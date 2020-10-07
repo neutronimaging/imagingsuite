@@ -40,7 +40,12 @@ std::vector<size_t> KIPLSHARED_EXPORT GetFITSDims(const std::string &filename)
 	std::ostringstream msg;
     fits_open_image(&fptr, filename.c_str(), READONLY, &status);
 	if (status!=0) {
-		msg<<"Failed to open '"<<filename<<"' in GetFITSDims";
+        char err_text[512];
+
+        fits_get_errstatus(status, err_text);
+
+        msg<<"Failed to open '"<<filename<<"' in GetFITSDims (status: "<<status<<", message: "<<err_text<<")";
+
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
 	int bitpix=0;

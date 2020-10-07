@@ -17,6 +17,7 @@
 #include <imagereader.h>
 #include <imagewriter.h>
 #include <readerexception.h>
+#include <profile/Timer.h>
 
 class TReaderConfigTest : public QObject
 {
@@ -35,6 +36,9 @@ private Q_SLOTS:
     void testRead();
     void testCroppedRead();
     void testGetDose();
+    void benchmarkReadVolume();
+    void benchmarkReadVolumeParallel();
+
 
 private:
     kipl::base::TImage<float> gradimg;
@@ -349,6 +353,64 @@ void TReaderConfigTest::testGetDose()
 
     QCOMPARE(dose,refDose);
 
+}
+
+void TReaderConfigTest::benchmarkReadVolume()
+{
+    ImageReader reader;
+
+    reader.bThreadedReading = false;
+
+    std::string fname = "/Users/data/P20180255/00_XCalibration/xcal_#####.fits";
+    size_t first = 1;
+    size_t last  = 10;
+    size_t step  = 1;
+
+    kipl::base::TImage<float,3> img;
+
+    kipl::profile::Timer timer;
+    timer.Tic();
+//    QBENCHMARK
+//    {
+        img = reader.Read(fname,first,last,step,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0,{});
+//    }
+        timer.Toc();
+
+
+    for (size_t i=0; i<img.Size(2); ++i)
+    {
+        float *pSlice = img.GetLinePtr(0,i);
+        double sum = 0.0;
+        for (size_t j=0; j<img.Size(0)*img.Size(1); ++j)
+            sum+=pSlice[j];
+        qDebug() << i<<":"<<sum;
+    }
+
+    qDebug() << timer.elapsedTime();
+}
+
+void TReaderConfigTest::benchmarkReadVolumeParallel()
+{
+    ImageReader reader;
+
+    reader.bThreadedReading = true;
+
+    std::string fname = "/Users/data/P20180255/00_XCalibration/xcal_#####.fits";
+    size_t first = 1;
+    size_t last  = 8;
+    size_t step  = 1;
+
+    kipl::base::TImage<float,3> img;
+
+    kipl::profile::Timer timer;
+    timer.Tic();
+//    QBENCHMARK
+//    {
+        img = reader.Read(fname,first,last,step,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0,{});
+//    }
+        timer.Toc();
+
+    qDebug() << timer.elapsedTime();
 }
 
 

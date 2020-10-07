@@ -7,6 +7,7 @@
 #include <iostream>
 #include <algorithm>
 #include <numeric>
+#include <thread>
 
 #include <base/timage.h>
 #include <io/io_tiff.h>
@@ -27,8 +28,11 @@
 #include "analyzefileext.h"
 #include "readerexception.h"
 
+#include <QDebug>
+
 ImageReader::ImageReader(kipl::interactors::InteractionBase *interactor) :
     logger("ImageReader"),
+    bThreadedReading(false),
     m_Interactor(interactor)
 {
 
@@ -179,6 +183,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
         float binning,
         const std::vector<size_t> & nCrop, size_t idx)
 {
+    qDebug() <<"Reading"<<filename.c_str();
     std::vector<size_t> dims;
 
     try
@@ -340,56 +345,15 @@ kipl::base::TImage<float,3> ImageReader::Read(string fname,
                                               float binning,
                                               const std::vector<size_t> &nCrop)
 {
-
-    kipl::base::TImage<float,3> img;
-    std::vector<size_t> dims;
-
-    if (fname.find('#')==std::string::npos)
-    { // Reading from single file
-        kipl::base::TImage<float,2> tmpimg;
-
-        for (size_t i=first; i<=last; i+=step)
-        {
-            if (UpdateStatus(static_cast<float>(i-first)/static_cast<float>(last-first),"Reading image"))
-                break;
-
-            tmpimg=Read(fname,flip,rotate,binning,nCrop,i);
-
-            if (i==first) {
-                dims=std::vector<size_t>({tmpimg.Size(0),tmpimg.Size(1),(last-first+1)/step});
-
-                img.resize(dims);
-            }
-            float *pImg=tmpimg.GetDataPtr();
-            std::copy(pImg,pImg+tmpimg.Size(),img.GetLinePtr(0,(i-first)/step));
-        }
-        img.info.nBitsPerSample = tmpimg.info.nBitsPerSample;
+    if (bThreadedReading)
+    {
+        return parallelRead(fname,first,last,step,flip,rotate,binning,nCrop);
     }
     else
     {
-        std::string filename;
-        std::string ext;
-        kipl::base::TImage<float,2> tmpimg;
-
-        for (size_t i=first; i<=last; i+=step)
-        {
-            if (UpdateStatus(static_cast<float>(i-first)/static_cast<float>(last-first),"Reading image"))
-                break;
-            kipl::strings::filenames::MakeFileName(fname,i,filename,ext,'#','0');
-
-            tmpimg=Read(filename,flip,rotate,binning,nCrop);
-
-            if (i==first) {
-                dims=std::vector<size_t>({tmpimg.Size(0),tmpimg.Size(1),(last-first+1)/step});
-
-                img.resize(dims);
-            }
-            float *pImg=tmpimg.GetDataPtr();
-            std::copy(pImg,pImg+tmpimg.Size(),img.GetLinePtr(0,(i-first)/step));
-        }
-        img.info.nBitsPerSample = tmpimg.info.nBitsPerSample;
+        return singleRead(fname,first,last,step,flip,rotate,binning,nCrop);
     }
-    return img;
+
 }
 
 kipl::base::TImage<float,2> ImageReader::ReadFITS(std::string filename, const std::vector<size_t> & nCrop,size_t idx)
@@ -456,6 +420,7 @@ kipl::base::TImage<float,2> ImageReader::ReadSEQ(std::string filename, const std
 bool ImageReader::UpdateStatus(float val, string msg)
 {
     bool res=false;
+
     if (m_Interactor!=nullptr) {
         res=m_Interactor->SetProgress(val,msg);
     }
@@ -523,6 +488,151 @@ float ImageReader::projectionDose(std::string path,
     kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
 
     return projectionDose(filename,nDoseROI,flip,rotate,binning);
+}
+
+void ImageReader::readProcess(string fname,
+                              size_t first,
+                              size_t last,
+                              size_t step,
+                              kipl::base::eImageFlip flip,
+                              kipl::base::eImageRotate rotate,
+                              float binning,
+                              const std::vector<size_t> &nCrop,
+                              float *pImg)
+{
+//    qDebug() << "readProcess"<< first<< last;
+    kipl::base::TImage<float,3> tmp;
+    try
+    {
+       tmp = singleRead(fname,first,last,step,flip,rotate,binning,nCrop);
+    }
+    catch (std::exception &e)
+    {
+        qDebug() << "Reading failed for first="<<first<< e.what();
+    }
+    qDebug() << "readProcess first"<< first << "size ="<< tmp.Size(0)<< tmp.Size(1)<< tmp.Size(2);
+
+    copy_n(tmp.GetDataPtr(),tmp.Size(),pImg);
+}
+
+kipl::base::TImage<float, 3> ImageReader::parallelRead(string fname, size_t first, size_t last, size_t step, kipl::base::eImageFlip flip, kipl::base::eImageRotate rotate, float binning, const std::vector<size_t> &nCrop)
+{
+    qDebug() <<"Parallel read";
+
+    std::ostringstream msg;
+
+    auto nThreads = std::thread::hardware_concurrency();
+    std::vector<std::thread> tlist;
+
+    msg<<"Parallel reading with "<<nThreads<<" threads\n";
+    logger.message(msg.str());
+
+    // File stepping
+    size_t totalSize = last-first+1;
+    size_t blockStep = totalSize / nThreads;
+    size_t blockRest = totalSize % nThreads;
+
+    qDebug() <<"Size"<< totalSize<<" step"<< blockStep <<"rest"<< blockRest;
+    size_t begin = first;
+    size_t end   = begin + blockStep + (blockRest ? 1 : 0)-1;
+
+    // Slice stepping
+    size_t nSlices   = totalSize / step;
+    size_t sliceStep = nSlices / nThreads ;
+    size_t sliceRest = nSlices % nThreads ;
+    size_t imgIdx    = 0;
+
+    qDebug() << nSlices<<" slices, step"<<sliceStep<<"rest"<<sliceRest;
+    auto dims=imageSize("",fname,first,binning);
+
+    kipl::base::TImage<float,3> img({dims[0],dims[1],nSlices});
+
+    for (auto i=0UL; i<nThreads; ++i)
+    {
+        qDebug() << "Starting thread"<<i<<"begin"<<begin<<"end"<<end<<"blockRest" <<blockRest<<"imgIdx"<<imgIdx<<"sliceRest"<<sliceRest;
+        float *pImg = img.GetLinePtr(0,imgIdx);
+
+        tlist.push_back(std::thread([=] { readProcess(fname,
+                                                      begin,
+                                                      end,
+                                                      step,
+                                                      flip,
+                                                      rotate,
+                                                      binning,
+                                                      nCrop,
+                                                      pImg); }));
+        if (blockRest)
+            --blockRest;
+
+        begin   = end + 1;
+        end     = begin + blockStep + (blockRest ? 1 : 0)-1;
+
+        imgIdx +=  sliceStep + (sliceRest ? 1 : 0);
+
+        if (sliceRest)
+            --sliceRest;
+    }
+
+    for (auto & it: tlist)
+        it.join();
+
+    return img;
+}
+
+kipl::base::TImage<float, 3> ImageReader::singleRead(string fname, size_t first, size_t last, size_t step, kipl::base::eImageFlip flip, kipl::base::eImageRotate rotate, float binning, const std::vector<size_t> &nCrop)
+{
+    kipl::base::TImage<float,3> img;
+    std::vector<size_t> dims;
+
+    if (fname.find('#')==std::string::npos)
+    { // Reading from single file
+        kipl::base::TImage<float,2> tmpimg;
+
+        for (size_t i=first; i<=last; i+=step)
+        {
+            if (UpdateStatus(static_cast<float>(i-first)/static_cast<float>(last-first),"Reading image"))
+                break;
+
+            tmpimg=Read(fname,flip,rotate,binning,nCrop,i);
+
+            if (i==first)
+            {
+                dims=std::vector<size_t>({tmpimg.Size(0),tmpimg.Size(1),(last-first+1)/step});
+
+                img.resize(dims);
+            }
+            float *pImg=tmpimg.GetDataPtr();
+            std::copy(pImg,pImg+tmpimg.Size(),img.GetLinePtr(0,(i-first)/step));
+        }
+        img.info.nBitsPerSample = tmpimg.info.nBitsPerSample;
+    }
+    else
+    {
+        std::string filename;
+        std::string ext;
+        kipl::base::TImage<float,2> tmpimg;
+
+        for (size_t i=first; i<=last; i+=step)
+        {
+            if (UpdateStatus(static_cast<float>(i-first)/static_cast<float>(last-first),"Reading image"))
+                break;
+            kipl::strings::filenames::MakeFileName(fname,i,filename,ext,'#','0');
+
+            tmpimg=Read(filename,flip,rotate,binning,nCrop);
+
+            if (i==first)
+            {
+                dims=std::vector<size_t>({tmpimg.Size(0),tmpimg.Size(1),(last-first+1)/step});
+
+                img.resize(dims);
+            }
+            float *pImg=tmpimg.GetDataPtr();
+            std::copy(pImg,pImg+tmpimg.Size(),img.GetLinePtr(0,(i-first)/step));
+        }
+        img.info.nBitsPerSample = tmpimg.info.nBitsPerSample;
+    }
+    qDebug() << "leaving single read"<< first;
+    return img;
 }
 
 

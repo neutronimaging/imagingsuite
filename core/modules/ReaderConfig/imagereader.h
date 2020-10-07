@@ -134,7 +134,55 @@ public:
 
     /// \returns The elapsed reading time.
     double ExecTime() {return timer.elapsedTime(kipl::profile::Timer::seconds);}
+
+    bool bThreadedReading;
 protected:
+    /// Reading a block of images into a volume with file name given by a file mask and an index number.
+    /// \param path Path to the location where the file is saved
+    /// \param filemask The mask of the file to read, # are used as place holders for the number.
+    /// \param number The file index number.
+    /// \param flip Should the image be flipped horizontally or vertically.
+    /// \param rotate Should the file be rotated, steps of 90deg.
+    /// \param binning Binning factor.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
+    /// \returns The 2D image stored in the specified file.
+    kipl::base::TImage<float,3> singleRead(std::string fname,
+                                      size_t first,
+                                      size_t last,
+                                      size_t step,
+                                      kipl::base::eImageFlip flip,
+                                      kipl::base::eImageRotate rotate,
+                                      float binning,
+                                      const std::vector<size_t> & nCrop);
+
+    /// Reading a block of images into a volume with file name given by a file mask and an index number.
+    /// \param path Path to the location where the file is saved
+    /// \param filemask The mask of the file to read, # are used as place holders for the number.
+    /// \param number The file index number.
+    /// \param flip Should the image be flipped horizontally or vertically.
+    /// \param rotate Should the file be rotated, steps of 90deg.
+    /// \param binning Binning factor.
+    /// \param nCrop ROI for cropping the image. If nullptr is provided the whole image will be read.
+    /// \returns The 2D image stored in the specified file.
+    kipl::base::TImage<float,3> parallelRead(std::string fname,
+                                      size_t first,
+                                      size_t last,
+                                      size_t step,
+                                      kipl::base::eImageFlip flip,
+                                      kipl::base::eImageRotate rotate,
+                                      float binning,
+                                      const std::vector<size_t> & nCrop);
+
+    void readProcess(std::string               fname,
+                    size_t                     first,
+                    size_t                     last,
+                    size_t                     step,
+                    kipl::base::eImageFlip     flip,
+                    kipl::base::eImageRotate   rotate,
+                    float                      binning,
+                    const std::vector<size_t> &nCrop,
+                    float                     *img);
+
     /// Recomputes the crop ROI based on flipping and rotation into real image coordinates.
     /// \param flip How should the image be flipped.
     /// \param rotate How should the image be rotated.
