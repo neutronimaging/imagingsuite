@@ -53,6 +53,37 @@ void PlotWidget::setCurveData(int id, const QVector<QPointF> &data, QString name
     setCurveData(id,series);
 }
 
+void PlotWidget::setCurveData(int id, const std::vector<float> &x, const std::vector<float> &y, QString name)
+{
+    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+
+    if (x.size() != y.size())
+        throw kipl::base::DimsException("PlotWidget got size mismatch in the vector lengths",__FILE__,__LINE__);
+
+    auto itX = x.begin();
+    auto itY = y.begin();
+    for (; itX != x.end() ; ++itX, ++itY)
+        series->append(*itX,*itY);
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
+}
+
+void PlotWidget::setCurveData(int id, const std::map<float, float> &data, QString name)
+{
+    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+
+    for (auto const &item : data)
+        series->append(item.first,item.second);
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
+}
+
 void PlotWidget::setCurveData(int id, const float * const x, const float * const y, const int N, QString name)
 {
     QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
@@ -221,39 +252,57 @@ void PlotWidget::updateAxes()
 { 
     findMinMax();
 
+    auto axes = ui->chart->chart()->axes();
+    std::ostringstream msg;
+    msg <<"Number of axes = " << axes.size();
+    logger.message(msg.str());
+
     if (minX!=std::numeric_limits<double>::max())
-        ui->chart->chart()->axisX()->setMin(minX);
+        axes[0]->setMin(minX);
 
     if (maxX!=-std::numeric_limits<double>::max())
-        ui->chart->chart()->axisX()->setMax(maxX);
+        axes[0]->setMax(maxX);
 
     if (minY!=std::numeric_limits<double>::max())
-        ui->chart->chart()->axisY()->setMin(minY);
+        axes[1]->setMin(minY);
 
     if (maxY!=-std::numeric_limits<double>::max())
-        ui->chart->chart()->axisY()->setMax(maxY);
+        axes[1]->setMax(maxY);
+
 }
 
 void PlotWidget::setXLabel(const QString &lbl)
 {
+    auto axes = ui->chart->chart()->axes();
+
     if (lbl.isEmpty())
-        ui->chart->chart()->axisX()->setTitleVisible(false);
+        axes[0]->setTitleVisible(false);
     else
     {
-        ui->chart->chart()->axisX()->setTitleText(lbl);
-        ui->chart->chart()->axisX()->setTitleVisible(true);
+        axes[0]->setTitleText(lbl);
+        axes[0]->setTitleVisible(true);
     }
+//    if (lbl.isEmpty())
+//        ui->chart->chart()->axisX()->setTitleVisible(false);
+//    else
+//    {
+//        ui->chart->chart()->axisX()->setTitleText(lbl);
+//        ui->chart->chart()->axisX()->setTitleVisible(true);
+//    }
 }
 
 void PlotWidget::setYLabel(const QString &lbl)
 {
+    auto axes = ui->chart->chart()->axes();
+
     if (lbl.isEmpty())
-        ui->chart->chart()->axisY()->setTitleVisible(false);
+        axes[1]->setTitleVisible(false);
     else
     {
-        ui->chart->chart()->axisY()->setTitleText(lbl);
-        ui->chart->chart()->axisY()->setTitleVisible(true);
+        axes[1]->setTitleText(lbl);
+        axes[1]->setTitleVisible(true);
     }
+
 }
 
 void PlotWidget::findMinMax()
