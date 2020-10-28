@@ -67,6 +67,7 @@ SOURCES += \
     ../src/io/io_stack.cpp \
     ../src/io/core/io_fits.cpp \
     ../src/io/io_vivaseq.cpp \
+    ../src/io/io_csv.cpp \
     ../src/generators/Sine2D.cpp \
     ../src/generators/SignalGenerator.cpp \
     ../src/generators/SequenceImage.cpp \
@@ -187,6 +188,7 @@ HEADERS +=\
     ../include/io/io_stack.h \
     ../include/io/io_fits.h \
     ../include/io/core/io_fits.hpp \
+    ../include/io/io_csv.h \
     ../include/io/DirAnalyzer.h \
     ../include/morphology/core/morphextrema.hpp \
     ../include/morphology/core/morphgeo.hpp \

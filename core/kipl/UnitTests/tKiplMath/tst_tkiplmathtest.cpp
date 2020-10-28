@@ -21,6 +21,7 @@
 #include <math/linfit.h>
 
 #include <io/io_tiff.h>
+#include <io/io_csv.h>
 
 class TKiplMathTest : public QObject
 {
@@ -41,6 +42,7 @@ private Q_SLOTS:
     void testTNTNonLinFit_fitter();
     void testARMANonLinFit_GaussianFunction();
     void testARMANonLinFit_fitter();
+    void testARMANonLinFit_realDataFit();
     void testFindPeaks();
 
     void testStatistics();
@@ -350,6 +352,38 @@ void TKiplMathTest::testARMANonLinFit_fitter()
     QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
 
 }
+
+void TKiplMathTest::testARMANonLinFit_realDataFit()
+{
+    auto data = kipl::io::readCSV("../TestData/1D/edgeprofiles/edgederiv_2mm.txt",',',false);
+
+    size_t N = data["b"].size();
+
+    arma::vec x(N);
+    arma::vec y(N);
+    arma::vec sig(N);
+
+    Nonlinear::SumOfGaussians sog(1);
+    auto maxIt = std::max_element(data["b"].begin(),data["b"].end());
+    sog[0]=*maxIt;//A
+    sog[1]=maxIt-data["b"].begin(); //m
+    sog[2]=1; //s
+
+    qDebug() << "Initial parameters:"<<sog[0] <<sog[1] <<sog[2] ;
+    for (size_t i=0; i<N; ++i)
+    {
+        x[i]=data["a"][i];
+        y[i]=data["b"][i];
+        sig[i]=1.0;
+    }
+
+    Nonlinear::LevenbergMarquardt mrq(1e-15);
+
+    mrq.fit(x,y,sig,sog);
+
+    qDebug() << "Fit parameters:"<<sog[0] <<sog[1] <<sog[2] ;
+}
+
 void TKiplMathTest::testFindPeaks()
 {
     const size_t N=100;
