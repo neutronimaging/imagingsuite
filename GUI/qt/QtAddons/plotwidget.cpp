@@ -254,7 +254,7 @@ void PlotWidget::updateAxes()
 
     auto axes = ui->chart->chart()->axes();
     std::ostringstream msg;
-    msg <<"Number of axes = " << axes.size();
+
     logger.message(msg.str());
 
     if (minX!=std::numeric_limits<double>::max())
@@ -282,13 +282,6 @@ void PlotWidget::setXLabel(const QString &lbl)
         axes[0]->setTitleText(lbl);
         axes[0]->setTitleVisible(true);
     }
-//    if (lbl.isEmpty())
-//        ui->chart->chart()->axisX()->setTitleVisible(false);
-//    else
-//    {
-//        ui->chart->chart()->axisX()->setTitleText(lbl);
-//        ui->chart->chart()->axisX()->setTitleVisible(true);
-//    }
 }
 
 void PlotWidget::setYLabel(const QString &lbl)

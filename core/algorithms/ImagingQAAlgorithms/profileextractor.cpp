@@ -13,9 +13,10 @@
 
 namespace ImagingQAAlgorithms {
 ProfileExtractor::ProfileExtractor() :
-    mPrecision(1.0f)
+    saveImages(false),
+    lineCoeffs{0.0f,1.0f},
+    mPrecision(0.1f)
 {
-    std::fill_n(lineCoeffs,2,0.0f);
 }
 
 void ProfileExtractor::setPrecision(float p)
@@ -28,7 +29,33 @@ float ProfileExtractor::precision()
     return mPrecision;
 }
 
-std::map<float, float> ProfileExtractor::getProfile(kipl::base::TImage<float, 2> &img,size_t *roi)
+std::map<float, float> ProfileExtractor::fittedLine(const std::vector<float> &x)
+{
+    std::map<float, float> line;
+
+    for (auto const &xx : x)
+        line.insert(make_pair(xx,lineCoeffs[0]+xx*lineCoeffs[1]));
+
+    return line;
+}
+
+const vector<float> &ProfileExtractor::coefficients()
+{
+    return lineCoeffs;
+}
+
+kipl::base::TImage<float, 2> ProfileExtractor::distanceMap(const std::vector<size_t> &dims)
+{
+    kipl::base::TImage<float, 2> img(dims);
+
+    for (size_t y=0 ; y<dims[1]; ++y)
+        for (size_t x=0 ; x<dims[0]; ++x)
+            img(x,y)=distanceToLine(x,y);
+
+    return img;
+}
+
+std::map<float, float> ProfileExtractor::getProfile(kipl::base::TImage<float, 2> &img,const std::vector<size_t> &roi)
 {
     (void)roi;
     std::map<float, kipl::math::Statistics> profile_stats;
@@ -38,7 +65,9 @@ std::map<float, float> ProfileExtractor::getProfile(kipl::base::TImage<float, 2>
 
     computeEdgeEquation(de);
 
- //   kipl::io::WriteTIFF(de,"PE_diffEdge.tif",kipl::base::Float32);
+    if (saveImages)
+       kipl::io::WriteTIFF(de,"PE_diffEdge.tif",kipl::base::Float32);
+
     int nx=static_cast<int>(de.Size(0));
     int ny=static_cast<int>(de.Size(1));
 
@@ -58,17 +87,14 @@ std::map<float, float> ProfileExtractor::getProfile(kipl::base::TImage<float, 2>
     }
 
     std::map<float, float> profile;
-    for (auto it=profile_stats.begin(); it!=profile_stats.end(); ++it)
-        profile.insert(std::make_pair(it->first,static_cast<float>(it->second.E())));
+    for (const auto & item : profile_stats )
+        profile.insert(std::make_pair(item.first,static_cast<float>(item.second.E())));
 
     return profile;
 }
 
 void ProfileExtractor::computeEdgeEquation(kipl::base::TImage<float, 2> &img)
 {
-
-    float *rawProfile=new float[img.Size(0)];
-
     float x=0.0f;
     float x2=0.0f;
     float y=0.0f;
@@ -95,8 +121,6 @@ void ProfileExtractor::computeEdgeEquation(kipl::base::TImage<float, 2> &img)
     lineCoeffs[1]=-(cnt*xy-x*y)/(cnt*y2-y*y);
 
     qDebug() << "m="<<lineCoeffs[0]<<"; k="<<lineCoeffs[1]<<", atan(k)"<<atan(lineCoeffs[1])*180/fPi;
-
-    delete [] rawProfile;
 }
 
 kipl::base::TImage<float, 2> ProfileExtractor::diffEdge(kipl::base::TImage<float, 2> &img)
@@ -134,7 +158,10 @@ kipl::base::TImage<float, 2> ProfileExtractor::diffEdge(kipl::base::TImage<float
 
 float ProfileExtractor::distanceToLine(int x, int y)
 {
-  float d=(x*lineCoeffs[0]-y+lineCoeffs[1])/sqrt(lineCoeffs[0]*lineCoeffs[0]+1.0f);
+    const float &m =  lineCoeffs[0];
+    const float &k = -lineCoeffs[1];
+//  float d=(y*lineCoeffs[1]-x+lineCoeffs[0])/sqrt(lineCoeffs[1]*lineCoeffs[1]+1.0f);
+    float d=(k*y-x+m)/sqrt(k*k+1.0f);
 
   d = floor(d/mPrecision)*mPrecision;
 
