@@ -49,8 +49,8 @@ ViewerMainWindow::ViewerMainWindow(QWidget *parent) :
             return;
         }
         catch (...) {
-                    QMessageBox::warning(this,"Load error","An unhandled exception was thrown");
-                    return;
+            QMessageBox::warning(this,"Load error","An unhandled exception was thrown");
+            return;
         }
 
         ui->viewer->set_image(img.GetDataPtr(),img.dims());
@@ -72,10 +72,12 @@ void ViewerMainWindow::on_actionOpen_triggered()
 
 void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &img)
 {
-    if (QFile::exists(QString::fromStdString(fname))) {
+    if (QFile::exists(QString::fromStdString(fname)))
+    {
         isMultiFrame = false;
         m_ext = kipl::io::GetFileExtensionType(fname);
-        switch (m_ext) {
+        switch (m_ext)
+        {
             case kipl::io::ExtensionTXT  : std::cout<<"Image format not supported"<<std::endl; break;
             case kipl::io::ExtensionDMP  : std::cout<<"Image format not supported"<<std::endl; break;
             case kipl::io::ExtensionDAT  : std::cout<<"Image format not supported"<<std::endl; break;
@@ -86,18 +88,17 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
             case kipl::io::ExtensionPNG  : std::cout<<"Image format not supported"<<std::endl; break;
             case kipl::io::ExtensionHDF  :
             {
-                auto dims = kipl::io::GetNexusDims(fname);
-                qDebug() << "dims size"<<dims.size()<<"("<<dims[0]<<", "<<dims[1]<<")";
                 kipl::io::ReadNexus(img,fname,0,{});
-                dims = img.dims();
-                qDebug() << "dims size"<<dims.size()<<"("<<dims[0]<<", "<<dims[1]<<")";
+                break;
             }
+
             case kipl::io::ExtensionSEQ  :
             {
                 kipl::io::ViVaSEQHeader header;
                 kipl::io::GetViVaSEQHeader(fname,&header);
                 isMultiFrame = true;
-                if (fname!=m_fname) {
+                if (fname!=m_fname)
+                {
                     ui->horizontalSlider->setMinimum(0);
                     ui->horizontalSlider->setMaximum(header.numberOfFrames-1);
                     ui->spinBox->setMinimum(0);
@@ -111,10 +112,9 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
             break;
         }
         m_fname = fname;
-        qDebug() << "sum=" <<kipl::math::sum(img.GetDataPtr(),img.Size());
-
     }
-    else {
+    else
+    {
 
         logger.warning("File does not exist");
     }

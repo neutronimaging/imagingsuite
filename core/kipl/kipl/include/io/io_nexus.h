@@ -11,6 +11,7 @@
 #include "../base/textractor.h"
 #include "../strings/filenames.h"
 #include "../base/kiplenums.h"
+#include "../math/sums.h"
 
 #include <iostream>
 #include <iomanip>
@@ -150,11 +151,11 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
                       ImgType *pslice = img.GetDataPtr();
 
                       // casting to ImgType
-                      std::copy_n(pslice,img.Size(),slab);
-//                      for (size_t i=0; i<img.Size();++i)
-//                      {
-//                          pslice[i] = static_cast<ImgType>(slab[i]);
-//                      }
+//                      std::copy_n(pslice,img.Size(),slab);
+                      for (size_t i=0; i<img.Size();++i)
+                      {
+                          pslice[i] = static_cast<ImgType>(slab[i]);
+                      }
 
                   }
               }
