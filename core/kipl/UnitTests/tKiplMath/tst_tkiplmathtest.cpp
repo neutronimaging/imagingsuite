@@ -367,7 +367,7 @@ void TKiplMathTest::testARMANonLinFit_realDataFit()
     auto maxIt = std::max_element(data["b"].begin(),data["b"].end());
     sog[0]=*maxIt;//A
     sog[1]=maxIt-data["b"].begin(); //m
-    sog[2]=1; //s
+    sog[2]=3; //s
 
     qDebug() << "Initial parameters:"<<sog[0] <<sog[1] <<sog[2] ;
     for (size_t i=0; i<N; ++i)
