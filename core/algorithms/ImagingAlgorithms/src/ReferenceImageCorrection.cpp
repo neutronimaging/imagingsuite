@@ -33,7 +33,7 @@ using namespace TNT;
 
 namespace ImagingAlgorithms {
 
-ReferenceImageCorrection::ReferenceImageCorrection() :
+ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::InteractionBase *interactor) :
     logger("ReferenceImageCorrection"),
     m_bHaveOpenBeam(false),
     m_bHaveDarkCurrent(false),
@@ -64,7 +64,7 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     tau(1.0f),
     min_area(0),
     thresh(0.0f),
-    m_Interactor(nullptr)
+    m_Interactor(interactor)
 {
     a = b = c = d = e = f = 1;
 }
@@ -76,20 +76,15 @@ ReferenceImageCorrection::~ReferenceImageCorrection()
 
 void ReferenceImageCorrection::SaveBG(bool value, std::string path, std::string obname, std::string filemask)
 {
-    bSaveBG = value;
-    pathBG = path;
+    bSaveBG     = value;
+    pathBG      = path;
     flatname_BG = obname;
     filemask_BG = filemask;
 }
 
-void ReferenceImageCorrection::SetInteractor(kipl::interactors::InteractionBase *interactor){
-    if (interactor!=nullptr){
+void ReferenceImageCorrection::SetInteractor(kipl::interactors::InteractionBase *interactor)
+{
         m_Interactor=interactor;
-    }
-    else{
-        m_Interactor=nullptr;
-    }
-
 }
 
 void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *ob,
@@ -99,7 +94,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         float dose_DC,
         bool normBB,
         const std::vector<size_t> & roi,
-        const std::vector<size_t> &doseroi)
+        const std::vector<size_t> & doseroi)
 {
 
     if (ob!=nullptr)
@@ -149,26 +144,30 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 		m_bHaveBlackBody=true;
 
 
-        switch (m_InterpMethod) {
-        case (Polynomial):{
+        switch (m_InterpMethod) 
+        {
+        case (Polynomial) : {
             m_OB_BB_Interpolated = InterpolateBlackBodyImage(ob_bb_parameters, m_nROI); // now rois are in absolute coordinates , richtig?
-            m_DoseBBflat_image = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseROI);
+            m_DoseBBflat_image   = InterpolateBlackBodyImage(ob_bb_parameters, m_nDoseROI);
             break;
         }
-        case(ThinPlateSplines): {
+            
+        case (ThinPlateSplines) : {
 
             m_OB_BB_Interpolated = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nROI); // now rois are in absolute coordinates , richtig?
-            m_DoseBBflat_image = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nDoseROI);
+            m_DoseBBflat_image   = InterpolateBlackBodyImagewithSplines(ob_bb_parameters, spline_ob_values, m_nDoseROI);
 
 
             break;
         }
+            
         }
 
 
         // HERE SAVE OB_BB INTERPOLATED
 
-        if (bSaveBG){
+        if (bSaveBG)
+        {
                 std::string fname=pathBG+"/"+flatname_BG;
                 kipl::strings::filenames::CheckPathSlashes(fname,false);
                 kipl::io::WriteTIFF(m_OB_BB_Interpolated,fname,kipl::base::Float32); // seem correct
@@ -177,13 +176,15 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         PrepareReferencesBB();
 	}
 
-    if (useExtBB){
+    if (useExtBB)
+    {
         m_bHaveExternalBlackBody = true;
         bExtSingleFile = useSingleExtBB;
         PrepareReferencesExtBB();
     }
 
-    if(!useBB && !useExtBB) {
+    if (!useBB && !useExtBB) 
+    {
         PrepareReferences(); // original way
     }
 
@@ -193,26 +194,29 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 void ReferenceImageCorrection::SetInterpolationOrderX(eInterpOrderX eim_x){
     m_IntMeth_x = eim_x;
 
-    switch(eim_x){
+    switch(eim_x)
+    {
 
-    case(SecondOrder_x):
-    {   b=1;
-        d=1;
-        e=1;
-        break;
-    }
-    case(FirstOrder_x): {
-        b=1;
-        d=1;
-        e=0;
-        break;
-    }
-    case(ZeroOrder_x): {
-        b=0;
-        d=0;
-        e=0;
-        break;
-    }
+        case(SecondOrder_x):
+        {   b=1;
+            d=1;
+            e=1;
+            break;
+        }
+        case(FirstOrder_x): 
+        {
+            b=1;
+            d=1;
+            e=0;
+            break;
+        }
+        case(ZeroOrder_x): 
+        {
+            b=0;
+            d=0;
+            e=0;
+            break;
+        }
 
     }
 
@@ -221,25 +225,29 @@ void ReferenceImageCorrection::SetInterpolationOrderX(eInterpOrderX eim_x){
 void ReferenceImageCorrection::SetInterpolationOrderY(eInterpOrderY eim_y){
     m_IntMeth_y = eim_y;
 
-    switch(eim_y){
+    switch(eim_y)
+    {
 
-    case(SecondOrder_y):{
-        c=1;
-        a=1;
-        f=1;
-        break;
-    }
-    case(FirstOrder_y):{
-        c=1;
-        a=1;
-        f=0;
-        break;
-    }
-    case(ZeroOrder_y):{
-        c=0;
-        a=0;
-        f=0;
-    }
+        case(SecondOrder_y):
+        {
+            c=1;
+            a=1;
+            f=1;
+            break;
+        }
+        case(FirstOrder_y):
+        {
+            c=1;
+            a=1;
+            f=0;
+            break;
+        }
+        case(ZeroOrder_y):
+        {
+            c=0;
+            a=0;
+            f=0;
+        }
 
     }
 
@@ -268,48 +276,49 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
     for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"BBLogNorm: Referencing iteration")==false)); i++) {
 
-        if (m_bHaveBlackBody) {
-
-
+        if (m_bHaveBlackBody) 
+        {
             float *current_param;
 
-            switch (m_InterpMethod) {
-            case Polynomial:{
-                current_param =new float[6];
-                memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
-                m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
-                m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
-                delete[] current_param;
-                break;
-            }
-            case ThinPlateSplines:{
-                current_param =new float[spline_sample_values.size()+3];
-
-                memcpy(current_param, sample_bb_interp_parameters+i*(spline_sample_values.size()+3), sizeof(float)*(spline_sample_values.size()+3));
-
-                m_BB_sample_Interpolated = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nROI);
-                m_DoseBBsample_image = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
+            switch (m_InterpMethod) 
+            {
+                case Polynomial:{
+                    current_param =new float[6];
+                    memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
+                    m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
+                    m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
                     delete[] current_param;
-                break;
-            }
-            default: throw ImagingException("Unknown m_InterpMethod in ReferenceImageCorrection::SetReferenceImages", __FILE__, __LINE__);
+                    break;
+                }
+                case ThinPlateSplines:{
+                    current_param =new float[spline_sample_values.size()+3];
+    
+                    memcpy(current_param, sample_bb_interp_parameters+i*(spline_sample_values.size()+3), sizeof(float)*(spline_sample_values.size()+3));
+    
+                    m_BB_sample_Interpolated = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nROI);
+                    m_DoseBBsample_image = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
+                        delete[] current_param;
+                    break;
+                }
+                default: throw ImagingException("Unknown m_InterpMethod in ReferenceImageCorrection::SetReferenceImages", __FILE__, __LINE__);
             }
 
             // here to save the BG
 
-            if (bSaveBG){
+            if (bSaveBG)
+            {
                 std::string filename, ext;
                 kipl::strings::filenames::MakeFileName(filemask_BG,static_cast<int>(i),filename,ext,'#','0');
                 std::string fname=pathBG+"/"+filename;
                 kipl::strings::filenames::CheckPathSlashes(fname,false);
                 kipl::io::WriteTIFF(m_BB_sample_Interpolated,fname,kipl::base::Float32); // seem correct
-
             }
 
 
         }
 
-        if (m_bHaveExternalBlackBody){
+        if (m_bHaveExternalBlackBody)
+        {
 
             m_BB_slice_ext.resize(m_OB_BB_ext.dims());
 
@@ -319,14 +328,14 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 //                memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetDataPtr(), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
                 fdose_ext_slice = fdoseS_ext;
             }
-            else {
-
-                if (m_BB_sample_ext.Size(2)!=img.Size(2)){
+            else 
+            {
+                if (m_BB_sample_ext.Size(2)!=img.Size(2))
+                {
                     throw ImagingException ("Number of externally processed BB images are not the same as Projection data",__FILE__,__LINE__);
                 }
                 memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,i), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
                 fdose_ext_slice = fdose_ext_list[i];
-
             }
 
         }
@@ -368,14 +377,14 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     float ot;
 
     if (bUseManualThresh)
-        {
-              ot = thresh;
-        }
+    {
+          ot = thresh;
+    }
     else
-        {
-            int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
-            ot = static_cast<float>(histo.at(value).first);
-            }
+    {
+        int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+        ot = static_cast<float>(histo.at(value).first);
+    }
 
 
 
@@ -390,11 +399,14 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     float *pImg = norm.GetDataPtr();
     float *res = maskOtsu.GetDataPtr();
     const int N=static_cast<int>(norm.Size());
-    for (size_t i=0; i<N; i++){
-        if (pImg[i]>=ot){
+    for (size_t i=0; i<N; i++)
+    {
+        if (pImg[i]>=ot)
+        {
             res[i] = 1;
         }
-        else {
+        else 
+        {
             res[i] = 0;
         }
     }
@@ -404,10 +416,12 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 //    kipl::io::WriteTIFF(maskOtsu,"mask_Otsu.tif",kipl::base::Float32);
     kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
 
-    try {
+    try 
+    {
         maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
     }
-    catch (ImagingException &e) {
+    catch (ImagingException &e)
+    {
         logger(kipl::logging::Logger::LogError,e.what());
         std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("kipl::morphology::FillPeaks failed", __FILE__, __LINE__);
@@ -419,19 +433,22 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
      size_t num_obj;
 
      vector< pair< size_t, size_t > > area;
-     try {
+     try
+     {
          num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
 //         kipl::io::WriteTIFF(labelImage, "labelImage.tif");
          std::ostringstream msg;
          msg << "number of objects: " << num_obj;
          logger(kipl::logging::Logger::LogDebug, msg.str());
      }
-     catch (ImagingException &e) {
+     catch (ImagingException &e)
+     {
          logger(kipl::logging::Logger::LogError,e.what());
          std::cerr<<"Error in the SegmentBlackBody function\n";
          throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
-     catch(kipl::base::KiplException &e){
+     catch(kipl::base::KiplException &e)
+     {
          logger(kipl::logging::Logger::LogError,e.what());
          std::cerr<<"Error in the SegmentBlackBody function\n";
          throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
@@ -457,9 +474,11 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
      // remove objetcs with size lower the minum size:
      for (size_t i=0; i<area.size(); ++i)
      {
-         if (area.at(i).first<=min_area){
+         if (area.at(i).first<=min_area)
+         {
              int *pLbl=labelImage.GetDataPtr();
              float *pOtsu = maskOtsuFilled.GetDataPtr();
+
              for (size_t p=0; p<=maskOtsuFilled.Size(); ++p)
              {
                  if(pLbl[p]==i)
@@ -478,44 +497,44 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
          throw ImagingException("SegmentBlackBodyNorm failed \n Please try to change the threshold ", __FILE__, __LINE__);
      }
      else
-         {
-
-
+     {
         // 3. Compute mask within Otsu
         // 3.a sum of rows and columns and location of rois
-
-
 
         float *vert_profile = new float[maskOtsuFilled.Size(1)];
         float *hor_profile = new float[maskOtsuFilled.Size(0)];
 
-
         kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), vert_profile, true); // sum of rows
         kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), hor_profile, true); // sum of columns
-
 
         //3.b create binary Signal
         float *bin_VP = new float[maskOtsuFilled.Size(1)];
         float *bin_HP = new float[maskOtsuFilled.Size(0)];
 
-        for (size_t i=0; i<maskOtsuFilled.Size(1); i++) {
+        for (size_t i=0; i<maskOtsuFilled.Size(1); i++)
+        {
             float max = *std::max_element(vert_profile, vert_profile+maskOtsuFilled.Size(1));
-            if(vert_profile[i]<max) {
+            if(vert_profile[i]<max)
+            {
                 bin_VP[i] = 1;
             }
-            else {
+            else
+            {
                 bin_VP[i] = 0;
             }
 
         }
 
 
-        for (size_t i=0; i<maskOtsuFilled.Size(0); i++) {
+        for (size_t i=0; i<maskOtsuFilled.Size(0); i++)
+        {
             float max = *std::max_element(hor_profile, hor_profile+maskOtsuFilled.Size(0));
-            if(hor_profile[i]<max) {
+            if(hor_profile[i]<max)
+            {
                 bin_HP[i] = 1;
             }
-            else {
+            else
+            {
                 bin_HP[i] = 0;
             }
         }
@@ -529,13 +548,16 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         int index_right = 0;
 
 
-         for (int i=0; i<maskOtsuFilled.Size(1)-1; i++) {
+         for (int i=0; i<maskOtsuFilled.Size(1)-1; i++)
+         {
              float diff = bin_VP[i+1]-bin_VP[i];
-             if (diff>=1) {
+             if (diff>=1)
+             {
                  pos_left[index_left] = i;
                  index_left++;
              }
-             if (diff<=-1) {
+             if (diff<=-1)
+             {
                  pos_right[index_right]=i+1; // to have all BB within the rois
                  index_right++;
              }
@@ -550,13 +572,18 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
          int index_right_2 = 0;
 
 
-          for (int i=0; i<maskOtsuFilled.Size(0)-1; i++) {
+          for (int i=0; i<maskOtsuFilled.Size(0)-1; i++)
+          {
               float diff = bin_HP[i+1]-bin_HP[i];
-              if (diff>=1) {
+
+              if (diff>=1)
+              {
                   pos_left_2[index_left_2] = i;
                   index_left_2++;
               }
-              if (diff<=-1) {
+
+              if (diff<=-1)
+              {
                   pos_right_2[index_right_2]=i+1;
                   index_right_2++;
               }
@@ -569,9 +596,11 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
           std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
 
           int pos = 0;
-          for (int i=0; i<(index_left); i++) {
+          for (int i=0; i<(index_left); i++)
+          {
 
-              for (int j=0; j<(index_left_2); j++) {
+              for (int j=0; j<(index_left_2); j++)
+              {
 
                     right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
                     right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
@@ -580,12 +609,12 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
                     pos++;
               }
-
           }
 
 
 
-          for (size_t bb_index=0; bb_index<pos; bb_index++){
+          for (size_t bb_index=0; bb_index<pos; bb_index++)
+          {
 
               std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
                                               size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
@@ -594,7 +623,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
               kipl::base::TImage<float,2> roi_im(roi_dim);
 
 
-              for (int i=0; i<roi_dim[1]; i++) {
+              for (int i=0; i<roi_dim[1]; i++)
+              {
                     memcpy(roi.GetLinePtr(i),maskOtsuFilled.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
                     memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
               }
@@ -603,27 +633,16 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
               float y_com= 0.0f;
               int size = 0;
 
-//              // old implementation with geometrical mean:
-//              for (size_t x=0; x<roi.Size(0); x++) {
-//                  for (size_t y=0; y<roi.Size(1); y++) {
-//                      if(roi(x,y)==0) {
-//                          x_com +=x;
-//                          y_com +=y;
-//                          size++;
-//                      }
-
-//                  }
-//              }
-//              x_com /=size;
-//              y_com /=size;
-
               float sum_roi = 0.0f;
 
               // weighted center of mass:
-              for (size_t y=0; y<roi.Size(1); y++) {
-                for (size_t x=0; x<roi.Size(0); x++) {
+              for (size_t y=0; y<roi.Size(1); y++)
+              {
+                for (size_t x=0; x<roi.Size(0); x++)
+                {
 
-                      if(roi(x,y)==0) {
+                      if (roi(x,y)==0)
+                      {
                           x_com += (roi_im(x,y)*float(x));
                           y_com += (roi_im(x,y)*float(y));
                           sum_roi += roi_im(x,y);
@@ -637,29 +656,28 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
               // draw the circle with user-defined radius
 
               // check on BB dimensions: this is now done at the beginning to avoid crash
-              if (size>=min_area) {
-
-
+              if (size>=min_area)
+              {
                   x_com /=sum_roi;
                   y_com /=sum_roi;
 
-                      for (size_t y=0; y<roi.Size(1); y++) {
-                            for (size_t x=0; x<roi.Size(0); x++) {
+                  for (size_t y=0; y<roi.Size(1); y++)
+                  {
+                        for (size_t x=0; x<roi.Size(0); x++)
+                        {
 
-                              if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
-    //                              roi(x,y)=1; // this one actually I don't need
-                                  mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
-                              }
+                          if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0)
+                          {
+//                              roi(x,y)=1; // this one actually I don't need
+                              mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
                           }
                       }
+                  }
 
-                      roi(int(x_com+0.5), int(y_com+0.5))=2;
+                  roi(int(x_com+0.5), int(y_com+0.5))=2;
               }
 
           }
-
-
-
 //          kipl::io::WriteTIFF(mask,"mask.tif",kipl::base::Float32);
     }
 
@@ -676,6 +694,7 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
 
     float *p_mask = mask.GetDataPtr();
     float *p_otsu = maskOtsu.GetDataPtr();
+
     for (int i=0; i<mask.Size(); i++)
     {
         if (p_mask[i]==0.0f) p_otsu[i]=1.0f;
@@ -693,24 +712,30 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
     float *bin_VP = new float[maskOtsu.Size(1)];
     float *bin_HP = new float[maskOtsu.Size(0)];
 
-    for (size_t i=0; i<mask.Size(1); i++) {
+    for (size_t i=0; i<mask.Size(1); i++)
+    {
         float max = *std::max_element(vert_profile, vert_profile+maskOtsu.Size(1));
-        if(vert_profile[i]<max) {
+        if(vert_profile[i]<max)
+        {
             bin_VP[i] = 1;
         }
-        else {
+        else
+        {
             bin_VP[i] = 0;
         }
 
     }
 
 
-    for (size_t i=0; i<mask.Size(0); i++) {
+    for (size_t i=0; i<mask.Size(0); i++)
+    {
         float max = *std::max_element(hor_profile, hor_profile+maskOtsu.Size(0));
-        if(hor_profile[i]<max) {
+        if(hor_profile[i]<max)
+        {
             bin_HP[i] = 1;
         }
-        else {
+        else
+        {
             bin_HP[i] = 0;
         }
     }
@@ -723,55 +748,61 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
     int index_right = 0;
 
 
-     for (int i=0; i<mask.Size(1)-1; i++) {
-         float diff = bin_VP[i+1]-bin_VP[i];
-         if (diff>=1) {
-             pos_left[index_left] = i;
-             index_left++;
-         }
-         if (diff<=-1) {
-             pos_right[index_right]=i+1; // to have all BB within the rois
-             index_right++;
-         }
-     }
+    for (int i=0; i<mask.Size(1)-1; i++)
+    {
+        float diff = bin_VP[i+1]-bin_VP[i];
+        if (diff>=1)
+        {
+            pos_left[index_left] = i;
+            index_left++;
+        }
+        if (diff<=-1)
+        {
+            pos_right[index_right]=i+1; // to have all BB within the rois
+            index_right++;
+        }
+    }
 
      // the same on the horizontal profile:
-     float *pos_left_2 = new float[100];
+     float *pos_left_2  = new float[100];
      float *pos_right_2 = new float[100];
-     int index_left_2 = 0;
-     int index_right_2 = 0;
+     int index_left_2   = 0;
+     int index_right_2  = 0;
 
 
-      for (int i=0; i<mask.Size(0)-1; i++) {
-          float diff = bin_HP[i+1]-bin_HP[i];
-          if (diff>=1) {
-              pos_left_2[index_left_2] = i;
-              index_left_2++;
-          }
-          if (diff<=-1) {
-              pos_right_2[index_right_2]=i+1;
-              index_right_2++;
-          }
-      }
+    for (int i=0; i<mask.Size(0)-1; i++)
+    {
+        float diff = bin_HP[i+1]-bin_HP[i];
+        if (diff>=1)
+        {
+            pos_left_2[index_left_2] = i;
+            index_left_2++;
+        }
+
+        if (diff<=-1)
+        {
+            pos_right_2[index_right_2]=i+1;
+            index_right_2++;
+        }
+    }
 
 
-      // from these define ROIs containing BBs --> i can probably delete them later on
-      std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
-      std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
+    // from these define ROIs containing BBs --> i can probably delete them later on
+    std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
+    std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
 
-      int pos = 0;
-      for (int i=0; i<(index_left); i++) {
-
-          for (int j=0; j<(index_left_2); j++) {
-
-                right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
-                right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
-                left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
-                left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
-                pos++;
-          }
-
-      }
+    int pos = 0;
+    for (int i=0; i<(index_left); i++)
+    {
+        for (int j=0; j<(index_left_2); j++)
+        {
+            right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
+            right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
+            left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
+            left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
+            pos++;
+        }
+    }
 
 
 //      ostringstream msg;
@@ -780,124 +811,108 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
 
 //      std::map<std::pair<int, int>, float>::const_iterator it_values = values.begin();
 
-      for (size_t bb_index=0; bb_index<pos; bb_index++){
+    for (size_t bb_index=0; bb_index<pos; bb_index++)
+    {
 
-//          msg.str(""); msg<<"bb_index= "<<bb_index;
-//          logger(kipl::logging::Logger::LogMessage,msg.str());
+        //          msg.str(""); msg<<"bb_index= "<<bb_index;
+        //          logger(kipl::logging::Logger::LogMessage,msg.str());
 
-          std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
-                                          size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
-          kipl::base::TImage<float,2> roi(roi_dim);
-          kipl::base::TImage<float,2> roi_im(roi_dim);
-
-
-          for (int i=0; i<roi_dim[1]; i++) {
-                memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
-                memcpy(roi_im.GetLinePtr(i),img.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
-          }
-
-          float x_com = 0.0f;
-          float y_com = 0.0f;
-          int size = 0;
-
-//          // old implementation with geometrical mean:
-//          for (size_t y=0; y<roi.Size(1); y++) {
-//            for (size_t x=0; x<roi.Size(0); x++) {
-//                  if(roi(x,y)==0) {
-//                      x_com +=x;
-//                      y_com +=y;
-//                      size++;
-//                  }
-
-//              }
-//          }
-//          x_com /=static_cast<float>(size);
-//          y_com /=static_cast<float>(size);
-
-          float sum_roi = 0.0f;
-
-          // weighted center of mass:
-          for (size_t x=0; x<roi.Size(0); x++) {
-              for (size_t y=0; y<roi.Size(1); y++) {
-                  if(roi(x,y)==0) {
-                      x_com += (roi_im(x,y)*float(x));
-                      y_com += (roi_im(x,y)*float(y));
-                      sum_roi += roi_im(x,y);
-                      size++;
-                  }
-
-              }
-          }
-
-          // draw the circle with user-defined radius
-
-          // check on BB dimensions:
-//          if (size>=min_area) { //this is now wrong
-
-          if (size!=0) { // check on BB existance
+        std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
+                                      size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+        kipl::base::TImage<float,2> roi(roi_dim);
+        kipl::base::TImage<float,2> roi_im(roi_dim);
 
 
-              x_com /=sum_roi;
-              y_com /=sum_roi;
+        for (int i=0; i<roi_dim[1]; i++)
+        {
+            memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
+            memcpy(roi_im.GetLinePtr(i),img.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
+        }
 
-              std::pair<int,int> temp;
-              temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
-
-              float value = 0.0f;
-              std::vector<float> grayvalues;
-              float mean_value =0.0f;
-
-                  for (size_t y=0; y<roi.Size(1); y++) {
-                        for (size_t x=0; x<roi.Size(0); x++) {
+        float x_com = 0.0f;
+        float y_com = 0.0f;
+        int size = 0;
 
 
+        float sum_roi = 0.0f;
 
-                          if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) { // and also this one is useless
-//                              roi(x,y)=1; // this one actually I don't need
-//                              mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1; // this is now useless
-                              value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
-//                              if (value!=0)
-//                              {
-                                grayvalues.push_back(value);
-                                mean_value += value;
-//                              }
-//
-                          }
+        // weighted center of mass:
+        for (size_t x=0; x<roi.Size(0); x++)
+        {
+            for (size_t y=0; y<roi.Size(1); y++)
+            {
+                if(roi(x,y)==0)
+                {
+                    x_com += (roi_im(x,y)*float(x));
+                    y_com += (roi_im(x,y)*float(y));
+                    sum_roi += roi_im(x,y);
+                    size++;
+                }
+            }
+        }
 
+        // draw the circle with user-defined radius
 
-                      }
-                  }
+        // check on BB dimensions:
+        //          if (size>=min_area) { //this is now wrong
 
-                  mean_value /= static_cast<float>(grayvalues.size());
+        if (size!=0)
+        { // check on BB existance
+            x_com /=sum_roi;
+            y_com /=sum_roi;
 
+            std::pair<int,int> temp;
+            temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
 
-                      roi(int(x_com+0.5), int(y_com+0.5))=2;
-                      const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
-                      const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
-                      std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
-                      std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
-                      float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2;
-                       float average = std::accumulate(grayvalues.begin(), grayvalues.end(), 0.0)/ grayvalues.size();
+            float value = 0.0f;
+            std::vector<float> grayvalues;
+            float mean_value =0.0f;
 
-//                      new_values.insert(std::make_pair(temp,median));
-                      std::pair<int,int> mypair;
+            for (size_t y=0; y<roi.Size(1); y++)
+            {
+                for (size_t x=0; x<roi.Size(0); x++)
+                {
+                    if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0)
+                    { // and also this one is useless
+                        //                              roi(x,y)=1; // this one actually I don't need
+                        //                              mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1; // this is now useless
+                        value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
 
-                      for (std::map<std::pair<int, int>, float>::const_iterator it_values = values.begin(); it_values != values.end(); ++it_values)
-                      {
-                          float dist = (it_values->first.first-temp.first)*(it_values->first.first-temp.first)+(it_values->first.second-temp.second)*(it_values->first.second-temp.second);
-                          if(dist<=100.0f)
-                          {
-                                mypair = std::make_pair(it_values->first.first, it_values->first.second);
-                                mypair.first = it_values->first.first;
-                                mypair.second = it_values->first.second;
-                                values.at(mypair) = median;
-                                break;
-                          }
-                      }
+                        grayvalues.push_back(value);
+                        mean_value += value;
+                    }
+                }
+            }
 
-         }
+            mean_value /= static_cast<float>(grayvalues.size());
 
-      }
+            roi(int(x_com+0.5), int(y_com+0.5))=2;
+            const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
+            const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
+            std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
+            std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
+            float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2;
+            float average = std::accumulate(grayvalues.begin(), grayvalues.end(), 0.0)/ grayvalues.size();
+
+            //                      new_values.insert(std::make_pair(temp,median));
+            std::pair<int,int> mypair;
+
+            for (std::map<std::pair<int, int>, float>::const_iterator it_values = values.begin(); it_values != values.end(); ++it_values)
+            {
+                float dist = (it_values->first.first-temp.first)*(it_values->first.first-temp.first)+(it_values->first.second-temp.second)*(it_values->first.second-temp.second);
+                if(dist<=100.0f)
+                {
+                    mypair = std::make_pair(it_values->first.first, it_values->first.second);
+                    mypair.first = it_values->first.first;
+                    mypair.second = it_values->first.second;
+                    values.at(mypair) = median;
+                    break;
+                }
+            }
+
+        }
+
+    }
 
 
 }
@@ -929,15 +944,15 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     float ot;
 
     if (bUseManualThresh)
-        {
-              ot = thresh;
-        }
-    else
-        {
-            int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
-            ot = static_cast<float>(histo.at(value).first);
-            }
 
+    {
+          ot = thresh;
+    }
+    else
+    {
+        int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+        ot = static_cast<float>(histo.at(value).first);
+    }
     //2.c threshold image
 
     kipl::base::TImage<float,2> maskOtsu(mask.dims());
@@ -949,11 +964,14 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     float *pImg = norm.GetDataPtr();
     float *res = maskOtsu.GetDataPtr();
     const int N=static_cast<int>(norm.Size());
-    for (size_t i=0; i<N; i++){
-        if (pImg[i]>=ot){
+    for (size_t i=0; i<N; i++)
+    {
+        if (pImg[i]>=ot)
+        {
             res[i] = 1;
         }
-        else {
+        else 
+        {
             res[i] = 0;
         }
     }
@@ -970,7 +988,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     // remove objetcs with size lower the minum size:
     for (size_t i=0; i<area.size(); ++i)
     {
-        if (area.at(i).first<=min_area){
+        if (area.at(i).first<=min_area)
+        {
             int *pLbl=labelImage.GetDataPtr();
             float *pOtsu = maskOtsuFilled.GetDataPtr();
             for (size_t p=0; p<=maskOtsuFilled.Size(); ++p)
@@ -983,214 +1002,212 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     }
 
 
-         if (num_obj==2 || area.at(1).first>=3*area.at(2).first) // this in principle assumes that there can not be only one BB
+    if (num_obj==2 || area.at(1).first>=3*area.at(2).first) // this in principle assumes that there can not be only one BB
 //    if (area.at(1).first>=3*area.at(2).first)
     {
         throw ImagingException("SegmentBlackBodyNorm failed \n Please try to change the threshold ", __FILE__, __LINE__);
     }
     else
+    {
+
+
+        // 3. Compute mask within Otsu
+        // 3.a sum of rows and columns and location of rois
+        
+        float *vert_profile = new float[maskOtsuFilled.Size(1)];
+        float *hor_profile = new float[maskOtsuFilled.Size(0)];
+        
+        
+        kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), vert_profile, true); // sum of rows
+        kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), hor_profile, true); // sum of columns
+        
+        
+        //3.b create binary Signal
+        float *bin_VP = new float[maskOtsuFilled.Size(1)];
+        float *bin_HP = new float[maskOtsuFilled.Size(0)];
+        
+        for (size_t i=0; i<maskOtsuFilled.Size(1); i++) 
         {
+            float max = *std::max_element(vert_profile, vert_profile+maskOtsuFilled.Size(1));
+            if(vert_profile[i]<max) 
+            {
+                bin_VP[i] = 1;
+            }
+            else 
+            {
+                bin_VP[i] = 0;
+            }
+        
+        }
+        
+        for (size_t i=0; i<maskOtsuFilled.Size(0); i++) 
+        {
+            float max = *std::max_element(hor_profile, hor_profile+maskOtsuFilled.Size(0));
+            if(hor_profile[i]<max) 
+            {
+                bin_HP[i] = 1;
+            }
+            else 
+            {
+                bin_HP[i] = 0;
+            }
+        }
+        
+        
+        // 3.c compute edges - diff signal
+        
+        float *pos_left  = new float[100];
+        float *pos_right = new float[100];
+        int index_left   = 0;
+        int index_right  = 0;
+        
+        
+        for (int i=0; i<maskOtsuFilled.Size(1)-1; i++) 
+        {
+            float diff = bin_VP[i+1]-bin_VP[i];
+            if (diff>=1) 
+            {
+                pos_left[index_left] = i;
+                index_left++;
+            }
+            if (diff<=-1) 
+            {
+                pos_right[index_right]=i+1; // to have all BB within the rois
+                index_right++;
+            }
+        }
+         
+        // the same on the horizontal profile:
+        float *pos_left_2  = new float[100];
+        float *pos_right_2 = new float[100];
+        int index_left_2   = 0;
+        int index_right_2  = 0;      
+        
+        for (int i=0; i<maskOtsuFilled.Size(0)-1; i++) 
+        {
+            float diff = bin_HP[i+1]-bin_HP[i];
+            if (diff>=1) 
+            {
+                pos_left_2[index_left_2]   = i;
+                index_left_2++;
+            }
+            if (diff<=-1) 
+            {
+                pos_right_2[index_right_2] = i+1;
+                index_right_2++;
+            }
+        }  
+        
+        // from these define ROIs containing BBs --> i can probably delete them later on
+        std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
+        std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
+        
+        int pos = 0;
+        for (int i=0; i<(index_left); i++) 
+        {
+            for (int j=0; j<(index_left_2); j++) 
+            {      
+                right_edges.at(pos).first  = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
+                right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
+                left_edges.at(pos).first   = pos_left[i]; // left position on vertical profiles = y0
+                left_edges.at(pos).second  = pos_left_2[j]; // left position on horizontal profiles = x0
+                pos++;
+            }
+        }
+        
+        
+        
+        for (size_t bb_index=0; bb_index<pos; bb_index++)
+        {
+    
+            std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
+                                          size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+            kipl::base::TImage<float,2> roi(roi_dim);
+            kipl::base::TImage<float,2> roi_im(roi_dim);
 
 
-            // 3. Compute mask within Otsu
-            // 3.a sum of rows and columns and location of rois
-
-            float *vert_profile = new float[maskOtsuFilled.Size(1)];
-            float *hor_profile = new float[maskOtsuFilled.Size(0)];
-
-
-            kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), vert_profile, true); // sum of rows
-            kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), hor_profile, true); // sum of columns
-
-
-            //3.b create binary Signal
-            float *bin_VP = new float[maskOtsuFilled.Size(1)];
-            float *bin_HP = new float[maskOtsuFilled.Size(0)];
-
-            for (size_t i=0; i<maskOtsuFilled.Size(1); i++) {
-                float max = *std::max_element(vert_profile, vert_profile+maskOtsuFilled.Size(1));
-                if(vert_profile[i]<max) {
-                    bin_VP[i] = 1;
-                }
-                else {
-                    bin_VP[i] = 0;
-                }
-
+            for (int i=0; i<roi_dim[1]; i++)
+            {
+                memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
+                memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);// I am not sure this one is correct.
             }
 
+            float x_com= 0.0f;
+            float y_com= 0.0f;
+            int size = 0;
 
-            for (size_t i=0; i<maskOtsuFilled.Size(0); i++) {
-                float max = *std::max_element(hor_profile, hor_profile+maskOtsuFilled.Size(0));
-                if(hor_profile[i]<max) {
-                    bin_HP[i] = 1;
-                }
-                else {
-                    bin_HP[i] = 0;
+            float sum_roi = 0.0f;
+
+            // weighted center of mass:
+            for (size_t x=0; x<roi.Size(0); x++)
+            {
+                for (size_t y=0; y<roi.Size(1); y++)
+                {
+                    if(roi(x,y)==0)
+                    {
+                          x_com   += (roi_im(x,y)*float(x));
+                          y_com   += (roi_im(x,y)*float(y));
+                          sum_roi += roi_im(x,y);
+                          size++;
+                    }
                 }
             }
+    
+    
+    
+            // draw the circle with user-defined radius
 
+            // check on BB dimensions:
+            if (size>=min_area)
+            {
+                x_com /=sum_roi;
+                y_com /=sum_roi;
 
-            // 3.c compute edges - diff signal
+                std::pair<int,int> temp;
+                temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
 
-            float *pos_left = new float[100];
-            float *pos_right = new float[100];
-            int index_left = 0;
-            int index_right = 0;
+                float value = 0.0f;
+                std::vector<float> grayvalues;
+                float mean_value =0.0f;
+    
+                for (size_t y=0; y<roi.Size(1); y++)
+                {
+                    for (size_t x=0; x<roi.Size(0); x++)
+                    {
 
+                       if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
+                    //                              roi(x,y)=1; // this one actually I don't need
+                              mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
+                              value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
+                    //                                          if (value!=0)
+                    //                                          {
+                                grayvalues.push_back(value);
+                                mean_value =+value;
+                    //                                           }
 
-             for (int i=0; i<maskOtsuFilled.Size(1)-1; i++) {
-                 float diff = bin_VP[i+1]-bin_VP[i];
-                 if (diff>=1) {
-                     pos_left[index_left] = i;
-                     index_left++;
-                 }
-                 if (diff<=-1) {
-                     pos_right[index_right]=i+1; // to have all BB within the rois
-                     index_right++;
-                 }
-             }
-
-
-             // the same on the horizontal profile:
-             float *pos_left_2 = new float[100];
-             float *pos_right_2 = new float[100];
-             int index_left_2 = 0;
-             int index_right_2 = 0;
-
-
-              for (int i=0; i<maskOtsuFilled.Size(0)-1; i++) {
-                  float diff = bin_HP[i+1]-bin_HP[i];
-                  if (diff>=1) {
-                      pos_left_2[index_left_2] = i;
-                      index_left_2++;
-                  }
-                  if (diff<=-1) {
-                      pos_right_2[index_right_2]=i+1;
-                      index_right_2++;
-                  }
-              }
-
-
-              // from these define ROIs containing BBs --> i can probably delete them later on
-              std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
-              std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
-
-              int pos = 0;
-              for (int i=0; i<(index_left); i++) {
-
-                  for (int j=0; j<(index_left_2); j++) {
-
-                        right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
-                        right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
-                        left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
-                        left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
-                        pos++;
-                  }
-
-              }
-
-
-
-              for (size_t bb_index=0; bb_index<pos; bb_index++){
-
-                  std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
-                                                  size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
-                  kipl::base::TImage<float,2> roi(roi_dim);
-                  kipl::base::TImage<float,2> roi_im(roi_dim);
-
-
-                  for (int i=0; i<roi_dim[1]; i++) {
-                        memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
-                        memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);// I am not sure this one is correct.
-                  }
-
-                  float x_com= 0.0f;
-                  float y_com= 0.0f;
-                  int size = 0;
-
-//                  // old implementation with geometrical mean:
-//                  for (size_t y=0; y<roi.Size(1); y++) {
-//                    for (size_t x=0; x<roi.Size(0); x++) {
-//                          if(roi(x,y)==0) {
-//                              x_com +=x;
-//                              y_com +=y;
-//                              size++;
-//                          }
-
-//                      }
-//                  }
-//                  x_com /= static_cast<float>(size);
-//                  y_com /= static_cast<float>(size);
-
-                  float sum_roi = 0.0f;
-
-                  // weighted center of mass:
-                  for (size_t x=0; x<roi.Size(0); x++) {
-                      for (size_t y=0; y<roi.Size(1); y++) {
-                          if(roi(x,y)==0) {
-                              x_com += (roi_im(x,y)*float(x));
-                              y_com += (roi_im(x,y)*float(y));
-                              sum_roi += roi_im(x,y);
-                              size++;
-                          }
 
                       }
-                  }
+                    }
+                }
+
+                roi(int(x_com+0.5), int(y_com+0.5))=2;
+
+                mean_value /= static_cast<float>(grayvalues.size());
 
 
-
-                  // draw the circle with user-defined radius
-
-                  // check on BB dimensions:
-                  if (size>=min_area) {
-
-
-                      x_com /=sum_roi;
-                      y_com /=sum_roi;
-
-                      std::pair<int,int> temp;
-                      temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
-
-                      float value = 0.0f;
-                      std::vector<float> grayvalues;
-                      float mean_value =0.0f;
-
-                         for (size_t y=0; y<roi.Size(1); y++) {
-                              for (size_t x=0; x<roi.Size(0); x++) {
-
-                                   if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
-            //                              roi(x,y)=1; // this one actually I don't need
-                                          mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
-                                          value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
-//                                          if (value!=0)
-//                                          {
-                                            grayvalues.push_back(value);
-                                            mean_value =+value;
-//                                           }
-
-
-                                  }
-                              }
-                          }
-
-                          roi(int(x_com+0.5), int(y_com+0.5))=2;
-
-                          mean_value /= static_cast<float>(grayvalues.size());
-
-
-                          const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
-                          const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
-                          std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
-                          std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
-                          float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2; // here I compute the median
-                          float average = std::accumulate( grayvalues.begin(), grayvalues.end(), 0.0)/ grayvalues.size();
-                          values.insert(std::make_pair(temp,median));
-//                          values.insert(std::make_pair(temp,average));
-                 }
-
-              }
-
-      }
+                const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
+                const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
+                std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
+                std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
+                float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2; // here I compute the median
+                float average = std::accumulate( grayvalues.begin(), grayvalues.end(), 0.0)/ grayvalues.size();
+                values.insert(std::make_pair(temp,median));
+                //                          values.insert(std::make_pair(temp,average));
+            }
+    
+        }
+    
+    }
 }
 
 void ReferenceImageCorrection::SetBBInterpRoi(const std::vector<size_t> &roi)
@@ -1210,9 +1227,12 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     float mean_value = 0.0f;
     int value_size = 0;
 
-    for (int y=0; y<mask.Size(1); ++y) {
-        for (int x=0; x<mask.Size(0); ++x) {
-            if (mask(x,y)==1){
+    for (int y=0; y<mask.Size(1); ++y)
+    {
+        for (int x=0; x<mask.Size(0); ++x)
+        {
+            if (mask(x,y)==1)
+            {
                 std::pair<int, int> temp;
                 temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images 
 //                if (img(x,y)!=0)
@@ -1228,15 +1248,15 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     }
 
-//    mean_value/=values.size();
-      mean_value/=static_cast<float>(value_size);
+    mean_value/=static_cast<float>(value_size);
 
     // remove outliers if values to be interpolated are above mean +2std
 
     float std_dev = 0.0f;
 
     for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
-                it != values.end(); ++it) {
+                it != values.end(); ++it)
+    {
         std_dev += (it->second-mean_value)*(it->second-mean_value);
     }
 
@@ -1246,11 +1266,14 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     // this should be the correct way of removing element (STL book, page 205)
 
-    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); ){
-        if(it->second >= (mean_value+2*std_dev)){
+    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); )
+    {
+        if(it->second >= (mean_value+2*std_dev))
+        {
             values.erase(it++);
         }
-        else{
+        else
+        {
             ++it;
         }
     }
@@ -1268,23 +1291,20 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     // IMPORTANT! WHEN THE A SPECIFIC ROI IS SELECTED FOR THE BBs, THEN THE INTERPOLATION PARAMETERS NEED TO BE COMPUTED ON THE BIGGER IMAGE GRID
     std::map<std::pair<int,int>, float> values;
 
-
-
-
     float mean_value = 0.0f;
 
-    for (int y=0; y<mask.Size(1); y++) {
-        for (int x=0; x<mask.Size(0); x++) {
-            if (mask(x,y)==1){
+    for (int y=0; y<mask.Size(1); y++)
+    {
+        for (int x=0; x<mask.Size(0); x++)
+        {
+            if (mask(x,y)==1)
+            {
                 std::pair<int,int> temp;
                 temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images. now it should be in absolute coordinates
                 values.insert(std::make_pair(temp,img(x,y)));
-                mean_value +=img(x,y);
-
+                mean_value += img(x,y);
             }
-
         }
-
     }
 
     mean_value/=values.size();
@@ -1294,18 +1314,22 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     float std_dev = 0.0f;
 
     for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin();
-                it != values.end(); ++it) {
+                it != values.end(); ++it)
+    {
         std_dev += (it->second-mean_value)*(it->second-mean_value);
     }
 
     std_dev=sqrt(std_dev/values.size());
 
 
-    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); ){
-        if(it->second >= (mean_value+2*std_dev)){
+    for (std::map<std::pair<int,int>, float>::const_iterator it = values.begin(); it!= values.end(); )
+    {
+        if(it->second >= (mean_value+2*std_dev))
+        {
             values.erase(it++);
         }
-        else{
+        else
+        {
             ++it;
         }
     }
@@ -1318,8 +1342,7 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     error = my_error;
 
 
-         return myparam;
-
+    return myparam;
 }
 
 float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, int>, float> &values, float &error){
@@ -1333,9 +1356,11 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
     std::map<std::pair<int, int>, float>::const_iterator it = values.begin();
 
 
-    for (int x=0; x<my_matrix.dim1(); x++) {
+    for (int x=0; x<my_matrix.dim1(); x++)
+    {
 
-        if (a && b && c && d && e && f) { // second order X, second order Y
+        if (a && b && c && d && e && f)
+        { // second order X, second order Y
               my_matrix[x][0] = 1;
               my_matrix[x][1] = it->first.first;
               my_matrix[x][2] = it->first.first*it->first.first;
@@ -1343,31 +1368,36 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
               my_matrix[x][4] = it->first.second;
               my_matrix[x][5] = it->first.second*it->first.second;
         }
-        if ((b && d && a && c) && (e==0) && (f==0)){ // first order X, first order Y
+        if ((b && d && a && c) && (e==0) && (f==0))
+        { // first order X, first order Y
             my_matrix[x][0] = 1;
             my_matrix[x][1] = it->first.first;
             my_matrix[x][2] = it->first.second;
             my_matrix[x][3] = it->first.first*it->first.second;
 
         }
-        if (b==0 && a==0 && c==0 && d==0 && e==0 && f==0) { // zero order X, zero order Y
+        if (b==0 && a==0 && c==0 && d==0 && e==0 && f==0)
+        { // zero order X, zero order Y
             my_matrix[x][0] = 1;
         }
 
-        if ((b && d && e && c && a) && f==0 ) { // second order X, first order Y
+        if ((b && d && e && c && a) && f==0 )
+        { // second order X, first order Y
             my_matrix[x][0] = 1;
             my_matrix[x][1] = it->first.first;
             my_matrix[x][2] = it->first.first*it->first.first;
             my_matrix[x][3] = it->first.first*it->first.second;
             my_matrix[x][4] = it->first.second;
         }
-        if ((b && d && e) && c==0 && a==0 && f==0 ) { // second order X, zero order Y
+        if ((b && d && e) && c==0 && a==0 && f==0 )
+        { // second order X, zero order Y
             my_matrix[x][0] = 1;
             my_matrix[x][1] = it->first.first;
             my_matrix[x][2] = it->first.first*it->first.first;
         }
 
-        if ((b && c && d && a && f) && e==0){ // first order X, second order Y
+        if ((b && c && d && a && f) && e==0)
+        { // first order X, second order Y
             my_matrix[x][0] = 1;
             my_matrix[x][1] = it->first.first;
             my_matrix[x][2] = it->first.first*it->first.second;
@@ -1375,12 +1405,14 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
             my_matrix[x][4] = it->first.second*it->first.second;
         }
 
-        if( (b && d) && a==0 && c==0 &&  e==0 && f==0){ //first order X, zero order Y
+        if( (b && d) && a==0 && c==0 &&  e==0 && f==0)
+        { //first order X, zero order Y
             my_matrix[x][0] = 1;
             my_matrix[x][1] = it->first.first;
         }
 
-        if (b==0 && d==0 && e==0 && (c && a && f)){ // zero order X, second order Y
+        if (b==0 && d==0 && e==0 && (c && a && f))
+        { // zero order X, second order Y
             my_matrix[x][0] = 1;
 //            my_matrix[x][1] = it->first.first;
 //            my_matrix[x][2] = it->first.first*it->first.first;
@@ -1389,25 +1421,25 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
             my_matrix[x][2] = it->first.second*it->first.second;
         }
 
-        if ((c && a) && b==0 && d==0 && e==0 && f==0){ // zero order X, first order Y
+        if ((c && a) && b==0 && d==0 && e==0 && f==0)
+        { // zero order X, first order Y
             my_matrix[x][0] = 1;
             my_matrix[x][1] = it->first.second;
 
         }
 
-              I[x] = static_cast<double>(it->second);
-              it++;
+        I[x] = static_cast<double>(it->second);
+        it++;
 
     }
 
     JAMA::QR<double> qr(my_matrix);
     param = qr.solve(I);
 
-
-
     float *myparam = new float[6];
 
-    for (int i=0; i<6; i++) { // initialize them to zero:
+    for (int i=0; i<6; i++)
+    { // initialize them to zero:
         myparam[i] = 0.0f;
     }
 
@@ -1420,9 +1452,11 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
 
     it = values.begin();
-  for (int i=0; i<values.size(); i++){
+  for (int i=0; i<values.size(); i++)
+  {
 
-      if (a && b && c && d && e && f) {
+      if (a && b && c && d && e && f)
+      {
 //            I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second)+static_cast<float>(param[5])*static_cast<float>(it->first.second*it->first.second);
            // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
            // fill parameters in the right order:
@@ -1436,7 +1470,8 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
 //            I_int[i] = myparam[0] + myparam[1]*static_cast<float>(it->first.first)+myparam[2]*static_cast<float>(it->first.first*it->first.first)+myparam[3]*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+myparam[4]*static_cast<float>(it->first.second)+myparam[5]*static_cast<float>(it->first.second*it->first.second);
       }
-      if ((b && d && a && c) && (e==0) && (f==0)){
+      if ((b && d && a && c) && (e==0) && (f==0))
+      {
 //          I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.second)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second);
 
           myparam[0] = static_cast<float>(param[0]); // 0
@@ -1446,11 +1481,13 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
           myparam[4] = static_cast<float>(param[2]); // y
 //          myparam[5] = static_cast<float>(param[5]); // y^2
       }
-      if (b==0 && a==0 && c==0 && d==0 && e==0 && f==0) {
+      if (b==0 && a==0 && c==0 && d==0 && e==0 && f==0)
+      {
 //          I_int[i] = static_cast<float>(param[0]);
           myparam[0] = static_cast<float>(param[0]); // 0
       }
-      if ((b && d && e && c && a) && f==0 ) {
+      if ((b && d && e && c && a) && f==0 )
+      {
 //          I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second);
           myparam[0] = static_cast<float>(param[0]); // 0
           myparam[1] = static_cast<float>(param[1]); // x
@@ -1465,7 +1502,8 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
           myparam[2] = static_cast<float>(param[2]); // x^2
       }
 
-      if((b && c && d && a && f) && e==0){
+      if((b && c && d && a && f) && e==0)
+      {
 //          I_int[i] = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(it->first.first)+static_cast<float>(param[2])*static_cast<float>(it->first.first*it->first.first)+static_cast<float>(param[3])*static_cast<float>(it->first.first)*static_cast<float>(it->first.second)+static_cast<float>(param[4])*static_cast<float>(it->first.second)+static_cast<float>(param[5])*static_cast<float>(it->first.second*it->first.second);
          // img(x,y) = static_cast<float>(param[0]) + static_cast<float>(param[1])*static_cast<float>(x)+static_cast<float>(param[2])*static_cast<float>(x)*static_cast<float>(x)+static_cast<float>(param[3])*static_cast<float>(x)*static_cast<float>(y)+static_cast<float>(param[4])*static_cast<float>(y)+static_cast<float>(param[5])*static_cast<float>(y)*static_cast<float>(y);
          // fill parameters in the right order:
