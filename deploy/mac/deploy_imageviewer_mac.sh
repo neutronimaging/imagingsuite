@@ -1,4 +1,4 @@
-DIRECTORY=~/Applications
+DIRECTORY=$WORKSPACE/deployed
 
 DEST="$DIRECTORY/imageviewer.app"
 REPOSPATH=$WORKSPACE
@@ -50,6 +50,14 @@ for f in `ls *.1.0.0.dylib`; do
 	ln -s $f "`basename $f .1.0.0.dylib`.1.dylib"
 	ln -s $f "`basename $f .1.0.0.dylib`.dylib"
 done
+
+if [ -e "/opt/local/lib/libzstd.1.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/Frameworks`
+fi
+
+if [ -e "/opt/local/lib/libzstd.9.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.9.dylib $DEST/Contents/Frameworks`
+fi
 
 popd
 

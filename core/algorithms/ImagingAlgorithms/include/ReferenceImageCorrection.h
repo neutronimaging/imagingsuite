@@ -54,7 +54,7 @@ public:
 
 
 
-    ReferenceImageCorrection();
+    ReferenceImageCorrection(kipl::interactors::InteractionBase *interactor = nullptr);
     ~ReferenceImageCorrection();
 
 //    void LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
@@ -187,15 +187,15 @@ protected:
     bool m_bHaveBBDoseROI;
 	bool m_bHaveBlackBodyROI;
     bool bPBvariante;
-    bool bExtSingleFile; /// boolean value on the use of a single file for sample background correction
+    bool bExtSingleFile;                /// boolean value on the use of a single file for sample background correction
 
-    float fdoseOB_ext; /// dose value in externally computed background for open beam image
-    float fdoseS_ext; /// dose value in externally computed background for single sample image
-    std::vector<float> fdose_ext_list; /// dose value list in externally computed sample with BB image in dose roi
-    float fdose_ext_slice; /// dose value of current slice from fdose_ext_list
+    float fdoseOB_ext;                  /// dose value in externally computed background for open beam image
+    float fdoseS_ext;                   /// dose value in externally computed background for single sample image
+    std::vector<float> fdose_ext_list;  /// dose value list in externally computed sample with BB image in dose roi
+    float fdose_ext_slice;              /// dose value of current slice from fdose_ext_list
 
-    float *ob_bb_parameters; /// interpolation parameters for the OB BB image
-    float *sample_bb_parameters; /// interpolation parameters for the sample image with BB
+    float *ob_bb_parameters;            /// interpolation parameters for the OB BB image
+    float *sample_bb_parameters;        /// interpolation parameters for the sample image with BB
     float *sample_bb_interp_parameters; /// interpolation parameters for the sample image for each projection angle
 
     ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod; /// method used for image averaging (options: sum, mean, max, weightedmean, median and average)
@@ -206,7 +206,7 @@ protected:
     eInterpMethod m_InterpMethod;
 
 
-    int a,b,c,d,e,f; /// weights for interpolation scheme, used to set different combined order
+    int a,b,c,d,e,f;                     /// weights for interpolation scheme, used to set different combined order
 
     std::vector<size_t> m_nDoseROI;      /// roi to be used for dose computation on BB images ("big roi" I would say..)
     std::vector<size_t> m_nROI;          /// actual roi onto compute the background images

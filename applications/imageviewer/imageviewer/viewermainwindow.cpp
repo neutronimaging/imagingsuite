@@ -164,6 +164,7 @@ void ViewerMainWindow::dropEvent(QDropEvent *e)
         kipl::base::TImage<float,2> img;
         LoadImage(fileName.toStdString(),img);
         ui->viewer->set_image(img.GetDataPtr(),img.dims());
+        ui->viewer->set_levels(kipl::base::quantile99);
     }
 }
 

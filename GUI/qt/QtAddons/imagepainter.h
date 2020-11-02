@@ -15,6 +15,7 @@
 
 #include <logging/logger.h>
 #include <base/timage.h>
+#include <base/kiplenums.h>
 
 #include "qmarker.h"
 
@@ -49,6 +50,7 @@ public:
 
     int  clear();
     void setLevels(const float level_low, const float level_high);
+    void setLevels(kipl::base::eQuantiles quantile);
     void getLevels(float *level_low, float *level_high);
     void getImageMinMax(float *level_low, float *level_high);
     const QVector<QPointF> &getImageHistogram();
