@@ -9,11 +9,13 @@ namespace py = pybind11;
 
 void bindReconFactory(py::module& m);
 void bindReconEngine(py::module& m);
+void bindReconstructor(py::module& m);
 
 PYBIND11_MODULE(muhrectomo, m)
 {
-    bindReconFactory(m);
-    bindReconEngine(m);
+//    bindReconFactory(m);
+//    bindReconEngine(m);
+    bindReconstructor(m);
 
     py::register_exception<ReconException>(m, "ReconException");
 }

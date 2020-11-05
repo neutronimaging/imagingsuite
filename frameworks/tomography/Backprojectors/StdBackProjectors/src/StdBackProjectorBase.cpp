@@ -8,6 +8,8 @@
 #include <sstream>
 #include <fstream>
 #include <limits>
+#include <chrono>
+#include <thread>
 
 #include <ParameterHandling.h>
 
@@ -163,7 +165,7 @@ void StdBackProjectorBase::SetROI(const std::vector<size_t> &roi)
 
 	ClearAll();
 
-    QThread::msleep(500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Is this really needed?
 	ProjCenter    = mConfig.ProjectionInfo.fCenter;
 	SizeU         = roi[2]-roi[0];
     if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
