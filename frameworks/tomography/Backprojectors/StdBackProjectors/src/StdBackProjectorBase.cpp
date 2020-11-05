@@ -210,7 +210,7 @@ void StdBackProjectorBase::SetROI(const std::vector<size_t> &roi)
     MatrixCenterX = volume.Size(1)/2;
 }
 
-const std::vector<size_t> & StdBackProjectorBase::GetMatrixDims()
+std::vector<size_t> StdBackProjectorBase::GetMatrixDims()
 {
     std::vector<size_t> dims;
     if (MatrixAlignment==MatrixZXY)

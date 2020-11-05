@@ -72,6 +72,7 @@ target_link_libraries(${TARGET_NAME}
     tiff
     ModuleConfig
     ReconFramework
+    StdBackProjectors
   )
 
 set_target_properties(${TARGET_NAME}
