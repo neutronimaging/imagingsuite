@@ -96,12 +96,6 @@ if(DYNAMIC_LIB)
 	    ../../../../lib/libhdf5_hl.10.dylib
       ../../../../lib/libhdf5.10.dylib	
       ../../../../lib/libsz.2.dylib
-#      ../../../external/mac/lib/libNeXus.1.0.0.dylib	
-#      ../../../external/mac/lib/libhdf5_cpp.11.dylib
-#      ../../../external/mac/lib/libNeXusCPP.1.0.0.dylib
-#	    ../../../external/mac/lib/libhdf5_hl.10.dylib
-#      ../../../external/mac/lib/libhdf5.10.dylib	
-#      ../../../external/mac/lib/libsz.2.dylib
 
       /opt/local/lib/libxml2.2.dylib 
       /opt/local/lib/libtiff.5.dylib
