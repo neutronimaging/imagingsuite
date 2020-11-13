@@ -19,12 +19,14 @@
 #include <QMutex>
 
 #include <logging/logger.h>
-
+#include <base/kiplenums.h>
 #include "imagepainter.h"
 #include "plotter.h"
 #include "imageviewerinfodialog.h"
 #include "qglyphs.h"
 #include "qmarker.h"
+
+
 
 namespace QtAddons {
 
@@ -69,6 +71,7 @@ public:
 
     void clear_viewer();
     void set_levels(const float level_low, const float level_high, bool updatelinked=true);
+    void set_levels(kipl::base::eQuantiles quantile=kipl::base::allData, bool updatelinked=true);
     void get_levels(float *level_low, float *level_high);
     void get_minmax(float *level_low, float *level_high);
     void show_clamped(bool show);
