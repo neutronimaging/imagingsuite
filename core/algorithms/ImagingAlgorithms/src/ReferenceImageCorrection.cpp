@@ -82,11 +82,6 @@ void ReferenceImageCorrection::SaveBG(bool value, std::string path, std::string 
     filemask_BG = filemask;
 }
 
-void ReferenceImageCorrection::SetInteractor(kipl::interactors::InteractionBase *interactor)
-{
-        m_Interactor=interactor;
-}
-
 void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *ob,
         kipl::base::TImage<float,2> *dc,
         bool useBB, bool useExtBB, bool useSingleExtBB,
@@ -1745,22 +1740,19 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 {
 
     // 1. normalize image
+    kipl::base::TImage<float, 2> norm;
+    norm.Clone(bb);
 
-    kipl::base::TImage<float, 2> norm(bb.dims());
-    kipl::base::TImage<float, 2> normdc(bb.dims());
-    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
-    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+    norm   -= dark;
+    norm   /= (flat-=dark); // TODO check this, it probably alters the original flat
 
-    normdc -=dark;
-
-    norm -=dark;
-    norm /= (flat-=dark);
-
-    try{
+    try
+    {
         SegmentBlackBody(norm, mask);
 //        SegmentBlackBody(norm, normdc, mask, values); // try for thin plates spline
     }
-    catch (...) {
+    catch (...)
+    {
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
 

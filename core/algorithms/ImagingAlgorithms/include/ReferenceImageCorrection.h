@@ -127,8 +127,6 @@ public:
     void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 2> &bb_sample_ext, float &dose, float &dose_s); /// set the BB externally computed images and corresponding doses, case of single file also for the sample background
     void SetComputeMinusLog(bool value) {m_bComputeLogarithm = value;}
     void SaveBG(bool value, string path, string obname, string filemask);
-    void SetInteractor(kipl::interactors::InteractionBase *interactor);
-
 
 protected:
     void PrepareReferences(); /// old version with references image preparation, without BB
