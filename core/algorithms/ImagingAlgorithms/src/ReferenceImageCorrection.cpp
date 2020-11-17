@@ -74,7 +74,7 @@ ReferenceImageCorrection::~ReferenceImageCorrection()
 
 }
 
-void ReferenceImageCorrection::SaveBG(bool value, std::string path, std::string obname, std::string filemask)
+void ReferenceImageCorrection::SaveBG(bool value, const string &path, const string &obname, const string &filemask)
 {
     bSaveBG     = value;
     pathBG      = path;
@@ -1547,14 +1547,18 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
 
 
     std::map<std::pair<int,int>, float>::const_iterator it_i = values.begin();
-    for (int i=0; i<values.size(); ++i) {
-            std::map<std::pair<int,int>, float>::const_iterator it_j = values.begin();
-        for (int j=0; j<values.size(); ++j) {
+    for (int i=0; i<values.size(); ++i)
+    {
+        std::map<std::pair<int,int>, float>::const_iterator it_j = values.begin();
+        for (int j=0; j<values.size(); ++j)
+        {
 
-            if (i==j){
+            if (i==j)
+            {
                 my_matrix[i][j] =  0.0f;
             }
-            else {
+            else
+            {
                 float ii_1 = static_cast<float>(it_i->first.first);
                 float ii_2 = static_cast<float>(it_i->first.second);
                 float jj_1 = static_cast<float>(it_j->first.first);
@@ -1563,18 +1567,15 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
   //              float dist = sqrt((it_i->first.first-it_j->first.first)*(it_i->first.first-it_j->first.first)+(it_i->first.second-it_j->first.second)*(it_i->first.second-it_j->first.second));
 //                float dist = sqrt((values.at(i).first.first-values.at(j).first.first)*(values.at(i).first.first-values.at(j).first.first)+(values.at(i).first.second-values.at(j).first.second)*(values.at(i).first.second-values.at(j).first.second)); // does not work like this...
                 my_matrix[i][j] = dist*dist*log(dist);
-
             }
             ++it_j;
-
-
         }
-
         ++it_i;
     }
 
     it_i = values.begin();
-    for (int i=0; i<values.size(); ++i){
+    for (int i=0; i<values.size(); ++i)
+    {
         my_matrix[i][values.size()] = 1.0;
         my_matrix[i][values.size()+1] = it_i->first.second; // y
         my_matrix[i][values.size()+2] = it_i->first.first; // x
@@ -1582,7 +1583,8 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
     }
 
     it_i = values.begin();
-    for (int i=0; i<values.size(); ++i){
+    for (int i=0; i<values.size(); ++i)
+    {
         my_matrix[values.size()][i] = 1.0;
         my_matrix[values.size()+1][i] = it_i->first.second; // y
         my_matrix[values.size()+2][i] = it_i->first.first; // x
@@ -1590,7 +1592,8 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
     }
 
     int i=0;
-    for (it_i = values.begin(); it_i!=values.end(); ++it_i){
+    for (it_i = values.begin(); it_i!=values.end(); ++it_i)
+    {
         b_vector[i] = it_i->second;
         ++i;
     }
@@ -1609,24 +1612,33 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
 
     TNT::Array2D<double> Utran(U.dim1(), U.dim2());
     for(int r=0; r<U.dim1(); ++r)
+    {
         for(int c=0; c<U.dim2(); ++c)
+        {
             Utran[c][r] = U[r][c];
+        }
+    }
 
     TNT::Array2D<double> Si(U.dim1(), U.dim2(), 0.0);
     for (int i=0; i<Si.dim1(); ++i)
+    {
         Si[i][i] = 1/S[i];
+    }
 
     TNT::Array2D<double> inv_matrix(my_matrix.dim1(), my_matrix.dim2());
     inv_matrix =  matmult(matmult(V,Si),Utran);
 
 
-    for (int i=0;i<my_matrix.dim1();i++){
-         for (int j=0;j<my_matrix.dim2();j++){
+    for (int i=0;i<my_matrix.dim1();i++)
+    {
+         for (int j=0;j<my_matrix.dim2();j++)
+         {
              qr_param[i]+=( inv_matrix[i][j]*b_vector[j]);
          }
      }
 
-    for (i=0; i<values.size()+3; ++i){
+    for (i=0; i<values.size()+3; ++i)
+    {
         param[i] = static_cast<float>(qr_param[i]);
     }
 
@@ -1650,33 +1662,33 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImagew
     float sumdist;
     std::map<std::pair<int,int>, float>::const_iterator it_i;
 
-    for (size_t x=0; x<dimx; ++x) {
-        for (size_t y=0; y<dimy; ++y){
-             it_i = values.begin();
+    for (size_t x=0; x<dimx; ++x)
+    {
+        for (size_t y=0; y<dimy; ++y)
+        {
+            it_i = values.begin();
 
-                sumdist = 0.0;
-                float *dist = new float[values.size()];
+            sumdist = 0.0;
+            float *dist = new float[values.size()];
 
-            for (size_t ind=0; ind<values.size(); ++ind) {
+            for (size_t ind=0; ind<values.size(); ++ind)
+            {
                 dist[ind] = ((it_i->first.first-(x+roi[0]))*(it_i->first.first-(x+roi[0]))+(it_i->first.second-(y+roi[1]))*(it_i->first.second-(y+roi[1])));
-                if (dist[ind]!=0){
+                if (dist[ind]!=0)
+                {
                     sumdist += (0.5*dist[ind]*log(dist[ind])*parameters[ind]); // correct?                }
                 }
 
                 ++it_i;
             }
 
-                delete [] dist;
+            delete [] dist;
 
             interpolated_img(x,y) = sumdist+parameters[values.size()]+parameters[values.size()+1]*(y+roi[1])+parameters[values.size()+2]*(x+roi[0]);
         }
     }
 
     return interpolated_img;
-
-
-
-
 }
 
 kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(float *parameters, const std::vector<size_t> &roi) {
@@ -1689,8 +1701,10 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(
     kipl::base::TImage <float,2> interpolated_img(dims);
     interpolated_img = 0.0f;
 
-    for (size_t x=0; x<dimx; x++) {
-        for (size_t y=0; y<dimy; y++){
+    for (size_t x=0; x<dimx; x++)
+    {
+        for (size_t y=0; y<dimy; y++)
+        {
             interpolated_img(x,y) = parameters[0] + parameters[1]*static_cast<float>(x+roi[0])+parameters[2]*static_cast<float>(x+roi[0])*static_cast<float>(x+roi[0])+parameters[3]*static_cast<float>(x+roi[0])*static_cast<float>(y+roi[1])+parameters[4]*static_cast<float>(y+roi[1])+parameters[5]*static_cast<float>(y+roi[1])*static_cast<float>(y+roi[1]);
         }
     }
@@ -1699,18 +1713,21 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::InterpolateBlackBodyImage(
 
 }
 
-float ReferenceImageCorrection::ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float,2>&img) {
-
+float ReferenceImageCorrection::ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img,
+                                                          kipl::base::TImage<float,2>&mask,
+                                                          kipl::base::TImage<float,2>&img)
+{
     float error = 0.0f;
     int  nValues = 0;
 
-      for(size_t ind=0; ind<static_cast<int>(img.Size()); ind++)
-          {
-              if (mask(ind)!=0) {
-                        error += ((interpolated_img(ind)-img(ind))/interpolated_img(ind))*((interpolated_img(ind)-img(ind))/interpolated_img(ind));
-                       nValues++;
-              }
-          }
+    for(size_t ind=0; ind<static_cast<int>(img.Size()); ind++)
+    {
+      if (mask(ind)!=0)
+      {
+                error += ((interpolated_img(ind)-img(ind))/interpolated_img(ind))*((interpolated_img(ind)-img(ind))/interpolated_img(ind));
+               nValues++;
+      }
+    }
 
   error = sqrt(1/float(nValues)*error);
 
@@ -1751,7 +1768,6 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     param = ComputeInterpolationParameters(mask,BB_DC);
 
     return param;
-
 }
 
 float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplines(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, std::map<std::pair<int, int>, float> &values)
@@ -1766,20 +1782,20 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplines(kipl::base::TI
     norm -=dark;
     norm /= (flat-=dark);
 
-    try{
+    try
+    {
         SegmentBlackBody(norm, normdc, mask, values);
 //         kipl::io::WriteTIFF(mask, "maskSpline.tif",kipl::base::Float32);
     }
-    catch (...) {
+    catch (...)
+    {
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
 
     float *tps_param = new float[values.size()+3];
     tps_param = SolveThinPlateSplines(values);
 
-
     return tps_param;
-
 }
 
 float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAndMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, std::map<std::pair<int, int>, float> &values)
@@ -1811,15 +1827,16 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     norm -=dark;
     norm /= (flat-=dark);
 
-    try{
+    try
+    {
         SegmentBlackBody(norm, mask);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         logger(kipl::logging::Logger::LogError,e.what());
         std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
-
 
     kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
@@ -1834,9 +1851,7 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     param = ComputeInterpolationParameters(mask,BB_DC,myerror);
     error = myerror;
 
-
     return param;
-
 }
 
 float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask){
@@ -1852,7 +1867,6 @@ float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TIma
     param = ComputeInterpolationParameters(mask,BB_DC);
 
     return param;
-
 }
 
 void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
@@ -1863,16 +1877,16 @@ void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
 
     m_nProj = nProj; // to set eventually around where it is used
     m_nBBimages = nBB;
-
-
 }
 
 void ReferenceImageCorrection::SetDoseList(const std::vector<float> & doselist){
 
-    if (m_nProj!=0) {
+    if (m_nProj!=0)
+    {
         dosesamplelist = doselist;
     }
-    else {
+    else
+    {
         throw ImagingException("m_nProj was not set before calling ReferenceImageCorrection::SetDoseList",__FILE__,__LINE__);
     }
 
@@ -1890,65 +1904,64 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
 //        ob_bb_parameters[i]=0.0f;
 //    }
 
-    switch(ebo) {
-    case(Interpolate) : {
+    switch(ebo)
+    {
+        case(Interpolate) :
+        {
+            sample_bb_parameters = new float[(nBBs+3)*m_nBBimages];
+            memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nBBimages);
+            sample_bb_interp_parameters = InterpolateSplineGeneric(sample_bb_parameters, nBBs);
 
-        sample_bb_parameters = new float[(nBBs+3)*m_nBBimages];
-        memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nBBimages);
-        sample_bb_interp_parameters = InterpolateSplineGeneric(sample_bb_parameters, nBBs);
-
-
-        for (size_t i=0; i<m_nProj; i++){
-            for (size_t j=0; j<(nBBs+3); j++){
-                sample_bb_interp_parameters[j+i*(nBBs+3)] *= (dosesamplelist[i]/tau);
-            }
-        }
-
-        break;
-    }
-    case(OneToOne) : {
-
-
-        if (m_nBBimages!=m_nProj){
-            throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
-        }
-
-
-
-        for (size_t i=0; i<m_nProj; i++){
-
-            for (size_t j=0; j<(nBBs+3); j++){          
-                sample_parameter[j+i*(nBBs+3)] *= (dosesamplelist[i]/tau);
-            }
-        }
-
-
-        memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nProj);
-
-
-
-        break;
-    }
-    case(Average) : {
-
-        sample_bb_parameters = new float[nBBs+3];
-        float *temp_parameters = new float[nBBs+3];
-        memcpy(temp_parameters, sample_parameter, sizeof(float)*(nBBs+3));
-
-//        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
-
-        for (size_t i=0; i<m_nProj; ++i){
-
-            memcpy(sample_bb_parameters, temp_parameters, sizeof(float)*(nBBs+3));
-            for (size_t j=0; j<(nBBs+3); ++j){
-                sample_bb_parameters[j] *= (dosesamplelist[i]/tau);
+            for (size_t i=0; i<m_nProj; i++)
+            {
+                for (size_t j=0; j<(nBBs+3); j++)
+                {
+                    sample_bb_interp_parameters[j+i*(nBBs+3)] *= (dosesamplelist[i]/tau);
+                }
             }
 
-            memcpy(sample_bb_interp_parameters+i*(nBBs+3), sample_bb_parameters, sizeof(float)*(nBBs+3));
+            break;
         }
+        case(OneToOne) :
+        {
+            if (m_nBBimages!=m_nProj)
+            {
+                throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
+            }
 
-        break;
-    }
+            for (size_t i=0; i<m_nProj; i++)
+            {
+                for (size_t j=0; j<(nBBs+3); j++)
+                {
+                    sample_parameter[j+i*(nBBs+3)] *= (dosesamplelist[i]/tau);
+                }
+            }
+
+            memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nProj);
+
+            break;
+        }
+        case(Average) :
+        {
+            sample_bb_parameters = new float[nBBs+3];
+            float *temp_parameters = new float[nBBs+3];
+            memcpy(temp_parameters, sample_parameter, sizeof(float)*(nBBs+3));
+
+    //        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
+
+            for (size_t i=0; i<m_nProj; ++i)
+            {
+                memcpy(sample_bb_parameters, temp_parameters, sizeof(float)*(nBBs+3));
+                for (size_t j=0; j<(nBBs+3); ++j)
+                {
+                    sample_bb_parameters[j] *= (dosesamplelist[i]/tau);
+                }
+
+                memcpy(sample_bb_interp_parameters+i*(nBBs+3), sample_bb_parameters, sizeof(float)*(nBBs+3));
+            }
+
+            break;
+        }
     }
 }
 
@@ -1969,60 +1982,65 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 //    ob_bb_parameters[4] = 0.0f;
 //    ob_bb_parameters[5] = 0.0f;
 
-    switch(ebo) {
-    case(Interpolate) : {
+    switch(ebo)
+    {
+        case(Interpolate) :
+        {
+            sample_bb_parameters = new float[6*m_nBBimages];
+            memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*m_nBBimages);
+            sample_bb_interp_parameters = InterpolateParametersGeneric(sample_bb_parameters);
 
-        sample_bb_parameters = new float[6*m_nBBimages];
-        memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*m_nBBimages);
-        sample_bb_interp_parameters = InterpolateParametersGeneric(sample_bb_parameters);
-
-        for (size_t i=0; i<m_nProj; i++){
-            for (size_t j=0; j<6; j++){
-                sample_bb_interp_parameters[j+i*6] *= (dosesamplelist[i]/tau);
-            }
-        }
-
-        break;
-    }
-    case(OneToOne) : {
-
-        if (m_nBBimages!=m_nProj){
-            throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
-        }
-
-
-
-        for (size_t i=0; i<m_nProj; i++){
-            for (size_t j=0; j<6; j++){
-                sample_parameter[j+i*6] *= (dosesamplelist[i]/tau);
-            }
-        }
-
-       memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*6*m_nProj);
-
-
-        break;
-    }
-    case(Average) : {
-
-        sample_bb_parameters = new float[6];
-        float *temp_parameters = new float[6];
-        memcpy(temp_parameters, sample_parameter, sizeof(float)*6);
-
-//        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
-
-        for (size_t i=0; i<m_nProj; ++i){
-
-            memcpy(sample_bb_parameters, temp_parameters, sizeof(float)*6);
-            for (size_t j=0; j<6; ++j){
-                sample_bb_parameters[j] *= (dosesamplelist[i]/tau);
+            for (size_t i=0; i<m_nProj; i++)
+            {
+                for (size_t j=0; j<6; j++)
+                {
+                    sample_bb_interp_parameters[j+i*6] *= (dosesamplelist[i]/tau);
+                }
             }
 
-            memcpy(sample_bb_interp_parameters+i*6, sample_bb_parameters, sizeof(float)*6);
+            break;
         }
+        case(OneToOne) :
+        {
 
-        break;
-    }
+            if (m_nBBimages!=m_nProj)
+            {
+                throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
+            }
+
+            for (size_t i=0; i<m_nProj; i++)
+            {
+                for (size_t j=0; j<6; j++)
+                {
+                    sample_parameter[j+i*6] *= (dosesamplelist[i]/tau);
+                }
+            }
+
+            memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*6*m_nProj);
+
+            break;
+        }
+        case(Average) :
+        {
+            sample_bb_parameters = new float[6];
+            float *temp_parameters = new float[6];
+            memcpy(temp_parameters, sample_parameter, sizeof(float)*6);
+
+    //        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
+
+            for (size_t i=0; i<m_nProj; ++i)
+            {
+                memcpy(sample_bb_parameters, temp_parameters, sizeof(float)*6);
+                for (size_t j=0; j<6; ++j)
+                {
+                    sample_bb_parameters[j] *= (dosesamplelist[i]/tau);
+                }
+
+                memcpy(sample_bb_interp_parameters+i*6, sample_bb_parameters, sizeof(float)*6);
+            }
+
+            break;
+        }
     }
 
 
@@ -2040,11 +2058,13 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
     int index_1;
     int index_2;
 
-    if(angles[0]<angles[2]) {
+    if (angles[0]<angles[2])
+    {
         bb_angles = new float[m_nBBimages+1];
         bb_angles[0] = angles[3]-angles[1];
 
-        for (size_t i=0; i<m_nBBimages; i++){
+        for (size_t i=0; i<m_nBBimages; i++)
+        {
             bb_angles[i+1]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
         }
 
@@ -2052,11 +2072,12 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
          index_2=0;
 
     }
-    else {
-
+    else
+    {
         bb_angles = new float[m_nBBimages];
 
-       for (size_t i=0; i<m_nBBimages; i++){
+       for (size_t i=0; i<m_nBBimages; i++)
+       {
            bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
            index_1=0;
            index_2=(nBBs+3);
@@ -2066,43 +2087,42 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
     small_a = &bb_angles[0];
     big_a = &bb_angles[1];
 
-    for (size_t i=0; i<m_nProj; i++){
+    for (size_t i=0; i<m_nProj; i++)
+    {
     //1. compute current angle for projection
 
         curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i; // that is the current projection angle
 
-
     //2. compute step for linear interpolation
 
-         step = (curr_angle-*small_a)/(*big_a-*small_a);
+        step = (curr_angle-*small_a)/(*big_a-*small_a);
 
      // 3. interpolate for missing angles
         float *temp_param = new float[nBBs+3];
 
-        for (size_t k=0; k<(nBBs+3);k++){
+        for (size_t k=0; k<(nBBs+3);k++)
+        {
             temp_param[k] = param[index_1+k]+(step)*(param[index_2+k]-param[index_1+k]);
         }
 
         memcpy(interpolated_param+i*(nBBs+3),temp_param,sizeof(float)*(nBBs+3));
         delete[] temp_param;
 
+        if (curr_angle>=*big_a)
+        { // se esco dal range incremento di 1
 
-
-
-        if (curr_angle>=*big_a){ // se esco dal range incremento di 1
-
-            if(curr_angle>=angles[3]) {
-
-                if (*big_a==angles[3]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
+            if(curr_angle>=angles[3])
+            {
+                if (*big_a==angles[3])
+                { // if pointers have not been modified yes, change the index, otherwise keep them as they are
                     index_1=index_2;
                     index_2 =0;
                 }
                 small_a = &angles[3];
                 *big_a = (angles[1]+angles[2]);
-
-
             }
-            else {
+            else
+            {
                 index_1 =index_2;
                 index_2 +=(nBBs+3);
                 small_a++;
@@ -2135,23 +2155,25 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
 
 
 
-    if(angles[0]<angles[2]) {
+    if(angles[0]<angles[2])
+    {
         bb_angles = new float[m_nBBimages+1];
         bb_angles[0] = angles[3]-angles[1];
 
-        for (size_t i=0; i<m_nBBimages; i++){
+        for (size_t i=0; i<m_nBBimages; i++)
+        {
             bb_angles[i+1]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
         }
 
-         index_1=m_nBBimages*6-6;
-         index_2=0;
-
+        index_1=m_nBBimages*6-6;
+        index_2=0;
     }
-    else {
+    else
+    {
+       bb_angles = new float[m_nBBimages];
 
-        bb_angles = new float[m_nBBimages];
-
-       for (size_t i=0; i<m_nBBimages; i++){
+       for (size_t i=0; i<m_nBBimages; i++)
+       {
            bb_angles[i]= angles[2]+(angles[3]-angles[2])/(m_nBBimages-1)*i; // this is now more generic starting at angle angles[2]
            index_1=0;
            index_2=6;
@@ -2161,63 +2183,53 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
     small_a = &bb_angles[0];
     big_a = &bb_angles[1];
 
-
-
-
-    for (size_t i=0; i<m_nProj; i++){
-    //1. compute current angle for projection
+    for (size_t i=0; i<m_nProj; i++)
+    {
+        //1. compute current angle for projection
 
         curr_angle = angles[0]+(angles[1]-angles[0])/(m_nProj-1)*i; // that is the current projection angle
 
 
-    //2. compute step for linear interpolation
+        //2. compute step for linear interpolation
 
          step = (curr_angle-*small_a)/(*big_a-*small_a);
 
-     // 3. interpolate for missing angles
+        // 3. interpolate for missing angles
         float *temp_param = new float[6];
 
-        for (size_t k=0; k<6;k++){
+        for (size_t k=0; k<6;k++)
+        {
             temp_param[k] = param[index_1+k]+(step)*(param[index_2+k]-param[index_1+k]);
         }
 
         memcpy(interpolated_param+i*6,temp_param,sizeof(float)*6);
         delete[] temp_param;
 
-
-
-
-        if (curr_angle>=*big_a){ // se esco dal range incremento di 1
-
-            if(curr_angle>=angles[3]) {
-
-                if (*big_a==angles[3]) { // if pointers have not been modified yes, change the index, otherwise keep them as they are
+        if (curr_angle>=*big_a)
+        { // se esco dal range incremento di 1
+            if (curr_angle>=angles[3])
+            {
+                if (*big_a==angles[3])
+                { // if pointers have not been modified yes, change the index, otherwise keep them as they are
                     index_1=index_2;
                     index_2 =0;
                 }
                 small_a = &angles[3];
                 *big_a = (angles[1]+angles[2]);
-
-
             }
-            else {
+            else
+            {
                 index_1 =index_2;
                 index_2 +=6;
                 small_a++;
                 big_a++;
             }
         }
-
-
-
-
     }
 
     delete [] bb_angles;
 
     return interpolated_param;
-
-
 }
 
 float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, size_t step){
@@ -2227,38 +2239,35 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
 
    // first copy the one that i already have
     size_t index = 0;
-    for (size_t i=0; i<6*n; i+=step*6){
+    for (size_t i=0; i<6*n; i+=step*6)
+    {
         memcpy(interpolated_param+i, param+index, sizeof(float)*6);
         index +=6;
-
     }
 
     memcpy(interpolated_param+6*n, param, sizeof(float)*6); // copio i primi in coda
 
 
-    for (size_t i=0; i<6*n; i+=step*6){
-            index=i;
+    for (size_t i=0; i<6*n; i+=step*6)
+    {
+        index=i;
 
-        for (size_t j=1; j<step; j++){
+        for (size_t j=1; j<step; j++)
+        {
             float *temp_param = new float[6];
 
-            for (size_t k=0; k<6; k++) {
+            for (size_t k=0; k<6; k++)
+            {
                    temp_param[k] = interpolated_param[i+k]+(j)*(interpolated_param[i+k+step*6]-interpolated_param[i+k])/(step);
             }
 
             index +=6;
             memcpy(interpolated_param+index,temp_param,sizeof(float)*6);
             delete[] temp_param;
-
-
         }
     }
 
-
     return interpolated_param;
-
-
-
 }
 
 float *ReferenceImageCorrection::ReplicateSplineParameters(float *param, size_t n, int nBBs)
@@ -2266,10 +2275,11 @@ float *ReferenceImageCorrection::ReplicateSplineParameters(float *param, size_t 
     float *interpolated_param = new float[(nBBs+3)*(n+1)];
     int index=0;
 
-        for (int i=0; i<=n; i++){
-            memcpy(interpolated_param+index,param,sizeof(float)*(nBBs+3));
-            index+=(nBBs+3);
-        }
+    for (int i=0; i<=n; i++)
+    {
+        memcpy(interpolated_param+index,param,sizeof(float)*(nBBs+3));
+        index+=(nBBs+3);
+    }
 
     return interpolated_param;
 }
@@ -2280,11 +2290,11 @@ float * ReferenceImageCorrection::ReplicateParameters(float *param, size_t n)
     float *interpolated_param = new float[6*(n+1)];
     int index=0;
 
-        for (int i=0; i<=n; i++){
-            memcpy(interpolated_param+index,param,sizeof(float)*6);
-            index+=6;
-        }
-
+    for (int i=0; i<=n; i++)
+    {
+        memcpy(interpolated_param+index,param,sizeof(float)*6);
+        index+=6;
+    }
 
     return interpolated_param;
 }
@@ -2294,8 +2304,11 @@ int* ReferenceImageCorrection::repeat_matrix(int* source, int count, int expand)
 {
     int i, j;
     int* target = (int*)malloc(sizeof(int)*count * expand);
-    for (i = 0; i < count; ++i) {
-        for (j = 0; j < expand; ++j) {
+
+    for (i = 0; i < count; ++i)
+    {
+        for (j = 0; j < expand; ++j)
+        {
             target[i * expand + j] = source[i];
         }
     }
@@ -2315,7 +2328,8 @@ void ReferenceImageCorrection::PrepareReferences()
         if (m_bHaveDarkCurrent)
         {
             #pragma omp parallel for
-            for (int i=0; i<N; ++i) {
+            for (int i=0; i<N; ++i)
+            {
                 float fProjPixel=pFlat[i]-pDark[i];
 
                 if (fProjPixel<=0)
@@ -2331,7 +2345,6 @@ void ReferenceImageCorrection::PrepareReferences()
                         pFlat[i]=fProjPixel*dose;
                     }
                 }
-
             }
         }
         else
@@ -2363,29 +2376,25 @@ void ReferenceImageCorrection::PrepareReferencesBB()
 
     if (m_bHaveBlackBody)
     {
+        const int N=static_cast<int>(m_OpenBeam.Size());
+        float *pFlat=m_OpenBeam.GetDataPtr();
+        float *pDark=m_DarkCurrent.GetDataPtr();
 
-    const int N=static_cast<int>(m_OpenBeam.Size());
-    float *pFlat=m_OpenBeam.GetDataPtr();
-    float *pDark=m_DarkCurrent.GetDataPtr();
+        float dose;
+        float Pdose = 0.0f;
 
-    float dose;
-    float Pdose = 0.0f;
-
-    float *pFlatBB = m_OB_BB_Interpolated.GetDataPtr();
+        float *pFlatBB = m_OB_BB_Interpolated.GetDataPtr();
 
         // set here the PB variante...
         if(bPBvariante)
         {
-
             Pdose = computedose(m_DoseBBflat_image);
             dose = 1.0f/(m_fOpenBeamDose-m_fDarkDose-Pdose);
-
         }
         else
         {
             dose = 1.0f/(m_fOpenBeamDose-m_fDarkDose);
         }
-
 
         if (m_bHaveDarkCurrent)
         {
@@ -2407,7 +2416,6 @@ void ReferenceImageCorrection::PrepareReferencesBB()
                         pFlat[i]=fProjPixel*(dose);
                     }
                 }
-
             }
         }
         else
@@ -2415,7 +2423,6 @@ void ReferenceImageCorrection::PrepareReferencesBB()
             #pragma omp parallel for
             for (int i=0; i<N; i++)
             {
-
                 float fProjPixel=pFlat[i]-pFlatBB[i];
                 if (fProjPixel<=0)
                     pFlat[i]=0;
@@ -2878,10 +2885,7 @@ bool ReferenceImageCorrection::updateStatus(float val, std::string msg)
     return false;
 }
 
-}
-
-
-
+} // End of namespace
 
 
 void string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm)
@@ -2894,15 +2898,14 @@ void string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::e
         throw ImagingException("The key string does not exist for eReferenceMethod",__FILE__,__LINE__);
 
     erm=methods[str];
-
-
 }
 
 std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm)
 {
     std::string str;
 
-    switch (erm) {
+    switch (erm)
+    {
         case ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm: str="LogNorm"; break;
         case ImagingAlgorithms::ReferenceImageCorrection::ReferenceNorm: str="Norm"; break;
         default: throw ImagingException("Unknown reference method in enum2string for eReferenceMethod",__FILE__,__LINE__);
@@ -2921,18 +2924,16 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
 void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions > bb_options;
-    bb_options["noBB"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::noBB;
+    bb_options["noBB"]        = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::noBB;
     bb_options["Interpolate"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::Interpolate;
-    bb_options["Average"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::Average;
-    bb_options["OneToOne"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::OneToOne;
-    bb_options["ExternalBB"] = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::ExternalBB;
+    bb_options["Average"]     = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::Average;
+    bb_options["OneToOne"]    = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::OneToOne;
+    bb_options["ExternalBB"]  = ImagingAlgorithms::ReferenceImageCorrection::eBBOptions::ExternalBB;
 
     if (bb_options.count(str)==0)
         throw  ImagingException("The key string does not exist for eBBOptions",__FILE__,__LINE__);
 
     ebo=bb_options[str];
-
-
 }
 
 std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)
@@ -2940,11 +2941,11 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOp
     std::string str;
 
     switch (ebo) {
-        case ImagingAlgorithms::ReferenceImageCorrection::noBB: str="noBB"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::Interpolate: str="Interpolate"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::Average: str="Average"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::OneToOne: str="OneToOne"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::ExternalBB: str="ExternalBB"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::noBB:        str = "noBB"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::Interpolate: str = "Interpolate"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::Average:     str = "Average"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::OneToOne:    str = "OneToOne"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ExternalBB:  str = "ExternalBB"; break;
         default                                     	: return "Undefined BB option"; break;
     }
     return  str;
@@ -2963,15 +2964,13 @@ void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX > int_methods;
     int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::SecondOrder_x;
-    int_methods["FirstOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::FirstOrder_x;
-    int_methods["ZeroOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::ZeroOrder_x;
+    int_methods["FirstOrder"]  = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::FirstOrder_x;
+    int_methods["ZeroOrder"]   = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::ZeroOrder_x;
 
     if (int_methods.count(str)==0)
         throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
 
     eim_x=int_methods[str];
-
-
 }
 
 std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x)
@@ -2979,9 +2978,9 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInte
     std::string str;
 
     switch (eim_x) {
-        case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x: str="SecondOrder"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder_x: str="FirstOrder"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder_x: str="ZeroOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x: str = "SecondOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder_x:  str = "FirstOrder";  break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder_x:   str = "ZeroOrder";   break;
         default                                     	: return "Undefined Interpolation method"; break;
     }
     return  str;
@@ -2999,15 +2998,13 @@ void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY > int_methods;
     int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::SecondOrder_y;
-    int_methods["FirstOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::FirstOrder_y;
-    int_methods["ZeroOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::ZeroOrder_y;
+    int_methods["FirstOrder"]  = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::FirstOrder_y;
+    int_methods["ZeroOrder"]   = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::ZeroOrder_y;
 
     if (int_methods.count(str)==0)
         throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
 
     eim_y=int_methods[str];
-
-
 }
 
 std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y)
@@ -3016,8 +3013,8 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInte
 
     switch (eim_y) {
         case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y: str="SecondOrder"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder_y: str="FirstOrder"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder_y: str="ZeroOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder_y:  str="FirstOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder_y:   str="ZeroOrder"; break;
         default                                     	: return "Undefined Interpolation method"; break;
     }
     return  str;
@@ -3035,28 +3032,27 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
 void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint)
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod > int_types;
-    int_types["Polynomial"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::Polynomial;
+    int_types["Polynomial"]       = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::Polynomial;
     int_types["ThinPlateSplines"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod::ThinPlateSplines;
 
     if (int_types.count(str)==0)
         throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
 
     eint=int_types[str];
-
-
 }
 
 std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint)
 {
     std::string str;
 
-    switch (eint) {
-        case ImagingAlgorithms::ReferenceImageCorrection::Polynomial: str="Polynomial"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines: str="ThinPlateSplines"; break;
+    switch (eint)
+    {
+        case ImagingAlgorithms::ReferenceImageCorrection::Polynomial:       str = "Polynomial"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines: str = "ThinPlateSplines"; break;
         default                                     	: return "Undefined Interpolation method"; break;
     }
-    return  str;
 
+    return  str;
 }
 
 std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eint)
