@@ -42,7 +42,7 @@ int MuhRecCLI::exec()
 
     if (2<args.size()) {
         if (args[1]=="-f") {
-            logger(kipl::logging::Logger::LogMessage,"MuhRec3 is running in CLI mode");
+            logger(kipl::logging::Logger::LogMessage,"MuhRec is running in CLI mode");
             try {
                 logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
                 ReconConfig config(QCoreApplication::applicationDirPath().toStdString());

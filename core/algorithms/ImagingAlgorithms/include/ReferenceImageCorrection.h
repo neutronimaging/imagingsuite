@@ -99,9 +99,6 @@ public:
     /// because the interpolation parameters are computed with respect to the projection_roi
     void SetBBInterpDoseRoi(const std::vector<size_t> &roi);
 
-    /// set bool value for computing negative logarithm
-    void ComputeLogartihm(bool x) {m_bComputeLogarithm=x;}
-
     /// set the radius used to define subset of segmented BBs
     void SetRadius(size_t x) {radius=x;}
 
@@ -211,7 +208,7 @@ public:
                              float &dose,
                              float &dose_s);
 
-    void SetComputeMinusLog(bool value) {m_bComputeLogarithm = value;}
+    void setNormMethod(ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod value) {m_ReferenceMethod = value;}
 
     void SaveBG(bool value, const std::string &path, const std::string &obname, const std::string &filemask);
 
@@ -234,7 +231,8 @@ protected:
     float *ReplicateSplineParameters(float *param, size_t n, int nBBs); /// Replicate interpolation parameters, to be used for the Average method and Spline option
 
     int ComputeLogNorm(kipl::base::TImage<float,2> &img, float dose);
-    void ComputeNorm(kipl::base::TImage<float,2> &img, float dose);
+    void ComputeNormOriginal(kipl::base::TImage<float,2> &img, float dose);
+    void ComputeNormRevised(kipl::base::TImage<float,2> &img, float dose);
     int* repeat_matrix(int* source, int count, int expand); /// repeat matrix. not used.
     float computedose(kipl::base::TImage<float,2>&img); /// duplicate.. to move in timage probably or something like this
 
@@ -242,7 +240,7 @@ protected:
 	bool m_bHaveDarkCurrent;
 	bool m_bHaveBlackBody;
     bool m_bHaveExternalBlackBody;
-	bool m_bComputeLogarithm;
+    eReferenceMethod m_ReferenceMethod;
     bool bUseManualThresh;
     bool bSaveBG;
 

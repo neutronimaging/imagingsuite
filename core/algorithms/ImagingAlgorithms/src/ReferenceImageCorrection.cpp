@@ -39,7 +39,7 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     m_bHaveDarkCurrent(false),
     m_bHaveBlackBody(false),
     m_bHaveExternalBlackBody(false),
-    m_bComputeLogarithm(true),
+    m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     bUseManualThresh(false),
     bSaveBG(false),
     m_fOpenBeamDose(1.0f),
@@ -250,13 +250,10 @@ void ReferenceImageCorrection::SetInterpolationOrderY(eInterpOrderY eim_y){
 
 kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage<float,2> &img, float dose)
 {
-    if (m_bComputeLogarithm)
+    switch (m_ReferenceMethod)
     {
-        ComputeLogNorm(img,dose);
-    }
-    else
-    {
-		ComputeNorm(img,dose);
+    case ReferenceLogNorm : ComputeLogNorm(img,dose); break;
+    case ReferenceNorm    : ComputeNormOriginal(img,dose); break;
     }
 
     return img;
@@ -2336,13 +2333,10 @@ void ReferenceImageCorrection::PrepareReferences()
                     pFlat[i]=0;
                 else
                 {
-                    if (m_bComputeLogarithm)
+                    switch (m_ReferenceMethod)
                     {
-                        pFlat[i]=log(fProjPixel)+log(dose);
-                    }
-                    else
-                    {
-                        pFlat[i]=fProjPixel*dose;
+                    case ReferenceLogNorm :   pFlat[i]=log(fProjPixel)+log(dose); break;
+                    case ReferenceNorm    :   pFlat[i]=fProjPixel*dose; break;
                     }
                 }
             }
@@ -2357,13 +2351,10 @@ void ReferenceImageCorrection::PrepareReferences()
                     pFlat[i]=0;
                 else
                 {
-                    if (m_bComputeLogarithm)
+                    switch (m_ReferenceMethod)
                     {
-                        pFlat[i]=log(fProjPixel)+log(dose);
-                    }
-                    else
-                    {
-                        pFlat[i] = fProjPixel*dose;
+                    case ReferenceLogNorm :   pFlat[i]=log(fProjPixel)+log(dose); break;
+                    case ReferenceNorm    :   pFlat[i]=fProjPixel*dose; break;
                     }
                 }
             }
@@ -2407,13 +2398,10 @@ void ReferenceImageCorrection::PrepareReferencesBB()
                     pFlat[i]=0;
                 else
                 {
-                    if (m_bComputeLogarithm)
+                    switch (m_ReferenceMethod)
                     {
-                        pFlat[i]=log(fProjPixel)+log(dose);
-                    }
-                    else
-                    {
-                        pFlat[i]=fProjPixel*(dose);
+                    case ReferenceLogNorm :   pFlat[i]=log(fProjPixel)+log(dose); break;
+                    case ReferenceNorm    :   pFlat[i]=fProjPixel*dose; break;
                     }
                 }
             }
@@ -2428,13 +2416,10 @@ void ReferenceImageCorrection::PrepareReferencesBB()
                     pFlat[i]=0;
                 else
                 {
-                    if (m_bComputeLogarithm)
+                    switch (m_ReferenceMethod)
                     {
-                         pFlat[i]=log(fProjPixel)+log(dose);
-                    }
-                    else
-                    {
-                         pFlat[i]=(fProjPixel*dose);
+                    case ReferenceLogNorm :   pFlat[i]=log(fProjPixel)+log(dose); break;
+                    case ReferenceNorm    :   pFlat[i]=fProjPixel*dose; break;
                     }
                 }
             }
@@ -2471,10 +2456,11 @@ void ReferenceImageCorrection::PrepareReferencesExtBB()
                     pFlat[i]=0;
                 else
                 {
-                    if (m_bComputeLogarithm)
-                        pFlat[i]=log(fProjPixel*(dose));
-                    else
-                        pFlat[i]=(fProjPixel*(dose));
+                    switch (m_ReferenceMethod)
+                    {
+                    case ReferenceLogNorm :   pFlat[i]=log(fProjPixel*(dose)); break;
+                    case ReferenceNorm    :   pFlat[i]=(fProjPixel*(dose));    break;
+                    }
                 }
 
             }
@@ -2490,10 +2476,11 @@ void ReferenceImageCorrection::PrepareReferencesExtBB()
                     pFlat[i]=0;
                 else
                 {
-                    if (m_bComputeLogarithm)
-                        pFlat[i]=log(fProjPixel*dose);
-                    else
-                        pFlat[i] = fProjPixel*dose;
+                    switch (m_ReferenceMethod)
+                    {
+                    case ReferenceLogNorm :   pFlat[i]=log(fProjPixel*dose); break;
+                    case ReferenceNorm    :   pFlat[i]=(fProjPixel*dose);    break;
+                    }
                 }
             }
 
@@ -2697,7 +2684,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
     return 1;
 }
 
-void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, float dose)
+void ReferenceImageCorrection::ComputeNormOriginal(kipl::base::TImage<float,2> &img, float dose)
 {
 
 //    dose = dose - m_fDarkDose;
@@ -2830,6 +2817,78 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
     }
 }
 
+void ReferenceImageCorrection::ComputeNormRevised(kipl::base::TImage<float,2> &img, float dose)
+{
+    int N=static_cast<int>(img.Size(0)*img.Size(1));
+
+    float *pFlat  = m_OpenBeam.GetDataPtr();
+    float *pDark  = m_DarkCurrent.GetDataPtr();
+    float *pImg   = img.GetDataPtr();
+
+    float *pImgBB = nullptr;
+    float Pdose = 0.0f;
+
+    if (m_bHaveBlackBody)
+    {
+        pImgBB = m_BB_sample_Interpolated.GetDataPtr();
+        if (bPBvariante)
+        {
+            Pdose = computedose(m_DoseBBsample_image);
+        } // for now I assume I have all images.. other wise makes no much sense
+    }
+
+    if (m_bHaveExternalBlackBody) {
+        pImgBB = m_BB_slice_ext.GetDataPtr();
+        Pdose  = fdose_ext_slice;
+    }
+
+    float invDose = dose-Pdose;
+    invDose = invDose < 1.0f ? 1.0f : 1.0f / invDose;
+
+    int processSelector = 0;
+
+    processSelector += pImgBB != nullptr  ? 4 : 0;
+    processSelector += m_bHaveDarkCurrent ? 2 : 0;
+    processSelector += m_bHaveOpenBeam    ? 1 : 0;
+
+    #pragma omp parallel for firstprivate(pImgBB, pDark, pFlat)
+    for (int i=0; i<N; i++)
+    {
+        float & fProjPixel = pImg[i];
+
+        switch (processSelector)
+        {
+        case 0 : // nothing happens
+            break;
+        case 1 : // Only divide by open beam
+            fProjPixel /= pFlat[i];
+            break;
+        case 2 : // Only subtract dark current
+            fProjPixel -= pDark[i];
+            break;
+        case 3 : // Traditional open beam correction (flat is assumed to be corrected by DC and scaled by dose)
+            fProjPixel = (fProjPixel-pDark[i])/pFlat[i];
+            break;
+        case 4 : // Only subtract bb image
+            fProjPixel -= pImgBB[i];
+            break;
+        case 5 : // Subtract bb image and divide by open beam
+            fProjPixel = (fProjPixel - pImgBB[i]) / pFlat[i];
+            break;
+        case 6 : // Subtract bb image and dark current image
+            fProjPixel = (fProjPixel - pImgBB[i] - pDark[i]);
+            break;
+        case 7 : // The full bb correction
+            fProjPixel = (fProjPixel - pImgBB[i] - pDark[i]) / pFlat[i];
+            break;
+        default:
+            throw ImagingException("Unsupported normalization case, this should never happen.",__FILE__,__LINE__);
+        }
+
+        fProjPixel *= invDose;
+    }
+
+}
 
 float ReferenceImageCorrection::computedose(kipl::base::TImage<float,2> &img){
 
