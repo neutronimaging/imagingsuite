@@ -40,6 +40,7 @@ private Q_SLOTS:
     void testNonLinFit_enums();
     void testTNTNonLinFit_GaussianFunction();
     void testTNTNonLinFit_fitter();
+    void testTNTNonLinFit_realDataFit();
     void testARMANonLinFit_GaussianFunction();
     void testARMANonLinFit_fitter();
     void testARMANonLinFit_realDataFit();
@@ -353,6 +354,38 @@ void TKiplMathTest::testARMANonLinFit_fitter()
 
 }
 
+void TKiplMathTest::testTNTNonLinFit_realDataFit()
+{
+//    auto data = kipl::io::readCSV("../TestData/1D/edgeprofiles/edgederiv_2mm.txt",',',false);
+
+//    size_t N = data["b"].size();
+
+//    qDebug() << "N="<<N;
+//    Array1D<double> x(N);
+//    Array1D<double> y(N);
+//    Array1D<double> sig(N);
+
+//    Nonlinear::TNTfit::SumOfGaussians sog(1);
+//    auto maxIt = std::max_element(data["b"].begin(),data["b"].end());
+//    sog[0]=*maxIt;//A
+//    sog[1]=maxIt-data["b"].begin(); //m
+//    sog[2]=3; //s
+
+//    qDebug() << "Initial parameters:"<<sog[0] <<sog[1] <<sog[2] ;
+//    for (size_t i=0; i<N; ++i)
+//    {
+//        x[i]=data["a"][i];
+//        y[i]=data["b"][i];
+//        sig[i]=1.0;
+//    }
+
+//    Nonlinear::TNTfit::LevenbergMarquardt mrq(1e-15);
+
+//    mrq.fit(x,y,sig,sog);
+
+//    qDebug() << "Fit parameters:"<<sog[0] <<sog[1] <<sog[2] ;
+}
+
 void TKiplMathTest::testARMANonLinFit_realDataFit()
 {
     auto data = kipl::io::readCSV("../TestData/1D/edgeprofiles/edgederiv_2mm.txt",',',false);
@@ -363,13 +396,14 @@ void TKiplMathTest::testARMANonLinFit_realDataFit()
     arma::vec y(N);
     arma::vec sig(N);
 
-    Nonlinear::SumOfGaussians sog(1);
+    Nonlinear::Gaussian gaussian;
     auto maxIt = std::max_element(data["b"].begin(),data["b"].end());
-    sog[0]=*maxIt;//A
-    sog[1]=maxIt-data["b"].begin(); //m
-    sog[2]=3; //s
+    gaussian[0] = *maxIt;//A
+    gaussian[1] =  data["a"][maxIt-data["b"].begin()]; //m
+    gaussian[2] =  3; // s
+    gaussian[3] =  0; // b
 
-    qDebug() << "Initial parameters:"<<sog[0] <<sog[1] <<sog[2] ;
+    qDebug() << "Initial parameters:"<<gaussian[0]<<gaussian[1]<<gaussian[2]<<gaussian[3] ;
     for (size_t i=0; i<N; ++i)
     {
         x[i]=data["a"][i];
@@ -379,9 +413,9 @@ void TKiplMathTest::testARMANonLinFit_realDataFit()
 
     Nonlinear::LevenbergMarquardt mrq(1e-15);
 
-    mrq.fit(x,y,sig,sog);
+    mrq.fit(x,y,sig,gaussian);
 
-    qDebug() << "Fit parameters:"<<sog[0] <<sog[1] <<sog[2] ;
+    qDebug() << "Fit parameters:"<<gaussian[0]<<gaussian[1]<<gaussian[2]<<gaussian[3];
 }
 
 void TKiplMathTest::testFindPeaks()
