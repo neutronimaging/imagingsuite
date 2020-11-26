@@ -9,18 +9,21 @@
 #include "../../include/base/KiplException.h"
 
 namespace kipl { namespace strings {
+
 bool GetElement(std::string &str, std::string &element)
 {	
     size_t pos=str.find_first_not_of(" ,:");
 	if (pos!=str.npos)
 		str=str.substr(pos);
-	else {
+    else
+    {
 		element.clear();
 		return false;
 	}
 	
     pos=str.find_first_of(" ,:");
-	if (pos==str.npos) { // Last element
+    if (pos==str.npos)
+    { // Last element
 		element=str;
 		return false;
 	}
@@ -30,6 +33,7 @@ bool GetElement(std::string &str, std::string &element)
 	
 	return true;
 }
+
 size_t String2Array(std::string str, double *v, size_t N)
 {
 	std::string data, element;
@@ -181,23 +185,42 @@ size_t String2Array(std::string str, std::vector<float> &v, size_t cnt)
 
 size_t String2Array(std::string str, std::vector<size_t> &v, size_t cnt)
 {
+    std::ostringstream msg;
     std::string data, element;
     data=str;
     bool status=true;
     v.clear();
     size_t i=0;
-    while (status)
+
+    try
     {
-        status=GetElement(data,element);
-        if (!element.empty())
+        while (status)
         {
-            v.push_back(std::stoul(element));
-            ++i;
+            status=GetElement(data,element);
+
+            if ( (!element.empty()) && (std::isdigit(element[0])) )
+            {
+                v.push_back(std::stoul(element));
+                ++i;
+            }
         }
+    }
+    catch (std::exception & e)
+    {
+        msg.str("");
+        msg << "STL exception "<<e.what()
+            << "\n in string2array at element i="<<i
+            << " value="<<element;
+
+        throw kipl::base::KiplException(msg.str());
     }
 
     if (v.size()<cnt)
-        throw kipl::base::KiplException("Too few elements found in string",__FILE__,__LINE__);
+    {
+        msg.str("");
+        msg << "Too few elements ("<<v.size()<<"<"<<cnt<<") found in string "<<str;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
 
     if (cnt<v.size())
         v=std::vector<size_t>(v.begin(),v.begin()+cnt);
@@ -207,23 +230,40 @@ size_t String2Array(std::string str, std::vector<size_t> &v, size_t cnt)
 
 size_t String2Array(std::string str, std::vector<int> &v, size_t cnt)
 {
+    std::ostringstream msg;
     std::string data, element;
     data=str;
     bool status=true;
     v.clear();
     size_t i=0;
-    while (status)
+    try
     {
-        status=GetElement(data,element);
-        if (!element.empty())
+        while (status)
         {
-            v.push_back(std::stoi(element));
-            ++i;
+            status=GetElement(data,element);
+            if ( (!element.empty()) && (std::isdigit(element[0])) )
+            {
+                v.push_back(std::stoi(element));
+                ++i;
+            }
         }
+    }
+    catch (std::exception & e)
+    {
+        msg.str("");
+        msg << "STL exception "<<e.what()
+            << "\n in string2array at element i="<<i
+            << " value="<<element;
+
+        throw kipl::base::KiplException(msg.str());
     }
 
     if (v.size()<cnt)
-        throw kipl::base::KiplException("Too few elements found in string",__FILE__,__LINE__);
+    {
+        msg.str("");
+        msg << "Too few elements ("<<v.size()<<"<"<<cnt<<") found in string "<<str;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
 
     if (cnt<v.size())
         v=std::vector<int>(v.begin(),v.begin()+cnt);
