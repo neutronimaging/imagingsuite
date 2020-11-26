@@ -16,6 +16,15 @@ enum eOperatingSystem {
     OSLinux
 };
 
+enum eQuantiles {
+  quantile50 = 50,
+  quantile75 = 75,
+  quantile90 = 90,
+  quantile95 = 95,
+  quantile99 = 99,
+  allData    = 100
+};
+
 /// \brief Image plane selection enum
 enum eImagePlanes {
     ImagePlaneXY = 1, ///< selects the XY plane
