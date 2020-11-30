@@ -58,7 +58,7 @@ public:
     /// \param N number of bins
     virtual void GetHistogram(float *axis, size_t *hist,size_t nBins);
 
-    const std::vector<size_t> & GetMatrixDims();
+    std::vector<size_t> GetMatrixDims();
 
     virtual float Min();
 
