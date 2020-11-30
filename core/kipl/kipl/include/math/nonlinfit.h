@@ -8,6 +8,8 @@
 
 #include <armadillo>
 
+#include "../logging/logger.h"
+
 using namespace TNT;
 
 namespace Nonlinear {
@@ -109,13 +111,14 @@ protected:
 
 int KIPLSHARED_EXPORT LeastMedianSquared(double *x, double *y, FitFunctionBase &fn);
 
-class KIPLSHARED_EXPORT LevenbergMarquardt {
+class KIPLSHARED_EXPORT LevenbergMarquardt
+{
 //Object for nonlinear least-squares fitting by the Levenberg-Marquardt method, also including
 //the ability to hold specified parameters at fixed, specified values. Call constructor to bind data
 //vectors and fitting functions and to input an initial parameter guess. Then call any combination
 //of hold, free, and fit as often as desired. fit sets the output quantities a, covar, alpha,
 //and chisq.
-
+    kipl::logging::Logger logger;
 public:
     LevenbergMarquardt(const double TOL=1.e-3, int iterations=2500) ;
 

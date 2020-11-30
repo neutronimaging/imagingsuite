@@ -1,6 +1,5 @@
 //<LICENCE>
 
-#include <QDebug>
 #include <cstring>
 #include <sstream>
 #include <cmath>
@@ -26,6 +25,7 @@ namespace Nonlinear {
 
 
 LevenbergMarquardt::LevenbergMarquardt(const double TOL, int iterations) :
+    logger("LevenbergMarquardt"),
     maxIterations(iterations),
     tol(TOL)
 {
@@ -47,7 +47,6 @@ void LevenbergMarquardt::fit(arma::vec &x, arma::vec &y,
         throw kipl::base::KiplException("Array size missmatch for the fitter",__FILE__,__LINE__);
 
     ndat=x.n_elem;
- //   qDebug()<< "ndat:"<<ndat;
 
     covar=arma::mat(ma,ma);
     alpha=arma::mat(ma,ma);
@@ -64,20 +63,18 @@ void LevenbergMarquardt::fit(arma::vec &x, arma::vec &y,
 
     mrqcof(fn,x,y,sig,alpha,beta); // Initialization.
 
-//    for (int i=0; i<temp.dim1(); ++i) {
-//        for (int j=0; j<temp.dim2(); ++j) {
-//            qDebug() << "i="<<i<<", j="<<j<<"="<<alpha[i][j];
-//        }
-//    }
-
     fn.getPars(atry);
 
     ochisq=chisq;
 
+    std::ostringstream msg;
     for (iter=0;iter<maxIterations;iter++)
     {
         if ((iter % 100)==0)
-            qDebug() <<"iteration:"<<iter<<"done:"<<done<<", alambda:"<<alamda<<", chisq:"<<chisq;
+        {
+            msg.str(""); msg<<"iteration:"<<iter<<"done:"<<done<<", alambda:"<<alamda<<", chisq:"<<chisq;
+            logger.message(msg.str());
+        }
 
         if (done==NDONE)
         {
@@ -190,8 +187,10 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         for (j=0;j<i+1;j++)
             covar.at(i,j)=covar.at(j,i)=0.0;
     k=mfit-1;
-    for (j=ma-1;j>=0;j--) {
-        if (fn.isFree(j)) {
+    for (j=ma-1;j>=0;j--)
+    {
+        if (fn.isFree(j))
+        {
             for (i=0;i<ma;i++) std::swap(covar.at(i,k),covar.at(i,j));
             for (i=0;i<ma;i++) std::swap(covar.at(k,i),covar.at(j,i));
             k--;
@@ -689,8 +688,6 @@ void LevenbergMarquardt::fit(Array1D<double> &x, Array1D<double> &y,
     ochisq=chisq;
 
     for (iter=0;iter<maxIterations;iter++) {
-        if ((iter % 100)==0)
-            qDebug() <<"iteration:"<<iter<<"done:"<<done<<", alambda:"<<alamda<<", chisq:"<<chisq;
 
         if (done==NDONE) {
             alamda=0.; //Last pass. Use zero alamda.
