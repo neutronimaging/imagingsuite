@@ -361,7 +361,8 @@ void TReaderConfigTest::benchmarkReadVolume()
 
     reader.bThreadedReading = false;
 
-    std::string fname = "/Users/data/P20180255/00_XCalibration/xcal_#####.fits";
+//    std::string fname = "/Users/data/P20180255/00_XCalibration/xcal_#####.fits";
+    std::string fname = "D:\\P20180255\\00_XCalibration\\xcal_#####.fits";
     size_t first = 1;
     size_t last  = 10;
     size_t step  = 1;
