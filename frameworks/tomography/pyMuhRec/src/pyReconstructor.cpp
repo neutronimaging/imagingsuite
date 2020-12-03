@@ -163,7 +163,7 @@ void bindReconstructor(py::module &m)
 
                     std::cout<<"process ready to start"<<std::endl;
 
-                    recon.backProjector->SetROI({0UL,0UL,dims[0],dims[2]});
+                    recon.backProjector->SetROI({0UL,0UL,img.Size(0),img.Size(1)});
                     recon.backProjector->Process(img,parameters);
 
                    // std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
