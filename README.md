@@ -10,9 +10,10 @@ The project has a [public webpage](https://neutronimaging.github.io/) where you 
 Python bindings are implemented to allow the use of the modules in python. The bindings are implemented using PYBIND11 and you need to use cmake to build them.
 
 #### First step create directories for the build
+Create build and install folders in the ```path``` where you want them
 ```bash 
-mkdir build
-mkdir install
+mkdir <path>/build
+mkdir <path>/install
 ```
 
 #### MuhRec back-projectors
