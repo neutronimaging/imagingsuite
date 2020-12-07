@@ -6,6 +6,43 @@ The project has a [public webpage](https://neutronimaging.github.io/) where you 
 - [Prerequisities](https://github.com/neutronimaging/imagingsuite/wiki/Prerequisites-for-building)
 - [How to build](https://github.com/neutronimaging/imagingsuite/wiki/Build-instructions)
 
+### Building python bindings
+Python bindings are implemented to allow the use of the modules in python. The bindings are implemented using PYBIND11 and you need to use cmake to build them.
+
+#### First step create directories for the build
+```bash 
+mkdir build
+mkdir install
+```
+
+#### MuhRec back-projectors
+The cmake file to build the backprojector bindings located located in the folder ````imagingsuite/framework/tomography````.
+
+Steps to build:
+
+
+##### Build the module
+```bash
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=../install -DDYNAMIC_LIB=ON
+cmake --build . --target install
+cd ..
+```
+
+##### Post build actions
+```bash 
+cd install/lib
+../../nexuslinkage.sh
+for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done
+
+```
+
+#### Imaging algortihms
+
+
+
 ## Documentation
 - [MuhRec](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec)
 - [KipTool](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-KipTool)
+
+
