@@ -30,17 +30,23 @@ void bindReconstructor(py::module &m)
                   )
                     {
                         ReconConfig config("");
-                        std::map<std::string,int> parMap;
-                        parMap["center"]    = 0;
-                        parMap["tiltangle"] = 1;
-                        parMap["tiltpivot"] = 2;
-                        parMap["usetilt"]   = 3;
-                        parMap["roi"]       = 4;
-                        parMap["direction"] = 5;
-                        parMap["resolution"] = 6;
-                        parMap["usematrixroi"] = 7;
-                        parMap["matrixroi"] = 8;
-                        parMap["rotate"] = 9;
+                        const std::map<std::string,int> parMap = {{"center",         0},
+                                                                  {"tiltangle",      1},
+                                                                  {"tiltpivot",      2},
+                                                                  {"usetilt",        3},
+                                                                  {"roi",            4},
+                                                                  {"direction",      5},
+                                                                  {"resolution",     6},
+                                                                  {"usematrixroi",   7},
+                                                                  {"matrixroi",      8},
+                                                                  {"rotate",         9},
+                                                                  {"sod",           10},
+                                                                  {"sdd",           11},
+                                                                  {"piercingpoint", 12},
+                                                                  {"beamgeometry",  13}
+
+                                                                 };
+
 
                         std::map<std::string,std::string> backprojPars;
                         backprojPars["ProjectionBufferSize"] = "16";
@@ -52,7 +58,7 @@ void bindReconstructor(py::module &m)
                         for (const auto & item : args)
                         {
                             auto key = py::cast<std::string>(item.first);
-                            switch (parMap[key])
+                            switch (parMap.at(key))
                             {
                             case 0 :
                                 config.ProjectionInfo.fCenter = py::cast<float>(item.second);
@@ -90,10 +96,20 @@ void bindReconstructor(py::module &m)
                             case 9 :
                                 config.MatrixInfo.fRotation = py::cast<float>(item.second);
                                 break;
-                            case 10 : // Is not really needed...
-                                config.MatrixInfo.fGrayInterval = py::cast<std::vector<float>>(item.second);
-                                if (config.ProjectionInfo.roi.size() != 2)
-                                    throw std::runtime_error("The gray interval vector has the wrong size");
+                            case 10 : // sod
+                                config.ProjectionInfo.fSOD = py::cast<float>(item.second);
+                                break;
+                            case 11: // sdd
+                                config.ProjectionInfo.fSOD = py::cast<float>(item.second);
+                                break;
+                            case 12: // piercing point
+                                {
+                                    std::string ppstr = py::cast<std::string>(item.second);
+                                    kipl::strings::String2Array(ppstr,config.ProjectionInfo.fpPoint,2);
+                                }
+                                break;
+                            case 13:
+                                config.ProjectionInfo.beamgeometry = py::cast<ReconConfig::cProjections::eBeamGeometry>(item.second);
                                 break;
 
                             }
@@ -101,6 +117,7 @@ void bindReconstructor(py::module &m)
                         recon.backProjector->Configure(config,backprojPars);
                     }
     );
+
     reClass.def("process",
                 [](Reconstructor &recon,
                    py::array_t<float> &projections,
@@ -161,12 +178,8 @@ void bindReconstructor(py::module &m)
                         }
                     }
 
-                    std::cout<<"process ready to start"<<std::endl;
-
                     recon.backProjector->SetROI({0UL,0UL,img.Size(0),img.Size(1)});
                     recon.backProjector->Process(img,parameters);
-
-                   // std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
                 },
                 "Reconstructs a set of projections"
     );
@@ -176,8 +189,6 @@ void bindReconstructor(py::module &m)
                  std::ostringstream msg;
 
                  auto dims = recon.backProjector->GetMatrixDims();
-                 std::cout<<dims[0]<<" "<<dims[1]<<" "<<dims[2]<<" "<<std::endl;
-
 
                  kipl::base::TImage<float,3> vol(dims);
 
@@ -220,8 +231,15 @@ void bindReconstructor(py::module &m)
             .value("bpMultiProj",            bpMultiProj)
             .value("bpMultiProjParallel",    bpMultiProjParallel)
             .value("bpNearestNeighbor",      bpNearestNeighbor)
+            .value("bpFDKSingle",            bpFDKSingle)
+            .value("bpbpFDKDouble",          bpFDKDouble)
             .export_values();
 
+    py::enum_<ReconConfig::cProjections::eBeamGeometry>(m,"eBeamGeometry")
+            .value("BeamGeometryParallel",   ReconConfig::cProjections::BeamGeometry_Parallel)
+            .value("BeamGeometryCone",       ReconConfig::cProjections::BeamGeometry_Cone)
+            .value("BeamGeometryHelix",      ReconConfig::cProjections::BeamGeometry_Helix)
+            .export_values();
 }
 
 #endif

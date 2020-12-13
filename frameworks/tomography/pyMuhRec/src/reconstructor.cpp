@@ -4,6 +4,8 @@
 #include <MultiProjBP.h>
 #include <MultiProjBPparallel.h>
 #include <NNMultiProjBP.h>
+#include <fdkbp_single.h>
+#include <fdkbp.h>
 
 Reconstructor::Reconstructor(eBackProjectors bp) :
     backProjector(nullptr)
@@ -34,6 +36,12 @@ void Reconstructor::createBP(eBackProjectors bp)
 
     case bpNearestNeighbor:
         backProjector = new NearestNeighborBP(nullptr);
+        break;
+    case bpFDKSingle :
+        backProjector = new FDKbp_single(nullptr);
+        break;
+    case bpFDKDouble :
+        backProjector = new FDKbp(nullptr);
         break;
     }
 }

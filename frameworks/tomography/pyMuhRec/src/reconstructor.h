@@ -8,7 +8,9 @@ enum eBackProjectors
 {
     bpMultiProj,
     bpMultiProjParallel,
-    bpNearestNeighbor
+    bpNearestNeighbor,
+    bpFDKSingle,
+    bpFDKDouble
 };
 
 class Reconstructor

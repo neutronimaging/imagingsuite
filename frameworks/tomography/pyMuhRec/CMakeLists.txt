@@ -32,6 +32,7 @@ include_directories(
     ../../../external/mac/include/hdf5
     ../Framework/ReconFramework/include
     ../Backprojectors/StdBackProjectors/include
+    ../Backprojectors/FDKBackProjectors/src
     ../../../core/algorithms/ImagingAlgorithms/include
     )
 link_directories(../../../../lib /opt/local/lib )
@@ -73,6 +74,7 @@ target_link_libraries(${TARGET_NAME}
     ModuleConfig
     ReconFramework
     StdBackProjectors
+    FDKBackProjectors
   )
 
 set_target_properties(${TARGET_NAME}
@@ -88,6 +90,7 @@ if(DYNAMIC_LIB)
       ../../../../lib/libModuleConfig.1.0.0.dylib 
       ../../../../lib/libReconFramework.1.0.0.dylib
       ../../../../lib/libStdBackProjectors.1.0.0.dylib
+      ../../../../lib/libFDKBackProjectors.1.0.0.dylib
       ../../../../lib/libImagingAlgorithms.1.0.0.dylib
       ../../../../lib/libReaderConfig.1.0.0.dylib
       ../../../../lib/libNeXus.1.0.0.dylib	
