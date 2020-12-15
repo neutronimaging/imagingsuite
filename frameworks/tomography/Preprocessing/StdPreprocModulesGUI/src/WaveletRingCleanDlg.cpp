@@ -129,8 +129,8 @@ void WaveletRingCleanDlg::ApplyParameters()
     memset(hist,0,N*sizeof(size_t));
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 95.0, &nLo, &nHi);
-    ui->viewer_difference->set_image(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.dims());
+    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
+    ui->viewer_difference->set_image(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.dims(),axis[nLo],axis[nHi]);
     double sum2=0.0;
     float *pDiff=m_DifferenceSino.GetDataPtr();
     for (size_t i=0; i<m_DifferenceSino.Size(); i++)
