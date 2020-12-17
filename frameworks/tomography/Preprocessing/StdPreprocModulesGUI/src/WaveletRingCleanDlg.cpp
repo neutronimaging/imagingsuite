@@ -86,17 +86,18 @@ void WaveletRingCleanDlg::ApplyParameters()
     kipl::base::TImage<float,3> img({m_Projections.Size(0), 1,m_Projections.Size(2)});
 
     const size_t N=512;
-    size_t hist[N];
-    float axis[N];
+    std::vector<size_t> hist(N,0UL);
+    std::vector<float>  axis(N,0.0f);
+
     size_t nLo, nHi;
 
     m_OriginalSino=GetSinogram(m_Projections,m_Projections.Size(1)>>1);
 
-    memcpy(img.GetDataPtr(),m_OriginalSino.GetDataPtr(),m_OriginalSino.Size()*sizeof(float));
+    std::copy_n(m_OriginalSino.GetDataPtr(),m_OriginalSino.Size(),img.GetDataPtr());
 
-    kipl::base::Histogram(m_OriginalSino.GetDataPtr(), m_OriginalSino.Size(), hist, N, 0.0f, 0.0f, axis);
+    kipl::base::Histogram(m_OriginalSino.GetDataPtr(), m_OriginalSino.Size(), N, hist, axis, 0.0f, 0.0f,true);
 
-    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
+    kipl::base::FindLimits(hist, 97.5, nLo, nHi);
     ui->viewer_original->set_image(m_OriginalSino.GetDataPtr(),m_OriginalSino.dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
@@ -117,20 +118,25 @@ void WaveletRingCleanDlg::ApplyParameters()
         return ;
     }
 
-    m_ProcessedSino = m_OriginalSino;
+    m_ProcessedSino.resize(m_OriginalSino.dims());
 
-    memset(hist,0,N*sizeof(size_t));
-    memset(axis,0,N*sizeof(float));
-    kipl::base::Histogram(m_ProcessedSino.GetDataPtr(), m_ProcessedSino.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
+    std::copy_n(img.GetDataPtr(),img.Size(),m_ProcessedSino.GetDataPtr());
+
+    std::fill(axis.begin(),axis.end(),0.0f);
+    std::fill(hist.begin(),hist.end(),0UL);
+
+    kipl::base::Histogram(m_ProcessedSino.GetDataPtr(), m_ProcessedSino.Size(), N, hist, axis, 0.0f, 0.0f, true);
+    kipl::base::FindLimits(hist, 97.5, nLo, nHi);
     ui->viewer_result->set_image(m_ProcessedSino.GetDataPtr(), m_ProcessedSino.dims(),axis[nLo],axis[nHi]);
 
     m_DifferenceSino=m_ProcessedSino-m_OriginalSino;
-    memset(hist,0,N*sizeof(size_t));
-    memset(axis,0,N*sizeof(float));
-    kipl::base::Histogram(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 95.0, &nLo, &nHi);
-    ui->viewer_difference->set_image(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.dims());
+
+    std::fill(axis.begin(),axis.end(),0.0f);
+    std::fill(hist.begin(),hist.end(),0UL);
+    kipl::base::Histogram(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.Size(), N, hist, axis, 0.0f, 0.0f, true);
+    kipl::base::FindLimits(hist, 97.5, nLo, nHi);
+    ui->viewer_difference->set_image(m_DifferenceSino.GetDataPtr(), m_DifferenceSino.dims(),axis[nLo],axis[nHi]);
+
     double sum2=0.0;
     float *pDiff=m_DifferenceSino.GetDataPtr();
     for (size_t i=0; i<m_DifferenceSino.Size(); i++)

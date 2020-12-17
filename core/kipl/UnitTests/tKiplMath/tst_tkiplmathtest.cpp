@@ -19,7 +19,7 @@
 #include <math/covariance.h>
 #include <math/gradient.h>
 #include <math/linfit.h>
-
+#include <base/thistogram.h>
 #include <io/io_tiff.h>
 #include <io/io_csv.h>
 
@@ -59,6 +59,8 @@ private Q_SLOTS:
     void testPolyVal();
     void testPolyFit();
     void testPolyDeriv();
+
+    void testFindLimits();
 
 
 
@@ -779,6 +781,21 @@ void TKiplMathTest::testPolyDeriv()
     QCOMPARE(ddc3[0],3.0);
     QCOMPARE(ddc3[1],-3.0);
 
+}
+
+void TKiplMathTest::testFindLimits()
+{
+    std::vector<size_t> vec(100,1UL);
+
+    size_t lo,hi;
+    kipl::base::FindLimits(vec,90.0f,lo,hi);
+
+    QCOMPARE(lo,4UL);
+    QCOMPARE(hi,94UL);
+
+    kipl::base::FindLimits(vec,80.0f,lo,hi);
+    QCOMPARE(lo,9UL);
+    QCOMPARE(hi,89UL);
 }
 
 QTEST_APPLESS_MAIN(TKiplMathTest)
