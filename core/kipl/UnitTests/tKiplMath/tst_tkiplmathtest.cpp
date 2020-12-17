@@ -19,8 +19,9 @@
 #include <math/covariance.h>
 #include <math/gradient.h>
 #include <math/linfit.h>
-
+#include <base/thistogram.h>
 #include <io/io_tiff.h>
+#include <io/io_csv.h>
 
 class TKiplMathTest : public QObject
 {
@@ -37,10 +38,12 @@ private Q_SLOTS:
     void testCOG();
     void testCircularHoughTransform();
     void testNonLinFit_enums();
-//    void testTNTNonLinFit_GaussianFunction();
-//    void testTNTNonLinFit_fitter();
+    void testTNTNonLinFit_GaussianFunction();
+    void testTNTNonLinFit_fitter();
+    void testTNTNonLinFit_realDataFit();
     void testARMANonLinFit_GaussianFunction();
     void testARMANonLinFit_fitter();
+    void testARMANonLinFit_realDataFit();
     void testFindPeaks();
 
     void testStatistics();
@@ -56,6 +59,8 @@ private Q_SLOTS:
     void testPolyVal();
     void testPolyFit();
     void testPolyDeriv();
+
+    void testFindLimits();
 
 
 
@@ -350,6 +355,71 @@ void TKiplMathTest::testARMANonLinFit_fitter()
     QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
 
 }
+
+void TKiplMathTest::testTNTNonLinFit_realDataFit()
+{
+//    auto data = kipl::io::readCSV("../TestData/1D/edgeprofiles/edgederiv_2mm.txt",',',false);
+
+//    size_t N = data["b"].size();
+
+//    qDebug() << "N="<<N;
+//    Array1D<double> x(N);
+//    Array1D<double> y(N);
+//    Array1D<double> sig(N);
+
+//    Nonlinear::TNTfit::SumOfGaussians sog(1);
+//    auto maxIt = std::max_element(data["b"].begin(),data["b"].end());
+//    sog[0]=*maxIt;//A
+//    sog[1]=maxIt-data["b"].begin(); //m
+//    sog[2]=3; //s
+
+//    qDebug() << "Initial parameters:"<<sog[0] <<sog[1] <<sog[2] ;
+//    for (size_t i=0; i<N; ++i)
+//    {
+//        x[i]=data["a"][i];
+//        y[i]=data["b"][i];
+//        sig[i]=1.0;
+//    }
+
+//    Nonlinear::TNTfit::LevenbergMarquardt mrq(1e-15);
+
+//    mrq.fit(x,y,sig,sog);
+
+//    qDebug() << "Fit parameters:"<<sog[0] <<sog[1] <<sog[2] ;
+}
+
+void TKiplMathTest::testARMANonLinFit_realDataFit()
+{
+    auto data = kipl::io::readCSV("../TestData/1D/edgeprofiles/edgederiv_2mm.txt",',',false);
+
+    size_t N = data["b"].size();
+
+    arma::vec x(N);
+    arma::vec y(N);
+    arma::vec sig(N);
+
+    Nonlinear::Gaussian gaussian;
+    auto maxIt = std::max_element(data["b"].begin(),data["b"].end());
+    gaussian[0] = *maxIt;//A
+    gaussian[1] =  data["a"][maxIt-data["b"].begin()]; //m
+    gaussian[2] =  3; // s
+    gaussian[3] =  0; // b
+
+    qDebug() << "Initial parameters:"<<gaussian[0]<<gaussian[1]<<gaussian[2]<<gaussian[3] ;
+    for (size_t i=0; i<N; ++i)
+    {
+        x[i]=data["a"][i];
+        y[i]=data["b"][i];
+        sig[i]=1.0;
+    }
+
+    Nonlinear::LevenbergMarquardt mrq(1e-15);
+
+    mrq.fit(x,y,sig,gaussian);
+
+    qDebug() << "Fit parameters:"<<gaussian[0]<<gaussian[1]<<gaussian[2]<<gaussian[3];
+}
+
 void TKiplMathTest::testFindPeaks()
 {
     const size_t N=100;
@@ -711,6 +781,21 @@ void TKiplMathTest::testPolyDeriv()
     QCOMPARE(ddc3[0],3.0);
     QCOMPARE(ddc3[1],-3.0);
 
+}
+
+void TKiplMathTest::testFindLimits()
+{
+    std::vector<size_t> vec(100,1UL);
+
+    size_t lo,hi;
+    kipl::base::FindLimits(vec,90.0f,lo,hi);
+
+    QCOMPARE(lo,4UL);
+    QCOMPARE(hi,94UL);
+
+    kipl::base::FindLimits(vec,80.0f,lo,hi);
+    QCOMPARE(lo,9UL);
+    QCOMPARE(hi,89UL);
 }
 
 QTEST_APPLESS_MAIN(TKiplMathTest)

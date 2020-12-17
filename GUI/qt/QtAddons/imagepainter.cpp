@@ -302,6 +302,31 @@ void ImagePainter::setLevels(const float level_low, const float level_high)
     preparePixbuf();
 }
 
+void ImagePainter::setLevels(kipl::base::eQuantiles quantile)
+{
+    auto cumHist = m_Histogram;
+
+    float cumSum = 0.0f;
+    for (auto & histBin : cumHist)
+    {
+        cumSum += histBin.y();
+        histBin.setY(cumSum);
+    }
+
+    float fraction =  (1.0f-static_cast<float>(quantile)/100.0f)/2.0f;
+    float limitA = cumSum * fraction;
+    float limitB = cumSum * (1.0-fraction);
+    for (auto & histBin : cumHist)
+    {
+        if (histBin.y()<=limitA)
+            m_MinVal = histBin.x();
+
+        if (histBin.y()<=limitB)
+            m_MaxVal = histBin.x();
+    }
+
+    preparePixbuf();
+}
 float ImagePainter::getValue(int x, int y)
 {
     return m_OriginalImage[x+m_dims[0]*y];

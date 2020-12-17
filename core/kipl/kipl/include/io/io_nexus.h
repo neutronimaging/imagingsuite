@@ -1,6 +1,8 @@
 #ifndef IO_NEXUS_H
 #define IO_NEXUS_H
 
+#include <QDebug>
+
 #include "../kipl_global.h"
 #include "../base/imagecast.h"
 #include "../base/timage.h"
@@ -9,6 +11,7 @@
 #include "../base/textractor.h"
 #include "../strings/filenames.h"
 #include "../base/kiplenums.h"
+#include "../math/sums.h"
 
 #include <iostream>
 #include <iomanip>
@@ -20,6 +23,7 @@
 
 #include <nexus/napi.h>
 #include <nexus/NeXusFile.hpp>
+#include <nexus/NeXusException.hpp>
 
 #ifdef _MSC_VER
 #include <io.h>
@@ -61,20 +65,15 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
 
     for (map<string,string>::const_iterator it = entries.begin();it != entries.end(); ++it) {
         if(it->second=="NXdata") {
-//            std::cout << " found data!"<< std::endl;
             file.openGroup(it->first, it->second);
             attr_infos = file.getAttrInfos();
-//            cout << "Number of group attributes for "<< it->second <<": " << attr_infos.size() << endl;
 
             map<string, string> entries_data = file.getEntries();
-//            cout << "Group contains " << entries_data.size() << " items" << endl;
 
             for (map<string,string>::const_iterator it_data = entries_data.begin();
                  it_data != entries_data.end(); it_data++) {
-//                std::cout << it_data->first << ": " << it_data->second << std::endl;
                 file.openData(it_data->first);
                 attr_infos = file.getAttrInfos();
-//                cout << "Number of data attributes for " << it_data->first <<  ": "<< attr_infos.size() <<std::endl;
                 for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin(); it_att != attr_infos.end(); it_att++)
                 {
 //                  cout << "   " << it_att->name << " = ";
@@ -85,7 +84,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
 
                   if (it_att->name=="signal")
                   {
-//                      std::cout << "found plottable data!!" << std::endl;
+                      qDebug() << "found plottable data!!" ;
 
                       size_t img_size[3];
 
@@ -131,6 +130,11 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
                               msg<<"ReadNexus file.getSlab caused an STL exception: "<<E.what();
                               throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
+                      catch (NeXus::Exception &e){
+                          msg.str("");
+                          msg<<"ReadNexus file.getSlab caused an NeXus exception: "<<e.what();
+                          throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+                      }
                       catch (...){
                           msg.str("");
                           msg<<"ReadNexus file.getSlab caused an unknown exception: ";
@@ -141,11 +145,13 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
 
 
                       std::vector<size_t> size2D = { img_size[0],
-                                                     img_size[1]};
+                                                     img_size[1],
+                                                     1};
                       img.resize(size2D);
                       ImgType *pslice = img.GetDataPtr();
 
                       // casting to ImgType
+//                      std::copy_n(pslice,img.Size(),slab);
                       for (size_t i=0; i<img.Size();++i)
                       {
                           pslice[i] = static_cast<ImgType>(slab[i]);

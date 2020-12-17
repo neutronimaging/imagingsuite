@@ -33,7 +33,7 @@ using namespace TNT;
 
 namespace ImagingAlgorithms {
 
-ReferenceImageCorrection::ReferenceImageCorrection() :
+ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::InteractionBase *interactor) :
     logger("ReferenceImageCorrection"),
     m_bHaveOpenBeam(false),
     m_bHaveDarkCurrent(false),
@@ -64,7 +64,7 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     tau(1.0f),
     min_area(0),
     thresh(0.0f),
-    m_Interactor(nullptr)
+    m_Interactor(interactor)
 {
     a = b = c = d = e = f = 1;
 }
