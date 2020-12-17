@@ -58,6 +58,13 @@ std::map<float, size_t> KIPLSHARED_EXPORT ExactHistogram(float const * const dat
 /// \param hi resulting upper bound
 int KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi);
 
+/// \brief Identifies an intensity interval using a histogram based on the percentage of pixels
+/// \param hist The histogram
+/// \param percentage the percentage of the quantile to consider.
+/// \param lo resulting lower bound
+/// \param hi resulting upper bound
+int  KIPLSHARED_EXPORT FindLimits(std::vector<size_t> &hist, float percentage, size_t & lo, size_t & hi);
+
 /// \brief Computes the entropy of the histogram
 /// \param hist The histogram
 /// \param N number of bins in the histogram
