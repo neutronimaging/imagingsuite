@@ -9,8 +9,6 @@
 
 #include "../logging/logger.h"
 
-using namespace TNT;
-
 namespace Nonlinear {
 
 enum eProfileFunction {

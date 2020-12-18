@@ -207,77 +207,77 @@ void TKiplMathTest::testNonLinFit_enums()
 }
 void TKiplMathTest::testTNTNonLinFit_GaussianFunction()
 {
-    Nonlinear::TNTfit::SumOfGaussians sog(1);
-    QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
-    QCOMPARE(sog.getNpars2fit(),3); // Default all will be fitted
+//    Nonlinear::TNTfit::SumOfGaussians sog(1);
+//    QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
+//    QCOMPARE(sog.getNpars2fit(),3); // Default all will be fitted
 
-    std::vector<bool> lv={false,true,true};
-    sog.setLock(lv);
-    for (int i=0; i<sog.getNpars(); ++i)
-        QCOMPARE(sog.isFree(i),lv[i]);
+//    std::vector<bool> lv={false,true,true};
+//    sog.setLock(lv);
+//    for (int i=0; i<sog.getNpars(); ++i)
+//        QCOMPARE(sog.isFree(i),lv[i]);
 
-    QCOMPARE(sog.getNpars2fit(),1);
-    sog[0]=1;
-    sog[1]=0;
-    sog[2]=1;
+//    QCOMPARE(sog.getNpars2fit(),1);
+//    sog[0]=1;
+//    sog[1]=0;
+//    sog[2]=1;
 
-    QCOMPARE(sog(0.0),(double)1.0);
-    QVERIFY(fabs(sog(1)-(double)0.367879441171)<(double)1.0e-7);
+//    QCOMPARE(sog(0.0),(double)1.0);
+//    QVERIFY(fabs(sog(1)-(double)0.367879441171)<(double)1.0e-7);
 
-    Nonlinear::TNTfit::SumOfGaussians sog2(2);
-    sog2[0]=1;
-    sog2[1]=0;
-    sog2[2]=1;
-    sog2[3]=2;
-    sog2[4]=0.5;
-    sog2[5]=0.5;
-//    qDebug() << (double)sog2(0);
-//    qDebug() << (double)sog2(1);
-    QVERIFY(fabs(sog2(0)-(double)1.73575888234)<(double)1.0e-7);
-    QVERIFY(fabs(sog2(1)-(double)1.10363832351)<(double)1.0e-7);
+//    Nonlinear::TNTfit::SumOfGaussians sog2(2);
+//    sog2[0]=1;
+//    sog2[1]=0;
+//    sog2[2]=1;
+//    sog2[3]=2;
+//    sog2[4]=0.5;
+//    sog2[5]=0.5;
+////    qDebug() << (double)sog2(0);
+////    qDebug() << (double)sog2(1);
+//    QVERIFY(fabs(sog2(0)-(double)1.73575888234)<(double)1.0e-7);
+//    QVERIFY(fabs(sog2(1)-(double)1.10363832351)<(double)1.0e-7);
 
-    double x=1;
-    double y0=0;
-    double y1=0;
-    Array1D<double> dyda(3);
+//    double x=1;
+//    double y0=0;
+//    double y1=0;
+//    Array1D<double> dyda(3);
 
-    y0=sog(x);
-    sog(x,y1,dyda);
-    QCOMPARE(y0,y1);
+//    y0=sog(x);
+//    sog(x,y1,dyda);
+//    QCOMPARE(y0,y1);
 }
 
 void TKiplMathTest::testTNTNonLinFit_fitter()
 {
-    int N=100;
+//    int N=100;
 
-    Array1D<double> x(N);
-    Array1D<double> y(N);
-    Array1D<double> sig(N);
+//    Array1D<double> x(N);
+//    Array1D<double> y(N);
+//    Array1D<double> sig(N);
 
-    Nonlinear::TNTfit::SumOfGaussians sog0(1),sog(1);
-    sog0[0]=2; //A
-    sog0[1]=0; //m
-    sog0[2]=1; //s
+//    Nonlinear::TNTfit::SumOfGaussians sog0(1),sog(1);
+//    sog0[0]=2; //A
+//    sog0[1]=0; //m
+//    sog0[2]=1; //s
 
-    sog[0]=1; //A
-    sog[1]=0.5; //m
-    sog[2]=1.5; //s
+//    sog[0]=1; //A
+//    sog[1]=0.5; //m
+//    sog[2]=1.5; //s
 
-    for (int i=0; i<N; ++i)
-    {
-        x[i]=(i-N/2)*0.2;
-        y[i]=sog0(x[i]);
-      //  qDebug() << "Data: x="<<x[i]<<", y="<<y[i];
-        sig[i]=1.0;
-    }
+//    for (int i=0; i<N; ++i)
+//    {
+//        x[i]=(i-N/2)*0.2;
+//        y[i]=sog0(x[i]);
+//      //  qDebug() << "Data: x="<<x[i]<<", y="<<y[i];
+//        sig[i]=1.0;
+//    }
 
-    Nonlinear::TNTfit::LevenbergMarquardt mrq(1e-15);
+//    Nonlinear::TNTfit::LevenbergMarquardt mrq(1e-15);
 
-    mrq.fit(x,y,sig,sog);
+//    mrq.fit(x,y,sig,sog);
 
-    QVERIFY(fabs(sog[0]-sog0[0])<1e-5);
-    QVERIFY(fabs(sog[1]-sog0[1])<1e-5);
-    QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
+//    QVERIFY(fabs(sog[0]-sog0[0])<1e-5);
+//    QVERIFY(fabs(sog[1]-sog0[1])<1e-5);
+//    QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
 
 }
 
