@@ -37,32 +37,36 @@ public:
 private Q_SLOTS:
     void testCOG();
     void testCircularHoughTransform();
+
     void testNonLinFit_enums();
-    void testTNTNonLinFit_GaussianFunction();
-    void testTNTNonLinFit_fitter();
-    void testTNTNonLinFit_realDataFit();
-    void testARMANonLinFit_GaussianFunction();
-    void testARMANonLinFit_fitter();
-    void testARMANonLinFit_realDataFit();
     void testFindPeaks();
 
     void testStatistics();
     void testImageStats();
     void testSignFunction();
-    void testCovDims();
     void testCovSymmetry();
     void testCovIntactData();
     void testCovSmallData();
     void testCorrSmallData();
     void testMinMax();
-
     void testPolyVal();
-    void testPolyFit();
     void testPolyDeriv();
-
     void testFindLimits();
 
+    void testARMANonLinFit_GaussianFunction();
 
+private :
+    void testPolyFit();
+    void testARMANonLinFit_fitter();
+    void testARMANonLinFit_realDataFit();
+    void testTNTNonLinFit_GaussianFunction();
+    void testTNTNonLinFit_fitter();
+    void testTNTNonLinFit_realDataFit();
+
+
+
+// Bad
+    void testCovDims();
 
 
 private:
