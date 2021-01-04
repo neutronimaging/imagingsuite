@@ -18,6 +18,8 @@
 #include "../../include/base/KiplException.h"
 #include "../../include/strings/miscstring.h"
 
+#include <QDebug>
+
 using namespace TNT;
 using namespace JAMA;
 
@@ -41,8 +43,9 @@ void LevenbergMarquardt::fit(arma::vec &x, arma::vec &y,
     //    on ma coefficients a[0..ma-1]. When 2 is no longer decreasing, set best-fit values
     //    for the parameters a[0..ma-1], and chisq D 2, covar[0..ma-1][0..ma-1], and
     //    alpha[0..ma-1][0..ma-1]. (Parameters held fixed will return zero covariances.)
-    ma=fn.getNpars();
-    mfit=fn.getNpars2fit();
+    ma   = fn.getNpars();
+    mfit = fn.getNpars2fit();
+
     if ((x.n_elem!=y.n_elem) || (x.n_elem!=sig.n_elem))
         throw kipl::base::KiplException("Array size missmatch for the fitter",__FILE__,__LINE__);
 
@@ -51,7 +54,8 @@ void LevenbergMarquardt::fit(arma::vec &x, arma::vec &y,
     covar=arma::mat(ma,ma);
     alpha=arma::mat(ma,ma);
 
-    int j,k,l,iter,done=0;
+    int j,k,l,iter;
+    int    done   = 0;
     double alamda = 0.001;
     double ochisq = 0;
 
@@ -94,8 +98,9 @@ void LevenbergMarquardt::fit(arma::vec &x, arma::vec &y,
             oneda.at(j,0)=beta.at(j);
         }
 
-    //    gaussj(temp,oneda); //Matrix solution.
         oneda = arma::solve(temp,oneda);
+
+        oneda.print();
 
         for (j=0;j<mfit;j++)
         {
@@ -139,7 +144,8 @@ void LevenbergMarquardt::fit(arma::vec &x, arma::vec &y,
             chisq=ochisq;
         }
     }
-    throw kipl::base::KiplException("Fitmrq too many iterations",__FILE__,__LINE__);
+    if (maxIterations <= iter )
+        throw kipl::base::KiplException("Fitmrq too many iterations",__FILE__,__LINE__);
 }
 
 void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, arma::vec &x, arma::vec &y,
@@ -148,14 +154,19 @@ void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, arma::vec &x, ar
 //Used by fit to evaluate the linearized fitting matrix alpha, and vector beta as in (15.5.8), and to calculate 2.
     int i,j,k,l,m;
     double ymod,wt,sig2i,dy;
+
     arma::vec dyda(ma);
     for (j=0; j<mfit; j++)
     { //Initialize (symmetric) alpha, beta.
-        for (k=0; k<=j; k++) alpha.at(j,k)=0.0;
-            beta[j]=0.0;
+        for (k=0; k<=j; k++)
+            alpha.at(j,k)=0.0;
+        beta[j]=0.0;
     }
 
     chisq=0.0;
+
+//    for (j=0,l=0;l<ma;l++)
+//        qDebug() << "l"<<l<< (fn.isFree(l) ? "free" : "locked");
 
     for (i=0; i<ndat; i++)
     { //Summation loop over all data.
@@ -185,14 +196,16 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
     int i,j,k;
     for (i=mfit;i<ma;i++)
         for (j=0;j<i+1;j++)
-            covar.at(i,j)=covar.at(j,i)=0.0;
+            covar.at(i,j) = covar.at(j,i) = 0.0;
     k=mfit-1;
     for (j=ma-1;j>=0;j--)
     {
         if (fn.isFree(j))
         {
-            for (i=0;i<ma;i++) std::swap(covar.at(i,k),covar.at(i,j));
-            for (i=0;i<ma;i++) std::swap(covar.at(k,i),covar.at(j,i));
+            for (i=0;i<ma;i++)
+                std::swap(covar.at(i,k),covar.at(i,j));
+            for (i=0;i<ma;i++)
+                std::swap(covar.at(k,i),covar.at(j,i));
             k--;
         }
     }
@@ -372,7 +385,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
         double y=0.0;
 
         arg = (x-m_pars[1])/m_pars[2];
-        ex  = exp(-arg*arg);
+        ex  = exp(-arg*arg*0.5);
         y   = m_pars[0]*ex + m_pars[3];
 
         return y;
@@ -395,7 +408,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
         dyda[0] = ex;
         dyda[1] = fac/m_pars[2];
         dyda[2] = fac*arg/m_pars[2];
-        dyda[4] = 1;
+        dyda[3] = 1;
 
         return 1;
     }
@@ -456,14 +469,8 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
         double arg,ex;
 
         double y=0.0;
-        for (i=0;i<m_Npars;i+=3) {
-//            arg=(x-m_pars[i+1])/m_pars[i+2];
-//            y+=m_pars[i]*exp(-0.5*arg*arg);
-//			arg=(x-m_pars[i+1])/m_pars[i+2]; This is the derivative code!
-//			ex=exp(-arg*arg);
-//			fac=m_pars[i]*ex*2.0*arg;
-//			y += m_pars[i]*ex;
-
+        for (i=0;i<m_Npars;i+=3)
+        {
             arg=(x-m_pars[i+1])/m_pars[i+2];
             ex=exp(-arg*arg);
             y += m_pars[i]*ex;

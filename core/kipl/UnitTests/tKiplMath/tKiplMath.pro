@@ -55,10 +55,13 @@ win32 {
     }
     INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
+    QMAKE_LIBDIR += $$PWD/../../../../../ExternalDependencies/windows/lib
     QMAKE_CXXFLAGS += /openmp /O2
 
-    LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
- }
+    LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+    LIBS += -llibopenblas
+#    LIBS += -lliblapack -llibblas
+}
 
 
 

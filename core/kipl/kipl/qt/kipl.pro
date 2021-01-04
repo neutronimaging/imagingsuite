@@ -32,6 +32,8 @@ unix {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
+
+    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 }
 
 win32 {
@@ -42,14 +44,17 @@ win32 {
     INCLUDEPATH += $$PWD/../../../../external/include
     INCLUDEPATH += ../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
+    QMAKE_LIBDIR += $$PWD/../../../../../ExternalDependencies/windows/lib
     QMAKE_CXXFLAGS += /openmp /O2
 
     DEFINES += NOMINMAX
+
+
+    LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+    LIBS += -llibopenblas
+#    LIBS += -lliblapack -llibblas
 }
 
-win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
-else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
-else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 
 DEFINES += KIPL_LIBRARY
 

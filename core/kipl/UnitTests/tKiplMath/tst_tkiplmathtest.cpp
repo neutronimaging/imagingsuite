@@ -53,12 +53,16 @@ private Q_SLOTS:
     void testPolyDeriv();
     void testFindLimits();
 
+    void testARMANonLinFit_SumOfGaussianFunction();
     void testARMANonLinFit_GaussianFunction();
+    void testARMANonLinFit_fitter();
+    void testARMANonLinFit_realDataFit();
 
 private :
     void testPolyFit();
-    void testARMANonLinFit_fitter();
-    void testARMANonLinFit_realDataFit();
+
+
+
     void testTNTNonLinFit_GaussianFunction();
     void testTNTNonLinFit_fitter();
     void testTNTNonLinFit_realDataFit();
@@ -285,7 +289,7 @@ void TKiplMathTest::testTNTNonLinFit_fitter()
 
 }
 
-void TKiplMathTest::testARMANonLinFit_GaussianFunction()
+void TKiplMathTest::testARMANonLinFit_SumOfGaussianFunction()
 {
     Nonlinear::SumOfGaussians sog(1);
     QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
@@ -325,6 +329,38 @@ void TKiplMathTest::testARMANonLinFit_GaussianFunction()
     QCOMPARE(y0,y1);
 }
 
+void TKiplMathTest::testARMANonLinFit_GaussianFunction()
+{
+    Nonlinear::Gaussian g;
+    QCOMPARE(g.getNpars(),4); // Three parameters as we have position, amplitude and width.
+    QCOMPARE(g.getNpars2fit(),4); // Default all will be fitted
+
+    std::vector<bool> lv={false,true,true,false};
+    g.setLock(lv);
+    for (int i=0; i<g.getNpars(); ++i)
+        QCOMPARE(g.isFree(i),lv[i]);
+
+    QCOMPARE(g.getNpars2fit(),2);
+    g[0]=1.5;
+    g[1]=2;
+    g[2]=0.5;
+    g[3]=0.0;
+
+    qDebug() << g(1);
+    QCOMPARE(g(2.0),(double)1.5);
+    QVERIFY(fabs(g(1)-(double)0.20300292485491905)<(double)1.0e-7);
+
+    double x=1;
+    double y0=0;
+    double y1=0;
+    arma::vec dyda(4);
+
+    y0=g(x);
+    g(x,y1,dyda);
+    QCOMPARE(y0,y1);
+    qDebug()<< "dyda" << dyda[0] << dyda[1]<< dyda[2]<< dyda[3];
+}
+
 void TKiplMathTest::testARMANonLinFit_fitter()
 {
     int N=100;
@@ -352,7 +388,19 @@ void TKiplMathTest::testARMANonLinFit_fitter()
 
     Nonlinear::LevenbergMarquardt mrq(1e-15);
 
-    mrq.fit(x,y,sig,sog);
+    try
+    {
+        mrq.fit(x,y,sig,sog);
+    }
+    catch (std::exception &e)
+    {
+        QFAIL(e.what());
+    }
+
+    for (int i=0; i<3; ++i)
+    {
+        qDebug() << "Data: sog="<<sog[i]<<", sog0="<<sog0[i];
+    }
 
     QVERIFY(fabs(sog[0]-sog0[0])<1e-5);
     QVERIFY(fabs(sog[1]-sog0[1])<1e-5);
@@ -394,7 +442,14 @@ void TKiplMathTest::testTNTNonLinFit_realDataFit()
 
 void TKiplMathTest::testARMANonLinFit_realDataFit()
 {
-    auto data = kipl::io::readCSV("../TestData/1D/edgeprofiles/edgederiv_2mm.txt",',',false);
+    std::map<std::string,std::vector<float>> data;
+    try {
+        data = kipl::io::readCSV("../TestData/1D/edgeprofiles/edgederiv_2mm.txt",',',false);
+    }
+    catch (std::exception & e)
+    {
+         QFAIL(e.what());
+    }
 
     size_t N = data["b"].size();
 
@@ -403,11 +458,15 @@ void TKiplMathTest::testARMANonLinFit_realDataFit()
     arma::vec sig(N);
 
     Nonlinear::Gaussian gaussian;
+
     auto maxIt = std::max_element(data["b"].begin(),data["b"].end());
+    auto pos = std::distance(data["b"].begin(),maxIt);
+
+    qDebug() << "pos"<< pos;
     gaussian[0] = *maxIt;//A
     gaussian[1] =  data["a"][maxIt-data["b"].begin()]; //m
-    gaussian[2] =  3; // s
-    gaussian[3] =  0; // b
+    gaussian[2] =  2.5; // s
+    gaussian[3] =  0.1; // b
 
     qDebug() << "Initial parameters:"<<gaussian[0]<<gaussian[1]<<gaussian[2]<<gaussian[3] ;
     for (size_t i=0; i<N; ++i)
@@ -419,7 +478,17 @@ void TKiplMathTest::testARMANonLinFit_realDataFit()
 
     Nonlinear::LevenbergMarquardt mrq(1e-15);
 
-    mrq.fit(x,y,sig,gaussian);
+    try
+    {
+        mrq.fit(x,y,sig,gaussian);
+    }
+    catch (std::exception &e)
+    {
+        QFAIL(e.what());
+    }
+    catch (...) {
+        QFAIL("unknown exception");
+    }
 
     qDebug() << "Fit parameters:"<<gaussian[0]<<gaussian[1]<<gaussian[2]<<gaussian[3];
 }
