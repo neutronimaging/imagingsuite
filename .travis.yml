@@ -19,9 +19,9 @@ addons:
     - libcfitsio-dev 
     - libtiff-dev 
     - libxml2-dev 
-    - libnexus0-dev
+    - libnexus-dev
     - libfftw3-dev 
-    - libarmadillo8 
+    - libarmadillo9 
     - libarmadillo-dev
 script:
   - dpkg-query -L qt515base | grep bin
