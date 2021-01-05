@@ -9,6 +9,11 @@ REPOSPATH=$WORKSPACE/imagingsuite
 
 DEST=$WORKSPACE/builds
 
+echo $WORKSPACE
+echo $REPOSPATH
+echo $QTBINPATH
+echo $DEST
+
 mkdir -p $DEST/build-kipl
 cd $DEST/build-kipl
 
