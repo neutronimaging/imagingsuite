@@ -1,8 +1,25 @@
 language: cpp
+os: linux
 dist: focal
 compiler: gcc
 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - sourceline: 'ppa:beineri/opt-qt-5.15.2-focal'
+    update: true
+    packages:
+    - qt515base
+    - qt515tools
+    - gcc-9
+    - g++-9
+    - libc6-i386
+    - libgl-dev
+    - libgl1-mesa-dev
+    - mesa-common-dev
 script:
+  - /opt/qt515/bin/qt515-env.sh
   - export WORKSPACE=`pwd`/..
   - tmp=`which qmake`; export QTBINPATH="${tmp%qmake}"
   - build/build_core_kipl.sh
