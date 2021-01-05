@@ -1,0 +1,8 @@
+language: cpp
+dist: focal
+compiler: gcc
+
+script:
+  - export WORKSPACE=`pwd`
+  - tmp=`which qmake`; export QTBINPATH="${tmp%qmake}"
+  - build/build_core_kipl.sh
