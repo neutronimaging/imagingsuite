@@ -24,8 +24,7 @@ addons:
     - libarmadillo9 
     - libarmadillo-dev
 script:
-  - dpkg-query -L qt515base | grep bin
   - /opt/qt515/bin/qt515-env.sh
   - export WORKSPACE=`pwd`/..
-  - tmp=`which qmake`; export QTBINPATH="${tmp%qmake}"
+  - export QTBINPATH=/opt/qt515/bin 
   - build/build_core_kipl.sh
