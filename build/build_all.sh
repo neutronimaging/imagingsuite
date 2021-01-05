@@ -2,8 +2,8 @@
 
 REPOSPATH=$WORKSPACE/imagingsuite
 
-$REPOSPATH/build_core_kipl.sh
-$REPOSPATH/build_core_algorithms.sh
+$REPOSPATH/build/build_core_kipl.sh
+$REPOSPATH/build/build_core_algorithms.sh
 
 if [ -d "$WORKSPACE/ToFImaging" ] 
 then
