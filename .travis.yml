@@ -27,4 +27,4 @@ script:
   - /opt/qt515/bin/qt515-env.sh
   - export WORKSPACE=`pwd`/..
   - export QTBINPATH=/opt/qt515/bin 
-  - build/build_core_kipl.sh
+  - build/build_all.sh
