@@ -22,6 +22,11 @@ addons:
     - libcfitsio-dev 
     - libtiff-dev 
     - libxml2-dev 
+    - libhdf4-0
+    - libhdf4-dev
+    - libhdf5-103
+    - libhdf5-dev
+    - libnexus1
     - libnexus-dev
     - libfftw3-dev 
     - libarmadillo9 
@@ -32,4 +37,4 @@ script:
   - export QTBINPATH=/opt/qt515/bin 
   - build/build_all.sh
   - ls ../lib
-  - ls ../applications
+  - ls ../Applications
