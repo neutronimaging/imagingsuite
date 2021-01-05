@@ -1,7 +1,9 @@
 #!/bin/bash
-./build_core_kipl.sh
-./build_core_algorithms.sh
 
+REPOSPATH=$WORKSPACE/imagingsuite
+
+$REPOSPATH/build_core_kipl.sh
+$REPOSPATH/build_core_algorithms.sh
 
 if [ -d "$WORKSPACE/ToFImaging" ] 
 then
@@ -14,15 +16,13 @@ else
     echo "Warning: Directory $WORKSPACE/ToFImaging does not exists."
 fi
 
+$REPOSPATH/build/build_core_modules.sh
+$REPOSPATH/build/build_GUI.sh # needs to be here due to GUI components in modules
 
-./build_core_modules.sh
-./build_GUI.sh # needs to be here due to GUI components in modules
+$REPOSPATH/build/build_frameworks_tomography.sh
 
-./build_frameworks_tomography.sh
-#./build_frameworks_imageprocessing.sh
-
-./build_applications_imageviewer.sh
-./build_applications_muhrec.sh
-#./build_CLI_framesplitter.sh
+$REPOSPATH/build/build_applications_imageviewer.sh
+$REPOSPATH/build/build_applications_muhrec.sh
+$REPOSPATH/build_CLI_framesplitter.sh
 #./build_CLI_muhrec.sh
-../../ImagingQuality/build/build_applications_NIQA.sh
+#../../ImagingQuality/build/build_applications_NIQA.sh
