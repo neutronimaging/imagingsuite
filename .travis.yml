@@ -12,13 +12,19 @@ addons:
     packages:
     - qt515base
     - qt515tools
-    - gcc-9
-    - g++-9
     - libc6-i386
     - libgl-dev
     - libgl1-mesa-dev
     - mesa-common-dev
+    - libcfitsio-dev 
+    - libtiff-dev 
+    - libxml2-dev 
+    - libnexus0-dev
+    - libfftw3-dev 
+    - libarmadillo8 
+    - libarmadillo-dev
 script:
+  - dpkg-query -L qt515base | grep bin
   - /opt/qt515/bin/qt515-env.sh
   - export WORKSPACE=`pwd`/..
   - tmp=`which qmake`; export QTBINPATH="${tmp%qmake}"
