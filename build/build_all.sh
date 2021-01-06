@@ -23,6 +23,6 @@ $REPOSPATH/build/build_frameworks_tomography.sh
 
 $REPOSPATH/build/build_applications_imageviewer.sh
 $REPOSPATH/build/build_applications_muhrec.sh
-$REPOSPATH/build_CLI_framesplitter.sh
+# $REPOSPATH/build_CLI_framesplitter.sh
 #./build_CLI_muhrec.sh
 #../../ImagingQuality/build/build_applications_NIQA.sh

@@ -37,4 +37,3 @@ script:
   - export QTBINPATH=/opt/qt515/bin 
   - build/build_all.sh
   - ls ../lib
-  - ls ../Applications

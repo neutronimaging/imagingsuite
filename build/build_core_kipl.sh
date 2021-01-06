@@ -32,7 +32,7 @@ do
 		mkdir -p $DEST/build-$f
 		cd $DEST/build-$f
 
-                $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/core/kipl/UnitTests/$f/$f.pro
+        $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/core/kipl/UnitTests/$f/$f.pro
         make -f Makefile clean
         make -f Makefile mocables all
         make -f Makefile
