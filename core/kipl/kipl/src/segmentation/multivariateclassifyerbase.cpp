@@ -1,5 +1,5 @@
 //<LICENCE>
-
+#include <armadillo>
 #include "../../include/segmentation/multivariateclassifyerbase.h"
 
 #include "../include/base/KiplException.h"
@@ -13,11 +13,11 @@ ClassDescriptor::ClassDescriptor(std::string _name)
 
 /// \brief Create an initialized class descriptor
 /// \param _m mean value vector
-ClassDescriptor::ClassDescriptor(TNT::Array1D<double> _m,
-                TNT::Array2D<double> _C,
+ClassDescriptor::ClassDescriptor(arma::vec _m,
+                arma::mat _C,
                 std::string _name)
 {
-
+    throw kipl::base::KiplException("Distance metrics are not implemented",__FILE__, __LINE__);
 
 }
 
@@ -41,10 +41,10 @@ ClassDescriptor & ClassDescriptor::operator=(ClassDescriptor &cd)
 /// \param metric Selects the metric to calculate the distance
 double ClassDescriptor::Distance(ClassDescriptor &cd, eDistanceMetric metric)
 {
-    if (m.dim()!=cd.m.dim())
+    if (m.n_elem!=cd.m.n_elem)
         throw kipl::base::KiplException("Class distance: mean value matrix size mismatch",__FILE__,__LINE__);
 
-    if ((C.dim1()!=cd.C.dim1()) || (C.dim2()!=cd.C.dim2()))
+    if ((C.n_rows!=cd.C.n_rows) || (C.n_cols!=cd.C.n_cols))
         throw kipl::base::KiplException("Class distance: Covariance matrix size mismatch",__FILE__,__LINE__);
 
     return 0.0;
@@ -55,7 +55,7 @@ double ClassDescriptor::EuclideanDistance(ClassDescriptor &cd)
     double val=0.0;
     double sum=0.0;
 
-    for (int i=0; i<m.dim1(); i++) {
+    for (int i=0; i<m.n_elem; i++) {
         //val=m[i][0]-cd.m[i][0];
         sum+=val*val;
     }
