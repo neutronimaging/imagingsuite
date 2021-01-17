@@ -15,7 +15,10 @@ ClassDescriptor::ClassDescriptor(std::string _name)
 /// \param _m mean value vector
 ClassDescriptor::ClassDescriptor(arma::vec _m,
                 arma::mat _C,
-                std::string _name)
+                std::string _name) :
+    m(_m),
+    C(_C),
+    className(_name)
 {
     throw kipl::base::KiplException("Distance metrics are not implemented",__FILE__, __LINE__);
 
@@ -23,7 +26,10 @@ ClassDescriptor::ClassDescriptor(arma::vec _m,
 
 /// \brief Copy c'tor
 /// \param cd A class descriptor object
-ClassDescriptor::ClassDescriptor(ClassDescriptor &cd)
+ClassDescriptor::ClassDescriptor(ClassDescriptor &cd) :
+    m(cd.m),
+    C(cd.C),
+    className(cd.className)
 {
 
 }
@@ -32,7 +38,9 @@ ClassDescriptor::ClassDescriptor(ClassDescriptor &cd)
 /// \param cd A class descriptor object
 ClassDescriptor & ClassDescriptor::operator=(ClassDescriptor &cd)
 {
-
+    m = cd.m;
+    C = cd.C;
+    className = cd.className;
     return *this;
 }
 
@@ -47,20 +55,33 @@ double ClassDescriptor::Distance(ClassDescriptor &cd, eDistanceMetric metric)
     if ((C.n_rows!=cd.C.n_rows) || (C.n_cols!=cd.C.n_cols))
         throw kipl::base::KiplException("Class distance: Covariance matrix size mismatch",__FILE__,__LINE__);
 
+    switch (metric)
+    {
+    case Euclidean : return EuclideanDistance(cd);
+    case Euclidean2 : return EuclideanDistance2(cd);
+    case Mahalanobis : return MahalanobisDistance(cd);
+    case Bhattacharyya : return BhattacharyyaDistance(cd);
+    }
+
     return 0.0;
 }
 
 double ClassDescriptor::EuclideanDistance(ClassDescriptor &cd)
 {
+    return sqrt(EuclideanDistance2(cd));
+}
+
+double ClassDescriptor::EuclideanDistance2(ClassDescriptor &cd)
+{
     double val=0.0;
     double sum=0.0;
 
-    for (int i=0; i<m.n_elem; i++) {
-        //val=m[i][0]-cd.m[i][0];
+    for (arma::uword i=0; i<m.n_elem; i++)
+    {
         sum+=val*val;
     }
 
-    return sqrt(sum);
+    return sum;
 }
 
 double ClassDescriptor::MahalanobisDistance(ClassDescriptor &cd)
@@ -72,20 +93,21 @@ double ClassDescriptor::MahalanobisDistance(ClassDescriptor &cd)
 
 double ClassDescriptor::BhattacharyyaDistance(ClassDescriptor &cd)
 {
-//    TNT::Array2D<double> d;
-//    TNT::Array1D<double> mm=m-cd.m;
-//    TNT::Array2D<double> cc=C+cd.C;
+    throw kipl::base::KiplException("BhattacharyyaDistance is not implemented",__FILE__,__LINE__);
+    arma::mat d;
+    arma::mat mm=m-cd.m;
+    arma::mat cc=C+cd.C;
 
-//    d=TNT::matmult(cc,mm);
+    d=cc * mm;
 //    for (int i=0; i<mm.dim())
 
-//    if ((d.num_cols()!=1) || (d.num_rows()!=1))
-//        throw kipl::base::KiplException("Matrix multiplication did not result in a scalar",__FILE__,__LINE__);
+    if ((d.n_cols!=1) || (d.n_rows!=1))
+        throw kipl::base::KiplException("Matrix multiplication did not result in a scalar",__FILE__,__LINE__);
 
-//    double dist=0.125*d[0][0]-0.5*log(TNT::);
+    double dist=0.125*d.at(0)-0.5*log(1);
 
 
-    return 0.0;
+    return dist;
 }
 
 MultiVariateClassifyerBase::MultiVariateClassifyerBase()

@@ -8,7 +8,6 @@
 #include "../include/pca/pca.h"
 #include "../include/math/covariance.h"
 #include "../include/math/image_statistics.h"
-#include "../include/math/tnt_utils.h"
 
 namespace kipl {
 namespace pca {
