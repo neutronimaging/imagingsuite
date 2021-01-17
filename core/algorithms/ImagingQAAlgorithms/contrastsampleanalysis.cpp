@@ -1,9 +1,6 @@
 //<LICENSE>
 
-#include <tnt_array1d.h>
-#include <tnt_array2d.h>
-#include <jama_lu.h>
-#include <jama_qr.h>
+#include <armadillo>
 
 #include <base/thistogram.h>
 #include <base/tsubimage.h>
@@ -275,21 +272,22 @@ void ContrastSampleAnalysis::estimateInsetRing()
     qDebug() << msg.str().c_str();
     if (dots.size()<5)
         throw kipl::base::KiplException("Too few dots to estimate the ring parameters.");
-    TNT::Array2D<float> H(dots.size()-1UL,2);
-    TNT::Array1D<float> a(dots.size()-1UL);
+    arma::mat H(dots.size()-1UL,2);
+    arma::vec a(dots.size()-1UL);
+
     std::pair<float,float> xyN=dots.back();
-    for (size_t i=0; i<dots.size()-1; ++i) {
-        H[i][0]=2*(xyN.first-dots[i].first);
-        H[i][1]=2*(xyN.second-dots[i].second);
-        a[i]=xyN.first*xyN.first
+
+    for (size_t i=0; i<dots.size()-1; ++i)
+    {
+        H(i,0) = 2*(xyN.first-dots[i].first);
+        H(i,1) = 2*(xyN.second-dots[i].second);
+        a(i)   = xyN.first*xyN.first
                 +xyN.second*xyN.second
                 -dots[i].first*dots[i].first
                 -dots[i].second*dots[i].second;
     }
 
-    JAMA::QR<float> qr(H);
-    TNT::Array1D<float> parameters;
-    parameters = qr.solve(a);
+    arma::vec parameters = arma::solve(H,a);
     m_ringCenter.x=parameters[0];
     m_ringCenter.y=parameters[1];
 
@@ -311,8 +309,10 @@ void ContrastSampleAnalysis::estimateInsetRing()
     msg.str("");
     msg<<"Dot centers at:\n";
     float r=hypotf(m_maxInsetCenter.x-m_ringCenter.x,m_maxInsetCenter.y-m_ringCenter.y);
+
     m_insetCenters.clear();
-    for (int i=0 ; i<6 ; i++) {
+    for (int i=0 ; i<6 ; i++)
+    {
         kipl::base::coords3Df coord;
 
         coord.y=r*cos(phi+i*fPi/3)+m_ringCenter.y;
@@ -322,6 +322,7 @@ void ContrastSampleAnalysis::estimateInsetRing()
 
         msg<<"Inset "<<i<<" at "<<coord.x<<", "<<coord.y<<"\n";
     }
+
     logger.message(msg.str());
 }
 
