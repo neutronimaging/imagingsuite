@@ -7,7 +7,6 @@
 #include <base/tprofile.h>
 #include <base/tsubimage.h>
 #include <base/textractor.h>
-#include <math/tnt_utils.h>
 #include <math/statistics.h>
 #include <filters/filter.h>
 
