@@ -19,7 +19,6 @@ message("Destdir $$DESTDIR")
 
 
 unix {
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg
     QMAKE_CXXFLAGS += -fPIC -O2
     unix:!macx {
         INCLUDEPATH += /usr/include/cfitsio
@@ -40,7 +39,7 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+
     INCLUDEPATH += $$PWD/../../../../external/include
     INCLUDEPATH += ../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64

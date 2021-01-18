@@ -1,7 +1,7 @@
 //<LICENSE>
 
 #include <map>
-#include <math.h>
+#include <cmath>
 #include <sstream>
 #include <list>
 #include <algorithm>

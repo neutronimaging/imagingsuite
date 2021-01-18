@@ -20,7 +20,7 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += "$$PWD/../../../../../external/src/linalg" "$$PWD/../../../../../external/include" "$$PWD/../../../../../external/include/cfitsio"
+    INCLUDEPATH += "$$PWD/../../../../../external/include" "$$PWD/../../../../../external/include/cfitsio"
     QMAKE_LIBDIR += $$PWD/../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
@@ -29,7 +29,6 @@ win32 {
 
 unix {
     QMAKE_CXXFLAGS += -fPIC -O2
-    INCLUDEPATH += "../../../../../external/src/linalg"
 
     unix:!macx {
 

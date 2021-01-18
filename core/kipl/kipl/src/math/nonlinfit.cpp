@@ -9,15 +9,12 @@
 #include <armadillo>
 
 #include "../../include/math/nonlinfit.h"
-#include "../../include/math/jama_inverses.h"
 #include "../../include/math/mathconstants.h"
 #include "../../include/logging/logger.h"
 #include "../../include/base/KiplException.h"
 #include "../../include/strings/miscstring.h"
 
 #include <QDebug>
-
-using namespace JAMA;
 
 namespace Nonlinear {
 
@@ -412,7 +409,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
     int Gaussian::Hessian(double UNUSED(x), arma::mat &UNUSED)
     {
 
-        cerr<<"The Hessian is not available"<<endl;
+        std::cerr<<"The Hessian is not available"<<endl;
         return 1;
 
         /*
@@ -425,7 +422,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
 
     int Gaussian::Jacobian(double UNUSED(x), arma::mat & UNUSED(jac))
     {
-        cerr<<"The Jacobian is not available"<<endl;
+        std::cerr<<"The Jacobian is not available"<<endl;
         return 1;
         /*
         if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
@@ -445,7 +442,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
 
         for (i=0; i<m_Npars; i+=3)
         {
-            cout<<est[i]  <<"A="<<m_pars[i]  <<" "
+            std::cout<<est[i]  <<"A="<<m_pars[i]  <<" "
                 <<est[i+1]<<"m="<<m_pars[i+1]<<" "
                 <<est[i+2]<<"s="<<m_pars[i+2]<<endl;
         }
@@ -498,7 +495,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
     int SumOfGaussians::Hessian(double UNUSED(x), arma::mat &UNUSED)
     {
 
-        cerr<<"The Hessian is not available"<<endl;
+        std::cerr<<"The Hessian is not available"<<endl;
         return 1;
 
         /*
@@ -511,7 +508,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
 
     int SumOfGaussians::Jacobian(double UNUSED(x), arma::mat & UNUSED(jac))
     {
-        cerr<<"The Jacobian is not available"<<endl;
+        std::cerr<<"The Jacobian is not available"<<endl;
         return 1;
         /*
         if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
@@ -531,7 +528,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
 
         for (i=0; i<m_Npars; i+=3)
         {
-            cout<<est[i]  <<"A="<<m_pars[i]  <<" "
+            std::cout<<est[i]  <<"A="<<m_pars[i]  <<" "
                 <<est[i+1]<<"m="<<m_pars[i+1]<<" "
                 <<est[i+2]<<"s="<<m_pars[i+2]<<endl;
         }
@@ -578,7 +575,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
         for (i=0; i<m_Npars; i++)
             est[i]=m_lock[i] ? ' ': '*';
 
-        cout<<est[0]<<"A="<<m_pars[0]<<
+        std::cout<<est[0]<<"A="<<m_pars[0]<<
             " "<<est[1]<<"m="<<m_pars[1]<<
             " "<<est[2]<<"gamma="<<m_pars[2]<<
             " "<<est[3]<<"sigma="<<m_pars[3]<<endl;
@@ -618,7 +615,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
     {
         char est=m_lock[0] ? ' ' : '*';
 
-        cout<<est<<"gamma="<<m_pars[0];
+        std::cout<<est<<"gamma="<<m_pars[0];
         return 0;
     }
 
@@ -627,7 +624,7 @@ void LevenbergMarquardt::gaussj(arma::mat &a, arma::mat &b)
 
 }
 
-void string2enum(string &str, Nonlinear::eProfileFunction &e)
+void string2enum(std::string &str, Nonlinear::eProfileFunction &e)
 {
     std::string lowstr=kipl::strings::toLower(str);
 
@@ -664,7 +661,7 @@ std::string enum2string(Nonlinear::eProfileFunction e)
     return "GaussProfile";
 }
 
-ostream &operator<<(ostream &s, Nonlinear::eProfileFunction e)
+std::ostream &operator<<(std::ostream &s, Nonlinear::eProfileFunction e)
 {
     std::string str;
     str=enum2string(e);
