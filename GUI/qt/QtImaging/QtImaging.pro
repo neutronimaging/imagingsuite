@@ -80,7 +80,6 @@ CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib
 else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug
 
 LIBS += -lkipl -lQtAddons -lReaderConfig -lImagingAlgorithms
-INCLUDEPATH += $$PWD/../../../external/src/linalg
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include

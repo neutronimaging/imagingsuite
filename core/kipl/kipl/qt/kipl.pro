@@ -19,7 +19,6 @@ message("Destdir $$DESTDIR")
 
 
 unix {
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg
     QMAKE_CXXFLAGS += -fPIC -O2
     unix:!macx {
         INCLUDEPATH += /usr/include/cfitsio
@@ -32,24 +31,27 @@ unix {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
+
+    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+
     INCLUDEPATH += $$PWD/../../../../external/include
     INCLUDEPATH += ../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
+    QMAKE_LIBDIR += $$PWD/../../../../../ExternalDependencies/windows/lib
     QMAKE_CXXFLAGS += /openmp /O2
 
     DEFINES += NOMINMAX
+
+    LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+    LIBS += -llibopenblas
 }
 
-win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
-else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi -lliblapack -llibblas
-else:unix: LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 
 DEFINES += KIPL_LIBRARY
 
@@ -216,7 +218,6 @@ HEADERS +=\
     ../include/math/LUTCollection.h \
     ../include/math/LUTbase.h \
     ../include/math/LinearAlgebra.h \
-    ../include/math/jama_inverses.h \
     ../include/math/image_statistics.h \
     ../include/math/GaussianNoise.h \
     ../include/math/core/median.hpp \
@@ -302,7 +303,6 @@ HEADERS +=\
     ../include/utilities/TimeDate.h \
     ../include/math/covariance.h \
     ../include/pca/pca.h \
-    ../include/math/tnt_utils.h \
     ../include/math/core/covariance.hpp \
     ../include/filters/GaborFilter.h \
     ../include/morphology/skeleton.h \

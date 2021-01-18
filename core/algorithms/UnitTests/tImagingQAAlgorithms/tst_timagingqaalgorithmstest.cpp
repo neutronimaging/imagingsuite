@@ -152,7 +152,6 @@ void TImagingQAAlgorithmsTest::testResEstAdmin()
 //    void   setProfile(double *p, int N, double d=1.0);
 //    void   setProfile(std::vector<double> &p, double d=1.0);
 //    void   setProfile(std::vector<float> &p, double d=1.0);
-//    void   setProfile(TNT::Array1D<double> &p, double d=1.0);
 
 }
 

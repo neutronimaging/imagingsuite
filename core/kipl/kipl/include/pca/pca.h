@@ -7,8 +7,7 @@
 #include <iostream>
 #include <string>
 
-#include <tnt_array2d.h>
-
+#include <armadillo>
 #include "../base/timage.h"
 #include "../logging/logger.h"
 #include "../math/covariance.h"
@@ -31,9 +30,9 @@ public:
 
     void eigenimages(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,3> &eig);
     void filter(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,3> &filt, int level);
-    TNT::Array2D<double> cov();
-    TNT::Array1D<double> eigenvalues();
-    TNT::Array2D<double> eigenvectors();
+    arma::mat cov();
+    arma::vec eigenvalues();
+    arma::mat eigenvectors();
 
     void setCovarianceType(kipl::math::eCovarianceType ct);
     kipl::math::eCovarianceType getCovarianceType();
@@ -55,14 +54,14 @@ protected:
     double * m_fMean;
     double * m_fStdDev;
 
-    TNT::Array2D<double> m_mCovariance;
+    arma::mat m_mCovariance;
     kipl::math::eCovarianceType m_eCovType;
 
     kipl::pca::ePCA_DecompositionType m_eDecompositionType;
 
-    TNT::Array2D<double> m_mEigenVectors;
-    TNT::Array1D<double> m_mEigenValues;
-    TNT::Array2D<double> m_mTransformMatrix;
+    arma::mat m_mEigenVectors;
+    arma::vec m_mEigenValues;
+    arma::mat m_mTransformMatrix;
 };
 }
 }

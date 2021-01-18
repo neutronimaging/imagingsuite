@@ -53,20 +53,22 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
 
     modules.clear();
     reader = xmlReaderForFile(configfile.c_str(), nullptr, 0);
-    if (reader != nullptr) {
+    if (reader != nullptr)
+    {
     	ret = xmlTextReaderRead(reader);
         name = xmlTextReaderConstName(reader);
 
-
-        if (name==nullptr) {
+        if (name==nullptr)
+        {
             throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
         }
 
         sName=reinterpret_cast<const char *>(name);
         msg.str(""); msg<<"Found "<<sName<<" expect "<<ProjectName;
         logger(kipl::logging::Logger::LogMessage,msg.str());
-        if (std::string(sName)!=ProjectName) {
-            msg.str();
+        if (std::string(sName)!=ProjectName)
+        {
+            msg.str("");
             msg<<"Unexpected project contents in parameter file ("<<sName<<"!="<<ProjectName<<")";
             logger(kipl::logging::Logger::LogMessage,msg.str());
             throw ModuleException(msg.str(),__FILE__,__LINE__);
@@ -76,11 +78,14 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
     	
         ret = xmlTextReaderRead(reader);
         
-        while (ret == 1) {
-        	if (xmlTextReaderNodeType(reader)==1) {
+        while (ret == 1)
+        {
+            if (xmlTextReaderNodeType(reader)==1)
+            {
 	            name = xmlTextReaderConstName(reader);
 	            
-                if (name==nullptr) {
+                if (name==nullptr)
+                {
 	                throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	            }
 	            sName=reinterpret_cast<const char *>(name);
@@ -96,12 +101,15 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
             ret = xmlTextReaderRead(reader);
         }
         xmlFreeTextReader(reader);
-        if (ret != 0) {
+        if (ret != 0)
+        {
         	std::stringstream str;
         	str<<"Module config failed to parse "<<configfile;
         	throw ModuleException(str.str(),__FILE__,__LINE__);
         }
-    } else {
+    }
+    else
+    {
     	std::stringstream str;
     	str<<"Module config could not open "<<configfile;
     	throw ModuleException(str.str(),__FILE__,__LINE__);
