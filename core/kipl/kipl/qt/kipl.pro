@@ -49,10 +49,8 @@ win32 {
 
     DEFINES += NOMINMAX
 
-
     LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
     LIBS += -llibopenblas
-#    LIBS += -lliblapack -llibblas
 }
 
 
@@ -221,7 +219,6 @@ HEADERS +=\
     ../include/math/LUTCollection.h \
     ../include/math/LUTbase.h \
     ../include/math/LinearAlgebra.h \
-    ../include/math/jama_inverses.h \
     ../include/math/image_statistics.h \
     ../include/math/GaussianNoise.h \
     ../include/math/core/median.hpp \
@@ -307,7 +304,6 @@ HEADERS +=\
     ../include/utilities/TimeDate.h \
     ../include/math/covariance.h \
     ../include/pca/pca.h \
-    ../include/math/tnt_utils.h \
     ../include/math/core/covariance.hpp \
     ../include/filters/GaborFilter.h \
     ../include/morphology/skeleton.h \
