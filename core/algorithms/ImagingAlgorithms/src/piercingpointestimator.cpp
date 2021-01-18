@@ -4,15 +4,9 @@
 
 #include <algorithm>
 
-#include <tnt_array1d.h>
-#include <tnt_array2d.h>
-#include <jama_lu.h>
-#include <jama_qr.h>
-
 #include <base/tprofile.h>
 #include <base/tsubimage.h>
 #include <base/textractor.h>
-#include <math/tnt_utils.h>
 #include <math/statistics.h>
 #include <filters/filter.h>
 
@@ -125,26 +119,24 @@ void PiercingPointEstimator::ComputeEstimate(kipl::base::TImage<float,2> &img)
 {
     int matrix_cols = 6;
 
-    Array2D< double > H(img.Size(),matrix_cols, 0.0);
-    Array1D< double > I(img.Size(), 0.0);
+    arma::mat H(img.Size(),matrix_cols);
+    arma::vec I(img.Size());
 
     size_t i=0;
     for (double y=0; y<img.Size(1); ++y) {
         for (double x=0; x<img.Size(0); ++x,++i) {
-                  H[i][0] = 1;
-                  H[i][1] = x;
-                  H[i][2] = y;
-                  H[i][3] = x*y;
-                  H[i][4] = x*x;
-                  H[i][5] = y*y;
-                  I[i]    = img[i];
+                  H.at(i,0) = 1;
+                  H.at(i,1) = x;
+                  H.at(i,2) = y;
+                  H.at(i,3) = x*y;
+                  H.at(i,4) = x*x;
+                  H.at(i,5) = y*y;
+                  I.at(i)    = img[i];
             }
 
     }
 
-    JAMA::QR<double> qr(H);
-    parameters = qr.solve(I);
-
+    parameters = arma::solve(H,I);
     std::ostringstream msg;
     msg<<parameters[0]<<", "
        <<parameters[1]<<", "
@@ -172,25 +164,24 @@ pair<float,float> PiercingPointEstimator::LocateMax()
     logger(logger.LogMessage,"Enter locate max");
     pair<float,float> position;
 
-    Array2D< float > H(2,2, 0.0);
+    arma::mat H(2,2);
 
-    H[0][0] = 2*parameters[4];
-    H[0][1] =   parameters[3];
-    H[1][0] =   parameters[3];
-    H[1][1] = 2*parameters[5];
+    H(0,0) = 2*parameters[4];
+    H(0,1) =   parameters[3];
+    H(1,0) =   parameters[3];
+    H(1,1) = 2*parameters[5];
 
-    Array1D< float > I(2, 0.0);
+    arma::vec I(2);
 
-    I[0]    =  -parameters[1];
-    I[1]    =  -parameters[2];
+    I(0)    =  -parameters[1];
+    I(1)    =  -parameters[2];
 
     logger(logger.LogMessage,"Initialize");
-    JAMA::QR<float> qr(H);
-    Array1D< float > pos(2, 0.0);
-    pos = qr.solve(I);
+
+    arma::vec pos = arma::solve(H,I);
 
     logger(logger.LogMessage,"Equation solved");
-    position = make_pair(pos[0], pos[1]);
+    position = make_pair(pos(0), pos(1));
 
     msg.str("");
     msg<<"Got pair "<<position.first<<", "<<position.second<<", ";

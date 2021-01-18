@@ -493,11 +493,11 @@ void TKiplMathTest::testCovDims()
 
     kipl::math::Covariance<float> cov;
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
-    QCOMPARE(C.dim1(),C.dim2());
+    QCOMPARE(C.n_rows,C.n_cols);
 
-    QCOMPARE(C.dim1(),int(img.Size(1)));
+    QCOMPARE(C.n_rows,int(img.Size(1)));
 }
 
 void TKiplMathTest::testCovSymmetry()
@@ -508,11 +508,13 @@ void TKiplMathTest::testCovSymmetry()
 
     kipl::math::Covariance<float> cov;
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
-    for (int i=0; i<int(img.Size(1)); i++) {
-        for (int j=i; j<int(img.Size(1)); j++) {
-            QCOMPARE(C[i][j],C[j][i]);
+    for (int i=0; i<int(img.Size(1)); i++)
+    {
+        for (int j=i; j<int(img.Size(1)); j++)
+        {
+            QCOMPARE(C.at(i,j),C.at(j,i));
         }
     }
 }
@@ -525,7 +527,7 @@ void TKiplMathTest::testCovIntactData()
 
     kipl::math::Covariance<float> cov;
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
     for (int i=0; i<int(img.Size()); i++)
         QCOMPARE(img[i],sin2D[i]);
@@ -542,15 +544,17 @@ void TKiplMathTest::testCovSmallData()
 
     cov.setResultMatrixType(kipl::math::CovarianceMatrix);
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
-    for (int i=0 ; i<img.Size(1); i++) {
-        for (int j=0 ; j<img.Size(1); j++) {
+    for (int i=0 ; i<img.Size(1); i++)
+    {
+        for (int j=0 ; j<img.Size(1); j++)
+        {
   //          std::cout<<std::setw(12)<<C[i][j];
 
         }
 //        std::cout<<std::endl;
-        QVERIFY(fabs(C[i][i]-0.5)<1e-7);
+        QVERIFY(fabs(C.at(i,i)-0.5)<1e-7);
     }
 }
 
@@ -563,14 +567,14 @@ void TKiplMathTest::testCorrSmallData()
     kipl::math::Covariance<float> cov;
     cov.setResultMatrixType(kipl::math::CorrelationMatrix);
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
-    for (int i=0 ; i<img.Size(1); i++) {
-        for (int j=0 ; j<img.Size(1); j++) {
-            std::cout<<std::setw(12)<<C[i][j];
+    for (size_t i=0 ; i<img.Size(1); i++) {
+        for (size_t j=0 ; j<img.Size(1); j++) {
+            std::cout<<std::setw(12)<<C.at(i,j);
         }
         std::cout<<std::endl;
-        QVERIFY(fabs(C[i][i]-1.0)<1e-7);
+        QVERIFY(fabs(C.at(i,i)-1.0)<1e-7);
     }
 }
 

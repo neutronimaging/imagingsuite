@@ -13,6 +13,7 @@ namespace segmentation {
     public:
         enum eDistanceMetric {
             Euclidean = 0,
+            Euclidean2,
             Mahalanobis,
             Bhattacharyya
         };
@@ -44,6 +45,7 @@ namespace segmentation {
         std::string className; ///<! Name of the class descriptor
     private:
         double EuclideanDistance(ClassDescriptor &cd);
+        double EuclideanDistance2(ClassDescriptor &cd);
         double MahalanobisDistance(ClassDescriptor &cd);
         double BhattacharyyaDistance(ClassDescriptor &cd);
 
