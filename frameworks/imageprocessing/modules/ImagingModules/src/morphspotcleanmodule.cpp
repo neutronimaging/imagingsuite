@@ -1,3 +1,4 @@
+//<LICENSE>
 #include "morphspotcleanmodule.h"
 #include <thread>
 #include <cstdlib>
@@ -6,6 +7,7 @@
 #include <ParameterHandling.h>
 #include <MorphSpotClean.h>
 #include <base/timage.h>
+#include <base/textractor.h>
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <ImagingException.h>
@@ -15,7 +17,7 @@
 
 IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor) :
     KiplProcessModuleBase("MorphSpotClean",false, interactor),
-    m_eConnectivity(kipl::morphology::conn4),
+    m_eConnectivity(kipl::base::conn4),
     m_eDetectionMethod(ImagingAlgorithms::MorphDetectPeaks),
     m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
     m_fThreshold{0.1f,0.1f},
@@ -24,7 +26,7 @@ IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::MorphSpotCleanModule(kipl::int
     m_nMaxArea(30),
     m_bRemoveInfNan(false),
     m_bUseClamping(false),
-    m_fMinLevel(-0.1f),
+    m_fMinLevel(-0.1),
     m_fMaxLevel(12),
     m_bThreading(false)
 {
@@ -41,8 +43,8 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::Configure(KiplProcessConfi
     string2enum(GetStringParameter(parameters,"connectivity"),m_eConnectivity);
     string2enum(GetStringParameter(parameters,"cleanmethod"),m_eCleanMethod);
     string2enum(GetStringParameter(parameters,"detectionmethod"),m_eDetectionMethod);
-    kipl::strings::String2Array(GetStringParameter(parameters,"threshold"),m_fThreshold,2);
-    kipl::strings::String2Array(GetStringParameter(parameters,"sigma"),m_fSigma,2);
+    kipl::strings::string2vector(GetStringParameter(parameters,"threshold"),m_fThreshold);
+    kipl::strings::string2vector(GetStringParameter(parameters,"sigma"),m_fSigma);
     m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
     m_nMaxArea          = GetIntParameter(parameters,"maxarea");
     m_bRemoveInfNan     = kipl::strings::string2bool(GetStringParameter(parameters,"removeinfnan"));
@@ -61,8 +63,8 @@ std::map<string, string> IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::GetPa
     parameters["connectivity"] = enum2string(m_eConnectivity);
     parameters["cleanmethod"]  = enum2string(m_eCleanMethod);
     parameters["detectionmethod"] = enum2string(m_eDetectionMethod);
-    parameters["threshold"]    = kipl::strings::Array2String(m_fThreshold,2);
-    parameters["sigma"]        = kipl::strings::Array2String(m_fSigma,2);
+    parameters["threshold"]    = kipl::strings::Vector2String(m_fThreshold);
+    parameters["sigma"]        = kipl::strings::Vector2String(m_fSigma);
     parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
     parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
     parameters["removeinfnan"] = kipl::strings::bool2string(m_bRemoveInfNan);
@@ -110,7 +112,7 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::ProcessCore(kipl::base::TI
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
     cleaner.setEdgeConditioning(m_nEdgeSmoothLength);
-    cleaner.cleanInfNan(m_bRemoveInfNan);
+    cleaner.cleanInfNan();
     cleaner.setLimits(m_bUseClamping,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
 
     kipl::base::TImage<float,2> slice;
@@ -121,7 +123,7 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::ProcessCore(kipl::base::TI
         slice=kipl::base::ExtractSlice(img,i,kipl::base::ImagePlaneXY,nullptr);
 
             try {
-                cleaner.Process(slice,m_fThreshold, m_fSigma);
+                cleaner.process(slice,m_fThreshold, m_fSigma);
             }
             catch (ImagingException & e) {
                 msg.str();
@@ -153,6 +155,6 @@ kipl::base::TImage<float,2> IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::De
 {
     ImagingAlgorithms::MorphSpotClean cleaner;
     cleaner.setCleanMethod(dm,m_eCleanMethod);
-    return cleaner.DetectionImage(img);
+    return cleaner.detectionImage(img);
 }
 

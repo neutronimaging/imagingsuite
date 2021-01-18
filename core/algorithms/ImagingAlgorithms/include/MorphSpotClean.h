@@ -5,9 +5,12 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
+#include <array>
 
 #include "ImagingAlgorithms_global.h"
 #include <base/timage.h>
+#include <base/kiplenums.h>
 #include <morphology/morphology.h>
 #include <logging/logger.h>
 #include <containers/ArrayBuffer.h>
@@ -35,15 +38,23 @@ class IMAGINGALGORITHMSSHARED_EXPORT MorphSpotClean
     const float mark;
 public:
     MorphSpotClean();
-    void Process(kipl::base::TImage<float,2> &img, float th, float sigma);
-    void Process(kipl::base::TImage<float,2> &img, float *th, float *sigma);
+    void process(kipl::base::TImage<float,2> &img, float th, float sigma);
+    void process(kipl::base::TImage<float,2> &img, std::vector<float> &th, std::vector<float> &sigma);
 
-    void setConnectivity(kipl::morphology::MorphConnect conn = kipl::morphology::conn8);
+    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
+    kipl::base::eConnectivity connectivity();
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
+    eMorphDetectionMethod detectionMethod();
+    eMorphCleanMethod cleanMethod();
     void setLimits(bool bClamp, float fMin, float fMax, int nMaxArea);
-    void cleanInfNan(bool remove);
+    std::vector<float> clampLimits();
+    bool clampActive();
+    int maxArea();
+    void setCleanInfNan(bool activate);
+    bool cleanInfNan();
     void setEdgeConditioning(int nSmoothLenght);
-    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
+    int edgeConditionLength();
+    kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);
 
 protected:
     void FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks);
@@ -75,7 +86,7 @@ protected:
 
     kipl::base::TImage<float,2> CleanByArray(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels);
 
-    kipl::morphology::MorphConnect m_eConnectivity;
+    kipl::base::eConnectivity m_eConnectivity;
     eMorphCleanMethod              m_eMorphClean;
     eMorphDetectionMethod          m_eMorphDetect;
     size_t m_nEdgeSmoothLength;
@@ -85,8 +96,8 @@ protected:
     bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    float m_fThreshold[2];
-    float m_fSigma[2];
+    std::vector<float> m_fThreshold;
+    std::vector<float> m_fSigma;
     kipl::math::SigmoidLUT m_LUT;
 
     kipl::base::TImage<float,2> mask;

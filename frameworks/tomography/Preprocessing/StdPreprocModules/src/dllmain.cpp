@@ -1,15 +1,4 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2011-04-22 12:52:16 +0200 (Fr, 22 Apr 2011) $
-// $Rev: 915 $
-// $Id: NormPlugins.h 915 2011-04-22 10:52:16Z kaestner $
-//
-//#include "stdafx.h"
+//<LICENSE>
 //#ifdef _MSC_VER
 
 //// dllmain.cpp : Defines the entry point for the DLL application.

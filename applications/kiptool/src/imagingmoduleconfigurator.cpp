@@ -10,6 +10,8 @@
 #include <KiplEngine.h>
 #include "ImageIO.h"
 
+#include <QDebug>
+
 ImagingModuleConfigurator::ImagingModuleConfigurator(KiplProcessConfig *config)
 {
     ModuleConfigurator::m_Config=dynamic_cast<ConfigBase *>(config);
@@ -20,14 +22,14 @@ ImagingModuleConfigurator::~ImagingModuleConfigurator(){
 }
 
 
-int ImagingModuleConfigurator::GetImage(std::string sSelectedModule)
+int ImagingModuleConfigurator::GetImage(std::string sSelectedModule, kipl::interactors::InteractionBase *interactor)
 {
-
+    std::ostringstream msg;
     KiplEngine *engine=nullptr;
     KiplFactory factory;
 
     KiplProcessConfig * config=dynamic_cast<KiplProcessConfig *>(m_Config);
-    std::ostringstream msg;
+
     try {
         engine=factory.BuildEngine(*dynamic_cast<KiplProcessConfig *>(m_Config));
     }
@@ -53,13 +55,13 @@ int ImagingModuleConfigurator::GetImage(std::string sSelectedModule)
 
     logger(kipl::logging::Logger::LogMessage,"Engine successfully built");
 
-    m_OriginalImage = LoadVolumeImage(*config);
+    m_OriginalImage = LoadVolumeImage(*config,interactor);
 
     m_Image=engine->RunPreproc(&m_OriginalImage,sSelectedModule);
 
-
     if (engine!=nullptr)
         delete engine;
-    return 0;
+
+    return 1;
 }
 

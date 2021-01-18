@@ -10,7 +10,7 @@ TARGET = StdBackProjectors
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
+CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
 
 
@@ -104,11 +104,10 @@ else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debu
 #INCLUDEPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
 #DEPENDPATH += $$PWD/../../../../../../../kipl/trunk/kipl/include
 
-LIBS += -lkipl -lModuleConfig -lReconFramework
+LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
-
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
@@ -116,7 +115,8 @@ DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
 
-
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/src
 
 macx: {
 INCLUDEPATH += $$PWD/../../../../../../external/mac/include

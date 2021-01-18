@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef STRIPEFILTERMODULE_H
 #define STRIPEFILTERMODULE_H
 
@@ -34,9 +35,9 @@ protected:
     std::string m_sWaveletName;
 //    size_t scale;
     float m_fSigma;
-    size_t m_nLevels;
+    int m_nLevels;
     bool m_bParallelProcessing;
-    ImagingAlgorithms::StripeFilterOperation op;
+    ImagingAlgorithms::eStripeFilterOperation op;
     kipl::base::eImagePlanes plane;
 
 private:

@@ -1,9 +1,10 @@
-//<LICENCE>
+//<LICENSE>
 
 #ifndef TIMAGE_H_
 #define TIMAGE_H_
 #include <stdexcept>
 #include <complex>
+#include <vector>
 
 #include "core/sharedbuffer.h"
 #include "imageinfo.h"
@@ -26,7 +27,13 @@ public:
 	TImage(const TImage<T,N> &img);
 	/// \brief Constructor to specify the image size
 	/// \param dims Array containing the dimensions of the image. The first index in the dimension array refers to the fast index increment in the image.
-	TImage(size_t const * const dims);
+    TImage(const std::vector<size_t> & dims);
+
+    /// \brief C'tor to initialize image to use an external buffer
+    /// \param pBuffer pointer to the externa buffer
+    /// \param dims array containing the image dimensions
+    TImage(T *pBuffer, const std::vector<size_t> & dims);
+
 	/// \brief D'tor for the image class. 
 	~TImage();
 	
@@ -43,6 +50,8 @@ public:
 	/// \returns The length of the data buffer
 	/// \test The method is tested with unit test
 	size_t Size() const { return m_buffer.Size(); }
+
+    bool haveExternalBuffer() {return m_buffer.haveExternalBuffer();}
 	
 	/// \param n Dimension index (starts with 0)
 	/// \returns The length of dimension n
@@ -57,9 +66,10 @@ public:
 		return m_Dims[n];	
 	}
 	
-	void FreeImage() { size_t d[8]={1,1,1,1,1,1,1,1}; Resize(d); }
+    void FreeImage() { std::vector<size_t> d(N,1); resize(d); }
 
-	size_t Resize(size_t const * const dims);
+//	size_t Resize(size_t const * const dims);
+    size_t resize(const std::vector<size_t> &dims);
 	/// \brief Element access operator
 	/// \param index Sequential index of a pixel in the image
 	/// \test The operator is tested by a unit test
@@ -82,14 +92,14 @@ public:
 	/// \test The method is tested with unit test
 	int References() {return m_buffer.References();}
 	// Arithmetic operators
-	TImage<T,N> & operator+=(TImage<T,N> &img); //< Operator to add two images
-	TImage<T,N> & operator-=(TImage<T,N> &img);
-	TImage<T,N> & operator*=(TImage<T,N> &img);
-	TImage<T,N> & operator/=(TImage<T,N> &img);
-	TImage<T,N> & operator+=(const T x);
-	TImage<T,N> & operator-=(const T x);
-	TImage<T,N> & operator*=(const T x);
-	TImage<T,N> & operator/=(const T x);
+    const TImage<T,N> & operator+=(const TImage<T,N> &img); //< Operator to add two images
+    const TImage<T,N> & operator-=(const TImage<T,N> &img);
+    const TImage<T,N> & operator*=(const TImage<T,N> &img);
+    const TImage<T,N> & operator/=(const TImage<T,N> &img);
+    const TImage<T,N> & operator+=(const T x);
+    const TImage<T,N> & operator-=(const T x);
+    const TImage<T,N> & operator*=(const T x);
+    const TImage<T,N> & operator/=(const T x);
 
     TImage<T,N> operator+(const T x) const;
     TImage<T,N> operator-(const T x) const;
@@ -129,7 +139,8 @@ public:
 	}
 	
 	/// \brief Returns a reference to the dimension array
-    const size_t * Dims() const {return m_Dims;}
+//    const size_t * Dims() const {return m_Dims;}
+    const std::vector<size_t> & dims() const { return m_Dims;}
 
     /// \brief Makes a current image a deep copy of the data.
 	void Clone();
@@ -142,15 +153,15 @@ public:
 private:
   /// \brief Computes to number of elements to allocate for the image
   /// \param dims Array containing the dimensions of the image
-	size_t _ComputeNElements(size_t const * const dims);
-	
+    size_t _ComputeNElements(const std::vector<size_t> & dims);
+    /// \brief Dimension array
+    std::vector<size_t> m_Dims;
 	size_t m_NData;
 	
 	/// \brief Buffer constaining the image data
 	kipl::base::core::buffer<T> m_buffer;
 
-	/// \brief Dimension array
-	size_t m_Dims[N];
+
 };
 
 /// \brief Computes the pixelwise sum between two images
@@ -158,28 +169,28 @@ private:
 /// \param imgB The second term
 /// \returns The pixewise sum
 template<typename T, size_t N>
-TImage<T,N> operator+(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator+(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Computes the pixelwise difference between two images
 /// \param imgA The first term
 /// \param imgB The second term
 /// \returns The pixewise difference
 template<typename T, size_t N>
-TImage<T,N> operator-(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator-(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Computes the pixelwise product between two images
 /// \param imgA The first factor
 /// \param imgB The second factor
 /// \returns The pixewise sum
 template<typename T, size_t N>
-TImage<T,N> operator*(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator*(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Computes the pixelwise division between two images
 /// \param imgA The numerator
 /// \param imgB The denominator
 /// \returns The pixewise sum
 template<typename T, size_t N>
-TImage<T,N> operator/(TImage<T,N> &imgA, TImage<T,N> &imgB);
+const TImage<T,N> operator/(const TImage<T,N> &imgA, const TImage<T,N> &imgB);
 
 /// \brief Send information about the image to a stream
 /// \param s target stream
@@ -194,6 +205,9 @@ std::ostream & operator<<(std::ostream &s, const TImage<T,N> &img);
 /// \returns true if the images have the same dimensions
 template<typename T, size_t N>
 bool CheckEqualSize(TImage<T,N> &img1, TImage<T,N> &img2);
+
+template<typename T>
+std::string renderImgAsString(kipl::base::TImage<T,2> &img, size_t N=20);
 }}
 
 // Implementation of the methods

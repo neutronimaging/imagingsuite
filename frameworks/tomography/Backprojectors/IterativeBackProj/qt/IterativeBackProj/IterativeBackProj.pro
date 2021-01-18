@@ -40,7 +40,6 @@ unix:!symbian {
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
-        QMAKE_INFO_PLIST = Info.plist
         ICON = muhrec3.icns
     }
     else {

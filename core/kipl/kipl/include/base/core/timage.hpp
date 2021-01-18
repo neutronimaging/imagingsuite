@@ -6,6 +6,9 @@
 #include <cstring>
 #include <typeinfo>
 #include <iomanip>
+#include <algorithm>
+#include "../timage.h"
+
 #ifdef _OPENMP
     #include <omp.h>
 #else
@@ -21,23 +24,37 @@ using namespace std;
 namespace kipl { namespace base {
 
 template<typename T, size_t N>
-TImage<T,N>::TImage() : m_NData(0), m_buffer(0)
+TImage<T,N>::TImage() :
+    m_Dims(N,0UL),
+    m_NData(0),
+    m_buffer(0)
 {
-	memset(m_Dims,0,N*sizeof(size_t));
 }
 	
 template<typename T, size_t N>
-TImage<T,N>::TImage(const TImage<T,N> &img) : m_NData(img.m_NData), m_buffer(img.m_buffer)
+TImage<T,N>::TImage(const TImage<T,N> &img) :
+    m_Dims(img.m_Dims),
+    m_NData(img.m_NData),
+    m_buffer(img.m_buffer)
 {
 	info=img.info;
-	memcpy(m_Dims,img.m_Dims,N*sizeof(size_t));
 }
 
 template<typename T, size_t N>
-TImage<T,N>::TImage(size_t const * const dims) : m_NData(_ComputeNElements(dims)), m_buffer(m_NData) 
+TImage<T,N>::TImage(const std::vector<size_t> & dims) :
+    m_Dims(dims.begin(),dims.begin()+N),
+    m_NData(_ComputeNElements(m_Dims)),
+    m_buffer(m_NData)
 {
-	memcpy(m_Dims,dims,N*sizeof(size_t));
-	memset(m_buffer.GetDataPtr(), 0, m_NData*sizeof(T));
+    std::fill_n(m_buffer.GetDataPtr(), m_NData,0);
+}
+
+template<typename T, size_t N>
+TImage<T,N>::TImage(T *pBuffer, const std::vector<size_t> & dims) :
+    m_Dims(dims.begin(),dims.begin()+N),
+    m_NData(_ComputeNElements(dims)),
+    m_buffer(pBuffer,m_NData)
+{
 }
 
 template<typename T, size_t N>
@@ -49,10 +66,10 @@ TImage<T,N>::~TImage()
 template<typename T, size_t N>
 const TImage<T,N> & TImage<T,N>::operator=(const TImage<T,N> &img)
 {
-	info=img.info;
-	m_buffer=img.m_buffer;
-	m_NData=img.m_NData;
-	memcpy(m_Dims, img.m_Dims, N*sizeof(size_t));
+    info     = img.info;
+    m_buffer = img.m_buffer;
+    m_NData  = img.m_NData;
+    m_Dims   = img.m_Dims;
 	
 	return *this;
 }
@@ -60,18 +77,9 @@ const TImage<T,N> & TImage<T,N>::operator=(const TImage<T,N> &img)
 template<typename T, size_t N>
 const TImage<T,N> & TImage<T,N>::operator=(const T value)
 {
-	if (value==static_cast<T>(0)) {
-		memset(m_buffer.GetDataPtr(),0,m_buffer.Size()*sizeof(T));
-	}
-	else {
-		T* pData=m_buffer.GetDataPtr();
-		const size_t n=m_buffer.Size();
-		for (size_t i=0; i<n; i++) {
-			pData[i]=value;
-		}
-	}
+    std::fill_n(m_buffer.GetDataPtr(),m_buffer.Size(),value);
 
-	return *this;
+    return *this;
 }
 
 template<typename T, size_t N>
@@ -83,12 +91,12 @@ void TImage<T,N>::Clone()
 template<typename T, size_t N>
 void TImage<T,N>::Clone(const kipl::base::TImage<T,N> &img)
 {
-    this->Resize(img.Dims());
+    this->resize(img.dims());
     std::copy(img.GetDataPtr(),img.GetDataPtr()+img.Size(),this->GetDataPtr());
 }
 
 template<typename T, size_t N>
-size_t TImage<T,N>::_ComputeNElements(size_t const * const dims)
+size_t TImage<T,N>::_ComputeNElements(const std::vector<size_t> & dims)
 {
 	size_t NData=dims[0];
 	for (size_t i=1; i<N; i++)
@@ -118,18 +126,21 @@ T & TImage<T,N>::operator()(int x, int y, int z)
 }
 
 template<typename T, size_t N>
-size_t TImage<T,N>::Resize(size_t const * const dims) 
+size_t TImage<T,N>::resize(const std::vector<size_t> & dims)
 {
-	m_buffer.Resize(_ComputeNElements(dims));
-	for (size_t i=0; i<N; i++)
-		m_Dims[i]=dims[i];
+    if (dims.size()<N)
+        throw kipl::base::KiplException("Too short dims vector in resize",__FILE__,__LINE__);
 
-	m_NData=m_buffer.Size();
-	return m_buffer.Size();
+    m_buffer.Resize(_ComputeNElements(dims));
+
+    std::copy_n(dims.begin(),N,m_Dims.begin());
+
+    m_NData=m_buffer.Size();
+    return m_buffer.Size();
 }
 
 template<typename T, size_t N>
-TImage<T,N> & TImage<T,N>::operator+=(TImage<T,N> &img)
+const TImage<T,N> & TImage<T,N>::operator+=(const TImage<T,N> &img)
 {
 	for (size_t i=0; i<N ; i++) 
 		if (img.Size(i)!=Size(i)) 
@@ -139,34 +150,35 @@ TImage<T,N> & TImage<T,N>::operator+=(TImage<T,N> &img)
 	
 	//kipl::base::core::BasicAdd(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
 	if (typeid(T)==typeid(float)) {
-		kipl::base::core::SSE2Add(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::SSE2Add(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	else {
-		kipl::base::core::BasicAdd(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::BasicAdd(m_buffer.GetDataPtr(), img.GetDataPtr(),m_buffer.Size());
 	}
 	return *this;
 }
 
 template<typename T, size_t N>
-TImage<T,N> & TImage<T,N>::operator-=(TImage<T,N> &img)
+const TImage<T,N> & TImage<T,N>::operator-=(const TImage<T,N> &img)
 {
 	for (size_t i=0; i<N ; i++) 
 		if (img.Size(i)!=m_Dims[i]) 
 			throw std::length_error("Image dimension mismatch for TImage<T,N>::operator-=");
 	
 	m_buffer.Clone();	
-	
+
 	if (typeid(T)==typeid(float)) {
-		kipl::base::core::SSE2Minus(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::SSE2Minus(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	else {
-		kipl::base::core::BasicMinus(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::BasicMinus(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
+
 	}
 	return *this;
 }
 
 template<typename T, size_t N>
-TImage<T,N> & TImage<T,N>::operator*=(TImage<T,N> &img)
+const TImage<T,N> & TImage<T,N>::operator*=(const TImage<T,N> &img)
 {
 	for (size_t i=0; i<N ; i++) 
 		if (img.Size(i)!=m_Dims[i]) 
@@ -175,16 +187,16 @@ TImage<T,N> & TImage<T,N>::operator*=(TImage<T,N> &img)
 	m_buffer.Clone();	
 	
 	if (typeid(T)==typeid(float)) {
-		kipl::base::core::SSE2Mult(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::SSE2Mult(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	else {
-		kipl::base::core::BasicMult(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::BasicMult(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	return *this;
 }
 
 template<typename T, size_t N>
-TImage<T,N> & TImage<T,N>::operator/=(TImage<T,N> &img)
+const TImage<T,N> & TImage<T,N>::operator/=(const TImage<T,N> &img)
 {
 	for (size_t i=0; i<N ; i++) 
 		if (img.Size(i)!=m_Dims[i]) 
@@ -193,16 +205,16 @@ TImage<T,N> & TImage<T,N>::operator/=(TImage<T,N> &img)
 	m_buffer.Clone();	
 	
 	if (typeid(T)==typeid(float)) {
-		kipl::base::core::SSE2Div(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::SSE2Div(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	else {
-		kipl::base::core::BasicDiv(&m_buffer[0], &img.m_buffer[0],m_buffer.Size());
+        kipl::base::core::BasicDiv(m_buffer.GetDataPtr(), img.m_buffer.GetDataPtr(),m_buffer.Size());
 	}
 	return *this;
 }
 
 template<typename T, size_t N>
-TImage<T,N> & TImage<T,N>::operator+=(const T x)
+const TImage<T,N> & TImage<T,N>::operator+=(const T x)
 {
 	const size_t ndata=Size();
 	if (x==static_cast<T>(0))
@@ -216,7 +228,7 @@ TImage<T,N> & TImage<T,N>::operator+=(const T x)
 }
 
 template<typename T, size_t N>
-TImage<T,N> & TImage<T,N>::operator-=(const T x)
+const TImage<T,N> & TImage<T,N>::operator-=(const T x)
 {
 	const size_t ndata=Size();
 	if (x==static_cast<T>(0))
@@ -230,7 +242,7 @@ TImage<T,N> & TImage<T,N>::operator-=(const T x)
 }
 
 template<typename T, size_t N>
-TImage<T,N> & TImage<T,N>::operator*=(const T x)
+const TImage<T,N> & TImage<T,N>::operator*=(const T x)
 {
 	const size_t ndata=Size();
 	if (x==static_cast<T>(1))
@@ -248,7 +260,7 @@ TImage<T,N> & TImage<T,N>::operator*=(const T x)
 }
 
 template<typename T, size_t N>
-TImage<T,N> & TImage<T,N>::operator/=(const T x)
+const TImage<T,N> & TImage<T,N>::operator/=(const T x)
 {
 	const ptrdiff_t ndata=Size();
 	if (x==static_cast<T>(1))
@@ -260,7 +272,6 @@ TImage<T,N> & TImage<T,N>::operator/=(const T x)
 
 	m_buffer.Clone();	
 
-#pragma omp parallel for
 	for (ptrdiff_t i=0; i<ndata; i++)
 		m_buffer[i]*=inv;
 
@@ -290,7 +301,6 @@ TImage<T,N> TImage<T,N>::operator-(const T x) const
     TImage<T,N> res=*this;
     res.Clone();
 
-#pragma omp parallel for
     for (ptrdiff_t i=0; i<ndata; i++)
         res.m_buffer[i]-=x;
 
@@ -305,7 +315,6 @@ TImage<T,N> TImage<T,N>::operator*(const T x) const
     TImage<T,N> res=*this;
     res.Clone();
 
-#pragma omp parallel for
     for (ptrdiff_t i=0; i<ndata; i++)
         res.m_buffer[i]*=x;
 
@@ -320,7 +329,6 @@ TImage<T,N> TImage<T,N>::operator/(const T x) const
     TImage<T,N> res=*this;
     res.Clone();
 
-#pragma omp parallel for
     for (ptrdiff_t i=0; i<ndata; i++)
         res.m_buffer[i]/=x;
 
@@ -328,7 +336,7 @@ TImage<T,N> TImage<T,N>::operator/(const T x) const
 }
 
 template<typename T, size_t N>
-TImage<T,N> operator+(TImage<T,N> &imgA, TImage<T,N> &imgB)
+const TImage<T,N> operator+(const TImage<T,N> &imgA, const TImage<T,N> &imgB)
 {
 	for (size_t i=0; i<N ; i++) 
 		if (imgA.Size(i)!=imgB.Size(i)) 
@@ -342,7 +350,7 @@ TImage<T,N> operator+(TImage<T,N> &imgA, TImage<T,N> &imgB)
 }
 
 template<typename T, size_t N>
-TImage<T,N> operator-(TImage<T,N> &imgA, TImage<T,N> &imgB)
+const TImage<T,N> operator-(const TImage<T,N> &imgA, const TImage<T,N> &imgB)
 {
 	for (size_t i=0; i<N ; i++) 
 		if (imgA.Size(i)!=imgB.Size(i)) 
@@ -356,7 +364,7 @@ TImage<T,N> operator-(TImage<T,N> &imgA, TImage<T,N> &imgB)
 }
 
 template<typename T, size_t N>
-TImage<T,N> operator*(TImage<T,N> &imgA, TImage<T,N> &imgB)
+const TImage<T,N> operator*(const TImage<T,N> &imgA, const TImage<T,N> &imgB)
 {
 	for (size_t i=0; i<N ; i++) 
 		if (imgA.Size(i)!=imgB.Size(i)) 
@@ -370,7 +378,7 @@ TImage<T,N> operator*(TImage<T,N> &imgA, TImage<T,N> &imgB)
 }
 
 template<typename T, size_t N>
-TImage<T,N> operator/(TImage<T,N> &imgA, TImage<T,N> &imgB)
+const TImage<T,N> operator/(const TImage<T,N> &imgA, const TImage<T,N> &imgB)
 {
 	for (size_t i=0; i<N ; i++) 
 		if (imgA.Size(i)!=imgB.Size(i)) 
@@ -411,6 +419,27 @@ bool CheckEqualSize(TImage<T1,N> &img1, TImage<T2,N> &img2)
 		res = res && (img1.Size(i)==img2.Size(i));
 
 	return res;
+}
+
+template <typename T>
+std::string renderImgAsString(kipl::base::TImage<T,2> &img, size_t N)
+{
+    std::string str;
+    if ((img.Size(0)<N) && (img.Size(1)<N))
+    {
+        for (size_t y=0; y<img.Size(1); ++y)
+        {
+            T *pLine = img.GetLinePtr(y);
+            for (size_t x=0; x<img.Size(0); ++x)
+            {
+                str.push_back(0 < pLine[x] ? 'o' : '.');
+            }
+            if (y!=img.Size(1)-1)
+                str.push_back('\n');
+        }
+    }
+
+    return str;
 }
 
 }}

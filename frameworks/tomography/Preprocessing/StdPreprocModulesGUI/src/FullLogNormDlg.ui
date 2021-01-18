@@ -32,6 +32,11 @@
          </property>
          <item>
           <property name="text">
+           <string>Single image</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>Sum</string>
           </property>
          </item>

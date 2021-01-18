@@ -22,7 +22,7 @@ ROIDialog::~ROIDialog()
 
 void ROIDialog::setImage(kipl::base::TImage<float,2> &img)
 {
-    ui->widget_image->set_image(img.GetDataPtr(),img.Dims());
+    ui->widget_image->set_image(img.GetDataPtr(),img.dims());
 }
 
 void ROIDialog::setROI(QRect r)

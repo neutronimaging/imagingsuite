@@ -14,8 +14,6 @@ public:
     ReaderException(std::string msg);
     ReaderException(std::string msg, std::string filename, size_t line);
     virtual ~ReaderException(void);
-
-    virtual std::string what();
 private:
 };
 

@@ -31,7 +31,7 @@ public:
 	bool plot(float const * const data, size_t const N, std::string label="");
 	bool plot(double const * const data, size_t const N, std::string label="");
 	bool plot(float const * const axis, float const * const data, size_t const N, std::string label="");
-	bool image(float const * const data, size_t const * const dims);
+    bool image(float const * const data, const std::vector<size_t> & dims);
 	bool image(const kipl::base::TImage<float,2> img);
 	bool image(const kipl::base::TImage<int,2> img);
 	bool image(const kipl::base::TImage<short,2> img);

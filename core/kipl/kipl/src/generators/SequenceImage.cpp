@@ -9,7 +9,7 @@ using namespace std;
 
 namespace kipl { namespace generators {
 
-kipl::base::TImage<float,2> SequenceImage::MakeSequenceImage2D(size_t const * const dims, float start)
+kipl::base::TImage<float,2> SequenceImage::MakeSequenceImage2D(const std::vector<size_t> & dims, float start)
 {
 	kipl::base::TImage<float,2> img(dims);
 	
@@ -21,7 +21,7 @@ kipl::base::TImage<float,2> SequenceImage::MakeSequenceImage2D(size_t const * co
 
 kipl::base::TImage<float,2> SequenceImage::MakeModImage2D(size_t N, size_t M)
 {
-	size_t dims[]={N,N};
+    std::vector<size_t> dims={N,N};
 	kipl::base::TImage<float,2> img(dims);
 	
 	for (size_t i=0; i<img.Size(); i++)
@@ -32,7 +32,7 @@ kipl::base::TImage<float,2> SequenceImage::MakeModImage2D(size_t N, size_t M)
 
 kipl::base::TImage<float,2> SequenceImage::MakeAxisSumImage2D(size_t N)
 {
-	size_t dims[]={N,N};
+    std::vector<size_t> dims={N,N};
 	kipl::base::TImage<float,2> img(dims);
 	
 	for (size_t i=0, y=0; y<N; y++)
@@ -42,7 +42,7 @@ kipl::base::TImage<float,2> SequenceImage::MakeAxisSumImage2D(size_t N)
 	return img;
 }
 
-kipl::base::TImage<float,3> SequenceImage::MakeSequenceImage3D(size_t const * const dims, float start)
+kipl::base::TImage<float,3> SequenceImage::MakeSequenceImage3D(const std::vector<size_t> & dims, float start)
 {
 	kipl::base::TImage<float,3> img(dims);
 	

@@ -22,13 +22,23 @@ AverageImage::~AverageImage()
 
 }
 
+void AverageImage::setWindowSize(int n)
+{
+    WindowSize=n;
+}
+
+int AverageImage::windowSize()
+{
+    return WindowSize;
+}
+
 kipl::base::TImage<float,2> AverageImage::operator()(kipl::base::TImage<float,3> &img,
                                                      eAverageMethod method,
-                                                     float *weights)
+                                                     std::vector<float> weights)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
     kipl::base::TImage<float,3> wimg;
-    if (weights!=nullptr) {
+    if (!weights.empty()) {
         wimg=WeightImages(img,weights);
     }
     else {
@@ -48,10 +58,13 @@ kipl::base::TImage<float,2> AverageImage::operator()(kipl::base::TImage<float,3>
     return res;
 }
 
-kipl::base::TImage<float,3> AverageImage::WeightImages(kipl::base::TImage<float,3> &img, float *weights)
+kipl::base::TImage<float,3> AverageImage::WeightImages(kipl::base::TImage<float,3> &img, std::vector<float> &weights)
 {
     kipl::base::TImage<float,3> res=img;
     res.Clone();
+
+    if (weights.size()!=img.Size(2))
+        throw ImagingException("WeightImages failed as the size(weight)!=number of planes in img",__FILE__,__LINE__);
 
     for (size_t i=0; i<img.Size(2); i++) {
         float *pRes=res.GetLinePtr(0,i);
@@ -67,7 +80,7 @@ kipl::base::TImage<float,3> AverageImage::WeightImages(kipl::base::TImage<float,
 
 kipl::base::TImage<float,2> AverageImage::ComputeSum(kipl::base::TImage<float,3> &img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
 
     res=0.0f;
 
@@ -95,16 +108,13 @@ kipl::base::TImage<float,2> AverageImage::ComputeAverage(kipl::base::TImage<floa
 
 kipl::base::TImage<float,2> AverageImage::ComputeMedian(kipl::base::TImage<float,3> & img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
     size_t N=img.Size(2);
     size_t M=res.Size();
     float * buffer = new float[N];
     float *pImg=img.GetDataPtr();
     float *pRes=res.GetDataPtr();
     for (size_t i=0; i<M; i++, pImg++, pRes++) {
-//        for (size_t j=0; j<N; j++) {
-//            buffer[j]=pImg[j*M];
-//        }
         GetColumn(img,i,buffer);
         kipl::math::median_STL(buffer,N,pRes);
     }
@@ -114,10 +124,10 @@ kipl::base::TImage<float,2> AverageImage::ComputeMedian(kipl::base::TImage<float
 
 kipl::base::TImage<float,2> AverageImage::ComputeWeightedAverage(kipl::base::TImage<float,3> & img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
-    kipl::base::TImage<float,2> tmp(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
+    kipl::base::TImage<float,2> tmp(img.dims());
 
-    kipl::base::TImage<float,3> weights(img.Dims());
+    kipl::base::TImage<float,3> weights(img.dims());
     kipl::filters::StdDevFilter stddev;
 
     float *pRes=nullptr;
@@ -163,7 +173,7 @@ kipl::base::TImage<float,2> AverageImage::ComputeWeightedAverage(kipl::base::TIm
 
 kipl::base::TImage<float,2> AverageImage::ComputeMin(kipl::base::TImage<float,3> & img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
 
     const size_t N=res.Size();
     const size_t M=img.Size(2);
@@ -183,7 +193,7 @@ kipl::base::TImage<float,2> AverageImage::ComputeMin(kipl::base::TImage<float,3>
 
 kipl::base::TImage<float,2> AverageImage::ComputeMax(kipl::base::TImage<float,3> & img)
 {
-    kipl::base::TImage<float,2> res(img.Dims());
+    kipl::base::TImage<float,2> res(img.dims());
 
     memcpy(res.GetDataPtr(),img.GetDataPtr(),res.Size()*sizeof(float));
 
@@ -210,12 +220,11 @@ void AverageImage::GetColumn(kipl::base::TImage<float,3> &img, size_t idx, float
 
 }
 
-
-
 void string2enum(std::string str, ImagingAlgorithms::AverageImage::eAverageMethod &eam)
 {
     std::map<std::string,ImagingAlgorithms::AverageImage::eAverageMethod> methods;
 
+    methods["ImageSelectSingle"]=ImagingAlgorithms::AverageImage::ImageSelectSingle;
     methods["ImageSum"]=ImagingAlgorithms::AverageImage::ImageSum;
     methods["ImageAverage"]=ImagingAlgorithms::AverageImage::ImageAverage;
     methods["ImageMedian"]=ImagingAlgorithms::AverageImage::ImageMedian;
@@ -234,6 +243,7 @@ std::string enum2string(ImagingAlgorithms::AverageImage::eAverageMethod eam)
     std::string str;
 
     switch (eam) {
+        case ImagingAlgorithms::AverageImage::ImageSelectSingle: str="ImageSelectSingle"; break;
         case ImagingAlgorithms::AverageImage::ImageSum: str="ImageSum"; break;
         case ImagingAlgorithms::AverageImage::ImageAverage: str="ImageAverage"; break;
         case ImagingAlgorithms::AverageImage::ImageMedian: str="ImageMedian"; break;

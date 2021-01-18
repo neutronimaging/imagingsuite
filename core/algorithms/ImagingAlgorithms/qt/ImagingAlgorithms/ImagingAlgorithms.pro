@@ -42,7 +42,6 @@ unix {
     }
     else
     {
-  #      QMAKE_MAC_SDK = macosx10.12
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
@@ -67,7 +66,8 @@ SOURCES += \
     ../../src/piercingpointestimator.cpp \
     ../../src/ReferenceImageCorrection.cpp \
     ../../src/tomocenter.cpp \
-    ../../src/vostripeclean.cpp
+    ../../src/vostripeclean.cpp \
+    ../../src/projectionfilter.cpp
 
 HEADERS += \
     ../../include/StripeFilter.h \
@@ -83,7 +83,8 @@ HEADERS += \
     ../../include/piercingpointestimator.h \
     ../../include/ReferenceImageCorrection.h \
     ../../include/tomocenter.h \
-    ../../include/vostripeclean.h
+    ../../include/vostripeclean.h \
+    ../../include/projectionfilter.h
 
 
 unix:!symbian {

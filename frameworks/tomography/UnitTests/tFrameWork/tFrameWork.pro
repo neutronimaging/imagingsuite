@@ -27,20 +27,25 @@ unix {
     INCLUDEPATH += "../../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
-    unix:!macx {
-        QMAKE_CXXFLAGS += -fopenmp
-        QMAKE_LFLAGS += -lgomp
-        LIBS += -lgomp
-        QMAKE_LIBDIR += -L/opt/usr/lib
-    }
+
 
     unix:macx {
         INCLUDEPATH  += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
         INCLUDEPATH  += /opt/local/include/libxml2
     }
+    else {
+        QMAKE_CXXFLAGS += -fopenmp
+        QMAKE_LFLAGS += -lgomp
+        LIBS += -lgomp
+        QMAKE_LIBDIR += -L/opt/usr/lib
+        INCLUDEPATH += /usr/include/libxml2
+        INCLUDEPATH += /usr/include/cfitsio
+    }
 
-    LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+
+
+    LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -lxml2
 }
 
 unix:mac {

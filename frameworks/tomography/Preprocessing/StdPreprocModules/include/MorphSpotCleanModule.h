@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef MORPHSPOTCLEANMODULE_H
 #define MORPHSPOTCLEANMODULE_H
 
@@ -23,19 +25,19 @@ protected:
     int ProcessSingle(kipl::base::TImage<float,3> & img);
     int ProcessParallel(kipl::base::TImage<float,3> & img);
     int ProcessParallelStd(kipl::base::TImage<float,3> & img);
-    int ProcessParallelStd(size_t tid, float *pImg, const size_t *dims, size_t N);
-    kipl::morphology::MorphConnect m_eConnectivity;
+    int ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSlice, size_t N);
+    kipl::base::eConnectivity m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
-    float m_fThreshold[2];
-    float m_fSigma[2];
+    std::vector<float> m_fThreshold;
+    std::vector<float> m_fSigma;
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
     bool m_bRemoveInfNaN;
     bool m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    bool m_bThreading;
+    bool m_bTranspose;
 };
 
 #endif // MORPHSPOTCLEANMODULE_H

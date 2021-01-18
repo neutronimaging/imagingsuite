@@ -11,10 +11,11 @@ QT       -= gui
 TARGET = tst_kiplsegmentationtest
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG   += c++11
 
 TEMPLATE = app
 
-CONFIG += c++11
+
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug

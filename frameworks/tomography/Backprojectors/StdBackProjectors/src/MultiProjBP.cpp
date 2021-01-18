@@ -1,13 +1,4 @@
-//
-// This file is part of the recon library by Anders Kaestner
-// (c) 2008 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author: kaestner $
-// $Date: 2010-09-27 15:20:52 +0200 (Mo, 27 Sep 2010) $
-// $Rev: 726 $
-//
+//<LICENSE>
 
 //#include "stdafx.h"
 #include "../include/MultiProjBP.h"
@@ -25,14 +16,21 @@
 MultiProjectionBP::MultiProjectionBP(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Multi projection BP",StdBackProjectorBase::MatrixZXY, interactor)
 {
-
+    logger(kipl::logging::Logger::LogMessage,"C'tor MultiProjectionBP");
+    publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
+                                       "MuhRec - a new tomography reconstructor",
+                                       "Nuclear Instruments and Methods Section A",
+                                       2011,
+                                       651,
+                                       1,
+                                       "156-160",
+                                       "10.1016/j.nima.2011.01.129"));
 }
 
 MultiProjectionBP::~MultiProjectionBP(void)
 {
 }
 
- 
 void MultiProjectionBP::BackProject()
 {
 	std::stringstream msg;

@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include <base/thistogram.h>
+#include <stltools/stlvecmath.h>
 
 
 KiplProcessModuleBase::KiplProcessModuleBase(std::string name,bool bComputeHistogram, kipl::interactors::InteractionBase *interactor) :

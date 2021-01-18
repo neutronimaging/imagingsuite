@@ -33,7 +33,7 @@ class QTADDONSSHARED_EXPORT ImageViewerWidget : public QWidget
     Q_OBJECT
 
     kipl::logging::Logger logger;
-    static QList<ImageViewerWidget *> s_ViewerList;
+ //   static QList<ImageViewerWidget *> s_ViewerList;
     static int m_nViewerCounter;
     QString m_sViewerName;
 public:
@@ -53,11 +53,11 @@ public:
     };
 
    // explicit ImageViewerWidget(QWidget *parent = 0);
-    ImageViewerWidget(QWidget *parent = 0);
+    ImageViewerWidget(QWidget *parent = nullptr);
     ~ImageViewerWidget();
 
-    void set_image(float const * const data, size_t const * const dims);
-    void set_image(float const * const data, size_t const * const dims, const float low, const float high);
+    void set_image(float const * const data, const std::vector<size_t> &dims);
+    void set_image(float const * const data, const std::vector<size_t> & dims, const float low, const float high);
     void getImageDims(int &x, int &y);
     void set_plot(QVector<QPointF> data, QColor color, int idx);
     void clear_plot(int idx=-1);
@@ -121,6 +121,7 @@ protected:
     ImageViewerInfoDialog m_infoDialog;
     QMutex m_MouseMoveMutex;
     QMutex m_ImageMutex;
+    double m_CurrentScale;
 
 signals:
     void newImageDims(const QRect &rect);

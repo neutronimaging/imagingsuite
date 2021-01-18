@@ -1,6 +1,5 @@
 //<LICENSE>
 
-#include "stdafx.h"
 #include "CountNANs.h"
 
 CountNANs::CountNANs() :

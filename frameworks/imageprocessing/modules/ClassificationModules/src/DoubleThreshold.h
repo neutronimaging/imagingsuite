@@ -1,9 +1,4 @@
-/*
- * DoubleThreshold.h
- *
- *  Created on: Nov 11, 2012
- *      Author: anders
- */
+//<LICENSE>
 
 #ifndef DOUBLETHRESHOLD_H_
 #define DOUBLETHRESHOLD_H_

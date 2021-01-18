@@ -8,9 +8,14 @@
 #include <cstring>
 #include <cmath>
 #include <algorithm>
+#include <vector>
 #include <map>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "../../../include/math/sums.h"
+#include "../../../include/math/image_statistics.h"
 #include "../../../include/base/thistogram.h"
 #ifndef NO_TIFF
 #include "../../../include/io/io_tiff.h"
@@ -19,45 +24,62 @@
 namespace kipl { namespace base {
 //int Histogram(float const * const data, size_t nData, size_t * const hist, const size_t nBins, float lo, float hi, float * const pAxis)
 
-int KIPLSHARED_EXPORT Histogram(float * data, size_t nData, size_t * hist, size_t nBins, float lo, float hi, float * pAxis)
+int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t * hist, size_t nBins, float lo, float hi, float * pAxis, bool avoidZeros)
 {
 
     float start=0;
     float stop=1.0f;
-   
-    if (lo==hi) {
-        start = *std::min_element(data,data+nData);
-        stop  = *std::max_element(data,data+nData);
+
+    if (lo==hi)
+    {
+        kipl::math::minmax(data,nData,&start,&stop,true);
     }
-    else {
+    else
+    {
 		start=std::min(lo,hi);
 		stop=std::max(lo,hi);
     }
 
-    memset(hist,0,sizeof(size_t)*nBins);
+    std::fill_n(hist,nBins,0UL);
     
 	float scale=(nBins)/(stop-start);
     #pragma omp parallel firstprivate(nData,start,scale)
     {
 		int index;
 		long long int i=0;	
-		size_t *temp_hist=new size_t[nBins];
-		memset(temp_hist,0,nBins*sizeof(size_t));
+        std::vector<size_t> temp_hist(nBins);
+        //size_t *temp_hist=new size_t[nBins];
+        std::fill(temp_hist.begin(),temp_hist.end(),0UL);
+
 		const ptrdiff_t snData=static_cast<ptrdiff_t>(nData);
 		const ptrdiff_t snBins=static_cast<ptrdiff_t>(nBins);
-
-		#pragma omp for
-		for (i=0; i<snData; i++) {
-			index=static_cast<int>((data[i]-start)*scale);
-			if ((index<snBins) && (0<=index))
-				temp_hist[index]++;
-		}
+        if (avoidZeros)
+        {
+            #pragma omp for
+            for (i=0; i<snData; i++) {
+                if (data[i]!=0.0f)
+                {
+                    index=static_cast<int>((data[i]-start)*scale);
+                    if ((index<snBins) && (0<=index))
+                        temp_hist[index]++;
+                }
+            }
+        }
+        else
+        {
+            #pragma omp for
+            for (i=0; i<snData; i++) {
+                index=static_cast<int>((data[i]-start)*scale);
+                if ((index<snBins) && (0<=index))
+                    temp_hist[index]++;
+            }
+        }
 		#pragma omp critical
 		{
 			for (i=0; i<snBins; i++)
 				hist[i]+=temp_hist[i];
 		}
-		delete [] temp_hist;
+        //delete [] temp_hist;
     }
     scale=(stop-start)/nBins;
     if (pAxis!=nullptr) {
@@ -67,6 +89,76 @@ int KIPLSHARED_EXPORT Histogram(float * data, size_t nData, size_t * hist, size_
     }
 
 	return 0;
+}
+
+int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t nBins, std::vector<size_t> & hist, std::vector<float> &axis, float lo, float hi, bool avoidZeros)
+{
+
+    float start=0;
+    float stop=1.0f;
+
+    if (lo==hi)
+    {
+        kipl::math::minmax(data,nData,&start,&stop,true);
+    }
+    else
+    {
+        start=std::min(lo,hi);
+        stop=std::max(lo,hi);
+    }
+    hist.resize(nBins);
+    axis.resize(nBins);
+
+    std::fill(hist.begin(),hist.end(),0UL);
+
+    float scale=(nBins)/(stop-start);
+    #pragma omp parallel firstprivate(nData,start,scale)
+    {
+        int index;
+        long long int i=0;
+        std::vector<size_t> temp_hist(nBins);
+        std::fill(temp_hist.begin(),temp_hist.end(),0UL);
+
+        const ptrdiff_t snData=static_cast<ptrdiff_t>(nData);
+        const ptrdiff_t snBins=static_cast<ptrdiff_t>(nBins);
+        if (avoidZeros)
+        {
+            #pragma omp for
+            for (i=0; i<snData; i++) {
+                if (data[i]!=0.0f)
+                {
+                    index=static_cast<int>((data[i]-start)*scale);
+                    if ((index<snBins) && (0<=index))
+                        temp_hist[index]++;
+                }
+            }
+        }
+        else
+        {
+            #pragma omp for
+            for (i=0; i<snData; i++) {
+                index=static_cast<int>((data[i]-start)*scale);
+                if ((index<snBins) && (0<=index))
+                    temp_hist[index]++;
+            }
+        }
+        #pragma omp critical
+        {
+            for (i=0; i<hist.size(); i++)
+                hist[i]+=temp_hist[i];
+        }
+    }
+
+    float binIncrement = (stop-start)/nBins;
+    float binVal       = start+binIncrement/2;
+
+    for (auto &bin : axis)
+    {
+        bin     = binVal;
+        binVal += binIncrement;
+    }
+
+    return 0;
 }
 
 std::map<float, size_t> ExactHistogram(float const * const data, size_t Ndata)
@@ -140,10 +232,10 @@ int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float per
 // Bivariate histogram class
 BivariateHistogram::BivariateHistogram() :
     logger("BivariateHistogram"),
-    m_scalingA(1.0f,0.0f),
-    m_scalingB(1.0f,0.0f),
     m_limitsA(0.0f,1.0f),
-    m_limitsB(0.0f,1.0f)
+    m_limitsB(0.0f,1.0f),
+    m_scalingA(1.0f,0.0f),
+    m_scalingB(1.0f,0.0f)
 {
 
 }
@@ -178,8 +270,8 @@ void BivariateHistogram::Initialize(float loA, float hiA, size_t binsA,
     m_scalingB.first  = static_cast<float>(m_nbins.second) / (m_limitsB.second-m_limitsB.first);
     m_scalingB.second = m_limitsB.first;
 
-    size_t dims[2]={m_nbins.first,m_nbins.second};
-    m_bins.Resize(dims);
+    std::vector<size_t> dims={m_nbins.first,m_nbins.second};
+    m_bins.resize(dims);
 }
 
 /// \brief Initialize the histogram using data
@@ -267,9 +359,9 @@ kipl::base::TImage<size_t,2> & BivariateHistogram::Bins()
     return m_bins;
 }
 
-size_t const *   BivariateHistogram::Dims()
+const std::vector<size_t> & BivariateHistogram::Dims()
 {
-    return m_bins.Dims();
+    return m_bins.dims();
 }
 
 /// \brief Compute index to a histogram bin. This is the generic version.
@@ -337,7 +429,7 @@ std::map<float, map<float,size_t> > BivariateHistogram::CompressedHistogram(kipl
 void BivariateHistogram::Write(string fname)
 {
 #ifndef NO_TIFF
-    kipl::base::TImage<float,2> img(m_bins.Dims());
+    kipl::base::TImage<float,2> img(m_bins.dims());
 
     float cnt=static_cast<float>(kipl::math::sum(m_bins.GetDataPtr(),m_bins.Size()));
 
@@ -345,7 +437,7 @@ void BivariateHistogram::Write(string fname)
         img[i]=static_cast<float>(m_bins[i]);
     }
 
-    kipl::io::WriteTIFF32(img,fname.c_str());
+    kipl::io::WriteTIFF(img,fname,kipl::base::Float32);
 #endif
 }
 

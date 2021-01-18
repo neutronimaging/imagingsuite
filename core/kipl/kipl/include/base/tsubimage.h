@@ -3,6 +3,8 @@
 #ifndef TSUBIMAGE_H_
 #define TSUBIMAGE_H_
 
+#include <vector>
+
 #include "timage.h"
 
 namespace kipl { namespace base {
@@ -16,7 +18,7 @@ public:
     /// \param nStart array with starting positions for each image axis
     /// \param nLength array with subimage width for each image axis
     /// \returns the extracted image
-	static TImage<T,NDims> Get(TImage<T,NDims> const src, size_t const *const nStart, size_t const *const nLength);
+    static TImage<T,NDims> Get(TImage<T,NDims> const src, const std::vector<size_t> & nStart, const std::vector<size_t> & nLength);
 
     /// \brief Gets a sub image using roi coordinates
     /// \param src The source image
@@ -24,7 +26,7 @@ public:
     /// \param includeCoord include the end coordinate (e.g. x1-x0+1) on true or (x1-x0) on false
     /// \returns the extracted image
     /// \test Unit test is available
-    static TImage<T,NDims> Get(TImage<T,NDims> const src, size_t const * const roi, bool includeCoord=true);
+    static TImage<T,NDims> Get(TImage<T,NDims> const src, const std::vector<size_t> & roi, bool includeCoord=true);
 
     /// \brief Puts a sub image back into a larger image
     /// \param src The sub image to put

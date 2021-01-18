@@ -10,7 +10,7 @@ using namespace std;
 namespace kipl { namespace morphology {
 kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img, vector<int> &lbl, bool keeplabel)
 {
-	kipl::base::TImage<int,2> tmp(img.Dims());
+    kipl::base::TImage<int,2> tmp(img.dims());
 	
 	deque<int> stack;
 	int *pImg=img.GetDataPtr();
@@ -50,13 +50,13 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 		return ExtractLabelledRegions(img,lbl,false);
 	}
 	
-	CLabelledItem::CLabelledItem(int id, int nDim) {
+    LabelledItem::LabelledItem(int id, int nDim) {
 			ResetAll();
 			this->item_id=id;
 			this->NDim=nDim;
 	}
 	
-	int CLabelledItem::AddPosition(int x, int y, int z)
+    int LabelledItem::AddPosition(int x, int y, int z)
 	{
 		this->sum[0]+=x;
 		this->sum[1]+=y;
@@ -70,7 +70,7 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 	}
 	
 	
-	int CLabelledItem::AddPosition(int *pos)
+    int LabelledItem::AddPosition(int *pos)
 	{
 		for (int i=0; i<NDim; i++)
 			this->sum[i]+=pos[i];
@@ -83,9 +83,9 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 		return 0;
 	}
 	
-	int CLabelledItem::CheckBBox(int x,int y,int z) 
+    int LabelledItem::CheckBBox(int x,int y,int z)
 	{
-		cout<<"."<<flush;
+        //cout<<"."<<flush;
 		if (x<this->bbox[0]) this->bbox[0]=x;
 		if (x>this->bbox[3]) this->bbox[3]=x;
 		if (y<this->bbox[1]) this->bbox[1]=y;
@@ -96,7 +96,7 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 		return 0;
 	}
 
-	int CLabelledItem::getCOG(double &x, double &y, double &z) const
+    int LabelledItem::getCOG(double &x, double &y, double &z) const
 	{
 		if (this->newinfo)
 			this->Compute();
@@ -107,7 +107,7 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 		return 0;
 	}
 	
-	int CLabelledItem::getCOG(double *cogtmp) const
+    int LabelledItem::getCOG(double *cogtmp) const
 	{
 		if (this->newinfo)
 			Compute();
@@ -117,7 +117,7 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 		return 0;
 	}
 	
-	int CLabelledItem::ResetAll()
+    int LabelledItem::ResetAll()
 	{
 		int i;
 		for (i=0; i<3 ; i++) {
@@ -138,7 +138,7 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 	}
 	
 	
-	int CLabelledItem::Copy(const CLabelledItem & item)
+    int LabelledItem::Copy(const LabelledItem & item)
 	{
 		this->NDim=item.NDim;
 		int i;
@@ -159,7 +159,7 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 		return this->item_id;
 	}
 	
-	int CLabelledItem::Compute() const
+    int LabelledItem::Compute() const
 	{
 		for (int i=0; i<NDim ; i++) 
 			this->cog[i]=this->sum[i]/N;
@@ -169,7 +169,7 @@ kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img,
 		return N;
 	}
 	
-	ostream & operator<<(ostream & os, const CLabelledItem & item)
+    ostream & operator<<(ostream & os, const LabelledItem & item)
 	{
 		if (item.PrettyPrint) {
 			os<<"Item "<<item.getItemID()<<":";

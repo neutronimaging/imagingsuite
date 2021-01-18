@@ -5,12 +5,13 @@
 #include "../../include/generators/Sine2D.h"
 #include "../../include/base/timage.h"
 #include "../../include/math/mathconstants.h"
+#include <vector>
 
 using namespace std;
 
 namespace kipl { namespace generators {
 
-kipl::base::TImage<float,2> Sine2D::SineRings(size_t *dims, float fScale=1.0f)
+kipl::base::TImage<float,2> Sine2D::SineRings(const std::vector<size_t> &dims, float fScale=1.0f)
 {
 	kipl::base::TImage<float,2> img(dims);
 	size_t N=std::min(dims[0],dims[1]);
@@ -32,7 +33,7 @@ kipl::base::TImage<float,2> Sine2D::SineRings(size_t *dims, float fScale=1.0f)
 
 kipl::base::TImage<float,2> Sine2D::JaehneRings(size_t N, float fScale=1.0f)
 {
-	size_t dims[]={N,N};
+    std::vector<size_t> dims={N,N};
 	kipl::base::TImage<float,2> img(dims);
 	
 	const float cfHalf=N/2.0f;

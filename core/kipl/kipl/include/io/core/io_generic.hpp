@@ -9,14 +9,15 @@
 #include "../../base/kiplenums.h"
 #include "../../base/KiplException.h"
 #include "../../logging/logger.h"
-
+#include "../../base/timage.h"
+#include "../io_generic.h"
 
 #include <list>
 namespace kipl { namespace io {
 
 template <typename ImgType>
 int ReadGeneric(kipl::base::TImage<ImgType,2> &img,
-                char const * const fname,
+                const std::string & fname,
                 size_t size_x,
                 size_t size_y,
                 size_t offset,
@@ -25,7 +26,7 @@ int ReadGeneric(kipl::base::TImage<ImgType,2> &img,
                 kipl::base::eDataType dt,
                 kipl::base::eEndians endian,
                 size_t imageindex,
-                size_t const * const nCrop)
+                const std::vector<size_t> & nCrop)
 {
     std::ifstream datfile(fname, ios_base::binary);
 
@@ -43,7 +44,7 @@ int ReadGeneric(kipl::base::TImage<ImgType,2> &img,
 
 template <typename ImgType>
 int ReadGeneric(std::list<kipl::base::TImage<ImgType,2> > &imglist,
-                char const * const fname,
+                const std::string & fname,
                 size_t size_x,
                 size_t size_y,
                 size_t offset,
@@ -51,7 +52,7 @@ int ReadGeneric(std::list<kipl::base::TImage<ImgType,2> > &imglist,
                 size_t imagesperfile,
                 kipl::base::eDataType dt,
                 kipl::base::eEndians endian,
-                size_t const * const nCrop)
+                const std::vector<size_t> & nCrop)
 {
     std::ifstream datfile(fname, ios_base::binary);
 
@@ -83,7 +84,7 @@ int  ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> &img,
                 kipl::base::eDataType dt,
                 kipl::base::eEndians endian,
                 size_t imageindex,
-                size_t const * const nCrop)
+                const std::vector<size_t> & nCrop)
 {
     kipl::logging::Logger logger("ReadGeneric");
     std::ostringstream msg;
@@ -98,8 +99,8 @@ int  ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> &img,
 
     file.seekg(file_offset);
 
-    size_t dims[2]={size_x, size_y};
-    img.Resize(dims);
+    std::vector<size_t> dims={size_x, size_y};
+    img.resize(dims);
 
     img=(unsigned short)0;
     converter data[3];

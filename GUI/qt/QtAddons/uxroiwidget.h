@@ -43,6 +43,8 @@ public:
     /// \param roi Coordinates organized as x0,y0,x1,y1.
     void setROI(size_t *roi, bool ignoreBoundingBox=false);
 
+    void setROI(const std::vector<size_t> &roi, bool ignoreBoundingBox=false);
+
     /// \brief Set the ROI coordinates using a Qt rect
     /// \param rect The rectangle object describing the roi
     void setROI(QRect rect, bool ignoreBoundingBox=false);
@@ -65,7 +67,13 @@ public:
     void getROI(int *roi);
 
     /// \brief Populates a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI
+    void getROI(std::vector<int> &roi);
+
+    /// \brief Populates a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI
     void getROI(size_t *roi);
+
+    /// \brief Populates a four element array with x0,y0,x1,y1 describing the oposite corners of the ROI
+    void getROI(std::vector<size_t> &roi);
 
     void getROI(kipl::base::RectROI &roi);
 

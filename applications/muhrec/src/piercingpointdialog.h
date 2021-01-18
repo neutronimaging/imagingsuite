@@ -1,9 +1,11 @@
+//<LICENSE>
 #ifndef PIERCINGPOINTDIALOG_H
 #define PIERCINGPOINTDIALOG_H
 
 #include <QDialog>
 #include <ReconConfig.h>
 #include <logging/logger.h>
+#include <base/timage.h>
 
 namespace Ui {
 class PiercingPointDialog;
@@ -15,12 +17,12 @@ class PiercingPointDialog : public QDialog
 
     kipl::logging::Logger logger;
 public:
-    explicit PiercingPointDialog(QWidget *parent = 0);
+    explicit PiercingPointDialog(QWidget *parent = nullptr);
     ~PiercingPointDialog();
 
     int exec(ReconConfig &config);
 
-    pair<float,float> getPosition() { return position; }
+    std::pair<float,float> getPosition() { return position; }
 
 private slots:
     void on_checkBox_useROI_toggled(bool checked);
@@ -33,11 +35,10 @@ private:
 
     Ui::PiercingPointDialog *ui;
 
-
-    size_t roi[4];
+    std::vector<size_t> roi;
     bool correctGain;
     bool useROI;
-    pair<float,float> position;
+    std::pair<float,float> position;
     kipl::base::TImage<float,2> ob;
     kipl::base::TImage<float,2> dc;
 };

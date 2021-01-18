@@ -81,9 +81,9 @@ int CameraStripeClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<s
 
 int CameraStripeClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
-    kipl::base::TImage<float,2> proj(img.Dims());
+    kipl::base::TImage<float,2> proj(img.dims());
 
-    for (int j=0; j<img.Size(2); j++) {
+    for (size_t j=0; j<img.Size(2); j++) {
         memcpy(proj.GetDataPtr(),img.GetLinePtr(0,j),proj.Size()*sizeof(float));
         ProcessCore(proj,coeff);
         memcpy(img.GetLinePtr(0,j),proj.GetDataPtr(),proj.Size()*sizeof(float));

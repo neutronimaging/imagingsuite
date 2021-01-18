@@ -39,7 +39,7 @@ public:
 
     /// Sets the region of interest on the projections.
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-    virtual void SetROI(size_t *roi);
+    virtual void SetROI(const std::vector<size_t> &roi);
 
 protected:
     virtual size_t reconstruct(kipl::base::TImage<float,3> proj,std::list<float> & angles) = 0;

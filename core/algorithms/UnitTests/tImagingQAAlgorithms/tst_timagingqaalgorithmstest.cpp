@@ -36,7 +36,7 @@ TImagingQAAlgorithmsTest::TImagingQAAlgorithmsTest()
 
 kipl::base::TImage<float,2> TImagingQAAlgorithmsTest::makeEdgeImage(size_t N, float sigma, float angle)
 {
-    size_t dims[2]={N,N};
+    std::vector<size_t> dims={N,N};
     kipl::base::TImage<float,2> img(dims);
 
     float center=dims[0]/2.0f;
@@ -55,10 +55,10 @@ kipl::base::TImage<float,2> TImagingQAAlgorithmsTest::makeEdgeImage(size_t N, fl
 
 void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
 {
-    QSKIP("Skipping due to save time");
+  //  QSKIP("Skipping due to save time");
     ImagingQAAlgorithms::ContrastSampleAnalysis csa;
     const size_t N=512;
-    size_t dims[2]={N,N};
+    std::vector<size_t> dims={N,N};
 
     kipl::base::TImage<float,2> orig(dims);
     const float resolution=0.05f;
@@ -72,7 +72,7 @@ void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
         float val=1.0f+i*0.1f;
         inset.Draw(orig,x,y,val);
     }
-    kipl::io::WriteTIFF32(orig,"csa_test_orig.tif");
+    kipl::io::WriteTIFF(orig,"csa_test_orig.tif",kipl::base::Float32);
 
     kipl::math::Statistics stats[6];
     kipl::base::coords3Df centers[6];
@@ -142,8 +142,6 @@ void TImagingQAAlgorithmsTest::testResEstAlg()
     double s=1.0;
     re.setPixelSize(s);
     // Test data Gaussian
-    double A=1;
-    double center=10;
     double sigma=2;
 
     const int N=21;
@@ -166,7 +164,7 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
 
     kipl::base::TImage<float,2> img=makeEdgeImage(50,2.0f,3.0f);
 
-    kipl::io::WriteTIFF32(img,"slantededge.tif");
+    kipl::io::WriteTIFF(img,"slantededge.tif",kipl::base::Float32);
 
     ImagingQAAlgorithms::ProfileExtractor p;
 
