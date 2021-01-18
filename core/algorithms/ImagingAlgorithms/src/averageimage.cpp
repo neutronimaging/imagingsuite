@@ -46,7 +46,7 @@ kipl::base::TImage<float,2> AverageImage::operator()(kipl::base::TImage<float,3>
     }
 
     switch (method) {
-        case ImageSelectSingle:     std::copy_n(wimg.GetDataPtr(),res.Size(),res.GetDataPtr());
+        case ImageSelectSingle:     std::copy_n(wimg.GetDataPtr(),res.Size(),res.GetDataPtr()); break;
         case ImageSum:              res=ComputeSum(wimg); break;
         case ImageAverage:          res=ComputeAverage(wimg); break;
         case ImageMedian:           res=ComputeMedian(wimg); break;

@@ -106,9 +106,13 @@ void ReconEngine::SetConfig(ReconConfig &config)
                 <<m_Config.ProjectionInfo.roi[3]<<"]";
     logger.message(msg.str());
 
-    kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
+    //kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
+    std::map<float, ProjectionInfo> ProjectionList;
+    BuildFileList( &m_Config, &ProjectionList);
 
-    msg.str(""); msg<<m_Config.ProjectionInfo.sFileMask<<", "<<m_Config.ProjectionInfo.nFirstIndex<<", "<<fname<<", "<<ext;
+    fname = ProjectionList.begin()->second.name;
+
+    msg.str(""); msg<<"Projection file to check size on ";
     logger(logger.LogMessage,msg.str());
 
     try {

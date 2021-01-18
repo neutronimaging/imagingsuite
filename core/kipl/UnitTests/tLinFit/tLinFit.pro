@@ -23,7 +23,6 @@ SOURCES += tst_tlinfittest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 unix {
-    INCLUDEPATH += "$$PWD/../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -42,7 +41,7 @@ unix {
 }
 
 win32 {
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
+    INCLUDEPATH += $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
     LIBPATH += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }

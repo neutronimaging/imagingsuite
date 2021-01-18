@@ -21,7 +21,8 @@ class TImagingQAAlgorithmsTest : public QObject
 
 public:
     TImagingQAAlgorithmsTest();
-    kipl::base::TImage<float,2> makeEdgeImage(size_t N, float sigma, float angle);
+    kipl::base::TImage<float, 2> makeEdgeImage(size_t N, float sigma, const std::vector<float> &coefs);
+    kipl::base::TImage<float, 2> makeEdgeImage(size_t N, float sigma, float angle);
 
 private Q_SLOTS:
     void testContrastSampleAnalysis();
@@ -53,6 +54,23 @@ kipl::base::TImage<float,2> TImagingQAAlgorithmsTest::makeEdgeImage(size_t N, fl
     return img;
 }
 
+kipl::base::TImage<float,2> TImagingQAAlgorithmsTest::makeEdgeImage(size_t N, float sigma, const std::vector<float> & coefs)
+{
+    std::vector<size_t> dims={N,N};
+    kipl::base::TImage<float,2> img(dims);
+
+    float m=coefs[0];
+    float k=coefs[1];
+    for (size_t y=0; y<dims[1]; ++y)
+    {
+        for (size_t x=0; x<dims[0]; ++x)
+        {
+            img(x,y)=1.0f/(1.0f+exp(-(x-m+k*y)/sigma));
+        }
+    }
+
+    return img;
+}
 void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
 {
   //  QSKIP("Skipping due to save time");
@@ -134,7 +152,6 @@ void TImagingQAAlgorithmsTest::testResEstAdmin()
 //    void   setProfile(double *p, int N, double d=1.0);
 //    void   setProfile(std::vector<double> &p, double d=1.0);
 //    void   setProfile(std::vector<float> &p, double d=1.0);
-//    void   setProfile(TNT::Array1D<double> &p, double d=1.0);
 
 }
 
@@ -164,23 +181,34 @@ void TImagingQAAlgorithmsTest::testResEstAlg()
 
 void TImagingQAAlgorithmsTest::testProfileExtractor()
 {
+    size_t N = 50;
+    std::vector<float> coefs = {N/2.0f,0.1f};
 
-    kipl::base::TImage<float,2> img=makeEdgeImage(50,2.0f,3.0f);
+    kipl::base::TImage<float,2> img=makeEdgeImage(50,2.0f,coefs);
 
     kipl::io::WriteTIFF(img,"slantededge.tif",kipl::base::Float32);
 
     ImagingQAAlgorithms::ProfileExtractor p;
 
+    p.setPrecision(1.0f);
+    p.saveImages = true;
     auto profile=p.getProfile(img);
+    kipl::io::serializeMap(profile,"profile_synth.txt");
+
+    auto dmap=p.distanceMap(img.dims());
+    kipl::io::WriteTIFF(dmap,"edgedistmap.tif",kipl::base::Float32);
+
+    QVERIFY(fabs(p.coefficients()[0]/coefs[0]-1)<0.01);
+    QVERIFY(fabs(p.coefficients()[1]/coefs[1]-1)<0.01);
 
     kipl::base::TImage<float,2> img2;
     kipl::io::ReadTIFF(img2,"../TestData/2D/tiff/raw_edge.tif");
 
-
+    p.saveImages = false;
     profile=p.getProfile(img2);
 
     qDebug() << "Profile length = "<<profile.size();
-    kipl::io::serializeMap(profile,"profile.txt");
+    kipl::io::serializeMap(profile,"profile_raw.txt");
 
 }
 

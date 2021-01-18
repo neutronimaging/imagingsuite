@@ -3,7 +3,7 @@
 #include <utility>
 #include "../../include/stltools/stlvecmath.h"
 
-std::map<float,float> diff(std::map<float,float> data)
+std::map<float,float> diff(const std::map<float,float> & data)
 {
   std::map<float,float> dmap;
 
