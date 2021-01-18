@@ -1,6 +1,9 @@
 #include <QString>
 #include <QtTest>
 
+#include <thread>
+#include <chrono>
+
 #include <base/timage.h>
 #include <base/trotate.h>
 #include <base/tsubimage.h>
@@ -10,6 +13,7 @@
 #include <ProjectionReader.h>
 #include <ReconHelpers.h>
 #include <ReconException.h>
+#include <processtiminglogger.h>
 
 
 class FrameWorkTest : public QObject
@@ -31,6 +35,7 @@ private Q_SLOTS:
     void testBuildFileList_GeneratedGolden();
     void testBuildFileList_GeneratedInvGolden();
     void testBuildFileList();
+    void testProcessTimingLogger();
 
 
 private:
@@ -1249,6 +1254,15 @@ void FrameWorkTest::testBuildFileList()
 
     msg.str(""); msg<<"Expected 1.0, got "<<sum;
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+}
+
+void FrameWorkTest::testProcessTimingLogger()
+{
+    ProcessTimingLogger ptl("test.json");
+
+    ptl.addLogEntry();
+    std::this_thread::sleep_for(chrono::seconds(1));
+    ptl.addLogEntry();
 }
 
 QTEST_APPLESS_MAIN(FrameWorkTest)
