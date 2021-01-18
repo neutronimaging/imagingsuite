@@ -19,8 +19,9 @@
 #include <math/covariance.h>
 #include <math/gradient.h>
 #include <math/linfit.h>
-
+#include <base/thistogram.h>
 #include <io/io_tiff.h>
+#include <io/io_csv.h>
 
 class TKiplMathTest : public QObject
 {
@@ -36,28 +37,32 @@ public:
 private Q_SLOTS:
     void testCOG();
     void testCircularHoughTransform();
+
     void testNonLinFit_enums();
-    void testTNTNonLinFit_GaussianFunction();
-    void testTNTNonLinFit_fitter();
-    void testARMANonLinFit_GaussianFunction();
-    void testARMANonLinFit_fitter();
     void testFindPeaks();
 
     void testStatistics();
     void testImageStats();
     void testSignFunction();
-    void testCovDims();
     void testCovSymmetry();
     void testCovIntactData();
     void testCovSmallData();
     void testCorrSmallData();
     void testMinMax();
-
     void testPolyVal();
-    void testPolyFit();
     void testPolyDeriv();
+    void testFindLimits();
 
+    void testARMANonLinFit_SumOfGaussianFunction();
+    void testARMANonLinFit_GaussianFunction();
+    void testARMANonLinFit_fitter();
+    void testARMANonLinFit_realDataFit();
 
+private :
+    void testPolyFit();
+
+// Bad
+    void testCovDims();
 
 
 private:
@@ -200,83 +205,10 @@ void TKiplMathTest::testNonLinFit_enums()
     QCOMPARE(msg.str(),std::string("VoightProfile"));
 
 }
-void TKiplMathTest::testTNTNonLinFit_GaussianFunction()
-{
-    Nonlinear::TNTfit::SumOfGaussians sog(1);
-    QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
-    QCOMPARE(sog.getNpars2fit(),3); // Default all will be fitted
 
-    std::vector<bool> lv={false,true,true};
-    sog.setLock(lv);
-    for (int i=0; i<sog.getNpars(); ++i)
-        QCOMPARE(sog.isFree(i),lv[i]);
 
-    QCOMPARE(sog.getNpars2fit(),1);
-    sog[0]=1;
-    sog[1]=0;
-    sog[2]=1;
 
-    QCOMPARE(sog(0.0),(double)1.0);
-    QVERIFY(fabs(sog(1)-(double)0.367879441171)<(double)1.0e-7);
-
-    Nonlinear::TNTfit::SumOfGaussians sog2(2);
-    sog2[0]=1;
-    sog2[1]=0;
-    sog2[2]=1;
-    sog2[3]=2;
-    sog2[4]=0.5;
-    sog2[5]=0.5;
-//    qDebug() << (double)sog2(0);
-//    qDebug() << (double)sog2(1);
-    QVERIFY(fabs(sog2(0)-(double)1.73575888234)<(double)1.0e-7);
-    QVERIFY(fabs(sog2(1)-(double)1.10363832351)<(double)1.0e-7);
-
-    double x=1;
-    double y0=0;
-    double y1=0;
-    Array1D<double> dyda(3);
-
-    y0=sog(x);
-    sog(x,y1,dyda);
-    QCOMPARE(y0,y1);
-}
-
-void TKiplMathTest::testTNTNonLinFit_fitter()
-{
-    int N=100;
-
-    Array1D<double> x(N);
-    Array1D<double> y(N);
-    Array1D<double> sig(N);
-
-    Nonlinear::TNTfit::SumOfGaussians sog0(1),sog(1);
-    sog0[0]=2; //A
-    sog0[1]=0; //m
-    sog0[2]=1; //s
-
-    sog[0]=1; //A
-    sog[1]=0.5; //m
-    sog[2]=1.5; //s
-
-    for (int i=0; i<N; ++i)
-    {
-        x[i]=(i-N/2)*0.2;
-        y[i]=sog0(x[i]);
-      //  qDebug() << "Data: x="<<x[i]<<", y="<<y[i];
-        sig[i]=1.0;
-    }
-
-    Nonlinear::TNTfit::LevenbergMarquardt mrq(1e-15);
-
-    mrq.fit(x,y,sig,sog);
-
-    QVERIFY(fabs(sog[0]-sog0[0])<1e-5);
-    QVERIFY(fabs(sog[1]-sog0[1])<1e-5);
-    QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
-
-}
-
-void TKiplMathTest::testARMANonLinFit_GaussianFunction()
+void TKiplMathTest::testARMANonLinFit_SumOfGaussianFunction()
 {
     Nonlinear::SumOfGaussians sog(1);
     QCOMPARE(sog.getNpars(),3); // Three parameters as we have position, amplitude and width.
@@ -316,6 +248,38 @@ void TKiplMathTest::testARMANonLinFit_GaussianFunction()
     QCOMPARE(y0,y1);
 }
 
+void TKiplMathTest::testARMANonLinFit_GaussianFunction()
+{
+    Nonlinear::Gaussian g;
+    QCOMPARE(g.getNpars(),4); // Three parameters as we have position, amplitude and width.
+    QCOMPARE(g.getNpars2fit(),4); // Default all will be fitted
+
+    std::vector<bool> lv={false,true,true,false};
+    g.setLock(lv);
+    for (int i=0; i<g.getNpars(); ++i)
+        QCOMPARE(g.isFree(i),lv[i]);
+
+    QCOMPARE(g.getNpars2fit(),2);
+    g[0]=1.5;
+    g[1]=2;
+    g[2]=0.5;
+    g[3]=0.0;
+
+    qDebug() << g(1);
+    QCOMPARE(g(2.0),(double)1.5);
+    QVERIFY(fabs(g(1)-(double)0.20300292485491905)<(double)1.0e-7);
+
+    double x=1;
+    double y0=0;
+    double y1=0;
+    arma::vec dyda(4);
+
+    y0=g(x);
+    g(x,y1,dyda);
+    QCOMPARE(y0,y1);
+    qDebug()<< "dyda" << dyda[0] << dyda[1]<< dyda[2]<< dyda[3];
+}
+
 void TKiplMathTest::testARMANonLinFit_fitter()
 {
     int N=100;
@@ -343,13 +307,79 @@ void TKiplMathTest::testARMANonLinFit_fitter()
 
     Nonlinear::LevenbergMarquardt mrq(1e-15);
 
-    mrq.fit(x,y,sig,sog);
+    try
+    {
+        mrq.fit(x,y,sig,sog);
+    }
+    catch (std::exception &e)
+    {
+        QFAIL(e.what());
+    }
+
+    for (int i=0; i<3; ++i)
+    {
+        qDebug() << "Data: sog="<<sog[i]<<", sog0="<<sog0[i];
+    }
 
     QVERIFY(fabs(sog[0]-sog0[0])<1e-5);
     QVERIFY(fabs(sog[1]-sog0[1])<1e-5);
     QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
 
 }
+
+void TKiplMathTest::testARMANonLinFit_realDataFit()
+{
+    std::map<std::string,std::vector<float>> data;
+    try {
+        data = kipl::io::readCSV("../TestData/1D/edgeprofiles/edgederiv_2mm.txt",',',false);
+    }
+    catch (std::exception & e)
+    {
+         QFAIL(e.what());
+    }
+
+    size_t N = data["b"].size();
+
+    arma::vec x(N);
+    arma::vec y(N);
+    arma::vec sig(N);
+
+    Nonlinear::Gaussian gaussian;
+
+    auto maxIt = std::max_element(data["b"].begin(),data["b"].end());
+    auto pos = std::distance(data["b"].begin(),maxIt);
+
+    qDebug() << "pos"<< pos;
+    gaussian[0] = *maxIt;//A
+    gaussian[1] =  data["a"][maxIt-data["b"].begin()]; //m
+    gaussian[2] =  2.5; // s
+    gaussian[3] =  0.1; // b
+
+    qDebug() << "Initial parameters:"<<gaussian[0]<<gaussian[1]<<gaussian[2]<<gaussian[3] ;
+    for (size_t i=0; i<N; ++i)
+    {
+        x[i]=data["a"][i];
+        y[i]=data["b"][i];
+        sig[i]=1.0;
+    }
+
+    Nonlinear::LevenbergMarquardt mrq(1e-15);
+
+    try
+    {
+        mrq.fit(x,y,sig,gaussian);
+    }
+    catch (std::exception &e)
+    {
+        QFAIL(e.what());
+    }
+    catch (...) {
+        QFAIL("unknown exception");
+    }
+
+    qDebug() << "Fit parameters:"<<gaussian[0]<<gaussian[1]<<gaussian[2]<<gaussian[3];
+}
+
 void TKiplMathTest::testFindPeaks()
 {
     const size_t N=100;
@@ -463,11 +493,11 @@ void TKiplMathTest::testCovDims()
 
     kipl::math::Covariance<float> cov;
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
-    QCOMPARE(C.dim1(),C.dim2());
+    QCOMPARE(C.n_rows,C.n_cols);
 
-    QCOMPARE(C.dim1(),int(img.Size(1)));
+    QCOMPARE(C.n_rows,int(img.Size(1)));
 }
 
 void TKiplMathTest::testCovSymmetry()
@@ -478,11 +508,13 @@ void TKiplMathTest::testCovSymmetry()
 
     kipl::math::Covariance<float> cov;
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
-    for (int i=0; i<int(img.Size(1)); i++) {
-        for (int j=i; j<int(img.Size(1)); j++) {
-            QCOMPARE(C[i][j],C[j][i]);
+    for (int i=0; i<int(img.Size(1)); i++)
+    {
+        for (int j=i; j<int(img.Size(1)); j++)
+        {
+            QCOMPARE(C.at(i,j),C.at(j,i));
         }
     }
 }
@@ -495,7 +527,7 @@ void TKiplMathTest::testCovIntactData()
 
     kipl::math::Covariance<float> cov;
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
     for (int i=0; i<int(img.Size()); i++)
         QCOMPARE(img[i],sin2D[i]);
@@ -512,15 +544,17 @@ void TKiplMathTest::testCovSmallData()
 
     cov.setResultMatrixType(kipl::math::CovarianceMatrix);
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
-    for (int i=0 ; i<img.Size(1); i++) {
-        for (int j=0 ; j<img.Size(1); j++) {
+    for (int i=0 ; i<img.Size(1); i++)
+    {
+        for (int j=0 ; j<img.Size(1); j++)
+        {
   //          std::cout<<std::setw(12)<<C[i][j];
 
         }
 //        std::cout<<std::endl;
-        QVERIFY(fabs(C[i][i]-0.5)<1e-7);
+        QVERIFY(fabs(C.at(i,i)-0.5)<1e-7);
     }
 }
 
@@ -533,14 +567,14 @@ void TKiplMathTest::testCorrSmallData()
     kipl::math::Covariance<float> cov;
     cov.setResultMatrixType(kipl::math::CorrelationMatrix);
 
-    TNT::Array2D<double> C=cov.compute(img.GetDataPtr(),img.dims(),2);
+    arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
-    for (int i=0 ; i<img.Size(1); i++) {
-        for (int j=0 ; j<img.Size(1); j++) {
-            std::cout<<std::setw(12)<<C[i][j];
+    for (size_t i=0 ; i<img.Size(1); i++) {
+        for (size_t j=0 ; j<img.Size(1); j++) {
+            std::cout<<std::setw(12)<<C.at(i,j);
         }
         std::cout<<std::endl;
-        QVERIFY(fabs(C[i][i]-1.0)<1e-7);
+        QVERIFY(fabs(C.at(i,i)-1.0)<1e-7);
     }
 }
 
@@ -711,6 +745,21 @@ void TKiplMathTest::testPolyDeriv()
     QCOMPARE(ddc3[0],3.0);
     QCOMPARE(ddc3[1],-3.0);
 
+}
+
+void TKiplMathTest::testFindLimits()
+{
+    std::vector<size_t> vec(100,1UL);
+
+    size_t lo,hi;
+    kipl::base::FindLimits(vec,90.0f,lo,hi);
+
+    QCOMPARE(lo,4UL);
+    QCOMPARE(hi,94UL);
+
+    kipl::base::FindLimits(vec,80.0f,lo,hi);
+    QCOMPARE(lo,9UL);
+    QCOMPARE(hi,89UL);
 }
 
 QTEST_APPLESS_MAIN(TKiplMathTest)

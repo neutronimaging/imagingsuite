@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -40,7 +40,7 @@
          </size>
         </property>
        </widget>
-       <widget class="QtAddons::Plotter" name="CurvePlotter" native="true">
+       <widget class="QtAddons::PlotWidget" name="CurvePlotter" native="true">
         <property name="geometry">
          <rect>
           <x>580</x>
@@ -520,12 +520,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QtAddons::Plotter</class>
-   <extends>QWidget</extends>
-   <header location="global">plotter.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SingleModuleConfiguratorWidget</class>
    <extends>QWidget</extends>
    <header location="global">singlemoduleconfiguratorwidget.h</header>
@@ -553,6 +547,12 @@
    <class>ReaderForm</class>
    <extends>QWidget</extends>
    <header location="global">readerform.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QtAddons::PlotWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">plotwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

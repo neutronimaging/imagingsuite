@@ -7,8 +7,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-//#include <tnt.h>
-
+#include <armadillo>
 
 #include <base/timage.h>
 #include <math/nonlinfit.h>
@@ -32,7 +31,7 @@ public:
     void   setProfile(double *p, int N);
     void   setProfile(const std::vector<double> &p);
     void   setProfile(const std::vector<float> &p);
-    void   setProfile(TNT::Array1D<double> &p);
+    void   setProfile(arma::vec &p);
     const std::vector<double> &profile();
     void   clear();
 

@@ -68,9 +68,11 @@ void MainWindow::PlotClicked()
         data.append(QPointF(x,sin(2*3.1415*x)));
     }
 
-    ui->CurvePlotter->setCurveData(0,data);
-    ui->CurvePlotter->setPlotCursor(0,QtAddons::PlotCursor(0.5,QColor("blue"),QtAddons::PlotCursor::Vertical));
-    ui->CurvePlotter->setPlotCursor(1,QtAddons::PlotCursor(0.25,QColor("red"),QtAddons::PlotCursor::Horizontal));
+    ui->CurvePlotter->setCurveData(0,data,"sine curve");
+    ui->CurvePlotter->setXLabel("x");
+    ui->CurvePlotter->setYLabel("y");
+//    ui->CurvePlotter->setPlotCursor(0,QtAddons::PlotCursor(0.5,QColor("blue"),QtAddons::PlotCursor::Vertical));
+//    ui->CurvePlotter->setPlotCursor(1,QtAddons::PlotCursor(0.25,QColor("red"),QtAddons::PlotCursor::Horizontal));
 }
 
 void MainWindow::on_ShowImageButton_clicked()

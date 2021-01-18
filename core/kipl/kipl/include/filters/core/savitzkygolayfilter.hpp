@@ -6,7 +6,6 @@
 #include "../../base/KiplException.h"
 #include "../../math/mathfunctions.h"
 #include "../../stltools/stlvecmath.h"
-#include "../../math/tnt_utils.h"
 #include <armadillo>
 #include "../../math/linfit.h"
 #include <QDebug>
