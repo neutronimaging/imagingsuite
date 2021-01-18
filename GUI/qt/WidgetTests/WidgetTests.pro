@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += svg widgets printsupport
+QT       += svg widgets charts printsupport
 #QT       += core gui
 CONFIG += c++11
 

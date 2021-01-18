@@ -130,7 +130,6 @@ win32 {
     QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += ../../../../../../external/src/linalg
     INCLUDEPATH += ../../../../../../external/include
     INCLUDEPATH += ../../../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64

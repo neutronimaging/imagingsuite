@@ -1,4 +1,4 @@
-DIRECTORY=~/Applications
+DIRECTORY=$WORKSPACE/deployed
 
 DEST="$DIRECTORY/imageviewer.app"
 REPOSPATH=$WORKSPACE
@@ -50,6 +50,14 @@ for f in `ls *.1.0.0.dylib`; do
 	ln -s $f "`basename $f .1.0.0.dylib`.1.dylib"
 	ln -s $f "`basename $f .1.0.0.dylib`.dylib"
 done
+
+if [ -e "/opt/local/lib/libzstd.1.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/Frameworks`
+fi
+
+if [ -e "/opt/local/lib/libzstd.9.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.9.dylib $DEST/Contents/Frameworks`
+fi
 
 popd
 
@@ -120,3 +128,18 @@ install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/l
 install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5_hl.10.dylib  libhdf5_hl.10.dylib libhdf5_hl.10.dylib
 install_name_tool -change /usr/local/opt/szip/lib/libsz.2.dylib @executable_path/../Frameworks/libsz.2.dylib libhdf5_hl.10.dylib
 install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib libhdf5_hl.10.dylib
+
+
+rm -rf /tmp/imageviewer
+
+if [ ! -d "/tmp/imageviewer" ]; then
+  mkdir /tmp/imageviewer
+fi
+
+if [ ! -e "tmp/imageviewer/Applications" ]; then
+	ln -s /Applications /tmp/imageviewer
+fi
+
+cp -r $DEST /tmp/imageviewer
+
+hdiutil create -volname ImageViewer -srcfolder /tmp/imageviewer -ov -format UDZO $DIRECTORY/ImageViewer_build-$GITVER-`date +%Y%m%d`.dmg

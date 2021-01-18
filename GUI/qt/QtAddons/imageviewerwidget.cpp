@@ -16,6 +16,8 @@
 #include <QFileDialog>
 #include <QDir>
 
+#include <base/kiplenums.h>
+
 #include "setgraylevelsdlg.h"
 namespace QtAddons {
 
@@ -607,6 +609,23 @@ void ImageViewerWidget::set_levels(const float level_low, const float level_high
     {
         UpdateLinkedViewers();
     }
+
+    emit levelsChanged(level_low,level_high);
+}
+
+void ImageViewerWidget::set_levels(kipl::base::eQuantiles quantile, bool updatelinked)
+{
+    QMutexLocker locker(&m_ImageMutex);
+
+    m_ImagePainter.setLevels(quantile);
+    if (updatelinked)
+    {
+        UpdateLinkedViewers();
+    }
+
+    float level_low,level_high;
+
+    m_ImagePainter.getLevels(&level_low,&level_high);
 
     emit levelsChanged(level_low,level_high);
 }

@@ -5,7 +5,7 @@
 
 #include "ImagingAlgorithms_global.h"
 
-#include <tnt_array1d.h>
+#include <armadillo>
 #include <vector>
 
 #include <base/timage.h>
@@ -31,7 +31,7 @@ private:
 
 
     kipl::base::TImage<float,2> correctedImage;
-    TNT::Array1D< double > parameters;
+    arma::vec parameters;
 
     float m_gainThreshold;
 };

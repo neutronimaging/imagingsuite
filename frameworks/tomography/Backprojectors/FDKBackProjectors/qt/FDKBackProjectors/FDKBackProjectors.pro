@@ -42,7 +42,7 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH  += ../../../../../../external/src/linalg ../../../../../../external/include ../../../../../../external/include/cfitsio
+    INCLUDEPATH  += ../../../../../../external/include ../../../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio -llibfftw3-3 -llibfftw3f-3
