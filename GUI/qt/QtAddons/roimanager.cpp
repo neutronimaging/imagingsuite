@@ -202,7 +202,7 @@ void ROIManager::on_button_deleteROI_clicked()
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(item);
         viewer->clear_rectangle(roiItem->roi.getID());
-        delete ui->listROI->takeItem(ui->listROI->row(item));
+        delete ui->listROI->takeItem(ui->listROI->row(roiItem));
     }
 
 }
@@ -272,6 +272,9 @@ void QtAddons::ROIManager::on_button_load_clicked()
 
 void QtAddons::ROIManager::on_listROI_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
+    if (current == nullptr)
+        return;
+
     ROIListItem *currentItem = dynamic_cast<ROIListItem *>(current);
 
     viewer->set_rectangle(currentItem->rect(),QColor("red"),currentItem->roi.getID());
@@ -282,3 +285,15 @@ void QtAddons::ROIManager::on_listROI_currentItemChanged(QListWidgetItem *curren
         viewer->set_rectangle(previousItem->rect(),QColor("green"),previousItem->roi.getID());
     }
 }
+
+void QtAddons::ROIManager::on_button_clearAll_clicked()
+{
+    while (ui->listROI->count())
+    {
+        auto roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(0));
+        viewer->clear_rectangle(roiItem->roi.getID());
+
+        delete ui->listROI->takeItem(0);
+    }
+}
+

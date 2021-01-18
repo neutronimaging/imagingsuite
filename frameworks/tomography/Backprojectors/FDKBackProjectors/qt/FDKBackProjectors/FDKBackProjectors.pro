@@ -42,7 +42,7 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH  += ../../../../../../external/src/linalg ../../../../../../external/include ../../../../../../external/include/cfitsio
+    INCLUDEPATH  += ../../../../../../external/include ../../../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio -llibfftw3-3 -llibfftw3f-3
@@ -93,17 +93,22 @@ HEADERS += ../../src/fdkbackproj.h \
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lReconAlgorithms
 
+LIBS += -lkipl -lModuleConfig -lImagingAlgorithms -lReaderConfig -lReconFramework
+
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/src
+DEPENDPATH  += $$PWD/../../../../../../core/kipl/kipl/src
 
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/src
+DEPENDPATH  += $$PWD/../../../../../../core/modules/ModuleConfig/src
+
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
-DEPENDPATH += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
+DEPENDPATH  += $$PWD/../../../../Framework/ReconAlgorithms/ReconAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
-DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
+DEPENDPATH  += $$PWD/../../../../Framework/ReconFramework/src
 
 macx: {
 INCLUDEPATH += $$PWD/../../../../../../external/mac/include

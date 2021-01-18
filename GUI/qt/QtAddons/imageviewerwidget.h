@@ -19,12 +19,14 @@
 #include <QMutex>
 
 #include <logging/logger.h>
-
+#include <base/kiplenums.h>
 #include "imagepainter.h"
 #include "plotter.h"
 #include "imageviewerinfodialog.h"
 #include "qglyphs.h"
 #include "qmarker.h"
+
+
 
 namespace QtAddons {
 
@@ -69,6 +71,7 @@ public:
 
     void clear_viewer();
     void set_levels(const float level_low, const float level_high, bool updatelinked=true);
+    void set_levels(kipl::base::eQuantiles quantile=kipl::base::allData, bool updatelinked=true);
     void get_levels(float *level_low, float *level_high);
     void get_minmax(float *level_low, float *level_high);
     void show_clamped(bool show);
@@ -89,7 +92,12 @@ public slots:
     void ShowContextMenu(const QPoint& pos);
     void on_levelsChanged(float lo, float hi);
 
+private slots:
+    void saveCurrentView();
+    void copyImage();
+
 protected:
+    void setupActions();
     virtual void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent * event);
     void mousePressEvent(QMouseEvent *event);
@@ -102,6 +110,7 @@ protected:
 protected:
     void UpdateFromLinkedViewer(QtAddons::ImageViewerWidget *w);
     void UpdateLinkedViewers();
+    void saveImage(const QString &fname);
 
     ImagePainter m_ImagePainter;
     void updateRubberBandRegion();
@@ -114,6 +123,7 @@ protected:
     QRect roiRect;
     eViewerMouseModes m_MouseMode;
     Qt::MouseButton m_PressedButton;
+    bool m_mouseMoved;
     QPoint m_LastMotionPosition;
     QSize widgetSize;
     QSet<ImageViewerWidget *> m_LinkedViewers;
@@ -122,6 +132,8 @@ protected:
     QMutex m_MouseMoveMutex;
     QMutex m_ImageMutex;
     double m_CurrentScale;
+    QAction *saveImageAct;
+    QAction *copyImageAct;
 
 signals:
     void newImageDims(const QRect &rect);

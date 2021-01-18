@@ -106,9 +106,13 @@ void ReconEngine::SetConfig(ReconConfig &config)
                 <<m_Config.ProjectionInfo.roi[3]<<"]";
     logger.message(msg.str());
 
-    kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
+    //kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
+    std::map<float, ProjectionInfo> ProjectionList;
+    BuildFileList( &m_Config, &ProjectionList);
 
-    msg.str(""); msg<<m_Config.ProjectionInfo.sFileMask<<", "<<m_Config.ProjectionInfo.nFirstIndex<<", "<<fname<<", "<<ext;
+    fname = ProjectionList.begin()->second.name;
+
+    msg.str(""); msg<<"Projection file to check size on ";
     logger(logger.LogMessage,msg.str());
 
     try {
@@ -903,6 +907,7 @@ int ReconEngine::Run3D(bool bRerunBackproj)
 
     int res=0;
     msg<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
+
     logger(kipl::logging::Logger::LogMessage,msg.str());
     try {
         msg.str(""); msg<<"run3d "<<m_Config.ProjectionInfo.beamgeometry;
@@ -999,9 +1004,7 @@ int ReconEngine::Run3DFull()
     msg<<": ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-
-     m_FirstSlice=roi[1];
-
+    m_FirstSlice=roi[1];
 
 	kipl::profile::Timer totalTimer;
 

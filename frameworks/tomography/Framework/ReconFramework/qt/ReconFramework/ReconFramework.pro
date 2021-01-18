@@ -130,7 +130,6 @@ win32 {
     QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += ../../../../../../external/src/linalg
     INCLUDEPATH += ../../../../../../external/include
     INCLUDEPATH += ../../../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
@@ -155,13 +154,15 @@ exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {
 }
 
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl -lModuleConfig
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl -lModuleConfig
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl -lModuleConfig -lImagingAlgorithms -lReaderConfig
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl -lModuleConfig -lImagingAlgorithms -lReaderConfig
 
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
 
-
 INCLUDEPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
+
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include

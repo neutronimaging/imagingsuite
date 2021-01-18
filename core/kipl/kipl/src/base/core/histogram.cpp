@@ -21,6 +21,8 @@
 #include "../../../include/io/io_tiff.h"
 #endif
 
+#include <QDebug>
+
 namespace kipl { namespace base {
 //int Histogram(float const * const data, size_t nData, size_t * const hist, const size_t nBins, float lo, float hi, float * const pAxis)
 
@@ -125,7 +127,7 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         {
             #pragma omp for
             for (i=0; i<snData; i++) {
-                if (data[i]!=0.0f)
+                if ( (data[i]!=0.0f) && std::isfinite(data[i]))
                 {
                     index=static_cast<int>((data[i]-start)*scale);
                     if ((index<snBins) && (0<=index))
@@ -227,6 +229,33 @@ int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float per
 		}
 	}
 	return 0;
+}
+
+int  KIPLSHARED_EXPORT FindLimits(std::vector<size_t> &hist, float percentage, size_t & lo, size_t & hi)
+{
+
+    size_t N=hist.size();
+
+    std::vector<ptrdiff_t> cumulated(N,0L);
+
+    cumulated[0]=hist[0];
+    for (size_t i=1; i<N; i++)
+    {
+        cumulated[i]=cumulated[i-1]+hist[i];
+    }
+
+
+    lo=0;
+    hi=0;
+
+    float fraction=(100.0f-percentage)/200.0f;
+    ptrdiff_t lowlevel  = static_cast<ptrdiff_t>(cumulated[N-1]*fraction);
+    ptrdiff_t highlevel = static_cast<ptrdiff_t>(cumulated[N-1]*(1-fraction));
+
+    lo = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), lowlevel));
+    hi = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), highlevel));
+
+    return 0;
 }
 //------------------------------------------------------------------
 // Bivariate histogram class

@@ -63,7 +63,7 @@ int process(int argc, char *argv[])
     std::string srcfname=args["infile"];
     qDebug() << "Pre size check";
     try {
-        dims=reader.GetImageSize(srcfname,1.0f);
+        dims=reader.imageSize(srcfname,1.0f);
     } catch (ReaderException &e) {
         logger.error(e.what());
         exit(0);

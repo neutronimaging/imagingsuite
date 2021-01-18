@@ -1300,6 +1300,9 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinFirstProjection->setValue(static_cast<int>(m_Config.ProjectionInfo.nFirstIndex));
     ui->spinLastProjection->setValue(static_cast<int>(m_Config.ProjectionInfo.nLastIndex));
     ui->spinProjectionStep->setValue(static_cast<int>(m_Config.ProjectionInfo.nProjectionStep));
+    ui->spinBox_projPerView->setValue(static_cast<int>(m_Config.ProjectionInfo.nRepeatedView));
+    on_spinBox_projPerView_valueChanged(static_cast<int>(m_Config.ProjectionInfo.nRepeatedView));
+    ui->comboBox_projectionCominationMethod->setCurrentIndex(static_cast<int>(m_Config.ProjectionInfo.averageMethod));
     ui->comboProjectionStyle->setCurrentIndex(m_Config.ProjectionInfo.imagetype);
     ui->spinProjectionBinning->setValue(m_Config.ProjectionInfo.fBinning);
     ui->comboFlipProjection->setCurrentIndex(m_Config.ProjectionInfo.eFlip);
@@ -1470,12 +1473,16 @@ void MuhRecMainWindow::UpdateConfig()
         ui->spinLastProjection->setValue(m_Config.ProjectionInfo.nLastIndex);
         QMessageBox::information(this,"Last<First projection","Last<First projection, swapped values");
     }
+    m_Config.ProjectionInfo.nProjectionStep = ui->spinProjectionStep->value();
+    m_Config.ProjectionInfo.nRepeatedView   = ui->spinBox_projPerView->value();
+    m_Config.ProjectionInfo.averageMethod   = static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboBox_projectionCominationMethod->currentIndex());
+    m_Config.ProjectionInfo.imagetype = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
+    m_Config.ProjectionInfo.fBinning = ui->spinProjectionBinning->value();
+    m_Config.ProjectionInfo.eFlip = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
+    m_Config.ProjectionInfo.eRotate = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
 
-    m_Config.ProjectionInfo.nProjectionStep    = static_cast<size_t>(ui->spinProjectionStep->value());
-    m_Config.ProjectionInfo.imagetype          = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
-    m_Config.ProjectionInfo.fBinning           = ui->spinProjectionBinning->value();
-    m_Config.ProjectionInfo.eFlip              = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
-    m_Config.ProjectionInfo.eRotate            = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
+//    m_Config.ProjectionInfo.sReferencePath = ui->editReferencePath->text().toStdString();
+//    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sReferencePath,true);
 
     m_Config.ProjectionInfo.sOBFileMask        = ui->editOpenBeamMask->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sOBFileMask,false);
@@ -2677,7 +2684,7 @@ void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
 
 void MuhRecMainWindow::on_comboDataSequence_currentIndexChanged(int index)
 {
-    if (index==m_Config.ProjectionInfo.GoldenSectionScan)
+    if ( (index==m_Config.ProjectionInfo.GoldenSectionScan) || (index==m_Config.ProjectionInfo.InvGoldenSectionScan) )
     {
         if  (ui->radioButton_customTurn->isChecked()) {
             ui->radioButton_customTurn->setCheckable(false);
@@ -2853,6 +2860,15 @@ void MuhRecMainWindow::UpdatePiercingPoint()
 
 }
 
+void MuhRecMainWindow::on_spinBox_projPerView_valueChanged(int arg1)
+{
+    if (arg1==1) {
+        ui->comboBox_projectionCominationMethod->hide();
+    }
+    else {
+        ui->comboBox_projectionCominationMethod->show();
+    }
+}
 void MuhRecMainWindow::on_dspinSOD_valueChanged(double arg1)
 {
     ui->dspinSDD->setMinimum(arg1);

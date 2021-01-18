@@ -10,7 +10,7 @@
 #include <buildfilelist.h>
 
 #include <loggingdialog.h>
-#include <datasetbase.h>
+#include <fileset.h>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -68,9 +68,11 @@ void MainWindow::PlotClicked()
         data.append(QPointF(x,sin(2*3.1415*x)));
     }
 
-    ui->CurvePlotter->setCurveData(0,data);
-    ui->CurvePlotter->setPlotCursor(0,QtAddons::PlotCursor(0.5,QColor("blue"),QtAddons::PlotCursor::Vertical));
-    ui->CurvePlotter->setPlotCursor(1,QtAddons::PlotCursor(0.25,QColor("red"),QtAddons::PlotCursor::Horizontal));
+    ui->CurvePlotter->setCurveData(0,data,"sine curve");
+    ui->CurvePlotter->setXLabel("x");
+    ui->CurvePlotter->setYLabel("y");
+//    ui->CurvePlotter->setPlotCursor(0,QtAddons::PlotCursor(0.5,QColor("blue"),QtAddons::PlotCursor::Vertical));
+//    ui->CurvePlotter->setPlotCursor(1,QtAddons::PlotCursor(0.25,QColor("red"),QtAddons::PlotCursor::Horizontal));
 }
 
 void MainWindow::on_ShowImageButton_clicked()
@@ -132,11 +134,9 @@ void MainWindow::on_check_linkimages_toggled(bool checked)
 
 void MainWindow::on_pushButton_listdata_clicked()
 {
-    std::list<FileSet> loaderlist;
-
     std::ostringstream msg;
 
-    loaderlist=ui->ImageLoaders->GetList();
+    auto loaderlist=ui->ImageLoaders->getList();
     msg.str("");
     msg<<"Getting files from loader:\n";
     for (auto it=loaderlist.begin(); it!=loaderlist.end(); it++) {
@@ -145,7 +145,7 @@ void MainWindow::on_pushButton_listdata_clicked()
 
     logger.message(msg.str());
 
-    std::list<std::string> flist=BuildFileList(loaderlist);
+    std::vector<std::string> flist=BuildFileList(loaderlist);
 
     msg.str("");
     msg<<"Build file list:\n";

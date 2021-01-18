@@ -1,7 +1,6 @@
 #ifndef GRADIENT_H
 #define GRADIENT_H
 
-#include <tnt.h>
 #include <type_traits>
 
 namespace kipl {

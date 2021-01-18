@@ -95,10 +95,11 @@ void SetGrayLevelsDlg::updateLevels(bool interval, double a, double b)
     double lo=0;
     double hi=0;
 
+
     if (interval)
     {
-        lo=a;
-        hi=b;
+        lo=isfinite(a) ? a : -1e6;
+        hi=isfinite(b) ? b : 1e6;
         ui->doubleSpinBox_levelCenter->setValue((b+a)/2.0);
         ui->doubleSpinBox_levelWindow->setValue(fabs(b-a));
 

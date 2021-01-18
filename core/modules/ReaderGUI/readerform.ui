@@ -142,7 +142,7 @@
        <item>
         <widget class="QLabel" name="label_repeat">
          <property name="text">
-          <string>Repeat</string>
+          <string>Count</string>
          </property>
         </widget>
        </item>
@@ -261,6 +261,33 @@
              <string>270 degrees</string>
             </property>
            </item>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_lastIndex">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Last index</string>
+           </property>
           </widget>
          </item>
         </layout>

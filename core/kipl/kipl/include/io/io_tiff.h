@@ -571,14 +571,29 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 
 	int dimx,dimy;
 	// We need to set some values for basic tags before we can add any data
-	TIFFGetField(image, TIFFTAG_IMAGEWIDTH,&dimx);
+    TIFFGetField(image, TIFFTAG_IMAGEWIDTH,  &dimx);
 	TIFFGetField(image, TIFFTAG_IMAGELENGTH, &dimy);
+
+    if (    (dimx<=static_cast<long>(crop[0])) ||
+            (dimy<=static_cast<long>(crop[2])) ||
+            (dimx<=static_cast<long>(crop[1])) ||
+            (dimy<=static_cast<long>(crop[3])))
+    {
+        msg.str("");
+        msg<<"Cropping region ("
+           <<crop[0]<<", "
+           <<crop[1]<<", "
+           <<crop[2]<<", "
+           <<crop[3]<<") is out of bounds ("<<dimx<<", "<<dimy<<") for file "<<fname;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+
     int adjcrop[4]={static_cast<int>(min(static_cast<size_t>(dimx),crop[0])),
                     static_cast<int>(min(static_cast<size_t>(dimy),crop[1])),
                     static_cast<int>(min(static_cast<size_t>(dimx),crop[2])),
                     static_cast<int>(min(static_cast<size_t>(dimy),crop[3]))};
-	if ((adjcrop[2]-adjcrop[0])==0) kipl::base::KiplException("Failed to crop image in X",__FILE__,__LINE__);
-	if ((adjcrop[3]-adjcrop[1])==0) kipl::base::KiplException("Failed to crop image in Y",__FILE__,__LINE__);
+    if ((adjcrop[2]-adjcrop[0])==0) kipl::base::KiplException("Failed to crop image in X (x1<x0)",__FILE__,__LINE__);
+    if ((adjcrop[3]-adjcrop[1])==0) kipl::base::KiplException("Failed to crop image in Y (y1<y0)",__FILE__,__LINE__);
 	
     std::vector<size_t> imgdims = { static_cast<size_t>(adjcrop[2]-adjcrop[0]),
                                     static_cast<size_t>(adjcrop[3]-adjcrop[1]) };
@@ -586,7 +601,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	bufferSize = TIFFScanlineSize(image);
     try
     {
-        if((buffer = new unsigned char[bufferSize]) == nullptr)
+        if ( (buffer = new unsigned char[bufferSize]) == nullptr )
         {
 			msg.str("");
 			msg<<"Could not allocate"<<bufferSize<<" bytes for the uncompressed image";
@@ -777,6 +792,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const std::string & fname, const
         res=ReadTIFF(img,fname,crop,i);
         std::copy_n(img.GetDataPtr(),img.Size(),src.GetLinePtr(0,i));
     }
+    src.info.nBitsPerSample = img.info.nBitsPerSample;
 
     return res;
 }

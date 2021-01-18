@@ -43,7 +43,7 @@ win32 {
     QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH  += ../../../../../../external/src/linalg ../../../../../../external/include ../../../../../../external/include/cfitsio
+    INCLUDEPATH  += ../../../../../../external/include ../../../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
@@ -111,6 +111,9 @@ DEPENDPATH += $$PWD/../../../../../../core/modules/ModuleConfig/include
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../../../core/algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../../../Framework/ReconFramework/src
