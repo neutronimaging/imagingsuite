@@ -20,7 +20,7 @@ public:
 //                     std::vector<ModuleItem *> & preprocList,
 //                     BackProjectorModuleBase *backProjector);
 
-    void addLogEntry();
+    void addLogEntry(std::map<string, std::map<string, string>> &entryData);
 
 private:
     std::string logPath;

@@ -1260,9 +1260,13 @@ void FrameWorkTest::testProcessTimingLogger()
 {
     ProcessTimingLogger ptl("test.json");
 
-    ptl.addLogEntry();
+    std::map<std::string,std::map<std::string,std::string>> entryData = {{"data",{{"proj","500"}}},{"time",{{"bp","10"}}}};
+
+
+    ptl.addLogEntry(entryData);
     std::this_thread::sleep_for(chrono::seconds(1));
-    ptl.addLogEntry();
+    entryData["hardware"]={{"proj","500"}};
+    ptl.addLogEntry(entryData);
 }
 
 QTEST_APPLESS_MAIN(FrameWorkTest)

@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 #include <ctime>
+#include <map>
+#include <string>
 
 #include "../include/processtiminglogger.h"
 #include "../include/ReconException.h"
@@ -21,7 +23,7 @@ ProcessTimingLogger::ProcessTimingLogger(const std::string &path) :
 //    },
 
 //void ProcessTimingLogger::addLogEntry(ReconConfig &config, std::vector<ModuleItem *> &preprocList, BackProjectorModuleBase *backProjector)
-void ProcessTimingLogger::addLogEntry()
+void ProcessTimingLogger::addLogEntry(std::map<std::string,std::map<std::string,std::string>> & entryData)
 {
     std::ostringstream msg;
     std::ofstream ofs;
@@ -55,10 +57,18 @@ void ProcessTimingLogger::addLogEntry()
     }
 
     ofs << "    \"" << timeString() << "\" : {\n";
-    ofs << "    \"data\":{ \"projections\":625, \"ROIx\":100},\n";
+    for (const auto & category : entryData)
+    {
+        ofs << "    \""<< category.first <<"\":{ ";
+        for (const auto & item : category.second)
+        {
+            ofs<< "\""<< item.first<<"\":\""<<item.second<<"\",";
+        }
+        ofs<<"},\n";
+
+    }
     ofs << "    }";
 
-    ofs.flush();
     ofs.close();
 
 }
