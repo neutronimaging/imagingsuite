@@ -8,21 +8,15 @@
 
 #include "../include/processtiminglogger.h"
 #include "../include/ReconException.h"
+#include <strings/filenames.h>
 
 ProcessTimingLogger::ProcessTimingLogger(const std::string &path) :
     logger("ProcessTimingLogger"),
     logPath(path)
 {
+    kipl::strings::filenames::CheckPathSlashes(logPath,false);
 }
 
-
-//"2007-03-01T13:00:00" : {
-//    "data":{"projections":625, "ROIx":100, "ROIy":200,"MROIx":100, "MROIy":100, "MROIz":100 },
-//    "hardware":{"CPU":"Intel i7 @ 3.8GHz"},
-//    "timing" : {"FullLogNorm":10.3, "MorphSpotClean":4.4, "BPRecon":20.3}
-//    },
-
-//void ProcessTimingLogger::addLogEntry(ReconConfig &config, std::vector<ModuleItem *> &preprocList, BackProjectorModuleBase *backProjector)
 void ProcessTimingLogger::addLogEntry(std::map<std::string,std::map<std::string,std::string>> & entryData)
 {
     std::ostringstream msg;
