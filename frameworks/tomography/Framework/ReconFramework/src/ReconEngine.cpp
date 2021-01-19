@@ -20,6 +20,7 @@
 #include "../include/ReconEngine.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
+#include "../include/processtiminglogger.h"
 
 #include <QDebug>
 
@@ -1248,11 +1249,27 @@ int ReconEngine::Run3DFull()
 
 		msg.str("");
 		msg<<"\nModule process time:\n";
-
+        std::map<std::string, std::map<std::string,std::string>> timingLogList;
+        std::map<std::string,std::string> timingList;
         for (auto &module : m_PreprocList)
         {
             msg<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
+            timingList[module->GetModule()->ModuleName()] = std::to_string(module->GetModule()->ExecTime());
 		}
+        timingList[m_BackProjector->GetModule()->Name()] = std::to_string(m_BackProjector->GetModule()->ExecTime());
+        timingLogList["timing"]=timingList;
+
+        timingLogList["data"]= {{"projections",std::to_string(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex)},
+                                {"sizeu",std::to_string(m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0])},
+                                {"sizev",std::to_string(m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1])},
+                                {"sizex",std::to_string(m_Config.MatrixInfo.nDims[0])},
+                                {"sizey",std::to_string(m_Config.MatrixInfo.nDims[1])},
+                                {"sizez",std::to_string(m_Config.MatrixInfo.nDims[2])},
+                               };
+
+        ProcessTimingLogger ptl(ReconConfig::homePath()+"/.imagingtools/recontiming.json");
+
+        ptl.addLogEntry(timingLogList);
 
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 
