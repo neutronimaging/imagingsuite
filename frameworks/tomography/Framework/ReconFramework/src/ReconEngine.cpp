@@ -906,6 +906,10 @@ int ReconEngine::Run3D(bool bRerunBackproj)
 {
     std::stringstream msg;
 
+    kipl::profile::Timer totalTimer;
+
+    totalTimer.Tic();
+
     int res=0;
     msg<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
 
@@ -914,6 +918,7 @@ int ReconEngine::Run3D(bool bRerunBackproj)
         msg.str(""); msg<<"run3d "<<m_Config.ProjectionInfo.beamgeometry;
         logger.message(msg.str());
 
+        resetTimers();
         if ((bRerunBackproj==true) && (m_ProjectionBlocks.empty()==false))
             res=Run3DBackProjOnly();
         else
@@ -943,6 +948,8 @@ int ReconEngine::Run3D(bool bRerunBackproj)
         msg<<"Run3D failed with an unknown error";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
+
+    totalTimer.Toc();
 
     return res;
 }
@@ -1874,7 +1881,17 @@ size_t ReconEngine::validateImage(float *data, size_t N, const string &descripti
 void ReconEngine::Done()
 {
     if (m_Interactor!=nullptr)
-		m_Interactor->Done();
+        m_Interactor->Done();
+}
+
+void ReconEngine::resetTimers()
+{
+    m_BackProjector->GetModule()->resetTimer();
+    for (auto & module : m_PreprocList)
+    {
+        module->GetModule()->resetTimer();
+    }
+
 }
 
 void ReconEngine::MakeExtendedROI(size_t *roi, size_t margin, size_t *extroi, size_t *margins)
