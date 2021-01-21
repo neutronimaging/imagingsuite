@@ -4,6 +4,7 @@
 #include <deque>
 #include <cmath>
 #include <algorithm>
+#include <numeric>
 
 #include "../../include/segmentation/thresholds.h"
 #include "../../include/morphology/morphology.h"
@@ -79,7 +80,60 @@ int Threshold_Entropy(size_t const * const Hist,
 }
 */
 
-int Threshold_Otsu(size_t const * const hist, const size_t N)
+size_t thresholdOtsu(std::vector<size_t> &hist)
+{
+    int t = 0;
+
+    double sum_hist=static_cast<double>(std::accumulate(hist.begin(),hist.end(),0UL));
+
+    double m1    = 0.0;
+    double q_old = 0.0;
+    double m2    = 0.0;
+    double m     = 0.0;
+
+    std::vector<double> P(hist.begin(),hist.end());
+    size_t i=0UL;
+
+    for (auto & p : P)
+    {
+        p=p/sum_hist;
+        m+=i*p;
+
+        ++i;
+    }
+
+
+    double q1=P[0];
+    double sb=0, sb_max=0;
+    vector<double> svec;
+
+    for (i=1; i<P.size(); ++i)
+    {
+        q_old=q1;
+        q1+=P[i];
+        if ((q1) && (q1-1))
+        {
+            m1=(q_old*m1+(i)*P[i])/q1;
+            m2=(m-q1*m1)/(1-q1);
+            sb=q1*(1-q1)*(m1-m2)*(m1-m2);
+            svec.push_back(sb);
+            if (sb_max<sb)
+            {
+                t=i;
+                sb_max=sb;
+            }
+        }
+        else
+        {
+            svec.push_back(sb);
+        }
+    }
+
+    return t;
+
+}
+
+size_t thresholdOtsu(size_t const * const hist, const size_t N)
 {
 	int t=0;
 

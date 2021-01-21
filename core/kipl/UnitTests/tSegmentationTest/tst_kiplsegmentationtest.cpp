@@ -22,6 +22,7 @@ private Q_SLOTS:
     void testDoubleThreshold();
     void testMultiThreshold();
     void testGradientGuidedThreshold();
+    void testOtsu();
     void testCmpType();
 };
 
@@ -138,6 +139,20 @@ void kiplSegmentationTest::testGradientGuidedThreshold()
     QVERIFY2(img.Size(1)==res.Size(1),"y-size error");
 
     kipl::io::WriteTIFF(res,"gradientseg.tif");
+}
+
+void kiplSegmentationTest::testOtsu()
+{
+    std::vector<size_t> h={  0,   0,   0,   2,  16,  60, 139, 200, 177,  97,  33,   7,   1,
+                           1,   6,  25,  63,  97,  93,  55,  20,   4,   0,   0,   0,   0,
+                           0,   0,   0,   0};
+
+    size_t *hh =new size_t[h.size()];
+
+    std::copy(h.begin(),h.end(),hh);
+
+
+    QCOMPARE(kipl::segmentation::thresholdOtsu(h),kipl::segmentation::thresholdOtsu(hh,h.size()));
 }
 
 void kiplSegmentationTest::testCmpType()

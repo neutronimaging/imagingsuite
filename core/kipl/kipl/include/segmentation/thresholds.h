@@ -501,11 +501,17 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img,
 	/// \param T0 lower threshold
 	/// \param T1 upper threshold
     int KIPLSHARED_EXPORT Threshold_Entropy(vector<long> &hist, vector<float> & inter, float re, int &Tc, int &T0, int &T1);
-	
+
+
+    /// \brief Computes the image threshold acording to Otsu
+    /// \param hist Vector containing the histogram of the image to be thresholded
+    /// \bug Sometimes the second attempt fails...
+    size_t KIPLSHARED_EXPORT thresholdOtsu(std::vector<size_t> &hist);
+
 	/// \brief Computes the image threshold acording to Otsu
 	/// \param hist Vector containing the histogram of the image to be thresholded
 	/// \bug Sometimes the second attempt fails...
-    int KIPLSHARED_EXPORT Threshold_Otsu(size_t const * const hist, const size_t N);
+    size_t thresholdOtsu(size_t const * const hist, const size_t N);
 
 	/// \brief computes the threshold for a unimodal histogram
 	///	\param hist The histogram vector
