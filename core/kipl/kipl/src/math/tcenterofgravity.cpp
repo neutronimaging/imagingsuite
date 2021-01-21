@@ -50,7 +50,7 @@ kipl::base::coords3Df CenterOfGravity::findCenter(kipl::base::TImage<float,3> im
         size_t hist[nBins+1];
         float axis[nBins+1];
         kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, nBins, 0.0f, 0.0f, axis);
-        int idx=kipl::segmentation::Threshold_Otsu(hist,nBins);
+        int idx=kipl::segmentation::thresholdOtsu(hist,nBins);
 
         threshold=axis[idx];
         logger(logger.LogMessage,"Used threshold");

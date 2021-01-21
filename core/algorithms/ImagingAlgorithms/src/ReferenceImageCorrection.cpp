@@ -44,6 +44,7 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     bUseManualThresh(false),
     bSaveBG(false),
+    bSaveIntermediate(false),
     m_fOpenBeamDose(1.0f),
     m_bHaveDoseROI(false),
     m_bHaveBBDoseROI(false),
@@ -266,8 +267,8 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
     kipl::base::TImage<float, 2> slice(img.dims());
 
 
-    for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"BBLogNorm: Referencing iteration")==false)); i++) {
-
+    for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"BBLogNorm: Referencing iteration")==false)); i++)
+    {
         if (m_bHaveBlackBody) 
         {
             float *current_param;
@@ -277,9 +278,9 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 case Polynomial:
                 {
                     current_param =new float[6];
-                    memcpy(current_param, sample_bb_interp_parameters+i*6, sizeof(float)*6);
+                    std::copy_n(sample_bb_interp_parameters+i*6,6,current_param);
                     m_BB_sample_Interpolated = InterpolateBlackBodyImage(current_param ,m_nROI);
-                    m_DoseBBsample_image = InterpolateBlackBodyImage(current_param, m_nDoseROI);
+                    m_DoseBBsample_image     = InterpolateBlackBodyImage(current_param, m_nDoseROI);
                     delete[] current_param;
                     break;
                 }
@@ -287,10 +288,10 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 {
                     current_param =new float[spline_sample_values.size()+3];
     
-                    memcpy(current_param, sample_bb_interp_parameters+i*(spline_sample_values.size()+3), sizeof(float)*(spline_sample_values.size()+3));
-    
+                    std::copy_n(sample_bb_interp_parameters+i*(spline_sample_values.size()+3),(spline_sample_values.size()+3),current_param);
+
                     m_BB_sample_Interpolated = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nROI);
-                    m_DoseBBsample_image = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
+                    m_DoseBBsample_image     = InterpolateBlackBodyImagewithSplines(current_param, spline_sample_values, m_nDoseROI);
                         delete[] current_param;
                     break;
                 }
@@ -318,8 +319,6 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
             if (bExtSingleFile)
             {
-
-//                memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetDataPtr(), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
                 fdose_ext_slice = fdoseS_ext;
             }
             else 
@@ -328,29 +327,40 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 {
                     throw ImagingException ("Number of externally processed BB images are not the same as Projection data",__FILE__,__LINE__);
                 }
-                memcpy(m_BB_slice_ext.GetDataPtr(),m_BB_sample_ext.GetLinePtr(0,i), sizeof(float)*m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1));
+
+                std::copy_n(m_BB_sample_ext.GetLinePtr(0,i),
+                            m_BB_sample_ext.Size(0)*m_BB_sample_ext.Size(1),
+                            m_BB_slice_ext.GetDataPtr());
+
                 fdose_ext_slice = fdose_ext_list[i];
             }
 
         }
 
+        std::copy_n(img.GetLinePtr(0,i),
+                    slice.Size(),
+                    slice.GetDataPtr());
 
-        memcpy(slice.GetDataPtr(),img.GetLinePtr(0,i), sizeof(float)*slice.Size());
         Process(slice,dose[i]);
-        memcpy(img.GetLinePtr(0,i), slice.GetDataPtr(), sizeof(float)*slice.Size()); // and copy the result back
+
+        std::copy_n(slice.GetDataPtr(),
+                    slice.Size(),
+                    img.GetLinePtr(0,i));
 	}
 
 
 }
 
-void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask){
+void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask)
+{
 
     // 2. otsu threshold
     // 2.a compute histogram
 
 
     kipl::base::TImage<float,2> norm(img.dims());
-    memcpy(norm.GetDataPtr(), img.GetDataPtr(), sizeof(float)*img.Size()); // copy to norm.. evalute if necessary
+
+    std::copy_n(img.GetDataPtr(),img.Size(), norm.GetDataPtr());
 
     std::vector<pair<float, size_t>> histo;
     float min = *std::min_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size());
@@ -358,13 +368,11 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     kipl::base::THistogram<float> myhist(256, min, max);
     histo =  myhist(norm);
 
-
-    size_t * vec_hist = new size_t[256];
+    std::vector<size_t> vec_hist(256);
     for(int i=0; i<256; i++)
     {
-        vec_hist[i] = histo.at(i).second;
+        vec_hist[i] = histo[i].second;
     }
-
 
     //2.b compute otsu threshold
 
@@ -376,33 +384,24 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     }
     else
     {
-        int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
-        ot = static_cast<float>(histo.at(value).first);
+        int value = kipl::segmentation::thresholdOtsu(vec_hist);
+        ot = static_cast<float>(histo[value].first);
     }
-
-
 
     //2.c threshold image
 
     kipl::base::TImage<float,2> maskOtsu(mask.dims());
-    kipl::base::TImage<int,2> labelImage(mask.dims());
+    kipl::base::TImage<int,2>   labelImage(mask.dims());
 
  // now it works:
 //    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
 
     float *pImg = norm.GetDataPtr();
-    float *res = maskOtsu.GetDataPtr();
-    const int N=static_cast<int>(norm.Size());
+    float *res  = maskOtsu.GetDataPtr();
+    const size_t N=static_cast<int>(norm.Size());
     for (size_t i=0; i<N; i++)
     {
-        if (pImg[i]>=ot)
-        {
-            res[i] = 1;
-        }
-        else 
-        {
-            res[i] = 0;
-        }
+        res[i] = (ot < pImg[i]) ? 0 : 1;
     }
 
   // here: fillPeaks, as at this point the BBs are black in the binary mask
@@ -453,10 +452,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
          throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
 
-
-
      kipl::morphology::LabelArea(labelImage, num_obj, area);
-
 
      if (num_obj<=2)
          throw ImagingException("SegmentBlackBodyNorm failed \n Number of detected objects too little \n Please try to change the threshold or select a bigger ROI containing at least 2 BBs", __FILE__, __LINE__);
@@ -617,10 +613,14 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
               kipl::base::TImage<float,2> roi_im(roi_dim);
 
 
-              for (int i=0; i<roi_dim[1]; i++)
+              for (size_t i=0; i<roi_dim[1]; i++)
               {
-                    memcpy(roi.GetLinePtr(i),maskOtsuFilled.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
-                    memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
+                    std::copy_n(maskOtsuFilled.GetLinePtr(left_edges[bb_index].first+i)+left_edges[bb_index].second,
+                                roi_dim[0],
+                                roi.GetLinePtr(i));
+                    std::copy_n(norm.GetLinePtr(left_edges[bb_index].first+i)+left_edges[bb_index].second,
+                                roi_dim[0],
+                                roi_im.GetLinePtr(i));
               }
 
               float x_com= 0.0f;
@@ -637,10 +637,10 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
                       if (roi(x,y)==0)
                       {
-                          x_com += (roi_im(x,y)*float(x));
-                          y_com += (roi_im(x,y)*float(y));
+                          x_com   += (roi_im(x,y)*float(x));
+                          y_com   += (roi_im(x,y)*float(y));
                           sum_roi += roi_im(x,y);
-                          size++;
+                          ++size;
                       }
 
                   }
@@ -817,10 +817,15 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
         kipl::base::TImage<float,2> roi_im(roi_dim);
 
 
-        for (int i=0; i<roi_dim[1]; i++)
+        for (size_t i=0; i<roi_dim[1]; i++)
         {
-            memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
-            memcpy(roi_im.GetLinePtr(i),img.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
+            std::copy_n(maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second,
+                        roi_dim[0],
+                        roi.GetLinePtr(i));
+
+            std::copy_n(img.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second,
+                        roi_dim[0],
+                        roi_im.GetLinePtr(i));
         }
 
         float x_com = 0.0f;
@@ -916,7 +921,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     // 2. otsu threshold
     // 2.a compute histogram
     kipl::base::TImage<float,2> norm(normimg.dims());
-    memcpy(norm.GetDataPtr(), normimg.GetDataPtr(), sizeof(float)*img.Size()); // copy to norm.. evalute if necessary
+    norm.Clone(normimg);
 
     std::vector<pair<float, size_t>> histo;
     float min = *std::min_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size());
@@ -943,7 +948,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     }
     else
     {
-        int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+        int value = kipl::segmentation::thresholdOtsu(vec_hist, 256);
         ot = static_cast<float>(histo.at(value).first);
     }
     //2.c threshold image
@@ -1115,15 +1120,20 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
             kipl::base::TImage<float,2> roi_im(roi_dim);
 
 
-            for (int i=0; i<roi_dim[1]; i++)
+            for (size_t i=0; i<roi_dim[1]; i++)
             {
-                memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
-                memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);// I am not sure this one is correct.
+                std::copy_n(maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second,
+                            roi_dim[0],
+                            roi.GetLinePtr(i));
+
+                std::copy_n(norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second,
+                            roi_dim[0],
+                            roi_im.GetLinePtr(i)); // Chiara comment: I am not sure this one is correct.
             }
 
             float x_com= 0.0f;
             float y_com= 0.0f;
-            int size = 0;
+            size_t size = 0;
 
             float sum_roi = 0.0f;
 
@@ -1137,7 +1147,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
                           x_com   += (roi_im(x,y)*float(x));
                           y_com   += (roi_im(x,y)*float(y));
                           sum_roi += roi_im(x,y);
-                          size++;
+                          ++size;
                     }
                 }
             }
@@ -1739,6 +1749,8 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     norm   -= dark;
     norm   /= (flat-=dark); // TODO check this, it probably alters the original flat
 
+    // TODO Add support for predefined mask image from file.
+
     try
     {
         SegmentBlackBody(norm, mask);
@@ -1752,7 +1764,9 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 //    kipl::io::WriteTIFF(mask,"mask.tif",kipl::base::Float32);
 
     kipl::base::TImage<float,2> BB_DC(bb.dims());
-    memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
+
+    BB_DC.Clone(bb);
+
     BB_DC-=dark;
 
     kipl::base::TImage<float, 2> interpolated_BB(bb.dims());
@@ -1769,8 +1783,9 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplines(kipl::base::TI
     // 1. normalize image
     kipl::base::TImage<float, 2> norm(bb.dims());
     kipl::base::TImage<float, 2> normdc(bb.dims());
-    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
-    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+
+    norm.Clone(bb);
+    normdc.Clone(bb);
 
     normdc -=dark;
     norm -=dark;
@@ -1794,9 +1809,9 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplines(kipl::base::TI
 
 float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAndMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, std::map<std::pair<int, int>, float> &values)
 {
-
     kipl::base::TImage<float,2> BB_DC(bb.dims());
-    memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
+
+    BB_DC.Clone(bb);
     BB_DC-=dark;
     ComputeBlackBodyCentroids(BB_DC,mask, values);
 
@@ -1808,18 +1823,17 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAndMask(kipl::b
 
 float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask, float &error)
 {
-
-
     // 1. normalize image
 
     kipl::base::TImage<float, 2> norm(bb.dims());
     kipl::base::TImage<float, 2> normdc(bb.dims());
-    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
-    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
 
-    normdc -=dark;
-    norm -=dark;
-    norm /= (flat-=dark);
+    norm.Clone(bb);
+    normdc.Clone(bb);
+
+    normdc -= dark;
+    norm   -= dark;
+    norm   /= (flat-=dark);
 
     try
     {
@@ -1833,13 +1847,14 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     }
 
     kipl::base::TImage<float,2> BB_DC(bb.dims());
-    memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
+
+    BB_DC.Clone(bb);
     BB_DC-=dark;
 
     kipl::base::TImage<float, 2> interpolated_BB(bb.dims());
     interpolated_BB = 0.0f;
 
-    float * param = new float[6];
+    float * param = new float[6]; // TODO Check potential memory leak.
     float myerror;
 
     param = ComputeInterpolationParameters(mask,BB_DC,myerror);
@@ -1851,7 +1866,8 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask){
 
     kipl::base::TImage<float,2> BB_DC(bb.dims());
-    memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
+
+    BB_DC.Clone(bb);
     BB_DC-=dark;
 
 //    kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
@@ -1893,17 +1909,16 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
     sample_bb_interp_parameters = new float[(nBBs+3)*m_nProj];
 
     m_nBBimages = nBBSampleCount; // store how many images with BB and sample i do have
-    memcpy(ob_bb_parameters, ob_parameter, sizeof(float)*(nBBs+3));
-//    for (size_t i=0; i<nBBs+3; ++i){
-//        ob_bb_parameters[i]=0.0f;
-//    }
+    std::copy_n(ob_parameter, (nBBs+3),ob_bb_parameters);
 
     switch(ebo)
     {
         case(Interpolate) :
         {
             sample_bb_parameters = new float[(nBBs+3)*m_nBBimages];
-            memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nBBimages);
+
+            std::copy_n(sample_parameter,(nBBs+3)*m_nBBimages,sample_bb_parameters);
+
             sample_bb_interp_parameters = InterpolateSplineGeneric(sample_bb_parameters, nBBs);
 
             for (size_t i=0; i<m_nProj; i++)
@@ -1931,27 +1946,28 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
                 }
             }
 
-            memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nProj);
+            std::copy_n(sample_parameter,(nBBs+3)*m_nProj,sample_bb_interp_parameters);
 
             break;
         }
         case(Average) :
         {
-            sample_bb_parameters = new float[nBBs+3];
+            sample_bb_parameters   = new float[nBBs+3];
             float *temp_parameters = new float[nBBs+3];
-            memcpy(temp_parameters, sample_parameter, sizeof(float)*(nBBs+3));
+
+            std::copy_n(sample_parameter,(nBBs+3),temp_parameters);
 
     //        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
 
             for (size_t i=0; i<m_nProj; ++i)
             {
-                memcpy(sample_bb_parameters, temp_parameters, sizeof(float)*(nBBs+3));
+                std::copy_n(temp_parameters,nBBs+3,sample_bb_parameters);
                 for (size_t j=0; j<(nBBs+3); ++j)
                 {
                     sample_bb_parameters[j] *= (dosesamplelist[i]/tau);
                 }
 
-                memcpy(sample_bb_interp_parameters+i*(nBBs+3), sample_bb_parameters, sizeof(float)*(nBBs+3));
+                std::copy_n(sample_bb_parameters, nBBs+3, sample_bb_interp_parameters+i*(nBBs+3));
             }
 
             break;
@@ -1964,24 +1980,21 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
 {
 
     m_nProj = nProj; // not very smartly defined
-    ob_bb_parameters = new float[6];
+    ob_bb_parameters            = new float[6];
     sample_bb_interp_parameters = new float[6*m_nProj];
 
     m_nBBimages = nBBSampleCount; // store how many images with BB and sample i do have
-    memcpy(ob_bb_parameters, ob_parameter, sizeof(float)*6);
-//    ob_bb_parameters[0] = 0.0f;
-//    ob_bb_parameters[1] = 0.0f;
-//    ob_bb_parameters[2] = 0.0f;
-//    ob_bb_parameters[3] = 0.0f;
-//    ob_bb_parameters[4] = 0.0f;
-//    ob_bb_parameters[5] = 0.0f;
+
+    std::copy_n(ob_parameter,6,ob_bb_parameters);
 
     switch(ebo)
     {
         case(Interpolate) :
         {
             sample_bb_parameters = new float[6*m_nBBimages];
-            memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*6*m_nBBimages);
+
+            std::copy_n(sample_parameter, 6*m_nBBimages, sample_bb_parameters);
+
             sample_bb_interp_parameters = InterpolateParametersGeneric(sample_bb_parameters);
 
             for (size_t i=0; i<m_nProj; i++)
@@ -2010,27 +2023,29 @@ void ReferenceImageCorrection::SetInterpParameters(float *ob_parameter, float *s
                 }
             }
 
-            memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*6*m_nProj);
+            std::copy_n(sample_parameter,6*m_nProj,sample_bb_interp_parameters);
 
             break;
         }
         case(Average) :
         {
-            sample_bb_parameters = new float[6];
+            sample_bb_parameters   = new float[6];
             float *temp_parameters = new float[6];
-            memcpy(temp_parameters, sample_parameter, sizeof(float)*6);
+
+            std::copy_n(sample_parameter, 6, temp_parameters);
 
     //        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
 
             for (size_t i=0; i<m_nProj; ++i)
             {
-                memcpy(sample_bb_parameters, temp_parameters, sizeof(float)*6);
+                std::copy_n(temp_parameters,6, sample_bb_parameters);
+
                 for (size_t j=0; j<6; ++j)
                 {
                     sample_bb_parameters[j] *= (dosesamplelist[i]/tau);
                 }
 
-                memcpy(sample_bb_interp_parameters+i*6, sample_bb_parameters, sizeof(float)*6);
+                std::copy_n(sample_bb_parameters,6,sample_bb_interp_parameters+i*6);
             }
 
             break;
@@ -2099,7 +2114,7 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
             temp_param[k] = param[index_1+k]+(step)*(param[index_2+k]-param[index_1+k]);
         }
 
-        memcpy(interpolated_param+i*(nBBs+3),temp_param,sizeof(float)*(nBBs+3));
+        std::copy_n(temp_param,nBBs+3,interpolated_param+i*(nBBs+3));
         delete[] temp_param;
 
         if (curr_angle>=*big_a)
@@ -2196,7 +2211,7 @@ float* ReferenceImageCorrection::InterpolateParametersGeneric(float* param){
             temp_param[k] = param[index_1+k]+(step)*(param[index_2+k]-param[index_1+k]);
         }
 
-        memcpy(interpolated_param+i*6,temp_param,sizeof(float)*6);
+        std::copy_n(temp_param,6,interpolated_param+i*6);
         delete[] temp_param;
 
         if (curr_angle>=*big_a)
@@ -2235,12 +2250,11 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
     size_t index = 0;
     for (size_t i=0; i<6*n; i+=step*6)
     {
-        memcpy(interpolated_param+i, param+index, sizeof(float)*6);
+        std::copy_n(param+index, 6, interpolated_param+i);
         index +=6;
     }
 
-    memcpy(interpolated_param+6*n, param, sizeof(float)*6); // copio i primi in coda
-
+    std::copy_n(param,6,interpolated_param+6*n);
 
     for (size_t i=0; i<6*n; i+=step*6)
     {
@@ -2256,7 +2270,8 @@ float* ReferenceImageCorrection::InterpolateParameters(float *param, size_t n, s
             }
 
             index +=6;
-            memcpy(interpolated_param+index,temp_param,sizeof(float)*6);
+            std::copy_n(temp_param,6,interpolated_param+index);
+
             delete[] temp_param;
         }
     }
@@ -2269,9 +2284,9 @@ float *ReferenceImageCorrection::ReplicateSplineParameters(float *param, size_t 
     float *interpolated_param = new float[(nBBs+3)*(n+1)];
     int index=0;
 
-    for (int i=0; i<=n; i++)
+    for (size_t i=0; i<=n; i++)
     {
-        memcpy(interpolated_param+index,param,sizeof(float)*(nBBs+3));
+        std::copy_n(param, nBBs+3, interpolated_param+index);
         index+=(nBBs+3);
     }
 
@@ -2284,9 +2299,9 @@ float * ReferenceImageCorrection::ReplicateParameters(float *param, size_t n)
     float *interpolated_param = new float[6*(n+1)];
     int index=0;
 
-    for (int i=0; i<=n; i++)
+    for (size_t i=0; i<=n; i++)
     {
-        memcpy(interpolated_param+index,param,sizeof(float)*6);
+        std::copy_n(param,6,interpolated_param+index);
         index+=6;
     }
 
@@ -2297,7 +2312,7 @@ float * ReferenceImageCorrection::ReplicateParameters(float *param, size_t n)
 int* ReferenceImageCorrection::repeat_matrix(int* source, int count, int expand)
 {
     int i, j;
-    int* target = (int*)malloc(sizeof(int)*count * expand);
+    int* target = (int*)malloc(sizeof(int)*count * expand); // TODO check if this is used anywhere?
 
     for (i = 0; i < count; ++i)
     {
@@ -2910,6 +2925,12 @@ float ReferenceImageCorrection::computedose(kipl::base::TImage<float,2> &img){
 
     return dose;
 
+}
+
+void ReferenceImageCorrection::saveIntermediateImage(kipl::base::TImage<float, 2> &img, const string &fname)
+{
+    if (bSaveIntermediate)
+        kipl::io::WriteTIFF(img,fname,kipl::base::Float32);
 }
 
 void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 2> &bb_sample_ext, float &dose, float &dose_s)

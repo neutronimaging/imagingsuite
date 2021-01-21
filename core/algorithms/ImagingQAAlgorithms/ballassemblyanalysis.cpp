@@ -55,7 +55,7 @@ void BallAssemblyAnalysis::createLabelledMask(kipl::base::TImage<float,3> &img)
     size_t hist[nBins+1];
     float axis[nBins+1];
     kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, nBins, 0.0f, 0.0f, axis);
-    int idx=kipl::segmentation::Threshold_Otsu(hist,nBins);
+    int idx=kipl::segmentation::thresholdOtsu(hist,nBins);
 
     float threshold=axis[idx];
     mask.resize(img.dims());

@@ -235,6 +235,7 @@ protected:
     void ComputeNormRevised(kipl::base::TImage<float,2> &img, float dose);
     int* repeat_matrix(int* source, int count, int expand); /// repeat matrix. not used.
     float computedose(kipl::base::TImage<float,2>&img); /// duplicate.. to move in timage probably or something like this
+    void saveIntermediateImage(kipl::base::TImage<float,2> &img, const std::string &fname);
 
 	bool m_bHaveOpenBeam;
 	bool m_bHaveDarkCurrent;
@@ -243,6 +244,7 @@ protected:
     eReferenceMethod m_ReferenceMethod;
     bool bUseManualThresh;
     bool bSaveBG;
+    bool bSaveIntermediate;
 
     std::string pathBG;      ///< path for saving BGs
     std::string flatname_BG; ///< filename for saving the open beam BG
