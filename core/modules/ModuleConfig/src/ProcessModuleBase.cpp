@@ -52,6 +52,11 @@ int ProcessModuleBase::Process(kipl::base::TImage<float,3> &img, std::map<std::s
     return res;
 }
 
+void ProcessModuleBase::resetTimer()
+{
+    timer.reset();
+}
+
 const std::vector<Publication> &ProcessModuleBase::publicationList() const
 {
     return publications;

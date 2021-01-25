@@ -21,6 +21,7 @@
 
 #include <ReconException.h>
 #include <ModuleException.h>
+#include <ReconConfig.h>
 
 #include "muhrecmainwindow.h"
 
@@ -43,6 +44,8 @@ int main(int argc, char *argv[])
     std::string homedir = QDir::homePath().toStdString();
 
     kipl::strings::filenames::CheckPathSlashes(homedir,true);
+    ReconConfig::setHomePath(homedir);
+
     msg.str(""); msg<<"Home dir: "<<homedir;
     logger.message(msg.str());
 
