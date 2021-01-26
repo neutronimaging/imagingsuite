@@ -15,9 +15,10 @@ if(NOT pybind11_sources_POPULATED)
     ${pybind11_sources_SOURCE_DIR}
     ${pybind11_sources_BINARY_DIR}
     )
-    add_definitions(-DHAVEPYBIND11 -DNO_QT)
+    add_definitions(-DHAVEPYBIND11)
 endif()
 
+add_definitions(-DNO_QT)
 set(TARGET_NAME "muhrectomo") 
 
 include_directories(
