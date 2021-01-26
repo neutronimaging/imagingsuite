@@ -145,8 +145,6 @@ private:
 
     void mrqcof(Nonlinear::FitFunctionBase &fn, arma::vec &x, arma::vec &y, arma::vec &sig, arma::mat &alpha, arma::vec &beta);
     void covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn);
-    void gaussj(arma::mat &a, arma::mat &b);
-
 };
 
 /// \brief Function implementation of a sum of Gaussians
