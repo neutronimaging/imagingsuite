@@ -62,6 +62,7 @@ public:
     /// The time used to process data wth the module.
     /// \returns The elapsed time in seconds.
     double ExecTime() {return timer.elapsedTime(kipl::profile::Timer::seconds);}
+    void resetTimer();
 
     /// The repository verision of the module base and its module instance.
     /// \returns A string containing the version.

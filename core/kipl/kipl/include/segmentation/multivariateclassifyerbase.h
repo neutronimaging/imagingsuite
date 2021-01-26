@@ -5,7 +5,7 @@
 
 #include "../kipl_global.h"
 
-#include <tnt.h>
+#include <armadillo>
 
 namespace kipl {
 namespace segmentation {
@@ -13,6 +13,7 @@ namespace segmentation {
     public:
         enum eDistanceMetric {
             Euclidean = 0,
+            Euclidean2,
             Mahalanobis,
             Bhattacharyya
         };
@@ -22,8 +23,8 @@ namespace segmentation {
 
         /// \brief Create an initialized class descriptor
         /// \param _m mean value vector
-        ClassDescriptor(TNT::Array1D<double> _m,
-                        TNT::Array2D<double> _C,
+        ClassDescriptor(arma::vec _m,
+                        arma::mat _C,
                         std::string _name="noname");
 
         /// \brief Copy c'tor
@@ -39,11 +40,12 @@ namespace segmentation {
         /// \param metric Selects the metric to calculate the distance
         double Distance(ClassDescriptor &cd, eDistanceMetric metric = Bhattacharyya);
 
-        TNT::Array1D<double> m; ///<! Mean value matrix [Nx1]
-        TNT::Array2D<double> C; ///<! Covariance Matrix
+        arma::vec m; ///<! Mean value matrix [Nx1]
+        arma::mat C; ///<! Covariance Matrix
         std::string className; ///<! Name of the class descriptor
     private:
         double EuclideanDistance(ClassDescriptor &cd);
+        double EuclideanDistance2(ClassDescriptor &cd);
         double MahalanobisDistance(ClassDescriptor &cd);
         double BhattacharyyaDistance(ClassDescriptor &cd);
 

@@ -18,7 +18,6 @@ INCLUDEPATH += $$PWD/../../kipl/include
 DEPENDPATH += $$PWD/../../kipl/src
 
 LIBS += -lkipl # -lFaddeeva
-#INCLUDEPATH += $$PWD/../../../../external/src/linalg
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../external/src/Fadeeva_erf/release/ -lFaddeeva
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../external/src/Fadeeva_erf/debug/ -lFaddeeva

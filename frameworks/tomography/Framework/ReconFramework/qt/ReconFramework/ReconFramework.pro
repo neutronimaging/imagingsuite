@@ -25,7 +25,8 @@ SOURCES += \
     ../../src/ProjectionReader.cpp \
     ../../src/PreprocModuleBase.cpp \
     ../../src/ModuleItem.cpp \
-    ../../src/BackProjectorModuleBase.cpp
+    ../../src/BackProjectorModuleBase.cpp \
+    ../../src/processtiminglogger.cpp
 
 HEADERS += \
     ../../include/ReconHelpers.h \
@@ -39,6 +40,7 @@ HEADERS += \
     ../../include/ModuleItem.h \
     ../../include/ReconFramework_global.h \
     ../../include/BackProjectorModuleBase.h \
+    ../../include/processtiminglogger.h \
     ../../src/stdafx.h
 
 symbian {
@@ -130,7 +132,6 @@ win32 {
     QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += ../../../../../../external/src/linalg
     INCLUDEPATH += ../../../../../../external/include
     INCLUDEPATH += ../../../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
