@@ -31,24 +31,18 @@ void ProcessTimingLogger::addLogEntry(std::map<std::string,std::map<std::string,
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 
-    long pos = ofs.tellp();
-    std::cout<<pos<<std::endl;
     ofs.seekp(0,ios::end);
+
+    long pos = ofs.tellp();
 
     if (pos==0L) {
         ofs<<"{\n";
     }
-    else
-    {
-        ofs.seekp(-1,ios::end);
-        pos = ofs.tellp();
-        std::cout<<pos<<std::endl;
-        //ofs<<",\n";
-        ofs.write(",",1);
-        pos = ofs.tellp();
-        std::cout<<pos<<std::endl;
-        ofs<<"\n";
-    }
+//    else
+//    {
+//        ofs.seekp(-2,ios::end);
+//        ofs<<",\n";
+//    }
 
     ofs << "    \"" << timeString() << "\" : {\n";
     for (const auto & category : entryData)
@@ -56,12 +50,17 @@ void ProcessTimingLogger::addLogEntry(std::map<std::string,std::map<std::string,
         ofs << "    \""<< category.first <<"\":{ ";
         for (const auto & item : category.second)
         {
-            ofs<< "\""<< item.first<<"\":\""<<item.second<<"\",";
+            ofs<< "\""<< item.first<<"\":\""<<item.second<<"\"";
+            if (item.first != category.second.rbegin()->first)
+                ofs<<",";
         }
-        ofs<<"},\n";
+        ofs<<"}";
+        if (category.first != entryData.rbegin()->first)
+            ofs<<",";
+        ofs<<"\n";
 
     }
-    ofs << "    }";
+    ofs << "    },\n";
 
     ofs.close();
 
