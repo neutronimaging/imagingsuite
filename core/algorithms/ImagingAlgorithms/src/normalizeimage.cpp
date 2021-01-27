@@ -75,7 +75,7 @@ void NormalizeImage::process(kipl::base::TImage<float, 2> &img)
         for (size_t i = 0; i<img.Size(); ++i)
         {
             if (img[i]<=0)
-                img[i] = 0.0f;
+                img[i] = 1.0f;
 
             img[i] = std::logf(img[i]) - mFlatField[i];
         }

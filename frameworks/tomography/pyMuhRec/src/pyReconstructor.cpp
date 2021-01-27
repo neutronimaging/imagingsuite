@@ -139,8 +139,9 @@ void bindReconstructor(py::module &m)
                                                 static_cast<size_t>(buf1.shape[0])
                                              };
 
+                    // py::print(dims[0],dims[1],dims[2]);
                     kipl::base::TImage<float,3> img(static_cast<float*>(buf1.ptr),dims);
-
+                    
                     std::map<std::string,std::string> parameters;
                     std::map<std::string,int> parMap;
                     parMap["angles"]  = 0;
@@ -184,6 +185,13 @@ void bindReconstructor(py::module &m)
                 "Reconstructs a set of projections"
     );
 
+    reClass.def("matrixDims",[](Reconstructor &recon)
+            {
+                auto dims=recon.backProjector->GetMatrixDims();
+                // py::print(dims[0],dims[1],dims[2]);
+                return dims;
+            });
+
     reClass.def("volume",[](Reconstructor &recon)
              {
                  std::ostringstream msg;
@@ -202,7 +210,7 @@ void bindReconstructor(py::module &m)
 
                  return volume;
               },
-                    "Applies the stripe filter on the image as in-place operation.");
+                    "Retrieves the reconstructed volume from the backprojector.");
 
     //    sfClass.def("process",
     //                 [](ImagingAlgorithms::StripeFilter &sf,
