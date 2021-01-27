@@ -22,7 +22,7 @@ copy %REPOS%\lib\InspectorModules.dll .
 copy %REPOS%\lib\FDKBackProjectors.dll .
 copy %REPOS%\lib\ReaderConfig.dll .
 copy %REPOS%\lib\ReaderGUI.dll .
-#copy %REPOS%\lib\ReconAlgorithms.dll .
+rem copy %REPOS%\lib\ReconAlgorithms.dll .
 copy %REPOS%\lib\QtImaging.dll .
 
 copy %REPOS%\imagingsuite\external\lib64\libtiff.dll .
