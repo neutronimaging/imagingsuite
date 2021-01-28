@@ -47,12 +47,19 @@ void ProcessTimingLogger::addLogEntry(std::map<std::string,std::map<std::string,
     ofs << "    \"" << timeString() << "\" : {\n";
     for (const auto & category : entryData)
     {
-        ofs << "    \""<< category.first <<"\":{ ";
+        ofs << "        \""<< category.first <<"\":{ ";
         for (const auto & item : category.second)
         {
-            ofs<< "\""<< item.first<<"\":\""<<item.second<<"\"";
+            ofs<< "\""<< item.first<<"\":";
+            try
+            {
+                ofs<<std::stod(item.second);
+            }  catch ( std::invalid_argument)
+            {
+                ofs<<"\""<<std::stod(item.second)<<"\"";
+            }
             if (item.first != category.second.rbegin()->first)
-                ofs<<",";
+                ofs<<", ";
         }
         ofs<<"}";
         if (category.first != entryData.rbegin()->first)
