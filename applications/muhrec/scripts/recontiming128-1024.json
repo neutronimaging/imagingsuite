@@ -210,5 +210,32 @@
     "2021-01-28T10:08:06" : {
         "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
         "timing":{ "FullLogNorm":728.378, "MorphSpotClean":37707.7, "Multi projection BP parallel":78992.6, "WaveletRingClean":451903, "total":640702}
-    }
-}
+    },
+    "2021-01-28T10:18:53" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":831.751, "MorphSpotClean":38552.2, "Multi projection BP parallel":80227.8, "WaveletRingClean":455960, "total":647195}
+    },
+    "2021-01-28T10:29:38" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":761.062, "MorphSpotClean":38330.9, "Multi projection BP parallel":79793.8, "WaveletRingClean":454489, "total":644954}
+    },
+    "2021-01-28T10:40:23" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":750.34, "MorphSpotClean":38080.1, "Multi projection BP parallel":81321.8, "WaveletRingClean":453062, "total":645026}
+    },
+    "2021-01-28T10:51:06" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":732.793, "MorphSpotClean":38328.4, "Multi projection BP parallel":79565.7, "WaveletRingClean":452507, "total":642986}
+    },
+    "2021-01-28T11:01:47" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":746.137, "MorphSpotClean":38160.7, "Multi projection BP parallel":79043.5, "WaveletRingClean":451534, "total":641019}
+    },
+    "2021-01-28T11:12:29" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":750.226, "MorphSpotClean":38096.6, "Multi projection BP parallel":78947.6, "WaveletRingClean":452130, "total":641585}
+    },
+    "2021-01-28T11:23:10" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":752.782, "MorphSpotClean":38035.5, "Multi projection BP parallel":79168.7, "WaveletRingClean":452152, "total":641719}
+    },
