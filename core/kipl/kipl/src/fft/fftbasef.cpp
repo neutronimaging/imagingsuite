@@ -1,11 +1,12 @@
 //<LICENCE>
 
-
 #include <cstring>
 #include <complex>
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <vector>
+#include <numeric>
 
 #include <fftw3.h>
 
@@ -13,11 +14,9 @@
 #include "../../include/base/KiplException.h"
 
 namespace kipl { namespace math { namespace fft {
-using namespace std;
 
 
-
-FFTBaseFloat::FFTBaseFloat(size_t const * const Dims, size_t const NDim) : 	
+FFTBaseFloat::FFTBaseFloat(const std::vector<size_t> _dims) :
 	logger("kipl::math::fft::FFTBaseFloat", std::clog),
 	have_r2cPlan(false),
 	have_c2cPlan(false),
@@ -30,19 +29,10 @@ FFTBaseFloat::FFTBaseFloat(size_t const * const Dims, size_t const NDim) :
     cBufferA(nullptr),
     cBufferB(nullptr),
     rBuffer(nullptr),
-	Ndata(Dims[0])
+    dims(_dims),
+    Ndata(std::accumulate(_dims.begin(), _dims.end(), 1, std::multiplies<size_t>()))
 {
-	for (size_t i=1; i<NDim; i++)
-		Ndata*=Dims[i];
-		
-	for (size_t i=0; i<NDim; i++)
-        dims[i]=static_cast<int>(Dims[i]);
-
-	for (size_t i=NDim; i<8; i++)
-		dims[i]=1;
-		
-	ndim=static_cast<int>(NDim);
-
+    ndim=dims.size();
 }
 
 FFTBaseFloat::~FFTBaseFloat()
@@ -69,13 +59,13 @@ FFTBaseFloat::~FFTBaseFloat()
 		delete [] rBuffer;
 }
 
-int FFTBaseFloat::operator() ( complex<float> *inCdata,  complex<float> *outCdata, int sign)
+int FFTBaseFloat::operator() ( std::complex<float> *inCdata,  std::complex<float> *outCdata, int sign)
 {
 	if (!cBufferA)
-		cBufferA=new  complex<float>[Ndata];
+        cBufferA=new  std::complex<float>[Ndata];
 	
 	if (!cBufferB)
-		cBufferB=new  complex<float>[Ndata];
+        cBufferB=new  std::complex<float>[Ndata];
 
 //    std::fill_n(cBufferA,0,Ndata);
 //    std::fill_n(cBufferB,0,Ndata);
@@ -102,20 +92,21 @@ int FFTBaseFloat::operator() ( complex<float> *inCdata,  complex<float> *outCdat
 							FFTW_ESTIMATE);
 					break;
 				default:
-					cerr<<"ndim="<<ndim<<" is not supported"<<endl;
-					return -1;
+                    throw kipl::base::KiplException("Number of dimensions are not supported",__FILE__,__LINE__);
 			}
 							
 			have_c2cPlan=true;
 		}
 	
-		memcpy(cBufferA,inCdata,sizeof( complex<float>)*Ndata);
+        memcpy(cBufferA,inCdata,sizeof( std::complex<float>)*Ndata);
 		fftwf_execute(c2cPlan);
 	}
 	else {
-		if (!have_c2cPlanI) {
-			ostringstream str;
-			switch (ndim) {
+        if (!have_c2cPlanI)
+        {
+            std::ostringstream str;
+            switch (ndim)
+            {
 				case 1:
 					c2cPlanI=fftwf_plan_dft_1d(dims[0],
                             reinterpret_cast<fftwf_complex*>(cBufferA),
@@ -138,26 +129,26 @@ int FFTBaseFloat::operator() ( complex<float> *inCdata,  complex<float> *outCdat
 					str.str("");
 					str<<"ndim="<<ndim<<" is not supported";
 					logger(kipl::logging::Logger::LogError,str.str());
-					return -1;
+                    throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
 					
 			}
 							
 			have_c2cPlanI=true;
 		}
 			
-		memcpy(cBufferA,inCdata,sizeof( complex<float>)*Ndata);
+        memcpy(cBufferA,inCdata,sizeof( std::complex<float>)*Ndata);
 		fftwf_execute(c2cPlanI);
 	}
 
-	memcpy(outCdata,cBufferB,sizeof( complex<float>)*Ndata);
+    memcpy(outCdata,cBufferB,sizeof( std::complex<float>)*Ndata);
 	
 	return static_cast<int>(Ndata);
 }
 
-int FFTBaseFloat::operator() (float *inRdata,  complex<float> *outCdata)
+int FFTBaseFloat::operator() (float *inRdata,  std::complex<float> *outCdata)
 {
 	if (!cBufferA)
-		cBufferA=new  complex<float>[Ndata];
+        cBufferA=new  std::complex<float>[Ndata];
 	
 	if (!rBuffer)
 		rBuffer=new float[2*Ndata];
@@ -166,7 +157,7 @@ int FFTBaseFloat::operator() (float *inRdata,  complex<float> *outCdata)
     std::fill_n(rBuffer,0,2*Ndata);
 		
 	if (!have_r2cPlan) {
-		ostringstream str;
+        std::ostringstream str;
 		switch (ndim) {
 			case 1:
 				r2cPlan=fftwf_plan_dft_r2c_1d(dims[0],
@@ -187,7 +178,7 @@ int FFTBaseFloat::operator() (float *inRdata,  complex<float> *outCdata)
 				str.str("");
 				str<<"ndim="<<ndim<<" is not supported";
 				logger(kipl::logging::Logger::LogError,str.str());
-				return -1;
+                kipl::base::KiplException(str.str(),__FILE__,__LINE__);
 		}
 	
 		have_r2cPlan=true;
@@ -197,17 +188,17 @@ int FFTBaseFloat::operator() (float *inRdata,  complex<float> *outCdata)
 	
 	fftwf_execute(r2cPlan);
 
-	memcpy(outCdata,cBufferA,sizeof( complex<float>)*Ndata);
+    memcpy(outCdata,cBufferA,sizeof( std::complex<float>)*Ndata);
 
 	return static_cast<int>(Ndata);
 }
 
 
-int FFTBaseFloat::operator() ( complex<float> *inCdata, float *outRdata)
+int FFTBaseFloat::operator() ( std::complex<float> *inCdata, float *outRdata)
 {
 	if (!cBufferA)
 		//cBufferA=reinterpret_cast<complex<float> *>(fftw_malloc(sizeof(fftwf_complex) * Ndata));
-		cBufferA=new  complex<float>[Ndata];
+        cBufferA=new  std::complex<float>[Ndata];
 	
 	if (!rBuffer)
 		rBuffer=new float[2*Ndata];
@@ -216,7 +207,7 @@ int FFTBaseFloat::operator() ( complex<float> *inCdata, float *outRdata)
     std::fill_n(rBuffer,0,2*Ndata);
 
 	if (!have_c2rPlan) {
-		ostringstream str;
+        std::ostringstream str;
 		switch (ndim) {
 			case 1:
 				c2rPlan=fftwf_plan_dft_c2r_1d(dims[0],
@@ -237,13 +228,13 @@ int FFTBaseFloat::operator() ( complex<float> *inCdata, float *outRdata)
 				str.str("");
 				str<<"ndim="<<ndim<<" is not supported";
 				logger(kipl::logging::Logger::LogError,str.str());
-				return -1;
+                throw kipl::base::KiplException(str.str(),__FILE__,__LINE__);
 		}
 		
 		have_c2rPlan=true;
 	}
 	
-	memcpy(cBufferA,inCdata,sizeof(complex<float>)*Ndata);
+    memcpy(cBufferA,inCdata,sizeof(std::complex<float>)*Ndata);
 	fftwf_execute(c2rPlan);
 
 	memcpy(outRdata,rBuffer,sizeof(float)*Ndata);

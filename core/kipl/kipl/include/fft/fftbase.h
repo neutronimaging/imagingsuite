@@ -7,6 +7,7 @@
 
 #include <complex>
 #include <cstring>
+#include <vector>
 #include <fftw3.h>
 
 #include "../logging/logger.h"
@@ -32,7 +33,7 @@ public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform
 	///	\param NDim the rank of the transform
-    FFTBase(size_t const * const Dims, size_t const NDim);
+    FFTBase(const std::vector<size_t> &_dims);
     
     /// \brief Computes a complex Fourier transform
     ///	\param inCdata pointer to the input data
@@ -74,9 +75,9 @@ protected:
 	std::complex<double> *cBufferB;
 	double *rBuffer;
 	
-	long Ndata;
-	int dims[8];
-	int ndim;
+    size_t Ndata;
+    std::vector<size_t> dims;
+    size_t ndim;
 };
 
 
@@ -85,7 +86,7 @@ public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform
 	///	\param NDim the rank of the transform
-    FFTBaseFloat(size_t const * const Dims, size_t const NDim);
+    FFTBaseFloat(const std::vector<size_t> _dims);
     
     /// \brief Computes a complex Fourier transform
     ///	\param inCdata pointer to the input data
@@ -129,7 +130,7 @@ protected:
 	float *rBuffer;
 	
 	size_t Ndata;
-	int dims[8];
+    std::vector<size_t> dims;
 	int ndim;
 };
 

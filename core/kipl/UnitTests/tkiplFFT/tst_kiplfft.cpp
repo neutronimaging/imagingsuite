@@ -1,6 +1,8 @@
 #include <QtTest>
 
 // add necessary includes here
+
+#include <vector>
 #include <fft/fftbase.h>
 #include <fft/zeropadding.h>
 
@@ -16,7 +18,11 @@ private slots:
     void test_FFTdoubleCTor();
     void test_FFTfloatCTor();
 
-    void test_FFTinThreads();
+    void test_FFTdouble();
+    void test_FFTfloat();
+
+    void test_FFTdoubleInThreads();
+    void test_FFTfloatInThreads();
 
 };
 
@@ -32,15 +38,30 @@ kiplFFT::~kiplFFT()
 
 void kiplFFT::test_FFTdoubleCTor()
 {
-  //  kipl::math::fft::FFTBase fft();
+    kipl::math::fft::FFTBase fft({1024UL});
 }
 
 void kiplFFT::test_FFTfloatCTor()
 {
+    kipl::math::fft::FFTBaseFloat fft({1024UL});
+}
+
+void kiplFFT::test_FFTdouble()
+{
 
 }
 
-void kiplFFT::test_FFTinThreads()
+void kiplFFT::test_FFTfloat()
+{
+
+}
+
+void kiplFFT::test_FFTdoubleInThreads()
+{
+
+}
+
+void kiplFFT::test_FFTfloatInThreads()
 {
 
 }

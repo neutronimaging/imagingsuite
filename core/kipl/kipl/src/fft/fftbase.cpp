@@ -2,15 +2,16 @@
 
 #include <iostream>
 #include <complex>
-
+#include <vector>
+#include <numeric>
 #include <fftw3.h>
 
+#include "../../include/base/KiplException.h"
 #include "../../include/fft/fftbase.h"
 
 namespace kipl { namespace math { namespace fft {
-using namespace std;
 
-FFTBase::FFTBase(size_t const * const Dims, size_t const NDim) : 	
+FFTBase::FFTBase(const std::vector<size_t> &_dims) :
 	logger("kipl::math::fft::FFTBase", std::clog),
 	have_r2cPlan(false),
 	have_c2cPlan(false),
@@ -20,23 +21,13 @@ FFTBase::FFTBase(size_t const * const Dims, size_t const NDim) :
     c2rPlan(nullptr),
     c2cPlan(nullptr),
     c2cPlanI(nullptr),
-
-	Ndata(Dims[0])
+    cBufferA(nullptr),
+    cBufferB(nullptr),
+    rBuffer(nullptr),
+    dims(_dims),
+    Ndata(std::accumulate(_dims.begin(), _dims.end(), 1, std::multiplies<size_t>()))
 {
-
-	for (size_t i=1; i<NDim; i++)
-		Ndata*=Dims[i];
-		
-	for (size_t i=0; i<NDim; i++)
-			dims[i]=Dims[i];
-	
-	for (int i=NDim; i<8; i++)
-		dims[i]=1;
-		
-	ndim=NDim;
-    cBufferA=nullptr;
-    cBufferB=nullptr;
-    rBuffer=nullptr;
+    ndim=dims.size();
 }
 
 
@@ -64,18 +55,20 @@ FFTBase::~FFTBase()
 		delete [] rBuffer;
 }
 
-int FFTBase::operator() ( complex<double> *inCdata,  complex<double> *outCdata, int sign)
+int FFTBase::operator() ( std::complex<double> *inCdata,  std::complex<double> *outCdata, int sign)
 {
 	if (!cBufferA)
-		cBufferA=new  complex<double>[Ndata];
+        cBufferA=new  std::complex<double>[Ndata];
 	
 	if (!cBufferB)
-		cBufferB=new  complex<double>[Ndata];
+        cBufferB=new  std::complex<double>[Ndata];
 	
 
 	if (sign<0) {
-		if (!have_c2cPlan) {
-			switch (ndim) {
+        if (!have_c2cPlan)
+        {
+            switch (ndim)
+            {
 				case 1:
 					c2cPlan=fftw_plan_dft_1d(dims[0],
                            reinterpret_cast<fftw_complex*>(cBufferA), 
@@ -95,20 +88,22 @@ int FFTBase::operator() ( complex<double> *inCdata,  complex<double> *outCdata, 
 							FFTW_ESTIMATE);
 					break;
 				default:
-					cerr<<"ndim="<<ndim<<" is not supported"<<endl;
-					return -1;
+                    throw kipl::base::KiplException("using unexpected number of dimensions",__FILE__,__LINE__);
 			}
 							
 			have_c2cPlan=true;
 		}
 	
-		memcpy(cBufferA,inCdata,sizeof( complex<double>)*Ndata);
+        memcpy(cBufferA,inCdata,sizeof( std::complex<double>)*Ndata);
 		fftw_execute(c2cPlan);
 	}
-	else {
-		if (!have_c2cPlanI) {
-			ostringstream str;
-			switch (ndim) {
+    else
+    {
+        if (!have_c2cPlanI)
+        {
+            std::ostringstream str;
+            switch (ndim)
+            {
 				case 1:
 					c2cPlanI=fftw_plan_dft_1d(dims[0],
                            reinterpret_cast<fftw_complex*>(cBufferA), 
@@ -138,26 +133,28 @@ int FFTBase::operator() ( complex<double> *inCdata,  complex<double> *outCdata, 
 			have_c2cPlanI=true;
 		}
 			
-		memcpy(cBufferA,inCdata,sizeof( complex<double>)*Ndata);
+        memcpy(cBufferA,inCdata,sizeof( std::complex<double>)*Ndata);
 		fftw_execute(c2cPlanI);
 	}
 
-	memcpy(outCdata,cBufferB,sizeof( complex<double>)*Ndata);
+    memcpy(outCdata,cBufferB,sizeof( std::complex<double>)*Ndata);
 	
 	return Ndata;
 }
 
-int FFTBase::operator() (double *inRdata,  complex<double> *outCdata)
+int FFTBase::operator() (double *inRdata,  std::complex<double> *outCdata)
 {
 	if (!cBufferA)
-		cBufferA=new  complex<double>[Ndata];
+        cBufferA=new  std::complex<double>[Ndata];
 	
 	if (!rBuffer)
 		rBuffer=new double[Ndata];
 		
-	if (!have_r2cPlan) {
-		ostringstream str;
-		switch (ndim) {
+    if (!have_r2cPlan)
+    {
+        std::ostringstream str;
+        switch (ndim)
+        {
 			case 1:
 				r2cPlan=fftw_plan_dft_r2c_1d(dims[0],
 						rBuffer,reinterpret_cast<fftw_complex*>(cBufferA),
@@ -187,22 +184,24 @@ int FFTBase::operator() (double *inRdata,  complex<double> *outCdata)
 	
 	fftw_execute(r2cPlan);
 
-	memcpy(outCdata,cBufferA,sizeof( complex<double>)*Ndata);
+    memcpy(outCdata,cBufferA,sizeof( std::complex<double>)*Ndata);
 
 	return Ndata;
 }
 
-int FFTBase::operator() ( complex<double> *inCdata, double *outRdata)
+int FFTBase::operator() ( std::complex<double> *inCdata, double *outRdata)
 {
 	if (!cBufferA)
-		cBufferA=new  complex<double>[Ndata];
+        cBufferA=new  std::complex<double>[Ndata];
 	
 	if (!rBuffer)
 		rBuffer=new double[Ndata];
 		
-	if (!have_c2rPlan) {
-		ostringstream str;
-		switch (ndim) {
+    if (!have_c2rPlan)
+    {
+        std::ostringstream str;
+        switch (ndim)
+        {
 			case 1:
 				c2rPlan=fftw_plan_dft_c2r_1d(dims[0],
 						reinterpret_cast<fftw_complex*>(cBufferA),rBuffer,
@@ -228,7 +227,7 @@ int FFTBase::operator() ( complex<double> *inCdata, double *outRdata)
 		have_c2rPlan=true;
 	}
 	
-	memcpy(cBufferA,inCdata,sizeof(complex<double>)*Ndata);
+    memcpy(cBufferA,inCdata,sizeof(std::complex<double>)*Ndata);
 	fftw_execute(c2rPlan);
 
 	memcpy(outRdata,rBuffer,sizeof(double)*Ndata);
