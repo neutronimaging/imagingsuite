@@ -24,5 +24,7 @@ SUBDIRS += \
     ../kipl/UnitTests/tNoiseImage \
     ../kipl/UnitTests/tSegmentationTest \
     ../kipl/UnitTests/tSTLVectorOperations \
-    ../kipl/UnitTests/tDirAnalysis
+    ../kipl/UnitTests/tDirAnalysis \
+    ../kipl/UnitTests/tkiplFFT
+
 
