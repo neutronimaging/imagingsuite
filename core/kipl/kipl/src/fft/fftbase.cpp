@@ -58,15 +58,19 @@ FFTBase::~FFTBase()
 int FFTBase::operator() ( std::complex<double> *inCdata,  std::complex<double> *outCdata, int sign)
 {
 	if (!cBufferA)
-        cBufferA=new  std::complex<double>[Ndata];
+        cBufferA = new std::complex<double>[Ndata];
 	
 	if (!cBufferB)
-        cBufferB=new  std::complex<double>[Ndata];
+        cBufferB = new std::complex<double>[Ndata];
 	
+    std::fill_n(cBufferA,0,Ndata);
+    std::fill_n(cBufferB,0,Ndata);
 
-	if (sign<0) {
+    if (sign<0)
+    {
         if (!have_c2cPlan)
         {
+            std::lock_guard<std::mutex> lock(fftMutex);
             switch (ndim)
             {
 				case 1:
@@ -93,14 +97,16 @@ int FFTBase::operator() ( std::complex<double> *inCdata,  std::complex<double> *
 							
 			have_c2cPlan=true;
 		}
-	
-        memcpy(cBufferA,inCdata,sizeof( std::complex<double>)*Ndata);
+
+        std::copy_n(inCdata,Ndata,cBufferA);
 		fftw_execute(c2cPlan);
 	}
     else
     {
         if (!have_c2cPlanI)
         {
+            std::lock_guard<std::mutex> lock(fftMutex);
+
             std::ostringstream str;
             switch (ndim)
             {
@@ -133,25 +139,29 @@ int FFTBase::operator() ( std::complex<double> *inCdata,  std::complex<double> *
 			have_c2cPlanI=true;
 		}
 			
-        memcpy(cBufferA,inCdata,sizeof( std::complex<double>)*Ndata);
+        std::copy_n(inCdata,Ndata,cBufferA);
 		fftw_execute(c2cPlanI);
 	}
 
-    memcpy(outCdata,cBufferB,sizeof( std::complex<double>)*Ndata);
-	
+    std::copy_n(cBufferB,Ndata,outCdata);
+
 	return Ndata;
 }
 
 int FFTBase::operator() (double *inRdata,  std::complex<double> *outCdata)
 {
 	if (!cBufferA)
-        cBufferA=new  std::complex<double>[Ndata];
+        cBufferA = new std::complex<double>[Ndata];
 	
 	if (!rBuffer)
-		rBuffer=new double[Ndata];
+        rBuffer = new double[Ndata];
 		
+    std::fill_n(cBufferA,0, Ndata);
+    std::fill_n(rBuffer, 0, Ndata);
+
     if (!have_r2cPlan)
     {
+        std::lock_guard<std::mutex> lock(fftMutex);
         std::ostringstream str;
         switch (ndim)
         {
@@ -179,12 +189,12 @@ int FFTBase::operator() (double *inRdata,  std::complex<double> *outCdata)
 	
 		have_r2cPlan=true;
 	}
-	
-	memcpy(rBuffer,inRdata,sizeof(double)*Ndata);		
-	
+			
+    std::copy_n(inRdata,Ndata,rBuffer);
+
 	fftw_execute(r2cPlan);
 
-    memcpy(outCdata,cBufferA,sizeof( std::complex<double>)*Ndata);
+    std::copy_n(cBufferA,Ndata,outCdata);
 
 	return Ndata;
 }
@@ -192,13 +202,17 @@ int FFTBase::operator() (double *inRdata,  std::complex<double> *outCdata)
 int FFTBase::operator() ( std::complex<double> *inCdata, double *outRdata)
 {
 	if (!cBufferA)
-        cBufferA=new  std::complex<double>[Ndata];
+        cBufferA = new std::complex<double>[Ndata];
 	
 	if (!rBuffer)
-		rBuffer=new double[Ndata];
+        rBuffer = new double[Ndata];
+
+    std::fill_n(cBufferA, 0, Ndata);
+    std::fill_n(rBuffer,  0, Ndata);
 		
     if (!have_c2rPlan)
     {
+        std::lock_guard<std::mutex> lock(fftMutex);
         std::ostringstream str;
         switch (ndim)
         {
@@ -227,13 +241,16 @@ int FFTBase::operator() ( std::complex<double> *inCdata, double *outRdata)
 		have_c2rPlan=true;
 	}
 	
-    memcpy(cBufferA,inCdata,sizeof(std::complex<double>)*Ndata);
-	fftw_execute(c2rPlan);
+    std::copy_n(inCdata,Ndata,cBufferA);
 
-	memcpy(outRdata,rBuffer,sizeof(double)*Ndata);
+    fftw_execute(c2rPlan);
 
-	return Ndata;
+    std::copy_n(rBuffer,Ndata,outRdata);
+
+    return Ndata;
 }
 
-}}}
+}
+}
+}
 

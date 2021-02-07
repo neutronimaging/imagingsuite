@@ -7,14 +7,22 @@
 #include <algorithm>
 #include <vector>
 #include <numeric>
+#include <thread>
+#include <mutex>
 
 #include <fftw3.h>
 
 #include "../../include/fft/fftbase.h"
 #include "../../include/base/KiplException.h"
 
-namespace kipl { namespace math { namespace fft {
+namespace kipl
+{
+namespace math
+{
+namespace fft
+{
 
+std::mutex fftMutex;
 
 FFTBaseFloat::FFTBaseFloat(const std::vector<size_t> _dims) :
 	logger("kipl::math::fft::FFTBaseFloat", std::clog),
@@ -62,17 +70,21 @@ FFTBaseFloat::~FFTBaseFloat()
 int FFTBaseFloat::operator() ( std::complex<float> *inCdata,  std::complex<float> *outCdata, int sign)
 {
 	if (!cBufferA)
-        cBufferA=new  std::complex<float>[Ndata];
+        cBufferA = new std::complex<float>[Ndata];
 	
 	if (!cBufferB)
-        cBufferB=new  std::complex<float>[Ndata];
+        cBufferB = new std::complex<float>[Ndata];
 
-//    std::fill_n(cBufferA,0,Ndata);
-//    std::fill_n(cBufferB,0,Ndata);
+    std::fill_n(cBufferA,0,Ndata);
+    std::fill_n(cBufferB,0,Ndata);
 
-	if (sign<0) {
-		if (!have_c2cPlan) {
-			switch (ndim) {
+    if (sign<0)
+    {
+        if (!have_c2cPlan)
+        {
+            std::lock_guard<std::mutex> lock(fftMutex);
+            switch (ndim)
+            {
 				case 1:
 					c2cPlan=fftwf_plan_dft_1d(dims[0],
                            reinterpret_cast<fftwf_complex*>(cBufferA), 
@@ -98,12 +110,14 @@ int FFTBaseFloat::operator() ( std::complex<float> *inCdata,  std::complex<float
 			have_c2cPlan=true;
 		}
 	
-        memcpy(cBufferA,inCdata,sizeof( std::complex<float>)*Ndata);
+        std::copy_n(inCdata,Ndata,cBufferA);
 		fftwf_execute(c2cPlan);
 	}
-	else {
+    else
+    {
         if (!have_c2cPlanI)
         {
+            std::lock_guard<std::mutex> lock(fftMutex);
             std::ostringstream str;
             switch (ndim)
             {
@@ -136,29 +150,32 @@ int FFTBaseFloat::operator() ( std::complex<float> *inCdata,  std::complex<float
 			have_c2cPlanI=true;
 		}
 			
-        memcpy(cBufferA,inCdata,sizeof( std::complex<float>)*Ndata);
+        std::copy_n(inCdata,Ndata,cBufferA);
 		fftwf_execute(c2cPlanI);
 	}
 
-    memcpy(outCdata,cBufferB,sizeof( std::complex<float>)*Ndata);
-	
+    std::copy_n(cBufferB,Ndata,outCdata);
+
 	return static_cast<int>(Ndata);
 }
 
 int FFTBaseFloat::operator() (float *inRdata,  std::complex<float> *outCdata)
 {
 	if (!cBufferA)
-        cBufferA=new  std::complex<float>[Ndata];
+        cBufferA = new std::complex<float>[Ndata];
 	
 	if (!rBuffer)
-		rBuffer=new float[2*Ndata];
+        rBuffer = new float[2*Ndata];
 
     std::fill_n(cBufferA,0,Ndata);
     std::fill_n(rBuffer,0,2*Ndata);
 		
-	if (!have_r2cPlan) {
+    if (!have_r2cPlan)
+    {
+        std::lock_guard<std::mutex> lock(fftMutex);
         std::ostringstream str;
-		switch (ndim) {
+        switch (ndim)
+        {
 			case 1:
 				r2cPlan=fftwf_plan_dft_r2c_1d(dims[0],
 						rBuffer,reinterpret_cast<fftwf_complex*>(cBufferA),
@@ -184,11 +201,11 @@ int FFTBaseFloat::operator() (float *inRdata,  std::complex<float> *outCdata)
 		have_r2cPlan=true;
 	}
 	
-	memcpy(rBuffer,inRdata,sizeof(float)*Ndata);		
+    std::copy_n(inRdata,Ndata,rBuffer);
 	
 	fftwf_execute(r2cPlan);
 
-    memcpy(outCdata,cBufferA,sizeof( std::complex<float>)*Ndata);
+    std::copy_n(cBufferA,Ndata,outCdata);
 
 	return static_cast<int>(Ndata);
 }
@@ -203,12 +220,15 @@ int FFTBaseFloat::operator() ( std::complex<float> *inCdata, float *outRdata)
 	if (!rBuffer)
 		rBuffer=new float[2*Ndata];
 
-    std::fill_n(cBufferA,0,Ndata);
-    std::fill_n(rBuffer,0,2*Ndata);
+    std::fill_n(cBufferA, 0,   Ndata);
+    std::fill_n(rBuffer,  0, 2*Ndata);
 
-	if (!have_c2rPlan) {
+    if (!have_c2rPlan)
+    {
+        std::lock_guard<std::mutex> lock(fftMutex);
         std::ostringstream str;
-		switch (ndim) {
+        switch (ndim)
+        {
 			case 1:
 				c2rPlan=fftwf_plan_dft_c2r_1d(dims[0],
 						reinterpret_cast<fftwf_complex*>(cBufferA),rBuffer,
@@ -234,10 +254,10 @@ int FFTBaseFloat::operator() ( std::complex<float> *inCdata, float *outRdata)
 		have_c2rPlan=true;
 	}
 	
-    memcpy(cBufferA,inCdata,sizeof(std::complex<float>)*Ndata);
+    std::copy_n(inCdata,Ndata,cBufferA);
 	fftwf_execute(c2rPlan);
 
-	memcpy(outRdata,rBuffer,sizeof(float)*Ndata);
+    std::copy_n(rBuffer, Ndata, outRdata);
 
     return static_cast<int>(Ndata);
 }

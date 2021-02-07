@@ -8,15 +8,21 @@
 #include <complex>
 #include <cstring>
 #include <vector>
+#include <thread>
+#include <mutex>
 #include <fftw3.h>
 
 #include "../logging/logger.h"
 
-namespace kipl {
+namespace kipl
+{
 /// \brief The math name space collects mathematical functions
-namespace math {
+namespace math
+{
 /// \brief The FFT namespace collects classes related to the fft
-namespace fft {
+namespace fft
+{
+extern std::mutex fftMutex;
 
 /// \brief Base class to provide an efficient interface to libFFTW
 ///
@@ -28,7 +34,8 @@ namespace fft {
 ///	allocate any data to external pointers.
 ///
 ///@author Anders Kaestner
-class KIPLSHARED_EXPORT FFTBase{
+class KIPLSHARED_EXPORT FFTBase
+{
 public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform
@@ -81,7 +88,8 @@ protected:
 };
 
 
-class KIPLSHARED_EXPORT FFTBaseFloat{
+class KIPLSHARED_EXPORT FFTBaseFloat
+{
 public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform
