@@ -238,4 +238,5 @@
     "2021-01-28T11:23:10" : {
         "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
         "timing":{ "FullLogNorm":752.782, "MorphSpotClean":38035.5, "Multi projection BP parallel":79168.7, "WaveletRingClean":452152, "total":641719}
-    },
+    }
+}
