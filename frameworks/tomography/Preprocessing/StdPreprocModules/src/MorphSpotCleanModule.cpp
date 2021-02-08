@@ -118,7 +118,7 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
     return parameters;
 }
 
-bool MorphSpotCleanModule::SetROI(size_t * UNUSED(roi))
+bool MorphSpotCleanModule::SetROI(const std::vector<size_t> &roi)
 {
     return false;
 }
