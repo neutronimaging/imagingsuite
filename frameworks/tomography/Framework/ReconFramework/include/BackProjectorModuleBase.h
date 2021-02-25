@@ -98,7 +98,7 @@ public:
 
     /// Execution time of the latest back-projection run.
     /// \returns The execution time in seconds.
-    double ExecTime() {return timer.elapsedTime(kipl::profile::Timer::seconds); }
+    double execTime() {return timer.cumulativeTime(); }
     void resetTimer();
 
     const std::vector<Publication> & publicationList();

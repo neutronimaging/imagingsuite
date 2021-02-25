@@ -213,7 +213,7 @@ void StripeFilter::configure(const std::vector<int> &dims, const string &wname, 
         if ( fft[i] != nullptr ) 
             delete fft[i];
 
-        fft[i]=new kipl::math::fft::FFTBaseFloat(&N,1);
+        fft[i]=new kipl::math::fft::FFTBaseFloat({N});
 
         if (m_pDamping[i]!= nullptr)
             delete [] m_pDamping[i];

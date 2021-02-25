@@ -21,9 +21,12 @@ win32 {
     }
 
     INCLUDEPATH += "$$PWD/../../../../../external/include" "$$PWD/../../../../../external/include/cfitsio"
+    QMAKE_LIBDIR += $$PWD/../../../../../../ExternalDependencies/windows/lib
     QMAKE_LIBDIR += $$PWD/../../../../../external/lib64
 
+
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    LIBS += -llibopenblas
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
