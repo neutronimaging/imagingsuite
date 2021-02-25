@@ -104,6 +104,7 @@ protected:
 	bool UpdateProgress(float val, std::string msg);
     size_t validateImage(float *data, size_t N, const string &description);
 	void Done();
+    void resetTimers();
 
     bool TransferMatrix(const std::vector<size_t> &dims);
 
