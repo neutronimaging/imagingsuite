@@ -164,7 +164,7 @@ std::vector<int> StripeFilter::dims()
     return wdims;
 }
 
-bool StripeFilter::checkDims(const size_t *dims)
+bool StripeFilter::checkDims(const std::vector<size_t> &dims)
 {
     if ((static_cast<int>(dims[0])!=wdims[0]) || (static_cast<int>(dims[1])!=wdims[1]))
         throw ImagingException("Image size check failed",__FILE__,__LINE__);
@@ -213,7 +213,7 @@ void StripeFilter::configure(const std::vector<int> &dims, const string &wname, 
         if ( fft[i] != nullptr ) 
             delete fft[i];
 
-        fft[i]=new kipl::math::fft::FFTBaseFloat(&N,1);
+        fft[i]=new kipl::math::fft::FFTBaseFloat({N});
 
         if (m_pDamping[i]!= nullptr)
             delete [] m_pDamping[i];

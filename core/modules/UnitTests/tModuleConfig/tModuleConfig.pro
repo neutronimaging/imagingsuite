@@ -50,7 +50,7 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    INCLUDEPATH += $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio
@@ -76,3 +76,6 @@ DEPENDPATH += $$PWD/../../../../frameworks/tomography/Framework/ReconFramework/i
 
 INCLUDEPATH += $$PWD/../../ModuleConfig/include
 DEPENDPATH += $$PWD/../../ModuleConfig/src
+
+INCLUDEPATH += $$PWD/../../../algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../algorithms/ImagingAlgorithms/include

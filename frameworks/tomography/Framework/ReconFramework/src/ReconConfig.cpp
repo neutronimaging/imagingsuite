@@ -9,6 +9,8 @@
 #include <iomanip>
 #include <algorithm>
 
+#include <averageimage.h>
+
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <strings/filenames.h>
@@ -294,9 +296,11 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
             if (sName=="resolution")      kipl::strings::String2Array(sValue,ProjectionInfo.fResolution,2);
             if (sName=="binning")         ProjectionInfo.fBinning        = std::stof(sValue);
 
-            if (sName=="firstindex")      ProjectionInfo.nFirstIndex     = std::stoul(sValue);
-            if (sName=="lastindex")       ProjectionInfo.nLastIndex      = std::stoul(sValue);
-            if (sName=="projectionstep")  ProjectionInfo.nProjectionStep = std::stoul(sValue);
+	        if (sName=="firstindex")      ProjectionInfo.nFirstIndex     = atoi(sValue.c_str());
+	        if (sName=="lastindex")       ProjectionInfo.nLastIndex          = atoi(sValue.c_str());
+	        if (sName=="projectionstep")  ProjectionInfo.nProjectionStep = atoi(sValue.c_str());
+            if (sName=="repeatedview")    ProjectionInfo.nRepeatedView   = std::stoul(sValue);
+            if (sName=="averagemethod")   string2enum(sValue,ProjectionInfo.averageMethod);
 			if (sName=="skipprojections") {
 				kipl::strings::String2Set(sValue,ProjectionInfo.nlSkipList);
 				msg<<"Skip list: "<<kipl::strings::Set2String(ProjectionInfo.nlSkipList);
@@ -597,6 +601,8 @@ ReconConfig::cProjections::cProjections() :
     nFirstIndex(1),
     nLastIndex(625),
     nProjectionStep(1),
+    nRepeatedView(1),
+    averageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     bRepeatLine(false),
     scantype(SequentialScan),
     nGoldenStartIdx(0),
@@ -638,6 +644,8 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	nFirstIndex(a.nFirstIndex),
 	nLastIndex(a.nLastIndex),
 	nProjectionStep(a.nProjectionStep),
+    nRepeatedView(a.nRepeatedView),
+    averageMethod(a.averageMethod),
 	nlSkipList(a.nlSkipList),
 	bRepeatLine(a.bRepeatLine),
 	scantype(a.scantype),
@@ -678,6 +686,8 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
     nMargin         = a.nMargin;
 	nFirstIndex     = a.nFirstIndex;
 	nProjectionStep = a.nProjectionStep;
+    nRepeatedView   = a.nRepeatedView;
+    averageMethod   = a.averageMethod;
 	bRepeatLine     = a.bRepeatLine;
 	scantype		= a.scantype;
     nGoldenStartIdx = a.nGoldenStartIdx;
@@ -733,6 +743,8 @@ std::string ReconConfig::cProjections::WriteXML(int indent)
 	str<<setw(indent+4)  <<" "<<"<firstindex>"<<nFirstIndex<<"</firstindex>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<lastindex>"<<nLastIndex<<"</lastindex>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<projectionstep>"<<nProjectionStep<<"</projectionstep>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<repeatedview>"<<nRepeatedView<<"</repeatedview>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<averagemethod>"<<averageMethod<<"</averagemethod>"<<std::endl;
 	if (!nlSkipList.empty()) {
 		str<<setw(indent+4)  <<" "<<"<skipprojections>"<<kipl::strings::Set2String(nlSkipList)<<"</skipprojections>"<<std::endl;
 	}

@@ -1,6 +1,9 @@
 #include <QString>
 #include <QtTest>
 
+#include <thread>
+#include <chrono>
+
 #include <base/timage.h>
 #include <base/trotate.h>
 #include <base/tsubimage.h>
@@ -10,6 +13,7 @@
 #include <ProjectionReader.h>
 #include <ReconHelpers.h>
 #include <ReconException.h>
+#include <processtiminglogger.h>
 
 
 class FrameWorkTest : public QObject
@@ -31,6 +35,7 @@ private Q_SLOTS:
     void testBuildFileList_GeneratedGolden();
     void testBuildFileList_GeneratedInvGolden();
     void testBuildFileList();
+    void testProcessTimingLogger();
 
 
 private:
@@ -1013,13 +1018,13 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
 
     ReconConfig config("");
 // Test even number
-    config.ProjectionInfo.sFileMask="test_####.fits";
-    config.ProjectionInfo.nFirstIndex=0;
-    config.ProjectionInfo.nLastIndex=18;
-    config.ProjectionInfo.fScanArc[0]=0.0f;
-    config.ProjectionInfo.fScanArc[1]=180.0f;
-    config.ProjectionInfo.scantype=config.ProjectionInfo.GoldenSectionScan;
-    config.ProjectionInfo.nGoldenStartIdx=0;
+    config.ProjectionInfo.sFileMask       = "test_####.fits";
+    config.ProjectionInfo.nFirstIndex     = 0;
+    config.ProjectionInfo.nLastIndex      = 18;
+    config.ProjectionInfo.fScanArc[0]     = 0.0f;
+    config.ProjectionInfo.fScanArc[1]     = 180.0f;
+    config.ProjectionInfo.scantype        = config.ProjectionInfo.GoldenSectionScan;
+    config.ProjectionInfo.nGoldenStartIdx = 0;
 
     std::map<float,ProjectionInfo> ProjectionList;
     BuildFileList(&config,&ProjectionList);
@@ -1249,6 +1254,19 @@ void FrameWorkTest::testBuildFileList()
 
     msg.str(""); msg<<"Expected 1.0, got "<<sum;
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+}
+
+void FrameWorkTest::testProcessTimingLogger()
+{
+    ProcessTimingLogger ptl("test.json");
+
+    std::map<std::string,std::map<std::string,std::string>> entryData = {{"data",{{"proj","500"}}},{"time",{{"bp","10"}}}};
+
+
+    ptl.addLogEntry(entryData);
+    std::this_thread::sleep_for(chrono::seconds(1));
+    entryData["hardware"]={{"proj","500"}};
+    ptl.addLogEntry(entryData);
 }
 
 QTEST_APPLESS_MAIN(FrameWorkTest)

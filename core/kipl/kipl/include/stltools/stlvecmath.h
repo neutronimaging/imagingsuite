@@ -367,7 +367,7 @@ T cumsum(const ForwardIterator &begin,const ForwardIterator &end, std::vector<T>
 	return tv.back();
 }
 
-std::map<float,float> KIPLSHARED_EXPORT diff(std::map<float,float> data);
+std::map<float,float> KIPLSHARED_EXPORT diff(const std::map<float, float> &data);
 
 // /// \brief Find the first occurance of the test becoming true
 // ///

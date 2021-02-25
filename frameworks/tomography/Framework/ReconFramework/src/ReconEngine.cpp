@@ -20,6 +20,7 @@
 #include "../include/ReconEngine.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
+#include "../include/processtiminglogger.h"
 
 #include <QDebug>
 
@@ -106,9 +107,13 @@ void ReconEngine::SetConfig(ReconConfig &config)
                 <<m_Config.ProjectionInfo.roi[3]<<"]";
     logger.message(msg.str());
 
-    kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
+    //kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
+    std::map<float, ProjectionInfo> ProjectionList;
+    BuildFileList( &m_Config, &ProjectionList);
 
-    msg.str(""); msg<<m_Config.ProjectionInfo.sFileMask<<", "<<m_Config.ProjectionInfo.nFirstIndex<<", "<<fname<<", "<<ext;
+    fname = ProjectionList.begin()->second.name;
+
+    msg.str(""); msg<<"Projection file to check size on ";
     logger(logger.LogMessage,msg.str());
 
     try {
@@ -903,15 +908,47 @@ int ReconEngine::Run3D(bool bRerunBackproj)
 
     int res=0;
     msg<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
+
     logger(kipl::logging::Logger::LogMessage,msg.str());
     try {
+        kipl::profile::Timer totalTimer;
+        totalTimer.reset();
+        totalTimer.Tic();
+
         msg.str(""); msg<<"run3d "<<m_Config.ProjectionInfo.beamgeometry;
         logger.message(msg.str());
 
+        resetTimers();
         if ((bRerunBackproj==true) && (m_ProjectionBlocks.empty()==false))
             res=Run3DBackProjOnly();
         else
             res=Run3DFull();
+
+        totalTimer.Toc();
+
+        std::map<std::string, std::map<std::string,std::string>> timingLogList;
+        std::map<std::string,std::string> timingList;
+        timingList["total"]=std::to_string(totalTimer.cumulativeTime());
+
+        for (auto &module : m_PreprocList)
+        {
+            msg<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->execTime()<<"s\n";
+            timingList[module->GetModule()->ModuleName()] = std::to_string(module->GetModule()->execTime());
+        }
+        timingList[m_BackProjector->GetModule()->Name()] = std::to_string(m_BackProjector->GetModule()->execTime());
+        timingLogList["timing"]=timingList;
+
+        timingLogList["data"]= {{"projections",std::to_string(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex)},
+                                {"sizeu",std::to_string(m_Config.ProjectionInfo.roi[2]-m_Config.ProjectionInfo.roi[0])},
+                                {"sizev",std::to_string(m_Config.MatrixInfo.nDims[2])}, // Temporary fix
+                                {"sizex",std::to_string(m_Config.MatrixInfo.nDims[0])},
+                                {"sizey",std::to_string(m_Config.MatrixInfo.nDims[1])},
+                                {"sizez",std::to_string(m_Config.MatrixInfo.nDims[2])},
+                               };
+
+        ProcessTimingLogger ptl(ReconConfig::homePath()+"/.imagingtools/recontiming.json");
+
+        ptl.addLogEntry(timingLogList);
     }
     catch (ReconException &e)
     {
@@ -937,6 +974,8 @@ int ReconEngine::Run3D(bool bRerunBackproj)
         msg<<"Run3D failed with an unknown error";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
+
+
 
     return res;
 }
@@ -999,9 +1038,7 @@ int ReconEngine::Run3DFull()
     msg<<": ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-
-     m_FirstSlice=roi[1];
-
+    m_FirstSlice=roi[1];
 
 	kipl::profile::Timer totalTimer;
 
@@ -1245,11 +1282,6 @@ int ReconEngine::Run3DFull()
 
 		msg.str("");
 		msg<<"\nModule process time:\n";
-
-        for (auto &module : m_PreprocList)
-        {
-            msg<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
-		}
 
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 
@@ -1854,7 +1886,17 @@ size_t ReconEngine::validateImage(float *data, size_t N, const string &descripti
 void ReconEngine::Done()
 {
     if (m_Interactor!=nullptr)
-		m_Interactor->Done();
+        m_Interactor->Done();
+}
+
+void ReconEngine::resetTimers()
+{
+    m_BackProjector->GetModule()->resetTimer();
+    for (auto & module : m_PreprocList)
+    {
+        module->GetModule()->resetTimer();
+    }
+
 }
 
 void ReconEngine::MakeExtendedROI(size_t *roi, size_t margin, size_t *extroi, size_t *margins)

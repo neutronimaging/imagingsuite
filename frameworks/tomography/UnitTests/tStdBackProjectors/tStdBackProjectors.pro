@@ -45,7 +45,7 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+
     INCLUDEPATH += $$PWD/../../../../external/include
     INCLUDEPATH += $$PWD/../../../../external/include/cfitsio
     INCLUDEPATH += $$PWD/../../../../external/include/libxml2
@@ -58,7 +58,7 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdBackProjectors
+LIBS += -lkipl -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdBackProjectors
 
 INCLUDEPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
 DEPENDPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure

@@ -1,14 +1,14 @@
 #ifndef READERCONFIGLISTWIDGET_H
 #define READERCONFIGLISTWIDGET_H
 
-#include <list>
+#include <vector>
 
 #include <QWidget>
 #include <QListWidgetItem>
 #include <QListWidget>
 
 #include <logging/logger.h>
-#include <datasetbase.h>
+#include <fileset.h>
 
 #include "readergui_global.h"
 
@@ -21,7 +21,7 @@ public:
     ~ReaderConfigListWidget();
     void SetList(std::list<FileSet> &loaderlist);
     void AddLoader(FileSet &loader);
-    std::list<FileSet> GetList();
+    std::vector<FileSet> getList();
 
 public slots:
     virtual void on_Button_AddLoader_clicked();

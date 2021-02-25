@@ -67,7 +67,9 @@ std::vector<size_t> KIPLSHARED_EXPORT GetFITSDims(const std::string &filename)
 		msg<<"ReadFITS: "<<err_text<<" ("<<filename<<")";
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
-    std::vector<size_t> dims(naxes,naxes+naxis);
+    std::vector<size_t> dims = {static_cast<size_t>(naxes[0]),
+                                static_cast<size_t>(naxes[1]),
+                                naxis < 3 ? 1 : static_cast<size_t>(naxes[2])};
 
 	fits_close_file(fptr, &status);
     return dims;

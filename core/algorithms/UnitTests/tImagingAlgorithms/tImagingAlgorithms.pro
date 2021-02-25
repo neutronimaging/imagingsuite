@@ -19,7 +19,6 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 TEMPLATE = app
 
 unix {
-    INCLUDEPATH += ../../../../external/src/linalg
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -41,7 +40,7 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
+    INCLUDEPATH += $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 

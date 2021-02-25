@@ -531,7 +531,7 @@ void TestImagingAlgorithms::StripeFilterParameters()
    QCOMPARE(static_cast<size_t>(sf.dims()[1]),sino.Size(1));
    QCOMPARE(sf.sigma(),0.21f);
    QCOMPARE(sf.decompositionLevels(),4);
-   size_t dims[]={sino.Size(0),sino.Size(1)};
+   std::vector<size_t> dims={sino.Size(0),sino.Size(1)};
    QCOMPARE(sf.checkDims(dims),true);
    dims[0]--;
    QVERIFY_EXCEPTION_THROWN(sf.checkDims(dims),ImagingException);

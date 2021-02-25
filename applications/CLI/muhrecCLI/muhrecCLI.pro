@@ -12,6 +12,10 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../Applications/debu
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
+VERSION = 4.3
+
+DEFINES += VERSION=\\\"$$VERSION\\\"
+
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -68,11 +72,13 @@ HEADERS += \
     muhreccli.h \
     stdafx.h
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug
+
+LIBS += -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
+DEPENDPATH  += $$PWD/../../../core/kipl/kipl/include
 
 #INCLUDEPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
 #DEPENDPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
@@ -81,10 +87,10 @@ DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
 #DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/include
-DEPENDPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
+DEPENDPATH  += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
 
 INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
+DEPENDPATH  += $$PWD/../../../core/modules/ModuleConfig/include
 
-#INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
-#DEPENDPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/src
+INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../core/algorithms/ImagingAlgorithms/src

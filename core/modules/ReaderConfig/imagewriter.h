@@ -6,6 +6,7 @@
 #include <string>
 
 #include <base/timage.h>
+#include <base/kiplenums.h>
 #include <logging/logger.h>
 #include "readerconfig_global.h"
 
@@ -17,7 +18,7 @@ public:
     ImageWriter();
     ~ImageWriter();
 
-    void write(kipl::base::TImage<float,2> &img, std::string fname);
+    void write(kipl::base::TImage<float,2> &img, std::string fname, kipl::base::eDataType dt = kipl::base::UInt16);
 };
 
 #endif // IMAGEWRITER_H

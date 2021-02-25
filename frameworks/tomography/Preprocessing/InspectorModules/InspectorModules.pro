@@ -58,7 +58,7 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+
     INCLUDEPATH += $$PWD/../../../../external/include
     INCLUDEPATH += $$PWD/../../../../external/include/cfitsio
     INCLUDEPATH += $$PWD/../../../../external/include/libxml2
@@ -71,7 +71,7 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug
 
-LIBS += -lkipl -lModuleConfig -lReconFramework
+LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
@@ -82,7 +82,8 @@ DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
 DEPENDPATH += $$PWD/../../Framework/ReconFramework/src
 
-
+INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH += $$PWD/../../../../core//algorithms/ImagingAlgorithms/src
 
 macx: {
 

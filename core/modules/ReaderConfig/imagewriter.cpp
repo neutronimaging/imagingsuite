@@ -19,7 +19,7 @@ ImageWriter::~ImageWriter()
     logger(logger.LogMessage,"Writer ended");
 }
 
-void ImageWriter::write(kipl::base::TImage<float,2> &img, std::string fname)
+void ImageWriter::write(kipl::base::TImage<float,2> &img, std::string fname,kipl::base::eDataType dt)
 {
 
     kipl::io::eExtensionTypes exttype=kipl::io::GetFileExtensionType(fname);
@@ -37,7 +37,7 @@ void ImageWriter::write(kipl::base::TImage<float,2> &img, std::string fname)
                 logger(logger.LogDebug,msg.str());
                 break;
             case kipl::io::ExtensionTIFF:
-                kipl::io::WriteTIFF(img,fname.c_str());
+                kipl::io::WriteTIFF(img,fname.c_str(),dt);
                 msg.str("");
                 msg<<"Wrote image "<<img<<" as "<<fname<<" using WriteTIFF ";
                 logger(logger.LogDebug,msg.str());

@@ -4,8 +4,10 @@
 #include <cmath>
 #include <sstream>
 #include <iostream>
-
+#include <armadillo>
 #include "../../base/KiplException.h"
+
+#include "../covariance.h"
 
 namespace kipl {
 namespace math {
@@ -16,7 +18,6 @@ Covariance<T>::Covariance() :
     m_pData(nullptr),
     m_nVars(0),
     m_nElements(0),
-    m_fMean(nullptr),
     m_eResultMatrixType(CovarianceMatrix)
 {}
 
@@ -27,18 +28,18 @@ Covariance<T>::~Covariance()
 }
 
 template<typename T>
-TNT::Array2D<double> Covariance<T>::compute(T *data, size_t nElements, size_t nVars, bool bCenter)
+arma::mat Covariance<T>::compute(T *data, size_t nElements, size_t nVars, bool bCenter)
 {
     m_nVars=nVars;
     m_pData=data;
-    TNT::Array2D<double> cov(m_nVars,m_nVars);
+    arma::mat cov(m_nVars,m_nVars);
 
     if (bCenter)
         ComputeStatistics();
 
     for (int i=0; i<m_nVars; i++) {
         for (int j=i; j<m_nVars; j++) {
-            cov[j][i]=cov[i][j]=ComputePairSum(i,j);
+            cov.at(j,i)=cov.at(i,j)=ComputePairSum(i,j);
         }
     }
 
@@ -47,11 +48,11 @@ TNT::Array2D<double> Covariance<T>::compute(T *data, size_t nElements, size_t nV
 }
 
 template<typename T>
-TNT::Array2D<double> Covariance<T>::compute(T *data, const std::vector<size_t> &dims, size_t Ndims, bool bCenter)
+arma::mat Covariance<T>::compute(T *data, const std::vector<size_t> &dims, size_t Ndims, bool bCenter)
 {
     m_nVars=dims[Ndims-1];
     m_pData=data;
-    TNT::Array2D<double> cov(m_nVars,m_nVars);
+    arma::mat cov(m_nVars,m_nVars);
 
     m_nElements=dims[0];
 
@@ -61,13 +62,16 @@ TNT::Array2D<double> Covariance<T>::compute(T *data, const std::vector<size_t> &
     if (bCenter)
         ComputeStatistics();
 
-    for (int i=0; i<m_nVars; i++) {
-        for (int j=i; j<m_nVars; j++) {
+    for (int i=0; i<m_nVars; i++)
+    {
+        for (int j=i; j<m_nVars; j++)
+        {
             if (i==j)
-                cov[i][j]=ComputePairSum(i,j,bCenter);
-            else {
-                cov[i][j]=ComputePairSum(i,j,bCenter);
-                cov[j][i]=cov[i][j];
+                cov.at(i,j)=ComputePairSum(i,j,bCenter);
+            else
+            {
+                cov.at(i,j)=ComputePairSum(i,j,bCenter);
+                cov.at(j,i)=cov.at(i,j);
             }
         }
     }
@@ -105,17 +109,13 @@ double Covariance<T>::ComputePairSum(int a,int b, bool bCenter)
 template <typename T>
 void Covariance<T>::AllocateData()
 {
-    DeallocateData();
-
-    m_fMean=new double[m_nElements];
+    m_fMean.resize(m_nElements);
 }
 
 template <typename T>
 void Covariance<T>::DeallocateData()
 {
-    if (m_fMean!=NULL)
-        delete [] m_fMean;
-    m_fMean=NULL;
+
 }
 
 
@@ -138,19 +138,23 @@ void Covariance<T>::ComputeStatistics()
 }
 
 template<typename T>
-void Covariance<T>::NormalizeMatrix(TNT::Array2D<double> &mat)
+void Covariance<T>::NormalizeMatrix(arma::mat &mat)
 {
     double scale;
-    switch (m_eResultMatrixType) {
+    switch (m_eResultMatrixType)
+    {
     case CovarianceMatrix:
         scale=1.0/double(m_nElements);
-        for (int i=0 ; i<m_nVars; i++) {
-            for (int j=i ; j<m_nVars; j++) {
+        for (int i=0 ; i<m_nVars; i++)
+        {
+            for (int j=i ; j<m_nVars; j++)
+            {
                 if (i==j)
-                    mat[i][j]*=scale;
-                else {
-                    mat[i][j]*=scale;
-                    mat[j][i]*=scale;
+                    mat.at(i,j)*=scale;
+                else
+                {
+                    mat.at(i,j)*=scale;
+                    mat.at(j,i)*=scale;
                 }
             }
         }
@@ -160,12 +164,12 @@ void Covariance<T>::NormalizeMatrix(TNT::Array2D<double> &mat)
         for (int i=0 ; i<m_nVars; i++) {
             for (int j=i ; j<m_nVars; j++) {
                 if (i!=j) {
-                    scale=1.0/std::sqrt(mat[i][i]*mat[j][j]);
-                    mat[i][j]*=scale;
-                    mat[j][i]*=scale;
+                    scale=1.0/std::sqrt(mat.at(i,i)*mat.at(j,j));
+                    mat.at(i,j)*=scale;
+                    mat.at(j,i)*=scale;
                 }
             }
-            mat[i][i]=1.0;
+            mat.at(i,i)=1.0;
         }
     break;
     default: throw kipl::base::KiplException("Unknown matrix normalization", __FILE__,__LINE__);
