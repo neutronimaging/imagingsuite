@@ -13,7 +13,7 @@
 #include <profile/Timer.h>
 #include <interactors/interactionbase.h>
 
-#include "datasetbase.h"
+#include "fileset.h"
 
 class READERCONFIGSHARED_EXPORT ImageReader
 {
@@ -37,7 +37,7 @@ public:
             kipl::base::eImageFlip flip=kipl::base::ImageFlipNone,
             kipl::base::eImageRotate rotate=kipl::base::ImageRotateNone,
             float binning=1.0f,
-                                     const std::vector<size_t> &nCrop={}, size_t idx=0L);
+            const std::vector<size_t> &nCrop={}, size_t idx=0L);
 
     /// Reading a single file with file name given by a file mask and an index number.
     /// \param path Path to the location where the file is saved
@@ -89,14 +89,14 @@ public:
     /// \param binning Binning factor
     /// \param dims A preallocated array to store the image dimensions.
     /// \returns number of dimensions
-    std::vector<size_t> GetImageSize(std::string path, std::string filemask, size_t number, float binning);
+    std::vector<size_t> imageSize(std::string path, std::string filemask, size_t number, float binning=1.0f);
 
     /// Get the image dimensions for an image file using an explicit file name
     /// \param filename File name of the of the image to read.
     /// \param binning Binning factor
     /// \param dims A preallocated array to store the image dimensions.
     /// \returns number of dimensions
-    std::vector<size_t> GetImageSize(std::string filename, float binning);
+    std::vector<size_t> imageSize(std::string filename, float binning=1.0f);
 
     /// Get the projection dose for an image file using an explicit file name
     /// \param filename File name of the of the image to read.
@@ -105,11 +105,11 @@ public:
     /// \param binning Binning factor
     /// \param doseroi The area were the dose is to be measured (x0,y0,x1,y1).
     /// \returns The dose value as the median of the row average intensity.
-    float GetProjectionDose(std::string filename,
-                            kipl::base::eImageFlip flip,
-                            kipl::base::eImageRotate rotate,
-                            float binning,
-                            const std::vector<size_t> &nDoseROI);
+    float projectionDose(   std::string filename,
+                            const std::vector<size_t> &nDoseROI,
+                            kipl::base::eImageFlip flip     = kipl::base::ImageFlipNone,
+                            kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
+                            float binning                   = 1.0f);
 
     /// Get the projection dose for an image file using an explicit file name
     /// \param path The path where image is stored
@@ -120,13 +120,14 @@ public:
     /// \param binning Binning factor
     /// \param doseroi The area were the dose is to be measured (x0,y0,x1,y1).
     /// \returns The dose value as the median of the row average intensity.
-    float GetProjectionDose(std::string path,
+    float projectionDose(   std::string path,
                             std::string filemask,
                             size_t number,
-                            kipl::base::eImageFlip flip,
-                            kipl::base::eImageRotate rotate,
-                            float binning,
-                            const std::vector<size_t> &nCrop);
+                            const std::vector<size_t> &nDoseROI,
+                            kipl::base::eImageFlip flip     = kipl::base::ImageFlipNone,
+                            kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
+                            float binning                   = 1.0f
+                            );
 
     /// Initializes the reading timer
     void Initialize() {timer.reset();}

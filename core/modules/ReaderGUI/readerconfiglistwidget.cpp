@@ -9,7 +9,7 @@
 #include <QPushButton>
 #include <qmessagebox.h>
 
-#include <datasetbase.h>
+#include <fileset.h>
 
 #include "readerconfiglistwidget.h"
 #include "addloaderdialog.h"
@@ -127,9 +127,9 @@ void ReaderConfigListWidget::on_Selected_Loader_doubleclicked(QListWidgetItem* c
     emit readerListModified();
 }
 
-std::list<FileSet> ReaderConfigListWidget::GetList()
+std::vector<FileSet> ReaderConfigListWidget::getList()
 {
-    std::list<FileSet> loaderlist;
+    std::vector<FileSet> loaderlist;
 
     for (int i=0; i<m_ListWidget_loaders->count(); i++) {
         LoaderListItem *item = dynamic_cast<LoaderListItem *>(m_ListWidget_loaders->item(i));

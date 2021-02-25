@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <numeric>
 
 #include <base/timage.h>
 #include <io/io_tiff.h>
@@ -38,7 +39,7 @@ ImageReader::~ImageReader(void)
 
 }
 
-std::vector<size_t> ImageReader::GetImageSize(std::string path,
+std::vector<size_t> ImageReader::imageSize(std::string path,
                                    std::string filemask,
                                    size_t number,
                                    float binning)
@@ -47,10 +48,10 @@ std::vector<size_t> ImageReader::GetImageSize(std::string path,
     std::string ext;
     kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
 
-    return GetImageSize(filename,binning);
+    return imageSize(filename,binning);
 }
 
-std::vector<size_t> ImageReader::GetImageSize(std::string filename, float binning)
+std::vector<size_t> ImageReader::imageSize(std::string filename, float binning)
 {
     auto ext=readers::GetFileExtensionType(filename);
 
@@ -182,7 +183,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
 
     try
     {
-        dims=GetImageSize(filename, binning);
+        dims=imageSize(filename, binning);
     }
     catch (ReaderException &e)
     {
@@ -479,11 +480,11 @@ kipl::base::TImage<float,2> ImageReader::ReadPNG(std::string filename, const std
     return kipl::base::TImage<float,2>();
 }
 
-float ImageReader::GetProjectionDose(std::string filename,
-        kipl::base::eImageFlip flip,
-        kipl::base::eImageRotate rotate,
-        float binning,
-        const std::vector<size_t> & nDoseROI)
+float ImageReader::projectionDose(  std::string filename,
+                                    const std::vector<size_t> & nDoseROI,
+                                    kipl::base::eImageFlip flip,
+                                    kipl::base::eImageRotate rotate,
+                                    float binning)
 {
     kipl::base::TImage<float,2> img;
 
@@ -494,39 +495,34 @@ float ImageReader::GetProjectionDose(std::string filename,
 
     float *pImg=img.GetDataPtr();
 
-    float *means=new float[img.Size(1)];
-    memset(means,0,img.Size(1)*sizeof(float));
+    std::vector<float> means(img.Size(1),0.0f);
 
     for (size_t y=0; y<img.Size(1); y++)
     {
         pImg=img.GetLinePtr(y);
-
-        for (size_t x=0; x<img.Size(0); x++)
-        {
-            means[y]+=pImg[x];
-        }
+        means[y]=std::accumulate(pImg,pImg+img.Size(0),0.0f);
         means[y]=means[y]/static_cast<float>(img.Size(0));
     }
 
     float dose;
-    kipl::math::median(means,img.Size(1),&dose);
-    delete [] means;
+    kipl::math::median(means,&dose);
+
     return dose;
 }
 
-float ImageReader::GetProjectionDose(std::string path,
-        std::string filemask,
-        size_t number,
-        kipl::base::eImageFlip flip,
-        kipl::base::eImageRotate rotate,
-        float binning,
-        const std::vector<size_t> & nDoseROI)
+float ImageReader::projectionDose(std::string path,
+                                        std::string filemask,
+                                        size_t number,
+                                        const std::vector<size_t> &nDoseROI,
+                                        kipl::base::eImageFlip flip,
+                                        kipl::base::eImageRotate rotate,
+                                        float binning)
 {
     std::string filename;
     std::string ext;
     kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
 
-    return GetProjectionDose(filename,flip,rotate,binning,nDoseROI);
+    return projectionDose(filename,nDoseROI,flip,rotate,binning);
 }
 
 

@@ -924,6 +924,8 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
 
 	std::map<float, ProjectionInfo> ProjectionList;
 	BuildFileList( &config, &ProjectionList);
+    msg.str(""); msg<<config.WriteXML();
+    logger.message(msg.str());
 
 
     std::vector<size_t> dims = { nCrop[2]-nCrop[0],

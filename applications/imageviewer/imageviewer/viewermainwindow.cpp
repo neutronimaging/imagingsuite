@@ -12,12 +12,15 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QtDebug>
+#include <QMessageBox>
 
 #include <base/timage.h>
 #include <io/analyzefileext.h>
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
 #include <io/io_vivaseq.h>
+#include <io/io_nexus.h>
+#include <math/sums.h>
 
 #include <imagewriter.h>
 
@@ -39,7 +42,17 @@ ViewerMainWindow::ViewerMainWindow(QWidget *parent) :
     if (1<args.size()) {
         std::string fname=args.last().toStdString();
         kipl::base::TImage<float,2> img;
-        LoadImage(fname,img);
+        try {
+            LoadImage(fname,img);
+        }  catch (kipl::base::KiplException &e) {
+            QMessageBox::warning(this,"Load error",QString::fromStdString(e.what()));
+            return;
+        }
+        catch (...) {
+            QMessageBox::warning(this,"Load error","An unhandled exception was thrown");
+            return;
+        }
+
         ui->viewer->set_image(img.GetDataPtr(),img.dims());
     }
 
@@ -59,25 +72,33 @@ void ViewerMainWindow::on_actionOpen_triggered()
 
 void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &img)
 {
-    if (QFile::exists(QString::fromStdString(fname))) {
+    if (QFile::exists(QString::fromStdString(fname)))
+    {
         isMultiFrame = false;
         m_ext = kipl::io::GetFileExtensionType(fname);
-        switch (m_ext) {
-            case kipl::io::ExtensionTXT: std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionDMP: std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionDAT: std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionXML: std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionRAW: std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionFITS: kipl::io::ReadFITS(img,fname.c_str()); break;
-            case kipl::io::ExtensionTIFF: kipl::io::ReadTIFF(img,fname.c_str()); break;
-            case kipl::io::ExtensionPNG: std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionHDF: std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionSEQ :
+        switch (m_ext)
+        {
+            case kipl::io::ExtensionTXT  : std::cout<<"Image format not supported"<<std::endl; break;
+            case kipl::io::ExtensionDMP  : std::cout<<"Image format not supported"<<std::endl; break;
+            case kipl::io::ExtensionDAT  : std::cout<<"Image format not supported"<<std::endl; break;
+            case kipl::io::ExtensionXML  : std::cout<<"Image format not supported"<<std::endl; break;
+            case kipl::io::ExtensionRAW  : std::cout<<"Image format not supported"<<std::endl; break;
+            case kipl::io::ExtensionFITS : kipl::io::ReadFITS(img,fname); break;
+            case kipl::io::ExtensionTIFF : kipl::io::ReadTIFF(img,fname); break;
+            case kipl::io::ExtensionPNG  : std::cout<<"Image format not supported"<<std::endl; break;
+            case kipl::io::ExtensionHDF  :
+            {
+                kipl::io::ReadNexus(img,fname,0,{});
+                break;
+            }
+
+            case kipl::io::ExtensionSEQ  :
             {
                 kipl::io::ViVaSEQHeader header;
                 kipl::io::GetViVaSEQHeader(fname,&header);
                 isMultiFrame = true;
-                if (fname!=m_fname) {
+                if (fname!=m_fname)
+                {
                     ui->horizontalSlider->setMinimum(0);
                     ui->horizontalSlider->setMaximum(header.numberOfFrames-1);
                     ui->spinBox->setMinimum(0);
@@ -92,7 +113,8 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
         }
         m_fname = fname;
     }
-    else {
+    else
+    {
 
         logger.warning("File does not exist");
     }
@@ -142,6 +164,7 @@ void ViewerMainWindow::dropEvent(QDropEvent *e)
         kipl::base::TImage<float,2> img;
         LoadImage(fileName.toStdString(),img);
         ui->viewer->set_image(img.GetDataPtr(),img.dims());
+        ui->viewer->set_levels(kipl::base::quantile99);
     }
 }
 

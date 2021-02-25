@@ -17,7 +17,12 @@ public:
 
     void setPrecision(float prec);
     float precision();
-    std::map<float,float> getProfile(kipl::base::TImage<float,2> &img, size_t *roi=nullptr);
+    std::map<float,float> getProfile(kipl::base::TImage<float,2> &img, const std::vector<size_t> &roi = {});
+    std::map<float,float> fittedLine(const std::vector<float> & x = {});
+    const vector<float> & coefficients();
+
+    kipl::base::TImage<float,2> distanceMap(const std::vector<size_t> &dims);
+    bool saveImages;
 
 private:
     kipl::base::TImage<float,2> diffEdge(kipl::base::TImage<float,2> &img);
@@ -25,7 +30,7 @@ private:
 
     float distanceToLine(int x,int y);
 
-    float lineCoeffs[2];
+    std::vector<float> lineCoeffs;
     float mPrecision;
 };
 

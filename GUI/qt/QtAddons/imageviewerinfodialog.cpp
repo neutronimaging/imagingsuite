@@ -33,7 +33,10 @@ void ImageViewerInfoDialog::updateInfo(kipl::base::TImage<float,2> img, QRect ro
                                 static_cast<size_t>(roi.x()+roi.width()),
                                 static_cast<size_t>(roi.y()+roi.height())};
 
-    m_roiImage = kipl::base::TSubImage<float,2>::Get(img,nroi);
+    if (roi.width()<1 || roi.height()<1)
+        m_roiImage = img;
+    else
+        m_roiImage = kipl::base::TSubImage<float,2>::Get(img,nroi);
 
     kipl::math::Statistics stats;
 

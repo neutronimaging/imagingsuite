@@ -7,7 +7,7 @@
 QT       += core widgets printsupport charts concurrent
 
 TARGET = muhrec
-VERSION = 4.2
+VERSION = 4.3
 TEMPLATE = app
 CONFIG += c++11
 
@@ -39,15 +39,13 @@ unix:!symbian {
     }
 
     LIBS += -ltiff -lxml2
-
-    INCLUDEPATH += $$PWD/../../../external/src/linalg
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    INCLUDEPATH  += $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../external/lib64
 
     LIBS += -llibxml2_dll -llibtiff -lcfitsio

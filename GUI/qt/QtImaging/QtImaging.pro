@@ -76,13 +76,15 @@ unix {
 FORMS += \
     pixelsizedlg.ui
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl -lQtAddons -lReaderConfig
-else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl -lQtAddons -lReaderConfig
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib
+else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug
 
-INCLUDEPATH += $$PWD/../../../external/src/linalg
+LIBS += -lkipl -lQtAddons -lReaderConfig -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig/
 DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig/

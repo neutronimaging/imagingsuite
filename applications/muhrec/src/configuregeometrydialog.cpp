@@ -403,6 +403,8 @@ int ConfigureGeometryDialog::LoadImages()
 
         std::map<float,ProjectionInfo> projlist;
         BuildFileList(&m_Config,&projlist);
+
+
         std::map<float,ProjectionInfo>::iterator it,marked;
 
         try
@@ -480,7 +482,6 @@ int ConfigureGeometryDialog::LoadImages()
             loaderror_dlg.exec();
             return -1;
         }
-
 
         try {
             marked=projlist.begin();

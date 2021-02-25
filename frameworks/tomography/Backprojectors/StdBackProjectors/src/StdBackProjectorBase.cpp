@@ -54,7 +54,7 @@ void StdBackProjectorBase::ClearAll()
 	SizeProj=0;
 	MatrixCenterX=0;
 
-	ProjCenter=0.0;
+    ProjCenter=0.0f;
 	memset(fWeights,0,sizeof(float)*1024);
 	memset(fSin,0,sizeof(float)*1024);
 	memset(fCos,0,sizeof(float)*1024);
@@ -128,6 +128,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 
 size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, std::map<std::string, std::string> parameters)
 {
+    timer.Tic();
 	if (volume.Size()==0)
 		throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
@@ -152,7 +153,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 		memcpy(pImg,pProj,sizeof(float)*img.Size());
 		Process(img,angles[i],weights[i],i==(nProj-1));
 	}
-
+    timer.Toc();
 	delete [] weights;
 	delete [] angles;
 	return 0;
@@ -160,7 +161,10 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 
 void StdBackProjectorBase::SetROI(const std::vector<size_t> &roi)
 {
+
 	ClearAll();
+
+    QThread::msleep(500);
 	ProjCenter    = mConfig.ProjectionInfo.fCenter;
 	SizeU         = roi[2]-roi[0];
     if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
@@ -191,7 +195,6 @@ void StdBackProjectorBase::SetROI(const std::vector<size_t> &roi)
 
     volume.resize(matrixDims);
 	volume=0.0f;
-
 	stringstream msg;
 	
 	msg<<"Setting up reconstructor with ROI=["<<roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3]<<"]"<<std::endl;
@@ -202,6 +205,7 @@ void StdBackProjectorBase::SetROI(const std::vector<size_t> &roi)
 	logger(kipl::logging::Logger::LogVerbose,msg.str());
 
 	BuildCircleMask();
+
     MatrixCenterX = volume.Size(1)/2;
 }
 

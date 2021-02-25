@@ -85,7 +85,7 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,const std::string & fname, const
                 (naxes[1]<=static_cast<long>(nCrop[3])))
         {
             msg.str("");
-            msg<<"Cropping region ("<<nCrop[0]<<", "<<nCrop[1]<<", "<<nCrop[2]<<", "<<nCrop[3]<<") out of bounds ("<<naxes[0]<<", "<<naxes[1]<<") for file "<<fname;
+            msg<<"Cropping region ("<<nCrop[0]<<", "<<nCrop[1]<<", "<<nCrop[2]<<", "<<nCrop[3]<<") is out of bounds ("<<naxes[0]<<", "<<naxes[1]<<") for file "<<fname;
             throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
         }
 

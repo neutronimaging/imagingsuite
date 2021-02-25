@@ -1,18 +1,20 @@
 //<LICENSE>
 
 #include <map>
-#include <math.h>
+#include <cmath>
 #include <sstream>
 #include <list>
 #include <algorithm>
 #include <numeric>
 
-#include <tnt_array1d.h>
-#include <tnt_array2d.h>
-#include <jama_lu.h>
-#include <jama_qr.h>
-#include <jama_svd.h>
-#include <tnt_cmat.h>
+#include <armadillo>
+
+//#include <tnt_array1d.h>
+//#include <tnt_array2d.h>
+//#include <jama_lu.h>
+//#include <jama_qr.h>
+//#include <jama_svd.h>
+//#include <tnt_cmat.h>
 
 #include <math/median.h>
 #include <io/io_tiff.h>
@@ -29,11 +31,11 @@
 #include "../include/ReferenceImageCorrection.h"
 #include "../include/ImagingException.h"
 
-using namespace TNT;
+//using namespace TNT;
 
 namespace ImagingAlgorithms {
 
-ReferenceImageCorrection::ReferenceImageCorrection() :
+ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::InteractionBase *interactor) :
     logger("ReferenceImageCorrection"),
     m_bHaveOpenBeam(false),
     m_bHaveDarkCurrent(false),
@@ -64,7 +66,7 @@ ReferenceImageCorrection::ReferenceImageCorrection() :
     tau(1.0f),
     min_area(0),
     thresh(0.0f),
-    m_Interactor(nullptr)
+    m_Interactor(interactor)
 {
     a = b = c = d = e = f = 1;
 }
@@ -1327,71 +1329,73 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
     int matrix_size = 1 + ((d && a)+b+c+f+e);
 
-    Array2D< double > my_matrix(values.size(),matrix_size, 0.0);
-    Array1D< double > I(values.size(), 0.0);
-    Array1D< double > param(matrix_size, 0.0);
+    arma::mat my_matrix(values.size(),matrix_size);
+    arma::vec I(values.size());
+    arma::vec param(matrix_size);
     std::map<std::pair<int, int>, float>::const_iterator it = values.begin();
 
 
-    for (int x=0; x<my_matrix.dim1(); x++) {
+    for (arma::uword x=0; x<my_matrix.n_rows; x++)
+    {
 
-        if (a && b && c && d && e && f) { // second order X, second order Y
-              my_matrix[x][0] = 1;
-              my_matrix[x][1] = it->first.first;
-              my_matrix[x][2] = it->first.first*it->first.first;
-              my_matrix[x][3] = it->first.first*it->first.second;
-              my_matrix[x][4] = it->first.second;
-              my_matrix[x][5] = it->first.second*it->first.second;
+        if (a && b && c && d && e && f)
+        { // second order X, second order Y
+              my_matrix.at(x,0) = 1;
+              my_matrix.at(x,1) = it->first.first;
+              my_matrix.at(x,2) = it->first.first*it->first.first;
+              my_matrix.at(x,3) = it->first.first*it->first.second;
+              my_matrix.at(x,4) = it->first.second;
+              my_matrix.at(x,5) = it->first.second*it->first.second;
         }
-        if ((b && d && a && c) && (e==0) && (f==0)){ // first order X, first order Y
-            my_matrix[x][0] = 1;
-            my_matrix[x][1] = it->first.first;
-            my_matrix[x][2] = it->first.second;
-            my_matrix[x][3] = it->first.first*it->first.second;
-
+        if ((b && d && a && c) && (e==0) && (f==0))
+        { // first order X, first order Y
+            my_matrix.at(x,0) = 1;
+            my_matrix.at(x,1) = it->first.first;
+            my_matrix.at(x,2) = it->first.second;
+            my_matrix.at(x,3) = it->first.first*it->first.second;
         }
         if (b==0 && a==0 && c==0 && d==0 && e==0 && f==0) { // zero order X, zero order Y
-            my_matrix[x][0] = 1;
+            my_matrix.at(x,0) = 1;
         }
 
         if ((b && d && e && c && a) && f==0 ) { // second order X, first order Y
-            my_matrix[x][0] = 1;
-            my_matrix[x][1] = it->first.first;
-            my_matrix[x][2] = it->first.first*it->first.first;
-            my_matrix[x][3] = it->first.first*it->first.second;
-            my_matrix[x][4] = it->first.second;
+            my_matrix.at(x,0) = 1;
+            my_matrix.at(x,1) = it->first.first;
+            my_matrix.at(x,2) = it->first.first*it->first.first;
+            my_matrix.at(x,3) = it->first.first*it->first.second;
+            my_matrix.at(x,4) = it->first.second;
         }
         if ((b && d && e) && c==0 && a==0 && f==0 ) { // second order X, zero order Y
-            my_matrix[x][0] = 1;
-            my_matrix[x][1] = it->first.first;
-            my_matrix[x][2] = it->first.first*it->first.first;
+            my_matrix.at(x,0) = 1;
+            my_matrix.at(x,1) = it->first.first;
+            my_matrix.at(x,2) = it->first.first*it->first.first;
         }
 
         if ((b && c && d && a && f) && e==0){ // first order X, second order Y
-            my_matrix[x][0] = 1;
-            my_matrix[x][1] = it->first.first;
-            my_matrix[x][2] = it->first.first*it->first.second;
-            my_matrix[x][3] = it->first.second;
-            my_matrix[x][4] = it->first.second*it->first.second;
+            my_matrix.at(x,0) = 1;
+            my_matrix.at(x,1) = it->first.first;
+            my_matrix.at(x,2) = it->first.first*it->first.second;
+            my_matrix.at(x,3) = it->first.second;
+            my_matrix.at(x,4) = it->first.second*it->first.second;
         }
 
         if( (b && d) && a==0 && c==0 &&  e==0 && f==0){ //first order X, zero order Y
-            my_matrix[x][0] = 1;
-            my_matrix[x][1] = it->first.first;
+            my_matrix.at(x,0) = 1;
+            my_matrix.at(x,1) = it->first.first;
         }
 
         if (b==0 && d==0 && e==0 && (c && a && f)){ // zero order X, second order Y
-            my_matrix[x][0] = 1;
+            my_matrix.at(x,0) = 1;
 //            my_matrix[x][1] = it->first.first;
 //            my_matrix[x][2] = it->first.first*it->first.first;
 //            my_matrix[x][3] = it->first.first*it->first.second;
-            my_matrix[x][1] = it->first.second;
-            my_matrix[x][2] = it->first.second*it->first.second;
+            my_matrix.at(x,1) = it->first.second;
+            my_matrix.at(x,2) = it->first.second*it->first.second;
         }
 
         if ((c && a) && b==0 && d==0 && e==0 && f==0){ // zero order X, first order Y
-            my_matrix[x][0] = 1;
-            my_matrix[x][1] = it->first.second;
+            my_matrix.at(x,0) = 1;
+            my_matrix.at(x,1) = it->first.second;
 
         }
 
@@ -1400,10 +1404,7 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
     }
 
-    JAMA::QR<double> qr(my_matrix);
-    param = qr.solve(I);
-
-
+    param = arma::solve(my_matrix,I);
 
     float *myparam = new float[6];
 
@@ -1414,7 +1415,7 @@ float * ReferenceImageCorrection::SolveLinearEquation(std::map<std::pair<int, in
 
 
 
-    Array1D< double > I_int(values.size(), 0.0);
+    arma::vec I_int(values.size());
 
     // here my param must be in the same order...
 
@@ -1526,18 +1527,18 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
     //1. create system matrix, dimension of the matrix depends on the number of BB found
     float *param = new float[values.size()+3];
 
-    Array2D< double > my_matrix(values.size()+3,values.size()+3, 0.0);
-    Array1D< double > b_vector(values.size()+3, 0.0);
-    Array1D< double > qr_param(values.size()+3, 0.0);
+    arma::mat my_matrix(values.size()+3,values.size()+3);
+    arma::vec b_vector(values.size()+3);
+    arma::vec qr_param(values.size()+3);
 
 
     std::map<std::pair<int,int>, float>::const_iterator it_i = values.begin();
-    for (int i=0; i<values.size(); ++i) {
+    for (size_t i=0; i<values.size(); ++i) {
             std::map<std::pair<int,int>, float>::const_iterator it_j = values.begin();
-        for (int j=0; j<values.size(); ++j) {
+        for (size_t j=0; j<values.size(); ++j) {
 
             if (i==j){
-                my_matrix[i][j] =  0.0f;
+                my_matrix.at(i,j) =  0.0f;
             }
             else {
                 float ii_1 = static_cast<float>(it_i->first.first);
@@ -1547,71 +1548,70 @@ float * ReferenceImageCorrection::SolveThinPlateSplines(std::map<std::pair<int,i
                 float dist = sqrt((ii_1-jj_1)*(ii_1-jj_1)+(ii_2-jj_2)*(ii_2-jj_2));
   //              float dist = sqrt((it_i->first.first-it_j->first.first)*(it_i->first.first-it_j->first.first)+(it_i->first.second-it_j->first.second)*(it_i->first.second-it_j->first.second));
 //                float dist = sqrt((values.at(i).first.first-values.at(j).first.first)*(values.at(i).first.first-values.at(j).first.first)+(values.at(i).first.second-values.at(j).first.second)*(values.at(i).first.second-values.at(j).first.second)); // does not work like this...
-                my_matrix[i][j] = dist*dist*log(dist);
+                my_matrix.at(i,j) = dist*dist*log(dist);
 
             }
             ++it_j;
-
-
         }
-
         ++it_i;
     }
 
     it_i = values.begin();
     for (int i=0; i<values.size(); ++i){
-        my_matrix[i][values.size()] = 1.0;
-        my_matrix[i][values.size()+1] = it_i->first.second; // y
-        my_matrix[i][values.size()+2] = it_i->first.first; // x
+        my_matrix.at(i,values.size()) = 1.0;
+        my_matrix.at(i,values.size()+1) = it_i->first.second; // y
+        my_matrix.at(i,values.size()+2) = it_i->first.first; // x
         ++it_i;
     }
 
     it_i = values.begin();
     for (int i=0; i<values.size(); ++i){
-        my_matrix[values.size()][i] = 1.0;
-        my_matrix[values.size()+1][i] = it_i->first.second; // y
-        my_matrix[values.size()+2][i] = it_i->first.first; // x
+        my_matrix.at(values.size(),i) = 1.0;
+        my_matrix.at(values.size()+1,i) = it_i->first.second; // y
+        my_matrix.at(values.size()+2,i) = it_i->first.first; // x
         ++it_i;
     }
 
     int i=0;
     for (it_i = values.begin(); it_i!=values.end(); ++it_i){
-        b_vector[i] = it_i->second;
+        b_vector.at(i) = it_i->second;
         ++i;
     }
+
+    qr_param = arma::solve(my_matrix,b_vector);
 
 //    JAMA::QR<double> qr(my_matrix);
 //    qr_param = my_matrix.solve(b_vector); // crashed with QR
 
-    JAMA::SVD<double> svd(my_matrix);
-    Array2D< double > U(values.size()+3,values.size()+3, 0.0);
-    Array2D< double > V(values.size()+3,values.size()+3, 0.0);
-    Array1D< double > S(values.size()+3, 0.0);
+//    JAMA::SVD<double> svd(my_matrix);
+//    Array2D< double > U(values.size()+3,values.size()+3, 0.0);
+//    Array2D< double > V(values.size()+3,values.size()+3, 0.0);
+//    Array1D< double > S(values.size()+3, 0.0);
 
-    svd.getU(U);
-    svd.getV(V);
-    svd.getSingularValues(S);
+//    svd.getU(U);
+//    svd.getV(V);
+//    svd.getSingularValues(S);
 
-    TNT::Array2D<double> Utran(U.dim1(), U.dim2());
-    for(int r=0; r<U.dim1(); ++r)
-        for(int c=0; c<U.dim2(); ++c)
-            Utran[c][r] = U[r][c];
+//    TNT::Array2D<double> Utran(U.dim1(), U.dim2());
+//    for(int r=0; r<U.dim1(); ++r)
+//        for(int c=0; c<U.dim2(); ++c)
+//            Utran[c][r] = U[r][c];
 
-    TNT::Array2D<double> Si(U.dim1(), U.dim2(), 0.0);
-    for (int i=0; i<Si.dim1(); ++i)
-        Si[i][i] = 1/S[i];
+//    TNT::Array2D<double> Si(U.dim1(), U.dim2(), 0.0);
+//    for (int i=0; i<Si.dim1(); ++i)
+//        Si[i][i] = 1/S[i];
 
-    TNT::Array2D<double> inv_matrix(my_matrix.dim1(), my_matrix.dim2());
-    inv_matrix =  matmult(matmult(V,Si),Utran);
+//    TNT::Array2D<double> inv_matrix(my_matrix.dim1(), my_matrix.dim2());
+//    inv_matrix =  matmult(matmult(V,Si),Utran);
 
 
-    for (int i=0;i<my_matrix.dim1();i++){
-         for (int j=0;j<my_matrix.dim2();j++){
-             qr_param[i]+=( inv_matrix[i][j]*b_vector[j]);
-         }
-     }
+//    for (int i=0;i<my_matrix.dim1();i++){
+//         for (int j=0;j<my_matrix.dim2();j++){
+//             qr_param[i]+=( inv_matrix[i][j]*b_vector[j]);
+//         }
+//     }
 
-    for (i=0; i<values.size()+3; ++i){
+    for (size_t i=0; i<values.size()+3; ++i){
         param[i] = static_cast<float>(qr_param[i]);
     }
 

@@ -45,7 +45,7 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg
+
     INCLUDEPATH += $$PWD/../../../../external/include
     INCLUDEPATH += $$PWD/../../../../external/include/cfitsio
     INCLUDEPATH += $$PWD/../../../../external/include/libxml2
@@ -58,25 +58,25 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lFDKBackProjectors
+LIBS += -lkipl -lImagingAlgorithms -lReconFramework -lModuleConfig -lFDKBackProjectors
 
 INCLUDEPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../../GUI/qt/QtModuleConfigure
+DEPENDPATH  += $$PWD/../../../../GUI/qt/QtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../../GUI/qt/QtAddons
-DEPENDPATH += $$PWD/../../../../GUI/qt/QtAddons
+DEPENDPATH  += $$PWD/../../../../GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
-DEPENDPATH += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../../core/algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../Framework/ReconFramework/include
-DEPENDPATH += $$PWD/../../Framework/ReconFramework/include
+DEPENDPATH  += $$PWD/../../Framework/ReconFramework/include
 
 INCLUDEPATH += $$PWD/../../Backprojectors/FDKBackProjectors/src
-DEPENDPATH += $$PWD/../../Backprojectors/FDKBackProjectors/src
+DEPENDPATH  += $$PWD/../../Backprojectors/FDKBackProjectors/src
 
 INCLUDEPATH += $$PWD/../../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../../core/kipl/kipl/include
+DEPENDPATH  += $$PWD/../../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../../core/modules/ModuleConfig/include
+DEPENDPATH  += $$PWD/../../../../core/modules/ModuleConfig/include

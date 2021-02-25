@@ -57,7 +57,7 @@ int process(int argc, char *argv[])
     size_t first=std::stoi(args["first"]);
     size_t last=std::stoi(args["last"]);
 
-    auto dims=reader.GetImageSize("",srcfname,first,1.0);
+    auto dims=reader.imageSize("",srcfname,first,1.0);
 
     size_t slicex=dims[1]/2;
     size_t slicey=dims[0]/2;
