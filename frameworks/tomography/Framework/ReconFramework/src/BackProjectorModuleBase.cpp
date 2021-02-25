@@ -27,6 +27,11 @@ BackProjectorModuleBase::~BackProjectorModuleBase(void)
 {
 }
 
+void BackProjectorModuleBase::resetTimer()
+{
+    timer.reset();
+}
+
 const std::vector<Publication> &BackProjectorModuleBase::publicationList()
 {
     return publications;

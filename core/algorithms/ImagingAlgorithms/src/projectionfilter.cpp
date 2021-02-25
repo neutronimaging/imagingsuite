@@ -279,7 +279,7 @@ void ProjectionFilter::buildFilter(const size_t N)
         fft=nullptr;
     }
     if (fft==nullptr)
-        fft=new kipl::math::fft::FFTBaseFloat(&nFFTsize,1);
+        fft=new kipl::math::fft::FFTBaseFloat({nFFTsize});
 
     mFilter.resize(N2);
     std::fill_n(mFilter.begin(),N2,0.0f);

@@ -128,6 +128,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 
 size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, std::map<std::string, std::string> parameters)
 {
+    timer.Tic();
 	if (volume.Size()==0)
 		throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
@@ -152,7 +153,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 		memcpy(pImg,pProj,sizeof(float)*img.Size());
 		Process(img,angles[i],weights[i],i==(nProj-1));
 	}
-
+    timer.Toc();
 	delete [] weights;
 	delete [] angles;
 	return 0;
