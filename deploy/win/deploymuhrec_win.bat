@@ -20,12 +20,9 @@ copy %REPOS%\lib\StdPreprocModulesGUI.dll .
 copy %REPOS%\lib\InspectorModulesGUI.dll .
 copy %REPOS%\lib\InspectorModules.dll .
 copy %REPOS%\lib\FDKBackProjectors.dll .
-#copy %REPOS%\lib\UnpublishedImagingAlgorithms.dll .
-#copy %REPOS%\lib\UnpublPreProcessing.dll .
-#copy %REPOS%\lib\UnpublPreProcessingGUI.dll .
 copy %REPOS%\lib\ReaderConfig.dll .
 copy %REPOS%\lib\ReaderGUI.dll .
-#copy %REPOS%\lib\ReconAlgorithms.dll .
+rem copy %REPOS%\lib\ReconAlgorithms.dll .
 copy %REPOS%\lib\QtImaging.dll .
 
 copy %REPOS%\imagingsuite\external\lib64\libtiff.dll .
@@ -49,6 +46,7 @@ copy %REPOS%\imagingsuite\external\lib64\libquadmath-0.dll .
 copy %REPOS%\imagingsuite\external\lib64\libwinpthread-1.dll .
 copy %REPOS%\imagingsuite\external\lib64\libblas.dll .
 copy %REPOS%\imagingsuite\external\lib64\liblapack.dll .
+copy %REPOS%\ExternalDependencies\windows\bin\libopenblas.dll
 
 copy %REPOS%\Applications\MuhRec.exe .
 copy %REPOS%\Applications\MuhRecCLI.exe .
