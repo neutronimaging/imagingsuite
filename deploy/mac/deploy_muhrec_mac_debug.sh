@@ -165,6 +165,7 @@ install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks
 install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libReconFramework.1.0.0.dylib
 install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libReconFramework.1.0.0.dylib
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libReconFramework.1.0.0.dylib
+install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib libReconFramework.1.0.0.dylib
 
 
 # QtAddons
@@ -190,6 +191,8 @@ install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libQtImaging.1.0.0.dylib
 install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libQtImaging.1.0.0.dylib
 install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libQtImaging.1.0.0.dylib
+install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libQtImaging.1.0.0.dylib
+
 
 # QtModuleConfigure
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtModuleConfigure.1.0.0.dylib

@@ -25,7 +25,8 @@ SOURCES += \
     ../../src/ProjectionReader.cpp \
     ../../src/PreprocModuleBase.cpp \
     ../../src/ModuleItem.cpp \
-    ../../src/BackProjectorModuleBase.cpp
+    ../../src/BackProjectorModuleBase.cpp \
+    ../../src/processtiminglogger.cpp
 
 HEADERS += \
     ../../include/ReconHelpers.h \
@@ -39,6 +40,7 @@ HEADERS += \
     ../../include/ModuleItem.h \
     ../../include/ReconFramework_global.h \
     ../../include/BackProjectorModuleBase.h \
+    ../../include/processtiminglogger.h \
     ../../src/stdafx.h
 
 symbian {

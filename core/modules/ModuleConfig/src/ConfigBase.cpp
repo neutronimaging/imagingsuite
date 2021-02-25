@@ -10,6 +10,8 @@
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 
+std::string ConfigBase::m_sHomePath = "";
+
 ConfigBase::ConfigBase(std::string name, std::string path) :
 	logger(name),
     m_sName(name),
@@ -316,6 +318,16 @@ void ConfigBase::setAppPath(const std::string &path)
 std::string ConfigBase::appPath()
 {
     return m_sApplicationPath;
+}
+
+void ConfigBase::setHomePath(const std::string &path)
+{
+    m_sHomePath = path;
+}
+
+std::string ConfigBase::homePath()
+{
+    return m_sHomePath;
 }
 
 void ConfigBase::ParseArgv(std::vector<std::string> &args)
