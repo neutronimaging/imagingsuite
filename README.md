@@ -36,8 +36,9 @@ cd install/lib
 for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done
 
 ```
-
-#### Imaging algortihms
+### Testing the build
+cd ../python
+PYTHONPATH=$PYTHONPATH:../install python3
 
 
 
