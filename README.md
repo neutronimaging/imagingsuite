@@ -40,7 +40,10 @@ for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done
 cd ../python
 PYTHONPATH=$PYTHONPATH:../install python3
 
-
+```python
+import imgalg
+import muhrectomo
+```
 
 ## Documentation
 - [MuhRec](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec)
