@@ -33,7 +33,6 @@ cd ..
 ##### Post build actions
 ```bash 
 cd install/lib
-../../nexuslinkage.sh
 for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done
 
 ```
