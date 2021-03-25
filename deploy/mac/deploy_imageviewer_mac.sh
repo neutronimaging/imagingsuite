@@ -4,6 +4,8 @@ DEST="$DIRECTORY/imageviewer.app"
 REPOSPATH=$WORKSPACE
 QTPATH=$QTBINPATH
 
+GITVER=`git rev-parse --short HEAD`
+
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
 fi

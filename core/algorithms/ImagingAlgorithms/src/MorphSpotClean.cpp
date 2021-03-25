@@ -20,6 +20,7 @@ namespace ImagingAlgorithms {
 MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
+    m_bUseThreading(false),
     m_eConnectivity(kipl::base::conn8),
     m_eMorphClean(MorphCleanReplace),
     m_eMorphDetect(MorphDetectHoles),
@@ -75,6 +76,38 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, std::vector<float
     default : throw ImagingException("Unkown cleaning method selected", __FILE__,__LINE__);
     }
 
+}
+
+void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, float th, float sigma)
+{
+    std::vector<float> thvec(2,th);
+    std::vector<float> sigvec(2,sigma);
+
+    process(img,thvec,sigvec);
+}
+
+void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<float> &th, std::vector<float> &sigma)
+{
+    if (m_bUseThreading)
+    {
+        throw ImagingException("Threading is not implemented for MorphSpotClean", __FILE__,__LINE__);
+    }
+    else
+    {
+        process(img,0UL,img.Size(2),th,sigma);
+    }
+}
+
+void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, size_t first, size_t last, std::vector<float> &th, std::vector<float> &sigma)
+{
+    kipl::base::TImage<float,2> slice(img.dims());
+
+    for (size_t i=first; i<last; ++i)
+    {
+        std::copy_n(img.GetLinePtr(i),slice.Size(),slice.GetDataPtr());
+        process(slice,th,sigma);
+        std::copy_n(slice.GetDataPtr(), slice.Size(),img.GetLinePtr(i));
+    }
 }
 
 void MorphSpotClean::FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks)
@@ -372,6 +405,16 @@ kipl::base::TImage<float,2> MorphSpotClean::detectionImage(kipl::base::TImage<fl
     };
 
     return det_img;
+}
+
+void MorphSpotClean::useThreading(bool x)
+{
+    m_bUseThreading = x;
+}
+
+bool MorphSpotClean::isThreaded()
+{
+    return m_bUseThreading;
 }
 
 kipl::base::TImage<float,2> MorphSpotClean::DetectHoles(kipl::base::TImage<float,2> img)

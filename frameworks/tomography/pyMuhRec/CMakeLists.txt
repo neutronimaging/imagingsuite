@@ -4,39 +4,50 @@
 # ~~~
 
 add_definitions(-DNO_QT)
-
-set(TARGET_NAME "imgalg") 
+set(TARGET_NAME "muhrectomo") 
 
 include_directories(
-    ../../kipl/kipl/include 
-    ../ImagingAlgorithms/include 
-    /opt/local/include .
-    ./../../external/pylinalg
+    /opt/local/include
+    /opt/local/include/libxml2
+    ../../../core/kipl/kipl/include
+    ../../../external/src/linalg
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    ../../../external/mac/include/
+    ../../../external/mac/include/nexus
+    ../../../external/mac/include/hdf5
+    ../Framework/ReconFramework/include
+    ../Backprojectors/StdBackProjectors/include
+    ../Backprojectors/FDKBackProjectors/src
+    ../../../core/algorithms/ImagingAlgorithms/include
     )
-    
+
 link_directories(../../../../lib /opt/local/lib )
 
+# add_definitions(-DVERSION="1.6.0")
 # create python module
+
+set(INC_FILES
+  src/reconstructor.h
+)
+
+set(SRC_FILES
+  src/pyReconEngine.cpp
+  src/pyReconException.cpp
+  src/pyReconConfig.cpp
+  src/pyReconFactory.cpp
+  src/pyReconstructor.cpp
+  src/reconstructor.cpp
+  src/pybinder.cpp
+)
+
+set(LINK_TYPE "MODULE")
+
 add_library(${TARGET_NAME}
   ${LINK_TYPE}
   MODULE
-
-  pyStripeFilter.cpp  
-#  pySpotClean.cpp  
-  pyNormalizeImage.cpp
-  pyPolynomialCorrection.cpp  
-  pyImagingException.cpp  
-# pyTranslateProjections.cpp  
-  pyMorphSpotClean.cpp  
-  pyPixelInfo.cpp
-  pyProjectionFilter.cpp
-#  pygammaclean.cpp  
-  pyAverageImage.cpp  
-#  pypiercingpointestimator.cpp  
-#  pyReferenceImageCorrection.cpp  
-#  pytomocenter.cpp  
-  pyBinder.cpp
-  pyBinder.h
+  ${SRC_FILES}  
+  ${INC_FILES}
   )
 
 target_link_libraries(${TARGET_NAME}
@@ -45,10 +56,16 @@ target_link_libraries(${TARGET_NAME}
 
   PRIVATE
     kipl
-    ImagingAlgorithms
     xml2
     tiff
+    ModuleConfig
+    ReconFramework
+    StdBackProjectors
+    FDKBackProjectors
   )
+
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 set_target_properties(${TARGET_NAME}
   PROPERTIES
@@ -78,8 +95,8 @@ if(DYNAMIC_LIB)
 
   #     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
-  #     execute_process(
-  #       COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
-  #       WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
-  #     )
+      # execute_process(
+      #   COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
+      #   WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
+      # )
 endif(DYNAMIC_LIB)
