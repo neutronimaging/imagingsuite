@@ -1,5 +1,5 @@
 //<LICENSE>
-#ifdef HAVEPYBIND11
+
 #include <ReconException.h>
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
@@ -19,5 +19,3 @@ PYBIND11_MODULE(muhrectomo, m)
 
     py::register_exception<ReconException>(m, "ReconException");
 }
-
-#endif

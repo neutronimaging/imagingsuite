@@ -1,5 +1,5 @@
 //<LICENSE>
-#ifdef HAVEPYBIND11
+//#ifdef HAVEPYBIND11
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -43,7 +43,14 @@ void bindReconstructor(py::module &m)
                                                                   {"sod",           10},
                                                                   {"sdd",           11},
                                                                   {"piercingpoint", 12},
-                                                                  {"beamgeometry",  13}
+                                                                  {"beamgeometry",  13},
+                                                                  {"filtertype",    14},
+                                                                  {"cutoff",        15},
+                                                                  {"order",         16},
+                                                                  {"usebias",       17},
+                                                                  {"biasweight",    18},
+                                                                  {"paddingdoubler",19}
+
 
                                                                  };
 
@@ -111,7 +118,14 @@ void bindReconstructor(py::module &m)
                             case 13:
                                 config.ProjectionInfo.beamgeometry = py::cast<ReconConfig::cProjections::eBeamGeometry>(item.second);
                                 break;
-
+                            case 14: // filtertype
+                            case 15: // cutoff
+                            case 16: // order
+                            case 17: // usebias
+                            case 18: // biasweight
+                            case 19: // paddingdoubler
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
+                                break;
                             }
                         }
                         recon.backProjector->Configure(config,backprojPars);
@@ -139,7 +153,7 @@ void bindReconstructor(py::module &m)
                                                 static_cast<size_t>(buf1.shape[0])
                                              };
 
-                    // py::print(dims[0],dims[1],dims[2]);
+                    py::print(dims[0],dims[1],dims[2]);
                     kipl::base::TImage<float,3> img(static_cast<float*>(buf1.ptr),dims);
                     
                     std::map<std::string,std::string> parameters;
@@ -212,29 +226,6 @@ void bindReconstructor(py::module &m)
               },
                     "Retrieves the reconstructed volume from the backprojector.");
 
-    //    sfClass.def("process",
-    //                 [](ImagingAlgorithms::StripeFilter &sf,
-    //                 py::array_t<float> &x,
-    //                 ImagingAlgorithms::eStripeFilterOperation op)
-    //            {
-    //                py::buffer_info buf1 = x.request();
-
-    //                size_t dims[]={static_cast<size_t>(buf1.shape[1]),
-    //                               static_cast<size_t>(buf1.shape[0])};
-
-    //                sf.checkDims(dims);
-
-    //                kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
-
-    //                sf.process(img,op);
-
-    //                std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
-    //            },
-
-    //            "Applies the stripe filter on the image as in-place operation.",
-    //            py::arg("x"),
-    //            py::arg("op"));
-
     py::enum_<eBackProjectors>(m,"eBackprojectors")
             .value("bpMultiProj",            bpMultiProj)
             .value("bpMultiProjParallel",    bpMultiProjParallel)
@@ -250,4 +241,4 @@ void bindReconstructor(py::module &m)
             .export_values();
 }
 
-#endif
+//#endif

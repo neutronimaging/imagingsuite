@@ -27,6 +27,7 @@ public:
     void process(kipl::base::TImage<float,3> &img);
 
     void useThreading();
+    bool usingLog();
 protected:
     void normalizeSlices(kipl::base::TImage<float,3> &img, size_t begin, size_t end);
     float computeDose(kipl::base::TImage<float,2> &img);

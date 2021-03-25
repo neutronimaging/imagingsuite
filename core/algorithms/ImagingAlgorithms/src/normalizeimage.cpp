@@ -77,7 +77,7 @@ void NormalizeImage::process(kipl::base::TImage<float, 2> &img)
             if (img[i]<=0)
                 img[i] = 1.0f;
 
-            img[i] = std::logf(img[i]) - mFlatField[i];
+            img[i] = mFlatField[i] - std::logf(img[i]);
         }
     }
     else
@@ -96,6 +96,11 @@ void NormalizeImage::process(kipl::base::TImage<float, 2> &img)
 void NormalizeImage::process(kipl::base::TImage<float, 3> &img)
 {
     normalizeSlices(img,0,img.Size(2));
+}
+
+bool NormalizeImage::usingLog()
+{
+    return bUseLog;
 }
 
 void NormalizeImage::normalizeSlices(kipl::base::TImage<float, 3> &img, size_t begin, size_t end)
