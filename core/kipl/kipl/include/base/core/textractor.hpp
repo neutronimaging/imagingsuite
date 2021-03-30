@@ -176,5 +176,61 @@ void InsertSlice(kipl::base::TImage<T,2> &slice, kipl::base::TImage<T,3> &volume
 	}
 }
 
+template<typename T>
+kipl::base::TImage<float,2> getPatch(kipl::base::TImage<T,2> srcImg, size_t x,size_t y,size_t h,size_t w, size_t margin)
+{
+    std::vector<size_t> roi={x,y,x+w+margin,y+h+margin};
+
+    if (x<margin)
+        roi[0]=0UL;
+
+    if (y<margin)
+        roi[1]=0UL;
+
+    if (srcImg.Size(0)<roi[2])
+        roi[2]=srcImg.Size(0);
+
+    if (srcImg.Size(1)<roi[3])
+        roi[3]=srcImg.Size(1);
+
+    kipl::base::TImage<T,2> resImg({roi[2]-roi[0],roi[3]-roi[1]});
+    for (size_t i=0; i<roi[3]-roi[1]; ++i)
+    {
+        std::copy_n(srcImg.GetLinePtr(i+roi[1],resImg.Size(0),resImg.GetLinePtr(i)));
+    }
+
+    return resImg;
+}
+
+template<typename T>
+void putPatch(kipl::base::TImage<T,2> patch, size_t x,size_t y, size_t margin,  kipl::base::TImage<T,2> dstImg)
+{
+    size_t margX = margin;
+    size_t margY = margin;
+    size_t w = patch.Size(0);
+    size_t h = patch.Size(1);
+
+    if (x<margin)
+        margX=x;
+
+    if (y<margin)
+        margY=y;
+
+
+    if (dstImg.Size(0)<x+patch.Size(0)-margin)
+        w=(x+patch.Size(0)+margin) % (x+patch.Size(0));
+
+    if (dstImg.Size(1)<y+patch.Size(1)-margin)
+        h=dstImg.Size(1);
+
+    for (size_t i=0; i<h; ++i)
+    {
+        std::copy_n(patch.GetLinePtr(i+margY)+margX,w,dstImg.GetLinePtr(i+y));
+    }
+
+    return dstImg;
+}
+
 }}
 #endif /*TEXTRACTOR_HPP_*/
+
