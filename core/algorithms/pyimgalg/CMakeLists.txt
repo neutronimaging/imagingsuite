@@ -35,6 +35,7 @@ add_library(${TARGET_NAME}
 #  pypiercingpointestimator.cpp  
 #  pyReferenceImageCorrection.cpp  
 #  pytomocenter.cpp  
+  pyCenterEstimation.cpp
   pyBinder.cpp
   pyBinder.h
   )
