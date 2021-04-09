@@ -1,5 +1,6 @@
 //<LICENSE>
 #include <algorithm>
+#include <thread>
 #include <morphology/morphextrema.h>
 #include <math/image_statistics.h>
 #include <morphology/label.h>
@@ -91,15 +92,41 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
     if (m_bUseThreading)
     {
         throw ImagingException("Threading is not implemented for MorphSpotClean", __FILE__,__LINE__);
+
+        std::ostringstream msg;
+        const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
+
+
+        std::vector<std::thread> threads;
+        const size_t N = img.Size(2);
+
+        size_t M=N/concurentThreadsSupported;
+
+        msg.str("");
+        msg<<N<<" projections on "<<concurentThreadsSupported<<" threads, "<<M<<" projections per thread";
+        logger(logger.LogMessage,msg.str());
+        size_t restCnt = N % concurentThreadsSupported;
+        for(size_t i = 0; i < concurentThreadsSupported; ++i)
+        {
+            // spawn threads
+            size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
+            auto pImg = &img;
+            threads.push_back(std::thread([=] { process(pImg,i*M,M+rest,th,sigma,i); }));
+        }
+
+        // call join() on each thread in turn
+        for_each(threads.begin(), threads.end(),
+            std::mem_fn(&std::thread::join));
     }
     else
     {
-        process(img,0UL,img.Size(2),th,sigma);
+        process(&img,0UL,img.Size(2),th,sigma);
     }
 }
 
-void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, size_t first, size_t last, std::vector<float> &th, std::vector<float> &sigma)
+void MorphSpotClean::process(kipl::base::TImage<float, 3> *pImg, size_t first, size_t last, std::vector<float> th, std::vector<float> sigma, size_t tid)
 {
+    auto & img = *pImg;
     kipl::base::TImage<float,2> slice(img.dims());
 
     for (size_t i=first; i<last; ++i)
