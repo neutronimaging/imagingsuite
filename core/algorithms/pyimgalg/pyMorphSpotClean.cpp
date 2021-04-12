@@ -152,16 +152,37 @@ void bindMorphSpotClean(py::module &m)
     {
         py::buffer_info buf1 = x.request();
 
-        std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
-                                        static_cast<size_t>(buf1.shape[0])};
-        double *data=static_cast<double*>(buf1.ptr);
+        if (buf1.ndim == 2)
+        {
+            std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
+            double *data=static_cast<double*>(buf1.ptr);
 
-        kipl::base::TImage<float,2> img(dims);
+            kipl::base::TImage<float,2> img(dims);
 
-        std::copy_n(data,img.Size(),img.GetDataPtr());
+            std::copy_n(data,img.Size(),img.GetDataPtr());
 
-        msc.process(img,th,sigma);
-        std::copy_n(img.GetDataPtr(),img.Size(),data);
+            msc.process(img,th,sigma);
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
+        else if (buf1.ndim==3)
+        {
+            std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[2]),
+                                            static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
+
+            double *data=static_cast<double*>(buf1.ptr);
+
+            kipl::base::TImage<float,3> img(dims);
+
+            std::copy_n(data,img.Size(),img.GetDataPtr());
+
+            msc.process(img,th,sigma);
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
+        else
+            throw ImagingException("Morphspot clean only supports 2- and 3-D data",__FILE__,__LINE__);
+
     },
 
                 "Cleans spots from the image in place using th as threshold and sigma as mixing width.",

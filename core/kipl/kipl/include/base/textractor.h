@@ -24,6 +24,12 @@ kipl::base::TImage<T,2> ExtractSlice(const kipl::base::TImage<T,N> &img, const s
 template<typename T>
 void InsertSlice(kipl::base::TImage<T,2> &slice, kipl::base::TImage<T,3> &volume, const size_t index, const kipl::base::eImagePlanes plane);
 
+template<typename T>
+kipl::base::TImage<float,2> getPatch(kipl::base::TImage<T,2> srcImg, size_t x,size_t y,size_t h,size_t w, size_t margin);
+
+template<typename T>
+void putPatch(kipl::base::TImage<T,2> patch, size_t x,size_t y, size_t margin, kipl::base::TImage<T,2> dstImg);
+
 }}
 
 #include "core/textractor.hpp"

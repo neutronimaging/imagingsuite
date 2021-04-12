@@ -41,6 +41,9 @@ public:
     void process(kipl::base::TImage<float,2> &img, float th, float sigma);
     void process(kipl::base::TImage<float,2> &img, std::vector<float> &th, std::vector<float> &sigma);
 
+    void process(kipl::base::TImage<float,3> &img, float th, float sigma);
+    void process(kipl::base::TImage<float,3> &img, std::vector<float> &th, std::vector<float> &sigma);
+
     void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
     kipl::base::eConnectivity connectivity();
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
@@ -55,11 +58,14 @@ public:
     void setEdgeConditioning(int nSmoothLenght);
     int edgeConditionLength();
     kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);
+    void useThreading(bool x);
+    bool isThreaded();
 
 protected:
     void FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks);
     void ProcessReplace(kipl::base::TImage<float,2> &img);
     void ProcessFill(kipl::base::TImage<float,2> &img);
+    void process(kipl::base::TImage<float, 3> *pImg, size_t first, size_t last, std::vector<float> th, std::vector<float> sigma, size_t tid=0UL);
 
     void PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded);
     void unpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img);
@@ -86,6 +92,7 @@ protected:
 
     kipl::base::TImage<float,2> CleanByArray(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels);
 
+    bool m_bUseThreading;
     kipl::base::eConnectivity m_eConnectivity;
     eMorphCleanMethod              m_eMorphClean;
     eMorphDetectionMethod          m_eMorphDetect;
@@ -119,3 +126,4 @@ std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &s, Imagin
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::eMorphDetectionMethod &md);
 
 #endif // MORPHSPOTCLEAN_H
+

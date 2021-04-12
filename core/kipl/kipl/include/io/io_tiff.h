@@ -575,8 +575,8 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	TIFFGetField(image, TIFFTAG_IMAGELENGTH, &dimy);
 
     if (    (dimx<=static_cast<long>(crop[0])) ||
-            (dimy<=static_cast<long>(crop[2])) ||
-            (dimx<=static_cast<long>(crop[1])) ||
+            (dimy<=static_cast<long>(crop[1])) ||
+            (dimx<=static_cast<long>(crop[2])) ||
             (dimy<=static_cast<long>(crop[3])))
     {
         msg.str("");

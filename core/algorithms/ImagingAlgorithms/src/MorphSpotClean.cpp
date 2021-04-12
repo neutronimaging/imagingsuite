@@ -1,5 +1,6 @@
 //<LICENSE>
 #include <algorithm>
+#include <thread>
 #include <morphology/morphextrema.h>
 #include <math/image_statistics.h>
 #include <morphology/label.h>
@@ -20,6 +21,7 @@ namespace ImagingAlgorithms {
 MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
+    m_bUseThreading(false),
     m_eConnectivity(kipl::base::conn8),
     m_eMorphClean(MorphCleanReplace),
     m_eMorphDetect(MorphDetectHoles),
@@ -75,6 +77,64 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, std::vector<float
     default : throw ImagingException("Unkown cleaning method selected", __FILE__,__LINE__);
     }
 
+}
+
+void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, float th, float sigma)
+{
+    std::vector<float> thvec(2,th);
+    std::vector<float> sigvec(2,sigma);
+
+    process(img,thvec,sigvec);
+}
+
+void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<float> &th, std::vector<float> &sigma)
+{
+    if (m_bUseThreading)
+    {
+        throw ImagingException("Threading is not implemented for MorphSpotClean", __FILE__,__LINE__);
+
+        std::ostringstream msg;
+        const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
+
+
+        std::vector<std::thread> threads;
+        const size_t N = img.Size(2);
+
+        size_t M=N/concurentThreadsSupported;
+
+        msg.str("");
+        msg<<N<<" projections on "<<concurentThreadsSupported<<" threads, "<<M<<" projections per thread";
+        logger(logger.LogMessage,msg.str());
+        size_t restCnt = N % concurentThreadsSupported;
+        for(size_t i = 0; i < concurentThreadsSupported; ++i)
+        {
+            // spawn threads
+            size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
+            auto pImg = &img;
+            threads.push_back(std::thread([=] { process(pImg,i*M,M+rest,th,sigma,i); }));
+        }
+
+        // call join() on each thread in turn
+        for_each(threads.begin(), threads.end(),
+            std::mem_fn(&std::thread::join));
+    }
+    else
+    {
+        process(&img,0UL,img.Size(2),th,sigma);
+    }
+}
+
+void MorphSpotClean::process(kipl::base::TImage<float, 3> *pImg, size_t first, size_t last, std::vector<float> th, std::vector<float> sigma, size_t tid)
+{
+    auto & img = *pImg;
+    kipl::base::TImage<float,2> slice(img.dims());
+
+    for (size_t i=first; i<last; ++i)
+    {
+        std::copy_n(img.GetLinePtr(i),slice.Size(),slice.GetDataPtr());
+        process(slice,th,sigma);
+        std::copy_n(slice.GetDataPtr(), slice.Size(),img.GetLinePtr(i));
+    }
 }
 
 void MorphSpotClean::FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks)
@@ -372,6 +432,16 @@ kipl::base::TImage<float,2> MorphSpotClean::detectionImage(kipl::base::TImage<fl
     };
 
     return det_img;
+}
+
+void MorphSpotClean::useThreading(bool x)
+{
+    m_bUseThreading = x;
+}
+
+bool MorphSpotClean::isThreaded()
+{
+    return m_bUseThreading;
 }
 
 kipl::base::TImage<float,2> MorphSpotClean::DetectHoles(kipl::base::TImage<float,2> img)

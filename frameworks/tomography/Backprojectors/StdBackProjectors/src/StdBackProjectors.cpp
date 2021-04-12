@@ -29,8 +29,6 @@ STDBACKPROJECTORS_EXPORT void * GetModule(const char *application, const char * 
 
 		if (sName=="NearestNeighborBP")
 			return new NearestNeighborBP(interactor);
-		if (sName=="MultiProjBPparallel")
-			return new MultiProjectionBPparallel(interactor);
 
 	}
 

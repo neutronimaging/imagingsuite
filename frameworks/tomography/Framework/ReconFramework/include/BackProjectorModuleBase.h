@@ -82,7 +82,7 @@ public:
 
     /// Get the size of the matrix
     /// \param dims a three-element array to store the size of the matrix
-    virtual const vector<size_t> & GetMatrixDims() {return volume.dims();}
+    virtual vector<size_t> GetMatrixDims() {return volume.dims();}
 
     /// Get the histogram of the reconstructed matrix. This should be calculated in the masked region only to avoid unnescessary zero counts.
     /// \param x the bin values of the x axis
