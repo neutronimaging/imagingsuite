@@ -12,6 +12,10 @@ namespace kipl { namespace math {
 template <typename T, size_t N>
 kipl::base::TImage<T,N> abs(kipl::base::TImage<T,N> img);
 
+template <typename T, size_t N>
+kipl::base::TImage<T,N> absDiff(const kipl::base::TImage<T,N> &imgA,
+                                const kipl::base::TImage<T,N> &imgB);
+
 //template <typename T, size_t N>
 //kipl::base::TImage<T,N> abs(const kipl::base::TImage<std::complex<T>,N> cimg);ame T
 

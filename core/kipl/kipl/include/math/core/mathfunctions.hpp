@@ -21,6 +21,26 @@ kipl::base::TImage<T,N> abs(kipl::base::TImage<T,N> img)
 	return result;
 }
 
+template <typename T, size_t N>
+kipl::base::TImage<T,N> absDiff(const kipl::base::TImage<T,N> &imgA,
+                                const kipl::base::TImage<T,N> &imgB)
+
+{
+    for (size_t i = 0; i< N; ++i )
+        if (imgA.Size(i)!=imgB.Size(i))
+            throw kipl::base::DimsException("Image sizes don't match in absDiff",__FILE__,__LINE__);
+
+    kipl::base::TImage<T,N> result(imgA.dims());
+
+    const T * pA = imgA.GetDataPtr();
+    const T * pB = imgB.GetDataPtr();
+    T * pRes = result.GetDataPtr();
+
+    for (size_t i=0UL; i<imgA.Size(); ++i)
+        pRes[i]=fabs(pA[i]-pB[i]);
+
+    return result;
+}
 
 
 template <typename T, size_t N>
