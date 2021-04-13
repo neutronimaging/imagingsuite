@@ -76,7 +76,13 @@ private:
     ///                - snr: ratio used to discriminate between useful
     ///                    information and noise.
     ///    Return:     - 1D binary mask.
-    std::list<size_t> detect_stripe(std::list<size_t >listdata, float snr);
+    std::vector<float> detect_stripe(std::vector<float> & listdata, float snr);
+
+    /// Fills in interpolated values as replacement for stripes
+    /// Implemented as inplace operation
+    /// \param img The image to be processed
+    /// \param mask A vector with non-zero values for positions to modify
+    void interpolationFill(kipl::base::TImage<float,2> &img, std::vector<float> &mask);
 
     kipl::base::TImage<float,2> transpose(kipl::base::TImage<float, 2> &img, bool doIt);
 

@@ -39,7 +39,7 @@ std::vector<T> projection2D(const T *pData, const std::vector<size_t> &dims, int
     {
     case 0 :
         N=dims[0];
-        profile = std::vector(dims[1],static_cast<T>(0));
+        profile = std::vector<float>(dims[1],static_cast<T>(0));
         for (size_t y=0; y<dims[1]; ++y)
         {
             const T* d=pData+y*dims[0];
@@ -55,7 +55,7 @@ std::vector<T> projection2D(const T *pData, const std::vector<size_t> &dims, int
         break;
     case 1 :
         N=dims[1];
-        profile = std::vector(dims[0],static_cast<T>(0));
+        profile = std::vector<float>(dims[0],static_cast<T>(0));
         for (size_t y=0; y<dims[1]; ++y)
         {
             const T* d=pData+y*dims[0];

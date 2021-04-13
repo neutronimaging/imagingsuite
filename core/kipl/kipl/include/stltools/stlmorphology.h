@@ -4,7 +4,7 @@
 #define STLMORPHOLOGY_H
 #include <vector>
 template <typename T>
-std::vector<T> binaryDilate(const std::vector<T> &x, size_t iterations=1)
+std::vector<T> binaryDilation(const std::vector<T> &x, size_t iterations=1)
 {
     std::vector<T> result(x.size(),static_cast<T>(0));
     std::vector<T> xx=x;

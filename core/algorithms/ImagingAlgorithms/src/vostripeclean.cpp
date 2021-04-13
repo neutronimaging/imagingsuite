@@ -6,6 +6,14 @@
 #include <numeric>
 
 #include <base/tpermuteimage.h>
+#include <filters/filter.h>
+#include <filters/medianfilter.h>
+#include <base/tprofile.h>
+#include <math/mathfunctions.h>
+#include <math/linfit.h>
+#include <stltools/stlvecmath.h>
+#include <stltools/stlmorphology.h>
+
 namespace ImagingAlgorithms
 {
 
@@ -182,7 +190,7 @@ kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedFitting(kipl::base::
     return res;
 }
 
-std::vector<float> VoStripeClean::detectStripe(std::vector<float> &listdata, float snr)
+std::vector<float> VoStripeClean::detect_stripe(std::vector<float> &listdata, float snr)
 {
 //    """
 //    Algorithm 4 in the paper. Used to locate stripe positions.
@@ -193,34 +201,97 @@ std::vector<float> VoStripeClean::detectStripe(std::vector<float> &listdata, flo
 //    ---------
 //    Return:     - 1D binary mask.
 //    """
-   size_t numdata = listdata.size();
-   auto listsorted = listdata;
-   std::sort(listsorted.begin(),listsorted.end(), greater<float>());
-   auto xlist = std::vector<float>(numdata,0.0f);
-   std::iota(xlist.begin(),xlist.end(),0.0f);
-   size_t ndrop = numdata / 4;
+    size_t numdata = listdata.size();
 
+    //    listsorted = np.sort(listdata)[::-1]
+    auto listsorted = listdata;
+    std::sort(listsorted.begin(),listsorted.end(), greater<float>());
+    //    xlist = np.arange(0, numdata, 1.0)
+    auto xlist = std::vector<float>(numdata,0.0f);
+    std::iota(xlist.begin(),xlist.end(),0.0f);
 
-//    listsorted = np.sort(listdata)[::-1]
-//    xlist = np.arange(0, numdata, 1.0)
-//    ndrop = np.int16(0.25 * numdata)
-//    (_slope, _intercept) = np.polyfit(
-//        xlist[ndrop:-ndrop-1], listsorted[ndrop:-ndrop - 1], 1)
-//    numt1 = _intercept + _slope * xlist[-1]
-//    noiselevel = np.abs(numt1 - _intercept)
-//    val1 = np.abs(listsorted[0] - _intercept) / noiselevel
-//    val2 = np.abs(listsorted[-1] - numt1) / noiselevel
-//    listmask = np.zeros_like(listdata)
-//    if (val1 >= snr):
-//        upper_thresh = _intercept + noiselevel * snr * 0.5
-//        listmask[listdata > upper_thresh] = 1.0
-//    if (val2 >= snr):
-//        lower_thresh = numt1 - noiselevel * snr * 0.5
-//        listmask[listdata <= lower_thresh] = 1.0
-//    return listmask
-    std::vector<size_t> listmask;
+    //    ndrop = np.int16(0.25 * numdata)
+    size_t ndrop = numdata / 4;
+
+    //    (_slope, _intercept) = np.polyfit(
+    //        xlist[ndrop:-ndrop-1], listsorted[ndrop:-ndrop - 1], 1)
+    std::vector<float> xx(xlist.begin()+ndrop,xlist.begin()+numdata-ndrop);
+    std::vector<float> ll(listsorted.begin()+ndrop,listsorted.begin()+numdata-ndrop);
+    auto coefs = kipl::math::polyFit(xx,ll,1);
+
+    //    numt1 = _intercept + _slope * xlist[-1]
+    //    noiselevel = np.abs(numt1 - _intercept)
+    //    val1 = np.abs(listsorted[0] - _intercept) / noiselevel
+    //    val2 = np.abs(listsorted[-1] - numt1) / noiselevel
+    float numt1      = coefs[0]+coefs[1] * numdata-1;
+    float noiselevel = fabs(numt1 - coefs[0]);
+    float val1       = fabs(listsorted[0] - coefs[0]) / noiselevel;
+    float val2       = fabs(listsorted.back() - numt1) / noiselevel;
+
+    //    listmask = np.zeros_like(listdata)
+    std::vector<float> listmask(listdata.size(),0.0f);
+    //    if (val1 >= snr):
+    //        upper_thresh = _intercept + noiselevel * snr * 0.5
+    //        listmask[listdata > upper_thresh] = 1.0
+    if (val1 >=snr)
+    {
+        float upper_thresh = coefs[0] + noiselevel * snr * 0.5;
+        //        listmask[listdata > upper_thresh] = 1.0
+        for (size_t i=0; i<listmask.size() ; ++i)
+            if (listdata[i] > upper_thresh)
+                listmask[i] = 1.0;
+    }
+
+    //    if (val2 >= snr):
+    //        lower_thresh = numt1 - noiselevel * snr * 0.5
+    //        listmask[listdata <= lower_thresh] = 1.0
+    if (val2 >=snr)
+    {
+        float lower_thresh = numt1 - noiselevel * snr * 0.5;
+
+        for (size_t i=0; i<listmask.size() ; ++i)
+            if (listdata[i] <= lower_thresh)
+                listmask[i] = 1.0;
+    }
 
     return listmask;
+}
+
+void VoStripeClean::interpolationFill(kipl::base::TImage<float, 2> &img, std::vector<float> &mask)
+{
+    if (mask.size()!=img.Size(0))
+    {
+        throw kipl::base::DimsException("Mask doesn't match image width in interpolationFill",__FILE__,__LINE__);
+    }
+
+    std::vector<pair<ptrdiff_t,ptrdiff_t>> interpolationBlocks;
+    auto it = mask.begin();
+    while (it!=mask.end())
+    {
+        it = std::upper_bound(it,mask.end(),0.5f);
+        if (it==mask.end())
+            break;
+
+        ptrdiff_t rise = it - mask.begin();
+        it = std::lower_bound(it,mask.end(),0.5f);
+        ptrdiff_t fall = it - mask.begin();
+        interpolationBlocks.push_back(make_pair(rise,fall));
+    }
+
+    for (size_t y=0; y<img.Size(1); ++y)
+    {
+        float *pLine = img.GetLinePtr(y);
+        for (auto & block : interpolationBlocks)
+        {
+            float k = (pLine[block.second]-pLine[block.first-1])/(block.second - block.first + 1);
+            float m = pLine[block.first-1] - k * (block.first-1);
+            for (ptrdiff_t x = block.first; x< block.second; ++x)
+            {
+                pLine[x] = k*x +m;
+            }
+        }
+    }
+
 }
 
 kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size, bool doTranspose)
@@ -270,16 +341,38 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
 
     size_t nrow = res.Size(1);
 
-//    sinosmoothed = np.apply_along_axis(uniform_filter1d, 0, sinogram, 10)
-//    listdiff = np.sum(np.abs(sinogram - sinosmoothed), axis=0)
-//    nmean = np.mean(listdiff)
-//    listdiffbck = median_filter(listdiff, size)
-//    listdiffbck[listdiffbck == 0.0] = nmean
-//    listfact = listdiff / listdiffbck
-//    listmask = detect_stripe(listfact, snr)
-//    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
-//    listmask[0:2] = 0.0
-//    listmask[-2:] = 0.0
+    //    sinosmoothed = np.apply_along_axis(uniform_filter1d, 0, sinogram, 10)
+    std::vector<float>  kernel(10,1.0f);
+    std::vector<size_t> kDims={1,10};
+    kipl::filters::TFilter<float,2> vsmooth(kernel,kDims);
+
+    auto sinosmoothed = vsmooth(res,kipl::filters::FilterBase::EdgeMirror);
+
+    //    listdiff = np.sum(np.abs(sinogram - sinosmoothed), axis=0)
+    auto absdiff  = kipl::math::absDiff(res,sinosmoothed);
+    auto listdiff = kipl::base::projection2D(absdiff.GetDataPtr(),absdiff.dims(),1,false);
+
+    //    nmean = np.mean(listdiff)
+    float nmean = std::accumulate(listdiff.begin(),listdiff.end(),0.0f)/listdiff.size();
+
+    //    listdiffbck = median_filter(listdiff, size)
+    auto listdiffbck = medianFilter(listdiff,size);
+
+    //    listdiffbck[listdiffbck == 0.0] = nmean
+    for (auto & item : listdiffbck)
+        if (item==0.0)
+            item = nmean;
+
+    //    listfact = listdiff / listdiffbck
+    auto listfact = listdiff/listdiffbck;
+
+    //    listmask = detect_stripe(listfact, snr)
+    auto listmask = detect_stripe(listfact, snr);
+    //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
+    listmask = binaryDilation(listmask, 1);
+    std::fill_n(listmask.begin(),listmask.begin()+2,0.0f);
+    std::fill_n(listmask.rbegin(),listmask.rbegin()+2,0.0f);
+
 //    listx = np.where(listmask < 1.0)[0]
 //    listy = np.arange(nrow)
 //    matz = sinogram[:, listx]
@@ -292,9 +385,9 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
 //    #sinogram = remove_large_stripe(sinogram, snr, size)
 //    return sinogram
 
-    auto res = transpose(sinogram,doTranspose);
+    interpolationFill(res,listmask);
 
-    return transpose(res,doTranspose);
+    return res;
 }
 
 kipl::base::TImage<float,2> VoStripeClean::removeAllStripes(kipl::base::TImage<float,2> &sinogram, float snr, size_t la_size, size_t sm_size, bool doTranspose)
