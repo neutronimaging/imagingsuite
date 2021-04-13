@@ -102,18 +102,18 @@ std::vector<double> operator/(std::vector<T> & a, double x)
 
 
 /// Divides the vector by another vector with the same size
-template<class T1, class T2>
-std::vector<double> operator/(std::vector<T1> & a, std::vector<T2> &b)
+template<class T>
+std::vector<T> operator/(std::vector<T> & a, std::vector<T> &b)
 {
 	if (a.size() != b.size()) {
         throw std::length_error("stlvec math op/ : Vector size miss match");
 	}
 
-    std::vector<double> tmp(a.size());
+    std::vector<T> tmp(a.size());
 	
 	for (size_t i=0; i<a.size(); i++) 
 		if (b[i])
-            tmp[i]=a[i]/static_cast<double>(b[i]);
+            tmp[i]=a[i]/b[i];
 		else {
             std::cerr<<"stlvec math op/ : div by zero at i="<<i<<std::endl;
 		}
