@@ -18,7 +18,8 @@ namespace ImagingAlgorithms
 {
 
 
-VoStripeClean::VoStripeClean()
+VoStripeClean::VoStripeClean() :
+    logger("VoStripeClean")
 {
 
 }
@@ -278,6 +279,12 @@ void VoStripeClean::interpolationFill(kipl::base::TImage<float, 2> &img, std::ve
         interpolationBlocks.push_back(make_pair(rise,fall));
     }
 
+    if (interpolationBlocks.empty())
+    {
+        logger.message("interpolationFill didn't find any blocks to fill");
+        return ;
+    }
+
     for (size_t y=0; y<img.Size(1); ++y)
     {
         float *pLine = img.GetLinePtr(y);
@@ -301,14 +308,37 @@ kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<
 //    remove partial stripes.
 //    Angular direction is along the axis 0.
 
+    float  badpixelratio = 0.05f;
+    size_t ndrop         = static_cast<size_t>(badpixelratio * sinogram.Size(1));
 
-//    sinosorted = np.sort(sinogram, axis=0)
-//    sinosmoothed = median_filter(sinosorted, (1, size))
-//    list1 = np.mean(sinosorted[ndrop:nrow - ndrop], axis=0)
-//    list2 = np.mean(sinosmoothed[ndrop:nrow - ndrop], axis=0)
-//    listfact = list1 / list2
-//    listmask = detect_stripe(listfact, snr)
+    kipl::base::TImage<float,2> tsinogram = transpose(sinogram,true);
+
+    //    sinosorted = np.sort(sinogram, axis=0)
+    kipl::base::TImage<float,2> sinosorted(tsinogram);
+    sinosorted.Clone();
+
+    for (size_t y=0; y<tsinogram.Size(1); ++y)
+        std::sort(tsinogram.GetLinePtr(y),tsinogram.GetLinePtr(y)+tsinogram.Size(0));
+
+    //    sinosmoothed = median_filter(sinosorted, (1, size))
+    kipl::filters::TMedianFilter<float,2> medfilt({size,1});
+    auto sinosmoothed = medfilt(sinosorted,kipl::filters::FilterBase::EdgeMirror);
+
+    //    list1 = np.mean(sinosorted[ndrop:nrow - ndrop], axis=0)
+    auto list1 = kipl::base::projection2D(sinosorted.GetDataPtr(),sinosorted.dims(),0,true,{ndrop,sinosorted.Size(0)-ndrop});
+
+    //    list2 = np.mean(sinosmoothed[ndrop:nrow - ndrop], axis=0)
+    auto list2 = kipl::base::projection2D(sinosmoothed.GetDataPtr(),sinosmoothed.dims(),0,true,{ndrop,sinosmoothed.Size(0)-ndrop});
+
+    //    listfact = list1 / list2
+    auto listfact = list1 / list2;
+
+    //    listmask = detect_stripe(listfact, snr)
+    auto listmask = detect_stripe(listfact, snr);
+
 //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
+    listmask = binaryDilation(listmask,1);
+
 //    matfact = np.tile(listfact,(nrow,1))
 //    sinogram = sinogram / matfact
 //    sinogram1 = np.transpose(sinogram)
@@ -325,11 +355,6 @@ kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<
 //    sinogram[:, listxmiss] = sino_corrected[:, listxmiss]
 //    return sinogram
     auto res = transpose(sinogram,doTranspose);
-    float  badpixelratio = 0.05f;
-    size_t nrow  = res.Size(0);
-    size_t ncol  = res.Size(1);
-    int    ndrop = static_cast<int>(badpixelratio * nrow);
-
 
     return transpose(res,doTranspose);
 }
@@ -338,8 +363,6 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
 {
     kipl::base::TImage<float,2> res;
     res.Clone(sinogram);
-
-    size_t nrow = res.Size(1);
 
     //    sinosmoothed = np.apply_along_axis(uniform_filter1d, 0, sinogram, 10)
     std::vector<float>  kernel(10,1.0f);
@@ -370,8 +393,8 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
     auto listmask = detect_stripe(listfact, snr);
     //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
     listmask = binaryDilation(listmask, 1);
-    std::fill_n(listmask.begin(),listmask.begin()+2,0.0f);
-    std::fill_n(listmask.rbegin(),listmask.rbegin()+2,0.0f);
+    std::fill(listmask.begin(),listmask.begin()+2,0.0f);
+    std::fill(listmask.rbegin(),listmask.rbegin()+2,0.0f);
 
 //    listx = np.where(listmask < 1.0)[0]
 //    listy = np.arange(nrow)

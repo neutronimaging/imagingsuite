@@ -24,7 +24,7 @@ void VerticalProjection2D(const T *pData, const std::vector<size_t> &dims, S *pP
 /// \param bMeanProjection switch to select if the average projection is to be computed instead of the sum
 /// \test TkiplbasetestTest::testProfiles() in tkiplbasetest.pro
 template <typename T>
-std::vector<T> projection2D(const T *pData, const std::vector<size_t> &dims, int axis=0, bool bMeanProjection=false);
+std::vector<T> projection2D(const T *pData, const std::vector<size_t> &dims, int axis=0, bool bMeanProjection=false, const std::vector<size_t> &slice={});
 
 /// \brief Extracts a horizontal projection from the image, the columns are summed
 /// \param pData pointer to the image

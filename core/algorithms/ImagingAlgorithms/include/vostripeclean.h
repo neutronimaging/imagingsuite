@@ -3,11 +3,13 @@
 
 #include <base/timage.h>
 #include <list>
+#include <logging/logger.h>
 
 namespace ImagingAlgorithms
 {
 class VoStripeClean
 {
+    kipl::logging::Logger logger;
 public:
     VoStripeClean();
     /// \brief  Algorithm 3 in the paper. Remove stripes using the sorting technique. Work particularly well for removing partial stripes. Angular direction is along the axis 0
