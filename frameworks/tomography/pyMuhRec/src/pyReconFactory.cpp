@@ -162,7 +162,7 @@ void fillMatrix(ReconConfig& config, py::dict& matrix)
 void makeEngineFromDict(py::dict userInformation, py::dict system, py::dict projections, py::dict matrix) // , py::dict proj, py::dict matrix, py::dict processchain
 {
     std::cout << "got called with\n";
-    ReconConfig config{};
+    ReconConfig config{""};
     fillUserInformation(config, userInformation);
     fillSystem(config, system);
     fillProjections(config, projections);
@@ -175,7 +175,7 @@ std::unique_ptr<ReconEngine> makeEngineFromXML(const std::string xmlFile)
     std::cout << "Loading config file '" << xmlFile << "' with project name '"
               << "'\n";
     kipl::logging::Logger logger("ReconFactory-Python");
-    ReconConfig config{};
+    ReconConfig config{""};
     try {
         config.LoadConfigFile(xmlFile, "reconstructor");
         std::cout << "Loaded with information: " << config.UserInformation.sOperator << '\n';

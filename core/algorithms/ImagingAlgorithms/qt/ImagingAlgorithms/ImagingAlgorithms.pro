@@ -63,6 +63,7 @@ SOURCES += \
     ../../src/TranslateProjections.cpp \
     ../../src/MorphSpotClean.cpp \
     ../../src/normalization.cpp \
+    ../../src/normalizeimage.cpp \
     ../../src/pixelinfo.cpp \
     ../../src/gammaclean.cpp \
     ../../src/averageimage.cpp \
@@ -79,6 +80,7 @@ HEADERS += \
     ../../include/TranslateProjections.h \
     ../../include/MorphSpotClean.h \
     ../../include/normalization.h \
+    ../../include/normalizeimage.h \
     ../../include/pixelinfo.h \
     ../../include/ImagingAlgorithms_global.h \
     ../../include/gammaclean.h \
