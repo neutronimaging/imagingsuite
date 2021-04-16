@@ -22,6 +22,7 @@
 #include <ImagingException.h>
 #include <StripeFilter.h>
 #include <ReferenceImageCorrection.h>
+#include <ReferenceImageCorrectionV1.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -576,6 +577,31 @@ void TestImagingAlgorithms::StripeFilterProcessing2D()
 void TestImagingAlgorithms::RefImgCorrection_Initialization()
 {
     ImagingAlgorithms::ReferenceImageCorrection bb;
+    reference::ImagingAlgorithms::ReferenceImageCorrection bbr;
+
+    float radius = 5.0f;
+    std::vector<int> diffroi({1,2,3,4}); // Update when I have roi data
+    float tau = 0.95f;
+    bool bPBvariante = false;
+    reference::ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX rxInterpOrder = reference::ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x;
+    reference::ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY ryInterpOrder = reference::ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y;
+    reference::ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod rInterpMethod = reference::ImagingAlgorithms::ReferenceImageCorrection::Polynomial;
+    float min_area = 50.0f;
+
+    bb.setNormMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm);
+
+
+    bbr.SetComputeMinusLog(true);
+    bbr.setDiffRoi(diffroi);
+    bbr.SetRadius(radius);
+    bbr.SetTau(tau);
+    bbr.SetPBvariante(bPBvariante);
+    bbr.SetInterpolationOrderX(rxInterpOrder);
+    bbr.SetInterpolationOrderY(ryInterpOrder);
+    bbr.SetMinArea(min_area);
+    bbr.SetInterpolationMethod(rInterpMethod);
+
+
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)
