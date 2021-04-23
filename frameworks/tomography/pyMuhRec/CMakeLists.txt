@@ -23,8 +23,8 @@ include_directories(
     )
 
 link_directories(
-  ../../../external/mac/lib 
   ../../../../lib 
+  ../../../external/mac/lib
   /opt/local/lib 
   )
 
