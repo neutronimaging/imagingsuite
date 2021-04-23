@@ -14,7 +14,11 @@ include_directories(
     ./../../external/pylinalg
     )
     
-link_directories(../../../../lib /opt/local/lib )
+link_directories(
+  ../../../external/mac/lib 
+  ../lib 
+  /opt/local/lib 
+  )
 
 # create python module
 add_library(${TARGET_NAME}

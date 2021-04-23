@@ -22,7 +22,11 @@ include_directories(
     ../../../core/algorithms/ImagingAlgorithms/include
     )
 
-link_directories(../../../../lib /opt/local/lib )
+link_directories(
+  ../../../external/mac/lib 
+  ../../../../lib 
+  /opt/local/lib 
+  )
 
 # add_definitions(-DVERSION="1.6.0")
 # create python module
