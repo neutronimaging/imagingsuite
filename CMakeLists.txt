@@ -102,7 +102,7 @@ else()
 endif()
 
 add_subdirectory(frameworks/tomography/pyMuhRec)
-add_subdirectory(core/algorithms/pyimgalg)
+#add_subdirectory(core/algorithms/pyimgalg)
 
 if(DYNAMIC_LIB)
   # install(
