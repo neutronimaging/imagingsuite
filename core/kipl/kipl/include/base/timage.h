@@ -105,6 +105,8 @@ public:
     TImage<T,N> operator-(const T x) const;
     TImage<T,N> operator*(const T x) const;
     TImage<T,N> operator/(const T x) const;
+
+    TImage<T,N> operator-() const;
 	
     /// \brief Returns the pointer to the data
 	/// \test The method is tested with unit test
