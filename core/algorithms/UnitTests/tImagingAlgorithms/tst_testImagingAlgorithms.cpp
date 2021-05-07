@@ -37,6 +37,7 @@ private Q_SLOTS:
     void MorphSpotClean_CleanPeaks();
     void MorphSpotClean_CleanBoth();
     void MorphSpotClean_EdgePreparation();
+    void MorphSpotClean_enums();
 
     void AverageImage_Enums();
     void AverageImage_Processing();
@@ -201,6 +202,30 @@ void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
 
     kipl::io::WriteTIFF(img,"spotcleaned.tif",kipl::base::Float32);
 
+}
+
+void TestImagingAlgorithms::MorphSpotClean_enums()
+{
+    std::map<std::string, ImagingAlgorithms::eMorphDetectionMethod> enummap;
+
+    enummap["morphdetectbrightspots"] = ImagingAlgorithms::MorphDetectBrightSpots ;
+    enummap["morphdetectdarkspots"]   = ImagingAlgorithms::MorphDetectDarkSpots ;
+    enummap["morphdetectallspots"]    = ImagingAlgorithms::MorphDetectAllSpots ;
+    enummap["morphdetectholes"]       = ImagingAlgorithms::MorphDetectHoles ;
+    enummap["morphdetectpeaks"]       = ImagingAlgorithms::MorphDetectPeaks ;
+    enummap["morphdetectboth"]        = ImagingAlgorithms::MorphDetectBoth ;
+
+    ImagingAlgorithms::eMorphDetectionMethod mdm;
+
+    for (auto & item : enummap)
+    {
+        QCOMPARE(enum2string(item.second),item.first);
+
+        string2enum(item.first,mdm);
+        QCOMPARE(mdm,item.second);
+    }
+
+    QVERIFY_EXCEPTION_THROWN(string2enum("qwerty",mdm);,kipl::base::KiplException);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()

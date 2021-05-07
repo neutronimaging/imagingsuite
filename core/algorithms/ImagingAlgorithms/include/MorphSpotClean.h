@@ -22,7 +22,10 @@
 namespace ImagingAlgorithms {
 
 enum eMorphDetectionMethod {
-    MorphDetectHoles = 0,
+    MorphDetectBrightSpots = 0,
+    MorphDetectDarkSpots,
+    MorphDetectAllSpots,
+    MorphDetectHoles,
     MorphDetectPeaks,
     MorphDetectBoth
 };

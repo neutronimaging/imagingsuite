@@ -749,9 +749,12 @@ std::string enum2string(ImagingAlgorithms::eMorphDetectionMethod mc)
 {
 
     switch (mc) {
-    case ImagingAlgorithms::MorphDetectHoles : return "morphdetectholes"; break;
-    case ImagingAlgorithms::MorphDetectPeaks : return "morphdetectpeaks"; break;
-    case ImagingAlgorithms::MorphDetectBoth  : return "morphdetectboth"; break;
+    case ImagingAlgorithms::MorphDetectBrightSpots : return "morphdetectbrightspots"; break;
+    case ImagingAlgorithms::MorphDetectDarkSpots   : return "morphdetectdarkspots";   break;
+    case ImagingAlgorithms::MorphDetectAllSpots    : return "morphdetectallspots";    break;
+    case ImagingAlgorithms::MorphDetectHoles       : return "morphdetectholes";       break;
+    case ImagingAlgorithms::MorphDetectPeaks       : return "morphdetectpeaks";       break;
+    case ImagingAlgorithms::MorphDetectBoth        : return "morphdetectboth";        break;
     default: throw ImagingException("Failed to convert enum to string.",__FILE__,__LINE__);
     }
 
@@ -767,12 +770,22 @@ std::ostream & operator<<(std::ostream &s, ImagingAlgorithms::eMorphDetectionMet
 
 void string2enum(std::string str, ImagingAlgorithms::eMorphDetectionMethod &mc)
 {
-    if (str=="morphdetectholes") mc=ImagingAlgorithms::MorphDetectHoles;
-    else if (str=="morphdetectpeaks") mc=ImagingAlgorithms::MorphDetectPeaks;
-    else if (str=="morphdetectboth") mc=ImagingAlgorithms::MorphDetectBoth;
-    else {
+    std::map<std::string, ImagingAlgorithms::eMorphDetectionMethod> enummap;
+    enummap["morphdetectbrightspots"] = ImagingAlgorithms::MorphDetectBrightSpots ;
+    enummap["morphdetectdarkspots"]   = ImagingAlgorithms::MorphDetectDarkSpots ;
+    enummap["morphdetectallspots"]    = ImagingAlgorithms::MorphDetectAllSpots ;
+    enummap["morphdetectholes"]       = ImagingAlgorithms::MorphDetectHoles ;
+    enummap["morphdetectpeaks"]       = ImagingAlgorithms::MorphDetectPeaks ;
+    enummap["morphdetectboth"]        = ImagingAlgorithms::MorphDetectBoth ;
+
+    try
+    {
+        mc = enummap.at(str);
+    }
+    catch (std::out_of_range & e)
+    {
         std::ostringstream msg;
-        msg<<"String ("<<str<<") could not be converted to eMorphDetectionMethod";
+        msg<<"String ("<<str<<") could not be converted to eMorphDetectionMethod ("<<e.what()<<")";
         throw ImagingException(msg.str(),__FILE__,__LINE__);
     }
 }
