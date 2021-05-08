@@ -107,7 +107,7 @@ public:
     TImage<T,N> operator/(const T x) const;
 
     TImage<T,N> operator-() const;
-	
+    TImage<T,N> operator-();
     /// \brief Returns the pointer to the data
 	/// \test The method is tested with unit test
 	T * GetDataPtr() { return m_buffer.GetDataPtr();}

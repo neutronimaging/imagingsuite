@@ -89,6 +89,10 @@ protected:
     kipl::base::TImage<float,2> DetectPeaks(kipl::base::TImage<float,2> img);
     kipl::base::TImage<float,2> DetectBoth(kipl::base::TImage<float,2> img);
 
+    kipl::base::TImage<float,2> DetectBrightSpots(kipl::base::TImage<float,2> &img);
+    kipl::base::TImage<float,2> DetectDarkSpots(kipl::base::TImage<float,2> &img);
+    kipl::base::TImage<float,2> DetectAllSpots(kipl::base::TImage<float,2> &img);
+
     void ExcludeLargeRegions(kipl::base::TImage<float,2> &img);
 
     void replaceInfNaN(kipl::base::TImage<float,2> &img);
