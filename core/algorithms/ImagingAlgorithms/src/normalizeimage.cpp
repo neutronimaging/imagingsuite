@@ -44,7 +44,8 @@ void NormalizeImage::setReferences(kipl::base::TImage<float, 2> &ff,
             mFlatField[i]=1.0f;
 
         if (bUseLog)
-            mFlatField[i]=std::logf(mFlatField[i]);
+         //   mFlatField[i]=std::logf(mFlatField[i]);
+               mFlatField[i]=std::log(mFlatField[i]);
     }
 
 }
@@ -77,7 +78,8 @@ void NormalizeImage::process(kipl::base::TImage<float, 2> &img)
             if (img[i]<=0)
                 img[i] = 1.0f;
 
-            img[i] = mFlatField[i] - std::logf(img[i]);
+            img[i] = mFlatField[i] - std::log(img[i]);
+//            img[i] = mFlatField[i] - std::logf(img[i]);
         }
     }
     else
