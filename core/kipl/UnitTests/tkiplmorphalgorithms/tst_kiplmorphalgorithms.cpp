@@ -179,10 +179,12 @@ void kiplmorphalgorithms::test_pixdist()
 void kiplmorphalgorithms::test_FillSpots()
 {
     kipl::base::TImage<float,2> img;
+    kipl::base::TImage<float,2> res;
     kipl::io::ReadTIFF(img,"../TestData/2D/tiff/spots/balls.tif");
     img = -img;
-    auto res = -kipl::morphology::FillSpot(img,5,kipl::base::conn8);
-
+    QBENCHMARK {
+        res = -kipl::morphology::FillSpot(img,5,kipl::base::conn8);
+    }
     kipl::io::WriteTIFF(res,"fillspots.tif");
 }
 
