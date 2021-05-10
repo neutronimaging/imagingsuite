@@ -25,6 +25,7 @@ MorphSpotClean::MorphSpotClean() :
     m_eConnectivity(kipl::base::conn8),
     m_eMorphClean(MorphCleanReplace),
     m_eMorphDetect(MorphDetectHoles),
+    m_seSize(7),
     m_nEdgeSmoothLength(9),
     m_nPadMargin(5),
     m_nMaxArea(100),
@@ -375,6 +376,16 @@ void MorphSpotClean::setLimits(bool bClamp, float fMin, float fMax, int nMaxArea
         m_nMaxArea = nMaxArea;
 }
 
+void MorphSpotClean::setDetectionStrelSize(size_t size)
+{
+    m_seSize = size;
+}
+
+size_t MorphSpotClean::detectionStrelSize()
+{
+    return m_seSize;
+}
+
 std::vector<float> MorphSpotClean::clampLimits()
 {
     std::vector<float> limits={m_fMinLevel,m_fMaxLevel};
@@ -421,20 +432,29 @@ void MorphSpotClean::unpadEdges(kipl::base::TImage<float,2> &padded, kipl::base:
     }
 }
 
-kipl::base::TImage<float,2> MorphSpotClean::detectionImage(kipl::base::TImage<float,2> img)
+pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> MorphSpotClean::detectionImage(kipl::base::TImage<float,2> img)
 {
-    kipl::base::TImage<float,2> det_img;
+
+    pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> imgs;
 
     switch (m_eMorphDetect) {
-    case MorphDetectBrightSpots : det_img = DetectBrightSpots(img); break;
-    case MorphDetectDarkSpots   : det_img = DetectDarkSpots(img); break;
-    case MorphDetectAllSpots    : det_img = DetectAllSpots(img); break;
-    case MorphDetectHoles       : det_img = DetectHoles(img);  break;
-    case MorphDetectPeaks       : det_img = DetectPeaks(img);  break;
-    case MorphDetectBoth        : det_img = DetectBoth(img);   break;
+    case MorphDetectBrightSpots : imgs.second = DetectBrightSpots(img); break;
+
+    case MorphDetectDarkSpots   : imgs.first  = DetectDarkSpots(img);   break;
+
+    case MorphDetectAllSpots    : imgs.second = DetectBrightSpots(img);
+                                  imgs.first  = DetectDarkSpots(img);
+                                  break;
+
+    case MorphDetectHoles       : imgs.first  = DetectHoles(img);  break;
+
+    case MorphDetectPeaks       : imgs.second = DetectPeaks(img);  break;
+
+    case MorphDetectBoth        : imgs.first  = DetectHoles(img);
+                                  imgs.second = DetectPeaks(img);  break;
     };
 
-    return det_img;
+    return imgs;
 }
 
 void MorphSpotClean::useThreading(bool x)
@@ -533,7 +553,7 @@ kipl::base::TImage<float, 2> MorphSpotClean::DetectBrightSpots(kipl::base::TImag
     float *pPeaks=nullptr;
 
     padded = -padded;
-    nopeaks=kipl::morphology::FillSpot(padded,5,m_eConnectivity);
+    nopeaks=kipl::morphology::FillSpot(padded,m_seSize,m_eConnectivity);
     nopeaks = -nopeaks;
 
     pPeaks=nopeaks.GetDataPtr();
@@ -558,7 +578,7 @@ kipl::base::TImage<float, 2> MorphSpotClean::DetectDarkSpots(kipl::base::TImage<
 
     float *pHoles=nullptr;
 
-    noholes=kipl::morphology::FillSpot(padded,5,m_eConnectivity);
+    noholes=kipl::morphology::FillSpot(padded,m_seSize,m_eConnectivity);
     pHoles=noholes.GetDataPtr();
 
     for (size_t i=0; i<N; i++) {
@@ -574,24 +594,33 @@ kipl::base::TImage<float, 2> MorphSpotClean::DetectDarkSpots(kipl::base::TImage<
 
 kipl::base::TImage<float,2> MorphSpotClean::DetectSpots(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels)
 {
-    kipl::base::TImage<float,2> s=detectionImage(img);
+    auto s=detectionImage(img);
 
-    kipl::base::TImage<float,2> result=img;
-    result.Clone();
+    kipl::base::TImage<float,2> result;
+    result.Clone(img);
 
     ExcludeLargeRegions(s);
 
-    float *pWeight=s.GetDataPtr();
-    float *pRes=result.GetDataPtr();
 
-    for (size_t i=0; i<img.Size(); i++) {
-        if ((pRes[i]<m_fMinLevel) || (m_fMaxLevel<pRes[i])) {
+    float *pWeightDark   = s.first.GetDataPtr();
+    float *pWeightBright = s.second.GetDataPtr();
+    float *pRes          = result.GetDataPtr();
+
+    for (size_t i=0; i<img.Size(); i++)
+    {
+        if ((pRes[i]<m_fMinLevel) || (m_fMaxLevel<pRes[i]))
+        {
             pixels->push_back(PixelInfo(i,pRes[i],1.0f));
             pRes[i]=mark;
         }
-        else if (pWeight[i]!=0) {
-            pixels->push_back(PixelInfo(i,pRes[i],pWeight[i]));
+        else if (pWeightDark[i]!=0)
+        {
+            pixels->push_back(PixelInfo(i,pRes[i],pWeightDark[i]));
             pRes[i]=mark;
+        }
+        else if (pWeightBright[i]!=0)
+        {
+
         }
     }
 

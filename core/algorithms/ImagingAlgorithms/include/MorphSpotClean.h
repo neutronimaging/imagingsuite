@@ -53,6 +53,8 @@ public:
     eMorphDetectionMethod detectionMethod();
     eMorphCleanMethod cleanMethod();
     void setLimits(bool bClamp, float fMin, float fMax, int nMaxArea);
+    void setDetectionStrelSize(size_t size);
+    size_t detectionStrelSize();
     std::vector<float> clampLimits();
     bool clampActive();
     int maxArea();
@@ -60,7 +62,7 @@ public:
     bool cleanInfNan();
     void setEdgeConditioning(int nSmoothLenght);
     int edgeConditionLength();
-    kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);
+    pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> detectionImage(kipl::base::TImage<float,2> img);
     void useThreading(bool x);
     bool isThreaded();
 
@@ -103,6 +105,7 @@ protected:
     kipl::base::eConnectivity m_eConnectivity;
     eMorphCleanMethod              m_eMorphClean;
     eMorphDetectionMethod          m_eMorphDetect;
+    size_t m_seSize;
     size_t m_nEdgeSmoothLength;
     size_t m_nPadMargin;
     int m_nMaxArea;
