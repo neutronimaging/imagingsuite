@@ -34,7 +34,7 @@ unix {
         LIBS += -L/opt/local/lib
     }
 
-    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo
+    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 }
 
 win32 {

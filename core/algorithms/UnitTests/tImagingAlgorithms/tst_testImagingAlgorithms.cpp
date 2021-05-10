@@ -67,21 +67,11 @@ private:
 
 TestImagingAlgorithms::TestImagingAlgorithms()
 {
-    std::vector<size_t> dims={7,7};
-    holes.resize(dims);
-
-    for (size_t i=0; i<holes.Size(); i++) {
-        holes[i]=i/10.0f;
-    }
-
-    pos1=24;
-    pos2=10;
-
-    points[pos1]=0.0f;
-    points[pos2]=100.0f;
-
-    holes[pos1]=0.0f;
-    holes[pos2]=100.0f;
+#ifndef DEBUG
+    kipl::io::ReadTIFF(holes,"../TestData/2D/tiff/spots/balls.tif");
+#else
+    kipl::io::ReadTIFF(holes,"../../TestData/2D/tiff/spots/balls.tif");
+#endif
 }
 
 void TestImagingAlgorithms::PixelInfo()
@@ -147,12 +137,12 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanReplace);
+    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectDarkSpots,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::base::conn8);
-    cleaner.process(img,1.0f,0.05f);
+    cleaner.setThresholdByFraction(true);
+    cleaner.process(img,0.95f,0.05f);
 
-    QCOMPARE(img[pos1],1.6f);
-    QCOMPARE(img[pos2],100.0f);
+    kipl::io::WriteTIFF(img,"cleandark.tif",kipl::base::Float32);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
@@ -162,12 +152,11 @@ void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectPeaks, ImagingAlgorithms::MorphCleanReplace);
+    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBrightSpots, ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::base::conn8);
-    cleaner.process(img,1.0f,0.05f);
+    cleaner.process(img,0.95f,0.05f);
 
-    QCOMPARE(img[pos1],0.0f);
-    QCOMPARE(img[pos2],1.8f);
+    kipl::io::WriteTIFF(img,"cleanbright.tif",kipl::base::Float32);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
@@ -179,21 +168,16 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::base::conn8);
-    cleaner.process(img,1.0f,0.05f);
+    cleaner.process(img,0.95f,0.05f);
 
-    QCOMPARE(img[pos1],1.6f);
-    QCOMPARE(img[pos2],1.8f);
+    kipl::io::WriteTIFF(img,"cleanall.tif",kipl::base::Float32);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
 {
     kipl::base::TImage<float,2> img;
-#ifndef DEBUG
-    kipl::io::ReadTIFF(img,"../imagingsuite/core/algorithms/UnitTests/data/spotprojection_0001.tif");
-#else
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/algorithms/UnitTests/data/spotprojection_0001.tif");
-#endif
 
+    img.Clone(holes);
     ImagingAlgorithms::MorphSpotClean cleaner;
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);

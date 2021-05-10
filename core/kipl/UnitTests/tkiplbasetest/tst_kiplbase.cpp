@@ -17,6 +17,8 @@
 #include <base/imagecast.h>
 #include <base/tpermuteimage.h>
 #include <base/kiplenums.h>
+#include <io/io_tiff.h>
+#include <io/io_serializecontainers.h>
 
 class TkiplbasetestTest : public QObject
 {
@@ -32,6 +34,9 @@ private Q_SLOTS:
     /// Tests for ImageInformation
     void testImageInfoCtor();
     void testImageInfoResolutions();
+
+    /// Tests for histograms
+    void testHighEntropyHistogram();
 
     /// Tests for BivariateHistogram
     void testBivariateHistogramInitialize();
@@ -139,6 +144,23 @@ void TkiplbasetestTest::testImageInfoResolutions()
 
     infoA.SetDPCMX(10.0f);
     QVERIFY(infoA.GetMetricX()  == 1.0f);
+
+}
+
+void TkiplbasetestTest::testHighEntropyHistogram()
+{
+    kipl::base::TImage<float,2> img;
+
+    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/spots/balls.tif");
+    std::vector<float> axis;
+    std::vector<size_t> hist;
+    kipl::base::Histogram(img.GetDataPtr(),img.Size(),1024UL,hist,axis,0.0f,0.0f,false);
+    kipl::io::serializeContainer(axis.begin(),axis.end(),"axis1.txt");
+    kipl::io::serializeContainer(hist.begin(),hist.end(),"hist1.txt");
+
+    kipl::base::highEntropyHistogram(img.GetDataPtr(),img.Size(),1024UL,hist,axis,0.0f,0.0f,false);
+    kipl::io::serializeContainer(axis.begin(),axis.end(),"axis2.txt");
+    kipl::io::serializeContainer(hist.begin(),hist.end(),"hist2.txt");
 
 }
 
