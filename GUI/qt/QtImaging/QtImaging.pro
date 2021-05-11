@@ -48,6 +48,7 @@ unix:macx {
 
     DEPENDPATH += $$PWD/../../../external/mac/include
     LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    LIBS += -larmadillo
 }
 
 win32 {
