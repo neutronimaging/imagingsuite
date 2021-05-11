@@ -15,7 +15,6 @@ addons:
     - qt515svg
     - qt515charts-no-lgpl
     - qt5153d
-    - libc6-i386
     - libgl-dev
     - libgl1-mesa-dev
     - mesa-common-dev
