@@ -1,9 +1,4 @@
-/*
- * WaveletRingClean.h
- *
- *  Created on: Aug 9, 2011
- *      Author: anders
- */
+//<LICENSE>
 
 #ifndef WAVELETRINGCLEAN_H_
 #define WAVELETRINGCLEAN_H_

@@ -16,7 +16,7 @@ WaveletRingClean::WaveletRingClean(kipl::interactors::InteractionBase *interacto
     m_sWName("daub15"),
     m_fSigma(0.05f),
     m_nDecNum(2),
-	m_bParallelProcessing(false),
+    m_bParallelProcessing(true),
 	m_eCleanMethod(ImagingAlgorithms::VerticalComponentFFT)
 {
     publications.push_back(Publication({"B. Muench","P. Trtik","F. Marone","M. Stampanoni"},
