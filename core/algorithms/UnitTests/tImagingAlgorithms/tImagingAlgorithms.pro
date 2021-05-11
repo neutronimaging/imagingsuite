@@ -31,9 +31,10 @@ unix {
     unix:macx {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
+        LIBS += -L/opt/local/lib
     }
 
-    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 }
 
 win32 {

@@ -39,7 +39,7 @@ unix:!symbian {
         LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu -lNeXus -lNeXusCPP
     }
 
-    LIBS += -ltiff -lxml2
+    LIBS += -ltiff -lxml2 -larmadillo
 }
 
 win32 {

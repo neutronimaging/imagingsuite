@@ -95,6 +95,10 @@ template <typename T>
 kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::base::eConnectivity conn);
 
 template <typename T>
+kipl::base::TImage<T,2> FillSpot(kipl::base::TImage<T,2> &img, size_t seSize, kipl::base::eConnectivity conn);
+
+
+template <typename T>
 kipl::base::TImage<T,2> FillPeaks(kipl::base::TImage<T,2> &img, kipl::base::eConnectivity conn);
 
 template <typename T>
