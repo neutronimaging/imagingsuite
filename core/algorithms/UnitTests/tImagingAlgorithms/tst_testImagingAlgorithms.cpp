@@ -426,11 +426,12 @@ void TestImagingAlgorithms::PolynomialCorrection_numeric()
 
     ImagingAlgorithms::PolynomialCorrection pc;
     const int N=5;
-    float val[N]={0.0f,1.0f,2.0f,3.0f,4.0f};
+    std::vector<float> val={0.0f,1.0f,2.0f,3.0f,4.0f};
     std::vector<float> result(N);
 
     for (size_t i=1; i<10; ++i)
     {
+
         pc.setup(c,static_cast<int>(i));
         std::vector<float> vec=pc.coefficients();
 
@@ -438,8 +439,7 @@ void TestImagingAlgorithms::PolynomialCorrection_numeric()
         for (size_t j=0; j<(i+1); ++j)
             QCOMPARE(vec[j],c[j]);
 
-        std::copy_n(val,N,result.begin());
-        pc.process(result);
+        result = pc.process(val);
 
         for (size_t k=0; k<N; ++k)
         {
