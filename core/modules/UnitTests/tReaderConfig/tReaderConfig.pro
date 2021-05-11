@@ -76,9 +76,10 @@ win32 {
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lReaderConfig
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug -lkipl -lReaderConfig
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug
 
+LIBS += -lkipl -lReaderConfig -lImagingAlgorithms
 INCLUDEPATH += $$PWD/../../../kipl/kipl/include
 DEPENDPATH  += $$PWD/../../../kipl/kipl/include
 
