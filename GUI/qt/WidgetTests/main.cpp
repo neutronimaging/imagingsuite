@@ -37,8 +37,8 @@ void testQRect()
     QPoint q1=QPoint(100,90);
     QPoint q2=QPoint(120,120);
 
-    cout<<r0.contains(q0)<<", "<<r1.contains(q0)<<endl;
-    cout<<r0.contains(q1)<<", "<<r1.contains(q1)<<endl;
-    cout<<r0.contains(q2)<<", "<<r1.contains(q2)<<endl;
+    std::cout<<r0.contains(q0)<<", "<<r1.contains(q0)<<std::endl;
+    std::cout<<r0.contains(q1)<<", "<<r1.contains(q1)<<std::endl;
+    std::cout<<r0.contains(q2)<<", "<<r1.contains(q2)<<std::endl;
 
 }

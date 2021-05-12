@@ -165,7 +165,14 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
     return 0;
 }
 
-void highEntropyHistogram(float const * const data, size_t nData, size_t nBins, std::vector<size_t> & hist, std::vector<float> &axis, float loLevel, float hiLevel, bool avoidZeros)
+void highEntropyHistogram(float const * const data,
+                          size_t nData,
+                          size_t nBins,
+                          std::vector<size_t> & hist,
+                          std::vector<float> &axis,
+                          float loLevel,
+                          float hiLevel,
+                          bool avoidZeros)
 {
    size_t lo=0;
    size_t hi=1;

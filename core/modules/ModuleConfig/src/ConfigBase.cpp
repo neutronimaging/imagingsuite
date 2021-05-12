@@ -225,7 +225,7 @@ std::string ConfigBase::cUserInformation::WriteXML(int indent)
 	using namespace std;
 	ostringstream str;
 
-	str<<setw(indent)  <<" "<<"<userinformation>"<<endl;
+    str<<setw(indent)  <<" "<<"<userinformation>"<<std::endl;
 		str<<setw(indent+4)  <<" "<<"<operator>"<<sOperator<<"</operator>\n";
 		str<<setw(indent+4)  <<" "<<"<instrument>"<<sInstrument<<"</instrument>\n";
 		str<<setw(indent+4)  <<" "<<"<projectnumber>"<<sProjectNumber<<"</projectnumber>\n";
@@ -233,7 +233,7 @@ std::string ConfigBase::cUserInformation::WriteXML(int indent)
 		str<<setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
         str<<setw(indent+4)  <<" "<<"<date>"<<sDate<<"</date>\n";
         str<<setw(indent+4)  <<" "<<"<version>"<<sVersion<<"</version>\n";
-	str<<setw(indent)  <<" "<<"</userinformation>"<<endl;
+    str<<setw(indent)  <<" "<<"</userinformation>"<<std::endl;
 
 	return str.str();
 }

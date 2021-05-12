@@ -23,7 +23,7 @@ int RunGUI(int argc, char *argv[]);
 
 int main(int argc, char *argv[])
 {
-    cout<<"Converting andor dat to tiff"<<endl;
+    std::cout<<"Converting andor dat to tiff"<<std::endl;
 
     ConvertConfig config;
     std::list<std::string> args;

@@ -38,7 +38,7 @@ GNUPlot::~GNUPlot()
 size_t GNUPlot::figure(size_t n)
 {
 	if (0<figures.count(n)) {
-		cout<<figures[n]<<endl;
+        std::cout<<figures[n]<<std::endl;
 	}
 	else {
 #ifdef __GNUC__
@@ -63,7 +63,7 @@ bool GNUPlot::plot(float w)
 		figure(0);
 
 	ostringstream cmd;
-	cmd<<"set title 'test "<<w<<"'; plot sin("<<w<<"*x) with lines"<<endl;
+    cmd<<"set title 'test "<<w<<"'; plot sin("<<w<<"*x) with lines"<<std::endl;
 	
 	Command(cmd);
 	
@@ -222,7 +222,7 @@ bool GNUPlot::image(const kipl::base::TImage<char,2> img)
 
 void GNUPlot::Command(ostringstream &cmd)
 {
-	cmd<<endl;
+    cmd<<std::endl;
 
 	fputs(cmd.str().c_str(),figures[m_nCurrentFigure]);
 	fflush(figures[m_nCurrentFigure]);
@@ -329,16 +329,16 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //size_t GNUPlot::figure(size_t n)
 //{
 //	if (0<figures.count(n)) {
-//		cout<<figures[n]<<endl;
+//		std::cout<<figures[n]<<std::endl;
 //	}
 //	else {
 //		
 //		FILE *tmp=nullptr; //popen(cm_GPpath.c_str(),"w");
 //		if (tmp==nullptr)
-//			cerr<<"Failed to open figure"<<endl;
+//			std::cerr<<"Failed to open figure"<<std::endl;
 //		else {
 //			figures[n] = tmp;
-//			cout<<"Figure "<<n<<" is opened"<<endl;
+//			std::cout<<"Figure "<<n<<" is opened"<<std::endl;
 //		}
 //	}
 //	
@@ -352,7 +352,7 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //		figure(0);
 //
 //	ostringstream cmd;
-//	cmd<<"set title 'test "<<w<<"'; plot sin("<<w<<"*x) with lines"<<endl;
+//	cmd<<"set title 'test "<<w<<"'; plot sin("<<w<<"*x) with lines"<<std::endl;
 //	
 //	Command(cmd);
 //	
@@ -432,7 +432,7 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //
 //void GNUPlot::Command(ostringstream &cmd)
 //{
-//	cmd<<endl;
+//	cmd<<std::endl;
 //	fputs(cmd.str().c_str(),figures[m_nCurrentFigure]);
 //	fflush(figures[m_nCurrentFigure]);
 //}

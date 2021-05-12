@@ -28,7 +28,7 @@ protected:
 	std::string m_sWName;
 	float m_fSigma;
 	size_t m_nDecNum;
-        ImagingAlgorithms::eStripeFilterOperation m_eCleanMethod;
+    ImagingAlgorithms::eStripeFilterOperation m_eCleanMethod;
 };
 
 #endif /* WAVELETRINGCLEAN_H_ */

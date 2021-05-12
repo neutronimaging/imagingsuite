@@ -54,7 +54,7 @@ int KIPLSHARED_EXPORT Histogram(const float * const data,
 /// \param hi Upper bound of the bins. Values greater than this bound are counted in the last bin
 /// \note If lo==hi the histogram will be using min and max intensity as interval.
 /// \param pAxis optional bin axis value array, must be preallocated. Not considered if nullptr
-void highEntropyHistogram(float const * const data,
+void KIPLSHARED_EXPORT highEntropyHistogram(float const * const data,
                           size_t nData,
                           size_t nBins,
                           std::vector<size_t> & hist,
