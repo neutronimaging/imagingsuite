@@ -62,15 +62,17 @@ void MorphSpotCleanDlg::ApplyParameters()
     ui->plotDetection->clearAllCursors();
 
     m_Cleaner.Configure(*config, parameters);
+    auto detectionimgs=m_Cleaner.DetectionImage(m_OriginalImage, ImagingAlgorithms::MorphDetectPeaks);
 
-    m_DetectionImageHoles=m_Cleaner.DetectionImage(m_OriginalImage, ImagingAlgorithms::MorphDetectHoles);
+    m_DetectionImageHoles=detectionimgs.first;
     for (size_t i=0; i<m_DetectionImageHoles.Size(); i++) // Fix nans
         if (!std::isfinite(m_DetectionImageHoles[i])) m_DetectionImageHoles[i]=0;
 
     if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectHoles) || (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
         prepareDetectionPlot(m_DetectionImageHoles,0,N,"Detection Holes","Threshold Holes");
 
-    m_DetectionImagePeaks=m_Cleaner.DetectionImage(m_OriginalImage, ImagingAlgorithms::MorphDetectPeaks);
+    m_DetectionImagePeaks = detectionimgs.second;
+
     for (size_t i=0; i<m_DetectionImagePeaks.Size(); i++) // Fix nans
         if (!std::isfinite(m_DetectionImagePeaks[i])) m_DetectionImagePeaks[i]=0;
 

@@ -320,7 +320,7 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
     return 0;
 }
 
-kipl::base::TImage<float,2> MorphSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm)
+pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> MorphSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm)
 {
     ImagingAlgorithms::MorphSpotClean cleaner;
     cleaner.setCleanMethod(dm,m_eCleanMethod);

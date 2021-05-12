@@ -167,7 +167,7 @@ void FrameWorkTest::testConfigCopyConstructor()
     config.ProjectionInfo.nDims[1] =           2046UL;
 
     config.ProjectionInfo.beamgeometry =       config.ProjectionInfo.BeamGeometry_Cone;
-    config.ProjectionInfo.fResolution = {0.123f,1.23};
+    config.ProjectionInfo.fResolution = {0.123f,1.23f};
     config.ProjectionInfo.fBinning =           1.0f;
     config.ProjectionInfo.nMargin =            5UL;
     config.ProjectionInfo.nFirstIndex =         3UL;
@@ -182,7 +182,7 @@ void FrameWorkTest::testConfigCopyConstructor()
     config.ProjectionInfo.fCenter =            10.0f;
     config.ProjectionInfo.fSOD =               10.0f;
     config.ProjectionInfo.fSDD =               1000.0f;
-    config.ProjectionInfo.fpPoint = {123.4, 456.6};
+    config.ProjectionInfo.fpPoint = {123.4f, 456.6f};
 
     config.ProjectionInfo.bTranslate =         true;
     config.ProjectionInfo.fTiltAngle =         0.1f;
@@ -305,7 +305,7 @@ void FrameWorkTest::testConfigAssignment()
     config.ProjectionInfo.nDims[1] =           2046UL;
 
     config.ProjectionInfo.beamgeometry =       config.ProjectionInfo.BeamGeometry_Cone;
-    config.ProjectionInfo.fResolution = {0.123f,1.23};
+    config.ProjectionInfo.fResolution = {0.123f,1.23f};
     config.ProjectionInfo.fBinning =           1.0f;
     config.ProjectionInfo.nMargin =            5UL;
     config.ProjectionInfo.nFirstIndex =         3UL;
@@ -320,7 +320,7 @@ void FrameWorkTest::testConfigAssignment()
     config.ProjectionInfo.fCenter =            10.0f;
     config.ProjectionInfo.fSOD =               10.0f;
     config.ProjectionInfo.fSDD =               1000.0f;
-    config.ProjectionInfo.fpPoint = {123.4, 456.6};
+    config.ProjectionInfo.fpPoint = {123.4f, 456.6f};
 
     config.ProjectionInfo.bTranslate =         true;
     config.ProjectionInfo.fTiltAngle =         0.1f;
@@ -1033,11 +1033,11 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     float sum=0.0f;
 
-    std::vector<float> gv180={ 0.        , 111.24611797,  42.49223595, 153.73835392,
-                            84.9844719 ,  16.23058987, 127.47670785,  58.72282582,
-                           169.9689438 , 101.21506177,  32.46117975, 143.70729772,
-                            74.9534157 ,   6.19971, 117.44565165,  48.69176962,
-                           159.9378876 ,  91.18400557,  22.43012355};
+    std::vector<float> gv180={ 0.f       , 111.24611797f,  42.49223595f, 153.73835392f,
+                            84.9844719f ,  16.23058987f, 127.47670785f,  58.72282582f,
+                           169.9689438f , 101.21506177f,  32.46117975f, 143.70729772f,
+                            74.9534157f ,   6.19971f, 117.44565165f,  48.69176962f,
+                           159.9378876f ,  91.18400557f,  22.43012355f};
 
     QCOMPARE(ProjectionList.size(),gv180.size());
     std::sort(gv180.begin(),gv180.end());
@@ -1059,10 +1059,10 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
 
-    std::vector<float> gv360 = {   0.0f      , 291.2461  , 222.49222 , 153.73837 ,  84.98446 ,
-                             16.230604, 307.47675 , 238.72289 , 169.96892 , 101.21517 ,
-                             32.46121 , 323.70724 , 254.95349 , 186.19952 , 117.44578 ,
-                             48.691597, 339.93784 , 271.18408 , 202.43034};
+    std::vector<float> gv360 = {   0.0f      , 291.2461f  , 222.49222f , 153.73837f ,  84.98446f ,
+                             16.230604f, 307.47675f , 238.72289f , 169.96892f , 101.21517f ,
+                             32.46121f , 323.70724f , 254.95349f , 186.19952f , 117.44578f ,
+                             48.691597f, 339.93784f , 271.18408f , 202.43034f};
 
     QCOMPARE(ProjectionList.size(),gv360.size());
     std::sort(gv360.begin(),gv360.end());
@@ -1093,11 +1093,11 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
 
-    std::vector<float> gv180b={ 0.        , 111.24611797,  42.49223595, 153.73835392,
-                            84.9844719 ,  16.23058987, 127.47670785,  58.72282582,
-                           169.9689438 , 101.21506177,  32.46117975, 143.70729772,
-                            74.9534157 ,   6.19971, 117.44565165,  48.69176962,
-                           159.9378876 ,  91.18400557,  22.43012355};
+    std::vector<float> gv180b={ 0.f       , 111.24611797f,  42.49223595f, 153.73835392f,
+                            84.9844719f ,  16.23058987f, 127.47670785f,  58.72282582f,
+                           169.9689438f , 101.21506177f,  32.46117975f, 143.70729772f,
+                            74.9534157f ,   6.19971f, 117.44565165f,  48.69176962f,
+                           159.9378876f ,  91.18400557f,  22.43012355f};
 
     std::sort(gv180b.begin(),gv180b.end());
     git=gv180b.begin();
@@ -1135,10 +1135,10 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     float sum=0.0f;
 
-    std::vector<float> gv180={  0.,        111.24612 ,   42.492245,  153.73833,    84.98449,    16.23059,
-            127.47666,    58.722794 , 169.96898 ,  101.2151 ,    32.46118,   143.70726,
-             74.95333,     6.19958, 117.44559,    48.691772 , 159.93796,    91.18403,
-             22.430218 };
+    std::vector<float> gv180={  0.f,        111.24612f ,   42.492245f,  153.73833f,    84.98449f,    16.23059f,
+            127.47666f,    58.722794f , 169.96898f ,  101.2151f ,    32.46118f,   143.70726f,
+             74.95333f,     6.19958f, 117.44559f,    48.691772f , 159.93796f,    91.18403f,
+             22.430218f };
 
 
     QCOMPARE(ProjectionList.size(),gv180.size());
@@ -1162,10 +1162,10 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
 
-    std::vector<float> gv360 = {   0.      ,  111.24612  , 222.49223  , 333.7383  ,   84.98449 ,  196.23059,
-                                  307.47665  ,  58.722794 , 169.96898 ,  281.2151  ,   32.46118  , 143.70726,
-                                  254.95332 ,    6.19958 ,117.44559 ,  228.69177 ,  339.93796 ,   91.18403,
-                                  202.4302   };
+    std::vector<float> gv360 = {   0.f      ,  111.24612f  , 222.49223f  , 333.7383f  ,   84.98449f ,  196.23059f,
+                                  307.47665f  ,  58.722794f , 169.96898f ,  281.2151f  ,   32.46118f  , 143.70726f,
+                                  254.95332f ,    6.19958f ,117.44559f ,  228.69177f ,  339.93796f ,   91.18403f,
+                                  202.4302f   };
 
     QCOMPARE(ProjectionList.size(),gv360.size());
     std::sort(gv360.begin(),gv360.end());
@@ -1196,10 +1196,10 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
 
-    std::vector<float> gv180odd={  0.,        111.24612 ,   42.492245,  153.73833,    84.98449,    16.23059,
-            127.47666,    58.722794 , 169.96898 ,  101.2151 ,    32.46118,   143.70726,
-             74.95333,     6.19958, 117.44559,    48.691772 , 159.93796,    91.18403,
-             22.430218 };
+    std::vector<float> gv180odd={  0.f,        111.24612f ,   42.492245f,  153.73833f,    84.98449f,    16.23059f,
+            127.47666f,    58.722794f , 169.96898f ,  101.2151f ,    32.46118f,   143.70726f,
+             74.95333f,     6.19958f, 117.44559f,    48.691772f , 159.93796f,    91.18403f,
+             22.430218f };
     std::sort(gv180odd.begin(),gv180odd.end());
     git=gv180odd.begin();
 

@@ -6,6 +6,7 @@
 #include <ParameterHandling.h>
 #include <StripeFilter.h>
 #include <ReconException.h>
+#include <functional>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
