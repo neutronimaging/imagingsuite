@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1343</width>
-    <height>847</height>
+    <height>849</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,7 +45,7 @@
        <string/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabInformation">
        <property name="toolTip">
@@ -68,16 +68,6 @@
                <string>Projection images</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_2">
-               <item row="2" column="3">
-                <widget class="QPushButton" name="pushButton_measurePixelSize">
-                 <property name="toolTip">
-                  <string>A tool to estimate the pixel size. &lt;br /&gt;Requires an image of an object with known dimensions.</string>
-                 </property>
-                 <property name="text">
-                  <string>Measure</string>
-                 </property>
-                </widget>
-               </item>
                <item row="2" column="8">
                 <widget class="QComboBox" name="comboProjectionStyle">
                  <property name="toolTip">
@@ -222,19 +212,6 @@
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_37">
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>Pixel size (mm)</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>dspinResolution</cstring>
                  </property>
                 </widget>
                </item>
@@ -412,34 +389,6 @@
                   </size>
                  </property>
                 </spacer>
-               </item>
-               <item row="2" column="2">
-                <widget class="QDoubleSpinBox" name="dspinResolution">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>The size of the pixels is important to obtain the correct attenuation coefficients.</string>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="decimals">
-                  <number>5</number>
-                 </property>
-                 <property name="maximum">
-                  <double>10.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
                </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="label_8">
@@ -1046,6 +995,91 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="title">
+           <string>Pixel size</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="QDoubleSpinBox" name="dspinResolution">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>The size of the pixels is important to obtain the correct attenuation coefficients.</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="suffix">
+                <string> mm</string>
+               </property>
+               <property name="decimals">
+                <number>5</number>
+               </property>
+               <property name="maximum">
+                <double>10.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.010000000000000</double>
+               </property>
+               <property name="value">
+                <double>0.100000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_measurePixelSize">
+               <property name="font">
+                <font>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>A tool to estimate the pixel size. &lt;br /&gt;Requires an image of an object with known dimensions.</string>
+               </property>
+               <property name="text">
+                <string>Measure pixel size</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBox_AcquisitionAngles">
           <property name="minimumSize">
            <size>
@@ -1158,6 +1192,9 @@
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
+                 </property>
+                 <property name="suffix">
+                  <string/>
                  </property>
                  <property name="minimum">
                   <double>-1000.000000000000000</double>
@@ -1517,7 +1554,7 @@
              <item>
               <widget class="QRadioButton" name="radioButton_SOD">
                <property name="text">
-                <string>Source to object [mm]</string>
+                <string>Source to object</string>
                </property>
                <attribute name="buttonGroup">
                 <string notr="true">buttonGroup_cbctDist</string>
@@ -1529,6 +1566,9 @@
                <property name="toolTip">
                 <string>Cone beam reconstruction needs the distances from source to sample as part of the acquisiton geometry.</string>
                </property>
+               <property name="suffix">
+                <string> mm</string>
+               </property>
                <property name="maximum">
                 <double>999999.989999999990687</double>
                </property>
@@ -1537,7 +1577,7 @@
              <item>
               <widget class="QRadioButton" name="radioButton_SDD">
                <property name="text">
-                <string>Source to Detector [mm]</string>
+                <string>Source to Detector</string>
                </property>
                <attribute name="buttonGroup">
                 <string notr="true">buttonGroup_cbctDist</string>
@@ -1548,6 +1588,9 @@
               <widget class="QDoubleSpinBox" name="dspinSDD">
                <property name="toolTip">
                 <string>Cone beam reconstruction needs the distances from source to detector distance as part of the acquisiton geometry.</string>
+               </property>
+               <property name="suffix">
+                <string> mm</string>
                </property>
                <property name="maximum">
                 <double>999999.989999999990687</double>
@@ -2407,7 +2450,7 @@
      <x>0</x>
      <y>0</y>
      <width>1343</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

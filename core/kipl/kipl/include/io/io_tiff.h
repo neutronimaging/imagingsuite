@@ -283,7 +283,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_
 {
     std::stringstream msg;
 	TIFF *image;
-	uint16 photo, spp, fillorder,bps, sformat;
+    uint16_t photo, spp, fillorder,bps, sformat;
 	tsize_t stripSize, stripCount;
 	unsigned long imageOffset;
 	long result;
@@ -517,7 +517,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	}
 	std::stringstream msg;
 	TIFF *image;
-	uint16 photo, spp, fillorder,bps, sformat;
+    uint16_t photo, spp, fillorder,bps, sformat;
 	tsize_t stripSize;
 	unsigned long imageOffset;
 
@@ -575,8 +575,8 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	TIFFGetField(image, TIFFTAG_IMAGELENGTH, &dimy);
 
     if (    (dimx<=static_cast<long>(crop[0])) ||
-            (dimy<=static_cast<long>(crop[2])) ||
-            (dimx<=static_cast<long>(crop[1])) ||
+            (dimy<=static_cast<long>(crop[1])) ||
+            (dimx<=static_cast<long>(crop[2])) ||
             (dimy<=static_cast<long>(crop[3])))
     {
         msg.str("");
@@ -802,7 +802,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const std::string & fname, const
 /// \param row indexes the line to read
 /// \param fname file name of the image file
 template <class ImgType>
-int ReadTIFFLine(ImgType *data,uint32 row, const std::string & fname)
+int ReadTIFFLine(ImgType *data,uint32_t row, const std::string & fname)
 {
 	std::stringstream msg;
 	TIFF *image;

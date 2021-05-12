@@ -48,7 +48,7 @@ unix {
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
 
-        LIBS += -L/opt/local/lib/ -lxml2 -larmadillo -ltiff
+        LIBS += -L/opt/local/lib/ -lxml2 -larmadillo -ltiff -llapack -lblas -liconv
     }
 
 
@@ -62,6 +62,7 @@ SOURCES += \
     ../../src/ImagingException.cpp \
     ../../src/TranslateProjections.cpp \
     ../../src/MorphSpotClean.cpp \
+    ../../src/normalizeimage.cpp \
     ../../src/pixelinfo.cpp \
     ../../src/gammaclean.cpp \
     ../../src/averageimage.cpp \
@@ -77,6 +78,7 @@ HEADERS += \
     ../../include/ImagingException.h \
     ../../include/TranslateProjections.h \
     ../../include/MorphSpotClean.h \
+    ../../include/normalizeimage.h \
     ../../include/pixelinfo.h \
     ../../include/ImagingAlgorithms_global.h \
     ../../include/gammaclean.h \

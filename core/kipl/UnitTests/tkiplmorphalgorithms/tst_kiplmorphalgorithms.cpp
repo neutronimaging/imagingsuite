@@ -9,6 +9,7 @@
 #include <morphology/morphology.h>
 #include <morphology/label.h>
 #include <morphology/morphdist.h>
+#include <morphology/morphextrema.h>
 
 #include <io/io_tiff.h>
 
@@ -27,6 +28,7 @@ private slots:
     void test_RemoveConnectedRegion();
     void test_LabelledItemsInfo();
     void test_pixdist();
+    void test_FillSpots();
 
 private:
     void test_EuclideanDistance();
@@ -172,6 +174,18 @@ void kiplmorphalgorithms::test_pixdist()
                 msg.str(""); msg<<"Z: x:"<<x<<", y:"<<y<<", z:"<<z<<" result:"<<result<<", expected:"<<expected;
                 QVERIFY2(result==expected,msg.str().c_str());
             }
+}
+
+void kiplmorphalgorithms::test_FillSpots()
+{
+    kipl::base::TImage<float,2> img;
+    kipl::base::TImage<float,2> res;
+    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/spots/balls.tif");
+    img = -img;
+    QBENCHMARK {
+        res = -kipl::morphology::FillSpot(img,5,kipl::base::conn8);
+    }
+    kipl::io::WriteTIFF(res,"fillspots.tif");
 }
 
 void kiplmorphalgorithms::test_EuclideanDistance()

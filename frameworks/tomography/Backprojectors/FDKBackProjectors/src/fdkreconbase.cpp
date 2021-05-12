@@ -269,7 +269,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
     return 0L;
 }
 
-const std::vector<size_t> & FdkReconBase::GetMatrixDims()
+std::vector<size_t> FdkReconBase::GetMatrixDims()
 {
     std::vector<size_t> dims;
     if (MatrixAlignment==MatrixZXY)

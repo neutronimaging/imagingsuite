@@ -383,3 +383,14 @@ float PixelSizeDlg::distanceToLine(float x, float y)
 
   return d;
 }
+
+void PixelSizeDlg::on_pushButton_level95p_clicked()
+{
+    ui->viewer->set_levels(kipl::base::quantile95);
+}
+
+void PixelSizeDlg::on_pushButton_level99p_clicked()
+{
+    ui->viewer->set_levels(kipl::base::quantile99);
+}
+

@@ -7,6 +7,7 @@
 #include "../morphology.h"
 #include "../morphgeo.h"
 #include "../../base/imageoperators.h"
+#include "../morphfilters.h"
 #include "../../math/image_statistics.h"
 
 #include <deque>
@@ -310,6 +311,43 @@ kipl::base::TImage<T,2> FillHole(kipl::base::TImage<T,2> &img, kipl::base::eConn
     }
 
     return result;
+}
+
+template <typename T>
+kipl::base::TImage<T,2> FillSpot(kipl::base::TImage<T,2> &img, size_t seSize, kipl::base::eConnectivity conn)
+{
+    std::stringstream msg;
+    std::vector<T> se(seSize*seSize,static_cast<T>(1));
+
+    kipl::morphology::TDilate<T,2> dilate(se,{seSize,seSize});
+    kipl::base::TImage<T,2> fm=dilate(img,kipl::filters::FilterBase::EdgeMirror);
+
+    std::copy_n(img.GetLinePtr(0),             img.Size(0), fm.GetLinePtr(0));
+    std::copy_n(img.GetLinePtr(img.Size(1)-1), img.Size(0), fm.GetLinePtr(img.Size(1)-1));
+
+    size_t last=img.Size(0)-1;
+    for (size_t i=1; i<img.Size(1)-1; ++i)
+    {
+        T *pA=img.GetLinePtr(i);
+        T *pB=fm.GetLinePtr(i);
+
+        pB[0]    = pA[0];
+        pB[last] = pA[last];
+    }
+
+    kipl::base::TImage<T,2> result;
+
+    try
+    {
+       result=kipl::morphology::RecByErosion(img,fm,conn);
+    }
+    catch (kipl::base::KiplException & e) {
+        msg<<"FillHoles failed with a kipl exception: "<<e.what();
+        throw kipl::base::KiplException(msg.str());
+    }
+
+    return result;
+
 }
 
 template <typename T>

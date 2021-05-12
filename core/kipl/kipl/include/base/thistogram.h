@@ -45,6 +45,24 @@ int KIPLSHARED_EXPORT Histogram(const float * const data,
                                 float lo=0.0f, float hi=0.0f,
                                 bool avoidZeros=false);
 
+/// \brief Computes a histogram from the data present in an array. The histgram will be well filled also when the data contains outliers.
+/// \param data The data array
+/// \param Ndata number of data points in the array
+/// \param hist the histogram counts, array must be preallocated
+/// \param nBins Number of bins in the histogram
+/// \param lo Lower bound of the bins. Values less than this bound are counted in the first bin
+/// \param hi Upper bound of the bins. Values greater than this bound are counted in the last bin
+/// \note If lo==hi the histogram will be using min and max intensity as interval.
+/// \param pAxis optional bin axis value array, must be preallocated. Not considered if nullptr
+void highEntropyHistogram(float const * const data,
+                          size_t nData,
+                          size_t nBins,
+                          std::vector<size_t> & hist,
+                          std::vector<float> &axis,
+                          float loLevel,
+                          float hiLevel,
+                          bool avoidZeros);
+
 /// \brief Computes an exact histogram from the data present in an array
 /// \param data The data array
 /// \param Ndata number of data points in the array
@@ -64,6 +82,11 @@ int KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float perc
 /// \param lo resulting lower bound
 /// \param hi resulting upper bound
 int  KIPLSHARED_EXPORT FindLimits(std::vector<size_t> &hist, float percentage, size_t & lo, size_t & hi);
+
+
+int KIPLSHARED_EXPORT FindLimits(float const * const data, size_t N, float percentage, size_t * lo, size_t * hi);
+
+int  KIPLSHARED_EXPORT FindLimit(std::vector<size_t> &hist, float fraction, size_t & lo);
 
 /// \brief Computes the entropy of the histogram
 /// \param hist The histogram

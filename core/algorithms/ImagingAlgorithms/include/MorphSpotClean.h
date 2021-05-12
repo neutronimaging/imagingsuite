@@ -22,13 +22,16 @@
 namespace ImagingAlgorithms {
 
 enum eMorphDetectionMethod {
-    MorphDetectHoles = 0,
+    MorphDetectBrightSpots = 0,
+    MorphDetectDarkSpots,
+    MorphDetectAllSpots,
+    MorphDetectHoles,
     MorphDetectPeaks,
     MorphDetectBoth
 };
 
 enum eMorphCleanMethod {
-    MorphCleanReplace =0,
+    MorphCleanReplace = 0,
     MorphCleanFill
 };
 
@@ -41,12 +44,18 @@ public:
     void process(kipl::base::TImage<float,2> &img, float th, float sigma);
     void process(kipl::base::TImage<float,2> &img, std::vector<float> &th, std::vector<float> &sigma);
 
+    void process(kipl::base::TImage<float,3> &img, float th, float sigma);
+    void process(kipl::base::TImage<float,3> &img, std::vector<float> &th, std::vector<float> &sigma);
+
     void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
     kipl::base::eConnectivity connectivity();
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
     eMorphDetectionMethod detectionMethod();
     eMorphCleanMethod cleanMethod();
     void setLimits(bool bClamp, float fMin, float fMax, int nMaxArea);
+    void setThresholdByFraction(bool method);
+    void setDetectionStrelSize(size_t size);
+    size_t detectionStrelSize();
     std::vector<float> clampLimits();
     bool clampActive();
     int maxArea();
@@ -54,12 +63,22 @@ public:
     bool cleanInfNan();
     void setEdgeConditioning(int nSmoothLenght);
     int edgeConditionLength();
-    kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);
+    pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> detectionImage(kipl::base::TImage<float,2> img);
+    void detectionImage(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks);
+    void useThreading(bool x);
+    bool isThreaded();
+//    const kipl::base::TImage<float> & getNoHoles();
+//    const kipl::base::TImage<float> & getNoPeaks();
 
 protected:
-    void FillOutliers(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks);
     void ProcessReplace(kipl::base::TImage<float,2> &img);
     void ProcessFill(kipl::base::TImage<float,2> &img);
+    void process(kipl::base::TImage<float, 3> *pImg,
+                 size_t first,
+                 size_t last,
+                 std::vector<float> th,
+                 std::vector<float> sigma,
+                 size_t tid=0UL);
 
     void PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded);
     void unpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img);
@@ -80,20 +99,27 @@ protected:
     kipl::base::TImage<float,2> DetectPeaks(kipl::base::TImage<float,2> img);
     kipl::base::TImage<float,2> DetectBoth(kipl::base::TImage<float,2> img);
 
+    kipl::base::TImage<float,2> DetectBrightSpots(kipl::base::TImage<float,2> &img);
+    kipl::base::TImage<float,2> DetectDarkSpots(kipl::base::TImage<float,2> &img);
+    kipl::base::TImage<float,2> DetectAllSpots(kipl::base::TImage<float,2> &img);
+
     void ExcludeLargeRegions(kipl::base::TImage<float,2> &img);
 
     void replaceInfNaN(kipl::base::TImage<float,2> &img);
 
     kipl::base::TImage<float,2> CleanByArray(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels);
 
+    bool m_bUseThreading;
     kipl::base::eConnectivity m_eConnectivity;
     eMorphCleanMethod              m_eMorphClean;
     eMorphDetectionMethod          m_eMorphDetect;
+    size_t m_seSize;
     size_t m_nEdgeSmoothLength;
     size_t m_nPadMargin;
     int m_nMaxArea;
     bool m_bRemoveInfNan;
     bool m_bClampData;
+    bool m_bThresholdByPercentage;
     float m_fMinLevel;
     float m_fMaxLevel;
     std::vector<float> m_fThreshold;
@@ -105,7 +131,9 @@ protected:
     int ng[8];
     int first_line;
     int last_line;
-
+//    kipl::base::TImage<float,2> padded;
+//    kipl::base::TImage<float,2> noholes;
+//    kipl::base::TImage<float,2> nopeaks;
 };
 
 }
@@ -119,3 +147,4 @@ std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &s, Imagin
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::eMorphDetectionMethod &md);
 
 #endif // MORPHSPOTCLEAN_H
+

@@ -105,7 +105,7 @@
                 <parameters>
                     <decnum>4</decnum>
                     <method>verticalfft</method>
-                    <parallel>false</parallel>
+                    <parallel>true</parallel>
                     <sigma>0.1</sigma>
                     <wname>daub25</wname>
                 </parameters>

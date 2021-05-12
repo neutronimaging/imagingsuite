@@ -15,6 +15,7 @@ public:
 
 private Q_SLOTS:
     void testBasicReadWriteTIFF();
+    void testReadRoiTIFF();
     void testMultiFrameReadTIFF();
     void testMultiFrameWriteTIFF();
     void testDataTypesWriteTIFF();
@@ -60,6 +61,36 @@ void tKIPL_IOTest::testBasicReadWriteTIFF()
     }
 
 }
+
+void tKIPL_IOTest::testReadRoiTIFF()
+{
+    std::string fname="../TestData/2D/tiff/normalized_edge.tif"; // Image size 122x300
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+
+    kipl::base::TImage<float,2> img;
+
+    kipl::io::ReadTIFF(img,fname);
+
+    std::vector<size_t> roi={10,10,100,100};
+    kipl::io::ReadTIFF(img,fname,roi,0);
+
+    QCOMPARE(img.Size(0),roi[2]-roi[0]);
+    QCOMPARE(img.Size(1),roi[3]-roi[1]);
+
+    std::vector<size_t> roi2={10,10,20,200}; // Vertical slab taller than the image size
+    kipl::io::ReadTIFF(img,fname,roi2,0);
+
+    QCOMPARE(img.Size(0),roi2[2]-roi2[0]);
+    QCOMPARE(img.Size(1),roi2[3]-roi2[1]);
+
+    std::vector<size_t> roi3={10,10,20,400}; // Vertical slab outside the image size
+    QVERIFY_EXCEPTION_THROWN( kipl::io::ReadTIFF(img,fname,roi3,0),kipl::base::KiplException);
+
+    std::vector<size_t> roi4={10,300,20,200}; // Vertical slab outside the image size
+    QVERIFY_EXCEPTION_THROWN( kipl::io::ReadTIFF(img,fname,roi4,0),kipl::base::KiplException);
+}
+
+
 
 void tKIPL_IOTest::testMultiFrameReadTIFF()
 {

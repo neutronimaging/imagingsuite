@@ -79,10 +79,10 @@ unix:!symbian {
 }
 
 unix:!mac {
-    exists(/usr/lib/*NeXus*) | exists(/usr/local/lib64/*NeXus*) {
+    exists(/usr/lib/*NeXus*) | exists(/usr/local/lib64/*NeXus* | exists(/usr/lib/x86_64-linux-gnu/*NeXus*)) {
         message("-lNeXus exists")
         DEFINES += HAVE_NEXUS
-        LIBS += -L/usr/local/lib64
+        LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu
         LIBS += -lNeXus -lNeXusCPP
     }
     else {
@@ -155,10 +155,10 @@ exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {
 }
 }
 
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib -lkipl -lModuleConfig -lImagingAlgorithms -lReaderConfig
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug -lkipl -lModuleConfig -lImagingAlgorithms -lReaderConfig
-
+LIBS+=-lkipl  -lImagingAlgorithms -lModuleConfig -lReaderConfig
 
 INCLUDEPATH += $$PWD/../../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../../core/kipl/kipl/include
