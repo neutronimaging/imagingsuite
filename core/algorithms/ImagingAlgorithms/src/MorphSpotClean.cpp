@@ -34,8 +34,8 @@ MorphSpotClean::MorphSpotClean() :
     m_bThresholdByPercentage(true),
     m_fMinLevel(-0.1f), // This shouldnt exist...
     m_fMaxLevel(7.0f), // This corresponds to 0.1% transmission
-    m_fThreshold{0.025f,0.025f},
-    m_fSigma{0.00f,0.0f},
+    m_fThreshold{0.95f,0.95f},
+    m_fSigma{0.025f,0.025f},
     m_LUT(1<<15,0.1f,0.0075f)
 {
 

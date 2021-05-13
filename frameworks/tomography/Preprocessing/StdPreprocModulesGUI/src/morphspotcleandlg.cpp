@@ -225,7 +225,7 @@ void MorphSpotCleanDlg::UpdateDialog()
     ui->comboCleanMethod->setCurrentIndex(m_eCleanMethod);
     ui->comboDetectionMethod->setCurrentIndex(m_eDetectionMethod);
     on_comboDetectionMethod_currentIndexChanged(m_eDetectionMethod);
-    ui->comboBox_ThresholdValue->setCurrentIndex(m_bThresholdByFraction ? 0 :1);
+    ui->comboBox_ThresholdValue->setCurrentIndex(m_bThresholdByFraction ? 1 : 0);
 
     ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
     ui->spinArea->setValue(m_nMaxArea);
