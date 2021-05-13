@@ -44,7 +44,14 @@ private:
 
 private:
     virtual void ApplyParameters();
-    void prepareDetectionPlot(kipl::base::TImage<float,2> &img,int det,size_t N,std::string curvelabel, std::string threslabel);
+    void prepareDetectionPlot(kipl::base::TImage<float,2> &img,
+                              int det,
+                              size_t N,
+                              float threshold,
+                              float sigma,
+                              std::string curvelabel,
+                              std::string threslabel);
+
     virtual void UpdateDialog();
     virtual void UpdateParameters();
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
@@ -71,7 +78,8 @@ private:
     float m_fMinLevel;
     float m_fMaxLevel;
     bool  m_bThreading;
-    bool  m_bThresholdByFraction
+    bool  m_bThresholdByFraction;
+    bool  m_bTranspose;
 };
 
 #endif // MORPHSPOTCLEANDLG_H

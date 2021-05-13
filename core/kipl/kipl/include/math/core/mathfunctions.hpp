@@ -120,6 +120,15 @@ double Entropy(T const * const data, const size_t N)
 	return entropy;
 }
 
+template <typename T, size_t N>
+void replaceInfNaN(kipl::base::TImage<T,N> &img, T val)
+{
+    T * pData=img.GetDataPtr();
+
+    for (size_t i=0; i<img.Size(); ++i) // Fix nans
+        if (!std::isfinite(pData[i])) pData[i]=val;
+
+}
 
 }}
 

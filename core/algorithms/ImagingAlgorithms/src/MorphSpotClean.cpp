@@ -214,7 +214,6 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     float *pPeaks = nopeaks.GetDataPtr();
 
 
-
     if ((m_fSigma[0]==0.0f) && (m_fSigma[1]==0.0f))
     {
         for (size_t i=0; i<padded.Size(); i++)
@@ -267,16 +266,19 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
             switch (m_eMorphDetect)
             {
             case MorphDetectDarkSpots :
-            case MorphDetectHoles :
-                pImg[i]=kipl::math::SigmoidWeights(pHoles[i]-val,val,pHoles[i],threshold[0],m_fSigma[0]);
                 break;
-
             case MorphDetectBrightSpots :
-            case MorphDetectPeaks :
-                pImg[i]=kipl::math::SigmoidWeights(val-pPeaks[i],val,pPeaks[i],threshold[1],m_fSigma[1]);
+                break;
+            case MorphDetectAllSpots :
+                break;
+            case MorphDetectHoles :
+                pImg[i]=kipl::math::SigmoidWeights(pHoles[i]-val,val,pHoles[i],threshold[0],sigma[0]);
                 break;
 
-            case MorphDetectAllSpots :
+            case MorphDetectPeaks :
+                pImg[i]=kipl::math::SigmoidWeights(val-pPeaks[i],val,pPeaks[i],threshold[1],sigma[1]);
+                break;
+
             case MorphDetectBoth :
                 dp=val-pPeaks[i];
                 dh=pHoles[i]-val;
