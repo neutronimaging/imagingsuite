@@ -71,7 +71,7 @@ int MorphSpotCleanModule::Configure(ReconConfig UNUSED(config), std::map<std::st
         string2enum(GetStringParameter(parameters,"detectionmethod"),m_eDetectionMethod);
         kipl::strings::string2vector(GetStringParameter(parameters,"threshold"),m_fThreshold);
         kipl::strings::string2vector(GetStringParameter(parameters,"sigma"),m_fSigma);
-        m_bThresholdByFraction = kipl::strings::string2bool(GetStringParameter(parameters,"thresholdfraction"));
+        m_bThresholdByFraction = kipl::strings::string2bool(GetStringParameter(parameters,"thresholdbyfraction"));
         m_nEdgeSmoothLength = GetIntParameter(parameters,"edgesmooth");
         m_nMaxArea          = GetIntParameter(parameters,"maxarea");
         m_bRemoveInfNaN     = kipl::strings::string2bool(GetStringParameter(parameters,"removeinfnan"));
@@ -80,6 +80,11 @@ int MorphSpotCleanModule::Configure(ReconConfig UNUSED(config), std::map<std::st
         m_fMaxLevel         = GetFloatParameter(parameters,"maxlevel");
         m_bThreading        = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
         m_bTranspose        = kipl::strings::string2bool(GetStringParameter(parameters,"transpose"));
+    }
+    catch (ImagingException &e) {
+        msg<<"Imaging exception: Failed to get parameters: "<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        return -1;
     }
     catch (ModuleException &e) {
         msg<<"Module exception: Failed to get parameters: "<<e.what();
@@ -110,7 +115,7 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
         parameters["detectionmethod"] = enum2string(m_eDetectionMethod);
         parameters["threshold"]    = kipl::strings::Vector2String(m_fThreshold);
         parameters["sigma"]        = kipl::strings::Vector2String(m_fSigma);
-        parameters["thresholdfraction"] = kipl::strings::bool2string(m_bThresholdByFraction);
+        parameters["thresholdbyfraction"] = kipl::strings::bool2string(m_bThresholdByFraction);
         parameters["edgesmooth"]   = kipl::strings::value2string(m_nEdgeSmoothLength);
         parameters["maxarea"]      = kipl::strings::value2string(m_nMaxArea);
         parameters["removeinfnan"] = kipl::strings::bool2string(m_bRemoveInfNaN);

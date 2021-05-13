@@ -27,7 +27,8 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     m_fSigma{0.01f,0.01f},
     m_bRemoveInfNaN(false),
     m_bClampData(false),
-    m_bThreading(false)
+    m_bThreading(false),
+    m_bThresholdByFraction(false)
 {
     ui->setupUi(this);
     ui->spinArea->hide();
@@ -246,6 +247,7 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_fMaxLevel         = static_cast<float>(ui->spinMaxValue->value());
     m_nMaxArea          = ui->spinArea->value();
     m_nEdgeSmoothLength = ui->spinEdgeLenght->value();
+    m_bThresholdByFraction = false;
 }
 
 void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
@@ -262,6 +264,7 @@ void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["minlevel"]        = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]        = kipl::strings::value2string(m_fMaxLevel);
     parameters["threading"]       = kipl::strings::bool2string(m_bThreading);
+    parameters["thresholdbyfraction"] = kipl::strings::bool2string(m_bThresholdByFraction);
 }
 
 
@@ -309,6 +312,15 @@ void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
     case 2: // Detection image
         switch (m_eDetectionMethod)
         {
+        case ImagingAlgorithms::MorphDetectDarkSpots :
+            dimg=m_DetectionImageHoles;
+            break;
+        case ImagingAlgorithms::MorphDetectBrightSpots :
+            dimg=m_DetectionImagePeaks;
+            break;
+        case ImagingAlgorithms::MorphDetectAllSpots :
+            dimg=m_DetectionImagePeaks - m_DetectionImageHoles;
+            break;
         case ImagingAlgorithms::MorphDetectHoles :
             dimg=m_DetectionImageHoles;
             break;
