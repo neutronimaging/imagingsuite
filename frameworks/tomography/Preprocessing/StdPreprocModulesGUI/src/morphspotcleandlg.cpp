@@ -44,7 +44,6 @@ MorphSpotCleanDlg::~MorphSpotCleanDlg()
 
 void MorphSpotCleanDlg::ApplyParameters()
 {
-    //kipl::base::TImage<float,2> img(m_Projections.Dims());
     m_OriginalImage=GetProjection(m_Projections,m_Projections.Size(2)/2);
 
     const size_t N=1024;
@@ -61,15 +60,15 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     m_Cleaner.Configure(*config, parameters);
 
-    auto detectionimgs=m_Cleaner.DetectionImage(m_OriginalImage, m_eDetectionMethod);
+    auto detectionimgs=m_Cleaner.DetectionImage(m_OriginalImage, m_eDetectionMethod,true);
 
     m_DetectionImageHoles=detectionimgs.first;
     kipl::math::replaceInfNaN(m_DetectionImageHoles,0.0f);
 
 
     if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectDarkSpots) ||
-        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectAllSpots) ||
-        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectHoles) ||
+        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectAllSpots)  ||
+        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectHoles)     ||
         (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
     {
         prepareDetectionPlot(m_DetectionImageHoles,0,N,m_fThreshold[0],m_fSigma[0],"Detection Holes","Threshold Holes");
@@ -78,17 +77,17 @@ void MorphSpotCleanDlg::ApplyParameters()
     m_DetectionImagePeaks = detectionimgs.second;
     kipl::math::replaceInfNaN(m_DetectionImagePeaks,0.0f);
 
-    if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectBrightSpots) ||
+    if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectBrightSpots)  ||
             (m_eDetectionMethod==ImagingAlgorithms::MorphDetectAllSpots) ||
-            (m_eDetectionMethod==ImagingAlgorithms::MorphDetectPeaks) ||
+            (m_eDetectionMethod==ImagingAlgorithms::MorphDetectPeaks)    ||
             (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
     {
         prepareDetectionPlot(m_DetectionImagePeaks,1,N,m_fThreshold[1],m_fSigma[1],"Detection Peaks","Threshold Peaks");
     }
 
     std::map<std::string,std::string> pars;
-    m_ProcessedImage=m_OriginalImage;
-    m_ProcessedImage.Clone();
+    m_ProcessedImage.Clone(m_OriginalImage);
+
     m_Cleaner.Process(m_ProcessedImage, pars);
 
     std::ostringstream msg;
@@ -252,6 +251,7 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_nMaxArea          = ui->spinArea->value();
     m_nEdgeSmoothLength = ui->spinEdgeLenght->value();
     m_bThresholdByFraction = ui->comboBox_ThresholdValue->currentIndex() != 0;
+
 }
 
 void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
@@ -344,19 +344,10 @@ void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
             dimg[i] = dimg[i]!=0.0f ? 1.0f : 0.0f;
         break;
     }
-    size_t nLo,nHi;
 
-    const size_t N=512;
-    float axis[N];
-    size_t hist[N];
-
-    memset(hist,0,N*sizeof(size_t));
-    memset(axis,0,N*sizeof(float));
-
-    kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
     logger(kipl::logging::Logger::LogMessage,"Start display");
-    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.dims(),axis[nLo],axis[nHi]);
+    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.dims(),0.0f,0.0f);
+    ui->viewerDifference->set_levels(kipl::base::quantile99);
 }
 
 void MorphSpotCleanDlg::on_comboDetectionMethod_currentIndexChanged(int index)
@@ -365,6 +356,19 @@ void MorphSpotCleanDlg::on_comboDetectionMethod_currentIndexChanged(int index)
 
     switch (method)
     {
+    case ImagingAlgorithms::MorphDetectDarkSpots :
+        ui->groupBoxPeaks->hide();
+        ui->groupBoxHoles->show();
+        break;
+
+    case ImagingAlgorithms::MorphDetectBrightSpots :
+        ui->groupBoxPeaks->show();
+        ui->groupBoxHoles->hide();
+        break;
+    case ImagingAlgorithms::MorphDetectAllSpots :
+        ui->groupBoxPeaks->show();
+        ui->groupBoxHoles->show();
+        break;
     case ImagingAlgorithms::MorphDetectHoles :
         ui->groupBoxPeaks->hide();
         ui->groupBoxHoles->show();

@@ -22,8 +22,8 @@
 namespace ImagingAlgorithms {
 
 enum eMorphDetectionMethod {
-    MorphDetectBrightSpots = 0,
-    MorphDetectDarkSpots,
+    MorphDetectDarkSpots = 0,
+    MorphDetectBrightSpots,
     MorphDetectAllSpots,
     MorphDetectHoles,
     MorphDetectPeaks,
@@ -63,8 +63,8 @@ public:
     bool cleanInfNan();
     void setEdgeConditioning(int nSmoothLenght);
     int edgeConditionLength();
-    pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> detectionImage(kipl::base::TImage<float,2> img);
-    void detectionImage(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks);
+    pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> detectionImage(kipl::base::TImage<float,2> img, bool removeBias);
+    void detectionImage(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks, bool removeBias);
     void useThreading(bool x);
     bool isThreaded();
 //    const kipl::base::TImage<float> & getNoHoles();
