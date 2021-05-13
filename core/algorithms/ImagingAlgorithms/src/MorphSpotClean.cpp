@@ -896,7 +896,11 @@ std::string enum2string(ImagingAlgorithms::eMorphDetectionMethod mc)
     case ImagingAlgorithms::MorphDetectHoles       : return "morphdetectholes";       break;
     case ImagingAlgorithms::MorphDetectPeaks       : return "morphdetectpeaks";       break;
     case ImagingAlgorithms::MorphDetectBoth        : return "morphdetectboth";        break;
-    default: throw ImagingException("Failed to convert enum to string.",__FILE__,__LINE__);
+    default:
+    {
+        std::ostringstream msg;
+        throw ImagingException("Failed to convert enum to string.",__FILE__,__LINE__);
+    }
     }
 
     return "bad value";

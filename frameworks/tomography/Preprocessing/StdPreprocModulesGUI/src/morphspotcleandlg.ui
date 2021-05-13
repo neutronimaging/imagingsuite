@@ -163,6 +163,24 @@
          <property name="toolTip">
           <string>Selects the type of outliers to remove.</string>
          </property>
+         <property name="currentIndex">
+          <number>5</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>Dark (experimental)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Bright (experimental)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>All (experimental)</string>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>Holes</string>

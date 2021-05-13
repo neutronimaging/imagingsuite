@@ -88,6 +88,7 @@
                     <cleanmethod>morphcleanreplace</cleanmethod>
                     <connectivity>conn4</connectivity>
                     <detectionmethod>morphdetectpeaks</detectionmethod>
+                    <thresholdbyfraction>false</thresholdbyfraction>
                     <edgesmooth>5</edgesmooth>
                     <maxarea>30</maxarea>
                     <maxlevel>12</maxlevel>

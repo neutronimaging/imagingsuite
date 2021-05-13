@@ -31,6 +31,7 @@ protected:
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
     std::vector<float> m_fThreshold;
     std::vector<float> m_fSigma;
+    bool m_bThresholdByFraction;
     int m_nEdgeSmoothLength;
     int m_nMaxArea;
     bool m_bRemoveInfNaN;
