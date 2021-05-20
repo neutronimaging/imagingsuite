@@ -91,7 +91,7 @@ void ConfigHistoryDialog::on_list_configurations_itemClicked(QListWidgetItem *it
 {
     ConfigListItem * confItem = dynamic_cast<ConfigListItem *>(item);
 
-    ui->ImageViewer_Display->set_image(confItem->image.GetDataPtr(),confItem->image.Dims());
+    ui->ImageViewer_Display->set_image(confItem->image.GetDataPtr(),confItem->image.dims());
     m_SelectedConfig = confItem->config;
 
 }

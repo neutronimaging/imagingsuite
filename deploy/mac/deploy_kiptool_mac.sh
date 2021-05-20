@@ -4,6 +4,7 @@ REPOSPATH=$WORKSPACE
 QTPATH=$QTBINPATH/..
 DEST="$DIRECTORY/KipTool.app"
 
+
 GITVER=`git rev-parse --short HEAD`
 echo $DIRECTORY
 echo $QTPATH
@@ -17,6 +18,7 @@ fi
 
 echo "Copy app"
 cp -r $REPOSPATH/Applications/KipTool.app $DIRECTORY
+
 
 pushd .
 CPCMD="cp"

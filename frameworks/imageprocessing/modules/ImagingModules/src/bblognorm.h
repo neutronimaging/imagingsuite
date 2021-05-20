@@ -30,8 +30,8 @@ public:
     virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls SetRoi and PrepareBBData
     virtual int ConfigureDLG(KiplProcessConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and does not call PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
-    virtual void LoadReferenceImages(size_t *roi); /// load all images that are needed for referencing in the current roi
-    virtual bool SetROI(size_t *roi); /// set the current roi to be processed and calls LoadReferenceImages
+    virtual void LoadReferenceImages(const std::vector<size_t> &roi);/// load all images that are needed for referencing in the current roi
+    virtual bool SetROI(const std::vector<size_t> &roi);/// set the current roi to be processed and calls LoadReferenceImages
 
     virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
@@ -39,7 +39,7 @@ public:
     virtual float GetInterpolationError(kipl::base::TImage<float,2> &mask); /// computes and returns interpolation error and mask on OB image with BBs
     virtual kipl::base::TImage<float, 2> GetMaskImage();
     virtual void PrepareBBData(); /// read all data (entire projection) that I need and prepare them for the BB correction, it is now called in LoadReferenceImages
-    virtual void LoadExternalBBData(size_t *roi); /// load BB images pre-processed elsewhere
+    virtual void LoadExternalBBData(const std::vector<size_t> &roi);  /// load BB images pre-processed elsewhere
 
 protected:
 
@@ -91,11 +91,16 @@ protected:
     bool bSaveBG; /// boolean value to enable the option of saving the computed BGs
     bool bExtSingleFile; /// boolean value on the use of a single file for sample background correction
 
-    size_t nNormRegion[4];
+/*    size_t nNormRegion[4];
     size_t nOriginalNormRegion[4];
     size_t BBroi[4]; /// region of interest to be set for BB segmentation
-    size_t doseBBroi[4]; /// region of interest for dose computation in BB images
-    size_t dose_roi[4]; /// region of interest for dose coputation in projection images
+    size_t doseBBroi[4];*/ /// region of interest for dose computation in BB images
+//    size_t dose_roi[4]; /// region of interest for dose coputation in projection images
+    std::vector<size_t> dose_roi;
+    std::vector<size_t> nNormRegion;
+    std::vector<size_t> nOriginalNormRegion;
+    std::vector<size_t> BBroi; /// region of interest to be set for BB segmentation
+    std::vector<size_t> doseBBroi; /// region of interest for dose computation in BB images
 
 
     size_t radius; /// radius used to select circular region within the BBs to be used for interpolation
@@ -118,7 +123,7 @@ protected:
     virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname,
                                                         int firstIndex,
                                                         int N,
-                                                        size_t *roi,
+                                                        const std::vector<size_t> &roi,
                                                         float initialDose,
                                                         float doseBias,
                                                         KiplProcessConfig &config,
@@ -138,13 +143,13 @@ protected:
                                  float doseBias); /// Loader function that only compute Dose in the BB dose roi , whitout loading the entire image
 
     virtual kipl::base::TImage<float,2> BBExternalLoader(std::string fname,
-                                                         size_t *roi,
+                                                         const std::vector<size_t> &roi,
                                                          float &dose); /// Loader function for externally created BB, open beam case (only 1 image)
     virtual kipl::base::TImage<float,3> BBExternalLoader(std::string fname,
                                                          int N,
-                                                         size_t *roi,
+                                                         const std::vector<size_t> &roi,
                                                        int firstIndex,
-                                                       float *doselist); /// Loader function for externally created BB, sample image case (nProj images with filemask)
+                                                       std::vector<float> &doselist); /// Loader function for externally created BB, sample image case (nProj images with filemask)
 
 
     float computedose(kipl::base::TImage<float,2>&img);

@@ -187,7 +187,7 @@ void ReslicerDialog::on_pushButton_preview_clicked()
             }
 
 
-            ui->viewer_slice->set_image(img.GetDataPtr(),img.Dims());
+            ui->viewer_slice->set_image(img.GetDataPtr(),img.dims());
             m_reslicer.m_nFirstXZ=0;
             m_reslicer.m_nLastXZ=static_cast<int>(img.Size(1));
 

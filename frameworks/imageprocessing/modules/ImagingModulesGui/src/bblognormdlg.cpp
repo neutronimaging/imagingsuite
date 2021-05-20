@@ -37,6 +37,8 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
 //    bUseNormROI(true),
 //    bUseNormROIBB(false),
     tau(0.99f),
+    BBroi(4,0UL),
+    doseBBroi(4,0UL),
     bPBvariante(true),
     bSameMask(true),
     bUseManualThresh(false),
@@ -61,8 +63,8 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     blackbodysamplename = "somename";
     flatname="./";
     darkname="./";
-    doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3] = 0;
-    BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
+//    doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3] = 0;
+//    BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
 
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
@@ -303,11 +305,12 @@ void BBLogNormDlg::UpdateParameters(){
 
     ui->roiwidget_doseROI->getROI(doseBBroi);
 
+    dose_roi = doseBBroi;
 
-        dose_roi[0] = doseBBroi[0];
-        dose_roi[1] = doseBBroi[1];
-        dose_roi[2] = doseBBroi[2];
-        dose_roi[3] = doseBBroi[3];
+//        dose_roi[0] = doseBBroi[0];
+//        dose_roi[1] = doseBBroi[1];
+//        dose_roi[2] = doseBBroi[2];
+//        dose_roi[3] = doseBBroi[3];
 
 
     if (ui->checkBox_saveBG->isChecked())
@@ -483,7 +486,7 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
                                              m_Config->mImageInformation.eFlip,
                                              m_Config->mImageInformation.eRotate,
                                              1.0f,
-                                             NULL);
+                                             {});
 //            }
 //            else {
 //                 m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
@@ -505,7 +508,7 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
                 lo=axis[nLo];
                 hi=axis[nHi];
 
-                ui->ob_bb_Viewer->set_image(m_Preview_OBBB.GetDataPtr(), m_Preview_OBBB.Dims(), lo,hi);
+                ui->ob_bb_Viewer->set_image(m_Preview_OBBB.GetDataPtr(), m_Preview_OBBB.dims(), lo,hi);
     }
 
 
@@ -672,7 +675,7 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
                                          m_Config->mImageInformation.eFlip,
                                          m_Config->mImageInformation.eRotate,
                                      1.0f,
-                                     NULL);
+                                      {});
 
 
         float lo,hi;
@@ -687,7 +690,7 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
             lo=axis[nLo];
             hi=axis[nHi];
 
-            ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.Dims(), lo,hi);
+            ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.dims(), lo,hi);
 
     }
 
@@ -801,7 +804,7 @@ void BBLogNormDlg::on_errorButton_clicked()
         kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
         lo=axis[nLo];
         hi=axis[nHi];
-        ui->mask_Viewer->set_image(mymask.GetDataPtr(), mymask.Dims(), lo,hi);
+        ui->mask_Viewer->set_image(mymask.GetDataPtr(), mymask.dims(), lo,hi);
     }
 
 }

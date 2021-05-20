@@ -72,7 +72,10 @@ int Fits2Tif::GetImage(std::list<kipl::base::TImage<float,2> > &imglist, std::st
     kipl::io::eExtensionTypes exttype=kipl::io::GetFileExtensionType(fm);
     kipl::base::TImage<unsigned short> simg;
     kipl::base::TRotate<float> rotate;
-    size_t *crop=config.bCrop ? config.nCrop : NULL;
+    size_t *thecrop=config.bCrop ? config.nCrop : NULL;
+    std::vector<size_t> crop = {thecrop[0], thecrop[1], thecrop[2], thecrop[3]};
+
+//    size_t *crop=config.bCrop ? config.nCrop : NULL;
 
     try {
         switch (exttype) {
@@ -86,11 +89,11 @@ int Fits2Tif::GetImage(std::list<kipl::base::TImage<float,2> > &imglist, std::st
                                                                 config.datatype,config.endian,crop);
                 break;
         case kipl::io::ExtensionFITS: kipl::io::ReadFITS(simg,fname.c_str(),crop); simglist.push_back(simg); break;
-        case kipl::io::ExtensionTIFF: kipl::io::ReadTIFF(simg,fname.c_str(),crop); simglist.push_back(simg); break;
+        case kipl::io::ExtensionTIFF: kipl::io::ReadTIFF(simg,fname.c_str(),*thecrop); simglist.push_back(simg); break;
         case kipl::io::ExtensionTXT :
         case kipl::io::ExtensionXML :
         case kipl::io::ExtensionPNG :
-        case kipl::io::ExtensionMAT :
+//        case kipl::io::ExtensionMAT :
         case kipl::io::ExtensionHDF :
         default : throw kipl::base::KiplException("The chosen file type is not implemented",__FILE__,__LINE__);
         }

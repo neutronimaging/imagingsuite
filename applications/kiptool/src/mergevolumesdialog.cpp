@@ -122,7 +122,7 @@ void MergeVolumesDialog::on_pushButton_loadA_clicked()
         return;
     }
 
-    ui->viewer_dataA->set_image(m_VerticalImgA.GetDataPtr(),m_VerticalImgA.Dims());
+    ui->viewer_dataA->set_image(m_VerticalImgA.GetDataPtr(),m_VerticalImgA.dims());
     on_comboBox_mixorder_currentIndexChanged(ui->comboBox_mixorder->currentIndex());
 
     ImageReader reader;
@@ -150,7 +150,7 @@ void MergeVolumesDialog::on_pushButton_loadB_clicked()
         dlg.exec();
         return;
     }
-    ui->viewer_dataB->set_image(m_VerticalImgB.GetDataPtr(),m_VerticalImgB.Dims());
+    ui->viewer_dataB->set_image(m_VerticalImgB.GetDataPtr(),m_VerticalImgB.dims());
     on_comboBox_mixorder_currentIndexChanged(ui->comboBox_mixorder->currentIndex());
 }
 
@@ -213,19 +213,19 @@ void MergeVolumesDialog::on_comboBox_result_currentIndexChanged(int index)
     case 0 :
         logger(kipl::logging::Logger::LogMessage,"Display local vertical");
         ui->viewer_result->set_image(m_VerticalImgLocalResult.GetDataPtr(),
-                                     m_VerticalImgLocalResult.Dims());
+                                     m_VerticalImgLocalResult.dims());
         break; // Local vertical
     case 1 :
         logger(kipl::logging::Logger::LogMessage,"Display full vertical");
         ui->viewer_result->set_image(m_VerticalImgResult.GetDataPtr(),
-                                     m_VerticalImgResult.Dims());
+                                     m_VerticalImgResult.dims());
         break; // Full vertical
     case 2 :
         logger(kipl::logging::Logger::LogMessage,"Display mixed");
 
         logger(kipl::logging::Logger::LogMessage,"Display local vertical");
         ui->viewer_result->set_image(m_HorizontalSliceResult.GetDataPtr(),
-                                     m_HorizontalSliceResult.Dims());
+                                     m_HorizontalSliceResult.dims());
 
         break; // Mixed slice
     }
@@ -269,9 +269,10 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
     }
 
    if (m_VerticalImgA.Size(0)==m_VerticalImgB.Size(0)) {
-        size_t dims[2]={static_cast<size_t>(m_VerticalImgA.Size(0)),
-                        static_cast<size_t>(m_merger.m_nStartOverlapA+m_merger.m_nLastB+1-m_merger.m_nFirstA-m_merger.m_nFirstB)};
-        m_VerticalImgResult.Resize(dims);
+//        size_t dims[2]={static_cast<size_t>(m_VerticalImgA.Size(0)),
+//                        static_cast<size_t>(m_merger.m_nStartOverlapA+m_merger.m_nLastB+1-m_merger.m_nFirstA-m_merger.m_nFirstB)};
+        std::vector<size_t> dims ={static_cast<size_t>(m_VerticalImgA.Size(0)),
+                                   static_cast<size_t>(m_merger.m_nStartOverlapA+m_merger.m_nLastB+1-m_merger.m_nFirstA-m_merger.m_nFirstB)};
         m_VerticalImgResult=0.0f;
         memcpy(m_VerticalImgResult.GetDataPtr(),
             m_VerticalImgA.GetDataPtr(),
@@ -301,8 +302,9 @@ void MergeVolumesDialog::on_pushButton_TestMix_clicked()
 
             idx_stop=m_VerticalImgResult.Size(1) < idx_stop  ? m_VerticalImgResult.Size(1) : idx_stop;
 
-            size_t dims[2]={m_VerticalImgResult.Size(0),static_cast<size_t>(idx_stop-idx_start)};
-            m_VerticalImgLocalResult.Resize(dims);
+//            size_t dims[2]={m_VerticalImgResult.Size(0),static_cast<size_t>(idx_stop-idx_start)};
+            std::vector <size_t> dims = {m_VerticalImgResult.Size(0),static_cast<size_t>(idx_stop-idx_start)};
+            m_VerticalImgLocalResult.resize(dims);
             memcpy(m_VerticalImgLocalResult.GetDataPtr(),
                    m_VerticalImgResult.GetLinePtr(idx_start),
                    m_VerticalImgLocalResult.Size()*sizeof(float));

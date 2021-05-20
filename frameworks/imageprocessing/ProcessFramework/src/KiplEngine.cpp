@@ -90,7 +90,7 @@ int KiplEngine::Run(kipl::base::TImage<float,3> * img)
 		msg.str("");
 		msg<<"Execution times :\n";
         for (auto &module : m_ProcessList) {
-            msg<<"Module "<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
+            msg<<"Module "<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->execTime()<<"s\n";
 		}
 		logger(kipl::logging::Logger::LogMessage,msg.str());
 	}
@@ -310,7 +310,7 @@ kipl::base::TImage<float,3> KiplEngine::RunPreproc(kipl::base::TImage<float,3> *
             if (moduleName==sLastModule)
                 break;
 
-            msg<<"Module "<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->ExecTime()<<"s\n";
+            msg<<"Module "<<module->GetModule()->ModuleName()<<": "<<module->GetModule()->execTime()<<"s\n";
         }
         logger(kipl::logging::Logger::LogMessage,msg.str());
     }

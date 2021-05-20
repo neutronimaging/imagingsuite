@@ -97,7 +97,7 @@ void WaveletRingCleanDlg::ApplyParameters()
     std::map<string, string> parameters;
     UpdateParameterList(parameters);
 
-    kipl::base::TImage<float,3> img(m_Projections.Dims());
+    kipl::base::TImage<float,3> img(m_Projections.dims());
 
 
     const size_t N=512;
@@ -125,7 +125,7 @@ void WaveletRingCleanDlg::ApplyParameters()
     }
 
 
-    m_ProcessedImg.Resize(m_OriginalImg.Dims());
+    m_ProcessedImg.resize(m_OriginalImg.dims());
     memcpy(m_ProcessedImg.GetDataPtr(),img.GetDataPtr(), img.Size()*sizeof(float));
 
 

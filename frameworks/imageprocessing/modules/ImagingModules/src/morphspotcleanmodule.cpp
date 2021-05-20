@@ -120,7 +120,7 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::ProcessCore(kipl::base::TI
     for (size_t i=0; (i<Nslices && (updateStatus(float(i)/Nslices,"Processing MorphSpot cleaning")==false) ); i++)
     {
 
-        slice=kipl::base::ExtractSlice(img,i,kipl::base::ImagePlaneXY,nullptr);
+        slice=kipl::base::ExtractSlice(img,i,kipl::base::ImagePlaneXY);
 
             try {
                 cleaner.process(slice,m_fThreshold, m_fSigma);
@@ -151,10 +151,10 @@ int IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::ProcessCore(kipl::base::TI
     return 0;
 }
 
-kipl::base::TImage<float,2> IMAGINGMODULESSHARED_EXPORT MorphSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm)
+pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> MorphSpotCleanModule::DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm, bool removeBias)
 {
     ImagingAlgorithms::MorphSpotClean cleaner;
     cleaner.setCleanMethod(dm,m_eCleanMethod);
-    return cleaner.detectionImage(img);
+    return cleaner.detectionImage(img,removeBias);
 }
 

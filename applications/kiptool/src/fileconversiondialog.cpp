@@ -56,9 +56,9 @@ void FileConversionDialog::on_pushButton_GetSkipList_clicked()
 {
     FindSkipListDialog dlg;
 
-    std::list<FileSet> loaderlist=ui->ImageLoaderConfig->GetList();
+    std::vector<FileSet> loaderlist=ui->ImageLoaderConfig->getList();
 
-    std::list<std::string> filelist=BuildFileList(loaderlist);
+    std::vector<std::string> filelist=BuildFileList(loaderlist);
 
     int res=dlg.exec(filelist);
 
@@ -101,7 +101,7 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     filecnt=0;
     flist.clear();
 
-    std::list<FileSet> ll=ui->ImageLoaderConfig->GetList();
+    std::vector<FileSet> ll=ui->ImageLoaderConfig->getList();
 
     if (ll.empty()==true)
     {
@@ -124,9 +124,10 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     }
 
     std::string skipstring=ui->lineEdit_SkipList->text().toStdString();
-    std::list<int> skiplist;
+    std::vector<int> skiplist;
 
-    kipl::strings::String2List(skipstring,skiplist);
+    kipl::strings::string2vector(skipstring,skiplist);
+
 
     std::map<float,std::string> plist=BuildProjectionFileList(ll,skiplist,
                                                               ui->comboBox_ScanOrder->currentIndex(),
@@ -233,31 +234,33 @@ int FileConversionDialog::ConvertImages()
     std::ostringstream msg,errmsg;
 
     size_t roi[4]={0,0,1,1};
-    size_t *crop=nullptr;
+//    size_t *crop=nullptr;
+    std::vector<size_t> crop;
     if (ui->widgetROI->isChecked() == true) {
         logger.message("using ROI");
         ui->widgetROI->getROI(roi);
-        crop = roi;
+        crop = {roi[0], roi[1], roi[2], roi[3]};
     }
 
     const bool bCollate = ui->groupBox_combineImages->isChecked();
     const int nCollate   = bCollate ? ui->spinCollationSize->value() : 1;
 
-    size_t dims[3];
+//    size_t dims[3];
+    std::vector<size_t> dims;
 
-    if (crop)
+    if (!crop.empty())
     {
         dims[0]=crop[2]-crop[0];
         dims[1]=crop[3]-crop[1];
     }
     else
     {
-        imgreader.GetImageSize(flist.front(),1.0f,dims);
+        dims = imgreader.imageSize(flist.front(),1.0f);
     }
     dims[2]=nCollate;
 
     if (bCollate==true)
-        img3d.Resize(dims);
+        img3d.resize(dims);
 
     ImagingAlgorithms::AverageImage avgimg;
     errmsg.str("");
@@ -387,7 +390,7 @@ void FileConversionDialog::on_spinCollationSize_valueChanged(int arg1)
 {
    std::ostringstream msg;
 
-   std::list<FileSet> ll=ui->ImageLoaderConfig->GetList();
+   std::vector<FileSet> ll=ui->ImageLoaderConfig->getList();
 
    if (ll.empty()==true) {
        logger(logger.LogWarning,"Empty image loader.");
@@ -395,9 +398,9 @@ void FileConversionDialog::on_spinCollationSize_valueChanged(int arg1)
    }
 
    std::string skipstring=ui->lineEdit_SkipList->text().toStdString();
-   std::list<int> skiplist;
+   std::vector<int> skiplist;
 
-   kipl::strings::String2List(skipstring,skiplist);
+   kipl::strings::string2vector(skipstring,skiplist);
 
    std::map<float,std::string> plist=BuildProjectionFileList(ll,
                                                              skiplist,
@@ -434,7 +437,7 @@ void FileConversionDialog::on_ImageLoaderConfig_readerListModified()
 {
     std::ostringstream msg;
 
-    std::list<FileSet> ll=ui->ImageLoaderConfig->GetList();
+    std::vector<FileSet> ll=ui->ImageLoaderConfig->getList();
     kipl::base::TImage<float,2> img;
     if (ll.empty()==true) {
         logger(logger.LogWarning,"Empty image loader.");

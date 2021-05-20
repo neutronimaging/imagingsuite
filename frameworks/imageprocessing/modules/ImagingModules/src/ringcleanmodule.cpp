@@ -67,12 +67,12 @@ int RingCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std
     }
 
     kipl::base::TImage<float,2> slice;
-    slice=kipl::base::ExtractSlice(img,0,plane,nullptr);
+    slice=kipl::base::ExtractSlice(img,0,plane);
 
-    m_StripeFilter = new ImagingAlgorithms::StripeFilter(slice.Dims(),wname,scale,sigma);
+    m_StripeFilter = new ImagingAlgorithms::StripeFilter(slice.dims(),wname,scale,sigma);
 
     for (size_t i=0; i<Nslices; i++) {
-        slice=kipl::base::ExtractSlice(img,i,plane,nullptr);
+        slice=kipl::base::ExtractSlice(img,i,plane);
         m_StripeFilter->process(slice,op);
         kipl::base::InsertSlice(slice,img,i,plane);
     }

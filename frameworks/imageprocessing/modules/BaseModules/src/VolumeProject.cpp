@@ -57,7 +57,7 @@ int VolumeProject::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::
 	case ProjectMax: 	 proj=MaxProject(img); break;
 	}
 
-	kipl::io::WriteTIFF32(proj,m_sFileName.c_str());
+    kipl::io::WriteTIFF(proj,m_sFileName.c_str(), kipl::base::Float32);
 
 	return 0;
 }
@@ -69,7 +69,7 @@ kipl::base::TImage<float,2> VolumeProject::MeanProject(kipl::base::TImage<float,
 
 	ptrdiff_t slices=static_cast<ptrdiff_t>(img.Size(2));
 
-	kipl::base::TImage<float,2> proj(img.Dims());
+    kipl::base::TImage<float,2> proj(img.dims());
 	float *pProj=proj.GetDataPtr();
 	proj=0.0f;
 

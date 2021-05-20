@@ -23,7 +23,9 @@ public:
 
     virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters);
     virtual std::map<std::string, std::string> GetParameters();
-    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm);
+//    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm);
+    pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm, bool removeBias);
+
 
 protected:
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
