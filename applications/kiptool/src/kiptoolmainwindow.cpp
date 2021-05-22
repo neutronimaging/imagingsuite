@@ -15,6 +15,7 @@
 #include <base/textractor.h>
 #include <io/DirAnalyzer.h>
 //#include <datasetbase.h>
+#include <fileset.h>
 #include <strings/filenames.h>
 #include <stltools/stlvecmath.h>
 
@@ -22,7 +23,7 @@
 #include "ui_kiptoolmainwindow.h"
 #include "confighistorydialog.h"
 #include "genericconversion.h"
-//#include "reslicerdialog.h"
+#include "reslicerdialog.h"
 #include "mergevolumesdialog.h"
 #include "fileconversiondialog.h"
 #include "processdialog.h"
@@ -887,10 +888,9 @@ void KipToolMainWindow::on_actionGeneric_file_conversion_triggered()
 
 void KipToolMainWindow::on_actionReslice_images_triggered()
 {
-    // To re set once reslicer dialog can build
-//    ReslicerDialog dlg;
+    ReslicerDialog dlg;
 
-//    dlg.exec();
+    dlg.exec();
 }
 
 void KipToolMainWindow::on_actionMerge_volumes_triggered()

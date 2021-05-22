@@ -1,7 +1,10 @@
 //<LICENSE>
 
-#ifndef DATASETBASE_H
-#define DATASETBASE_H
+//#ifndef DATASETBASE_H
+//#define DATASETBASE_H
+
+#ifndef FILESET_H
+#define FILESET_H
 
 #include <string>
 #include <list>

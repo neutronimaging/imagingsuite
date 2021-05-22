@@ -6,7 +6,8 @@
 #include <QDialog>
 
 #include <logging/logger.h>
-#include <datasetbase.h>
+//#include <datasetbase.h>
+#include <fileset.h>
 
 #include "Reslicer.h"
 

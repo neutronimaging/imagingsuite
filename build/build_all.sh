@@ -26,3 +26,8 @@ $REPOSPATH/build/build_applications_muhrec.sh
 # $REPOSPATH/build_CLI_framesplitter.sh
 #./build_CLI_muhrec.sh
 #../../ImagingQuality/build/build_applications_NIQA.sh
+
+
+#for kiptool:
+$REPOSPATH/build/build_frameworks_imageprocessing.sh
+$REPOSPATH/build/build_applications_kiptool.sh

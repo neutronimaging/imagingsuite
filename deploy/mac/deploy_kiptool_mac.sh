@@ -131,6 +131,9 @@ pwd
 
 cd $DEST/Contents/MacOS
 
+echo @executable_path
+echo executable_path
+
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib KipTool
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib KipTool
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib KipTool
@@ -178,7 +181,7 @@ install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frame
 
 # ReaderConfigGUI
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReaderGUI.1.0.0.dylib
-install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib libReaderGUI.1.0.0.dylib
+install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib libReaderGUI.1.0.0.dyl
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libReaderGUI.1.0.0.dylib
 
 #nexus_related

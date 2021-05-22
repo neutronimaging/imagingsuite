@@ -81,7 +81,7 @@ SOURCES +=  ../../src/main.cpp\
             ../../src/confighistorydialog.cpp \
             ../../src/genericconversion.cpp \
     ../../src/Reslicer.cpp \
-#    ../../src/reslicerdialog.cpp \
+    ../../src/reslicerdialog.cpp \
     ../../src/mergevolume.cpp \
     ../../src/mergevolumesdialog.cpp \
     ../../src/ImagingToolConfig.cpp \
@@ -97,7 +97,7 @@ HEADERS  += ../../src/kiptoolmainwindow.h \
             ../../src/confighistorydialog.h \
             ../../src/genericconversion.h \
     ../../src/Reslicer.h \
-#    ../../src/reslicerdialog.h \
+    ../../src/reslicerdialog.h \
     ../../src/mergevolume.h \
     ../../src/mergevolumesdialog.h \
     ../../src/ImagingToolConfig.h \
@@ -110,7 +110,7 @@ HEADERS  += ../../src/kiptoolmainwindow.h \
 FORMS    += ../../src/kiptoolmainwindow.ui \
             ../../src/confighistorydialog.ui \
             ../../src/genericconversion.ui \
-#    ../../src/reslicerdialog.ui \
+    ../../src/reslicerdialog.ui \
     ../../src/mergevolumesdialog.ui \
     ../../src/fileconversiondialog.ui \
     ../../src/loadimagedialog.ui \
