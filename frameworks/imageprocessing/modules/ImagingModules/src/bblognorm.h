@@ -3,42 +3,32 @@
 #define BBLOGNORM_H
 
 #include "ImagingModules_global.h"
-
 #include "imagingmodules.h"
 #include <logging/logger.h>
 #include <base/timage.h>
 #include <math/LUTCollection.h>
-
 #include <ReferenceImageCorrection.h>
 #include <KiplProcessModuleBase.h>
-
 #include <KiplProcessConfig.h>
-
-//#include <PreprocModuleBase.h>
-
-//#include "PreprocEnums.h"
 #include <averageimage.h>
 
-//#include "../include/NormPlugins.h"
 
 class IMAGINGMODULESSHARED_EXPORT BBLogNorm: public KiplProcessModuleBase {
 public:
     BBLogNorm(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~BBLogNorm();
 
-//    virtual int Configure(std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
     virtual int Configure(KiplProcessConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls SetRoi and PrepareBBData
     virtual int ConfigureDLG(KiplProcessConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and does not call PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
     virtual void LoadReferenceImages(const std::vector<size_t> &roi);/// load all images that are needed for referencing in the current roi
     virtual bool SetROI(const std::vector<size_t> &roi);/// set the current roi to be processed and calls LoadReferenceImages
-
-    virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
-    virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
+    virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff); /// Process 2D float images
+    virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff); /// Process 3D float images
     virtual void SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat); /// set references images
     virtual float GetInterpolationError(kipl::base::TImage<float,2> &mask); /// computes and returns interpolation error and mask on OB image with BBs
-    virtual kipl::base::TImage<float, 2> GetMaskImage();
-    virtual void PrepareBBData(); /// read all data (entire projection) that I need and prepare them for the BB correction, it is now called in LoadReferenceImages
+    virtual kipl::base::TImage<float, 2> GetMaskImage(); /// get BB mask image
+    virtual void PrepareBBData(); /// read all data (entire projection) that are needed and prepare them for the BB correction, called from LoadReferenceImages
     virtual void LoadExternalBBData(const std::vector<size_t> &roi);  /// load BB images pre-processed elsewhere
 
 protected:
@@ -49,17 +39,15 @@ protected:
     std::string darkname; /// name mask for DC image
     std::string blackbodyname; /// name mask for OB image with BBs
     std::string blackbodysamplename; /// name mask for sample image with BBs
-
     std::string blackbodyexternalname; /// name of the externally computed background for the OB
     std::string blackbodysampleexternalname; /// names of the externally computed backgrounds for the sample
-
     std::string pathBG; /// path for saving BGs
     std::string flatname_BG; /// filename for saving the open beam BG
     std::string filemask_BG; /// filemask for saving the computed sample BGs
+    std::string externalmaskname; /// filename of the external mask
 
     size_t nBBextCount; /// number of preprocessed BB images;
     size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images
-
     size_t nOBCount; /// number of OB images
     size_t nOBFirstIndex; /// first index in filename for OB images
     size_t nDCCount; /// number of DC images
@@ -75,7 +63,6 @@ protected:
     float fBlackDoseSample; /// dose values in black body images with sample in BB dose roi
     float fdarkBBdose; /// dose value in dark current images within BB dose roi
     float fFlatBBdose; /// dose value in open beam image within BB dose roi
-
     float tau; /// mean pattern transmission, default 0.97
     float thresh; /// manual threshold
 
@@ -90,13 +77,9 @@ protected:
     bool bPBvariante; /// boolean value to enable the full formulation of the correction by PB. It is actually the only one used
     bool bSaveBG; /// boolean value to enable the option of saving the computed BGs
     bool bExtSingleFile; /// boolean value on the use of a single file for sample background correction
+    bool bUseExternalMask; /// boolean value on the use of externally loaded mask
 
-/*    size_t nNormRegion[4];
-    size_t nOriginalNormRegion[4];
-    size_t BBroi[4]; /// region of interest to be set for BB segmentation
-    size_t doseBBroi[4];*/ /// region of interest for dose computation in BB images
-//    size_t dose_roi[4]; /// region of interest for dose coputation in projection images
-    std::vector<size_t> dose_roi;
+    std::vector<size_t> dose_roi; /// region of interest for dose normalization
     std::vector<size_t> nNormRegion;
     std::vector<size_t> nOriginalNormRegion;
     std::vector<size_t> BBroi; /// region of interest to be set for BB segmentation
@@ -110,15 +93,14 @@ protected:
     float flastAngle; /// last angle for BB sample image, used for BB interpolation option
     float fScanArc[2]; /// first and last angle of projections (to be used for tomo)
 
-    float *ob_bb_param;
-    float *sample_bb_param;
+    float *ob_bb_param; /// interpolation parameters for OB BB images
+    float *sample_bb_param; /// interpolation parameters for sample BB images
 
     int GetnProjwithAngle(float angle); /// compute the index of projection data at a given angle
 
-
-    kipl::base::TImage<float,2> mMaskBB;
-    kipl::base::TImage<float,2> mdark;
-    kipl::base::TImage<float,2 > mflat;
+    kipl::base::TImage<float,2> mMaskBB; /// mask Image
+    kipl::base::TImage<float,2> mdark; /// DC image
+    kipl::base::TImage<float,2 > mflat; /// OB image
 
     virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname,
                                                         int firstIndex,
@@ -151,7 +133,6 @@ protected:
                                                        int firstIndex,
                                                        std::vector<float> &doselist); /// Loader function for externally created BB, sample image case (nProj images with filemask)
 
-
     float computedose(kipl::base::TImage<float,2>&img);
 
     void PreparePolynomialInterpolationParameters(); /// get the interpolation parameters for the polynomial case
@@ -159,7 +140,6 @@ protected:
 
 private:
     int m_nWindow; /// apparentely not used
-   // kipl::interactors::InteractionBase *m_Interactor;
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod; /// method chosen for averaging Referencing images
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;/// method chosen for Referencing (BBLogNorm or LogNorm, only BBLogNorm is implemented at the moment)
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions; /// options for BB image reference correction (Interpolate, Average, OneToOne)
