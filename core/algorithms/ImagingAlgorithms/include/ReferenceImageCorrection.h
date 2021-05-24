@@ -57,11 +57,6 @@ public:
     ReferenceImageCorrection(kipl::interactors::InteractionBase *interactor = nullptr);
     ~ReferenceImageCorrection();
 
-//    void LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
-//            std::string dcname, size_t firstdc, size_t dccnt,
-//            std::string bbname, size_t firstbb, size_t bbcnt,
-//            size_t *roi,
-//            size_t *doseroi);
 
     void SetReferenceImages(kipl::base::TImage<float,2> *ob,
             kipl::base::TImage<float,2> *dc,
@@ -87,7 +82,7 @@ public:
     void SetRadius(size_t x) {radius=x;} ///< set the radius used to define subset of segmented BBs
     void SetTau (float x) {tau=x;} ///< set value of tau
     void setDiffRoi (const std::vector<int> &roi) { m_diffBBroi = roi;} ///< set diffroi, which is the difference between BBroi and the Projection roi -- it should be now only the BBroi
-    void SetPBvariante (bool x) {bPBvariante=x; } ///< set bool value for computation of pierre's variante. at the moment it is hidden from the Gui and it is intended to be set as dafault true
+    void SetPBvariante (bool x) {bPBvariante=x;} ///< set bool value for computation of pierre's variante. at the moment it is hidden from the Gui and it is intended to be set as dafault true
     void SetMinArea (size_t x) {min_area=x;} ///< set min area for BB segmentation
 
     void SetInterpolationOrderX(eInterpOrderX eim_x);
@@ -127,8 +122,7 @@ public:
     void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 2> &bb_sample_ext, float &dose, float &dose_s); /// set the BB externally computed images and corresponding doses, case of single file also for the sample background
     void SetComputeMinusLog(bool value) {m_bComputeLogarithm = value;}
     void SaveBG(bool value, string path, string obname, string filemask);
-    void SetInteractor(kipl::interactors::InteractionBase *interactor);
-
+    void SetInteractor(kipl::interactors::InteractionBase *interactor);    
 
 protected:
     void PrepareReferences(); /// old version with references image preparation, without BB
@@ -165,7 +159,6 @@ protected:
     std::string flatname_BG; /// filename for saving the open beam BG
     std::string filemask_BG; /// filemask for saving the computed sample BGs
 
-
     kipl::base::TImage<float,2> m_OpenBeam;
     kipl::base::TImage<float,2> m_OpenBeamforBB;
 	kipl::base::TImage<float,2> m_DarkCurrent;
@@ -174,12 +167,9 @@ protected:
     kipl::base::TImage<float,2> m_BB_sample_Interpolated;
     kipl::base::TImage<float,2> m_DoseBBsample_image;
     kipl::base::TImage<float,2> m_DoseBBflat_image;
-
     kipl::base::TImage<float,2> m_OB_BB_ext; /// externally computed OB image with BBs
     kipl::base::TImage<float,3> m_BB_sample_ext; /// externally computed sample image with BBs
     kipl::base::TImage<float,2> m_BB_slice_ext; /// externally computed slice of sample image with BBs
-
-
 
 	float m_fOpenBeamDose;
     float m_fDarkDose;
@@ -202,9 +192,7 @@ protected:
 
     eInterpOrderX m_IntMeth_x;
     eInterpOrderY m_IntMeth_y;
-
     eInterpMethod m_InterpMethod;
-
 
     int a,b,c,d,e,f;                     /// weights for interpolation scheme, used to set different combined order
 
@@ -225,8 +213,6 @@ protected:
     std::map<std::pair<int, int>, float> spline_ob_values;     /// map to be used for interpolation with splines and ob image. should be in principle the same number of images with BB, i start now with 1
     std::map<std::pair<int, int>, float> spline_sample_values; /// map to be used for interpolation with splines and sample image
 
-
-
     kipl::interactors::InteractionBase *m_Interactor;
     bool updateStatus(float val, std::string msg);
 };
@@ -234,33 +220,23 @@ protected:
 }
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod erm);
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo);
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX eim_x);
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY eim_y);
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eint);
 
 

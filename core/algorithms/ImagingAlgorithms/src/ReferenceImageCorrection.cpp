@@ -58,7 +58,6 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     m_nBlackBodyROI(4,0UL),
     m_diffBBroi(4,0),
     m_nDoseBBRoi(4,0UL),
-
     m_nBBimages(0),
     m_nProj(0),
     angles(4,0UL),
@@ -173,19 +172,18 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         if (bSaveBG){
                 std::string fname=pathBG+"/"+flatname_BG;
                 kipl::strings::filenames::CheckPathSlashes(fname,false);
-                kipl::io::WriteTIFF(m_OB_BB_Interpolated,fname,kipl::base::Float32); // seem correct
+                kipl::io::WriteTIFF(m_OB_BB_Interpolated,fname,kipl::base::Float32); // seems correct
         }
 
         PrepareReferencesBB();
 	}
-
-    if (useExtBB){
+    else if (useExtBB){
         m_bHaveExternalBlackBody = true;
         bExtSingleFile = useSingleExtBB;
         PrepareReferencesExtBB();
     }
-
-    if(!useBB && !useExtBB) {
+    else
+    {
         PrepareReferences(); // original way
     }
 
@@ -1718,13 +1716,14 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     norm -=dark;
     norm /= (flat-=dark);
 
+
     try{
         SegmentBlackBody(norm, mask);
-//        SegmentBlackBody(norm, normdc, mask, values); // try for thin plates spline
     }
     catch (...) {
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
+
 
 //    kipl::io::WriteTIFF(mask,"mask.tif",kipl::base::Float32);
 
@@ -1787,9 +1786,7 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAndMask(kipl::b
 float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask, float &error)
 {
 
-
     // 1. normalize image
-
     kipl::base::TImage<float, 2> norm(bb.dims());
     kipl::base::TImage<float, 2> normdc(bb.dims());
     memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
@@ -1808,7 +1805,6 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
 
-
     kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
@@ -1818,32 +1814,25 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
 
     float * param = new float[6];
     float myerror;
-
     param = ComputeInterpolationParameters(mask,BB_DC,myerror);
     error = myerror;
-
-
     return param;
 
 }
 
-float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask){
-
+float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask)
+{
     kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
-
-//    kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
-//    interpolated_BB = 0.0f;
-
     float * param = new float[6];
     param = ComputeInterpolationParameters(mask,BB_DC);
 
     return param;
-
 }
 
-void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
+void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB)
+{
     angles[0] = ang[0];
     angles[1] = ang[1];
     angles[2] = ang[2];
@@ -1851,7 +1840,6 @@ void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
 
     m_nProj = nProj; // to set eventually around where it is used
     m_nBBimages = nBB;
-
 
 }
 
@@ -1885,9 +1873,10 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
         memcpy(sample_bb_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nBBimages);
         sample_bb_interp_parameters = InterpolateSplineGeneric(sample_bb_parameters, nBBs);
 
-
-        for (size_t i=0; i<m_nProj; i++){
-            for (size_t j=0; j<(nBBs+3); j++){
+        for (size_t i=0; i<m_nProj; i++)
+        {
+            for (size_t j=0; j<(nBBs+3); j++)
+            {
                 sample_bb_interp_parameters[j+i*(nBBs+3)] *= (dosesamplelist[i]/tau);
             }
         }
@@ -1895,26 +1884,19 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
         break;
     }
     case(OneToOne) : {
-
-
-        if (m_nBBimages!=m_nProj){
+        if (m_nBBimages!=m_nProj)
+        {
             throw ImagingException("The number of BB images is not the same as the number of Projection images",__FILE__, __LINE__);
         }
 
-
-
-        for (size_t i=0; i<m_nProj; i++){
-
-            for (size_t j=0; j<(nBBs+3); j++){          
+        for (size_t i=0; i<m_nProj; i++)
+        {
+            for (size_t j=0; j<(nBBs+3); j++)
+            {
                 sample_parameter[j+i*(nBBs+3)] *= (dosesamplelist[i]/tau);
             }
         }
-
-
         memcpy(sample_bb_interp_parameters, sample_parameter, sizeof(float)*(nBBs+3)*m_nProj);
-
-
-
         break;
     }
     case(Average) : {
@@ -1925,10 +1907,11 @@ void ReferenceImageCorrection::SetSplinesParameters(float *ob_parameter, float *
 
 //        sample_bb_interp_parameters = ReplicateParameters(sample_bb_parameters, nProj);
 
-        for (size_t i=0; i<m_nProj; ++i){
-
+        for (size_t i=0; i<m_nProj; ++i)
+        {
             memcpy(sample_bb_parameters, temp_parameters, sizeof(float)*(nBBs+3));
-            for (size_t j=0; j<(nBBs+3); ++j){
+            for (size_t j=0; j<(nBBs+3); ++j)
+            {
                 sample_bb_parameters[j] *= (dosesamplelist[i]/tau);
             }
 
@@ -2875,7 +2858,6 @@ void ReferenceImageCorrection::SetExternalBBimages(kipl::base::TImage<float, 2> 
     memcpy(m_BB_sample_ext.GetDataPtr(), bb_sample_ext.GetDataPtr(), sizeof(float)*bb_sample_ext.Size());
 
     fdoseOB_ext = dose;
-
     fdose_ext_list = doselist;
 
 }
@@ -2889,9 +2871,8 @@ bool ReferenceImageCorrection::updateStatus(float val, std::string msg)
     return false;
 }
 
+
 }
-
-
 
 
 

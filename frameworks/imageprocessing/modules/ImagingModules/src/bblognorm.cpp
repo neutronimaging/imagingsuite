@@ -59,7 +59,6 @@ IMAGINGMODULESSHARED_EXPORT BBLogNorm::BBLogNorm(kipl::interactors::InteractionB
     m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
     m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial)
 {
-
     doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3]=0;
     dose_roi[0] = dose_roi[1] = dose_roi[2] = dose_roi[3]=0;
     BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
@@ -184,31 +183,64 @@ int IMAGINGMODULESSHARED_EXPORT BBLogNorm::Configure(KiplProcessConfig config, s
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
 
     dose_roi = nOriginalNormRegion;
-//    memcpy(nOriginalNormRegion,dose_roi,4*sizeof(size_t));
-    if ( m_Config.mImageInformation.bUseROI) {
-        msg<<"using image roi";
+
+    if ( m_Config.mImageInformation.bUseROI)
+    {
+        msg<<"using image roi with coordinates: "
+          <<  m_Config.mImageInformation.nROI[0] << " "
+          <<  m_Config.mImageInformation.nROI[1] << " "
+          <<  m_Config.mImageInformation.nROI[2] << " "
+          <<  m_Config.mImageInformation.nROI[3] << " ";
         logger(kipl::logging::Logger::LogDebug,msg.str());
+    }
+    else
+    {
+        msg<<"not using image roi";
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+    }
+
+    if (bUseExternalMask)
+    {
+        msg<<"using external BB mask";
+        logger(kipl::logging::Logger::LogDebug,msg.str());
+        ImageReader reader;
+        if (m_Config.mImageInformation.bUseROI)
+        {
+            mMaskBB = reader.Read(externalmaskname,
+                              m_Config.mImageInformation.eFlip,
+                              m_Config.mImageInformation.eRotate,
+                              1.0f,
+                              m_Config.mImageInformation.nROI);
+        }
+        else
+        {
+            mMaskBB = reader.Read(externalmaskname,
+                              m_Config.mImageInformation.eFlip,
+                              m_Config.mImageInformation.eRotate,
+                              1.0f,
+                              {});
+        }
+
+
     }
 
     size_t roi_bb_x= BBroi[2]-BBroi[0];
     size_t roi_bb_y = BBroi[3]-BBroi[1];
 
-    if (roi_bb_x>0 && roi_bb_y>0) {}
+    if (roi_bb_x>0 && roi_bb_y>0 && !bUseExternalMask) {}
     else {
-//        memcpy(BBroi,m_Config.mImageInformation.nROI, sizeof(size_t)*4);  // use the same as projections in case.. if i don't I got an Exception
         throw ImagingException("No roi is selected for BB selection. This is necessary for creating the BB mask.",__FILE__, __LINE__);
     }
 
     //check on dose BB roi size
     if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
         bUseNormROIBB=false;
-//        throw ImagingException("No roi is selected for dose BB correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
     }
     else {
         bUseNormROIBB = true;
     }
 
-    if ((dose_roi[2]-dose_roi[0])<=0 || (dose_roi[3]-dose_roi[1])<=0 ){
+    if ((dose_roi[2]-dose_roi[0])<=0 || (dose_roi[3]-dose_roi[1])<=0){
         bUseNormROI=false;
         throw ImagingException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
     }
@@ -575,7 +607,7 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareBBData(){
 
 
 //    int diffroi[4] = {int(BBroi[0]), int(BBroi[1]), int(BBroi[2]), int(BBroi[3])};
-     std::vector<int> diffroi(BBroi.begin(),BBroi.end());
+    std::vector<int> diffroi(BBroi.begin(),BBroi.end());
 
     m_corrector.setDiffRoi(diffroi);
     m_corrector.SetRadius(radius);
@@ -643,26 +675,52 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PreparePolynomialInterpolationParam
     kipl::base::TImage<float,2> obmask(bb.dims());
     std::stringstream msg;
 
-    try {
-        bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+    if (!bUseExternalMask)
+    {
+        try {
+            bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
+        }
+        catch (ModuleException &e) {
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw ModuleException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+        }
+
+        catch(ImagingException &e){
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw ImagingException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+        }
+
+        catch(kipl::base::KiplException &e){
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw kipl::base::KiplException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+        }
     }
-    catch (ModuleException &e) {
-        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
-        logger(kipl::logging::Logger::LogDebug,msg.str());
-        throw ModuleException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    else {
+        try {
+            bb_ob_param = m_corrector.PrepareBlackBodyImagewithMask(dark, bb, mMaskBB);
+        }
+        catch (ModuleException &e) {
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters with external BB mask. Please check your inputs." << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw ModuleException("Failed to compute bb_ob_parameters with external BB mask. Please check your inputs.", __FILE__,__LINE__);
+        }
+
+        catch(ImagingException &e){
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters with external BB mask. Please check your inputs." << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw ImagingException("Failed to compute bb_ob_parameters with external BB mask. Please check your inputs.", __FILE__,__LINE__);
+        }
+
+        catch(kipl::base::KiplException &e){
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters with external BB mask. Please check your inputs." << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw kipl::base::KiplException("Failed to compute bb_ob_parameters with external BB mask. Please check your inputs.", __FILE__,__LINE__);
+        }
     }
 
-    catch(ImagingException &e){
-        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
-        logger(kipl::logging::Logger::LogDebug,msg.str());
-        throw ImagingException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
-    }
-
-    catch(kipl::base::KiplException &e){
-        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
-        logger(kipl::logging::Logger::LogDebug,msg.str());
-        throw kipl::base::KiplException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
-    }
 
 
 
@@ -724,18 +782,20 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PreparePolynomialInterpolationParam
                      // in the first case compute the mask again (should not be necessary in well acquired datasets) however this requires that the first image (or at least one) of sample image with BB has the same angle of the sample image without BB
                      if (i==0) {
 
-                         if (bSameMask){
-                            mMaskBB = obmask;
-                            temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb, mMaskBB);
+                         if (!bUseExternalMask)
+                         {
+                             if (bSameMask){
+                                mMaskBB = obmask;
+                                temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb, mMaskBB);
+                             }
+                             else {
+                                 sample = BBLoader(m_Config.mImageInformation.sSourceFileMask, m_Config.mImageInformation.nFirstFileIndex+index, 1, 1.0f,fdarkBBdose, dosesample);
+                                 kipl::base::TImage<float,2> mask(sample.dims());
+                                 mask = 0.0f;
+                                 temp_parameters = m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask);
+                                 mMaskBB = mask; // or memcpy
+                             }
                          }
-                         else {
-                             sample = BBLoader(m_Config.mImageInformation.sSourceFileMask, m_Config.mImageInformation.nFirstFileIndex+index, 1, 1.0f,fdarkBBdose, dosesample);
-                             kipl::base::TImage<float,2> mask(sample.dims());
-                             mask = 0.0f;
-                             temp_parameters = m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask);
-                             mMaskBB = mask; // or memcpy
-                         }
-
 
 
                          if (bUseNormROIBB && bUseNormROI){
@@ -811,14 +871,20 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PreparePolynomialInterpolationParam
                              fdarkBBdose,
                              dosesample); // load the projection with angle closest to the first BB sample data
 
-                 if (bSameMask){
-                    mMaskBB = obmask;}
-                 else {
-                      kipl::base::TImage<float,2> mask(sample.dims());
-                      mask = 0.0f;
-                      mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
-                      mMaskBB = mask; // or memcpy
-                 }
+                  if (!bUseExternalMask)
+                  {
+                      if (bSameMask)
+                      {
+                         mMaskBB = obmask;
+                      }
+                      else
+                      {
+                           kipl::base::TImage<float,2> mask(sample.dims());
+                           mask = 0.0f;
+                           mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
+                           mMaskBB = mask; // or memcpy
+                      }
+                  }
 
                  temp_parameters= m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb, mMaskBB);
 
@@ -827,11 +893,12 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PreparePolynomialInterpolationParam
 
                     current_dose = fBlackDoseSample;
 
-                     if (bPBvariante) {
+                     if (bPBvariante)
+                     {
                              kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
                              float mydose = computedose(mybb);
                              current_dose+= ((1.0/tau-1.0)*mydose);
-                          }
+                      }
 
                      current_dose = current_dose<1 ? 1.0f : current_dose;
 
@@ -861,16 +928,26 @@ void IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PreparePolynomialInterpolationParam
                 // compute the mask again only for the first sample image, than assume BBs do not move during experiment
                 if (i==0) {
 
-                    if (bSameMask){
-                       mMaskBB = obmask;
-                       temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
+                    if (!bUseExternalMask)
+                    {
+                        if (bSameMask)
+                        {
+                           mMaskBB = obmask;
+                           temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
+                        }
+                        else
+                        {
+                             kipl::base::TImage<float,2> mask(sample.dims());
+                             mask = 0.0f;
+                             temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
+                             mMaskBB = mask; // or memcpy
+                        }
                     }
-                    else {
-                         kipl::base::TImage<float,2> mask(sample.dims());
-                         mask = 0.0f;
-                         temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
-                         mMaskBB = mask; // or memcpy
+                    else
+                    {
+                        temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
                     }
+
 
                     if (bUseNormROIBB && bUseNormROI){
     //                     prenormalize interpolation parameters with dose
@@ -954,24 +1031,49 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
 
     std::ostringstream msg;
 
-    try {
-        bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplines(flat,dark,bb, obmask, values);
+    if (!bUseExternalMask)
+    {
+        try {
+            bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplines(flat,dark,bb, obmask, values);
+        }
+        catch (ModuleException &e) {
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw ModuleException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+        }
+        catch(ImagingException &e){
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw ImagingException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+        }
+        catch(kipl::base::KiplException &e){
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw kipl::base::KiplException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+        }
     }
-    catch (ModuleException &e) {
-        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
-        logger(kipl::logging::Logger::LogDebug,msg.str());
-        throw ModuleException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
+    else
+    {
+        try {
+            bb_ob_param = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark, bb, mMaskBB, values);
+        }
+        catch (ModuleException &e) {
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters using externally provided mask. Please check your inputs. " << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw ModuleException("Failed to compute bb_ob_parameters using externally provided mask. Please check your inputs. ", __FILE__,__LINE__);
+        }
+        catch(ImagingException &e){
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters using externally provided mask. Please check your inputs. " << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw ImagingException("Failed to compute bb_ob_parameters using externally provided mask. Please check your inputs. ", __FILE__,__LINE__);
+        }
+        catch(kipl::base::KiplException &e){
+            msg.str(""); msg<<"Failed to compute bb_ob_parameters using externally provided mask. Please check your inputs. " << e.what();
+            logger(kipl::logging::Logger::LogDebug,msg.str());
+            throw kipl::base::KiplException("Failed to compute bb_ob_parameters using externally provided mask. Please check your inputs. ", __FILE__,__LINE__);
+        }
     }
-    catch(ImagingException &e){
-        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
-        logger(kipl::logging::Logger::LogDebug,msg.str());
-        throw ImagingException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
-    }
-    catch(kipl::base::KiplException &e){
-        msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
-        logger(kipl::logging::Logger::LogDebug,msg.str());
-        throw kipl::base::KiplException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
-    }
+
 
 
 //     kipl::base::TImage<float,2> mythinimage = m_corrector.InterpolateBlackBodyImagewithSplines(bb_ob_param, values, BBroi);
@@ -1036,8 +1138,8 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
                           logger(kipl::logging::Logger::LogDebug,"Loading sample images with BB");
 
 
-                          for (size_t i=0; (i<nBBSampleCount && (updateStatus(float(i)/nBBSampleCount,"Calculating ThinPlateSplines interpolation")==false)); i++) {
-
+                          for (size_t i=0; (i<nBBSampleCount && (updateStatus(float(i)/nBBSampleCount,"Calculating ThinPlateSplines interpolation")==false)); i++)
+                          {
 
                               samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, fBlackDoseSample);
 
@@ -1047,29 +1149,42 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
 
                               index = GetnProjwithAngle((angles[2]+(angles[3]-angles[2])/(nBBSampleCount-1)*i));
 
+
+
+
                               // in the first case compute the mask again (should not be necessary in well acquired datasets) however this requires that the first image (or at least one) of sample image with BB has the same angle of the sample image without BB
                               if (i==0) {
 
-                                  if (bSameMask){
-                                     mMaskBB = obmask;
-                                     values_bb = values;
-                                     temp_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb,mMaskBB, values_bb);
-                                     m_corrector.SetSplineSampleValues(values_bb);
+                                  if (!bUseExternalMask)
+                                  {
+                                      if (bSameMask){
+                                         mMaskBB = obmask;
+                                         values_bb = values;
+                                         temp_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb,mMaskBB, values_bb);
+                                         m_corrector.SetSplineSampleValues(values_bb);
+                                      }
+                                      else {
+                                          sample = BBLoader(m_Config.mImageInformation.sSourceFileMask, m_Config.mImageInformation.nFirstFileIndex+index,
+                                                                1, 1.0f,fdarkBBdose, dosesample);
+                                          kipl::base::TImage<float,2> mask(sample.dims());
+                                          mask = 0.0f;
+                                          temp_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark,samplebb,mask,values_bb);
+                                          m_corrector.SetSplineSampleValues(values_bb);
+
+    //                                      kipl::base::TImage<float,2> mythinimage = m_corrector.InterpolateBlackBodyImagewithSplines(temp_parameters, values_bb, BBroi);
+    //                                       kipl::io::WriteTIFF32(mythinimage,"BBsample_image.tif"); // this is now correct!
+
+
+                                          mMaskBB = mask; // or memcpy
+                                      }
                                   }
-                                  else {
-                                      sample = BBLoader(m_Config.mImageInformation.sSourceFileMask, m_Config.mImageInformation.nFirstFileIndex+index,
-                                                            1, 1.0f,fdarkBBdose, dosesample);
-                                      kipl::base::TImage<float,2> mask(sample.dims());
-                                      mask = 0.0f;
-                                      temp_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark,samplebb,mask,values_bb);
+                                  else
+                                  {
+                                      values_bb = values;
+                                      temp_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb,mMaskBB, values_bb);
                                       m_corrector.SetSplineSampleValues(values_bb);
-
-//                                      kipl::base::TImage<float,2> mythinimage = m_corrector.InterpolateBlackBodyImagewithSplines(temp_parameters, values_bb, BBroi);
-//                                       kipl::io::WriteTIFF32(mythinimage,"BBsample_image.tif"); // this is now correct!
-
-
-                                      mMaskBB = mask; // or memcpy
                                   }
+
 
 
 
@@ -1159,19 +1274,30 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
                                             1, 1.0f,fdarkBBdose, dosesample); // load the projection with angle closest to the first BB sample data
 
 
-                          if (bSameMask){
-                             mMaskBB = obmask;
-                             values_bb = values;
-                             mask_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb, mMaskBB, values_bb);
-//
+                          if (!bUseExternalMask)
+                          {
+                              if (bSameMask){
+                                 mMaskBB = obmask;
+                                 values_bb = values;
+                                 mask_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb, mMaskBB, values_bb);
+    //
+                              }
+                              else {
+                                   kipl::base::TImage<float,2> mask(sample.dims());
+                                   mask = 0.0f;
+                                   mask_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark, samplebb_temp, mask,values_bb);
+    //                               mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
+                                   mMaskBB = mask; // or memcpy
+                              }
+
                           }
-                          else {
-                               kipl::base::TImage<float,2> mask(sample.dims());
-                               mask = 0.0f;
-                               mask_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark, samplebb_temp, mask,values_bb);
-//                               mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
-                               mMaskBB = mask; // or memcpy
+                          else
+                          {
+                              values_bb = values;
+                              mask_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb, mMaskBB, values_bb);
                           }
+
+
 
                           m_corrector.SetSplineSampleValues(values_bb);
 
@@ -1230,21 +1356,31 @@ int IMAGINGMODULESSHARED_EXPORT  BBLogNorm::PrepareSplinesInterpolationParameter
                          // compute the mask again only for the first sample image, than assume BBs do not move during experiment
                          if (i==0) {
 
-                             if (bSameMask){
-                                mMaskBB = obmask;
-                                values_bb = values;
-                                temp_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb,mMaskBB, values_bb);
-//                                temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
-                                m_corrector.SetSplineSampleValues(values_bb);
+                             if (!bUseExternalMask) {
+                                 if (bSameMask){
+                                    mMaskBB = obmask;
+                                    values_bb = values;
+                                    temp_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb,mMaskBB, values_bb);
+    //                                temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
+                                    m_corrector.SetSplineSampleValues(values_bb);
+                                 }
+                                 else {
+                                      kipl::base::TImage<float,2> mask(sample.dims());
+                                      mask = 0.0f;
+                                      temp_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark,samplebb,mask,values_bb);
+    //                                  temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
+                                      mMaskBB = mask; // or memcpy
+                                      m_corrector.SetSplineSampleValues(values_bb);
+                                 }
                              }
                              else {
-                                  kipl::base::TImage<float,2> mask(sample.dims());
-                                  mask = 0.0f;
-                                  temp_parameters = m_corrector.PrepareBlackBodyImagewithSplines(sample,dark,samplebb,mask,values_bb);
-//                                  temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
-                                  mMaskBB = mask; // or memcpy
-                                  m_corrector.SetSplineSampleValues(values_bb);
+                                 values_bb = values;
+                                 temp_parameters = m_corrector.PrepareBlackBodyImagewithSplinesAndMask(dark,samplebb,mMaskBB, values_bb);
+ //                                temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
+                                 m_corrector.SetSplineSampleValues(values_bb);
                              }
+
+
 
                              if (bUseNormROIBB && bUseNormROI){
 //                       prenormalize interpolation parameters with dose
@@ -1495,7 +1631,6 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 
     int nDose=img.Size(2);
     float *doselist=nullptr;
-//    std::vector<float> doselist(img.Size(2),0.0f);
 
 
     ImageReader reader;
@@ -1503,7 +1638,6 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
 
     if (bUseNormROI==true) {
         doselist=new float[nDose];
-//        GetFloatParameterVector(coeff,"dose",doselist,nDose); // i don't have this fucking parameter
         std:: string filename,ext;
         std::string fmask = m_Config.mImageInformation.sSourceFileMask;
         int firstIndex = m_Config.mImageInformation.nFirstFileIndex;
@@ -1610,25 +1744,24 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         kipl::base::TImage<float,3> img3D(obdims);
         memcpy(img3D.GetLinePtr(0,0),img.GetDataPtr(),img.Size()*sizeof(float));
 
-        for (int i=1; i<N; ++i) {
+        for (int i=1; i<N; ++i)
+        {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-//            if (found==std::string::npos ) {
-
-                img=reader.Read(filename,
-                                m_Config.mImageInformation.eFlip,
-                                m_Config.mImageInformation.eRotate,
-                               1.0f,
+            img=reader.Read(
+                        filename,
+                        m_Config.mImageInformation.eFlip,
+                        m_Config.mImageInformation.eRotate,
+                        1.0f,
                         roi);
-                memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
+            memcpy(img3D.GetLinePtr(0,i),img.GetDataPtr(),img.Size()*sizeof(float));
 
-                tmpdose = bUseNormROI ? reader.projectionDose(filename,
-                                                              nOriginalNormRegion,
-                                                              m_Config.mImageInformation.eFlip,
-                                                              m_Config.mImageInformation.eRotate,
-                                                              1.0f
-                                                             ) : initialDose;
-
+            tmpdose = bUseNormROI ? reader.projectionDose(filename,
+                                                      nOriginalNormRegion,
+                                                      m_Config.mImageInformation.eFlip,
+                                                      m_Config.mImageInformation.eRotate,
+                                                      1.0f
+                                                     ) : initialDose;
             tmpdose   = tmpdose - doseBias;
             dose     += tmpdose;
 
