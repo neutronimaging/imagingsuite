@@ -48,7 +48,7 @@ unix {
         INCLUDEPATH += /opt/local/include/libxml2
         QMAKE_LIBDIR += /opt/local/lib
 
-        LIBS += -L/opt/local/lib/ -lxml2 -larmadillo -ltiff -llapack -lblas -liconv
+        LIBS += -L/opt/local/lib/ -lxml2 -larmadillo -ltiff -llapack -lblas
     }
 
 
