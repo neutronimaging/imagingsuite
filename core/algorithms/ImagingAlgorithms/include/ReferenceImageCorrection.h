@@ -53,6 +53,12 @@ public:
     }; /// Options for background interpolation
 
 
+    enum eMaskCreationMethod
+    {
+        originalMask,
+        userDefinedMask,
+        referenceFreeMask
+    };
 
     ReferenceImageCorrection(kipl::interactors::InteractionBase *interactor = nullptr);
     ~ReferenceImageCorrection();
@@ -73,6 +79,8 @@ public:
             bool  normBB,
             const std::vector<size_t> &roi,
             const std::vector<size_t> &doseroi);
+
+    void SetMaskCreationMethod(eMaskCreationMethod eMaskMethod, kipl::base::TImage<float,2> &mask);
 
     void SetInterpParameters(float *ob_parameter,
                              float *sample_parameter,
@@ -198,6 +206,8 @@ protected:
     float *sample_bb_parameters;        /// interpolation parameters for the sample image with BB
     float *sample_bb_interp_parameters; /// interpolation parameters for the sample image for each projection angle
 
+    ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod m_MaskMethod;
+    kipl::base::TImage<float,2> m_MaskImage;
     ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod; /// method used for image averaging (options: sum, mean, max, weightedmean, median and average)
 
     eInterpOrderX m_IntMeth_x;
@@ -263,6 +273,11 @@ std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eint);
 
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask);
+
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask);
+
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod emask);
 
 
 #endif /* REFERENCEIMAGECORRECTION_H_ */
