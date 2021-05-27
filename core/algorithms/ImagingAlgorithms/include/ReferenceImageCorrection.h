@@ -274,7 +274,7 @@ std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eint);
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string &str, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask);
 
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask);
 

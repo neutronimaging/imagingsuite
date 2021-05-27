@@ -3115,7 +3115,7 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMask
         case ImagingAlgorithms::ReferenceImageCorrection::originalMask            : return "originalmask";
         case ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask : return "manuallythresholdedmask";
         case ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask         : return "userdefinedmask";
-        case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask       : return "referenceFreeMask";
+        case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask       : return "referencefreemask";
         default : throw ImagingException("Unknown mask enum",__FILE__,__LINE__);
     }
 

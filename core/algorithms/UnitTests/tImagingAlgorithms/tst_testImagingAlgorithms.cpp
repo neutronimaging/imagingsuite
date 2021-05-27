@@ -55,6 +55,7 @@ private Q_SLOTS:
 
     void RefImgCorrection_Initialization();
 
+    void RefImgCorrection_enums();
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
@@ -585,6 +586,26 @@ void TestImagingAlgorithms::StripeFilterProcessing2D()
 void TestImagingAlgorithms::RefImgCorrection_Initialization()
 {
     ImagingAlgorithms::ReferenceImageCorrection bb;
+}
+
+void TestImagingAlgorithms::RefImgCorrection_enums()
+{
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
+    strmap["originalmask"]            = ImagingAlgorithms::ReferenceImageCorrection::originalMask;
+    strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
+    strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
+    strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
+
+    ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod em;
+    for (auto & item : strmap)
+    {
+        QCOMPARE(item.first,enum2string(item.second));
+        string2enum(item.first,em);
+        QCOMPARE(item.second,em);
+    }
+    em=static_cast<ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod>(9999);
+    QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
+    QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)
