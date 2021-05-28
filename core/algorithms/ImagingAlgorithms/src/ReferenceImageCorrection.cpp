@@ -50,7 +50,7 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     m_bHaveBlackBodyROI(false),
     bExtSingleFile(true),
     fdose_ext_slice(0.0f),
-    m_MaskMethod(ImagingAlgorithms::ReferenceImageCorrection::originalMask),
+    m_MaskMethod(ImagingAlgorithms::ReferenceImageCorrection::otsuMask),
     m_AverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_IntMeth_x(SecondOrder_x),
     m_IntMeth_y(SecondOrder_y),
@@ -3090,7 +3090,7 @@ void string2enum(const std::string &str, ImagingAlgorithms::ReferenceImageCorrec
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
 
-    strmap["originalmask"]            = ImagingAlgorithms::ReferenceImageCorrection::originalMask;
+    strmap["originalmask"]            = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
     strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
     strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
     strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
@@ -3112,7 +3112,7 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMask
 
     switch (emask)
     {
-        case ImagingAlgorithms::ReferenceImageCorrection::originalMask            : return "originalmask";
+        case ImagingAlgorithms::ReferenceImageCorrection::otsuMask            : return "otsulmask";
         case ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask : return "manuallythresholdedmask";
         case ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask         : return "userdefinedmask";
         case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask       : return "referencefreemask";

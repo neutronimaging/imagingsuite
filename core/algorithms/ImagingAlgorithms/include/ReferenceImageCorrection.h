@@ -55,7 +55,7 @@ public:
 
     enum eMaskCreationMethod
     {
-        originalMask,
+        otsuMask,
         manuallyThresholdedMask,
         userDefinedMask,
         referenceFreeMask
