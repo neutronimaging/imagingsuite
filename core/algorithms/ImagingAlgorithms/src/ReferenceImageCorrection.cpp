@@ -3090,9 +3090,10 @@ void string2enum(const std::string &str, ImagingAlgorithms::ReferenceImageCorrec
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
 
-    strmap["originalmask"]      = ImagingAlgorithms::ReferenceImageCorrection::originalMask;
-    strmap["userdefinedmask"]   = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
-    strmap["referencefreemask"] = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
+    strmap["originalmask"]            = ImagingAlgorithms::ReferenceImageCorrection::originalMask;
+    strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
+    strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
+    strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
 
     try
     {
@@ -3111,9 +3112,10 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMask
 
     switch (emask)
     {
-        case ImagingAlgorithms::ReferenceImageCorrection::originalMask      : return "originalmask";
-        case ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask   : return "userdefinedmask";
-        case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask : return "referenceFreeMask";
+        case ImagingAlgorithms::ReferenceImageCorrection::originalMask            : return "originalmask";
+        case ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask : return "manuallythresholdedmask";
+        case ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask         : return "userdefinedmask";
+        case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask       : return "referencefreemask";
         default : throw ImagingException("Unknown mask enum",__FILE__,__LINE__);
     }
 
