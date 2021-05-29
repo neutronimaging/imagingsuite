@@ -248,6 +248,7 @@ void ReferenceImageCorrection::SetInterpolationOrderY(eInterpOrderY eim_y){
         c=0;
         a=0;
         f=0;
+        break;
     }
 
     }
@@ -1790,6 +1791,34 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAndMask(kipl::b
 
     return tps_param;
 }
+
+//void ReferenceImageCorrection::SegmentBlackBodyOtsu(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask)
+//{
+//    // 1. normalize image
+
+//    kipl::base::TImage<float, 2> norm(bb.dims());
+//    kipl::base::TImage<float, 2> normdc(bb.dims());
+//    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+//    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+
+//    normdc -=dark;
+//    norm -=dark;
+//    norm /= (flat-=dark);
+//}
+
+//void ReferenceImageCorrection::SegmentBlackBodyManual(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, float thresh)
+//{
+//    // 1. normalize image
+
+//    kipl::base::TImage<float, 2> norm(bb.dims());
+//    kipl::base::TImage<float, 2> normdc(bb.dims());
+//    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+//    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+
+//    normdc -=dark;
+//    norm -=dark;
+//    norm /= (flat-=dark);
+//}
 
 float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask, float &error)
 {
