@@ -1869,14 +1869,25 @@ float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TIma
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
 
-//    kipl::base::TImage<float, 2> interpolated_BB(bb.Dims());
-//    interpolated_BB = 0.0f;
-
     float * param = new float[6];
     param = ComputeInterpolationParameters(mask,BB_DC);
 
     return param;
 
+}
+
+float * ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, float &error)
+{
+    kipl::base::TImage<float,2> BB_DC(bb.dims());
+    float * param = new float[6];
+    float myerror;
+
+    memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
+    BB_DC-=dark;
+    param = ComputeInterpolationParameters(mask,BB_DC,myerror);
+    error = myerror;
+
+    return param;
 }
 
 void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){

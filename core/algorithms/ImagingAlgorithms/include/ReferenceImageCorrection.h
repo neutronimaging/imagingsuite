@@ -118,6 +118,11 @@ public:
     float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark,
                                          kipl::base::TImage<float,2> &bb,
                                          kipl::base::TImage<float,2>&mask); /// uses a predefined mask and then call ComputeInterpolationParameter
+    float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark,
+                                         kipl::base::TImage<float,2> &bb,
+                                         kipl::base::TImage<float,2>&mask,
+                                         float &error); /// uses a predefined mask and returns interpolation parameters and interpolation error
+
     float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask,
                                           kipl::base::TImage<float,2>&img); /// compute interpolation parameters from img and mask
     float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask,
