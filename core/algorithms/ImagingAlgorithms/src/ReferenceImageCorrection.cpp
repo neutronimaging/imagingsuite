@@ -3130,7 +3130,7 @@ void string2enum(const std::string &str, ImagingAlgorithms::ReferenceImageCorrec
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
 
-    strmap["originalmask"]            = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
+    strmap["otsumask"]            = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
     strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
     strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
     strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
@@ -3152,7 +3152,7 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMask
 
     switch (emask)
     {
-        case ImagingAlgorithms::ReferenceImageCorrection::otsuMask            : return "otsulmask";
+        case ImagingAlgorithms::ReferenceImageCorrection::otsuMask            : return "otsumask";
         case ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask : return "manuallythresholdedmask";
         case ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask         : return "userdefinedmask";
         case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask       : return "referencefreemask";
