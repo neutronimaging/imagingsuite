@@ -3,6 +3,9 @@ os: linux
 dist: focal
 compiler: gcc
 
+before_install:
+  - sudo apt-get update
+
 addons:
   apt:
     sources:
