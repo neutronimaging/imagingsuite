@@ -89,5 +89,5 @@ macx: {
     DEPENDPATH  += $$PWD/../../../../external/mac/include
     DEPENDPATH  += $$PWD/../../../../external/mac/include/hdf5
     DEPENDPATH  += $$PWD/../../../../external/mac/include/nexus
-    LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    LIBS += -L$$PWD/../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }
