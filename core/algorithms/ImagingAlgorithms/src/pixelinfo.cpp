@@ -16,20 +16,20 @@ PixelInfo::PixelInfo(int nPos,float fValue, float fWeight) :
     weight(fWeight)
 {}
 
-PixelInfo::PixelInfo(const PixelInfo &info) :
-    pos(info.pos),
-    value(info.value),
-    weight(info.weight)
-{}
+//PixelInfo::PixelInfo(const PixelInfo &info) :
+//    pos(info.pos),
+//    value(info.value),
+//    weight(info.weight)
+//{}
 
-PixelInfo & PixelInfo::operator=(const PixelInfo & info)
-{
-    pos   = info.pos;
-    value = info.value;
-    weight = info.weight;
+//PixelInfo & PixelInfo::operator=(const PixelInfo & info)
+//{
+//    pos   = info.pos;
+//    value = info.value;
+//    weight = info.weight;
 
-    return *this;
-}
+//    return *this;
+//}
 
 }
 

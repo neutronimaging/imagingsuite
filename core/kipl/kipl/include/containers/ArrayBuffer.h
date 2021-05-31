@@ -35,9 +35,12 @@ public:
 
 	/// \brief Copies the data of the input buffer to the current buffer.
 	/// \param b the array to copy
-	void copy(ArrayBuffer<T> *b) {
-		memcpy(data.GetDataPtr(),b->dataptr(),b->size()*sizeof(T));
-		cnt=b->size();
+    void copy(ArrayBuffer<T> *b)
+    {
+        data.Resize(b->size());
+
+        std::copy_n(b->dataptr(),b->size(),data.GetDataPtr());
+        cnt=b->size();
 	}
 
 	/// \returns if the buffer is empty.
