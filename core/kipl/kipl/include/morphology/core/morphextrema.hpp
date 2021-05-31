@@ -104,7 +104,7 @@ int RMax(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
 
     ImgType *pExt=extremes.GetDataPtr();
     const ImgType *pImg=img.GetDataPtr();
-    ImgType val;
+    ImgType val=static_cast<ImgType>(0);
     ptrdiff_t i,j,pos,p;
 
     NG.setPosition(0L);
@@ -507,7 +507,7 @@ int RMin(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
 
     ImgType *pExt=extremes.GetDataPtr();
     const ImgType *pImg=img.GetDataPtr();
-    ImgType val;
+    ImgType val=static_cast<ImgType>(0);
     ptrdiff_t i,j,pos,p;
 
     for (i=0; i<extremes.Size(); i++) {
@@ -567,7 +567,7 @@ int RMax(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
 
     ImgType *pExt=extremes.GetDataPtr();
     const ImgType *pImg=img.GetDataPtr();
-    ImgType val;
+    ImgType val=static_cast<ImgType>(0);
     long i,pos,p;
     int j;
 
