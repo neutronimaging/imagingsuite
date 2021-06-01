@@ -16,8 +16,8 @@ ReportGeneratorBase::ReportGeneratorBase(std::string name) :
 void ReportGeneratorBase::OpenDestination(QString fname)
 {
     m_Printer.setOutputFormat(QPrinter::PdfFormat);
-    m_Printer.setPaperSize(QPrinter::A4);
-    m_Printer.setPageMargins(m_fMargin,m_fMargin,m_fMargin,m_fMargin,QPrinter::Millimeter);
+    m_Printer.setPageSize(QPageSize(QPageSize::A4));
+    m_Printer.setPageMargins(QMarginsF(m_fMargin,m_fMargin,m_fMargin,m_fMargin),QPageLayout::Millimeter);
     m_Printer.setOutputFileName(fname);
 
    m_fWidth  = m_Printer.width();
@@ -55,7 +55,7 @@ double ReportGeneratorBase::MakeHeader(const std::string name)
     //msg.str(""); msg<<"Processing date: "<<timestr;
     msg.str(""); msg<<timestr;
     QString str=QString::fromStdString(msg.str());
-    int w=fm.width(str);
+    int w=fm.horizontalAdvance(str);
 
     m_Painter.drawText(m_fWidth-w-2*m_fMargin,fm.height(),str);
     m_Painter.drawLine(0,fm.height()*1.5,m_fWidth, fm.height()*1.5);
