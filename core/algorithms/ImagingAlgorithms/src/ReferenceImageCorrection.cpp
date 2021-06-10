@@ -59,7 +59,6 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     m_nBlackBodyROI(4,0UL),
     m_diffBBroi(4,0),
     m_nDoseBBRoi(4,0UL),
-
     m_nBBimages(0),
     m_nProj(0),
     angles(4,0UL),
@@ -273,8 +272,8 @@ kipl::base::TImage<float,2> ReferenceImageCorrection::Process(kipl::base::TImage
 
 void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *dose)
 {
-    kipl::base::TImage<float, 2> slice(img.dims());
-
+    std::vector<size_t> slice_dims = {img.Size(0), img.Size(1)};
+    kipl::base::TImage<float, 2> slice(slice_dims);
 
     for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"BBLogNorm: Referencing iteration")==false)); i++) {
 
@@ -357,7 +356,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
 
     kipl::base::TImage<float,2> norm(img.dims());
-    memcpy(norm.GetDataPtr(), img.GetDataPtr(), sizeof(float)*img.Size()); // copy to norm.. evalute if necessary
+//    memcpy(norm.GetDataPtr(), img.GetDataPtr(), sizeof(float)*img.Size()); // copy to norm.. evalute if necessary
+    norm = img;
 
     std::vector<pair<float, size_t>> histo;
     float min = *std::min_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size());
@@ -366,33 +366,31 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     histo =  myhist(norm);
 
 
-    size_t * vec_hist = new size_t[256];
-    for(int i=0; i<256; i++)
-    {
-        vec_hist[i] = histo.at(i).second;
-    }
-
-
     //2.b compute otsu threshold
 
     float ot;
-
     if (bUseManualThresh)
-        {
-              ot = thresh;
-        }
+    {
+          ot = thresh;
+          std::cout << "threshold value in ReferenceImageCorrection: " << ot << std::endl;
+    }
     else
+    {
+        size_t * vec_hist = new size_t[256];
+        for(int i=0; i<256; i++)
         {
-            int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
-            ot = static_cast<float>(histo.at(value).first);
-            }
+            vec_hist[i] = histo.at(i).second;
+        }
+        int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+        ot = static_cast<float>(histo.at(value).first);
+   }
 
 
 
     //2.c threshold image
 
-    kipl::base::TImage<float,2> maskOtsu(mask.dims());
-    kipl::base::TImage<int,2> labelImage(mask.dims());
+    kipl::base::TImage<float,2> maskOtsu(norm.dims());
+    kipl::base::TImage<int,2> labelImage(norm.dims());
 
  // now it works:
 //    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
@@ -400,14 +398,17 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     float *pImg = norm.GetDataPtr();
     float *res = maskOtsu.GetDataPtr();
     const int N=static_cast<int>(norm.Size());
-    for (size_t i=0; i<N; i++){
-        if (pImg[i]>=ot){
-            res[i] = 1;
+    for (int i=0; i<N; ++i){
+        if (pImg[i]>=ot)
+        {
+            res[i] = 1.0f;
         }
-        else {
-            res[i] = 0;
+        else
+        {
+            res[i] = 0.0f;
         }
     }
+
 
   // here: fillPeaks, as at this point the BBs are black in the binary mask
 
@@ -1277,10 +1278,6 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
     // IMPORTANT! WHEN THE A SPECIFIC ROI IS SELECTED FOR THE BBs, THEN THE INTERPOLATION PARAMETERS NEED TO BE COMPUTED ON THE BIGGER IMAGE GRID
     std::map<std::pair<int,int>, float> values;
-
-
-
-
     float mean_value = 0.0f;
 
     for (int y=0; y<mask.Size(1); y++) {
@@ -1792,33 +1789,6 @@ float *ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAndMask(kipl::b
     return tps_param;
 }
 
-//void ReferenceImageCorrection::SegmentBlackBodyOtsu(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask)
-//{
-//    // 1. normalize image
-
-//    kipl::base::TImage<float, 2> norm(bb.dims());
-//    kipl::base::TImage<float, 2> normdc(bb.dims());
-//    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
-//    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
-
-//    normdc -=dark;
-//    norm -=dark;
-//    norm /= (flat-=dark);
-//}
-
-//void ReferenceImageCorrection::SegmentBlackBodyManual(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, float thresh)
-//{
-//    // 1. normalize image
-
-//    kipl::base::TImage<float, 2> norm(bb.dims());
-//    kipl::base::TImage<float, 2> normdc(bb.dims());
-//    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
-//    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
-
-//    normdc -=dark;
-//    norm -=dark;
-//    norm /= (flat-=dark);
-//}
 
 float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask, float &error)
 {
@@ -1843,7 +1813,6 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
         std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
-
 
     kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
