@@ -372,7 +372,6 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     if (bUseManualThresh)
     {
           ot = thresh;
-          std::cout << "threshold value in ReferenceImageCorrection: " << ot << std::endl;
     }
     else
     {
@@ -1280,18 +1279,18 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     std::map<std::pair<int,int>, float> values;
     float mean_value = 0.0f;
 
-    for (int y=0; y<mask.Size(1); y++) {
-        for (int x=0; x<mask.Size(0); x++) {
-            if (mask(x,y)==1){
+    for (int y=0; y<mask.Size(1); y++)
+    {
+        for (int x=0; x<mask.Size(0); x++)
+        {
+            if (mask(x,y)==1.0f){
                 std::pair<int,int> temp;
                 temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images. now it should be in absolute coordinates
                 values.insert(std::make_pair(temp,img(x,y)));
                 mean_value +=img(x,y);
 
             }
-
         }
-
     }
 
     mean_value/=values.size();
@@ -1319,13 +1318,11 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
 
 
     float *myparam = new float[6];
-//    float error;
     float my_error = 0.0f;
     myparam = SolveLinearEquation(values, my_error);
     error = my_error;
 
-
-         return myparam;
+    return myparam;
 
 }
 
