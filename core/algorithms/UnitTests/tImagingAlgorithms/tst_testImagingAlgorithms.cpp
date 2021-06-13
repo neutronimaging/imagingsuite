@@ -591,7 +591,7 @@ void TestImagingAlgorithms::RefImgCorrection_Initialization()
 void TestImagingAlgorithms::RefImgCorrection_enums()
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
-    strmap["originalmask"]            = ImagingAlgorithms::ReferenceImageCorrection::originalMask;
+    strmap["otsumask"]            = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
     strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
     strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
     strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;

@@ -1279,11 +1279,12 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     std::map<std::pair<int,int>, float> values;
     float mean_value = 0.0f;
 
-    for (int y=0; y<mask.Size(1); y++)
+    for (size_t y=0; y<mask.Size(1); ++y)
     {
-        for (int x=0; x<mask.Size(0); x++)
+        for (size_t x=0; x<mask.Size(0); ++x)
         {
-            if (mask(x,y)==1.0f){
+            if (mask(x,y)==1.0f)
+            {
                 std::pair<int,int> temp;
                 temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images. now it should be in absolute coordinates
                 values.insert(std::make_pair(temp,img(x,y)));
