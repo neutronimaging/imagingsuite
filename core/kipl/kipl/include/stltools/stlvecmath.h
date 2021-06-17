@@ -13,7 +13,6 @@
 #include "../math/median.h"
 #include "../kipl_global.h"
 
-#include <QDebug>
 //#include "statistics.h"
 //#include "../misc/sortalg.h"
 //#include "../image/imagethres.h"

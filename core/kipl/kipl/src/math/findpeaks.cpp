@@ -4,8 +4,6 @@
 #include <cmath>
 #include "../../include/math/statistics.h"
 
-#include <QDebug>
-
 namespace kipl {
 namespace math {
 

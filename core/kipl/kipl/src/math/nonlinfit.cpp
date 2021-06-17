@@ -14,8 +14,6 @@
 #include "../../include/base/KiplException.h"
 #include "../../include/strings/miscstring.h"
 
-#include <QDebug>
-
 namespace Nonlinear {
 
 

@@ -6,9 +6,6 @@
 #include <iostream>
 #include <armadillo>
 
-#if !defined(NO_QT)
-#include <QDebug>
-#endif
 #include "../../base/KiplException.h"
 
 namespace kipl { namespace math {
