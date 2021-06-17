@@ -100,7 +100,7 @@ if(NOT APPLE)
 else()
   set(CMAKE_INSTALL_RPATH @loader_path)
 endif()
-
+add_subdirectory(core/kipl/kipl)
 add_subdirectory(frameworks/tomography/pyMuhRec)
 #add_subdirectory(core/algorithms/pyimgalg)
 
@@ -129,7 +129,7 @@ if(DYNAMIC_LIB)
   #   DESTINATION lib/cmake/kipl
   # )
   install(FILES 
-  ../lib/libkipl.1.0.0.dylib 
+  #../lib/libkipl.1.0.0.dylib 
   ../lib/libModuleConfig.1.0.0.dylib 
   ../lib/libReconFramework.1.0.0.dylib
   ../lib/libStdBackProjectors.1.0.0.dylib
