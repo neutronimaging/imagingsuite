@@ -102,7 +102,7 @@ else()
 endif()
 
 add_subdirectory(frameworks/tomography/pyMuhRec)
-#add_subdirectory(core/algorithms/pyimgalg)
+add_subdirectory(core/algorithms/pyimgalg)
 
 if(DYNAMIC_LIB)
   # install(
@@ -128,30 +128,60 @@ if(DYNAMIC_LIB)
   #         "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
   #   DESTINATION lib/cmake/kipl
   # )
-  install(FILES 
-  ../lib/libkipl.1.0.0.dylib 
-  ../lib/libModuleConfig.1.0.0.dylib 
-  ../lib/libReconFramework.1.0.0.dylib
-  ../lib/libStdBackProjectors.1.0.0.dylib
-  ../lib/libFDKBackProjectors.1.0.0.dylib
-  ../lib/libImagingAlgorithms.1.0.0.dylib
-  ../lib/libReaderConfig.1.0.0.dylib
-  ../lib/libNeXus.1.0.0.dylib	
-  ../lib/libhdf5_cpp.11.dylib
-  ../lib/libNeXusCPP.1.0.0.dylib
-  ../lib/libhdf5_hl.10.dylib
-  ../lib/libhdf5.10.dylib	
-  ../lib/libsz.2.dylib
+  if (LINUX)
+    print('Linux')
+    install(FILES 
+      ../lib/libkipl.so.1.0.0 
+      ../lib/libModuleConfig.so.1.0.0 
+      ../lib/libReconFramework.so.1.0.0
+      ../lib/libStdBackProjectors.so.1.0.0
+      ../lib/libFDKBackProjectors.so.1.0.0
+      ../lib/libImagingAlgorithms.so.1.0.0
+      ../lib/libReaderConfig.so.1.0.0
+      # ../lib/libNeXus.so.1.0.0	
+      # ../lib/libhdf5_cpp.so.11
+      # ../lib/libNeXusCPP.so.1.0.0
+      # ../lib/libhdf5_hl.so.10
+      # ../lib/libhdf5.so.10	
+      # ../lib/libsz.so.2
 
-  /opt/local/lib/libxml2.2.dylib 
-  /opt/local/lib/libtiff.5.dylib
+  #    /opt/local/lib/libxml2.2.dylib 
+  #    /opt/local/lib/libtiff.5.dylib
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    execute_process(
+      COMMAND for f in `ls *.so.1.0.0`; do ln -s $f `basename $f .so.1.0.0`.so.1; done 
+      WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
+    )
+  endif()
+  if (APPLE)
+    install(FILES 
+    ../lib/libkipl.1.0.0.dylib 
+    ../lib/libModuleConfig.1.0.0.dylib 
+    ../lib/libReconFramework.1.0.0.dylib
+    ../lib/libStdBackProjectors.1.0.0.dylib
+    ../lib/libFDKBackProjectors.1.0.0.dylib
+    ../lib/libImagingAlgorithms.1.0.0.dylib
+    ../lib/libReaderConfig.1.0.0.dylib
+    ../lib/libNeXus.1.0.0.dylib	
+    ../lib/libhdf5_cpp.11.dylib
+    ../lib/libNeXusCPP.1.0.0.dylib
+    ../lib/libhdf5_hl.10.dylib
+    ../lib/libhdf5.10.dylib	
+    ../lib/libsz.2.dylib
 
-  execute_process(
-    COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
-    WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
-  )
+    /opt/local/lib/libxml2.2.dylib 
+    /opt/local/lib/libtiff.5.dylib
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+    execute_process(
+      COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
+      WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
+    )
+  endif()
+  
+
+
 endif(DYNAMIC_LIB)
 
 # turn on testing

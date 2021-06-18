@@ -4,8 +4,8 @@
 #
 #-------------------------------------------------
 
-QT        -= gui
-QT        += core
+#QT        -= gui
+#QT        += core
 
 TARGET    = kipl
 TEMPLATE  = lib
