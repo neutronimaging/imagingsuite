@@ -131,7 +131,7 @@ if(DYNAMIC_LIB)
   if (LINUX)
     print('Linux')
     install(FILES 
-      ../lib/libkipl.so.1.0.0 
+      #../lib/libkipl.so.1.0.0 
       ../lib/libModuleConfig.so.1.0.0 
       ../lib/libReconFramework.so.1.0.0
       ../lib/libStdBackProjectors.so.1.0.0
