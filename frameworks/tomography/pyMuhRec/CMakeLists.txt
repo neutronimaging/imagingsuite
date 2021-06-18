@@ -7,6 +7,7 @@ add_definitions(-DNO_QT)
 set(TARGET_NAME "muhrectomo") 
 
 include_directories(
+    /usr/include/libxml2
     /opt/local/include
     /opt/local/include/libxml2
     ../../../core/kipl/kipl/include
@@ -56,6 +57,7 @@ target_link_libraries(${TARGET_NAME}
 
   PRIVATE
     kipl
+    ImagingAlgorithms
     xml2
     tiff
     ModuleConfig
