@@ -23,7 +23,7 @@ add_library(${TARGET_NAME}
 
   pyStripeFilter.cpp  
 #  pySpotClean.cpp  
-  pyNormalizeImage.cpp
+#  pyNormalizeImage.cpp
   pyPolynomialCorrection.cpp  
   pyImagingException.cpp  
 # pyTranslateProjections.cpp  
