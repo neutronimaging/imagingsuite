@@ -4,7 +4,6 @@
 #include <filters/filter.h>
 #include <math/statistics.h>
 
-#include <QDebug>
 #include <filters/filter.h>
 #include <io/io_tiff.h>
 #include <base/tprofile.h>

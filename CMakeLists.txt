@@ -30,7 +30,9 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
+#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
+
+set(CMAKE_MODULE_PATH "lib" )
 # for testing we will need the python interpreter
 find_package(PythonInterp REQUIRED)
 
@@ -56,7 +58,27 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   add_definitions(-DVERSION="${GIT_VERSION_INFO}")
 endif()
 
-include(pybind11)
+include(FetchContent)
+
+FetchContent_Declare(
+  pybind11_sources
+  GIT_REPOSITORY https://github.com/pybind/pybind11.git
+  GIT_TAG        v2.2
+)
+
+FetchContent_GetProperties(pybind11_sources)
+
+if(NOT pybind11_sources_POPULATED)
+  FetchContent_Populate(pybind11_sources)
+
+  add_subdirectory(
+    ${pybind11_sources_SOURCE_DIR}
+    ${pybind11_sources_BINARY_DIR}
+    )
+    add_definitions(-DHAVEPYBIND11 -DNO_QT)
+endif()
+
+#include(pybind11)
 
 execute_process(
   COMMAND git describe --tag
@@ -101,6 +123,8 @@ else()
   set(CMAKE_INSTALL_RPATH @loader_path)
 endif()
 add_subdirectory(core/kipl/kipl)
+add_subdirectory(core/algorithms/ImagingAlgorithms)
+
 add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
 
