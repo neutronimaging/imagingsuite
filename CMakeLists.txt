@@ -124,7 +124,7 @@ else()
 endif()
 add_subdirectory(core/kipl/kipl)
 add_subdirectory(core/algorithms/ImagingAlgorithms)
-
+add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
 

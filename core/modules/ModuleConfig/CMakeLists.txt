@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(TARGET_NAME "ImagingAlgorithms")
+set(TARGET_NAME "ModuleConfig")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -19,43 +19,32 @@ include_directories(
     ../../../external/mac/include/hdf5
     )
 
-
-#include_directories(../../kipl/kipl/include /opt/local/include ../../../external/src/linalg)
-
-
 link_directories(../../../../lib /opt/local/lib )
 
 set(INC_FILES
-  include/StripeFilter.h  
-  include/SpotClean.h  
-  include/PolynomialCorrection.h  
-  include/ImagingException.h  
-  include/TranslateProjections.h  
-  include/MorphSpotClean.h  
-  include/pixelinfo.h  
-  include/projectionfilter.h
-  include/ImagingAlgorithms_global.h  
-  include/gammaclean.h  
-  include/averageimage.h  
-  include/piercingpointestimator.h  
-  include/ReferenceImageCorrection.h  
-  include/tomocenter.h
+  include/ModuleConfig_global.h 
+  include/publication.h 
+  include/ProcessModuleBase.h 
+  include/ParameterHandling.h 
+  include/ModuleItemBase.h 
+  include/ModuleException.h 
+  include/ModuleConfig.h 
+  include/ConfigBase.h 
+  include/datamodulebase.h 
+  include/modulelibnamemanger.h 
 )
 
 set(SRC_FILES
-  src/StripeFilter.cpp  
-  src/SpotClean.cpp  
-  src/PolynomialCorrection.cpp  
-  src/ImagingException.cpp  
-  src/TranslateProjections.cpp  
-  src/MorphSpotClean.cpp  
-  src/pixelinfo.cpp
-  src/projectionfilter.cpp
-  src/gammaclean.cpp  
-  src/averageimage.cpp  
-  src/piercingpointestimator.cpp  
-  src/ReferenceImageCorrection.cpp  
-  src/tomocenter.cpp  
+  src/publication.cpp 
+  src/stdafx.cpp 
+  src/ProcessModuleBase.cpp 
+  src/ParameterHandling.cpp 
+  src/ModuleItemBase.cpp 
+  src/ModuleException.cpp 
+  src/ModuleConfig.cpp 
+  src/ConfigBase.cpp 
+  src/datamodulebase.cpp 
+  src/modulelibnamemanger.cpp
 )
 
 
@@ -64,10 +53,11 @@ add_library(${TARGET_NAME} SHARED
   ${INC_FILES}
 )
 
+
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
-target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY HAVE_NEXUS)
 
 add_definitions(-DHAVE_NEXUS)
 
