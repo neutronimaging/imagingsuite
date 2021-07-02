@@ -122,14 +122,19 @@ if(NOT APPLE)
   set(CMAKE_INSTALL_RPATH $ORIGIN)
 else()
   set(CMAKE_INSTALL_RPATH @loader_path)
+ # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH YES)
 endif()
 
+# Core libraries
 add_subdirectory(core/kipl/kipl)
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(frameworks/tomography/Framework/ReconFramework)
 add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
 add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+
+# Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)
 #add_subdirectory(core/algorithms/pyimgalg)
 
@@ -192,15 +197,19 @@ if(DYNAMIC_LIB)
     # ../lib/libFDKBackProjectors.1.0.0.dylib
     # ../lib/libImagingAlgorithms.1.0.0.dylib
     # ../lib/libReaderConfig.1.0.0.dylib
-    # ../lib/libNeXus.1.0.0.dylib	
-    # ../lib/libhdf5_cpp.11.dylib
-    # ../lib/libNeXusCPP.1.0.0.dylib
-    # ../lib/libhdf5_hl.10.dylib
-    # ../lib/libhdf5.10.dylib	
-    # ../lib/libsz.2.dylib
-
+    external/mac/lib/libNeXus.1.0.0.dylib	
+    external/mac/lib//libhdf5_cpp.11.dylib
+    external/mac/lib//libNeXusCPP.1.0.0.dylib
+    external/mac/lib//libhdf5_hl.10.dylib
+    external/mac/lib//libhdf5.10.dylib	
+    external/mac/lib//libsz.2.dylib
     /opt/local/lib/libxml2.2.dylib 
     /opt/local/lib/libtiff.5.dylib
+    /opt/local/lib/libfftw3.3.dylib
+    /opt/local/lib/libfftw3f.3.dylib
+    /opt/local/lib/libcfitsio.dylib
+    /opt/local/lib/libarmadillo.10.dylib
+
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
     execute_process(
