@@ -126,7 +126,8 @@ add_subdirectory(core/kipl/kipl)
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(frameworks/tomography/pyMuhRec)
-add_subdirectory(core/algorithms/pyimgalg)
+add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+#add_subdirectory(core/algorithms/pyimgalg)
 
 if(DYNAMIC_LIB)
   # install(
