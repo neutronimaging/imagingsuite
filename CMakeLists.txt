@@ -157,12 +157,12 @@ if(DYNAMIC_LIB)
     print('Linux')
     install(FILES 
       #../lib/libkipl.so.1.0.0 
-      ../lib/libModuleConfig.so.1.0.0 
-      ../lib/libReconFramework.so.1.0.0
-      ../lib/libStdBackProjectors.so.1.0.0
-      ../lib/libFDKBackProjectors.so.1.0.0
-      ../lib/libImagingAlgorithms.so.1.0.0
-      ../lib/libReaderConfig.so.1.0.0
+      # ../lib/libModuleConfig.so.1.0.0 
+      # ../lib/libReconFramework.so.1.0.0
+      # ../lib/libStdBackProjectors.so.1.0.0
+      # ../lib/libFDKBackProjectors.so.1.0.0
+      # ../lib/libImagingAlgorithms.so.1.0.0
+      # ../lib/libReaderConfig.so.1.0.0
       # ../lib/libNeXus.so.1.0.0	
       # ../lib/libhdf5_cpp.so.11
       # ../lib/libNeXusCPP.so.1.0.0
@@ -181,19 +181,19 @@ if(DYNAMIC_LIB)
   endif()
   if (APPLE)
     install(FILES 
-    ../lib/libkipl.1.0.0.dylib 
-    ../lib/libModuleConfig.1.0.0.dylib 
-    ../lib/libReconFramework.1.0.0.dylib
-    ../lib/libStdBackProjectors.1.0.0.dylib
-    ../lib/libFDKBackProjectors.1.0.0.dylib
-    ../lib/libImagingAlgorithms.1.0.0.dylib
-    ../lib/libReaderConfig.1.0.0.dylib
-    ../lib/libNeXus.1.0.0.dylib	
-    ../lib/libhdf5_cpp.11.dylib
-    ../lib/libNeXusCPP.1.0.0.dylib
-    ../lib/libhdf5_hl.10.dylib
-    ../lib/libhdf5.10.dylib	
-    ../lib/libsz.2.dylib
+    # ../lib/libkipl.1.0.0.dylib 
+    # ../lib/libModuleConfig.1.0.0.dylib 
+    # ../lib/libReconFramework.1.0.0.dylib
+    # ../lib/libStdBackProjectors.1.0.0.dylib
+    # ../lib/libFDKBackProjectors.1.0.0.dylib
+    # ../lib/libImagingAlgorithms.1.0.0.dylib
+    # ../lib/libReaderConfig.1.0.0.dylib
+    # ../lib/libNeXus.1.0.0.dylib	
+    # ../lib/libhdf5_cpp.11.dylib
+    # ../lib/libNeXusCPP.1.0.0.dylib
+    # ../lib/libhdf5_hl.10.dylib
+    # ../lib/libhdf5.10.dylib	
+    # ../lib/libsz.2.dylib
 
     /opt/local/lib/libxml2.2.dylib 
     /opt/local/lib/libtiff.5.dylib
