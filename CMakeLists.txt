@@ -75,7 +75,8 @@ if(NOT pybind11_sources_POPULATED)
     ${pybind11_sources_SOURCE_DIR}
     ${pybind11_sources_BINARY_DIR}
     )
-    add_definitions(-DHAVEPYBIND11 -DNO_QT)
+    #add_definitions(-DHAVEPYBIND11 -DNO_QT)
+    add_definitions(-DHAVEPYBIND11)
 endif()
 
 #include(pybind11)
@@ -127,6 +128,7 @@ add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
 #add_subdirectory(core/algorithms/pyimgalg)
 
 if(DYNAMIC_LIB)
