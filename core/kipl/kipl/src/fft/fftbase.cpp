@@ -4,6 +4,7 @@
 #include <complex>
 #include <vector>
 #include <numeric>
+#include <algorithm>
 #include <fftw3.h>
 
 #include "../../include/base/KiplException.h"

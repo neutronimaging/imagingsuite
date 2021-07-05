@@ -83,7 +83,7 @@ void bindMorphSpotClean(py::module &m)
 
     // kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);
     mscClass.def("detectionImage",
-                 [](ImagingAlgorithms::MorphSpotClean &msc, py::array_t<float> &x)
+                 [](ImagingAlgorithms::MorphSpotClean &msc, py::array_t<float> &x, bool remove_bias)
     {
         auto r = x.unchecked<2>(); // x must have ndim = 2; can be non-writeable
 
@@ -93,10 +93,10 @@ void bindMorphSpotClean(py::module &m)
                                     static_cast<size_t>(buf1.shape[0])};
         kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
 
-        kipl::base::TImage<float,2> res=msc.detectionImage(img);
+        auto res=msc.detectionImage(img,remove_bias);
 
         py::array_t<float> det = py::array_t<float>(res.Size());
-        det.resize({res.Size(1),res.Size(0)});
+        det.resize({res.first.Size(1),res.first.Size(0)});
 
         std::copy_n(res.GetDataPtr(),res.Size(), static_cast<float *>(det.request().ptr));
         return det;
