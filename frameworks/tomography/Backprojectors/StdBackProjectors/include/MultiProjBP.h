@@ -2,7 +2,7 @@
 
 #ifndef _MULTIPROJBP_H_
 #define _MULTIPROJBP_H_
-#include "StdBackProjectors_global.h"
+
 
 #include <interactors/interactionbase.h>
 #include "../include/StdBackProjectorBase.h"

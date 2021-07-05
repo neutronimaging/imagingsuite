@@ -5,6 +5,7 @@
 #include "../include/ModuleException.h"
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 
 #include <utilities/TimeDate.h>
 #include <strings/miscstring.h>

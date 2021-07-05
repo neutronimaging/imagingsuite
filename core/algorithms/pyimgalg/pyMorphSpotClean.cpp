@@ -81,28 +81,29 @@ void bindMorphSpotClean(py::module &m)
                  &ImagingAlgorithms::MorphSpotClean::edgeConditionLength,
                  "Returns the lenght of the edge conditioning filter.");
 
-    // kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);
-    mscClass.def("detectionImage",
-                 [](ImagingAlgorithms::MorphSpotClean &msc, py::array_t<float> &x)
-    {
-        auto r = x.unchecked<2>(); // x must have ndim = 2; can be non-writeable
+    // // kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);
+    // mscClass.def("detectionImage",
+    //              [](ImagingAlgorithms::MorphSpotClean &msc, py::array_t<float> &x, bool remove_bias)
+    // {
+    //     // auto r = x.unchecked<2>(); // x must have ndim = 2; can be non-writeable
 
-        py::buffer_info buf1 = x.request();
+    //     // py::buffer_info buf1 = x.request();
 
-        std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[1]),
-                                    static_cast<size_t>(buf1.shape[0])};
-        kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
+    //     // std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[1]),
+    //     //                             static_cast<size_t>(buf1.shape[0])};
+    //     // kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
 
-        kipl::base::TImage<float,2> res=msc.detectionImage(img);
+    //     // auto res=msc.detectionImage(img,remove_bias);
 
-        py::array_t<float> det = py::array_t<float>(res.Size());
-        det.resize({res.Size(1),res.Size(0)});
+    //     // py::array_t<float> det = py::array_t<float>(res.Size());
+    //     // det.resize({res.first.Size(1),res.first.Size(0)});
 
-        std::copy_n(res.GetDataPtr(),res.Size(), static_cast<float *>(det.request().ptr));
-        return det;
-    },
-    "Computes the detection image from the provided image.",
-    py::arg("img"));
+    //     // std::copy_n(res.GetDataPtr(),res.Size(), static_cast<float *>(det.request().ptr));
+    //     // return det;
+    //     return x;
+    // },
+    // "Computes the detection image from the provided image.",
+    // py::arg("img"));
 
     mscClass.def("process",
                  [](ImagingAlgorithms::MorphSpotClean &msc,

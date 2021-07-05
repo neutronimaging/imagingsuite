@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
+    /usr/include/libxml2
     ../../../core/kipl/kipl/include
     ../../../external/src/linalg
     ../../../core/kipl/kipl/include
@@ -66,6 +67,7 @@ target_link_directories(${TARGET_NAME} PRIVATE
     ../../../external/mac/lib/
     )
 
+if (APPLE)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
     kipl
@@ -80,5 +82,23 @@ target_link_libraries(${TARGET_NAME}
     NeXus.1.0.0
     NeXusCPP.1.0.0
   )
+endif()
+
+if (LINUX)
+target_link_libraries(${TARGET_NAME}
+    PRIVATE
+    kipl
+    xml2
+    fftw3
+    fftw3f
+    cfitsio
+    tiff
+    armadillo
+    lapack
+    blas
+    # NeXus
+    # NeXusCPP
+  )
+endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
