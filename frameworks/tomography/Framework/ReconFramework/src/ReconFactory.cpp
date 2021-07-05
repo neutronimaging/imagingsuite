@@ -8,7 +8,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include <memory>
-#include <QDebug>
+
 
 ReconFactory::ReconFactory(void)
     : logger("ReconFactory")

@@ -3,7 +3,6 @@
 #include <base/kiplenums.h>
 #include <base/KiplException.h>
 #include <strings/filenames.h>
-#include <QDebug>
 
 ModuleLibNameManger::ModuleLibNameManger(const std::string &path) :
     logger("ModuleLibNameManger"),

@@ -6,7 +6,6 @@
 #include <sstream>
 #include <map>
 #include <vector>
-#include <QDebug>
 #include "../../include/io/io_csv.h"
 
 namespace kipl {

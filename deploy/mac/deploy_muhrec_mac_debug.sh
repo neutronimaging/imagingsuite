@@ -50,7 +50,7 @@ fi
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl.10.dylib $DEST/Contents/Frameworks`
 #`$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libhdf5_hl_cpp.100.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/imagingsuite/external/mac/lib/libsz.2.dylib $DEST/Contents/Frameworks`
-
+`$CPCMD /opt/local/lib/libarmadillo*.dylib $DEST/Contents/Frameworks`
 
 if [ -e "$REPOSPATH/Applications/muhrecCLI" ]; then
 	`$CPCMD $REPOSPATH/Applications/muhrecCLI $DEST/Contents/MacOS`
@@ -130,6 +130,9 @@ echo "Do deploy..."
 ./macdeployqt $DEST #-dmg
 
 cd $DEST/Contents/MacOS
+
+install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib MuhRec
+
 # muhrec
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib MuhRec
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib MuhRec

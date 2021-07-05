@@ -3,8 +3,6 @@
 #include <map>
 #include <string>
 
-#include <QDebug>
-
 #include "resolutionestimators.h"
 
 #include <armadillo>

@@ -1,8 +1,6 @@
 #ifndef IO_NEXUS_H
 #define IO_NEXUS_H
 
-#include <QDebug>
-
 #include "../kipl_global.h"
 #include "../base/imagecast.h"
 #include "../base/timage.h"
@@ -84,7 +82,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
 
                   if (it_att->name=="signal")
                   {
-                      qDebug() << "found plottable data!!" ;
+//                      qDebug() << "found plottable data!!" ;
 
                       size_t img_size[3];
 

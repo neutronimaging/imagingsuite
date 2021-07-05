@@ -1,8 +1,6 @@
 //<LICENCE>
 
 #include <../include/kipl_global.h>
-#include <QDebug>
-
 #include <cstring>
 #include <cstdlib>
 #include <vector>

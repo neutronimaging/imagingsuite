@@ -21,8 +21,6 @@
 #include "../../../include/io/io_tiff.h"
 #endif
 
-#include <QDebug>
-
 namespace kipl { namespace base {
 //int Histogram(float const * const data, size_t nData, size_t * const hist, const size_t nBins, float lo, float hi, float * const pAxis)
 
