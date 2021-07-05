@@ -4,10 +4,6 @@
 
 #include <list>
 
-#if !defined(NO_QT)
-#include <QDebug>
-#endif
-
 #include "../repairhole.h"
 #include "../pixeliterator.h"
 
@@ -18,8 +14,6 @@ template <class T>
 void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl::base::eConnectivity connect)
 {
     const T markedPixel = std::numeric_limits<T>::max();
-
-//    std::cout<< "img Size" << img.Size()<< std::endl;
 
     std::list<size_t> edgePixels;
     std::list<size_t> remainingPixels;

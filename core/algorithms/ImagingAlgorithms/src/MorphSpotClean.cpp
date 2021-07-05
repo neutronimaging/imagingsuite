@@ -12,10 +12,6 @@
 #include "../include/MorphSpotClean.h"
 #include "../include/ImagingException.h"
 
-#if !defined(NO_QT)
-#include <QDebug>
-#endif
-
 namespace ImagingAlgorithms {
 
 MorphSpotClean::MorphSpotClean() :
@@ -72,7 +68,6 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, std::vector<float
     m_fThreshold = th;
     m_fSigma     = sigma;
 
-//    qDebug() << "Threshold " << m_fThreshold <<", Sigma "<<m_fSigma;
     switch (m_eMorphClean)
     {
         case MorphCleanReplace  : ProcessReplace(img); break;

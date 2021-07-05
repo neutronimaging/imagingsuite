@@ -12,7 +12,7 @@
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
-#include <QDebug>
+
 
 //#define EQUIDISTANT_WEIGHTS
 

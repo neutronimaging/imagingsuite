@@ -17,7 +17,6 @@
 #include <base/tpermuteimage.h>
 #include <math/mathconstants.h>
 
-#include <QDebug>
 
 #define USE_PROJ_PADDING
 
