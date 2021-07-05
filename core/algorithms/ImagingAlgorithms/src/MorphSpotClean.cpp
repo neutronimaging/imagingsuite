@@ -1,5 +1,6 @@
 //<LICENSE>
 #include <algorithm>
+#include <functional>
 #include <thread>
 #include <morphology/morphextrema.h>
 #include <math/image_statistics.h>
