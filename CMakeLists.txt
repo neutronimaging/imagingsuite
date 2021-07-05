@@ -136,7 +136,7 @@ add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 
 # Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)
-#add_subdirectory(core/algorithms/pyimgalg)
+add_subdirectory(core/algorithms/pyimgalg)
 
 if(DYNAMIC_LIB)
   # install(
