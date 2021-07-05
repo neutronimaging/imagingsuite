@@ -40,6 +40,7 @@ set(INC_FILES
   include/piercingpointestimator.h  
   include/ReferenceImageCorrection.h  
   include/tomocenter.h
+  include/normalizeimage.h
 )
 
 set(SRC_FILES
@@ -56,6 +57,7 @@ set(SRC_FILES
   src/piercingpointestimator.cpp  
   src/ReferenceImageCorrection.cpp  
   src/tomocenter.cpp  
+  src/normalizeimage.cpp
 )
 
 
