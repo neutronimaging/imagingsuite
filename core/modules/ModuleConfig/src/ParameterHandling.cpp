@@ -29,8 +29,9 @@ float MODULECONFIGSHARED_EXPORT GetFloatParameter(std::map<std::string, std::str
 {
 	std::string str=GetStringParameter(parameters,parameter);
 
-	
-	return static_cast<float>(std::atof(str.c_str()));
+    return static_cast<float>(std::atof(str.c_str()));
+//    return static_cast<float>((QString::fromStdString(str.c_str()).toUtf8()).toFloat());
+
 }
 
 int MODULECONFIGSHARED_EXPORT GetIntParameter(std::map<std::string, std::string> parameters, std::string parameter)
