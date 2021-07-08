@@ -25,7 +25,7 @@ PYBIND11_MODULE(imgalg,m)
     bindMorphSpotClean(m);
     bindStripeFilter(m);
     bindProjectionFilter(m);
-    // bindNormalizeImage(m);
+    bindNormalizeImage(m);
     bindCenterEstimator(m);
 //    bindPixelInfo(m);
 //    bindException(m);
