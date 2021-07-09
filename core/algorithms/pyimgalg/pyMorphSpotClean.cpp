@@ -240,13 +240,15 @@ void bindMorphSpotClean(py::module &m)
 
 
     py::enum_<ImagingAlgorithms::eMorphDetectionMethod>(m,"eMorphDetectionMethod")
-            .value("MorphDetectHoles",         ImagingAlgorithms::MorphDetectHoles)
-            .value("MorphDetectPeaks",         ImagingAlgorithms::MorphDetectPeaks)
-            .value("MorphDetectBoth",          ImagingAlgorithms::MorphDetectBoth)
+            .value("MorphDetectDarkSpots",        ImagingAlgorithms::MorphDetectDarkSpots)
+            .value("MorphDetectMorphBrightSpots", ImagingAlgorithms::MorphDetectBrightSpots)
+            .value("MorphDetectAllSpots",         ImagingAlgorithms::MorphDetectAllSpots)
+            .value("MorphDetectHoles",            ImagingAlgorithms::MorphDetectHoles)
+            .value("MorphDetectPeaks",            ImagingAlgorithms::MorphDetectPeaks)
+            .value("MorphDetectBoth",             ImagingAlgorithms::MorphDetectBoth)
             .export_values();
 
 }
-
 
 
 
