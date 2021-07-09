@@ -3,7 +3,7 @@
 2. Install needed packages for building the libraries
 ```bash
 sudo apt-get update
-sudo apt-get build-essential git python-is-python3
+sudo apt-get install build-essential git python-is-python3
 sudo snap install cmake --classic
 sudo apt install python3.8-distutils
 sudo apt-get install libarmadillo9 libarmadillo-dev libtiff-dev libcfitsio-dev libfftw3-3 libfftw3-dev libxml2-dev libnexus-dev
@@ -76,7 +76,7 @@ Check in the start up banner that it is the anaconda python that started.
 Try to import the binder modules
 ```python
 import muhrectomo as mt
-import imgalg as ia
+import imgalg 
 ```
-Both should load with out error. Once you are done, you can stop python by pressing ctrl-D.
+Both should load without error. Once you are done, you can stop python by pressing ctrl-D.
 
