@@ -301,4 +301,4 @@ fi
 
 cp -r $DEST /tmp/muhrec
 
-hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec_build-$GITVER-`date +%Y%m%d`.dmg
+hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec-MacOS_build-$GITVER-`date +%Y%m%d`.dmg
