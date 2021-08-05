@@ -4,12 +4,15 @@
 
 #include "../include/BackProjectorModuleBase.h"
 #include "../include/ReconException.h"
+#include <ParameterHandling.h>
+#include <strings/miscstring.h>
 
 BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor) :
     logger(name),
 	MatrixAlignment(align),
     mConfig(""),
     m_sModuleName(name),
+    m_bBuildCircleMask(true),
 	m_sApplication(application),
     m_Interactor(interactor)
 {
@@ -54,7 +57,23 @@ size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,3> proj, std::m
 	msg<<"Backprojector module "<<m_sModuleName<<" does not support 3D processing.";
 	throw ReconException(msg.str(),__FILE__,__LINE__);
 
-	return 0;
+    return 0;
+}
+
+int BackProjectorModuleBase::Configure(ReconConfig config, std::map<string, string> parameters)
+{
+    m_bBuildCircleMask = kipl::strings::string2bool(GetStringParameter(parameters,"usecircularmask"));
+
+    return 0;
+}
+
+std::map<string, string> BackProjectorModuleBase::GetParameters()
+{
+   std::map<string, string> params;
+
+   params["usecircularmask"] = m_bBuildCircleMask ? "true" : "false" ;
+
+   return params;
 }
 
 
