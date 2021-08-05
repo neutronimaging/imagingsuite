@@ -125,6 +125,7 @@
                     <order>1</order>
                     <paddingdoubler>2</paddingdoubler>
                     <usebias>false</usebias>
+                    <usecircularmask>true</usecircularmask>
                 </parameters>
             </module>
         </backprojector>

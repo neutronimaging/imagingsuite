@@ -207,20 +207,29 @@ void BackProjectorModuleBase::BuildCircleMask()
     const float R2=R*R;
     for (size_t i=0; i<nSizeY; i++)
     {
-        float y=static_cast<float>(i)-matrixCenterY;
-        float y2=y*y;
-
-        if (y2<=R2)
+        if (m_bBuildCircleMask)
         {
-            float x=sqrt(R2-y2);
-            mask[i].first=static_cast<size_t>(ceil(matrixCenterX-x));
-            mask[i].second=min(nSizeX-1u,static_cast<size_t>(floor(matrixCenterX+x)));
+            float y=static_cast<float>(i)-matrixCenterY;
+            float y2=y*y;
+
+            if (y2<=R2)
+            {
+                float x=sqrt(R2-y2);
+                mask[i].first=static_cast<size_t>(ceil(matrixCenterX-x));
+                mask[i].second=min(nSizeX-1u,static_cast<size_t>(floor(matrixCenterX+x)));
+            }
+            else
+            {
+                mask[i].first  = 0UL;
+                mask[i].second = 0UL;
+            }
         }
         else
         {
             mask[i].first  = 0UL;
-            mask[i].second = 0UL;
+            mask[i].second = nSizeX;
         }
+
         if (mConfig.MatrixInfo.bUseROI)
         {
             if ((mConfig.MatrixInfo.roi[1]<=i) && (i<=mConfig.MatrixInfo.roi[3]))
