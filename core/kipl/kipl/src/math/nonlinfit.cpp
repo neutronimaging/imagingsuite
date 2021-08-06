@@ -1,4 +1,5 @@
 //<LICENCE>
+#include <QDebug>
 
 #include <cstring>
 #include <sstream>

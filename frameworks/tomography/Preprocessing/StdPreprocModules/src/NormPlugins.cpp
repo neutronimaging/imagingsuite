@@ -17,7 +17,6 @@
 #include <ParameterHandling.h>
 
 #include "../include/NormPlugins.h"
-#include <QDebug>
 
 NormBase::NormBase(std::string name) :
     PreprocModuleBase(name),

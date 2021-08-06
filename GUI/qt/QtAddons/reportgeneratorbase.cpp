@@ -26,7 +26,6 @@ void ReportGeneratorBase::OpenDestination(QString fname)
 
 int ReportGeneratorBase::DrawImage(float *pImg, int *srcdims, int *dstdims, int x,int y, bool drawframe)
 {
-    qDebug() << "DrawImage is not implemented";
 //    size_t imgdims[4]={size_t(srcdims[0]),size_t(srcdims[1]),size_t(srcdims[2]),size_t(srcdims[3])};
 
 //    m_ImagePainter.setImage(pImg,imgdims);

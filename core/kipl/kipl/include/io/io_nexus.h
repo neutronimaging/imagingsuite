@@ -82,8 +82,6 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
 
                   if (it_att->name=="signal")
                   {
-//                      qDebug() << "found plottable data!!" ;
-
                       size_t img_size[3];
 
                       if (nCrop.empty())

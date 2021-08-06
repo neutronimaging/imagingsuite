@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 #include <base/thistogram.h>
 #include <base/timage.h>

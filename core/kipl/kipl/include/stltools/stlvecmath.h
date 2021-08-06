@@ -183,7 +183,6 @@ std::vector<T> convolve1d(const std::vector<T> &x, const std::vector<S> &H)
     for (auto itX = x.begin(); itX!=x.end()-pos; ++itX, ++itY)
     {
         *itY = std::inner_product(H.begin(),H.end(),itX,0.0);
-     //   qDebug() << *itX, *itY;
     }
     return y;
 }

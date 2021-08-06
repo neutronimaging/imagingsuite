@@ -1,4 +1,5 @@
 #include <QtTest>
+#include <QDebug>
 
 // add necessary includes here
 #include <sstream>

@@ -5,9 +5,6 @@
 
 #include "ReconFramework_global.h"
 
-//#include <QThread>
-//#include <QDebug>
-
 #include <map>
 #include <list>
 #include <set>
