@@ -184,9 +184,7 @@ float PixelSizeDlg::getDistance2(kipl::base::TImage<float, 2> &im, size_t *roi)
     }
 
     delete [] profile;
-//    qDebug() << "eroi0=["<<eroi0[0]<<", "<<eroi0[1]<<", "<<eroi0[2]<<", "<<eroi0[3]<<"] ";
 //    ui->viewer->set_rectangle(QRect(eroi0[0],eroi0[1],eroi0[2]-eroi0[0],eroi0[3]-eroi0[1]),QColor("green"),0);
-//    qDebug() << "eroi1=["<<eroi1[0]<<", "<<eroi1[1]<<", "<<eroi1[2]<<", "<<eroi1[3]<<"] ";
 //    ui->viewer->set_rectangle(QRect(eroi1[0],eroi1[1],eroi1[2]-eroi1[0],eroi1[3]-eroi1[1]),QColor("yellow"),1);
 
     edgePositions0 = edgePositions(dimg, eroi0, axis);

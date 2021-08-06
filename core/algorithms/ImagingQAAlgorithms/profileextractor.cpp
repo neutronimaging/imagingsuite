@@ -119,7 +119,6 @@ void ProfileExtractor::computeEdgeEquation(kipl::base::TImage<float, 2> &img)
     lineCoeffs[0]=(x*y2-y*xy)/(cnt*y2-y*y);
     lineCoeffs[1]=-(cnt*xy-x*y)/(cnt*y2-y*y);
 
-    qDebug() << "m="<<lineCoeffs[0]<<"; k="<<lineCoeffs[1]<<", atan(k)"<<atan(lineCoeffs[1])*180/fPi;
 }
 
 kipl::base::TImage<float, 2> ProfileExtractor::diffEdge(kipl::base::TImage<float, 2> &img)

@@ -8,7 +8,6 @@
 #include "analyzefileext.h"
 #include <strings/filenames.h>
 #include <base/KiplException.h>
-#include <QDebug>
 
 namespace readers {
 

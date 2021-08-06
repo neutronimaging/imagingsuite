@@ -349,6 +349,7 @@ float StdBackProjectorBase::Max()
 
 int StdBackProjectorBase::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
+    BackProjectorModuleBase::Configure(config,parameters);
 	mConfig=config;
     nProjectionBufferSize = GetIntParameter(parameters,"ProjectionBufferSize");
     nSliceBlock           = GetIntParameter(parameters,"SliceBlock");
@@ -360,7 +361,11 @@ int StdBackProjectorBase::Configure(ReconConfig config, std::map<std::string, st
 std::map<std::string, std::string> StdBackProjectorBase::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
-    parameters = filter.parameters();
+    parameters = BackProjectorModuleBase::GetParameters();
+
+    auto fp = filter.parameters();
+    parameters.insert(fp.begin(),fp.end());
+
 	parameters["ProjectionBufferSize"]=kipl::strings::value2string(nProjectionBufferSize);
 	parameters["SliceBlock"]= kipl::strings::value2string(nSliceBlock);
 	

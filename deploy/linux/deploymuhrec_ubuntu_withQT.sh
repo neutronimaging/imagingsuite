@@ -113,8 +113,9 @@ chmod +x muhrec
 
 
 cp $REPOSPATH/imagingsuite/applications/muhrec/Resources/*.xml resources
+GITVER=`git rev-parse --short HEAD`
 
-fname=muhrec_`uname -s`_`uname -m`_`date +%Y%m%d`.tar.bz2
+fname=MuhRec-Ubuntu_`uname -s`_`uname -m`_build-$GITVER-`date +%Y%m%d`.tar.bz2
 
 echo $fname
 

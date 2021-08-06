@@ -1,5 +1,7 @@
 #include <QString>
 #include <QtTest>
+#include <QDebug>
+
 #include <math/linfit.h>
 #include <iostream>
 
