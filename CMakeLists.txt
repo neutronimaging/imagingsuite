@@ -129,6 +129,7 @@ endif()
 # Core libraries
 add_subdirectory(core/kipl/kipl)
 add_subdirectory(core/algorithms/ImagingAlgorithms)
+add_subdirectory(core/algorithms/AdvancedFilters)
 add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(frameworks/tomography/Framework/ReconFramework)
 add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
@@ -137,6 +138,7 @@ add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 # Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
+add_subdirectory(core/algorithms/pyadvancedfilters)
 
 if(DYNAMIC_LIB)
   # install(

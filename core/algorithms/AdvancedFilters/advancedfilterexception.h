@@ -7,7 +7,8 @@
 #include <base/KiplException.h>
 #include <string>
 
-class ADVANCEDFILTERSSHARED_EXPORT AdvancedFiltersException : public kipl::base::KiplException {
+class ADVANCEDFILTERSSHARED_EXPORT AdvancedFiltersException : public kipl::base::KiplException
+{
 public:
     virtual ~AdvancedFiltersException();
     AdvancedFiltersException(std::string msg);
