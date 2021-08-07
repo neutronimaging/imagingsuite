@@ -276,11 +276,11 @@ int NonLinDiffusionFilter<T,NDim>::operator()(kipl::base::TImage<float,NDim> &im
     this->u.Clone(img);
     img.FreeImage();
 
-    this->v.Resize(this->u.Dims());
+    this->v.resize(this->u.dims());
 //    //g.resize(u.Dims()); // Don't forget to allocate g or (dx,dy,dz)
 
     this->InitFilters(this->u.Size(0), this->u.Size(0)*this->u.Size(1));
-    const size_t *dims=this->u.Dims();
+    std::vector<size_t> dims=this->u.dims();
 
     kipl::profile::Timer timer;
     std::ostringstream msg;

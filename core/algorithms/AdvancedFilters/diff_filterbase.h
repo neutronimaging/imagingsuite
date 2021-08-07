@@ -16,10 +16,12 @@
 //#include "lambdaest.h"
 //#include "../math/mathmisc.h"
 
+#include "filterenums.h"
+
 namespace advancedfilters {
     const float NumLimitDiffusivity=std::numeric_limits<float>::min();
 	
-const eGradientType DefaultGrad=Jahne_Grad;
+const advancedfilters::eGradientType DefaultGrad=advancedfilters::Jahne_Grad;
 
 	/// An abstract base class for the family of diffusion related filters
     template <typename T, size_t NDim>
@@ -248,11 +250,11 @@ const eGradientType DefaultGrad=Jahne_Grad;
 		u=img;
 		img.FreeImage();
 
-		v.Resize(u.Dims()); 
-		g.Resize(u.Dims()); // Don't forget to allocate g or (dx,dy,dz)
+        v.resize(u.dims());
+        g.resize(u.dims()); // Don't forget to allocate g or (dx,dy,dz)
 	
 		InitFilters(u.Size(0), u.Size(1)*u.Size(2));
-        const size_t *dims=u.Dims();
+        std::vector<size_t> dims=u.dims();
 
 		kipl::profile::Timer timer;
 		std::ostringstream msg;
@@ -328,10 +330,10 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
                                                     kipl::base::TImage<T,NDim> &ag,
 													bool squared)
 	{
-		const size_t * dims=img.Dims();
+        std::vector<size_t> dims=img.dims();
 		float *pG;
 
-		ag.Resize(dims);
+        ag.resize(dims);
 		for (int dim=0; dim<NGrad; dim++) {
 			Gradient(img,ag,dim,false,true);
 		}
@@ -361,7 +363,7 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 	{
         T *pA,*pB, *pD;
 		int offset;
-        const size_t * dims=img.Dims();
+        std::vector<size_t> dims=img.dims();
 		int startx,starty,startz;
 		switch (order) {
 			case 0: offset=1; startx=1;starty=0;startz=0; break;
@@ -372,7 +374,7 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 		
 		int x,y,z;
 		if (reset) {
-			d.Resize(img.Dims());
+            d.resize(img.dims());
 			d=0;
 		}
 		
@@ -403,7 +405,7 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 			return DiffGradient(img,d,order,reset,squared);
 		}
 		
-        const size_t *dims=img.Dims();
+        std::vector<size_t> dims=img.dims();
 		float *pV, *pD;//*pDX, *pDY, *pDZ;
 		float tmp,ltmp,rtmp;
 		int *indFilt=this->IndGradKernel+order*this->NGradInd;; // *IndFiltX, *IndFiltY, *IndFiltZ, *pI;
@@ -427,7 +429,7 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 			order=0;
 			
 		if (reset) {
-			d.Resize(img.Dims());
+            d.resize(img.dims());
 			d=0;
 		}
 		
@@ -563,7 +565,7 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 		int *pIndFilt;
 		int pos, h,i,j,k;
 	
-        const size_t *dims=img.Dims();
+        std::vector<size_t> dims=img.dims();
 		int sxy,sx;
 		sx=dims[0];
 		sxy=dims[0]*dims[1];
@@ -822,7 +824,7 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 				
 		}
 
-        const size_t *dims=u.Dims();
+        std::vector<size_t> dims=u.dims();
 
 		Nlvec[0]=dims[1]; 
 		Nlvec[1]=dims[0];

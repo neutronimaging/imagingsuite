@@ -26,9 +26,11 @@
 
 #include "filterenums.h"
 
-namespace advancedfilters {
+namespace advancedfilters
+{
 
-inline __m128 sign(__m128 m) {
+inline __m128 sign(__m128 m)
+{
     return _mm_and_ps(_mm_or_ps(_mm_and_ps(m, _mm_set1_ps(-0.0f)), // is -0.0f correct?
                 _mm_set1_ps(1.0f)),
               _mm_cmpneq_ps(m, _mm_setzero_ps()));
@@ -45,7 +47,8 @@ ISSfilterQ3D<T>::ISSfilterQ3D(kipl::interactors::InteractionBase *interactor) :
 }
 
 template <typename T>
-ISSfilterQ3D<T>::~ISSfilterQ3D() {
+ISSfilterQ3D<T>::~ISSfilterQ3D()
+{
 
 }
 
@@ -75,25 +78,25 @@ void ISSfilterQ3D<T>::setRegularizationType(const eRegularizationType &eRegulari
 template <typename T>
 int ISSfilterQ3D<T>::process(kipl::base::TImage<T,3> &img, double dTau, double dLambda, double dAlpha, int nN, bool saveiterations, std::string itpath)
 {
-    if (m_error.size() != nN)
-        m_error.resize(nN);
-    
-    if (m_entropy.size() != nN)
-        m_entropy.resize(nN);
+    m_error.resize(nN);
+    m_entropy.resize(nN);
 
-	switch (m_eInitialImage) {
-		case InitialImageOriginal: m_f=img; m_f.Clone();break;
-		case InitialImageZero: m_f.Resize(img.Dims()); m_f=static_cast<T>(0); break;
+    switch (m_eInitialImage)
+    {
+        case InitialImageOriginal: m_f=img; m_f.Clone(); break;
+        case InitialImageZero:     m_f.resize(img.dims()); m_f=static_cast<T>(0); break;
 	}
 
-	m_dTau=dTau; 
-	m_dLambda=dLambda;
-	m_dAlpha=dAlpha;
-	m_v.Resize(img.Dims());
+    m_dTau    = dTau;
+    m_dLambda = dLambda;
+    m_dAlpha  = dAlpha;
+
+    m_v.resize(img.dims());
 	m_v=static_cast<T>(0);
 
 	std::ostringstream msg;
-    switch (m_eRegularization){
+    switch (m_eRegularization)
+    {
         case advancedfilters::RegularizationTV1 :
             logger(kipl::logging::Logger::LogMessage, "Running ISS with TV1");
             break;
@@ -102,21 +105,23 @@ int ISSfilterQ3D<T>::process(kipl::base::TImage<T,3> &img, double dTau, double d
             break;
     }
 
-    for (int i=0; (i<nN) && (updateStatus(float(i)/nN,"ISS 3D filter iteration")==false)	; ++i) {
+    for (int i=0; (i<nN) && (updateStatus(float(i)/nN,"ISS 3D filter iteration")==false)	; ++i)
+    {
 		msg.str("");
 		msg<<"Processing iteration "<<i+1;
 		logger(kipl::logging::Logger::LogMessage,msg.str());
         m_error[i]=_SolveIterationSSE(img)/img.Size();
 	//	entropy[i]=_ComputeEntropy(img);
 
-		if (saveiterations) {
+        if (saveiterations)
+        {
 			std::string fname, mask,ext;
 			kipl::strings::filenames::MakeFileName("iteration_####.tif",i, fname, ext, '#', '0');
 			std::string p=itpath;
 			kipl::strings::filenames::CheckPathSlashes(p,true);
 			fname=p+fname;
 			kipl::base::TImage<T,2> slice=kipl::base::ExtractSlice(img, img.Size(2)/2);
-			kipl::io::WriteTIFF32(slice,fname.c_str());
+            kipl::io::WriteTIFF(slice,fname.c_str(),kipl::base::Float32);
 		}
 	}
 
@@ -139,7 +144,8 @@ T ISSfilterQ3D<T>::_SolveIterationSSE(kipl::base::TImage<T,3> &img)
 	float fTau=static_cast<T>(m_dTau);
     float fTauAlpha=static_cast<T>(m_dTau*m_dAlpha);
 
-    if (m_eRegularization == advancedfilters::RegularizationTV1) {
+    if (m_eRegularization == advancedfilters::RegularizationTV1)
+    {
         #pragma omp parallel reduction(+:sum2)
         {
         //	int TID=omp_get_thread_num();
@@ -236,7 +242,7 @@ T ISSfilterQ3D<T>::_SolveIteration(kipl::base::TImage<T,3> &img)
         #pragma omp parallel reduction(+:sum2)
         {
             double localsum=0.0;
-            int TID=omp_get_thread_num();
+
             long long int N=img.Size();
             T tempFU;
             T fTau=static_cast<T>(m_dTau);
@@ -248,7 +254,8 @@ T ISSfilterQ3D<T>::_SolveIteration(kipl::base::TImage<T,3> &img)
             double diff=0.0;
 
             #pragma omp for
-            for (i=0; i<N ; i++) {
+            for (i=0; i<N ; i++)
+            {
                 tempFU=sign(pF[i]-pU[i]);
                 pU[i]+=fTau*(pP[i]+lambda*(tempFU+pV[i]));
                 pV[i]+=dTauAlpha*tempFU;
@@ -277,7 +284,8 @@ T ISSfilterQ3D<T>::_SolveIteration(kipl::base::TImage<T,3> &img)
             double diff=0.0;
 
             #pragma omp for
-            for (i=0; i<N ; i++) {
+            for (i=0; i<N ; i++)
+            {
                 tempFU=pF[i]-pU[i];
                 pU[i]+=fTau*(pP[i]+lambda*(tempFU+pV[i]));
                 pV[i]+=dTauAlpha*tempFU;
@@ -303,18 +311,21 @@ int ISSfilterQ3D<T>::_P(kipl::base::TImage<T,3> &img, kipl::base::TImage<T,3> &r
 
     kipl::base::TImage<T,2> dx,dy,dz, d2x, d2y,d2z;
 
-	res.Resize(img.Dims());
-    kipl::base::TImage<T,2> resslice(res.Dims());
+    res.resize(img.dims());
+    kipl::base::TImage<T,2> resslice(res.dims());
 	kipl::base::TImage<T,2> prev_dx;
 	kipl::base::TImage<T,2> prev_dy;
 	kipl::base::TImage<T,2> prev_dz;
+
     const int N=static_cast<int>(img.Size(2));
-	for (int i=0; i<N;i++) {
-		if (img_queue.empty()) {
+    for (int i=0; i<N;i++)
+    {
+        if (img_queue.empty())
+        {
 		//	kipl::base::TImage<T,2> slice=kipl::base::ExtractSlice(img,1);
 			kipl::base::TImage<T,2> slice=GetPaddedSlice(img,1,nMargin);
 			img_queue.push_back(slice);
-			resslice.Resize(slice.Dims());
+            resslice.resize(slice.dims());
 		}
 
 		//kipl::base::TImage<T,2> slice=kipl::base::ExtractSlice(img,i);
@@ -327,7 +338,8 @@ int ISSfilterQ3D<T>::_P(kipl::base::TImage<T,3> &img, kipl::base::TImage<T,3> &r
 
 		img_queue.pop_front();		
 		
-		if (1<dx_queue.size()) {
+        if (1<dx_queue.size())
+        {
 			_Curvature(dx_queue,dy_queue,dz_queue,resslice); // Lead difference
 			
 			prev_dx=dx_queue.front(); dx_queue.pop_front();
@@ -371,7 +383,8 @@ int ISSfilterQ3D<T>::_FirstDerivate(std::list<kipl::base::TImage<T,2> > &img_que
 	int sy=img1.Size(1);
 
     #pragma omp parallel for
-	for (int y=0; y<sy; y++) {
+    for (int y=0; y<sy; y++)
+    {
 		kipl::base::uFQuad d;
 
 		T* pImg0=img1.GetLinePtr(y);
@@ -386,7 +399,8 @@ int ISSfilterQ3D<T>::_FirstDerivate(std::list<kipl::base::TImage<T,2> > &img_que
 		T sum2  = static_cast<T>(0);
 		T denom = static_cast<T>(0);
 
-		for (int x=0; x<sx; x++) {
+        for (int x=0; x<sx; x++)
+        {
             // Division by two is omitted since the result is normed later
 			if (x==0)
 				pDx[0]=pImg0[1]-pImg0[0];
@@ -405,7 +419,8 @@ int ISSfilterQ3D<T>::_FirstDerivate(std::list<kipl::base::TImage<T,2> > &img_que
 			pDz[x]=pImg0[x]-pImgZ[x];
 
 			sum2+=pDz[x]*pDz[x];
-            if (sum2!=0) {
+            if (sum2!=0)
+            {
                 denom=static_cast<T>(1)/sqrt(sum2); // Hot spot!!!
 
                 pDx[x]*=denom;
@@ -425,12 +440,12 @@ int ISSfilterQ3D<T>::_FirstDerivate(std::list<kipl::base::TImage<T,2> > &img_que
 template <typename T>
 kipl::base::TImage<T,2> ISSfilterQ3D<T>::GetPaddedSlice(kipl::base::TImage<T,3> &vol, size_t nIdx, size_t nMargin)
 {
-	size_t dims[2]={vol.Size(0)+nMargin*2, vol.Size(1)+nMargin*2};
+    std::vector<size_t> dims={vol.Size(0)+nMargin*2, vol.Size(1)+nMargin*2};
 	kipl::base::TImage<T,2> slice(dims);
 
-
 	slice=static_cast<T>(0);
-	for (size_t i=0; i<vol.Size(1); i++) {
+    for (size_t i=0; i<vol.Size(1); i++)
+    {
 		memcpy(slice.GetLinePtr(i+nMargin)+nMargin,vol.GetLinePtr(i,nIdx),sizeof(T)*vol.Size(0));
 	}
 
@@ -440,8 +455,9 @@ kipl::base::TImage<T,2> ISSfilterQ3D<T>::GetPaddedSlice(kipl::base::TImage<T,3> 
 template <typename T>
 void ISSfilterQ3D<T>::InsertPaddedSlice(kipl::base::TImage<T,2> & slice, kipl::base::TImage<T,3> &vol, size_t nIdx, size_t nMargin)
 {
-	for (size_t i=0; i<vol.Size(1); i++) {
-		memcpy(vol.GetLinePtr(i,nIdx),slice.GetLinePtr(i+nMargin)+nMargin,sizeof(T)*vol.Size(0));
+    for (size_t i=0; i<vol.Size(1); i++)
+    {
+        std::copy_n(slice.GetLinePtr(i+nMargin)+nMargin,vol.Size(0),vol.GetLinePtr(i,nIdx));
 	}
 }
 
@@ -693,9 +709,9 @@ int ISSfilterQ3D<T>::_FirstDerivateSSE(std::list<kipl::base::TImage<T,2> > &img_
 									std::list<kipl::base::TImage<T,2> > &dy_queue,
 									std::list<kipl::base::TImage<T,2> > &dz_queue) // Lag difference
 {
-	kipl::base::TImage<T,2> dx(img_queue.front().Dims());
-	kipl::base::TImage<T,2> dy(img_queue.front().Dims());
-	kipl::base::TImage<T,2> dz(img_queue.front().Dims());
+    kipl::base::TImage<T,2> dx(img_queue.front().dims());
+    kipl::base::TImage<T,2> dy(img_queue.front().dims());
+    kipl::base::TImage<T,2> dz(img_queue.front().dims());
 
 	kipl::base::TImage<T,2> &img1=img_queue.back();
 	kipl::base::TImage<T,2> &img0=img_queue.front();
@@ -706,30 +722,37 @@ int ISSfilterQ3D<T>::_FirstDerivateSSE(std::list<kipl::base::TImage<T,2> > &img_
 
 
 	memset(dy.GetLinePtr(0),0,sx*sizeof(float));
-	float *px=dx.GetLinePtr(0);
-	float *py=dy.GetLinePtr(0);
-	float *pz=dz.GetLinePtr(0);
-	float *p0=img0.GetLinePtr(0);
-	float *p1=img1.GetLinePtr(0);
+    float *px  = dx.GetLinePtr(0);
+    float *py  = dy.GetLinePtr(0);
+    float *pz  = dz.GetLinePtr(0);
+    float *p0  = img0.GetLinePtr(0);
+    float *p1  = img1.GetLinePtr(0);
 	// First line processing
-	for (int x=1; x<sx; x++) {
-		if (x!=0) {
+    for (int x=1; x<sx; x++)
+    {
+        if (x!=0)
+        {
 			px[x]=p1[x]-p1[x-1];
 			py[x]=p1[x]-p1[x+sx];
 			pz[x]=p1[x]-p0[x];
 		}
-		else {
+        else
+        {
 			px[0]=p1[0]-p1[1];
 			py[0]=p1[0]-p1[sx];
 			pz[0]=p1[0]-p0[0];
 		}
-		float sum2=sqrt(px[x]*px[x]+py[x]*py[x]+pz[x]*pz[x]);
-		if (sum2!=0) {
+
+        float sum2=sqrt(px[x]*px[x]+py[x]*py[x]+pz[x]*pz[x]);
+        if (sum2!=0)
+        {
 			sum2=1.0f/sum2;
 			px[x]*=sum2;
 			py[x]*=sum2;
 			pz[x]*=sum2;
 		}
+
+
 	}
 
 
@@ -759,7 +782,8 @@ int ISSfilterQ3D<T>::_FirstDerivateSSE(std::list<kipl::base::TImage<T,2> > &img_
 
 
 		#pragma omp for
-		for (int y=1; y<sy; y++) {
+        for (int y=1; y<sy; y++)
+        {
 			memcpy(pImg0,img1.GetLinePtr(y),sx*sizeof(float));
 			memcpy(pImgX,img1.GetLinePtr(y)-1,sx*sizeof(float));
 			memcpy(pImgY,img1.GetLinePtr(y-1), sx*sizeof(float));
@@ -773,7 +797,8 @@ int ISSfilterQ3D<T>::_FirstDerivateSSE(std::list<kipl::base::TImage<T,2> > &img_
 			q->q.a=q->q.c;
 			// Division by two is omitted since the result is normed later
 		//	for (int x=sx4-1; 0<=x ; x--) {
-			for (int x=0; x<sx4; x++) {
+            for (int x=0; x<sx4; x++)
+            {
 				__m128 tmpX = _mm_sub_ps(pImg0[x], pImgX[x]);
 				__m128 tmpY = _mm_sub_ps(pImg0[x], pImgY[x]);
 				__m128 tmpZ = _mm_sub_ps(pImg0[x], pImgZ[x]);
@@ -916,8 +941,8 @@ int ISSfilterQ3D<T>::_CurvatureSSE(   std::list<kipl::base::TImage<T,2> > &dx_qu
 template <typename T>
 int ISSfilterQ3D<T>::_LeadRegularize(kipl::base::TImage<T,3> *img, Direction dir)
 {
-	T *pA=NULL;
-	T *pB=NULL;
+    T *pA = nullptr;
+    T *pB = nullptr;
 	
 	size_t const * const dims=img->Dims();
 	size_t sxy=dims[0]*dims[1];

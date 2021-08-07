@@ -15,7 +15,8 @@
 namespace advancedfilters {
 
 template <typename T>
-class ISSfilterQ3D {
+class ISSfilterQ3D
+{
 	kipl::logging::Logger logger;
 public:
   ISSfilterQ3D(kipl::interactors::InteractionBase *interactor=nullptr);
