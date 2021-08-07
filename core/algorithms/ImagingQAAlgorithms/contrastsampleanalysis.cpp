@@ -65,7 +65,7 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
     m_Img3D.Clone(img);
 
     logger(logger.LogMessage,"Average slice");
-    qDebug() << "Start avg";
+
     m_Img2D.resize(m_Img3D.dims());
     m_Img2D=0.0f;
     for (size_t slice=0; slice<m_Img3D.Size(2); ++slice)
@@ -77,27 +77,22 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
         }
     }
 
-    qDebug()<< "Summing done";
     for (size_t pix=0; pix<m_Img2D.Size(); ++pix)
     {
         m_Img2D[pix]/=m_Img3D.Size(2);
     }
 
-    qDebug() << "Pre filter"<< filterSize;
 //    if (1UL<filterSize)
 //    {
 //        size_t fltdims[]={filterSize,filterSize};
 //        kipl::filters::TMedianFilter<float,2> flt(fltdims);
 //        m_Img2D = flt(m_Img2D);
 //    }
-    qDebug() << "Histogram";
     makeHistogram();
 
-    qDebug() << "save";
     if (saveIntermediateImages)
         kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::Float32);
 
-   qDebug() << "done";
 }
 
 void ContrastSampleAnalysis::analyzeContrast(float pixelSize, const std::list<kipl::base::RectROI> &ROIs)
@@ -200,7 +195,6 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
     dotfile.close();
     timer.Toc();
     msg.str(""); msg<<"hMax timing: "<<timer;
-    qDebug() << msg.str().c_str();
 
 }
 
@@ -226,7 +220,6 @@ void ContrastSampleAnalysis::findCenters()
     kipl::morphology::hMax(chm,peaks,threshold, kipl::base::conn4);
     timer.Toc();
     msg.str(""); msg<<"hMax timing: "<<timer;
-    qDebug() << msg.str().c_str();
 
     if (saveIntermediateImages)
         kipl::io::WriteTIFF(peaks,"csa_hmax.tif",kipl::base::Float32);
@@ -269,7 +262,6 @@ void ContrastSampleAnalysis::estimateInsetRing()
     msg.str("");
     msg<<"Found "<<dots.size()<<" dots";
     logger(logger.LogMessage,msg.str());
-    qDebug() << msg.str().c_str();
     if (dots.size()<5)
         throw kipl::base::KiplException("Too few dots to estimate the ring parameters.");
     arma::mat H(dots.size()-1UL,2);
@@ -295,7 +287,6 @@ void ContrastSampleAnalysis::estimateInsetRing()
     timer.Toc();
 
     msg.str(""); msg<<"Circle fitting timing: "<<timer;
-    qDebug() << msg.str().c_str();
 
     msg.str("");
     msg<<"Ring center at ["<<parameters[0]<<", "<<parameters[1]<<"]";
@@ -365,7 +356,6 @@ void ContrastSampleAnalysis::makeHistogram()
 {
     std::ostringstream msg;
     msg<<"Compute histogram (size="<<m_Img2D.Size()<<", #bins="<<hist_size;
-    qDebug() << msg.str().c_str();
     logger(logger.LogMessage,msg.str());
     kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_size,hist_bins,hist_axis,0.0f,0.0f,true);
 
@@ -388,7 +378,6 @@ void ContrastSampleAnalysis::circleTransform(float pixelSize)
     chm=cht(m_Img2D,radius,true);
     timer.Toc();
     msg.str(""); msg<<"Circular Hough timing: "<<timer;
-    qDebug() << msg.str().c_str();
 
     if (saveIntermediateImages)
         kipl::io::WriteTIFF(chm,"csa_cht.tif",kipl::base::Float32);

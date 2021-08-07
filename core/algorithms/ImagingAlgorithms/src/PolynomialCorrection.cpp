@@ -185,10 +185,13 @@ void PolynomialCorrection::processInplace(double *data,size_t N)
 
 inline float PolynomialCorrection::computePolynomial(float x)
 {
-    float y=0;
+    float y=0.0f;
 
     switch (m_nDegree)
     {
+    case 0:
+        y=m_fCoef[0];
+        break;
     case 1:
         y=m_fCoef[1]*x+m_fCoef[0];
         break;

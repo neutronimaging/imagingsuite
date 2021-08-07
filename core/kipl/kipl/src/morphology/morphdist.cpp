@@ -15,7 +15,7 @@ namespace kipl { namespace morphology {
 int DistanceTransform3D(CImage<float,3> &img, CImage<float,3> &dist, CMetricBase &metric)
 {
 	if (metric.dim()!=3) {
-		cerr<<metric<<" is not a 3D metric"<<endl;
+        std::cerr<<metric<<" is not a 3D metric"<<std::endl;
 		return 0;
 	}
     int x,y,z;
@@ -78,7 +78,7 @@ int DistanceTransform3D(CImage<float,3> &img, CImage<float,3> &dist, CMetricBase
 /*
 int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetricBase &metric)
 {
-	//cout<<"enter"<<endl;
+    //std::cout<<"enter"<<std::endl;
 	int x,y;
     const int *dims=img.getDimsptr();
     dist.resize(dims);
@@ -91,7 +91,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
     int start=metric.start();
 	dist=FLT_MAX;
 
-	//cout<<"init"<<endl;
+    //std::cout<<"init"<<std::endl;
 	for (y=start; y<dims[1]-start; y++) {
 		pDist=dist.getLineptr(y)+start;
 		pImg=img.getLineptr(y)+start;
@@ -101,7 +101,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
  	}
 
 
-	//cout<<"forward"<<endl;
+    //std::cout<<"forward"<<std::endl;
 	for (y=start; y<dims[1]-start; y++) {
 		pDist=dist.getLineptr(y)+start;
 		for (x=start; x<dims[0]-start; x++,pDist++) {
@@ -110,7 +110,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 		}
 	}
 
-	//cout<<"backward"<<endl;
+    //std::cout<<"backward"<<std::endl;
 	for (y=dims[1]-1-start; y>=start; y--) {
 		pDist=dist.getLineptr(y)+dims[0]-1-start;
 		for (x=dims[0]-1-start; x>=start; x--,pDist--) {
@@ -119,7 +119,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
 		}
 	}
 
-	cout<<"finish"<<endl;
+    std::cout<<"finish"<<std::endl;
     pDist=dist.getDataptr();
     for (x=0; x<dist.N(); x++, pDist++)
         if (*pDist==FLT_MAX) *pDist=1;

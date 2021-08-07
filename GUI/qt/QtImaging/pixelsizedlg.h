@@ -34,6 +34,10 @@ private slots:
 
     void on_pushButton_Analyze_clicked();
 
+    void on_pushButton_level95p_clicked();
+
+    void on_pushButton_level99p_clicked();
+
 private:
     void loadImage(QString fn);
     void plotEdge(std::vector<std::pair<float,float>> &ep, QColor c, int idx);

@@ -8,6 +8,8 @@
 #include <sstream>
 #include <fstream>
 #include <limits>
+#include <chrono>
+#include <thread>
 
 #include <ParameterHandling.h>
 
@@ -15,7 +17,6 @@
 #include <base/tpermuteimage.h>
 #include <math/mathconstants.h>
 
-#include <QDebug>
 
 #define USE_PROJ_PADDING
 
@@ -164,7 +165,7 @@ void StdBackProjectorBase::SetROI(const std::vector<size_t> &roi)
 
 	ClearAll();
 
-    QThread::msleep(500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Is this really needed?
 	ProjCenter    = mConfig.ProjectionInfo.fCenter;
 	SizeU         = roi[2]-roi[0];
     if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
@@ -209,7 +210,7 @@ void StdBackProjectorBase::SetROI(const std::vector<size_t> &roi)
     MatrixCenterX = volume.Size(1)/2;
 }
 
-const std::vector<size_t> & StdBackProjectorBase::GetMatrixDims()
+std::vector<size_t> StdBackProjectorBase::GetMatrixDims()
 {
     std::vector<size_t> dims;
     if (MatrixAlignment==MatrixZXY)
@@ -348,21 +349,23 @@ float StdBackProjectorBase::Max()
 
 int StdBackProjectorBase::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
-    qDebug()<<"b";
+    BackProjectorModuleBase::Configure(config,parameters);
 	mConfig=config;
-qDebug()<<"b";
     nProjectionBufferSize = GetIntParameter(parameters,"ProjectionBufferSize");
     nSliceBlock           = GetIntParameter(parameters,"SliceBlock");
 	GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
     filter.setParameters(parameters);
-    qDebug()<<"b";
 	return 0;
 }
 
 std::map<std::string, std::string> StdBackProjectorBase::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
-    parameters = filter.parameters();
+    parameters = BackProjectorModuleBase::GetParameters();
+
+    auto fp = filter.parameters();
+    parameters.insert(fp.begin(),fp.end());
+
 	parameters["ProjectionBufferSize"]=kipl::strings::value2string(nProjectionBufferSize);
 	parameters["SliceBlock"]= kipl::strings::value2string(nSliceBlock);
 	

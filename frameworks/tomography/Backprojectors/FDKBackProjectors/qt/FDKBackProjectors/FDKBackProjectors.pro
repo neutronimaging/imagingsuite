@@ -32,6 +32,7 @@ unix:!symbian {
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
         INCLUDEPATH += /usr/include/libxml2
+        LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu -lNeXus -lNeXusCPP
     }
 
     LIBS += -ltiff -lxml2 -lfftw3 -lfftw3f

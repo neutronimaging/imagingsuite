@@ -1,6 +1,5 @@
 //<LICENCE>
 
-#include <QDebug>
 #include "../../include/kipl_global.h"
 #include "../include/interactors/interactionbase.h"
 

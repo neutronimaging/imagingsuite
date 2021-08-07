@@ -4,9 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core widgets printsupport charts
 
 TARGET = ImageViewer
 TEMPLATE = app
@@ -39,11 +37,14 @@ unix:!symbian {
         LIBS += -lgomp
         INCLUDEPATH += /usr/include/libxml2
         INCLUDEPATH += /usr/include/cfitsio
+        LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu -lNeXus -lNeXusCPP
+        DEFINES += HAVE_NEXUS
     }
 
     LIBS += -ltiff -lxml2 -lcfitsio
 
 }
+
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
@@ -72,7 +73,7 @@ FORMS    += viewermainwindow.ui \
 CONFIG(release, debug|release):      LIBS += -L$$PWD/../../../../lib
 else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug
 
-LIBS += -lkipl -lQtAddons -lReaderConfig
+LIBS += -lkipl -lImagingAlgorithms -lQtAddons -lReaderConfig
 
 INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig
 DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig

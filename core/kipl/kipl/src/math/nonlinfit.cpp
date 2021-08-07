@@ -1,4 +1,5 @@
 //<LICENCE>
+#include <QDebug>
 
 #include <cstring>
 #include <sstream>
@@ -13,8 +14,6 @@
 #include "../../include/logging/logger.h"
 #include "../../include/base/KiplException.h"
 #include "../../include/strings/miscstring.h"
-
-#include <QDebug>
 
 namespace Nonlinear {
 
@@ -333,7 +332,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
     int Gaussian::Hessian(double UNUSED(x), arma::mat &UNUSED)
     {
 
-        std::cerr<<"The Hessian is not available"<<endl;
+        std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
 
         /*
@@ -346,7 +345,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Gaussian::Jacobian(double UNUSED(x), arma::mat & UNUSED(jac))
     {
-        std::cerr<<"The Jacobian is not available"<<endl;
+        std::cerr<<"The Jacobian is not available"<<std::endl;
         return 1;
         /*
         if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
@@ -368,7 +367,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         {
             std::cout<<est[i]  <<"A="<<m_pars[i]  <<" "
                 <<est[i+1]<<"m="<<m_pars[i+1]<<" "
-                <<est[i+2]<<"s="<<m_pars[i+2]<<endl;
+                <<est[i+2]<<"s="<<m_pars[i+2]<<std::endl;
         }
 
         delete [] est;
@@ -419,7 +418,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
     int SumOfGaussians::Hessian(double UNUSED(x), arma::mat &UNUSED)
     {
 
-        std::cerr<<"The Hessian is not available"<<endl;
+        std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
 
         /*
@@ -432,7 +431,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int SumOfGaussians::Jacobian(double UNUSED(x), arma::mat & UNUSED(jac))
     {
-        std::cerr<<"The Jacobian is not available"<<endl;
+        std::cerr<<"The Jacobian is not available"<<std::endl;
         return 1;
         /*
         if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
@@ -454,7 +453,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         {
             std::cout<<est[i]  <<"A="<<m_pars[i]  <<" "
                 <<est[i+1]<<"m="<<m_pars[i+1]<<" "
-                <<est[i+2]<<"s="<<m_pars[i+2]<<endl;
+                <<est[i+2]<<"s="<<m_pars[i+2]<<std::endl;
         }
 
         delete [] est;
@@ -502,7 +501,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         std::cout<<est[0]<<"A="<<m_pars[0]<<
             " "<<est[1]<<"m="<<m_pars[1]<<
             " "<<est[2]<<"gamma="<<m_pars[2]<<
-            " "<<est[3]<<"sigma="<<m_pars[3]<<endl;
+            " "<<est[3]<<"sigma="<<m_pars[3]<<std::endl;
 
         delete [] est;
         return 1;

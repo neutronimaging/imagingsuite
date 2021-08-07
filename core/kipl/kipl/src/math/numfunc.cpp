@@ -27,7 +27,7 @@ double gammp(double a, double x)
 {
 	double gamser,gammcf,gln;
 	
-	if (x < 0.0 || a <= 0.0) cerr<<"Invalid arguments in routine gammp"<<endl;
+    if (x < 0.0 || a <= 0.0) cerr<<"Invalid arguments in routine gammp"<<std::endl;
 	if (x < (a+1.0)) {
 		gser(&gamser,a,x,&gln);
 		return gamser;
@@ -41,7 +41,7 @@ double gammq(double a, double x)
 {
 	double gamser,gammcf,gln;
 	
-	if (x < 0.0 || a <= 0.0) cerr<<"Invalid arguments in routine gammq"<<endl;
+    if (x < 0.0 || a <= 0.0) cerr<<"Invalid arguments in routine gammq"<<std::endl;
 	if (x < (a+1.0)) {
 		gser(&gamser,a,x,&gln);
 		return 1.0-gamser;
@@ -77,7 +77,7 @@ void gcf(double *gammcf, double a, double x, double *gln)
 		h *= del;
 		if (fabs(del-1.0) < EPS) break;
 	}
-	if (i > ITMAX) cerr<<"a too large, ITMAX too small in gcf"<<endl;
+    if (i > ITMAX) cerr<<"a too large, ITMAX too small in gcf"<<std::endl;
 	*gammcf=exp(-x+a*log(x)-(*gln))*h;
 }
 
@@ -88,7 +88,7 @@ void gser(double *gamser, double a, double x, double *gln)
 	
 	*gln=gammln(a);
 	if (x <= 0.0) {
-		if (x < 0.0) cerr<<"x less than 0 in routine gser"<<endl;
+        if (x < 0.0) cerr<<"x less than 0 in routine gser"<<std::endl;
 		*gamser=0.0;
 		return;
 	} else {
@@ -103,7 +103,7 @@ void gser(double *gamser, double a, double x, double *gln)
 				return;
 			}
 		}
-		cerr<<"a too large, ITMAX too small in routine gser"<<endl;
+        cerr<<"a too large, ITMAX too small in routine gser"<<std::endl;
 		return;
 	}
 }

@@ -48,7 +48,7 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
         m_fSigma  = GetFloatParameter(parameters,"sigma");
         m_sWaveletName = GetStringParameter(parameters, "wname");
         string2enum(GetStringParameter(parameters,"method"),m_eCleaningMethod);
-        m_bParallel = kipl::strings::string2bool(GetStringParameter(parameters,"parallel"));
+        m_bThreading = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
     }
     catch (ModuleException & e)
     {
@@ -172,7 +172,7 @@ void WaveletRingCleanDlg::UpdateParameters()
     m_sWaveletName    = ui->combo_wavelets->currentText().toStdString();
     m_nLevels         = ui->entry_levels->value();
     m_fSigma          = ui->entry_cutoff->value();
-    m_bParallel       = false;
+    m_bThreading       = true;
     m_eCleaningMethod = static_cast<ImagingAlgorithms::eStripeFilterOperation>(ui->combo_filtertype->currentIndex());
 }
 
@@ -181,7 +181,7 @@ void WaveletRingCleanDlg::UpdateParameterList(std::map<std::string, std::string>
     parameters["decnum"]   = kipl::strings::value2string(m_nLevels);
     parameters["sigma"]    = kipl::strings::value2string(m_fSigma);
     parameters["wname"]    = m_sWaveletName;
-    parameters["parallel"] = m_bParallel ? "true" : "false";
+    parameters["threading"] = m_bThreading ? "true" : "false";
     parameters["method"]   = enum2string(m_eCleaningMethod);
 }
 

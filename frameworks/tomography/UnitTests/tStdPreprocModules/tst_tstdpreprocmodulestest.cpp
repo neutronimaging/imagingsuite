@@ -4,6 +4,7 @@
 
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 #include <MorphSpotCleanModule.h>
 #include <ModuleException.h>
@@ -49,7 +50,7 @@ void TStdPreprocModulesTest::testMorpSpotClean_Initialize()
 {
     MorphSpotCleanModule msm(nullptr);
 
-    size_t roi[4]={10,100,990,110};
+    std::vector<size_t> roi={10,100,990,110};
     msm.SetROI(roi);
     ReconConfig config("");
 
@@ -116,7 +117,7 @@ void TStdPreprocModulesTest::testMorpSpotClean_Process()
 {
     MorphSpotCleanModule msm(nullptr);
 
-    size_t roi[4]={10,100,990,110};
+    std::vector<size_t> roi={10,100,990,110};
     msm.SetROI(roi);
     ReconConfig config("");
 

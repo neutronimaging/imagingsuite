@@ -4,12 +4,15 @@
 
 #include "../include/BackProjectorModuleBase.h"
 #include "../include/ReconException.h"
+#include <ParameterHandling.h>
+#include <strings/miscstring.h>
 
 BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor) :
     logger(name),
 	MatrixAlignment(align),
     mConfig(""),
     m_sModuleName(name),
+    m_bBuildCircleMask(true),
 	m_sApplication(application),
     m_Interactor(interactor)
 {
@@ -54,7 +57,23 @@ size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,3> proj, std::m
 	msg<<"Backprojector module "<<m_sModuleName<<" does not support 3D processing.";
 	throw ReconException(msg.str(),__FILE__,__LINE__);
 
-	return 0;
+    return 0;
+}
+
+int BackProjectorModuleBase::Configure(ReconConfig config, std::map<string, string> parameters)
+{
+    m_bBuildCircleMask = kipl::strings::string2bool(GetStringParameter(parameters,"usecircularmask"));
+
+    return 0;
+}
+
+std::map<string, string> BackProjectorModuleBase::GetParameters()
+{
+   std::map<string, string> params;
+
+   params["usecircularmask"] = m_bBuildCircleMask ? "true" : "false" ;
+
+   return params;
 }
 
 
@@ -188,20 +207,29 @@ void BackProjectorModuleBase::BuildCircleMask()
     const float R2=R*R;
     for (size_t i=0; i<nSizeY; i++)
     {
-        float y=static_cast<float>(i)-matrixCenterY;
-        float y2=y*y;
-
-        if (y2<=R2)
+        if (m_bBuildCircleMask)
         {
-            float x=sqrt(R2-y2);
-            mask[i].first=static_cast<size_t>(ceil(matrixCenterX-x));
-            mask[i].second=min(nSizeX-1u,static_cast<size_t>(floor(matrixCenterX+x)));
+            float y=static_cast<float>(i)-matrixCenterY;
+            float y2=y*y;
+
+            if (y2<=R2)
+            {
+                float x=sqrt(R2-y2);
+                mask[i].first=static_cast<size_t>(ceil(matrixCenterX-x));
+                mask[i].second=min(nSizeX-1u,static_cast<size_t>(floor(matrixCenterX+x)));
+            }
+            else
+            {
+                mask[i].first  = 0UL;
+                mask[i].second = 0UL;
+            }
         }
         else
         {
             mask[i].first  = 0UL;
-            mask[i].second = 0UL;
+            mask[i].second = nSizeX;
         }
+
         if (mConfig.MatrixInfo.bUseROI)
         {
             if ((mConfig.MatrixInfo.roi[1]<=i) && (i<=mConfig.MatrixInfo.roi[3]))

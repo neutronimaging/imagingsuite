@@ -153,7 +153,7 @@ CNeighborhood::CNeighborhood(const std::vector<size_t> &Dims, size_t const NDim,
 		cNG=6;
 		break;
 	case conn18:
-		cerr<<"CNeighborhood Warning: half neighborhoods are not modified"<<endl;
+        std::cerr<<"CNeighborhood Warning: half neighborhoods are not modified"<<std::endl;
 		cNGpm=14;
 		cNG=18;
 		break;
@@ -173,12 +173,12 @@ ptrdiff_t CNeighborhood::index3x3x3(size_t index)
 		return -1;
 
 	if (index>=cNG) {
-		cerr<<"CNeighborhood::index3x3x3 - Index exceeds connectivity"<<endl;
+        std::cerr<<"CNeighborhood::index3x3x3 - Index exceeds connectivity"<<std::endl;
 		return -1;
 	}
 
 	if (ndim!=3) {
-		cerr<<"Please only use index3x3x3 with 3D data"<<endl;
+        std::cerr<<"Please only use index3x3x3 with 3D data"<<std::endl;
 		return -1;
 	}
 

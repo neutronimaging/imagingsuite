@@ -1,5 +1,6 @@
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 #include <sstream>
 #include <list>

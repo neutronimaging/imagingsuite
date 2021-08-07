@@ -6,6 +6,7 @@
 #include <ParameterHandling.h>
 #include <StripeFilter.h>
 #include <ReconException.h>
+#include <functional>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -16,9 +17,9 @@ WaveletRingClean::WaveletRingClean(kipl::interactors::InteractionBase *interacto
     m_sWName("daub15"),
     m_fSigma(0.05f),
     m_nDecNum(2),
-	m_bParallelProcessing(false),
 	m_eCleanMethod(ImagingAlgorithms::VerticalComponentFFT)
 {
+    m_bThreading = true;
     publications.push_back(Publication({"B. Muench","P. Trtik","F. Marone","M. Stampanoni"},
                                         "Stripe and ring artifact removal with combined wavelet-Fourier filtering",
                                         "Optics express",
@@ -38,8 +39,9 @@ int WaveletRingClean::Configure(ReconConfig UNUSED(config), std::map<std::string
 	m_sWName              = GetStringParameter(parameters,"wname");
 	m_fSigma              = GetFloatParameter(parameters,"sigma");
 	m_nDecNum             = GetIntParameter(parameters,"decnum");
-	m_bParallelProcessing = kipl::strings::string2bool(GetStringParameter(parameters,"parallel"));
 	string2enum(GetStringParameter(parameters,"method"),m_eCleanMethod);
+    m_bThreading          = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
+
 
 	return 0;
 }
@@ -51,13 +53,13 @@ std::map<std::string, std::string> WaveletRingClean::GetParameters()
 	parameters["wname"]    = m_sWName;
 	parameters["sigma"]    = kipl::strings::value2string(m_fSigma);
 	parameters["decnum"]   = kipl::strings::value2string(m_nDecNum);
-	parameters["parallel"] = m_bParallelProcessing ? "true" : "false";
 	parameters["method"]   = enum2string(m_eCleanMethod);
+    parameters["threading"] = kipl::strings::bool2string(m_bThreading);
 
 	return parameters;
 }
 
-bool WaveletRingClean::SetROI(size_t * UNUSED(roi))
+bool WaveletRingClean::SetROI(const std::vector<size_t> &roi)
 {
 	return false;
 }
@@ -65,7 +67,7 @@ bool WaveletRingClean::SetROI(size_t * UNUSED(roi))
 int WaveletRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
 	int retval=0;
-	if (m_bParallelProcessing)
+    if (m_bThreading)
 		retval=ProcessParallel(img,coeff);
 	else
 		retval=ProcessSingle(img,coeff);
@@ -148,5 +150,76 @@ int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::ma
 }
 
 
+int WaveletRingClean::ProcessParallelStd(kipl::base::TImage<float,3> & img)
+{
+    std::ostringstream msg;
+    const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
 
 
+    std::vector<std::thread> threads;
+    const size_t N = img.Size(1);
+
+    size_t M=N/concurentThreadsSupported;
+
+    msg.str("");
+    msg<<N<<" sinograms on "<<concurentThreadsSupported<<" threads, "<<M<<" sinograms per thread";
+    logger(logger.LogMessage,msg.str());
+
+    for(size_t i = 0; i < concurentThreadsSupported; ++i)
+    {
+        // spawn threads
+        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
+        auto pImg = &img;
+        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,i*M,M+rest); }));
+    }
+
+    // call join() on each thread in turn
+    for_each(threads.begin(), threads.end(),
+        std::mem_fn(&std::thread::join));
+
+    return 0;
+}
+
+int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSinogram, size_t N)
+{
+    std::ostringstream msg;
+    bool fail = false;
+
+    msg<<"Starting waveletringclean thread number="<<tid<<", N="<<N;
+    logger.verbose(msg.str());
+    msg.str("");
+    msg<<"Thread "<<tid<<" progress :";
+
+    std::vector<size_t> dims={img->Size(0), img->Size(2)};
+
+    kipl::base::TImage<float,2> sinogram;
+    ImagingAlgorithms::StripeFilter *filter=nullptr;
+    try {
+        filter = new ImagingAlgorithms::StripeFilter(dims,m_sWName,m_nDecNum, m_fSigma);
+    }
+    catch (kipl::base::KiplException &e)
+    {
+        {
+            logger(kipl::logging::Logger::LogError,e.what());
+            fail=true;
+        }
+    }
+
+    if (!fail)
+    {
+        for (size_t j=0; j<N; j++)
+        {
+            std::cout<<"Processing sinogram "<<j<<std::endl;
+            ExtractSinogram(*img,sinogram,firstSinogram + j);
+
+            filter->process(sinogram);
+
+            InsertSinogram(sinogram,*img,j);
+        }
+        delete filter;
+    }
+
+    logger.verbose(msg.str());
+
+    return 0;
+}

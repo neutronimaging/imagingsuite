@@ -74,7 +74,7 @@ inline __m128 SortQuad2(__m128 data)
 //data[1]=_mm_shuffle(a,b,_MM_SHUFFLE(3,1,3,1));
 //a=_mm_min_ps(data[0],data[1]);
 //b=_mm_max_ps(data[0],data[1]);
-//cout<<a<<", "<<b<<endl;
+//std::cout<<a<<", "<<b<<std::endl;
 //}
 
 

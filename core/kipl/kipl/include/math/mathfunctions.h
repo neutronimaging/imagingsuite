@@ -94,6 +94,13 @@ float roundP(float f)
     const int temp = Pow<10,PRECISION>::result;
     return roundf(f*temp)/temp;
 }
+
+/// \brief Replaces pixels with inf or nan by a valid number
+/// \param img the image to check
+/// \return the number of inf pixels
+template <typename T, size_t NDims>
+void replaceInfNaN(kipl::base::TImage<T,NDims> &img, T val=static_cast<T>(0));
+
 }}
 
 #include "core/mathfunctions.hpp"

@@ -45,6 +45,8 @@ int FdkReconBase::Configure(ReconConfig config, std::map<std::string, std::strin
 
     mConfig=config;
 
+    BackProjectorModuleBase::Configure(config,parameters);
+
     nProjectionBufferSize=GetIntParameter(parameters,"ProjectionBufferSize");
     nSliceBlock=GetIntParameter(parameters,"SliceBlock");
     GetUIntParameterVector(parameters,"SubVolume",nSubVolume,2);
@@ -75,6 +77,7 @@ int FdkReconBase::FinalizeBuffers() {
 std::map<std::string, std::string> FdkReconBase::GetParameters()
 {
     std::map<std::string, std::string> parameters;
+    parameters = BackProjectorModuleBase::GetParameters();
 
     parameters["ProjectionBufferSize"]=kipl::strings::value2string(nProjectionBufferSize);
     parameters["SliceBlock"]= kipl::strings::value2string(nSliceBlock);
@@ -269,7 +272,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
     return 0L;
 }
 
-const std::vector<size_t> & FdkReconBase::GetMatrixDims()
+std::vector<size_t> FdkReconBase::GetMatrixDims()
 {
     std::vector<size_t> dims;
     if (MatrixAlignment==MatrixZXY)

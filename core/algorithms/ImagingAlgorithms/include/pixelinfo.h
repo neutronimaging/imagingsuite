@@ -10,8 +10,8 @@ class IMAGINGALGORITHMSSHARED_EXPORT PixelInfo {
 public:
     PixelInfo();
     PixelInfo(int nPos,float fValue, float fWeight);
-    PixelInfo(const PixelInfo &info);
-    PixelInfo & operator=(const PixelInfo & info);
+//    PixelInfo(const PixelInfo &info);
+//    PixelInfo & operator=(const PixelInfo & info);
     int pos;
     float value;
     float weight;
@@ -19,3 +19,4 @@ public:
 }
 
 #endif // PIXELINFO_H
+
