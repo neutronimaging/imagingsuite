@@ -75,6 +75,8 @@ if (LINUX)
     target_link_libraries(${TARGET_NAME}
         PRIVATE
         kipl
+        fftw3
+	    fftw3f
         tiff
         armadillo
         lapack

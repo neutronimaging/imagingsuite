@@ -38,17 +38,47 @@ add_library(${TARGET_NAME}
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 #set_target_properties(${TARGET_NAME} PROPERTIES CMAKE_INSTALL_RPATH "\$ORIGIN")
 
+# if (APPLE)
+# target_link_libraries(${TARGET_NAME}
+#   PUBLIC
+#     pybind11::module
 
+#   PRIVATE
+#     kipl
+#     fftw3
+#     fftw3f
+#     xml2
+#     tiff
+#     armadillo
+#     lapack
+#     blas
+#     AdvancedFilters
+#     cfitsio
+#     NeXus
+#     NeXusCPP
+#   )
+# endif(APPLE)
+
+# if (LINUX)
 target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module
 
   PRIVATE
     kipl
+    fftw3
+    fftw3f
     xml2
     tiff
+    armadillo
+    lapack
+    blas
     AdvancedFilters
+    cfitsio
+    NeXus
+    NeXusCPP
   )
+# endif(LINUX)
 
 set_target_properties(${TARGET_NAME}
   PROPERTIES

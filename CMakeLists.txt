@@ -10,7 +10,7 @@ execute_process(
   OUTPUT_VARIABLE IMGSUITE_VERSION
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-project(imagingsuite VERSION ${IMGSUITE_VERSION})
+#project(imagingsuite VERSION ${IMGSUITE_VERSION})
 project(imagingsuite VERSION 4.2.1)
 
 # require C++17

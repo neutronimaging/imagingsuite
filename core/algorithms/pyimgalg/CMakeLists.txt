@@ -49,6 +49,8 @@ target_link_libraries(${TARGET_NAME}
     ImagingAlgorithms
     xml2
     tiff
+    lapack
+    blas
   )
 
 set_target_properties(${TARGET_NAME}
