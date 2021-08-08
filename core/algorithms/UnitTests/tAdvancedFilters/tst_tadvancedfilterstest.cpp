@@ -8,7 +8,7 @@
 #include <io/io_tiff.h>
 #include <filters/nonlocalmeans.h>
 #include <base/KiplException.h>
-
+#include <advancedfilters.h>
 
 class TAdvancedFiltersTest : public QObject
 {
@@ -23,6 +23,7 @@ private Q_SLOTS:
     void NLMeans_WindowEnum();
     void NLMeans_AlgorithmEnum();
     void NLMeans_process();
+    void ISStypeDef();
 
 };
 
@@ -106,7 +107,7 @@ void TAdvancedFiltersTest::NLMeans_AlgorithmEnum()
 
 void TAdvancedFiltersTest::NLMeans_process()
 {
-    QSKIP("Development test");
+    QSKIP("Data is not available");
     kipl::base::TImage<float,2> img, res;
     kipl::io::ReadTIFF(img,"../data/scroll_256.tif");
 //    kipl::io::ReadTIFF(img,"../data/lena256x256_8bit.tif");
@@ -129,11 +130,16 @@ void TAdvancedFiltersTest::NLMeans_process()
         nlfilter(img,res);
     }
 
-    kipl::io::WriteTIFF(res,"nl_test.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF32(res,"nl_test.tif");
 
 }
 
+void TAdvancedFiltersTest::ISStypeDef()
+{
+    advancedfilters::ISSfilterQ3Df iss;
+}
 
-QTEST_APPLESS_MAIN(TKiplAdvFiltersTest)
 
-#include "tst_tkipladvfilterstest.moc"
+QTEST_APPLESS_MAIN(TAdvancedFiltersTest)
+
+#include "tst_tadvancedfilterstest.moc"

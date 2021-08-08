@@ -10,7 +10,7 @@ execute_process(
   OUTPUT_VARIABLE IMGSUITE_VERSION
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-project(imagingsuite VERSION ${IMGSUITE_VERSION})
+#project(imagingsuite VERSION ${IMGSUITE_VERSION})
 project(imagingsuite VERSION 4.2.1)
 
 # require C++17
@@ -129,6 +129,7 @@ endif()
 # Core libraries
 add_subdirectory(core/kipl/kipl)
 add_subdirectory(core/algorithms/ImagingAlgorithms)
+add_subdirectory(core/algorithms/AdvancedFilters)
 add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(frameworks/tomography/Framework/ReconFramework)
 add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
@@ -137,6 +138,7 @@ add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 # Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
+add_subdirectory(core/algorithms/pyadvancedfilters)
 
 if(DYNAMIC_LIB)
   # install(

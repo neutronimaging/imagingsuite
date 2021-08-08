@@ -14,27 +14,37 @@ find_package(PythonInterp REQUIRED)
 
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+add_subdirectory(algorithms/ImagingAlgorithms)
 add_subdirectory(algorithms/pyimgalg)
 add_subdirectory(modules/pyimgio)
+add_subdirectory(kipl/kipl)
+add_subdirectory(algorithms/AdvancedFilters)
+add_subdirectory(algorithms/pyadvancedfilters)
 
-# turn on testing
-enable_testing()
+if(NOT APPLE)
+  set(CMAKE_INSTALL_RPATH $ORIGIN)
+else()
+  set(CMAKE_INSTALL_RPATH @loader_path)
+endif()
 
-message(${CMAKE_CURRENT_SOURCE_DIR})
-## define test
-add_test(
-  NAME
-    testBindAverageImage
-  COMMAND
-    ${CMAKE_COMMAND} -E env PYIMGALG_MODULE_PATH=$<TARGET_FILE_DIR:pyimgalg>
-#    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindAverageImage.py
-    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindAverageImage.py
-)
+# # turn on testing
+# enable_testing()
 
-add_test(
-  NAME
-    testBindPolynomialCorrection
-  COMMAND
-    ${CMAKE_COMMAND} -E env PYIMGALG_MODULE_PATH=$<TARGET_FILE_DIR:pyimgalg>
-    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindPolynomialCorrection.py
-)
+# message(${CMAKE_CURRENT_SOURCE_DIR})
+# ## define test
+# add_test(
+#   NAME
+#     testBindAverageImage
+#   COMMAND
+#     ${CMAKE_COMMAND} -E env PYIMGALG_MODULE_PATH=$<TARGET_FILE_DIR:pyimgalg>
+# #    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindAverageImage.py
+#     ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindAverageImage.py
+# )
+
+# add_test(
+#   NAME
+#     testBindPolynomialCorrection
+#   COMMAND
+#     ${CMAKE_COMMAND} -E env PYIMGALG_MODULE_PATH=$<TARGET_FILE_DIR:pyimgalg>
+#     ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindPolynomialCorrection.py
+# )

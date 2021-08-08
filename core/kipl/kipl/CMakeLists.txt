@@ -320,6 +320,7 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_compile_definitions(${TARGET_NAME} PRIVATE KIPL_LIBRARY HAVE_NEXUS)
 
@@ -334,7 +335,7 @@ if (APPLE)
 	target_link_libraries(${TARGET_NAME}
     		PRIVATE
     			xml2
-			fftw3
+			    fftw3
     			fftw3f
     			cfitsio
     			tiff
@@ -347,18 +348,18 @@ if (APPLE)
 endif()
 
 if (LINUX)
-        target_link_libraries(${TARGET_NAME}
-                PRIVATE
-                        xml2
-                        fftw3
-                        fftw3f
-                        cfitsio
-                        tiff
-                        armadillo
-                        lapack
-                        blas
-                        NeXus
-                        NeXusCPP
-                )
+    target_link_libraries(${TARGET_NAME}
+        PRIVATE
+            xml2
+            fftw3
+            fftw3f
+            cfitsio
+            tiff
+            armadillo
+            lapack
+            blas
+            NeXus
+            NeXusCPP
+        )
 endif()
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

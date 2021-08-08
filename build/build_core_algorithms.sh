@@ -25,6 +25,13 @@ make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
 
+mkdir -p $DEST/build-advancedfilters
+cd $DEST/build-advancedfilters
+
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/core/algorithms/advancedfilters/advancedfilters.pro
+make -f Makefile clean
+make -f Makefile mocables all
+make -f Makefile
 
 if [ -e "$REPOSPATH/core/algorithms/UnitTests" ]
 then

@@ -1,57 +1,84 @@
-# ~~~
-# SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (c) 2021 ImaginSuite contributors (https://github.com/neutronimaging/imagingsuite)
-# ~~~
+include(FetchContent)
 
-add_definitions(-DNO_QT)
+FetchContent_Declare(
+  pybind11_sources
+  GIT_REPOSITORY https://github.com/pybind/pybind11.git
+  GIT_TAG        v2.2
+)
 
-set(TARGET_NAME "imgalg") 
+FetchContent_GetProperties(pybind11_sources)
 
-include_directories(
-    ../../kipl/kipl/include 
-    ../ImagingAlgorithms/include 
-    /opt/local/include .
-    ./../../external/pylinalg
+if(NOT pybind11_sources_POPULATED)
+  FetchContent_Populate(pybind11_sources)
+
+  add_subdirectory(
+    ${pybind11_sources_SOURCE_DIR}
+    ${pybind11_sources_BINARY_DIR}
     )
-    
+
+endif()
+add_definitions(-DHAVEPYBIND11 )
+set(TARGET_NAME "advancedfilters") 
+
+include_directories(../../kipl/kipl/include /opt/local/include ../../../external/src/linalg)
 link_directories(../../../../lib /opt/local/lib )
 
+# add_definitions(-DVERSION="1.6.0")
 # create python module
 add_library(${TARGET_NAME}
   ${LINK_TYPE}
   MODULE
 
-  pyStripeFilter.cpp  
-#  pySpotClean.cpp  
-  pyNormalizeImage.cpp
-  pyPolynomialCorrection.cpp  
-  pyImagingException.cpp  
-# pyTranslateProjections.cpp  
-  pyMorphSpotClean.cpp  
-  pyPixelInfo.cpp
-  pyProjectionFilter.cpp
-#  pygammaclean.cpp  
-  pyAverageImage.cpp  
-#  pypiercingpointestimator.cpp  
-#  pyReferenceImageCorrection.cpp  
-#  pytomocenter.cpp  
-  pyCenterEstimation.cpp
-  pyBinder.cpp
-  pyBinder.h
+  advancedfilters.cpp
+  advancedfilterexception.cpp
+  filterenums.cpp
+  pybinder.cpp
   )
 
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+#set_target_properties(${TARGET_NAME} PROPERTIES CMAKE_INSTALL_RPATH "\$ORIGIN")
+
+# if (APPLE)
+# target_link_libraries(${TARGET_NAME}
+#   PUBLIC
+#     pybind11::module
+
+#   PRIVATE
+#     kipl
+#     fftw3
+#     fftw3f
+#     xml2
+#     tiff
+#     armadillo
+#     lapack
+#     blas
+#     AdvancedFilters
+#     cfitsio
+#     NeXus
+#     NeXusCPP
+#   )
+# endif(APPLE)
+
+# if (LINUX)
 target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module
 
   PRIVATE
     kipl
-    ImagingAlgorithms
+    fftw3
+    fftw3f
     xml2
     tiff
+    armadillo
     lapack
     blas
+    AdvancedFilters
+    cfitsio
+    NeXus
+    NeXusCPP
   )
+# endif(LINUX)
 
 set_target_properties(${TARGET_NAME}
   PROPERTIES
@@ -59,7 +86,7 @@ set_target_properties(${TARGET_NAME}
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-if(DYNAMIC_LIB)
+  if(DYNAMIC_LIB)
   install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
   # install(FILES 
   #     ../../../../lib/libkipl.1.0.0.dylib 
