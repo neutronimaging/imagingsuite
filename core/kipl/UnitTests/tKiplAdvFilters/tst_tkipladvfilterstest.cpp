@@ -134,6 +134,6 @@ void TAdvancedFiltersTest::NLMeans_process()
 }
 
 
-QTEST_APPLESS_MAIN(TKiplAdvFiltersTest)
+QTEST_APPLESS_MAIN(TKiplAdvFiltersTest);
 
 #include "tst_tkipladvfilterstest.moc"
