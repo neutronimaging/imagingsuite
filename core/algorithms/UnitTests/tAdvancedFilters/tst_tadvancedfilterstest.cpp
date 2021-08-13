@@ -6,7 +6,7 @@
 
 #include <base/timage.h>
 #include <io/io_tiff.h>
-#include <filters/nonlocalmeans.h>
+#include <nonlocalmeans.h>
 #include <base/KiplException.h>
 #include <advancedfilters.h>
 
