@@ -57,7 +57,10 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl
+LIBS += -lkipl  -lAdvancedFilters
 
-INCLUDEPATH += $$PWD/../../kipl/include
-DEPENDPATH += $$PWD/../../kipl/src
+INCLUDEPATH += $$PWD/../../../kipl/kipl/include/
+DEPENDPATH += $$PWD/../../../kipl/kipl//src
+
+INCLUDEPATH += $$PWD/../../AdvancedFilters
+DEPENDPATH += $$PWD/../../AdvancedFilters

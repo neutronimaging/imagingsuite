@@ -27,6 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         advancedfilterexception.cpp \
+        nonlocalmeans.cpp \
         filterenums.cpp
 
 HEADERS += \
@@ -37,6 +38,8 @@ HEADERS += \
         ISSfilterQ3D.h \
         ISSfilterQ3Dp.h \
         NonLinDiffAOS.h \
+        nonlocalmeans.h \
+        nonlocalmeans.hpp \
         advancedfilterexception.h \
         advancedfilters.h \
         advancedfilters_global.h  \

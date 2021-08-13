@@ -3,7 +3,7 @@
 #ifndef NONLOCALMEANS_HPP
 #define NONLOCALMEANS_HPP
 
-namespace akipl {
+namespace advancedfilters {
 
 }
 #endif // NONLOCALMEANS_HPP
