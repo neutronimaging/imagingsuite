@@ -28,7 +28,7 @@ make -f Makefile
 mkdir -p $DEST/build-advancedfilters
 cd $DEST/build-advancedfilters
 
-$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/core/algorithms/advancedfilters/advancedfilters.pro
+$QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/core/algorithms/AdvancedFilters/AdvancedFilters.pro
 make -f Makefile clean
 make -f Makefile mocables all
 make -f Makefile
