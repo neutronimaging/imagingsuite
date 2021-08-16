@@ -6,6 +6,7 @@
 #include "../include/ReconException.h"
 #include <ParameterHandling.h>
 #include <strings/miscstring.h>
+#include <ModuleException.h>
 
 BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor) :
     logger(name),
@@ -62,7 +63,13 @@ size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,3> proj, std::m
 
 int BackProjectorModuleBase::Configure(ReconConfig config, std::map<string, string> parameters)
 {
-    m_bBuildCircleMask = kipl::strings::string2bool(GetStringParameter(parameters,"usecircularmask"));
+    try {
+        m_bBuildCircleMask = kipl::strings::string2bool(GetStringParameter(parameters,"usecircularmask"));
+    }
+    catch (ModuleException &e)
+    {
+        m_bBuildCircleMask = true;
+    }
 
     return 0;
 }

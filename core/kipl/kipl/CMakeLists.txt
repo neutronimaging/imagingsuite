@@ -206,8 +206,6 @@ set(INC_FILES
     include/io/core/io_generic.hpp
     include/io/analyzefileext.h
     include/generators/core/noiseimage.hpp
-    include/filters/nonlocalmeans.h
-    include/filters/core/nonlocalmeans.hpp
     include/math/PoissonNoise.h
     include/filters/stddevfilter.h
     include/interactors/interactionbase.h
@@ -295,7 +293,6 @@ set(SRC_FILES
     src/generators/spotgenerator.cpp
     src/io/analyzefileext.cpp
     src/io/io_generic.cpp
-    src/filters/nonlocalmeans.cpp
     src/math/PoissonNoise.cpp
     src/filters/stddevfilter.cpp
     src/interactors/interactionbase.cpp
