@@ -144,13 +144,38 @@ void bindMorphSpotClean(py::module &m)
                          std::vector<float> &th,
                          std::vector<float> &sigma)
             {
-                py::buffer_info buf1 = x.request();
+         py::buffer_info buf1 = x.request();
 
-                std::vector<size_t> dims={static_cast<size_t>(buf1.shape[1]),
-                               static_cast<size_t>(buf1.shape[0])};
-                kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
+        if (buf1.ndim == 2)
+        {
+            std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
+            float *data=static_cast<float*>(buf1.ptr);
 
-                msc.process(img,th,sigma);
+            kipl::base::TImage<float,2> img(dims);
+
+            std::copy_n(data,img.Size(),img.GetDataPtr());
+
+            msc.process(img,th,sigma);
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
+        else if (buf1.ndim==3)
+        {
+            std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[2]),
+                                            static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
+
+            float *data=static_cast<float*>(buf1.ptr);
+
+            kipl::base::TImage<float,3> img(dims);
+
+            std::copy_n(data,img.Size(),img.GetDataPtr());
+
+            msc.process(img,th,sigma);
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
+        else
+            throw ImagingException("Morphspot clean only supports 2- and 3-D data",__FILE__,__LINE__);
             },
 
             "Cleans spots from the image in place using th as threshold and sigma as mixing width.",
@@ -241,7 +266,7 @@ void bindMorphSpotClean(py::module &m)
 
     py::enum_<ImagingAlgorithms::eMorphDetectionMethod>(m,"eMorphDetectionMethod")
             .value("MorphDetectDarkSpots",        ImagingAlgorithms::MorphDetectDarkSpots)
-            .value("MorphDetectMorphBrightSpots", ImagingAlgorithms::MorphDetectBrightSpots)
+            .value("MorphDetectBrightSpots", ImagingAlgorithms::MorphDetectBrightSpots)
             .value("MorphDetectAllSpots",         ImagingAlgorithms::MorphDetectAllSpots)
             .value("MorphDetectHoles",            ImagingAlgorithms::MorphDetectHoles)
             .value("MorphDetectPeaks",            ImagingAlgorithms::MorphDetectPeaks)

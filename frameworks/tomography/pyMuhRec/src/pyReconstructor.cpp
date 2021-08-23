@@ -120,14 +120,19 @@ void bindReconstructor(py::module &m)
                                 config.ProjectionInfo.beamgeometry = py::cast<ReconConfig::cProjections::eBeamGeometry>(item.second);
                                 break;
                             case 14: // filtertype
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
                                 break; 
                             case 15: // cutoff
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
                                 break;
                             case 16: // order
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
                                 break;
                             case 17: // usebias
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
                                 break;
                             case 18: // biasweight
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
                                 break;
                             case 19: // paddingdoubler
                                 backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
