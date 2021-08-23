@@ -369,7 +369,7 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
     kipl::strings::filenames::MakeFileName(blackbodyname,nBBFirstIndex,filename,ext,'#','0');
     size_t found=blackbodyname.find("hdf");
     ProjectionReader reader;
-    if (QFile::exists(QString::fromStdString(filename)) || QFile::exists(QString::fromStdString(blackbodyname)) && blackbodyname!="./")
+    if ((QFile::exists(QString::fromStdString(filename)) || QFile::exists(QString::fromStdString(blackbodyname))) && blackbodyname!="./")
         {
             if (found==std::string::npos )
             {

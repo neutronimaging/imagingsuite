@@ -55,10 +55,14 @@ set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 target_compile_definitions(${TARGET_NAME} PRIVATE ADVANCEDFILTERS_LIBRARY)
 
+add_definitions(-DHAVE_NEXUS)
+
 target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
-    ../../../../external/mac/lib
+    ../../../external/mac/lib
     )
+
+
 
 if (APPLE)
     target_link_libraries(${TARGET_NAME}
@@ -68,6 +72,8 @@ if (APPLE)
         armadillo
         lapack
         blas
+        NeXus.1.0.0
+        NeXusCPP.1.0.0
     )
 endif()
 
@@ -81,6 +87,8 @@ if (LINUX)
         armadillo
         lapack
         blas
+        NeXus
+        NeXusCPP
     )
 endif()
 

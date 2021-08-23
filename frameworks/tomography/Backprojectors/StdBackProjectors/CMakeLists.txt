@@ -82,6 +82,8 @@ if (APPLE)
         NeXusCPP.1.0.0
     )
 endif()
+
+if (LINUX)
     target_link_libraries(${TARGET_NAME}
         PRIVATE
         kipl
@@ -99,7 +101,6 @@ endif()
         NeXus
         NeXusCPP
     )
-if (LINUX)
-
 endif()
+
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

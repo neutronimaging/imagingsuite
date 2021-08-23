@@ -118,13 +118,13 @@ set(INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 
 set(EXPORT_NAME ${PROJECT_NAME}-targets)
 
-if(NOT APPLE)
-  set(CMAKE_INSTALL_RPATH $ORIGIN)
-else()
-  set(CMAKE_INSTALL_RPATH @loader_path)
- # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH YES)
-endif()
+# if(NOT APPLE)
+#   set(CMAKE_INSTALL_RPATH $ORIGIN)
+# else()
+#   set(CMAKE_INSTALL_RPATH @loader_path)
+#  # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+#   set(CMAKE_BUILD_WITH_INSTALL_RPATH YES)
+# endif()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
