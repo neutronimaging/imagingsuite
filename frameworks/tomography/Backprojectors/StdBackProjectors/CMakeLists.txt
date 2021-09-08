@@ -83,24 +83,52 @@ if (APPLE)
     )
 endif()
 
-if (LINUX)
-    target_link_libraries(${TARGET_NAME}
-        PRIVATE
-        kipl
-        ImagingAlgorithms
-        ModuleConfig
-        ReconFramework
-        xml2
-        fftw3
-        fftw3f
-        cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus
-        NeXusCPP
-    )
-endif()
+if (UNIX AND NOT APPLE)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} PUBLIC
+            OpenMP::OpenMP_CXX
+            pybind11::module
+
+          PRIVATE
+            kipl
+            ImagingAlgorithms
+            ModuleConfig
+            ReconFramework
+            xml2
+            fftw3
+            fftw3f
+            cfitsio
+            tiff
+            armadillo
+            lapack
+            blas
+            NeXus
+            NeXusCPP
+            )
+    else()
+        target_link_libraries(${TARGET_NAME}
+          PUBLIC
+            pybind11::module
+
+          PRIVATE
+            kipl
+            ImagingAlgorithms
+            ModuleConfig
+            ReconFramework
+            xml2
+            fftw3
+            fftw3f
+            cfitsio
+            tiff
+            armadillo
+            lapack
+            blas
+            NeXus
+            NeXusCPP
+          )
+    endif()
+endif(LINUX)
+
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

@@ -94,7 +94,7 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
 
         std::ostringstream msg;
         const size_t N = img.Size(2);
-        const size_t concurentThreadsSupported = std::min(std::thread::hardware_concurrency(),N);
+        const size_t concurentThreadsSupported = std::min(std::thread::hardware_concurrency(),static_cast<unsigned int>(N));
 
 
         std::vector<std::thread> threads;

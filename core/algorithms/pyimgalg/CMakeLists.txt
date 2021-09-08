@@ -3,8 +3,6 @@
 # Copyright (c) 2021 ImaginSuite contributors (https://github.com/neutronimaging/imagingsuite)
 # ~~~
 
-add_definitions(-DNO_QT)
-
 set(TARGET_NAME "imgalg") 
 
 include_directories(
@@ -49,8 +47,14 @@ target_link_libraries(${TARGET_NAME}
     ImagingAlgorithms
     xml2
     tiff
+    armadillo
     lapack
     blas
+    fftw3
+    fftw3f
+    cfitsio
+    NeXus
+    NeXusCPP
   )
 
 set_target_properties(${TARGET_NAME}
