@@ -31,6 +31,15 @@ void bindMorphSpotClean(py::module &m)
 //                "Configures the polynomial with a list of coefficients",
 //                py::arg("coeff"));
 
+    mscClass.def("useThreading",
+                 &ImagingAlgorithms::MorphSpotClean::useThreading,
+                 "Switches the use of threaded processing.",
+                 py::arg("x"));
+
+    mscClass.def("isThreaded",
+                 &ImagingAlgorithms::MorphSpotClean::isThreaded,
+                 "Tells if threaded processing is used");
+
     mscClass.def("setCleanMethod",
                  &ImagingAlgorithms::MorphSpotClean::setCleanMethod,
                  "Returns the current list of coefficients",
