@@ -12,7 +12,7 @@ include_directories(
     ./../../external/pylinalg
     )
     
-link_directories(../../../../lib /opt/local/lib )
+link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
 
 # create python module
 add_library(${TARGET_NAME}
@@ -102,29 +102,7 @@ if (UNIX AND NOT APPLE)
               NeXusCPP
           )
     endif()
-endif(LINUX)
-
-
-
-
-target_link_libraries(${TARGET_NAME}
-  PUBLIC
-    pybind11::module
-
-  PRIVATE
-    kipl
-    ImagingAlgorithms
-    xml2
-    tiff
-    armadillo
-    lapack
-    blas
-    fftw3
-    fftw3f
-    cfitsio
-    NeXus
-    NeXusCPP
-  )
+endif()
 
 set_target_properties(${TARGET_NAME}
   PROPERTIES

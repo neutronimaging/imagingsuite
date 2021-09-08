@@ -97,7 +97,7 @@ if (UNIX AND NOT APPLE)
             NeXusCPP
           )
     endif()
-endif(LINUX)
+endif()
 
 set_target_properties(${TARGET_NAME}
   PROPERTIES

@@ -128,7 +128,7 @@ if (UNIX AND NOT APPLE)
             NeXusCPP
           )
     endif()
-endif(LINUX)
+endif()
 
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

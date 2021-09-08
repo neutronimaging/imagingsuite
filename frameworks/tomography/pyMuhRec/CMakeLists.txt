@@ -23,9 +23,9 @@ include_directories(
     ../../../core/algorithms/ImagingAlgorithms/include
     )
 
-#link_directories(../../../../lib /opt/local/lib )
+#link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
 
-link_directories( /opt/local/lib )
+link_directories( /opt/local/lib ../../../external/mac/lib)
 
 # add_definitions(-DVERSION="1.6.0")
 # create python module
@@ -135,7 +135,7 @@ if (UNIX AND NOT APPLE)
             NeXusCPP
           )
     endif()
-endif(LINUX)
+endif()
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
