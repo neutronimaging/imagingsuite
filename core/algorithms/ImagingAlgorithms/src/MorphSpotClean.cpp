@@ -18,7 +18,7 @@ namespace ImagingAlgorithms {
 MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
-    m_bUseThreading(false),
+    m_bUseThreading(true),
     m_eConnectivity(kipl::base::conn8),
     m_eMorphClean(MorphCleanReplace),
     m_eMorphDetect(MorphDetectHoles),
@@ -90,28 +90,32 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
 {
     if (m_bUseThreading)
     {
-        throw ImagingException("Threading is not implemented for MorphSpotClean", __FILE__,__LINE__);
-
         std::ostringstream msg;
-        const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
+        const size_t N = img.Size(2);
+        const size_t concurentThreadsSupported = std::min(std::thread::hardware_concurrency(),static_cast<unsigned int>(N));
 
 
         std::vector<std::thread> threads;
-        const size_t N = img.Size(2);
+
 
         size_t M=N/concurentThreadsSupported;
 
         msg.str("");
         msg<<N<<" projections on "<<concurentThreadsSupported<<" threads, "<<M<<" projections per thread";
         logger(logger.LogMessage,msg.str());
-        size_t restCnt = N % concurentThreadsSupported;
+        int restCnt = N % concurentThreadsSupported;
+        int begin = 0;
+        int end   = M + (restCnt>0 ? 1 :0) ;
 
+        auto pImg = &img;
         for (size_t i = 0; i < concurentThreadsSupported; ++i)
-        {
-            // spawn threads
-            size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
-            auto pImg = &img;
-            threads.push_back(std::thread([=] { process(pImg,i*M,M+rest, th,sigma,i); }));
+        {   // spawn threads
+
+            threads.push_back(std::thread([=] { process(pImg,begin,end, th,sigma,i); }));
+
+            --restCnt;
+            begin  = end;
+            end   += M + (restCnt>0 ? 1 :0) ;
         }
 
         // call join() on each thread in turn
@@ -177,7 +181,6 @@ void MorphSpotClean::detectionImage(kipl::base::TImage<float,2> &img, kipl::base
         if (nopeaks.Size()== padded.Size())
             for (size_t i=0 ; i<nopeaks.Size(); ++i)
                 nopeaks[i]=abs(nopeaks[i]-padded[i]);
-
     }
 }
 

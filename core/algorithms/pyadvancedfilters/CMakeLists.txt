@@ -1,29 +1,20 @@
-include(FetchContent)
+set(TARGET_NAME "advancedfilters")
 
-FetchContent_Declare(
-  pybind11_sources
-  GIT_REPOSITORY https://github.com/pybind/pybind11.git
-  GIT_TAG        v2.2
-)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-FetchContent_GetProperties(pybind11_sources)
-
-if(NOT pybind11_sources_POPULATED)
-  FetchContent_Populate(pybind11_sources)
-
-  add_subdirectory(
-    ${pybind11_sources_SOURCE_DIR}
-    ${pybind11_sources_BINARY_DIR}
+include_directories(
+    ../../kipl/kipl/include
+    /opt/local/include
+    ../../../external/src/linalg
     )
 
-endif()
-add_definitions(-DHAVEPYBIND11 )
-set(TARGET_NAME "advancedfilters") 
+link_directories(
+    ../../../../lib
+    /opt/local/lib
+    )
 
-include_directories(../../kipl/kipl/include /opt/local/include ../../../external/src/linalg)
-link_directories(../../../../lib /opt/local/lib )
-
-# add_definitions(-DVERSION="1.6.0")
 # create python module
 add_library(${TARGET_NAME}
   ${LINK_TYPE}
@@ -38,28 +29,13 @@ add_library(${TARGET_NAME}
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 #set_target_properties(${TARGET_NAME} PROPERTIES CMAKE_INSTALL_RPATH "\$ORIGIN")
 
-# if (APPLE)
-# target_link_libraries(${TARGET_NAME}
-#   PUBLIC
-#     pybind11::module
+target_link_directories(${TARGET_NAME} PRIVATE
+    /opt/local/lib
+    ../../../external/mac/lib
+    )
 
-#   PRIVATE
-#     kipl
-#     fftw3
-#     fftw3f
-#     xml2
-#     tiff
-#     armadillo
-#     lapack
-#     blas
-#     AdvancedFilters
-#     cfitsio
-#     NeXus
-#     NeXusCPP
-#   )
-# endif(APPLE)
 
-# if (LINUX)
+if (APPLE)
 target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module
@@ -75,10 +51,53 @@ target_link_libraries(${TARGET_NAME}
     blas
     AdvancedFilters
     cfitsio
-    NeXus
-    NeXusCPP
+    NeXus.1.0.0
+    NeXusCPP.1.0.0
   )
-# endif(LINUX)
+endif(APPLE)
+
+if (UNIX AND NOT APPLE)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} PUBLIC
+            OpenMP::OpenMP_CXX
+            pybind11::module
+
+          PRIVATE
+            kipl
+            fftw3
+            fftw3f
+            xml2
+            tiff
+            armadillo
+            lapack
+            blas
+            AdvancedFilters
+            cfitsio
+            NeXus
+            NeXusCPP
+            )
+    else()
+        target_link_libraries(${TARGET_NAME}
+          PUBLIC
+            pybind11::module
+
+          PRIVATE
+            kipl
+            fftw3
+            fftw3f
+            xml2
+            tiff
+            armadillo
+            lapack
+            blas
+            AdvancedFilters
+            cfitsio
+            NeXus
+            NeXusCPP
+          )
+    endif()
+endif()
 
 set_target_properties(${TARGET_NAME}
   PROPERTIES

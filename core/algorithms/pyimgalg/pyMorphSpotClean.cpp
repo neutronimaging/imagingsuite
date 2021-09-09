@@ -11,10 +11,6 @@
 #include <MorphSpotClean.h>
 #include <ImagingException.h>
 
-#if !defined(NO_QT)
-#include <QDebug>
-#endif
-
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -34,6 +30,15 @@ void bindMorphSpotClean(py::module &m)
 //                &ImagingAlgorithms::MorphSpotClean::setConnectivity), // kipl::morphology::MorphConnect conn = kipl::morphology::conn8
 //                "Configures the polynomial with a list of coefficients",
 //                py::arg("coeff"));
+
+    mscClass.def("useThreading",
+                 &ImagingAlgorithms::MorphSpotClean::useThreading,
+                 "Switches the use of threaded processing.",
+                 py::arg("x"));
+
+    mscClass.def("isThreaded",
+                 &ImagingAlgorithms::MorphSpotClean::isThreaded,
+                 "Tells if threaded processing is used");
 
     mscClass.def("setCleanMethod",
                  &ImagingAlgorithms::MorphSpotClean::setCleanMethod,

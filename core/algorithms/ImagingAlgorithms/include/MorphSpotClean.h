@@ -131,9 +131,6 @@ protected:
     int ng[8];
     int first_line;
     int last_line;
-//    kipl::base::TImage<float,2> padded;
-//    kipl::base::TImage<float,2> noholes;
-//    kipl::base::TImage<float,2> nopeaks;
 };
 
 }

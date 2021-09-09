@@ -23,9 +23,9 @@ include_directories(
     ../../../core/algorithms/ImagingAlgorithms/include
     )
 
-#link_directories(../../../../lib /opt/local/lib )
+#link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
 
-link_directories( /opt/local/lib )
+link_directories( /opt/local/lib ../../../external/mac/lib)
 
 # add_definitions(-DVERSION="1.6.0")
 # create python module
@@ -62,11 +62,80 @@ target_link_libraries(${TARGET_NAME}
     ImagingAlgorithms
     xml2
     tiff
+    fftw3
+    fftw3f
     ModuleConfig
     ReconFramework
     StdBackProjectors
     FDKBackProjectors
   )
+
+if (APPLE)
+target_link_libraries(${TARGET_NAME}
+  PUBLIC
+    pybind11::module
+
+  PRIVATE
+    kipl
+    ImagingAlgorithms
+    xml2
+    tiff
+    fftw3
+    fftw3f
+    ModuleConfig
+    ReconFramework
+    StdBackProjectors
+    FDKBackProjectors
+    cfitsio
+    NeXus.1.0.0
+    NeXusCPP.1.0.0
+  )
+endif(APPLE)
+
+if (UNIX AND NOT APPLE)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} PUBLIC
+            OpenMP::OpenMP_CXX
+            pybind11::module
+
+          PRIVATE
+            kipl
+            ImagingAlgorithms
+            xml2
+            tiff
+            fftw3
+            fftw3f
+            ModuleConfig
+            ReconFramework
+            StdBackProjectors
+            FDKBackProjectors
+            cfitsio
+            NeXus
+            NeXusCPP
+            )
+    else()
+        target_link_libraries(${TARGET_NAME}
+          PUBLIC
+            pybind11::module
+
+          PRIVATE
+            kipl
+            ImagingAlgorithms
+            xml2
+            tiff
+            fftw3
+            fftw3f
+            ModuleConfig
+            ReconFramework
+            StdBackProjectors
+            FDKBackProjectors
+            cfitsio
+            NeXus
+            NeXusCPP
+          )
+    endif()
+endif()
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")

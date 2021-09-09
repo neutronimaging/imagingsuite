@@ -77,24 +77,7 @@ target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
     ../../../external/mac/lib/
     )
-# if (APPLE)
-# target_link_libraries(${TARGET_NAME}
-#     PRIVATE
-#     kipl
-#     xml2
-#     fftw3
-#     fftw3f
-#     cfitsio
-#     tiff
-#     armadillo
-#     lapack
-#     blas
-#     NeXus.1.0.0
-#     NeXusCPP.1.0.0
-#   )
-# endif()
-
-# if (LINUX)
+if (APPLE)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
     kipl
@@ -106,9 +89,46 @@ target_link_libraries(${TARGET_NAME}
     armadillo
     lapack
     blas
-    NeXus
-    NeXusCPP
+    NeXus.1.0.0
+    NeXusCPP.1.0.0
   )
-# endif()
+endif()
+
+if (UNIX AND NOT APPLE)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} PUBLIC
+            OpenMP::OpenMP_CXX
+
+          PRIVATE
+            kipl
+            xml2
+            fftw3
+            fftw3f
+            cfitsio
+            tiff
+            armadillo
+            lapack
+            blas
+            NeXus
+            NeXusCPP
+        )
+    else()
+    target_link_libraries(${TARGET_NAME} 
+          PRIVATE
+            kipl
+            xml2
+            fftw3
+            fftw3f
+            cfitsio
+            tiff
+            armadillo
+            lapack
+            blas
+            NeXus
+            NeXusCPP
+        )
+    endif()
+endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
