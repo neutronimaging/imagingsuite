@@ -38,7 +38,8 @@ add_library(${TARGET_NAME}
   pyBinder.h
   )
 
-
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 if (APPLE)
 target_link_libraries(${TARGET_NAME}
@@ -110,7 +111,7 @@ set_target_properties(${TARGET_NAME}
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-if(DYNAMIC_LIB)
+#if(DYNAMIC_LIB)
   install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
   # install(FILES 
   #     ../../../../lib/libkipl.1.0.0.dylib 
@@ -136,4 +137,4 @@ if(DYNAMIC_LIB)
   #       COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
   #       WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
   #     )
-endif(DYNAMIC_LIB)
+#endif(DYNAMIC_LIB)

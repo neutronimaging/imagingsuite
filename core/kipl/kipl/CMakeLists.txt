@@ -344,8 +344,12 @@ if (APPLE)
   		)
 endif()
 
-if (LINUX)
-    target_link_libraries(${TARGET_NAME}
+if (UNIX AND NOT APPLE)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} PUBLIC
+            OpenMP::OpenMP_CXX
+        
         PRIVATE
             xml2
             fftw3
@@ -358,5 +362,20 @@ if (LINUX)
             NeXus
             NeXusCPP
         )
+    else()
+        target_link_libraries(${TARGET_NAME}
+            PRIVATE
+                xml2
+                fftw3
+                fftw3f
+                cfitsio
+                tiff
+                armadillo
+                lapack
+                blas
+                NeXus
+                NeXusCPP
+            )
+    endif()
 endif()
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

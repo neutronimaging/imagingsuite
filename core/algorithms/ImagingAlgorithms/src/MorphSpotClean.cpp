@@ -18,7 +18,7 @@ namespace ImagingAlgorithms {
 MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
-    m_bUseThreading(false),
+    m_bUseThreading(true),
     m_eConnectivity(kipl::base::conn8),
     m_eMorphClean(MorphCleanReplace),
     m_eMorphDetect(MorphDetectHoles),
@@ -90,8 +90,6 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
 {
     if (m_bUseThreading)
     {
-        throw ImagingException("Threading is not implemented for MorphSpotClean", __FILE__,__LINE__);
-
         std::ostringstream msg;
         const size_t N = img.Size(2);
         const size_t concurentThreadsSupported = std::min(std::thread::hardware_concurrency(),static_cast<unsigned int>(N));
