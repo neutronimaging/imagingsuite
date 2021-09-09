@@ -57,7 +57,7 @@ private:
     int         m_nLevels;
     float       m_fSigma;
     std::string m_sWaveletName;
-    bool        m_bParallel;
+    bool        m_bThreading;
     ImagingAlgorithms::eStripeFilterOperation m_eCleaningMethod;
 };
 

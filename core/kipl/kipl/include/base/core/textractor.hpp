@@ -228,7 +228,7 @@ void putPatch(kipl::base::TImage<T,2> patch, size_t x,size_t y, size_t margin,  
         std::copy_n(patch.GetLinePtr(i+margY)+margX,w,dstImg.GetLinePtr(i+y));
     }
 
-    return dstImg;
+    //return dstImg;
 }
 
 }}

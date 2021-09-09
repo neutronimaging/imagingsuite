@@ -3,8 +3,6 @@
 # Copyright (c) 2021 ImaginSuite contributors (https://github.com/neutronimaging/imagingsuite)
 # ~~~
 
-add_definitions(-DNO_QT)
-
 set(TARGET_NAME "imgalg") 
 
 include_directories(
@@ -14,7 +12,7 @@ include_directories(
     ./../../external/pylinalg
     )
     
-link_directories(../../../../lib /opt/local/lib )
+link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
 
 # create python module
 add_library(${TARGET_NAME}
@@ -40,6 +38,10 @@ add_library(${TARGET_NAME}
   pyBinder.h
   )
 
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+
+if (APPLE)
 target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module
@@ -49,7 +51,59 @@ target_link_libraries(${TARGET_NAME}
     ImagingAlgorithms
     xml2
     tiff
+    armadillo
+    lapack
+    blas
+    fftw3
+    fftw3f
+    cfitsio
+    NeXus.1.0.0
+    NeXusCPP.1.0.0
   )
+endif(APPLE)
+
+if (UNIX AND NOT APPLE)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} PUBLIC
+            OpenMP::OpenMP_CXX
+            pybind11::module
+
+          PRIVATE
+              kipl
+              ImagingAlgorithms
+              xml2
+              tiff
+              armadillo
+              lapack
+              blas
+              fftw3
+              fftw3f
+              cfitsio
+              NeXus
+              NeXusCPP
+            )
+    else()
+        target_link_libraries(${TARGET_NAME}
+          PUBLIC
+            pybind11::module
+
+          PRIVATE
+              kipl
+              ImagingAlgorithms
+              xml2
+              tiff
+              armadillo
+              lapack
+              blas
+              fftw3
+              fftw3f
+              cfitsio
+              NeXus
+              NeXusCPP
+          )
+    endif()
+endif()
 
 set_target_properties(${TARGET_NAME}
   PROPERTIES
@@ -57,7 +111,7 @@ set_target_properties(${TARGET_NAME}
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-if(DYNAMIC_LIB)
+#if(DYNAMIC_LIB)
   install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
   # install(FILES 
   #     ../../../../lib/libkipl.1.0.0.dylib 
@@ -83,4 +137,4 @@ if(DYNAMIC_LIB)
   #       COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
   #       WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
   #     )
-endif(DYNAMIC_LIB)
+#endif(DYNAMIC_LIB)

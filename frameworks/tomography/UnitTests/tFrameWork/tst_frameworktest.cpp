@@ -33,7 +33,10 @@ private Q_SLOTS:
     void testScanTypeEnum();
     void testBuildFileList_GeneratedSequence();
     void testBuildFileList_GeneratedGolden();
+    void testBuildFileList_GeneratedGolden_offset();
+    void testBuildFileList_GeneratedGolden_delay();
     void testBuildFileList_GeneratedInvGolden();
+    void testBuildFileList_GeneratedInvGolden_delay();
     void testBuildFileList();
     void testProcessTimingLogger();
 
@@ -167,7 +170,7 @@ void FrameWorkTest::testConfigCopyConstructor()
     config.ProjectionInfo.nDims[1] =           2046UL;
 
     config.ProjectionInfo.beamgeometry =       config.ProjectionInfo.BeamGeometry_Cone;
-    config.ProjectionInfo.fResolution = {0.123f,1.23};
+    config.ProjectionInfo.fResolution = {0.123f,1.23f};
     config.ProjectionInfo.fBinning =           1.0f;
     config.ProjectionInfo.nMargin =            5UL;
     config.ProjectionInfo.nFirstIndex =         3UL;
@@ -182,7 +185,7 @@ void FrameWorkTest::testConfigCopyConstructor()
     config.ProjectionInfo.fCenter =            10.0f;
     config.ProjectionInfo.fSOD =               10.0f;
     config.ProjectionInfo.fSDD =               1000.0f;
-    config.ProjectionInfo.fpPoint = {123.4, 456.6};
+    config.ProjectionInfo.fpPoint = {123.4f, 456.6f};
 
     config.ProjectionInfo.bTranslate =         true;
     config.ProjectionInfo.fTiltAngle =         0.1f;
@@ -305,7 +308,7 @@ void FrameWorkTest::testConfigAssignment()
     config.ProjectionInfo.nDims[1] =           2046UL;
 
     config.ProjectionInfo.beamgeometry =       config.ProjectionInfo.BeamGeometry_Cone;
-    config.ProjectionInfo.fResolution = {0.123f,1.23};
+    config.ProjectionInfo.fResolution = {0.123f,1.23f};
     config.ProjectionInfo.fBinning =           1.0f;
     config.ProjectionInfo.nMargin =            5UL;
     config.ProjectionInfo.nFirstIndex =         3UL;
@@ -320,7 +323,7 @@ void FrameWorkTest::testConfigAssignment()
     config.ProjectionInfo.fCenter =            10.0f;
     config.ProjectionInfo.fSOD =               10.0f;
     config.ProjectionInfo.fSDD =               1000.0f;
-    config.ProjectionInfo.fpPoint = {123.4, 456.6};
+    config.ProjectionInfo.fpPoint = {123.4f, 456.6f};
 
     config.ProjectionInfo.bTranslate =         true;
     config.ProjectionInfo.fTiltAngle =         0.1f;
@@ -480,7 +483,8 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with crop");
 
         for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%d", i, res_fits[i],crop_ref[i]);
+
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
             QVERIFY2(res_fits[i]==crop_ref[i],msg.toStdString().c_str());
         }
 
@@ -490,8 +494,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_tiff.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with crop");
         QVERIFY2(res_tiff.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with crop");
 
-        for (size_t i=0; i<res_tiff.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_tiff[i],crop_ref[i]);
+        for (size_t i=0; i<res_tiff.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_tiff[i]<<", ref="<<crop_ref[i];
             QVERIFY2(res_tiff[i]==crop_ref[i]
                      ,msg.toStdString().c_str());
         }
@@ -512,8 +517,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with horizontal");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
@@ -523,8 +529,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with vertical");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with vertical");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i], rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
@@ -534,8 +541,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with horvert");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with horvert");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
     }
@@ -551,8 +559,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with rotate 90");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with rotate 90");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
@@ -563,8 +572,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with rotate 180");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with rotate 180");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i], rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
@@ -575,8 +585,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with rotate 270");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with rotate 270");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i], rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
     }
@@ -595,8 +606,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with horizontal r90");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with horizontal r90");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
@@ -607,8 +619,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with horizontal r180");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with horizontal r180");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
@@ -619,8 +632,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with horizontal r270");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with horizontal r270");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
@@ -631,8 +645,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with vertical 90");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with vertical 90");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
@@ -643,8 +658,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with vertical 180");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with vertical 180");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
 
@@ -655,8 +671,9 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==rot_ref.Size(0),"Size mismatch for fits reading with vertical 270");
         QVERIFY2(res_fits.Size(1)==rot_ref.Size(1),"Size mismatch for fits reading with vertical 270");
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],rot_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            QTextStream(&msg) << "position "<<i<<": read="<<res_fits[i]<<", ref="<<rot_ref[i];
             QVERIFY2(res_fits[i]==rot_ref[i],msg.toStdString().c_str());
         }
     }
@@ -1033,11 +1050,11 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     float sum=0.0f;
 
-    std::vector<float> gv180={ 0.        , 111.24611797,  42.49223595, 153.73835392,
-                            84.9844719 ,  16.23058987, 127.47670785,  58.72282582,
-                           169.9689438 , 101.21506177,  32.46117975, 143.70729772,
-                            74.9534157 ,   6.19971, 117.44565165,  48.69176962,
-                           159.9378876 ,  91.18400557,  22.43012355};
+    std::vector<float> gv180={ 0.f       , 111.24611797f,  42.49223595f, 153.73835392f,
+                            84.9844719f ,  16.23058987f, 127.47670785f,  58.72282582f,
+                           169.9689438f , 101.21506177f,  32.46117975f, 143.70729772f,
+                            74.9534157f ,   6.19971f, 117.44565165f,  48.69176962f,
+                           159.9378876f ,  91.18400557f,  22.43012355f};
 
     QCOMPARE(ProjectionList.size(),gv180.size());
     std::sort(gv180.begin(),gv180.end());
@@ -1059,10 +1076,10 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
 
-    std::vector<float> gv360 = {   0.0f      , 291.2461  , 222.49222 , 153.73837 ,  84.98446 ,
-                             16.230604, 307.47675 , 238.72289 , 169.96892 , 101.21517 ,
-                             32.46121 , 323.70724 , 254.95349 , 186.19952 , 117.44578 ,
-                             48.691597, 339.93784 , 271.18408 , 202.43034};
+    std::vector<float> gv360 = {   0.0f      , 291.2461f  , 222.49222f , 153.73837f ,  84.98446f ,
+                             16.230604f, 307.47675f , 238.72289f , 169.96892f , 101.21517f ,
+                             32.46121f , 323.70724f , 254.95349f , 186.19952f , 117.44578f ,
+                             48.691597f, 339.93784f , 271.18408f , 202.43034f};
 
     QCOMPARE(ProjectionList.size(),gv360.size());
     std::sort(gv360.begin(),gv360.end());
@@ -1086,6 +1103,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     config.ProjectionInfo.nFirstIndex=1;
     config.ProjectionInfo.nLastIndex=19;
     config.ProjectionInfo.fScanArc[1]=180.0f;
+    config.ProjectionInfo.nGoldenStartIdx = 1;
 
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     BuildFileList(&config,&ProjectionList);
@@ -1093,11 +1111,11 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
 
-    std::vector<float> gv180b={ 0.        , 111.24611797,  42.49223595, 153.73835392,
-                            84.9844719 ,  16.23058987, 127.47670785,  58.72282582,
-                           169.9689438 , 101.21506177,  32.46117975, 143.70729772,
-                            74.9534157 ,   6.19971, 117.44565165,  48.69176962,
-                           159.9378876 ,  91.18400557,  22.43012355};
+    std::vector<float> gv180b={ 0.f       , 111.24611797f,  42.49223595f, 153.73835392f,
+                            84.9844719f ,  16.23058987f, 127.47670785f,  58.72282582f,
+                           169.9689438f , 101.21506177f,  32.46117975f, 143.70729772f,
+                            74.9534157f ,   6.19971f, 117.44565165f,  48.69176962f,
+                           159.9378876f ,  91.18400557f,  22.43012355f};
 
     std::sort(gv180b.begin(),gv180b.end());
     git=gv180b.begin();
@@ -1111,6 +1129,190 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
 
     msg.str(""); msg<<"Expected 1.0, got "<<sum;
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+}
+
+void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
+{
+    std::ostringstream msg;
+    size_t N=10;
+    size_t i=0;
+
+    ReconConfig config("");
+// Test even number
+    config.ProjectionInfo.sFileMask       = "test_####.fits";
+    config.ProjectionInfo.nFirstIndex     = 10;
+    config.ProjectionInfo.nLastIndex      = 28;
+    config.ProjectionInfo.fScanArc[0]     = 0.0f;
+    config.ProjectionInfo.fScanArc[1]     = 180.0f;
+    config.ProjectionInfo.scantype        = config.ProjectionInfo.GoldenSectionScan;
+    config.ProjectionInfo.nGoldenStartIdx = 10;
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    BuildFileList(&config,&ProjectionList);
+    N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
+    msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
+    float sum=0.0f;
+
+    std::vector<float> gv180={ 0.f       , 111.24611797f,  42.49223595f, 153.73835392f,
+                            84.9844719f ,  16.23058987f, 127.47670785f,  58.72282582f,
+                           169.9689438f , 101.21506177f,  32.46117975f, 143.70729772f,
+                            74.9534157f ,   6.19971f, 117.44565165f,  48.69176962f,
+                           159.9378876f ,  91.18400557f,  22.43012355f};
+
+    QCOMPARE(ProjectionList.size(),gv180.size());
+    std::sort(gv180.begin(),gv180.end());
+    auto git=gv180.begin();
+
+    for (auto &it: ProjectionList) {
+        sum+=it.second.weight;
+        QCOMPARE(it.first,*git);
+        ++git;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+
+    config.ProjectionInfo.fScanArc[1]=360.0f;
+    BuildFileList(&config,&ProjectionList);
+    N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
+    msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
+    sum=0.0f;
+
+    std::vector<float> gv360 = {   0.0f      , 291.2461f  , 222.49222f , 153.73837f ,  84.98446f ,
+                             16.230604f, 307.47675f , 238.72289f , 169.96892f , 101.21517f ,
+                             32.46121f , 323.70724f , 254.95349f , 186.19952f , 117.44578f ,
+                             48.691597f, 339.93784f , 271.18408f , 202.43034f};
+
+    QCOMPARE(ProjectionList.size(),gv360.size());
+    std::sort(gv360.begin(),gv360.end());
+
+    git = gv360.begin();
+
+    for (auto &it: ProjectionList)
+    {
+        sum+=it.second.weight;
+        QCOMPARE(it.first,*git);
+        ++git;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+
+
+    // Test odd number
+    ProjectionList.clear();
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=19;
+    config.ProjectionInfo.fScanArc[1]=180.0f;
+    config.ProjectionInfo.nGoldenStartIdx = 1;
+
+    N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
+    BuildFileList(&config,&ProjectionList);
+    msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
+    sum=0.0f;
+
+    std::vector<float> gv180b={ 0.f       , 111.24611797f,  42.49223595f, 153.73835392f,
+                            84.9844719f ,  16.23058987f, 127.47670785f,  58.72282582f,
+                           169.9689438f , 101.21506177f,  32.46117975f, 143.70729772f,
+                            74.9534157f ,   6.19971f, 117.44565165f,  48.69176962f,
+                           159.9378876f ,  91.18400557f,  22.43012355f};
+
+    std::sort(gv180b.begin(),gv180b.end());
+    git=gv180b.begin();
+
+    for (auto &it: ProjectionList)
+    {
+        sum+=it.second.weight;
+        QCOMPARE(it.first,*git);
+        ++git;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+}
+
+void FrameWorkTest::testBuildFileList_GeneratedGolden_delay()
+{
+   // Starting at index 10
+    std::vector<float> gv180={32.46117974981095f,
+                              143.70729772479237f,
+                              74.95341569977299f,
+                              6.19971f,
+                              117.44565164973501f,
+                              48.69176962471643f,
+                              159.93788759969704f,
+                              91.18400557467847f,
+                              22.43012354965988f,
+                              133.6762415246405f,
+                              64.9223594996219f,
+                              176.16847747460253f,
+                              107.41459544958475f,
+                              38.6611f,
+                              149.90683139954598f,
+                              81.15294937452657f,
+                              12.3994f,
+                              123.64518532449023f,
+                              54.89130329947002f,
+                              166.13742127445144f};
+
+    std::ostringstream msg;
+    size_t N=10;
+    size_t i=0;
+
+    ReconConfig config("");
+// Test even number
+    config.ProjectionInfo.sFileMask       = "test_####.fits";
+    config.ProjectionInfo.nFirstIndex     = 10;
+    config.ProjectionInfo.nLastIndex      = 29;
+    config.ProjectionInfo.fScanArc[0]     = 0.0f;
+    config.ProjectionInfo.fScanArc[1]     = 180.0f;
+    config.ProjectionInfo.scantype        = config.ProjectionInfo.GoldenSectionScan;
+    config.ProjectionInfo.nGoldenStartIdx = 0;
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    BuildFileList(&config,&ProjectionList);
+    N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
+    msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
+
+
+    QCOMPARE(ProjectionList.size(),gv180.size());
+    std::sort(gv180.begin(),gv180.end());
+    auto git=gv180.begin();
+
+    for (auto &it: ProjectionList) {
+        QCOMPARE(it.first,*git);
+        ++git;
+    }
+
+    //
+    config.ProjectionInfo.sFileMask       = "test_####.fits";
+    config.ProjectionInfo.nFirstIndex     = 12;
+    config.ProjectionInfo.nLastIndex      = 31;
+    config.ProjectionInfo.fScanArc[0]     = 0.0f;
+    config.ProjectionInfo.fScanArc[1]     = 180.0f;
+    config.ProjectionInfo.scantype        = config.ProjectionInfo.GoldenSectionScan;
+    config.ProjectionInfo.nGoldenStartIdx = 2;
+
+    ProjectionList.clear();
+    BuildFileList(&config,&ProjectionList);
+    N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
+    msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
+
+
+    QCOMPARE(ProjectionList.size(),gv180.size());
+    std::sort(gv180.begin(),gv180.end());
+    git=gv180.begin();
+
+    for (auto &it: ProjectionList) {
+        QCOMPARE(it.first,*git);
+        ++git;
+    }
 }
 
 void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
@@ -1135,10 +1337,10 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     float sum=0.0f;
 
-    std::vector<float> gv180={  0.,        111.24612 ,   42.492245,  153.73833,    84.98449,    16.23059,
-            127.47666,    58.722794 , 169.96898 ,  101.2151 ,    32.46118,   143.70726,
-             74.95333,     6.19958, 117.44559,    48.691772 , 159.93796,    91.18403,
-             22.430218 };
+    std::vector<float> gv180={  0.f,        111.24612f ,   42.492245f,  153.73833f,    84.98449f,    16.23059f,
+            127.47666f,    58.722794f , 169.96898f ,  101.2151f ,    32.46118f,   143.70726f,
+             74.95333f,     6.19958f, 117.44559f,    48.691772f , 159.93796f,    91.18403f,
+             22.430218f };
 
 
     QCOMPARE(ProjectionList.size(),gv180.size());
@@ -1162,10 +1364,10 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
 
-    std::vector<float> gv360 = {   0.      ,  111.24612  , 222.49223  , 333.7383  ,   84.98449 ,  196.23059,
-                                  307.47665  ,  58.722794 , 169.96898 ,  281.2151  ,   32.46118  , 143.70726,
-                                  254.95332 ,    6.19958 ,117.44559 ,  228.69177 ,  339.93796 ,   91.18403,
-                                  202.4302   };
+    std::vector<float> gv360 = {   0.f      ,  111.24612f  , 222.49223f  , 333.7383f  ,   84.98449f ,  196.23059f,
+                                  307.47665f  ,  58.722794f , 169.96898f ,  281.2151f  ,   32.46118f  , 143.70726f,
+                                  254.95332f ,    6.19958f ,117.44559f ,  228.69177f ,  339.93796f ,   91.18403f,
+                                  202.4302f   };
 
     QCOMPARE(ProjectionList.size(),gv360.size());
     std::sort(gv360.begin(),gv360.end());
@@ -1189,6 +1391,7 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     config.ProjectionInfo.nFirstIndex=1;
     config.ProjectionInfo.nLastIndex=19;
     config.ProjectionInfo.fScanArc[1]=180.0f;
+    config.ProjectionInfo.nGoldenStartIdx = 1;
 
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     BuildFileList(&config,&ProjectionList);
@@ -1196,10 +1399,10 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
 
-    std::vector<float> gv180odd={  0.,        111.24612 ,   42.492245,  153.73833,    84.98449,    16.23059,
-            127.47666,    58.722794 , 169.96898 ,  101.2151 ,    32.46118,   143.70726,
-             74.95333,     6.19958, 117.44559,    48.691772 , 159.93796,    91.18403,
-             22.430218 };
+    std::vector<float> gv180odd={  0.f,        111.24612f ,   42.492245f,  153.73833f,    84.98449f,    16.23059f,
+            127.47666f,    58.722794f , 169.96898f ,  101.2151f ,    32.46118f,   143.70726f,
+             74.95333f,     6.19958f, 117.44559f,    48.691772f , 159.93796f,    91.18403f,
+             22.430218f };
     std::sort(gv180odd.begin(),gv180odd.end());
     git=gv180odd.begin();
 
@@ -1212,6 +1415,11 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
 
     msg.str(""); msg<<"Expected 1.0, got "<<sum;
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+}
+
+void FrameWorkTest::testBuildFileList_GeneratedInvGolden_delay()
+{
+
 }
 
 void FrameWorkTest::testBuildFileList()

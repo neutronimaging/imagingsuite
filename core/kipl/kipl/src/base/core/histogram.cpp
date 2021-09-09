@@ -21,8 +21,6 @@
 #include "../../../include/io/io_tiff.h"
 #endif
 
-#include <QDebug>
-
 namespace kipl { namespace base {
 //int Histogram(float const * const data, size_t nData, size_t * const hist, const size_t nBins, float lo, float hi, float * const pAxis)
 
@@ -102,12 +100,14 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
     if (lo==hi)
     {
         kipl::math::minmax(data,nData,&start,&stop,true);
+
     }
     else
     {
         start=std::min(lo,hi);
         stop=std::max(lo,hi);
     }
+
     hist.resize(nBins);
     axis.resize(nBins);
 
@@ -163,11 +163,42 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
     return 0;
 }
 
+void highEntropyHistogram(float const * const data,
+                          size_t nData,
+                          size_t nBins,
+                          std::vector<size_t> & hist,
+                          std::vector<float> &axis,
+                          float loLevel,
+                          float hiLevel,
+                          bool avoidZeros)
+{
+   size_t lo=0;
+   size_t hi=1;
+   float ll = loLevel;
+   float hl = hiLevel;
+
+   while (2 < nBins/static_cast<float>(hi-lo))
+   {
+       Histogram(data,nData,nBins,hist,axis,ll,hl,avoidZeros);
+       FindLimits(hist, 99.0f, lo, hi);
+       if (lo==hi)
+       {
+            if (0<lo)
+                lo--;
+            else
+                hi++;
+       }
+       ll = axis[lo];
+       hl = axis[hi];
+   } ;
+}
+
 std::map<float, size_t> ExactHistogram(float const * const data, size_t Ndata)
 {
 	std::map<float, size_t> hist;
 
-	for (size_t i=0; i<Ndata; i++) {
+    for (size_t i=0; i<Ndata; i++)
+    {
 		hist[data[i]]++;
 	}
 
@@ -182,8 +213,10 @@ double  KIPLSHARED_EXPORT Entropy(size_t const * const hist, size_t N)
 
 	size_t histsum=kipl::math::sum(hist,N);
 
-	for (size_t i=0; i<N; i++) {
-		if (hist[i]!=0) {
+    for (size_t i=0; i<N; i++)
+    {
+        if (hist[i]!=0)
+        {
 			p=static_cast<double>(hist[i])/static_cast<double>(histsum);
 			entropy-=p*std::log10(p);
 		}
@@ -192,6 +225,18 @@ double  KIPLSHARED_EXPORT Entropy(size_t const * const hist, size_t N)
 	return entropy;
 }
 
+std::vector<size_t> cumulativeHistogram(std::vector<size_t> &hist)
+{
+    std::vector<size_t> cumulated(hist.size(),0);
+
+    cumulated[0]=hist[0];
+
+    for (size_t i=1; i<cumulated.size(); ++i)
+        cumulated[i] = cumulated[i-1]+hist[i];
+
+    return cumulated;
+
+}
 int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi)
 {
 	ptrdiff_t *cumulated=new ptrdiff_t[N];
@@ -233,30 +278,33 @@ int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float per
 
 int  KIPLSHARED_EXPORT FindLimits(std::vector<size_t> &hist, float percentage, size_t & lo, size_t & hi)
 {
-
-    size_t N=hist.size();
-
-    std::vector<ptrdiff_t> cumulated(N,0L);
-
-    cumulated[0]=hist[0];
-    for (size_t i=1; i<N; i++)
-    {
-        cumulated[i]=cumulated[i-1]+hist[i];
-    }
-
+    std::vector<size_t> cumulated=cumulativeHistogram(hist);
 
     lo=0;
     hi=0;
 
     float fraction=(100.0f-percentage)/200.0f;
-    ptrdiff_t lowlevel  = static_cast<ptrdiff_t>(cumulated[N-1]*fraction);
-    ptrdiff_t highlevel = static_cast<ptrdiff_t>(cumulated[N-1]*(1-fraction));
+    ptrdiff_t lowlevel  = static_cast<ptrdiff_t>(cumulated.back()*fraction);
+    ptrdiff_t highlevel = static_cast<ptrdiff_t>(cumulated.back()*(1-fraction));
 
     lo = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), lowlevel));
     hi = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), highlevel));
 
     return 0;
 }
+
+int  KIPLSHARED_EXPORT FindLimit(std::vector<size_t> &hist, float fraction, size_t & lo)
+{
+    std::vector<size_t> cumulated=cumulativeHistogram(hist);
+
+    lo=0;
+
+    ptrdiff_t lowlevel  = static_cast<ptrdiff_t>(cumulated.back()*fraction);
+    lo = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), lowlevel));
+
+    return 0;
+}
+
 //------------------------------------------------------------------
 // Bivariate histogram class
 BivariateHistogram::BivariateHistogram() :

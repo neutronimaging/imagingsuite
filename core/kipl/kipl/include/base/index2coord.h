@@ -20,16 +20,16 @@ namespace kipl { namespace base {
         /// \param C'tor to set the struct to default values (all =0)
 		coords3D() : x(0), y(0), z(0), reserved(0) {}
 
-        /// \brief Copy c'tor
-        /// \param c the instance to copy
-		coords3D(const coords3D &c) : x(c.x), y(c.y), z(c.z), reserved(c.reserved) {}
+//        /// \brief Copy c'tor
+//        /// \param c the instance to copy
+//		coords3D(const coords3D &c) : x(c.x), y(c.y), z(c.z), reserved(c.reserved) {}
 
-        /// \brief Assignment operator
-        /// \param c the instance to copy
-		const coords3D & operator=(const coords3D & c) {
-			x=c.x; y=c.y; z=c.z; reserved=c.reserved;
-			return *this;
-		}
+//        /// \brief Assignment operator
+//        /// \param c the instance to copy
+//		const coords3D & operator=(const coords3D & c) {
+//			x=c.x; y=c.y; z=c.z; reserved=c.reserved;
+//			return *this;
+//		}
 
         short x; ///< The x coordinate
         short y; ///< The y coordinate
@@ -61,16 +61,16 @@ namespace kipl { namespace base {
         /// \param C'tor to set the struct to default values (all =0)
         coords3Df() : x(0.0f), y(0.0f), z(0.0f), reserved(0.0f) {}
 
-        /// \brief Copy c'tor
-        /// \param c the instance to copy
-        coords3Df(const coords3D &c) : x(c.x), y(c.y), z(c.z), reserved(c.reserved) {}
+//        /// \brief Copy c'tor
+//        /// \param c the instance to copy
+//        coords3Df(const coords3D &c) : x(c.x), y(c.y), z(c.z), reserved(c.reserved) {}
 
-        /// \brief Assignment operator
-        /// \param c the instance to copy
-        const coords3Df & operator=(const coords3Df & c) {
-            x=c.x; y=c.y; z=c.z; reserved=c.reserved;
-            return *this;
-        }
+//        /// \brief Assignment operator
+//        /// \param c the instance to copy
+//        const coords3Df & operator=(const coords3Df & c) {
+//            x=c.x; y=c.y; z=c.z; reserved=c.reserved;
+//            return *this;
+//        }
 
         float x; ///< The x coordinate
         float y; ///< The y coordinate
@@ -105,16 +105,16 @@ namespace kipl { namespace base {
         /// \param C'tor to set the struct to default values (all =0)
         coords2D() : x(0), y(0) {}
 
-        /// \brief Copy c'tor
-        /// \param c the instance to copy
-        coords2D(const coords2D &c) : x(c.x), y(c.y) {}
+//        /// \brief Copy c'tor
+//        /// \param c the instance to copy
+//        coords2D(const coords2D &c) : x(c.x), y(c.y) {}
 
-        /// \brief Assignment operator
-        /// \param c the instance to copy
-        const coords2D & operator=(const coords2D & c) {
-            x=c.x; y=c.y;
-            return *this;
-        }
+//        /// \brief Assignment operator
+//        /// \param c the instance to copy
+//        const coords2D & operator=(const coords2D & c) {
+//            x=c.x; y=c.y;
+//            return *this;
+//        }
 
         /// \brief Equality test
         /// \param c the instance to compare

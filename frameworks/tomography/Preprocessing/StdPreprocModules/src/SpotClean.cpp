@@ -368,7 +368,7 @@ kipl::base::TImage<float,2> SpotClean::FillHoles(kipl::base::TImage<float,2> img
 			}
 			else{
 				// This shouldn't happen...
-//                cout<<"missed pixel"<<endl;
+//                std::cout<<"missed pixel"<<std::endl;
 			}
 		}
 

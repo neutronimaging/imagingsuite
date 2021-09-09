@@ -7,9 +7,9 @@
 #include "../include/StdBackProjectorBase.h"
 
 namespace reconstructor{ namespace UnitTests {
-	class testBasicReconstructor;
+	class STDBACKPROJECTORS_EXPORT testBasicReconstructor;
 }}
-class NearestNeighborBP:
+class STDBACKPROJECTORS_EXPORT NearestNeighborBP:
 	public StdBackProjectorBase
 {
 public:

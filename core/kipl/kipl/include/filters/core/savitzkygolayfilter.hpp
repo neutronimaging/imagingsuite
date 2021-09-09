@@ -8,7 +8,6 @@
 #include "../../stltools/stlvecmath.h"
 #include <armadillo>
 #include "../../math/linfit.h"
-#include <QDebug>
 
 namespace kipl {
 namespace filters {

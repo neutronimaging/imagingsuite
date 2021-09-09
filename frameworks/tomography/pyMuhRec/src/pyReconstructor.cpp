@@ -30,26 +30,27 @@ void bindReconstructor(py::module &m)
                   )
                     {
                         ReconConfig config("");
-                        const std::map<std::string,int> parMap = {{"center",         0},
-                                                                  {"tiltangle",      1},
-                                                                  {"tiltpivot",      2},
-                                                                  {"usetilt",        3},
-                                                                  {"roi",            4},
-                                                                  {"direction",      5},
-                                                                  {"resolution",     6},
-                                                                  {"usematrixroi",   7},
-                                                                  {"matrixroi",      8},
-                                                                  {"rotate",         9},
-                                                                  {"sod",           10},
-                                                                  {"sdd",           11},
-                                                                  {"piercingpoint", 12},
-                                                                  {"beamgeometry",  13},
-                                                                  {"filtertype",    14},
-                                                                  {"cutoff",        15},
-                                                                  {"order",         16},
-                                                                  {"usebias",       17},
-                                                                  {"biasweight",    18},
-                                                                  {"paddingdoubler",19}
+                        const std::map<std::string,int> parMap = {{"center",           0},
+                                                                  {"tiltangle",        1},
+                                                                  {"tiltpivot",        2},
+                                                                  {"usetilt",          3},
+                                                                  {"roi",              4},
+                                                                  {"direction",        5},
+                                                                  {"resolution",       6},
+                                                                  {"usematrixroi",     7},
+                                                                  {"matrixroi",        8},
+                                                                  {"rotate",           9},
+                                                                  {"sod",             10},
+                                                                  {"sdd",             11},
+                                                                  {"piercingpoint",   12},
+                                                                  {"beamgeometry",    13},
+                                                                  {"filtertype",      14},
+                                                                  {"cutoff",          15},
+                                                                  {"order",           16},
+                                                                  {"usebias",         17},
+                                                                  {"biasweight",      18},
+                                                                  {"paddingdoubler",  19},
+                                                                  {"usecircularmask", 20}
 
 
                                                                  };
@@ -119,12 +120,25 @@ void bindReconstructor(py::module &m)
                                 config.ProjectionInfo.beamgeometry = py::cast<ReconConfig::cProjections::eBeamGeometry>(item.second);
                                 break;
                             case 14: // filtertype
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
+                                break; 
                             case 15: // cutoff
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
+                                break;
                             case 16: // order
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
+                                break;
                             case 17: // usebias
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
+                                break;
                             case 18: // biasweight
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
+                                break;
                             case 19: // paddingdoubler
                                 backprojPars[py::cast<std::string>(item.first)] = py::cast<std::string>(item.second);
+                                break;
+                            case 20: // usecircularmask
+                                backprojPars[py::cast<std::string>(item.first)] = py::cast<bool>(item.second) ? "true":"false";
                                 break;
                             }
                         }

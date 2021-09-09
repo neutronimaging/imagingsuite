@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>694</width>
-    <height>821</height>
+    <width>773</width>
+    <height>721</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -163,6 +163,24 @@
          <property name="toolTip">
           <string>Selects the type of outliers to remove.</string>
          </property>
+         <property name="currentIndex">
+          <number>5</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>Dark (experimental)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Bright (experimental)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>All (experimental)</string>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>Holes</string>
@@ -230,6 +248,27 @@
          <item>
           <property name="text">
            <string>8-connectivity</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>Threshold value</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_ThresholdValue">
+         <item>
+          <property name="text">
+           <string>Absolute</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Fraction</string>
           </property>
          </item>
         </widget>

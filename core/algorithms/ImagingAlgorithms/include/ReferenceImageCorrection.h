@@ -10,9 +10,6 @@
 #include <base/timage.h>
 #include <logging/logger.h>
 #include "../include/averageimage.h"
-#if !defined(NO_QT)
-#include <QTextStream>
-#endif
 #include <interactors/interactionbase.h>
 
 

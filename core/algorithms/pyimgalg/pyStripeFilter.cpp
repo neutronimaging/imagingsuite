@@ -22,7 +22,13 @@ void bindStripeFilter(py::module &m)
 {
     py::class_<ImagingAlgorithms::StripeFilter> sfClass(m, "StripeFilter");
 
-    sfClass.def(py::init<const std::vector<int> &,const std::string &, int, float>());
+//   StripeFilter(const std::vector<size_t> & dims, const std::string &wname, int scale, float sigma);
+    sfClass.def(py::init<const std::vector<int> &,const std::string &, int, float>(),
+            "Initializes the stripe filter.",
+            py::arg("dims"),
+            py::arg("wname"),
+            py::arg("scale"),
+            py::arg("wcut"));
 
     sfClass.def("configure",
                 &ImagingAlgorithms::StripeFilter::configure,

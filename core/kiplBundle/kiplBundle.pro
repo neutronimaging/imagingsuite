@@ -7,7 +7,7 @@ SUBDIRS += \
     ../kipl/UnitTests/tFillHole \
     ../kipl/UnitTests/tImageOperators \
     ../kipl/UnitTests/tIndex2Coord \
-    ../kipl/UnitTests/tKiplAdvFilters \
+ #   ../kipl/UnitTests/tKiplAdvFilters \
     ../kipl/UnitTests/tkiplbasetest \
     ../kipl/UnitTests/tKIPLbaseTImage \
     ../kipl/UnitTests/tkiplfilters \

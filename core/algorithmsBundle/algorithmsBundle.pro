@@ -1,13 +1,11 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
+    ../algorithms/AdvancedFilters \
     ../algorithms/ImagingAlgorithms/qt/ImagingAlgorithms/ImagingAlgorithms.pro \
     ../algorithms/ImagingQAAlgorithms \
+    ../algorithms/UnitTests/tAdvancedFilters \
     ../algorithms/UnitTests/tImagingAlgorithms \
-    ../algorithms/UnitTests/tImagingQAAlgorithms
+    ../algorithms/UnitTests/tImagingQAAlgorithms\
+    ../algorithms/UnitTests/tKiplAdvFilters
 
-HEADERS += \
-    ../kipl/kipl/include/io/io_csv.h
-
-SOURCES += \
-    ../kipl/kipl/src/io/io_csv.cpp

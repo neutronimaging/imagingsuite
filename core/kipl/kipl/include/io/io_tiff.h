@@ -283,7 +283,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_
 {
     std::stringstream msg;
 	TIFF *image;
-	uint16 photo, spp, fillorder,bps, sformat;
+    uint16_t photo, spp, fillorder,bps, sformat;
 	tsize_t stripSize, stripCount;
 	unsigned long imageOffset;
 	long result;
@@ -404,14 +404,14 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_
         for(count = 0; count < bufferSize; count++)
         {
 			tempbyte = 0;
-            if (buffer[count] & 128) tempbyte += (char)1;
-            if (buffer[count] & 64)  tempbyte += (char)2;
-            if (buffer[count] & 32)  tempbyte += (char)4;
-            if (buffer[count] & 16)  tempbyte += (char)8;
-            if (buffer[count] & 8)   tempbyte += (char)16;
-            if (buffer[count] & 4)   tempbyte += (char)32;
-            if (buffer[count] & 2)   tempbyte += (char)64;
-            if (buffer[count] & 1)   tempbyte += (char)128;
+            if (buffer[count] & 128) tempbyte += static_cast<char>(1);
+            if (buffer[count] & 64)  tempbyte += static_cast<char>(2);
+            if (buffer[count] & 32)  tempbyte += static_cast<char>(4);
+            if (buffer[count] & 16)  tempbyte += static_cast<char>(8);
+            if (buffer[count] & 8)   tempbyte += static_cast<char>(16);
+            if (buffer[count] & 4)   tempbyte += static_cast<char>(32);
+            if (buffer[count] & 2)   tempbyte += static_cast<char>(64);
+            if (buffer[count] & 1)   tempbyte += static_cast<char>(128);
 
 			buffer[count] = tempbyte;
 		}
@@ -517,7 +517,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	}
 	std::stringstream msg;
 	TIFF *image;
-	uint16 photo, spp, fillorder,bps, sformat;
+    uint16_t photo, spp, fillorder,bps, sformat;
 	tsize_t stripSize;
 	unsigned long imageOffset;
 
@@ -802,7 +802,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,3> &src,const std::string & fname, const
 /// \param row indexes the line to read
 /// \param fname file name of the image file
 template <class ImgType>
-int ReadTIFFLine(ImgType *data,uint32 row, const std::string & fname)
+int ReadTIFFLine(ImgType *data,uint32_t row, const std::string & fname)
 {
 	std::stringstream msg;
 	TIFF *image;

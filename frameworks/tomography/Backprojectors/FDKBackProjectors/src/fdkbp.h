@@ -13,7 +13,7 @@
 //    class testBasicReconstructor;
 //}}
 
-class FDKbp : public FdkReconBase
+class FDKBACKPROJSHARED_EXPORT FDKbp : public FdkReconBase
 {
 public:
     FDKbp(kipl::interactors::InteractionBase *interactor=nullptr);

@@ -1,0 +1,242 @@
+{
+    "2021-02-08T13:50:06" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":2.5266, "MorphSpotClean":85.68, "Multi projection BP parallel":70.7251, "WaveletRingClean":337.965, "total":6089.34}
+    },
+    "2021-02-08T13:50:12" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":2.7878, "MorphSpotClean":103.478, "Multi projection BP parallel":63.3618, "WaveletRingClean":341.52, "total":5539.84}
+    },
+    "2021-02-08T13:50:18" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":3.0385, "MorphSpotClean":107.362, "Multi projection BP parallel":86.1035, "WaveletRingClean":360.565, "total":5608.43}
+    },
+    "2021-02-08T13:50:23" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":2.8213, "MorphSpotClean":99.7965, "Multi projection BP parallel":75.8301, "WaveletRingClean":352.548, "total":5601.16}
+    },
+    "2021-02-08T13:50:29" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":2.7232, "MorphSpotClean":120.294, "Multi projection BP parallel":61.4426, "WaveletRingClean":330.727, "total":5547.49}
+    },
+    "2021-02-08T13:50:35" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":2.1632, "MorphSpotClean":122.995, "Multi projection BP parallel":74.3003, "WaveletRingClean":328.59, "total":5578.99}
+    },
+    "2021-02-08T13:50:40" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":2.1156, "MorphSpotClean":87.0118, "Multi projection BP parallel":68.4943, "WaveletRingClean":349.571, "total":5530.52}
+    },
+    "2021-02-08T13:50:46" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":2.0915, "MorphSpotClean":115.58, "Multi projection BP parallel":77.2428, "WaveletRingClean":331.404, "total":5568.92}
+    },
+    "2021-02-08T13:50:51" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":2.5043, "MorphSpotClean":115.323, "Multi projection BP parallel":73.349, "WaveletRingClean":325.611, "total":5558.16}
+    },
+    "2021-02-08T13:50:57" : {
+        "data":{ "projections":128, "sizeu":128, "sizev":128, "sizex":128, "sizey":128, "sizez":128},
+        "timing":{ "FullLogNorm":2.0961, "MorphSpotClean":94.3628, "Multi projection BP parallel":67.1987, "WaveletRingClean":336.605, "total":5547.6}
+    },
+    "2021-02-08T13:51:12" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":15.3109, "MorphSpotClean":779.767, "Multi projection BP parallel":585.569, "WaveletRingClean":1602.57, "total":14265.5}
+    },
+    "2021-02-08T13:51:25" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":14.632, "MorphSpotClean":745.115, "Multi projection BP parallel":578.109, "WaveletRingClean":1598.66, "total":13777.7}
+    },
+    "2021-02-08T13:51:39" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":14.32, "MorphSpotClean":739.134, "Multi projection BP parallel":614.755, "WaveletRingClean":1598.07, "total":13882.2}
+    },
+    "2021-02-08T13:51:53" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":13.9731, "MorphSpotClean":715.834, "Multi projection BP parallel":606.238, "WaveletRingClean":1600.84, "total":13761.8}
+    },
+    "2021-02-08T13:52:07" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":13.9195, "MorphSpotClean":759.3, "Multi projection BP parallel":609.593, "WaveletRingClean":1628.18, "total":13908.7}
+    },
+    "2021-02-08T13:52:21" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":16.4457, "MorphSpotClean":769.238, "Multi projection BP parallel":601.929, "WaveletRingClean":1623.36, "total":13887.8}
+    },
+    "2021-02-08T13:52:35" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":14.9733, "MorphSpotClean":738.239, "Multi projection BP parallel":577.765, "WaveletRingClean":1592.45, "total":13850.3}
+    },
+    "2021-02-08T13:52:49" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":14.5292, "MorphSpotClean":759.414, "Multi projection BP parallel":590.004, "WaveletRingClean":1602.39, "total":13899.7}
+    },
+    "2021-02-08T13:53:03" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":13.3205, "MorphSpotClean":746.244, "Multi projection BP parallel":643.285, "WaveletRingClean":1588.73, "total":13818.8}
+    },
+    "2021-02-08T13:53:17" : {
+        "data":{ "projections":256, "sizeu":256, "sizev":256, "sizex":256, "sizey":256, "sizez":256},
+        "timing":{ "FullLogNorm":14.9404, "MorphSpotClean":745.922, "Multi projection BP parallel":579.491, "WaveletRingClean":1609.89, "total":13815.8}
+    },
+    "2021-02-08T13:53:46" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":41.8369, "MorphSpotClean":2363.11, "Multi projection BP parallel":2477.28, "WaveletRingClean":4395.94, "total":29628.6}
+    },
+    "2021-02-08T13:54:13" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":44.6922, "MorphSpotClean":2302.76, "Multi projection BP parallel":2506.5, "WaveletRingClean":4403.09, "total":27027.1}
+    },
+    "2021-02-08T13:54:40" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":47.6866, "MorphSpotClean":2327.47, "Multi projection BP parallel":2514.12, "WaveletRingClean":4393.62, "total":26991}
+    },
+    "2021-02-08T13:55:07" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":45.4971, "MorphSpotClean":2181.44, "Multi projection BP parallel":2473.64, "WaveletRingClean":4483.7, "total":26858.3}
+    },
+    "2021-02-08T13:55:34" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":44.5762, "MorphSpotClean":2300.67, "Multi projection BP parallel":2540.97, "WaveletRingClean":4448.09, "total":27065.1}
+    },
+    "2021-02-08T13:56:01" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":48.6036, "MorphSpotClean":2279.79, "Multi projection BP parallel":2494.57, "WaveletRingClean":4392.86, "total":26881.4}
+    },
+    "2021-02-08T13:56:28" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":43.9968, "MorphSpotClean":2340.99, "Multi projection BP parallel":2523.05, "WaveletRingClean":4489.04, "total":27114.4}
+    },
+    "2021-02-08T13:56:56" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":42.9749, "MorphSpotClean":2305.18, "Multi projection BP parallel":2511.36, "WaveletRingClean":4416.53, "total":26923.4}
+    },
+    "2021-02-08T13:57:23" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":42.3911, "MorphSpotClean":2289.63, "Multi projection BP parallel":2542.62, "WaveletRingClean":4405.9, "total":27006.1}
+    },
+    "2021-02-08T13:57:50" : {
+        "data":{ "projections":384, "sizeu":384, "sizev":384, "sizex":384, "sizey":384, "sizez":384},
+        "timing":{ "FullLogNorm":45.4349, "MorphSpotClean":2381.42, "Multi projection BP parallel":2507.36, "WaveletRingClean":4408.57, "total":27013.3}
+    },
+    "2021-02-08T13:58:40" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":100.33, "MorphSpotClean":5206.91, "Multi projection BP parallel":6172.06, "WaveletRingClean":9593.65, "total":50232.2}
+    },
+    "2021-02-08T13:59:27" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":101.807, "MorphSpotClean":5282.04, "Multi projection BP parallel":6232.47, "WaveletRingClean":9565.11, "total":46912.6}
+    },
+    "2021-02-08T14:00:14" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":101.808, "MorphSpotClean":5098.09, "Multi projection BP parallel":6239.19, "WaveletRingClean":9534.43, "total":46610.5}
+    },
+    "2021-02-08T14:01:01" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":96.6095, "MorphSpotClean":5219.66, "Multi projection BP parallel":6257.37, "WaveletRingClean":9622.27, "total":46912.4}
+    },
+    "2021-02-08T14:01:48" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":110.65, "MorphSpotClean":5259.09, "Multi projection BP parallel":6266.95, "WaveletRingClean":9566.75, "total":46979.1}
+    },
+    "2021-02-08T14:02:34" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":107.126, "MorphSpotClean":5180.41, "Multi projection BP parallel":6233.25, "WaveletRingClean":9554.65, "total":46736.4}
+    },
+    "2021-02-08T14:03:21" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":96.9103, "MorphSpotClean":5159.58, "Multi projection BP parallel":6262.97, "WaveletRingClean":9595.64, "total":46798.6}
+    },
+    "2021-02-08T14:04:08" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":97.3345, "MorphSpotClean":5252.21, "Multi projection BP parallel":6267.94, "WaveletRingClean":9622.92, "total":46954}
+    },
+    "2021-02-08T14:04:55" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":95.5867, "MorphSpotClean":5265.74, "Multi projection BP parallel":6246.54, "WaveletRingClean":9555.85, "total":46862}
+    },
+    "2021-02-08T14:05:42" : {
+        "data":{ "projections":512, "sizeu":512, "sizev":512, "sizex":512, "sizey":512, "sizez":512},
+        "timing":{ "FullLogNorm":103.153, "MorphSpotClean":5247.77, "Multi projection BP parallel":6257.1, "WaveletRingClean":9616.5, "total":46946.8}
+    },
+    "2021-02-08T14:07:54" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":323.769, "MorphSpotClean":16824.6, "Multi projection BP parallel":29215.8, "WaveletRingClean":29093.7, "total":131169}
+    },
+    "2021-02-08T14:09:56" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":329.71, "MorphSpotClean":16708, "Multi projection BP parallel":29917.9, "WaveletRingClean":29216.4, "total":122244}
+    },
+    "2021-02-08T14:11:58" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":320.694, "MorphSpotClean":16808.4, "Multi projection BP parallel":29909.2, "WaveletRingClean":29358.5, "total":122497}
+    },
+    "2021-02-08T14:14:01" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":319.714, "MorphSpotClean":16987.7, "Multi projection BP parallel":29854.5, "WaveletRingClean":29426.3, "total":122787}
+    },
+    "2021-02-08T14:16:04" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":319.229, "MorphSpotClean":17058.9, "Multi projection BP parallel":29962.8, "WaveletRingClean":29337, "total":122658}
+    },
+    "2021-02-08T14:18:07" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":341.947, "MorphSpotClean":16871.4, "Multi projection BP parallel":30409.8, "WaveletRingClean":29486.2, "total":123120}
+    },
+    "2021-02-08T14:20:10" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":321.061, "MorphSpotClean":16757.2, "Multi projection BP parallel":29889.3, "WaveletRingClean":29470.1, "total":122310}
+    },
+    "2021-02-08T14:22:12" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":320.678, "MorphSpotClean":16727.7, "Multi projection BP parallel":29957.3, "WaveletRingClean":29246.5, "total":122141}
+    },
+    "2021-02-08T14:24:14" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":320.997, "MorphSpotClean":16832.1, "Multi projection BP parallel":29999.3, "WaveletRingClean":29261.3, "total":122528}
+    },
+    "2021-02-08T14:26:18" : {
+        "data":{ "projections":768, "sizeu":768, "sizev":768, "sizex":768, "sizey":768, "sizez":768},
+        "timing":{ "FullLogNorm":330.761, "MorphSpotClean":16991.2, "Multi projection BP parallel":30410.2, "WaveletRingClean":29653.9, "total":123362}
+    },
+    "2021-02-08T14:30:47" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":736.528, "MorphSpotClean":38953.4, "Multi projection BP parallel":75558.2, "WaveletRingClean":67380, "total":268550}
+    },
+    "2021-02-08T14:35:07" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":815.534, "MorphSpotClean":39473, "Multi projection BP parallel":80595.2, "WaveletRingClean":67163.1, "total":260668}
+    },
+    "2021-02-08T14:39:30" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":845.725, "MorphSpotClean":39660.9, "Multi projection BP parallel":82177.6, "WaveletRingClean":67288.1, "total":262902}
+    },
+    "2021-02-08T14:43:54" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":801.946, "MorphSpotClean":39256.2, "Multi projection BP parallel":83553.7, "WaveletRingClean":67505.7, "total":263664}
+    },
+    "2021-02-08T14:48:16" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":803.224, "MorphSpotClean":39369.1, "Multi projection BP parallel":82386.7, "WaveletRingClean":67201.1, "total":262361}
+    },
+    "2021-02-08T14:52:39" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":765.657, "MorphSpotClean":39400.8, "Multi projection BP parallel":82176.3, "WaveletRingClean":67399, "total":262144}
+    },
+    "2021-02-08T14:57:01" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":781.002, "MorphSpotClean":39010.8, "Multi projection BP parallel":82100.9, "WaveletRingClean":67674.5, "total":261905}
+    },
+    "2021-02-08T15:01:23" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":788.522, "MorphSpotClean":39340.3, "Multi projection BP parallel":82105.5, "WaveletRingClean":67589.5, "total":262342}
+    },
+    "2021-02-08T15:05:46" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":757.886, "MorphSpotClean":39332.8, "Multi projection BP parallel":82308.9, "WaveletRingClean":67619.5, "total":262599}
+    },
+    "2021-02-08T15:10:09" : {
+        "data":{ "projections":1024, "sizeu":1024, "sizev":1024, "sizex":1024, "sizey":1024, "sizez":1024},
+        "timing":{ "FullLogNorm":764.863, "MorphSpotClean":39264.6, "Multi projection BP parallel":82674.2, "WaveletRingClean":67633.6, "total":262965}
+    }
+}

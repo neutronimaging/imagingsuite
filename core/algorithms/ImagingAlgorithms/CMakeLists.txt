@@ -1,79 +1,134 @@
-include(FetchContent)
+cmake_minimum_required(VERSION 3.14)
 
-set(TARGET_NAME "imagalg")
+set(TARGET_NAME "ImagingAlgorithms")
+project(kipl LANGUAGES CXX)
 
-FetchContent_Declare(
-  pybind11_sources
-  GIT_REPOSITORY https://github.com/pybind/pybind11.git
-  GIT_TAG        v2.2
-)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-FetchContent_GetProperties(pybind11_sources)
-
-if(NOT pybind11_sources_POPULATED)
-  FetchContent_Populate(pybind11_sources)
-
-  add_subdirectory(
-    ${pybind11_sources_SOURCE_DIR}
-    ${pybind11_sources_BINARY_DIR}
+include_directories(
+    /opt/local/include
+    /opt/local/include/libxml2
+    ../../../core/kipl/kipl/include
+    ../../../external/src/linalg
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    ../../../external/mac/include/
+    ../../../external/mac/include/nexus
+    ../../../external/mac/include/hdf5
     )
-    add_definitions(-DHAVEPYBIND11 -DNO_QT)
-endif()
 
-include_directories(../../kipl/kipl/include /opt/local/include ../../../external/src/linalg)
+
+#include_directories(../../kipl/kipl/include /opt/local/include ../../../external/src/linalg)
+
+
 link_directories(../../../../lib /opt/local/lib )
 
-# add_definitions(-DVERSION="1.6.0")
-# create python module
-add_library(imagalg
-  MODULE
-
-  src/StripeFilter.cpp  
-#  src/SpotClean.cpp  
-  src/PolynomialCorrection.cpp  
-  src/ImagingException.cpp  
-# src/TranslateProjections.cpp  
-  src/MorphSpotClean.cpp  
-  src/pixelinfo.cpp
-  src/projectionfilter.cpp
-#  src/gammaclean.cpp  
-  src/averageimage.cpp  
-#  src/piercingpointestimator.cpp  
-#  src/ReferenceImageCorrection.cpp  
-#  src/tomocenter.cpp  
-  src/pybinder.cpp
+set(INC_FILES
   include/StripeFilter.h  
-#  include/SpotClean.h  
+  include/SpotClean.h  
   include/PolynomialCorrection.h  
   include/ImagingException.h  
-#  include/TranslateProjections.h  
+  include/TranslateProjections.h  
   include/MorphSpotClean.h  
   include/pixelinfo.h  
   include/projectionfilter.h
   include/ImagingAlgorithms_global.h  
- # include/gammaclean.h  
+  include/gammaclean.h  
   include/averageimage.h  
- # include/piercingpointestimator.h  
- # include/ReferenceImageCorrection.h  
- # include/tomocenter.h
-  include/pybinder.h
-  )
+  include/piercingpointestimator.h  
+  include/ReferenceImageCorrection.h  
+  include/tomocenter.h
+  include/normalizeimage.h
+)
 
-target_link_libraries(imagalg
-  PUBLIC
-    pybind11::module
+set(SRC_FILES
+  src/StripeFilter.cpp  
+  src/SpotClean.cpp  
+  src/PolynomialCorrection.cpp  
+  src/ImagingException.cpp  
+  src/TranslateProjections.cpp  
+  src/MorphSpotClean.cpp  
+  src/pixelinfo.cpp
+  src/projectionfilter.cpp
+  src/gammaclean.cpp  
+  src/averageimage.cpp  
+  src/piercingpointestimator.cpp  
+  src/ReferenceImageCorrection.cpp  
+  src/tomocenter.cpp  
+  src/normalizeimage.cpp
+)
 
-  PRIVATE
+
+add_library(${TARGET_NAME} SHARED
+  ${SRC_FILES}
+  ${INC_FILES}
+)
+
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+
+target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY HAVE_NEXUS)
+
+add_definitions(-DHAVE_NEXUS)
+
+target_link_directories(${TARGET_NAME} PRIVATE
+    /opt/local/lib
+    ../../../external/mac/lib/
+    )
+if (APPLE)
+target_link_libraries(${TARGET_NAME}
+    PRIVATE
     kipl
     xml2
+    fftw3
+    fftw3f
+    cfitsio
     tiff
+    armadillo
+    lapack
+    blas
+    NeXus.1.0.0
+    NeXusCPP.1.0.0
   )
+endif()
 
-set_target_properties(imagalg
-  PROPERTIES
-    PREFIX "${PYTHON_MODULE_PREFIX}"
-    SUFFIX "${PYTHON_MODULE_EXTENSION}"
-  )
+if (UNIX AND NOT APPLE)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} PUBLIC
+            OpenMP::OpenMP_CXX
 
-#install(DIRECTORY "src/scipp" DESTINATION ".")
-install(TARGETS pyimagalg DESTINATION ".")
+          PRIVATE
+            kipl
+            xml2
+            fftw3
+            fftw3f
+            cfitsio
+            tiff
+            armadillo
+            lapack
+            blas
+            NeXus
+            NeXusCPP
+        )
+    else()
+    target_link_libraries(${TARGET_NAME} 
+          PRIVATE
+            kipl
+            xml2
+            fftw3
+            fftw3f
+            cfitsio
+            tiff
+            armadillo
+            lapack
+            blas
+            NeXus
+            NeXusCPP
+        )
+    endif()
+endif()
+
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

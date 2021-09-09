@@ -141,7 +141,7 @@ int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t
 		
 		first=h.begin();
 		if (maxIt==first) {
-			cerr<<"Rosin: Histogram has max at the first bin, no left tail?"<<endl;
+            std::cerr<<"Rosin: Histogram has max at the first bin, no left tail?"<<std::endl;
 			return 0;
 		}
 		while ((!*first) && (first!=last))
@@ -156,7 +156,7 @@ int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t
 		first=maxIt;
 		last=h.end(); last--;
 		if (maxIt==last) {
-			cerr<<"Rosin: Histogram has max at the last bin, no right tail?"<<endl;
+            std::cerr<<"Rosin: Histogram has max at the last bin, no right tail?"<<std::endl;
             return static_cast<int>(h.size()-1);
 		}
 		

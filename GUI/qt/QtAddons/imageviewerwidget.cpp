@@ -451,7 +451,6 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
             roiRect=roiRect.normalized();
 
             m_RubberBandStatus = RubberBandFreeze;
-//             qDebug() << "Mouse released:" <<roiRect<< m_ImagePainter.getScale();
             m_infoDialog.updateInfo(m_ImagePainter.getImage(), roiRect);
         }
         if (m_MouseMode==ViewerProfile)

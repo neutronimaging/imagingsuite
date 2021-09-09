@@ -479,7 +479,10 @@ std::string enum2string(const kipl::base::eOperatingSystem &os)
        case kipl::base::OSWindows : return "OSWindows";
        case kipl::base::OSMacOS   : return "OSMacOS";
        case kipl::base::OSLinux   : return "OSLinux";
+       default : throw kipl::base::KiplException("Failed to convert OS enum");
    }
+
+   return "OSUnknown";
 }
 
 void string2enum(const std::string &str, kipl::base::eOperatingSystem &os)

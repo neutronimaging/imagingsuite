@@ -31,9 +31,10 @@ unix {
     unix:macx {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
+        LIBS += -L/opt/local/lib
     }
 
-    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 }
 
 win32 {
@@ -44,7 +45,8 @@ win32 {
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 
-     LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+     LIBS += -llibtiff -lcfitsio -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+     LIBS += -lzlib_a
 }
 
 SOURCES += \
