@@ -258,9 +258,9 @@ std::string enum2string(ImagingAlgorithms::AverageImage::eAverageMethod eam)
     return  str;
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::AverageImage::eAverageMethod & eam)
-{
-    s<<enum2string(eam);
+//std::ostream & operator<<(ostream & s, ImagingAlgorithms::original::ReferenceImageCorrection::eMaskCreationMethod eam)
+//{
+//    s<<enum2string(eam);
 
-    return s;
-}
+//    return s;
+//}
