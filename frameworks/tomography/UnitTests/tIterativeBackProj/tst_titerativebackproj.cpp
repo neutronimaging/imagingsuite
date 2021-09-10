@@ -1,4 +1,5 @@
 #include <QtTest>
+#include <QDebug>
 
 #include <string>
 #include <map>

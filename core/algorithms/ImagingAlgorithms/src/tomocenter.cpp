@@ -7,9 +7,6 @@
 #include <map>
 #include <numeric>
 
-#if !defined(NO_QT)
-#include <QDebug>
-#endif
 
 #include <math/linfit.h>
 #include <base/tsubimage.h>
@@ -104,7 +101,7 @@ void TomoCenter::estimate(kipl::base::TImage<float, 2> &img0,
         }
         std::vector<double> tmpCoG;
         auto it=cogMap.begin();
-   //     qDebug() << "N="<<N<<"fraction="<<fraction<<"cogMap="<<cogMap.size();
+
         for (size_t i=0; i<N*fraction; ++i,++it)
             tmpCoG.push_back(it->second.second);
 

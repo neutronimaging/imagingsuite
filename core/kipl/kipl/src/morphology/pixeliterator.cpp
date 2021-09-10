@@ -1,5 +1,4 @@
 //<LICENCE>
-
 #include <iostream>
 #include <sstream>
 #include <cstring>
@@ -9,7 +8,6 @@
 #include "../../include/morphology/pixeliterator.h"
 #include "../../include/base/KiplException.h"
 #include <cstring>
-#include <QDebug>
 
 namespace kipl {
 namespace base {

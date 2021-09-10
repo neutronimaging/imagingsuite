@@ -15,10 +15,6 @@
 #include <ReconException.h>
 #include <ModuleException.h>
 #include <base/tpermuteimage.h>
-#include <QDebug>
-
-#include <QDebug>
-
 
 MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("MorphSpotClean",interactor),
@@ -155,7 +151,6 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
 {
     std::ostringstream msg;
     ImagingAlgorithms::MorphSpotClean cleaner;
-    qDebug() << enum2string(m_eDetectionMethod).c_str()<< enum2string(m_eCleanMethod).c_str();
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
     cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
@@ -198,7 +193,7 @@ int MorphSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
 
     kipl::base::TImage<float,2> proj(img.dims());
     ImagingAlgorithms::MorphSpotClean cleaner;
-    qDebug() << enum2string(m_eDetectionMethod).c_str()<< enum2string(m_eCleanMethod).c_str();
+
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
     cleaner.setConnectivity(m_eConnectivity);
     cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);

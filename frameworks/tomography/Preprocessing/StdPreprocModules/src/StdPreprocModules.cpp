@@ -37,7 +37,6 @@
 #include <sstream>
 #include <map>
 
-#include <QDebug>
 
 STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const char * name, void *vinteractor)
 {

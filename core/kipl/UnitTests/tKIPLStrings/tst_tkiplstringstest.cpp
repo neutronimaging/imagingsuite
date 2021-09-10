@@ -1,6 +1,7 @@
 #include <string>
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 #include <strings/filenames.h>
 #include <strings/miscstring.h>

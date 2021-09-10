@@ -19,7 +19,7 @@ IterativeReconBase::~IterativeReconBase()
 /// \param parameters Additional set of configuration parameters
 int IterativeReconBase::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
-
+    BackProjectorModuleBase::Configure(config,parameters);
     return 0;
 }
 
@@ -35,6 +35,8 @@ int IterativeReconBase::Initialize()
 std::map<std::string, std::string> IterativeReconBase::GetParameters()
 {
    std::map<std::string, std::string> params;
+
+   params = BackProjectorModuleBase::GetParameters();
 
    return params;
 }

@@ -1,5 +1,5 @@
 //<LICENCE>
-
+#include "advancedfilters_global.h"
 #include <cmath>
 #include <fstream>
 #include <sstream>
@@ -8,13 +8,13 @@
 #include <string>
 #include <thread>
 
-#include "../../include/filters/nonlocalmeans.h"
-#include "../../include/filters/filter.h"
-#include "../../include/base/thistogram.h"
+#include "nonlocalmeans.h"
+#include <filters/filter.h>
+#include <base/thistogram.h>
 #ifndef NO_TIFF
-#include "../../include/io/io_tiff.h"
+#include <io/io_tiff.h>
 #endif
-namespace akipl {
+namespace advancedfilters {
 //===========================================================
 // Implementation of helper class Histogram bin
 HistogramBin::HistogramBin() :
@@ -584,38 +584,38 @@ inline float NonLocalMeans::weight(float a, float b)
 
 
 // Helpers for the enums
-std::ostream & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMalgorithms a)
+std::ostream & operator<<(std::ostream & s, advancedfilters::NonLocalMeans::NLMalgorithms a)
 {
     s<<enum2string(a);
 
     return s;
 }
 
-std::string enum2string(akipl::NonLocalMeans::NLMalgorithms a)
+std::string enum2string(advancedfilters::NonLocalMeans::NLMalgorithms a)
 {
     std::string s;
 
     switch (a) {
-    case akipl::NonLocalMeans::NLMalgorithms::NLM_Naive                : s="NLM_Naive"; break;
-    case akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramOriginal    : s="NLM_HistogramOriginal"; break;
-    case akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSum         : s="NLM_HistogramSum"; break;
-    case akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel : s="NLM_HistogramSumParallel"; break;
-    case akipl::NonLocalMeans::NLMalgorithms::NLM_Bivariate            : s="NLM_Bivariate"; break;
-    case akipl::NonLocalMeans::NLMalgorithms::NLM_BivariateParallel    : s="NLM_BivariateParallel"; break;
+    case advancedfilters::NonLocalMeans::NLMalgorithms::NLM_Naive                : s="NLM_Naive"; break;
+    case advancedfilters::NonLocalMeans::NLMalgorithms::NLM_HistogramOriginal    : s="NLM_HistogramOriginal"; break;
+    case advancedfilters::NonLocalMeans::NLMalgorithms::NLM_HistogramSum         : s="NLM_HistogramSum"; break;
+    case advancedfilters::NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel : s="NLM_HistogramSumParallel"; break;
+    case advancedfilters::NonLocalMeans::NLMalgorithms::NLM_Bivariate            : s="NLM_Bivariate"; break;
+    case advancedfilters::NonLocalMeans::NLMalgorithms::NLM_BivariateParallel    : s="NLM_BivariateParallel"; break;
     default: throw kipl::base::KiplException("Failed to convert NLMalgorithm enum value to string.", __FILE__, __LINE__);
     }
     return s;
 }
 
-void string2enum(std::string s, akipl::NonLocalMeans::NLMalgorithms &a)
+void string2enum(std::string s, advancedfilters::NonLocalMeans::NLMalgorithms &a)
 {
-    std::map<std::string, akipl::NonLocalMeans::NLMalgorithms> values;
-    values["NLM_Naive"]                     = akipl::NonLocalMeans::NLMalgorithms::NLM_Naive;
-    values["NLM_HistogramOriginal"]         = akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramOriginal;
-    values["NLM_HistogramSum"]              = akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSum;
-    values["NLM_HistogramSumParallel"]      = akipl::NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel;
-    values["NLM_Bivariate"]              = akipl::NonLocalMeans::NLMalgorithms::NLM_Bivariate;
-    values["NLM_BivariateParallel"]              = akipl::NonLocalMeans::NLMalgorithms::NLM_BivariateParallel;
+    std::map<std::string, advancedfilters::NonLocalMeans::NLMalgorithms> values;
+    values["NLM_Naive"]                     = advancedfilters::NonLocalMeans::NLMalgorithms::NLM_Naive;
+    values["NLM_HistogramOriginal"]         = advancedfilters::NonLocalMeans::NLMalgorithms::NLM_HistogramOriginal;
+    values["NLM_HistogramSum"]              = advancedfilters::NonLocalMeans::NLMalgorithms::NLM_HistogramSum;
+    values["NLM_HistogramSumParallel"]      = advancedfilters::NonLocalMeans::NLMalgorithms::NLM_HistogramSumParallel;
+    values["NLM_Bivariate"]              = advancedfilters::NonLocalMeans::NLMalgorithms::NLM_Bivariate;
+    values["NLM_BivariateParallel"]              = advancedfilters::NonLocalMeans::NLMalgorithms::NLM_BivariateParallel;
 
     auto it=values.find(s);
 
@@ -626,35 +626,35 @@ void string2enum(std::string s, akipl::NonLocalMeans::NLMalgorithms &a)
 }
 
 
-std::ostream & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMwindows w)
+std::ostream & operator<<(std::ostream & s, advancedfilters::NonLocalMeans::NLMwindows w)
 {
     s<<enum2string(w);
 
     return s;
 }
 
-std::string enum2string(akipl::NonLocalMeans::NLMwindows w)
+std::string enum2string(advancedfilters::NonLocalMeans::NLMwindows w)
 {
     std::string s;
 
     switch (w) {
-    case akipl::NonLocalMeans::NLMwindows::NLM_window_sum           : s="NLM_window_sum"; break;
-    case akipl::NonLocalMeans::NLMwindows::NLM_window_avg           : s="NLM_window_avg"; break;
-    case akipl::NonLocalMeans::NLMwindows::NLM_window_gauss         : s="NLM_window_gauss"; break;
-    case akipl::NonLocalMeans::NLMwindows::NLM_window_buades        : s="NLM_window_buades"; break;
+    case advancedfilters::NonLocalMeans::NLMwindows::NLM_window_sum           : s="NLM_window_sum"; break;
+    case advancedfilters::NonLocalMeans::NLMwindows::NLM_window_avg           : s="NLM_window_avg"; break;
+    case advancedfilters::NonLocalMeans::NLMwindows::NLM_window_gauss         : s="NLM_window_gauss"; break;
+    case advancedfilters::NonLocalMeans::NLMwindows::NLM_window_buades        : s="NLM_window_buades"; break;
 
     default: throw kipl::base::KiplException("Failed to convert NLMwindows enum value to string.", __FILE__, __LINE__);
     }
     return s;
 }
 
-void string2enum(std::string s, akipl::NonLocalMeans::NLMwindows &w)
+void string2enum(std::string s, advancedfilters::NonLocalMeans::NLMwindows &w)
 {
-    std::map<std::string, akipl::NonLocalMeans::NLMwindows> values;
-    values["NLM_window_sum"]    = akipl::NonLocalMeans::NLMwindows::NLM_window_sum;
-    values["NLM_window_avg"]    = akipl::NonLocalMeans::NLMwindows::NLM_window_avg;
-    values["NLM_window_gauss"]  = akipl::NonLocalMeans::NLMwindows::NLM_window_gauss;
-    values["NLM_window_buades"]  = akipl::NonLocalMeans::NLMwindows::NLM_window_buades;
+    std::map<std::string, advancedfilters::NonLocalMeans::NLMwindows> values;
+    values["NLM_window_sum"]    = advancedfilters::NonLocalMeans::NLMwindows::NLM_window_sum;
+    values["NLM_window_avg"]    = advancedfilters::NonLocalMeans::NLMwindows::NLM_window_avg;
+    values["NLM_window_gauss"]  = advancedfilters::NonLocalMeans::NLMwindows::NLM_window_gauss;
+    values["NLM_window_buades"]  = advancedfilters::NonLocalMeans::NLMwindows::NLM_window_buades;
 
     auto it=values.find(s);
 
