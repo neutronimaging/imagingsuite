@@ -11,6 +11,7 @@
 #include <math/sums.h>
 #include <math/mathfunctions.h>
 #include <base/KiplException.h>
+#include <stltools/stlvecmath.h>
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
@@ -27,7 +28,9 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     m_fSigma{0.01f,0.01f},
     m_bRemoveInfNaN(false),
     m_bClampData(false),
-    m_bThreading(false)
+    m_bThreading(false),
+    m_bThresholdByFraction(true),
+    m_bTranspose(false)
 {
     ui->setupUi(this);
     ui->spinArea->hide();
@@ -41,18 +44,12 @@ MorphSpotCleanDlg::~MorphSpotCleanDlg()
 
 void MorphSpotCleanDlg::ApplyParameters()
 {
-    //kipl::base::TImage<float,2> img(m_Projections.Dims());
     m_OriginalImage=GetProjection(m_Projections,m_Projections.Size(2)/2);
 
     const size_t N=1024;
-    size_t hist[N];
-    float axis[N];
 
-    size_t nLo, nHi;
-
-    kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
-    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.dims(),axis[nLo],axis[nHi]);
+    ui->viewerOrignal->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.dims());
+    ui->viewerOrignal->set_levels(kipl::base::quantile99);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -63,76 +60,92 @@ void MorphSpotCleanDlg::ApplyParameters()
 
     m_Cleaner.Configure(*config, parameters);
 
-    m_DetectionImageHoles=m_Cleaner.DetectionImage(m_OriginalImage, ImagingAlgorithms::MorphDetectHoles);
-    for (size_t i=0; i<m_DetectionImageHoles.Size(); i++) // Fix nans
-        if (!std::isfinite(m_DetectionImageHoles[i])) m_DetectionImageHoles[i]=0;
+    auto detectionimgs=m_Cleaner.DetectionImage(m_OriginalImage, m_eDetectionMethod,true);
 
-    if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectHoles) || (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
-        prepareDetectionPlot(m_DetectionImageHoles,0,N,"Detection Holes","Threshold Holes");
+    m_DetectionImageHoles=detectionimgs.first;
+    kipl::math::replaceInfNaN(m_DetectionImageHoles,0.0f);
 
-    m_DetectionImagePeaks=m_Cleaner.DetectionImage(m_OriginalImage, ImagingAlgorithms::MorphDetectPeaks);
-    for (size_t i=0; i<m_DetectionImagePeaks.Size(); i++) // Fix nans
-        if (!std::isfinite(m_DetectionImagePeaks[i])) m_DetectionImagePeaks[i]=0;
 
-    if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectPeaks) || (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
-        prepareDetectionPlot(m_DetectionImagePeaks,1,N,"Detection Peaks","Threshold Peaks");
+    if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectDarkSpots) ||
+        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectAllSpots)  ||
+        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectHoles)     ||
+        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
+    {
+        prepareDetectionPlot(m_DetectionImageHoles,0,N,m_fThreshold[0],m_fSigma[0],"Detection Holes","Threshold Holes");
+    }
+
+    m_DetectionImagePeaks = detectionimgs.second;
+    kipl::math::replaceInfNaN(m_DetectionImagePeaks,0.0f);
+
+    if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectBrightSpots)  ||
+            (m_eDetectionMethod==ImagingAlgorithms::MorphDetectAllSpots) ||
+            (m_eDetectionMethod==ImagingAlgorithms::MorphDetectPeaks)    ||
+            (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
+    {
+        prepareDetectionPlot(m_DetectionImagePeaks,1,N,m_fThreshold[1],m_fSigma[1],"Detection Peaks","Threshold Peaks");
+    }
 
     std::map<std::string,std::string> pars;
-    m_ProcessedImage=m_OriginalImage;
-    m_ProcessedImage.Clone();
+    m_ProcessedImage.Clone(m_OriginalImage);
+
     m_Cleaner.Process(m_ProcessedImage, pars);
 
     std::ostringstream msg;
     msg.str(""); msg<<"Processed image"<<m_ProcessedImage;
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
-    memset(hist,0,N*sizeof(size_t));
-    memset(axis,0,N*sizeof(float));
-    kipl::base::Histogram(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.dims(),axis[nLo],axis[nHi]);
+    ui->viewerProcessed->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.dims());
+    ui->viewerProcessed->set_levels(kipl::base::quantile99);
 
     on_comboDetectionDisplay_currentIndexChanged(ui->comboDetectionDisplay->currentIndex());
 }
 
-void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,int det,size_t N,std::string curvelabel, std::string threslabel)
+void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,
+                                             int det,
+                                             size_t N,
+                                             float th,
+                                             float s,
+                                             std::string curvelabel,
+                                             std::string threslabel)
 {
 
-    size_t *hist = new size_t[N];
-    float  *axis = new float[N];
+    std::vector<size_t> hist(N,0);
+    std::vector<float> axis(N,0);
 
-    std::fill_n(hist,N,0);
-    std::fill_n(axis,N,0);
 
-    size_t *cumhist = new size_t[N];
+    kipl::base::highEntropyHistogram(img.GetDataPtr(),img.Size(),N,hist,axis,0.0f,0.0f,true);
 
-    kipl::base::Histogram(img.GetDataPtr(), img.Size(), hist, N, 0.0f, 0.0f, axis);
+    std::vector<float> fhist(hist.begin(),hist.end());
 
-    kipl::math::cumsum(hist,cumhist,N);
+    auto fcumhist=cumsum(fhist,true);
 
-    float *fcumhist=new float[N];
-    size_t ii=0;
+    ui->plotDetection->setCurveData(0+2*det,axis,fcumhist,QString::fromStdString(curvelabel));
 
-    for (ii=0;ii<N;ii++) {
-        fcumhist[ii]=static_cast<float>(cumhist[ii])/static_cast<float>(cumhist[N-1]);
-        if (0.999f<fcumhist[ii])
-            break;
+    float threshold = th;
+    float sigma = s;
+
+    if (m_bThresholdByFraction)
+    {
+        size_t idx;
+        kipl::base::FindLimit(hist,th,idx);
+        threshold = axis[idx];
     }
 
-    size_t N99=ii;
+    sigma = sigma * threshold;
 
-    ui->plotDetection->setCurveData(0+2*det,axis,fcumhist,static_cast<int>(N99),QString::fromStdString(curvelabel));
-    float *threshold = new float[N];
-    float *thaxis    = new float[N];
-    if (m_fSigma[det]!=0.0f)
+    if (sigma!=0.0f)
     { // In case of sigmoid mixing
-        float endPoint = axis[N99] < m_fThreshold[det]+5*m_fSigma[det] ? m_fThreshold[det]+5*m_fSigma[det] : axis[N99];
+        std::vector<float> weight(N,0);
+        std::vector<float> thaxis(N,0);
 
-        for (size_t i=0; i<N; i++) {
+        float endPoint = axis.back() < threshold+5*sigma ? threshold+5*sigma : axis.back();
+
+        for (size_t i=0; i<N; i++)
+        {
             thaxis[i]=axis[0]+i*(endPoint-axis[0])/N;
-            threshold[i]=kipl::math::Sigmoid(thaxis[i], m_fThreshold[det], m_fSigma[det]);
+            weight[i]=kipl::math::Sigmoid(thaxis[i], threshold, sigma);
         }
-        ui->plotDetection->setCurveData(1+2*det,thaxis,threshold,static_cast<int>(N),QString::fromStdString(threslabel));
+        ui->plotDetection->setCurveData(1+2*det,thaxis,weight,QString::fromStdString(threslabel));
     }
     else
     {
@@ -141,14 +154,6 @@ void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,in
                                                                 QtAddons::PlotCursor::Vertical));
     }
 
-
-
-    delete [] hist;
-    delete [] axis;
-    delete [] cumhist;
-    delete [] fcumhist;
-    delete [] threshold;
-    delete [] thaxis;
 }
 
 int MorphSpotCleanDlg::exec(ConfigBase *_config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> &img)
@@ -219,6 +224,7 @@ void MorphSpotCleanDlg::UpdateDialog()
     ui->comboCleanMethod->setCurrentIndex(m_eCleanMethod);
     ui->comboDetectionMethod->setCurrentIndex(m_eDetectionMethod);
     on_comboDetectionMethod_currentIndexChanged(m_eDetectionMethod);
+    ui->comboBox_ThresholdValue->setCurrentIndex(m_bThresholdByFraction ? 1 : 0);
 
     ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
     ui->spinArea->setValue(m_nMaxArea);
@@ -244,6 +250,8 @@ void MorphSpotCleanDlg::UpdateParameters()
     m_fMaxLevel         = static_cast<float>(ui->spinMaxValue->value());
     m_nMaxArea          = ui->spinArea->value();
     m_nEdgeSmoothLength = ui->spinEdgeLenght->value();
+    m_bThresholdByFraction = ui->comboBox_ThresholdValue->currentIndex() != 0;
+
 }
 
 void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
@@ -260,6 +268,8 @@ void MorphSpotCleanDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["minlevel"]        = kipl::strings::value2string(m_fMinLevel);
     parameters["maxlevel"]        = kipl::strings::value2string(m_fMaxLevel);
     parameters["threading"]       = kipl::strings::bool2string(m_bThreading);
+    parameters["thresholdbyfraction"] = kipl::strings::bool2string(m_bThresholdByFraction);
+    parameters["transpose"]       = kipl::strings::bool2string(m_bTranspose);
 }
 
 
@@ -307,6 +317,15 @@ void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
     case 2: // Detection image
         switch (m_eDetectionMethod)
         {
+        case ImagingAlgorithms::MorphDetectDarkSpots :
+            dimg=m_DetectionImageHoles;
+            break;
+        case ImagingAlgorithms::MorphDetectBrightSpots :
+            dimg=m_DetectionImagePeaks;
+            break;
+        case ImagingAlgorithms::MorphDetectAllSpots :
+            dimg=m_DetectionImagePeaks - m_DetectionImageHoles;
+            break;
         case ImagingAlgorithms::MorphDetectHoles :
             dimg=m_DetectionImageHoles;
             break;
@@ -325,19 +344,10 @@ void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
             dimg[i] = dimg[i]!=0.0f ? 1.0f : 0.0f;
         break;
     }
-    size_t nLo,nHi;
 
-    const size_t N=512;
-    float axis[N];
-    size_t hist[N];
-
-    memset(hist,0,N*sizeof(size_t));
-    memset(axis,0,N*sizeof(float));
-
-    kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
-    kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
     logger(kipl::logging::Logger::LogMessage,"Start display");
-    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.dims(),axis[nLo],axis[nHi]);
+    ui->viewerDifference->set_image(dimg.GetDataPtr(),dimg.dims(),0.0f,0.0f);
+    ui->viewerDifference->set_levels(kipl::base::quantile99);
 }
 
 void MorphSpotCleanDlg::on_comboDetectionMethod_currentIndexChanged(int index)
@@ -346,6 +356,19 @@ void MorphSpotCleanDlg::on_comboDetectionMethod_currentIndexChanged(int index)
 
     switch (method)
     {
+    case ImagingAlgorithms::MorphDetectDarkSpots :
+        ui->groupBoxPeaks->hide();
+        ui->groupBoxHoles->show();
+        break;
+
+    case ImagingAlgorithms::MorphDetectBrightSpots :
+        ui->groupBoxPeaks->show();
+        ui->groupBoxHoles->hide();
+        break;
+    case ImagingAlgorithms::MorphDetectAllSpots :
+        ui->groupBoxPeaks->show();
+        ui->groupBoxHoles->show();
+        break;
     case ImagingAlgorithms::MorphDetectHoles :
         ui->groupBoxPeaks->hide();
         ui->groupBoxHoles->show();

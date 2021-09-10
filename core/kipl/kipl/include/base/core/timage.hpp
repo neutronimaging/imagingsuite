@@ -309,6 +309,29 @@ TImage<T,N> TImage<T,N>::operator-(const T x) const
 }
 
 template<typename T, size_t N>
+TImage<T,N> TImage<T,N>::operator-() const
+{
+    kipl::base::TImage<T,N> res;
+    res.Clone(*this);
+
+    for (size_t i=0UL; i<res.Size(); ++i )
+        res[i]=-res[i];
+
+    return res;
+}
+
+template<typename T, size_t N>
+TImage<T,N> TImage<T,N>::operator-()
+{
+    kipl::base::TImage<T,N> res;
+    res.Clone(*this);
+
+    for (size_t i=0UL; i<res.Size(); ++i )
+        res[i]=-res[i];
+
+    return res;
+}
+template<typename T, size_t N>
 TImage<T,N> TImage<T,N>::operator*(const T x) const
 {
     const ptrdiff_t ndata=Size();

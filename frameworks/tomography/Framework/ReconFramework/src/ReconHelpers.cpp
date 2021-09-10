@@ -12,7 +12,7 @@
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
-#include <QDebug>
+
 
 //#define EQUIDISTANT_WEIGHTS
 
@@ -155,8 +155,11 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
                         size_t found = config->ProjectionInfo.sFileMask.find("hdf");
                         kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
 
-                        int idx = i - config->ProjectionInfo.nFirstIndex
-                                    - config->ProjectionInfo.nGoldenStartIdx
+//                        int idx = i - config->ProjectionInfo.nFirstIndex
+//                                    - config->ProjectionInfo.nGoldenStartIdx
+//                                    - skip ;
+
+                        int idx = i - config->ProjectionInfo.nGoldenStartIdx
                                     - skip ;
 
                         float angle=static_cast<float>(fmod(static_cast<float>(idx)*fGoldenSection*180.0f,arc)); // TODO Update equation to handle 360 deg scans

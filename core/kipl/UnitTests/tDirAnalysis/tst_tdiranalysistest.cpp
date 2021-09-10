@@ -1,5 +1,6 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
+#include <QDebug>
 
 #include <io/DirAnalyzer.h>
 #include <strings/filenames.h>

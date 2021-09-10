@@ -21,6 +21,14 @@ cd %DEST%/build-imagingqaalgorithms
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
 %QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
 
+mkdir %DEST%/build-advancedfilters
+cd %DEST%/build-advancedfilters
+
+%QTBINPATH%\qmake.exe -makefile -r %SPECSTR% ..\..\imagingsuite\core\algorithms\advancedfilters\advancedfilters.pro -o Makefile
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+
 
 echo "Build tests"
 

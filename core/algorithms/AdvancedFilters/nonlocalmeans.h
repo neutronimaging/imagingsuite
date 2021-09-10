@@ -3,22 +3,23 @@
 #ifndef NONLOCALMEANS_H
 #define NONLOCALMEANS_H
 
+#include "advancedfilters_global.h"
 #include <vector>
 #include <iostream>
 #include <string>
 
-#include "../base/timage.h"
-#include "../logging/logger.h"
-#include "filterbase.h"
-#include "../base/thistogram.h"
+#include <base/timage.h>
+#include <logging/logger.h>
+#include <filters/filterbase.h>
+#include <base/thistogram.h>
 
 
-namespace akipl {
+namespace advancedfilters {
 
 /// \brief A container for histogram bins that manages counts, sums, averages.
 ///
 /// These bins are created as support for the NonLocalMeans filter with histogram implementation.
-class KIPLSHARED_EXPORT HistogramBin {
+class ADVANCEDFILTERSSHARED_EXPORT HistogramBin {
 public:
     /// \brief Initializes the bin to 0
     HistogramBin();
@@ -38,12 +39,14 @@ public:
     double bin;         ///< The central value of the bin
 };
 
-class KIPLSHARED_EXPORT NonLocalMeans {
+class ADVANCEDFILTERSSHARED_EXPORT NonLocalMeans
+{
 protected:
     kipl::logging::Logger logger;
     public:
         /// \brief Enum to select the nonlocal means algorithm to use for the filtering
-        enum NLMalgorithms {
+        enum NLMalgorithms
+        {
             NLM_Naive,                  ///< Reference code to original algorithm
             NLM_HistogramOriginal,      ///< Reference code to histgram based algorithm
             NLM_HistogramSum,           ///<
@@ -53,7 +56,8 @@ protected:
         };
 
         /// \brief Enum to select the type of window weights to sum up the neighborhood values.
-        enum NLMwindows {
+        enum NLMwindows
+        {
             NLM_window_sum,     ///< Use the sum of the neighborhod pixels
             NLM_window_avg,     ///< Use the average of the neighborhood pixels
             NLM_window_gauss,   ///< Apply Gaussian weighting to the neighborhood pixels before summing
@@ -221,33 +225,33 @@ protected:
 /// \param s The target stream
 /// \param a The enum value
 /// \returns the target stream
-std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMalgorithms a);
+std::ostream ADVANCEDFILTERSSHARED_EXPORT & operator<<(std::ostream & s, advancedfilters::NonLocalMeans::NLMalgorithms a);
 
 /// \brief Converts a enum value to its string name
 /// \param a The enum value to convert
 /// \returns the string name of the enum value
-std::string  KIPLSHARED_EXPORT enum2string(akipl::NonLocalMeans::NLMalgorithms a);
+std::string  ADVANCEDFILTERSSHARED_EXPORT enum2string(advancedfilters::NonLocalMeans::NLMalgorithms a);
 
 /// \brief Converts an enum name to its enum value
 /// \param s The name string
 /// \param a The algorithm enum as converted from the string
-void  KIPLSHARED_EXPORT string2enum(std::string s, akipl::NonLocalMeans::NLMalgorithms &a);
+void  ADVANCEDFILTERSSHARED_EXPORT string2enum(std::string s, advancedfilters::NonLocalMeans::NLMalgorithms &a);
 
 /// \brief Writes the window enum value to a string
 /// \param s The target stream
 /// \param a The enum value
 /// \returns the target stream
-std::ostream KIPLSHARED_EXPORT & operator<<(std::ostream & s, akipl::NonLocalMeans::NLMwindows w);
+std::ostream ADVANCEDFILTERSSHARED_EXPORT & operator<<(std::ostream & s, advancedfilters::NonLocalMeans::NLMwindows w);
 
 /// \brief Converts a enum value to its string name
 /// \param a The enum value to convert
 /// \returns the string name of the enum value
-std::string  KIPLSHARED_EXPORT enum2string(akipl::NonLocalMeans::NLMwindows w);
+std::string  ADVANCEDFILTERSSHARED_EXPORT enum2string(advancedfilters::NonLocalMeans::NLMwindows w);
 
 /// \brief Converts an enum name to its enum value
 /// \param s The name string
 /// \param a The window enum as converted from the string
-void  KIPLSHARED_EXPORT string2enum(std::string s, akipl::NonLocalMeans::NLMwindows &w);
+void  ADVANCEDFILTERSSHARED_EXPORT string2enum(std::string s, advancedfilters::NonLocalMeans::NLMwindows &w);
 
 //#include "core/nonlocalmeans.hpp"
 #endif // NONLOCALMEANS_H

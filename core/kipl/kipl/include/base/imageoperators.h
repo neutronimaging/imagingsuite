@@ -66,7 +66,7 @@ size_t count_NaN(const kipl::base::TImage<T,NDims> &img)
 	size_t cnt=0L;
 
 	for (size_t i=0L; i<img.Size(); i++) {
-		cnt+=isnan(pData[i]);
+        cnt+=std::isnan(pData[i]);
 	}
 	
 	return cnt;
@@ -82,11 +82,13 @@ size_t count_Inf(const kipl::base::TImage<T,NDims> img)
 	size_t cnt=0L;
 	
 	for (size_t i=0L; i<img.Size(); i++) {
-		cnt+=isinf(pData[i]);
+        cnt+=std::isinf(pData[i]);
 	}
 	
 	return cnt;
 }
+
+
 
 }}
 #endif /*IMAGEOPERATORS_H_*/

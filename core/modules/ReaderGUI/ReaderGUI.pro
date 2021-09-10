@@ -44,6 +44,9 @@ unix {
         LIBS += -lgomp -lxml2
         INCLUDEPATH += /usr/include/libxml2
         INCLUDEPATH += /usr/include/cfitsio
+        DEFINES += HAVE_NEXUS
+        LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu
+        LIBS += -lNeXus -lNeXusCPP
     }
 
     unix:macx {

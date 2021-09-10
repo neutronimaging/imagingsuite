@@ -1,5 +1,6 @@
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 
 #include <base/timage.h>
@@ -146,7 +147,6 @@ void TImagingQAAlgorithmsTest::testResEstAdmin()
 
     for (size_t i=0; i<N; ++i)
     {
-//        qDebug() << i << rdata2[i] << fdata[i];
         QCOMPARE(rdata2[i],fdata[i]);
     }
 //    void   setProfile(double *p, int N, double d=1.0);

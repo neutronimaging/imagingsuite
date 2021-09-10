@@ -3092,8 +3092,6 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::original::ReferenceIma
     return s;
 }
 
-
-
 void string2enum(const std::string &str, ImagingAlgorithms::original::ReferenceImageCorrection::eMaskCreationMethod &emask)
 {
     std::map<std::string, ImagingAlgorithms::original::ReferenceImageCorrection::eMaskCreationMethod> strmap;

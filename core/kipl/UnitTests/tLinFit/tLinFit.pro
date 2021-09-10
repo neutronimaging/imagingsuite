@@ -37,7 +37,7 @@ unix {
         QMAKE_LIBDIR += /opt/local/lib
     }
 
-    LIBS += -lblas -llapack
+    LIBS += -larmadillo -lblas -llapack
 }
 
 win32 {

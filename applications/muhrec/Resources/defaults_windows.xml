@@ -86,13 +86,14 @@
                     <cleanmethod>morphcleanreplace</cleanmethod>
                     <connectivity>conn4</connectivity>
                     <detectionmethod>morphdetectpeaks</detectionmethod>
+                    <thresholdbyfraction>true</thresholdbyfraction>
                     <edgesmooth>5</edgesmooth>
                     <maxarea>30</maxarea>
                     <maxlevel>12</maxlevel>
                     <minlevel>-0.1</minlevel>
                     <sigma>0.01 0.01</sigma>
                     <threading>true</threading>
-                    <threshold>0.1 0.1</threshold>
+                    <threshold>0.95 0.95</threshold>
                     <transpose>false</transpose>
                 </parameters>
             </module>
@@ -103,7 +104,7 @@
                 <parameters>
                     <decnum>4</decnum>
                     <method>verticalfft</method>
-                    <parallel>false</parallel>
+                    <threading>true</threading>
                     <sigma>0.1</sigma>
                     <wname>daub25</wname>
                 </parameters>
@@ -124,6 +125,7 @@
                     <order>1</order>
                     <paddingdoubler>2</paddingdoubler>
                     <usebias>false</usebias>
+                    <usecircularmask>true</usecircularmask>
                 </parameters>
             </module>
         </backprojector>

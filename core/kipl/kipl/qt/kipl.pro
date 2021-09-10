@@ -4,8 +4,8 @@
 #
 #-------------------------------------------------
 
-QT        -= gui
-QT        += core
+#QT        -= gui
+#QT        += core
 
 TARGET    = kipl
 TEMPLATE  = lib
@@ -112,7 +112,6 @@ SOURCES += \
     ../src/generators/spotgenerator.cpp \
     ../src/io/analyzefileext.cpp \
     ../src/io/io_generic.cpp \
-    ../src/filters/nonlocalmeans.cpp \
     ../src/math/PoissonNoise.cpp \
     ../src/filters/stddevfilter.cpp \
     ../src/interactors/interactionbase.cpp \
@@ -316,8 +315,6 @@ HEADERS +=\
     ../include/io/core/io_generic.hpp \
     ../include/io/analyzefileext.h \
     ../include/generators/core/noiseimage.hpp \
-    ../include/filters/nonlocalmeans.h \
-    ../include/filters/core/nonlocalmeans.hpp \
     ../include/math/PoissonNoise.h \
     ../include/filters/stddevfilter.h \
     ../include/interactors/interactionbase.h \
@@ -347,18 +344,18 @@ HEADERS +=\
     ../include/math/gradient.h
 
 unix:!mac {
-exists(/usr/lib/*NeXus*) | exists(/usr/local/lib64/*NeXus*){
+#exists(/usr/lib/*NeXus*) | exists(/usr/local/lib64/*NeXus* | exists(/usr/lib/x86_64-linux-gnu/*NeXus*)){
 
-#    message("-lNeXus exists")
+    message("-lNeXus exists")
     DEFINES += HAVE_NEXUS
-    LIBS += -L/usr/local/lib64
+    LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu
     LIBS += -lNeXus -lNeXusCPP
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
-}
-else {
-message("-lNeXus does not exists $$HEADERS")
-}
+#}
+#else {
+#message("-lNeXus does not exists $$HEADERS")
+#}
 
 }
 

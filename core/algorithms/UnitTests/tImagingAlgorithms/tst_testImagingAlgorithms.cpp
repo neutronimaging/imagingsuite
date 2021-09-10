@@ -38,6 +38,7 @@ private Q_SLOTS:
     void MorphSpotClean_CleanPeaks();
     void MorphSpotClean_CleanBoth();
     void MorphSpotClean_EdgePreparation();
+    void MorphSpotClean_enums();
 
     void AverageImage_Enums();
     void AverageImage_Processing();
@@ -55,6 +56,7 @@ private Q_SLOTS:
 
     void RefImgCorrection_Initialization();
 
+    void RefImgCorrection_enums();
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
@@ -67,21 +69,11 @@ private:
 
 TestImagingAlgorithms::TestImagingAlgorithms()
 {
-    std::vector<size_t> dims={7,7};
-    holes.resize(dims);
-
-    for (size_t i=0; i<holes.Size(); i++) {
-        holes[i]=i/10.0f;
-    }
-
-    pos1=24;
-    pos2=10;
-
-    points[pos1]=0.0f;
-    points[pos2]=100.0f;
-
-    holes[pos1]=0.0f;
-    holes[pos2]=100.0f;
+#ifndef DEBUG
+    kipl::io::ReadTIFF(holes,"../TestData/2D/tiff/spots/balls.tif");
+#else
+    kipl::io::ReadTIFF(holes,"../../TestData/2D/tiff/spots/balls.tif");
+#endif
 }
 
 void TestImagingAlgorithms::PixelInfo()
@@ -147,12 +139,12 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanReplace);
+    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectDarkSpots,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::base::conn8);
-    cleaner.process(img,1.0f,0.05f);
+    cleaner.setThresholdByFraction(true);
+    cleaner.process(img,0.95f,0.05f);
 
-    QCOMPARE(img[pos1],1.6f);
-    QCOMPARE(img[pos2],100.0f);
+    kipl::io::WriteTIFF(img,"cleandark.tif",kipl::base::Float32);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
@@ -162,12 +154,11 @@ void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectPeaks, ImagingAlgorithms::MorphCleanReplace);
+    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBrightSpots, ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::base::conn8);
-    cleaner.process(img,1.0f,0.05f);
+    cleaner.process(img,0.95f,0.05f);
 
-    QCOMPARE(img[pos1],0.0f);
-    QCOMPARE(img[pos2],1.8f);
+    kipl::io::WriteTIFF(img,"cleanbright.tif",kipl::base::Float32);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
@@ -179,21 +170,16 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
     cleaner.setConnectivity(kipl::base::conn8);
-    cleaner.process(img,1.0f,0.05f);
+    cleaner.process(img,0.95f,0.05f);
 
-    QCOMPARE(img[pos1],1.6f);
-    QCOMPARE(img[pos2],1.8f);
+    kipl::io::WriteTIFF(img,"cleanall.tif",kipl::base::Float32);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
 {
     kipl::base::TImage<float,2> img;
-#ifndef DEBUG
-    kipl::io::ReadTIFF(img,"../imagingsuite/core/algorithms/UnitTests/data/spotprojection_0001.tif");
-#else
-    kipl::io::ReadTIFF(img,"../../imagingsuite/core/algorithms/UnitTests/data/spotprojection_0001.tif");
-#endif
 
+    img.Clone(holes);
     ImagingAlgorithms::MorphSpotClean cleaner;
 
     cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
@@ -202,6 +188,30 @@ void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
 
     kipl::io::WriteTIFF(img,"spotcleaned.tif",kipl::base::Float32);
 
+}
+
+void TestImagingAlgorithms::MorphSpotClean_enums()
+{
+    std::map<std::string, ImagingAlgorithms::eMorphDetectionMethod> enummap;
+
+    enummap["morphdetectbrightspots"] = ImagingAlgorithms::MorphDetectBrightSpots ;
+    enummap["morphdetectdarkspots"]   = ImagingAlgorithms::MorphDetectDarkSpots ;
+    enummap["morphdetectallspots"]    = ImagingAlgorithms::MorphDetectAllSpots ;
+    enummap["morphdetectholes"]       = ImagingAlgorithms::MorphDetectHoles ;
+    enummap["morphdetectpeaks"]       = ImagingAlgorithms::MorphDetectPeaks ;
+    enummap["morphdetectboth"]        = ImagingAlgorithms::MorphDetectBoth ;
+
+    ImagingAlgorithms::eMorphDetectionMethod mdm;
+
+    for (auto & item : enummap)
+    {
+        QCOMPARE(enum2string(item.second),item.first);
+
+        string2enum(item.first,mdm);
+        QCOMPARE(mdm,item.second);
+    }
+
+    QVERIFY_EXCEPTION_THROWN(string2enum("qwerty",mdm);,kipl::base::KiplException);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
@@ -418,11 +428,12 @@ void TestImagingAlgorithms::PolynomialCorrection_numeric()
 
     ImagingAlgorithms::PolynomialCorrection pc;
     const int N=5;
-    float val[N]={0.0f,1.0f,2.0f,3.0f,4.0f};
+    std::vector<float> val={0.0f,1.0f,2.0f,3.0f,4.0f};
     std::vector<float> result(N);
 
     for (size_t i=1; i<10; ++i)
     {
+
         pc.setup(c,static_cast<int>(i));
         std::vector<float> vec=pc.coefficients();
 
@@ -430,8 +441,7 @@ void TestImagingAlgorithms::PolynomialCorrection_numeric()
         for (size_t j=0; j<(i+1); ++j)
             QCOMPARE(vec[j],c[j]);
 
-        std::copy_n(val,N,result.begin());
-        pc.process(result);
+        result = pc.process(val);
 
         for (size_t k=0; k<N; ++k)
         {
@@ -602,6 +612,26 @@ void TestImagingAlgorithms::RefImgCorrection_Initialization()
     bbr.SetInterpolationMethod(rInterpMethod);
 
 
+}
+
+void TestImagingAlgorithms::RefImgCorrection_enums()
+{
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
+    strmap["otsumask"]            = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
+    strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
+    strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
+    strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
+
+    ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod em;
+    for (auto & item : strmap)
+    {
+        QCOMPARE(item.first,enum2string(item.second));
+        string2enum(item.first,em);
+        QCOMPARE(item.second,em);
+    }
+    em=static_cast<ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod>(9999);
+    QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
+    QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)

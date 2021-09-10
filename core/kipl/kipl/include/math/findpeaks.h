@@ -5,6 +5,7 @@
 
 #include "../kipl_global.h"
 #include <list>
+#include <cstddef>
 
 namespace kipl {
 namespace math {

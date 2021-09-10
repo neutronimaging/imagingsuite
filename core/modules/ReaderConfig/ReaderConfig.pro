@@ -46,6 +46,9 @@ unix {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
+        DEFINES += HAVE_NEXUS
+        LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu
+        LIBS += -lNeXus -lNeXusCPP
     }
 
     unix:macx {

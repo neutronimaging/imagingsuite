@@ -80,7 +80,7 @@ win32 {
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
-LIBS += -lkipl -lModuleConfig -lReconFramework
+LIBS += -lkipl -lImagingAlgorithms -lModuleConfig -lReconFramework
 
 INCLUDEPATH += $$PWD/../../../../core/modules/ModuleConfig/include
 DEPENDPATH  += $$PWD/../../../../core/modules/ModuleConfig/include

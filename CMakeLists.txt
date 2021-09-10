@@ -10,7 +10,7 @@ execute_process(
   OUTPUT_VARIABLE IMGSUITE_VERSION
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-project(imagingsuite VERSION ${IMGSUITE_VERSION})
+#project(imagingsuite VERSION ${IMGSUITE_VERSION})
 project(imagingsuite VERSION 4.2.1)
 
 # require C++17
@@ -30,7 +30,9 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
+#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
+
+set(CMAKE_MODULE_PATH "lib" )
 # for testing we will need the python interpreter
 find_package(PythonInterp REQUIRED)
 
@@ -56,7 +58,28 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   add_definitions(-DVERSION="${GIT_VERSION_INFO}")
 endif()
 
-include(pybind11)
+include(FetchContent)
+
+FetchContent_Declare(
+  pybind11_sources
+  GIT_REPOSITORY https://github.com/pybind/pybind11.git
+  GIT_TAG        v2.2
+)
+
+FetchContent_GetProperties(pybind11_sources)
+
+if(NOT pybind11_sources_POPULATED)
+  FetchContent_Populate(pybind11_sources)
+
+  add_subdirectory(
+    ${pybind11_sources_SOURCE_DIR}
+    ${pybind11_sources_BINARY_DIR}
+    )
+    #add_definitions(-DHAVEPYBIND11 -DNO_QT)
+    add_definitions(-DHAVEPYBIND11)
+endif()
+
+#include(pybind11)
 
 execute_process(
   COMMAND git describe --tag
@@ -95,14 +118,27 @@ set(INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 
 set(EXPORT_NAME ${PROJECT_NAME}-targets)
 
-if(NOT APPLE)
-  set(CMAKE_INSTALL_RPATH $ORIGIN)
-else()
-  set(CMAKE_INSTALL_RPATH @loader_path)
-endif()
+# if(NOT APPLE)
+#   set(CMAKE_INSTALL_RPATH $ORIGIN)
+# else()
+#   set(CMAKE_INSTALL_RPATH @loader_path)
+#  # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+#   set(CMAKE_BUILD_WITH_INSTALL_RPATH YES)
+# endif()
 
+# Core libraries
+add_subdirectory(core/kipl/kipl)
+add_subdirectory(core/algorithms/ImagingAlgorithms)
+add_subdirectory(core/algorithms/AdvancedFilters)
+add_subdirectory(core/modules/ModuleConfig)
+add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
+add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+
+# Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
+add_subdirectory(core/algorithms/pyadvancedfilters)
 
 if(DYNAMIC_LIB)
   # install(
@@ -128,36 +164,64 @@ if(DYNAMIC_LIB)
   #         "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
   #   DESTINATION lib/cmake/kipl
   # )
-  install(FILES 
-  ../lib/libkipl.1.0.0.dylib 
-  ../lib/libModuleConfig.1.0.0.dylib 
-  ../lib/libReconFramework.1.0.0.dylib
-  ../lib/libStdBackProjectors.1.0.0.dylib
-  ../lib/libFDKBackProjectors.1.0.0.dylib
-  ../lib/libImagingAlgorithms.1.0.0.dylib
-  ../lib/libReaderConfig.1.0.0.dylib
-  # ../lib/libNeXus.1.0.0.dylib	
-  # ../lib/libhdf5_cpp.11.dylib
-  # ../lib/libNeXusCPP.1.0.0.dylib
-  # ../lib/libhdf5_hl.10.dylib
-  # ../lib/libhdf5.10.dylib	
-  # ../lib/libsz.2.dylib
-  external/mac/lib/libNeXus.1.0.0.dylib	
-  external/mac/lib/libhdf5_cpp.11.dylib
-  external/mac/lib/libNeXusCPP.1.0.0.dylib
-  external/mac/lib/libhdf5_hl.10.dylib
-  external/mac/lib/libhdf5.10.dylib	
-  external/mac/lib/libsz.2.dylib
+  if (LINUX)
+    print('Linux')
+    install(FILES 
+      #../lib/libkipl.so.1.0.0 
+      # ../lib/libModuleConfig.so.1.0.0 
+      # ../lib/libReconFramework.so.1.0.0
+      # ../lib/libStdBackProjectors.so.1.0.0
+      # ../lib/libFDKBackProjectors.so.1.0.0
+      # ../lib/libImagingAlgorithms.so.1.0.0
+      # ../lib/libReaderConfig.so.1.0.0
+      # ../lib/libNeXus.so.1.0.0	
+      # ../lib/libhdf5_cpp.so.11
+      # ../lib/libNeXusCPP.so.1.0.0
+      # ../lib/libhdf5_hl.so.10
+      # ../lib/libhdf5.so.10	
+      # ../lib/libsz.so.2
 
-  /opt/local/lib/libxml2.2.dylib 
-  /opt/local/lib/libtiff.5.dylib
+  #    /opt/local/lib/libxml2.2.dylib 
+  #    /opt/local/lib/libtiff.5.dylib
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    execute_process(
+      COMMAND for f in `ls *.so.1.0.0`; do ln -s $f `basename $f .so.1.0.0`.so.1; done 
+      WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
+    )
+  endif()
+  if (APPLE)
+    install(FILES 
+    # ../lib/libkipl.1.0.0.dylib 
+    # ../lib/libModuleConfig.1.0.0.dylib 
+    # ../lib/libReconFramework.1.0.0.dylib
+    # ../lib/libStdBackProjectors.1.0.0.dylib
+    # ../lib/libFDKBackProjectors.1.0.0.dylib
+    # ../lib/libImagingAlgorithms.1.0.0.dylib
+    # ../lib/libReaderConfig.1.0.0.dylib
+    external/mac/lib/libNeXus.1.0.0.dylib	
+    external/mac/lib//libhdf5_cpp.11.dylib
+    external/mac/lib//libNeXusCPP.1.0.0.dylib
+    external/mac/lib//libhdf5_hl.10.dylib
+    external/mac/lib//libhdf5.10.dylib	
+    external/mac/lib//libsz.2.dylib
+    /opt/local/lib/libxml2.2.dylib 
+    /opt/local/lib/libtiff.5.dylib
+    /opt/local/lib/libfftw3.3.dylib
+    /opt/local/lib/libfftw3f.3.dylib
+    /opt/local/lib/libcfitsio.dylib
+    /opt/local/lib/libarmadillo.10.dylib
 
-  execute_process(
-    COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
-    WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
-  )
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+    execute_process(
+      COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
+      WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
+    )
+  endif()
+  
+
+
 endif(DYNAMIC_LIB)
 
 # turn on testing

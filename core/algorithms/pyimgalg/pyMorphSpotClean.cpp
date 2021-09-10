@@ -11,10 +11,6 @@
 #include <MorphSpotClean.h>
 #include <ImagingException.h>
 
-#if !defined(NO_QT)
-#include <QDebug>
-#endif
-
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -34,6 +30,15 @@ void bindMorphSpotClean(py::module &m)
 //                &ImagingAlgorithms::MorphSpotClean::setConnectivity), // kipl::morphology::MorphConnect conn = kipl::morphology::conn8
 //                "Configures the polynomial with a list of coefficients",
 //                py::arg("coeff"));
+
+    mscClass.def("useThreading",
+                 &ImagingAlgorithms::MorphSpotClean::useThreading,
+                 "Switches the use of threaded processing.",
+                 py::arg("x"));
+
+    mscClass.def("isThreaded",
+                 &ImagingAlgorithms::MorphSpotClean::isThreaded,
+                 "Tells if threaded processing is used");
 
     mscClass.def("setCleanMethod",
                  &ImagingAlgorithms::MorphSpotClean::setCleanMethod,
@@ -83,7 +88,7 @@ void bindMorphSpotClean(py::module &m)
 
     // kipl::base::TImage<float,2> detectionImage(kipl::base::TImage<float,2> img);
     mscClass.def("detectionImage",
-                 [](ImagingAlgorithms::MorphSpotClean &msc, py::array_t<float> &x)
+                 [](ImagingAlgorithms::MorphSpotClean &msc, py::array_t<float> &x, bool remove_bias)
     {
         auto r = x.unchecked<2>(); // x must have ndim = 2; can be non-writeable
 
@@ -93,16 +98,30 @@ void bindMorphSpotClean(py::module &m)
                                     static_cast<size_t>(buf1.shape[0])};
         kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
 
-        kipl::base::TImage<float,2> res=msc.detectionImage(img);
+        auto res=msc.detectionImage(img,remove_bias);
 
-        py::array_t<float> det = py::array_t<float>(res.Size());
-        det.resize({res.Size(1),res.Size(0)});
+        py::dict detections;
 
-        std::copy_n(res.GetDataPtr(),res.Size(), static_cast<float *>(det.request().ptr));
-        return det;
+        py::array_t<float> dark = py::array_t<float>(res.second.Size());
+        dark.resize({res.second.Size(1),res.second.Size(0)});
+
+        std::copy_n(res.second.GetDataPtr(),res.second.Size(), static_cast<float *>(dark.request().ptr));
+
+        detections["dark"]=dark;
+
+        py::array_t<float> bright = py::array_t<float>(res.first.Size());
+        bright.resize({res.first.Size(1),res.first.Size(0)});
+
+        std::copy_n(res.first.GetDataPtr(),res.first.Size(), static_cast<float *>(bright.request().ptr));
+
+        detections["bright"]=bright;
+
+        return detections;
+       
     },
     "Computes the detection image from the provided image.",
-    py::arg("img"));
+    py::arg("img"),
+    py::arg("remove_bias"));
 
     mscClass.def("process",
                  [](ImagingAlgorithms::MorphSpotClean &msc,
@@ -130,13 +149,38 @@ void bindMorphSpotClean(py::module &m)
                          std::vector<float> &th,
                          std::vector<float> &sigma)
             {
-                py::buffer_info buf1 = x.request();
+         py::buffer_info buf1 = x.request();
 
-                std::vector<size_t> dims={static_cast<size_t>(buf1.shape[1]),
-                               static_cast<size_t>(buf1.shape[0])};
-                kipl::base::TImage<float,2> img(static_cast<float*>(buf1.ptr),dims);
+        if (buf1.ndim == 2)
+        {
+            std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
+            float *data=static_cast<float*>(buf1.ptr);
 
-                msc.process(img,th,sigma);
+            kipl::base::TImage<float,2> img(dims);
+
+            std::copy_n(data,img.Size(),img.GetDataPtr());
+
+            msc.process(img,th,sigma);
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
+        else if (buf1.ndim==3)
+        {
+            std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[2]),
+                                            static_cast<size_t>(buf1.shape[1]),
+                                            static_cast<size_t>(buf1.shape[0])};
+
+            float *data=static_cast<float*>(buf1.ptr);
+
+            kipl::base::TImage<float,3> img(dims);
+
+            std::copy_n(data,img.Size(),img.GetDataPtr());
+
+            msc.process(img,th,sigma);
+            std::copy_n(img.GetDataPtr(),img.Size(),data);
+        }
+        else
+            throw ImagingException("Morphspot clean only supports 2- and 3-D data",__FILE__,__LINE__);
             },
 
             "Cleans spots from the image in place using th as threshold and sigma as mixing width.",
@@ -226,13 +270,15 @@ void bindMorphSpotClean(py::module &m)
 
 
     py::enum_<ImagingAlgorithms::eMorphDetectionMethod>(m,"eMorphDetectionMethod")
-            .value("MorphDetectHoles",         ImagingAlgorithms::MorphDetectHoles)
-            .value("MorphDetectPeaks",         ImagingAlgorithms::MorphDetectPeaks)
-            .value("MorphDetectBoth",          ImagingAlgorithms::MorphDetectBoth)
+            .value("MorphDetectDarkSpots",        ImagingAlgorithms::MorphDetectDarkSpots)
+            .value("MorphDetectBrightSpots", ImagingAlgorithms::MorphDetectBrightSpots)
+            .value("MorphDetectAllSpots",         ImagingAlgorithms::MorphDetectAllSpots)
+            .value("MorphDetectHoles",            ImagingAlgorithms::MorphDetectHoles)
+            .value("MorphDetectPeaks",            ImagingAlgorithms::MorphDetectPeaks)
+            .value("MorphDetectBoth",             ImagingAlgorithms::MorphDetectBoth)
             .export_values();
 
 }
-
 
 
 

@@ -22,7 +22,6 @@
 #include "../include/ReconHelpers.h"
 #include "../include/processtiminglogger.h"
 
-#include <QDebug>
 
 
 ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *interactor) :

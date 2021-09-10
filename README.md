@@ -2,14 +2,18 @@
 The imaging suite repository contains the core functionality sources for and documentation related to MuhRec, KipTool, and nGITool.
 The project has a [public webpage](https://neutronimaging.github.io/) where you get some more information.
 
-## Build instructions
+## Documentation
+- [MuhRec](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec)
+- [KipTool](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-KipTool)
+
+# Build instructions
 - [Prerequisities](https://github.com/neutronimaging/imagingsuite/wiki/Prerequisites-for-building)
 - [How to build](https://github.com/neutronimaging/imagingsuite/wiki/Build-instructions)
 
-### Building python bindings
+## Building python bindings
 Python bindings are implemented to allow the use of the modules in python. The bindings are implemented using PYBIND11 and you need to use cmake to build them.
 
-#### First step create directories for the build
+### First step create directories for the build
 Create build and install folders in the ```path``` where you want them
 ```bash 
 mkdir <path>/build
@@ -45,8 +49,6 @@ import imgalg
 import muhrectomo
 ```
 
-## Documentation
-- [MuhRec](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec)
-- [KipTool](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-KipTool)
+
 
 
