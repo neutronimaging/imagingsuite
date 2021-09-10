@@ -28,10 +28,8 @@
 #include <morphology/morphextrema.h>
 
 
-#include "../include/ReferenceImageCorrection.h"
+#include "../include/ReferenceImageCorrection2.h"
 #include "../include/ImagingException.h"
-
-//using namespace TNT;
 
 namespace ImagingAlgorithms {
 
@@ -52,8 +50,8 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     bExtSingleFile(true),
     fdose_ext_slice(0.0f),
     m_AverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
-    m_IntMeth_x(SecondOrder_x),
-    m_IntMeth_y(SecondOrder_y),
+    m_IntMeth_x(SecondOrder),
+    m_IntMeth_y(SecondOrder),
     m_nDoseROI(4,0UL),
     m_nROI(4,0UL),
     m_nBlackBodyROI(4,0UL),
@@ -188,26 +186,26 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
 
 }
 
-void ReferenceImageCorrection::SetInterpolationOrderX(eInterpOrderX eim_x){
+void ReferenceImageCorrection::SetInterpolationOrderX(eInterpOrder eim_x){
     m_IntMeth_x = eim_x;
 
     switch(eim_x)
     {
 
-        case(SecondOrder_x):
+        case(SecondOrder):
         {   b=1;
             d=1;
             e=1;
             break;
         }
-        case(FirstOrder_x): 
+        case(FirstOrder):
         {
             b=1;
             d=1;
             e=0;
             break;
         }
-        case(ZeroOrder_x): 
+        case(ZeroOrder):
         {
             b=0;
             d=0;
@@ -219,33 +217,32 @@ void ReferenceImageCorrection::SetInterpolationOrderX(eInterpOrderX eim_x){
 
 }
 
-void ReferenceImageCorrection::SetInterpolationOrderY(eInterpOrderY eim_y){
+void ReferenceImageCorrection::SetInterpolationOrderY(eInterpOrder eim_y){
     m_IntMeth_y = eim_y;
 
     switch(eim_y)
     {
 
-        case(SecondOrder_y):
+        case(SecondOrder):
         {
             c=1;
             a=1;
             f=1;
             break;
         }
-        case(FirstOrder_y):
+        case(FirstOrder):
         {
             c=1;
             a=1;
             f=0;
             break;
         }
-        case(ZeroOrder_y):
+        case(ZeroOrder):
         {
             c=0;
             a=0;
             f=0;
         }
-
     }
 
 
@@ -3037,12 +3034,12 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
 }
 
 
-void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x)
+void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder &eim_x)
 {
-    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX > int_methods;
-    int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::SecondOrder_x;
-    int_methods["FirstOrder"]  = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::FirstOrder_x;
-    int_methods["ZeroOrder"]   = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX::ZeroOrder_x;
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder > int_methods;
+    int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder::SecondOrder;
+    int_methods["FirstOrder"]  = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder::FirstOrder;
+    int_methods["ZeroOrder"]   = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder::ZeroOrder;
 
     if (int_methods.count(str)==0)
         throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
@@ -3050,57 +3047,23 @@ void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::
     eim_x=int_methods[str];
 }
 
-std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x)
+std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder &eim_x)
 {
     std::string str;
 
     switch (eim_x) {
-        case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x: str = "SecondOrder"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder_x:  str = "FirstOrder";  break;
-        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder_x:   str = "ZeroOrder";   break;
+        case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder: str = "SecondOrder"; break;
+        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder:  str = "FirstOrder";  break;
+        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder:   str = "ZeroOrder";   break;
         default                                     	: return "Undefined Interpolation method"; break;
     }
     return  str;
 
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX eim_x)
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder eim_x)
 {
     s<<enum2string(eim_x);
-
-    return s;
-}
-
-void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y)
-{
-    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY > int_methods;
-    int_methods["SecondOrder"] = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::SecondOrder_y;
-    int_methods["FirstOrder"]  = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::FirstOrder_y;
-    int_methods["ZeroOrder"]   = ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY::ZeroOrder_y;
-
-    if (int_methods.count(str)==0)
-        throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
-
-    eim_y=int_methods[str];
-}
-
-std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y)
-{
-    std::string str;
-
-    switch (eim_y) {
-        case ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y: str="SecondOrder"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::FirstOrder_y:  str="FirstOrder"; break;
-        case ImagingAlgorithms::ReferenceImageCorrection::ZeroOrder_y:   str="ZeroOrder"; break;
-        default                                     	: return "Undefined Interpolation method"; break;
-    }
-    return  str;
-
-}
-
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY eim_y)
-{
-    s<<enum2string(eim_y);
 
     return s;
 }

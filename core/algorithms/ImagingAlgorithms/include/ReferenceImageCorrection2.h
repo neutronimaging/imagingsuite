@@ -35,17 +35,11 @@ public:
       ExternalBB
     }; /// Options for BB image handling
 
-    enum eInterpOrderX{
-        SecondOrder_x,
-        FirstOrder_x,
-        ZeroOrder_x
-    }; /// Options for BB mask interpolation, x direction
-
-    enum eInterpOrderY{
-        SecondOrder_y,
-        FirstOrder_y,
-        ZeroOrder_y
-    }; /// Options for BB mask interpolation, y direction
+    enum eInterpOrder{
+        SecondOrder,
+        FirstOrder,
+        ZeroOrder
+    }; /// Options for BB mask interpolation
 
     enum eInterpMethod{
         Polynomial,
@@ -115,8 +109,8 @@ public:
     /// set min area for BB segmentation
     void SetMinArea (size_t x) {min_area=x;}
 
-    void SetInterpolationOrderX(eInterpOrderX eim_x);
-    void SetInterpolationOrderY(eInterpOrderY eim_y);
+    void SetInterpolationOrderX(eInterpOrder eim_x);
+    void SetInterpolationOrderY(eInterpOrder eim_y);
 
     /// set map to be used for spline interpolation of ob images
     void SetSplineObValues(std::map<std::pair<int, int>, float> &values) {spline_ob_values = values;}
@@ -285,8 +279,8 @@ protected:
 
     ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod; /// method used for image averaging (options: sum, mean, max, weightedmean, median and average)
 
-    eInterpOrderX m_IntMeth_x;
-    eInterpOrderY m_IntMeth_y;
+    eInterpOrder m_IntMeth_x;
+    eInterpOrder m_IntMeth_y;
 
     eInterpMethod m_InterpMethod;
 
@@ -318,33 +312,27 @@ protected:
 
 }
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
+void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
 
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
+std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod erm);
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
+void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
 
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
+std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo);
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x);
+void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder &eim_x);
 
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x);
+std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder &eim_x);
 
-std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX eim_x);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder eim_x);
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y);
+void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
 
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y);
-
-std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY eim_y);
-
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
-
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
+std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eint);
 

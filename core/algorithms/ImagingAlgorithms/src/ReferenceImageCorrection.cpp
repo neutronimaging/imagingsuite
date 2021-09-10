@@ -350,7 +350,8 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
 }
 
-void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask){
+void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask)
+{
 
     // 2. otsu threshold
     // 2.a compute histogram
@@ -381,7 +382,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
         {
             vec_hist[i] = histo.at(i).second;
         }
-        int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+        int value = kipl::segmentation::thresholdOtsu(vec_hist, 256);
         ot = static_cast<float>(histo.at(value).first);
    }
 
@@ -945,7 +946,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
         }
     else
         {
-            int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+            int value = kipl::segmentation::thresholdOtsu(vec_hist, 256);
             ot = static_cast<float>(histo.at(value).first);
             }
 
@@ -2937,13 +2938,6 @@ std::string enum2string(const ImagingAlgorithms::original::ReferenceImageCorrect
 
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY erm)
-{
-    s<<enum2string(erm);
-
-    return s;
-}
-
 void  string2enum(std::string str, ImagingAlgorithms::original::ReferenceImageCorrection::eBBOptions &ebo)
 {
     std::map<std::string, ImagingAlgorithms::original::ReferenceImageCorrection::eBBOptions > bb_options;
@@ -2961,7 +2955,7 @@ void  string2enum(std::string str, ImagingAlgorithms::original::ReferenceImageCo
 
 }
 
-std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)
+std::string enum2string(const ImagingAlgorithms::original::ReferenceImageCorrection::eBBOptions &ebo)
 {
     std::string str;
 
@@ -2977,7 +2971,7 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOp
 
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo)
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::original::ReferenceImageCorrection::eBBOptions ebo)
 {
     s<<enum2string(ebo);
 
@@ -3014,7 +3008,7 @@ std::string enum2string(const ImagingAlgorithms::original::ReferenceImageCorrect
 
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX eim_x)
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderX eim_x)
 {
     s<<enum2string(eim_x);
 
@@ -3025,10 +3019,10 @@ void  string2enum(std::string str, ImagingAlgorithms::original::ReferenceImageCo
 {
     std::map<std::string, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY > int_methods;
     int_methods["SecondOrder"] = ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY::SecondOrder_y;
-    int_methods["FirstOrder"] = ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY::FirstOrder_y;
-    int_methods["ZeroOrder"] = ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY::ZeroOrder_y;
+    int_methods["FirstOrder"]  = ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY::FirstOrder_y;
+    int_methods["ZeroOrder"]   = ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY::ZeroOrder_y;
 
-    if (int_methods.count(str)==0)
+    if (int_methods.count(str) == 0)
         throw  ImagingException("The key string does not exist for eInterpMethod",__FILE__,__LINE__);
 
     eim_y=int_methods[str];
@@ -3058,7 +3052,7 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::original::ReferenceIma
 }
 
 
-void  string2enum(std::string str, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpMethod &eint)
+void  string2enum(const std::string &str, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpMethod &eint)
 {
     std::map<std::string, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpMethod > int_types;
     int_types["Polynomial"] = ImagingAlgorithms::original::ReferenceImageCorrection::eInterpMethod::Polynomial;
@@ -3128,7 +3122,7 @@ std::string enum2string(const ImagingAlgorithms::original::ReferenceImageCorrect
 }
 
 
-std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod emask)
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::original::ReferenceImageCorrection::eMaskCreationMethod emask)
 {
     s<<enum2string(emask);
 

@@ -254,7 +254,7 @@ void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorith
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY &eim_y);
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY eim_y);
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpMethod &eint);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const string &str, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpMethod &eint);
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::original::ReferenceImageCorrection::eInterpMethod &eint);
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::original::ReferenceImageCorrection::eInterpMethod eint);
 
