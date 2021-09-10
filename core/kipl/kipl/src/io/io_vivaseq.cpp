@@ -99,7 +99,7 @@ int ReadViVaSEQ(std::string fname, kipl::base::TImage<float,3> &img, const std::
         char * buffer = new char[buffersize];
 
         for (int i=first; i<last; i+=frame_step) {
-            for (int j=roi[1]; j<roi[3]; ++j ) {
+            for (int j=roi[1]; j<static_cast<int>(roi[3]); ++j ) {
                 file.seekg(header.headerSize+                               // header offset
                            i*framesize +                                    // frame offset
                            j*header.imageWidth*header.bytesPerPixel +       // row offset

@@ -50,15 +50,16 @@ public:
     }; /// Options for background interpolation
 
 
+    enum eMaskCreationMethod
+    {
+        otsuMask,
+        manuallyThresholdedMask,
+        userDefinedMask,
+        referenceFreeMask
+    };
 
     ReferenceImageCorrection(kipl::interactors::InteractionBase *interactor = nullptr);
     ~ReferenceImageCorrection();
-
-//    void LoadReferenceImages(std::string path, std::string obname, size_t firstob, size_t obcnt,
-//            std::string dcname, size_t firstdc, size_t dccnt,
-//            std::string bbname, size_t firstbb, size_t bbcnt,
-//            size_t *roi,
-//            size_t *doseroi);
 
     void SetReferenceImages(kipl::base::TImage<float,2> *ob,
             kipl::base::TImage<float,2> *dc,
@@ -70,6 +71,8 @@ public:
             bool  normBB,
             const std::vector<size_t> &roi,
             const std::vector<size_t> &doseroi);
+
+    void SetMaskCreationMethod(eMaskCreationMethod eMaskMethod, kipl::base::TImage<float,2> &mask);
 
     void SetInterpParameters(float *ob_parameter,
                              float *sample_parameter,
@@ -110,6 +113,11 @@ public:
     float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark,
                                          kipl::base::TImage<float,2> &bb,
                                          kipl::base::TImage<float,2>&mask); /// uses a predefined mask and then call ComputeInterpolationParameter
+    float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark,
+                                         kipl::base::TImage<float,2> &bb,
+                                         kipl::base::TImage<float,2>&mask,
+                                         float &error); /// uses a predefined mask and returns interpolation parameters and interpolation error
+
     float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask,
                                           kipl::base::TImage<float,2>&img); /// compute interpolation parameters from img and mask
     float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask,
@@ -162,7 +170,6 @@ protected:
     std::string flatname_BG; /// filename for saving the open beam BG
     std::string filemask_BG; /// filemask for saving the computed sample BGs
 
-
     kipl::base::TImage<float,2> m_OpenBeam;
     kipl::base::TImage<float,2> m_OpenBeamforBB;
 	kipl::base::TImage<float,2> m_DarkCurrent;
@@ -171,12 +178,9 @@ protected:
     kipl::base::TImage<float,2> m_BB_sample_Interpolated;
     kipl::base::TImage<float,2> m_DoseBBsample_image;
     kipl::base::TImage<float,2> m_DoseBBflat_image;
-
     kipl::base::TImage<float,2> m_OB_BB_ext; /// externally computed OB image with BBs
     kipl::base::TImage<float,3> m_BB_sample_ext; /// externally computed sample image with BBs
     kipl::base::TImage<float,2> m_BB_slice_ext; /// externally computed slice of sample image with BBs
-
-
 
 	float m_fOpenBeamDose;
     float m_fDarkDose;
@@ -195,6 +199,8 @@ protected:
     float *sample_bb_parameters;        /// interpolation parameters for the sample image with BB
     float *sample_bb_interp_parameters; /// interpolation parameters for the sample image for each projection angle
 
+    ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod m_MaskMethod;
+    kipl::base::TImage<float,2> m_MaskImage;
     ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod; /// method used for image averaging (options: sum, mean, max, weightedmean, median and average)
 
     eInterpOrderX m_IntMeth_x;
@@ -210,19 +216,19 @@ protected:
     std::vector<size_t> m_nBlackBodyROI; /// roi to be used for computing interpolated BB images, roi position is relative to the image projection roi, on which interpolation parameters are computed
     std::vector<int>    m_diffBBroi;     /// difference between BB roi and projection roi, important when computing interpolation parameters
     std::vector<size_t> m_nDoseBBRoi;    /// "big roi" to be used for dose computation on BB images, this is now relative to projection roi coordinates, due to the interpolation scheme
+    std::vector<float> angles;           /// first and last angles of nProj and nBBImages, respectively
+    std::vector<float> dosesamplelist;   /// list of doses for sample images computed at dose BB roi, to be used in the Interpolate BBOption
+
     size_t m_nBBimages;                  /// number of images with BB sample that are available
     size_t m_nProj;                      /// number of images that are needed after interpolation
-    std::vector<float> angles;           /// first and last angles of nProj and nBBImages, respectively
     size_t radius;                       /// radius value for BB mask creation
-    float tau;                           /// mean pattern transmission
-    std::vector<float> dosesamplelist;   /// list of doses for sample images computed at dose BB roi, to be used in the Interpolate BBOption
     size_t min_area;                     /// min area for BB segmentation
+
+    float tau;                           /// mean pattern transmission
     float thresh;                        /// manual threshold
 
     std::map<std::pair<int, int>, float> spline_ob_values;     /// map to be used for interpolation with splines and ob image. should be in principle the same number of images with BB, i start now with 1
     std::map<std::pair<int, int>, float> spline_sample_values; /// map to be used for interpolation with splines and sample image
-
-
 
     kipl::interactors::InteractionBase *m_Interactor;
     bool updateStatus(float val, std::string msg);
@@ -231,35 +237,28 @@ protected:
 }
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod erm);
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo);
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX &eim_x);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX eim_x);
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY &eim_y);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY eim_y);
 
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
-
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eint);
 
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string &str, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod emask);
 
 
 #endif /* REFERENCEIMAGECORRECTION_H_ */
