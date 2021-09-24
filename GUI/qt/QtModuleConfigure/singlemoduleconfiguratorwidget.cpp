@@ -202,7 +202,13 @@ void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
     #endif
     logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
 
-    if (fileName.isEmpty())
+    if ( fileName.isNull() )
+    {
+        logger(kipl::logging::Logger::LogError,"File selection was cancelled");
+        return;
+    }
+
+    if ( fileName.isEmpty() )
     {
         logger(kipl::logging::Logger::LogError,"No file selected");
         return;
