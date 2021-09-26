@@ -246,7 +246,7 @@ install_name_tool -change libReconFramework.1.dylib @executable_path/../Framewor
 install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libFDKBackProjectors.1.0.0.dylib
 install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libFDKBackProjectors.1.0.0.dylib
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libFDKBackprojectors.1.0.0.dylib
-
+install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib libFDKBackprojectors.1.0.0.dylib
 # Inspectors
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libInspectorModules.1.0.0.dylib
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libInspectorModules.1.0.0.dylib
@@ -273,6 +273,8 @@ install_name_tool -change libReconFramework.1.dylib @executable_path/../Framewor
 install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libStdBackprojectors.1.0.0.dylib
 install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libStdBackprojectors.1.0.0.dylib
 install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libStdBackprojectors.1.0.0.dylib
+install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib libStdBackprojectors.1.0.0.dylib
+
 # Preprocessing
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libStdPreprocModules.1.0.0.dylib
 install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libStdPreprocModules.1.0.0.dylib
