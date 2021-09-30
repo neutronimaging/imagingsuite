@@ -974,8 +974,6 @@ int ReconEngine::Run3D(bool bRerunBackproj)
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 
-
-
     return res;
 }
 

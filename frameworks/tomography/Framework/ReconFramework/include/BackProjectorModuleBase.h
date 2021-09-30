@@ -63,6 +63,10 @@ public:
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
     virtual void SetROI(const std::vector<size_t> &roi)=0;
 
+    void setNumberOfThreads(int N);
+
+    int numberOfThreads();
+
     /// Get the reconstructed matrix
     /// \returns The matrix as TImage object
 	kipl::base::TImage<float,3> GetVolume() {return volume;}
@@ -128,6 +132,7 @@ protected:
     std::string m_sApplication;                  ///< The name of the application calling the module
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     std::vector<Publication> publications;
+    int nNumberOfThreads;
 };
 
 #endif

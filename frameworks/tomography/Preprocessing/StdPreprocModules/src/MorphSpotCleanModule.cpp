@@ -56,9 +56,10 @@ MorphSpotCleanModule::~MorphSpotCleanModule()
 {
 }
 
-int MorphSpotCleanModule::Configure(ReconConfig UNUSED(config), std::map<std::string, std::string> parameters)
+int MorphSpotCleanModule::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
     std::ostringstream msg;
+    setNumberOfThreads(config.System.nMaxThreads);
 
     try
     {
@@ -138,10 +139,24 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::ma
 {
     logger(logger.LogMessage,"ProcessCore");
 
-    if (m_bThreading)
-        return ProcessParallelStd(img);
-    else
-        return ProcessSingle(img);
+    // Threading done by cleaner class
+
+    ImagingAlgorithms::MorphSpotClean cleaner;
+    cleaner.useThreading(m_bThreading);
+    cleaner.setNumberOfThreads(numberOfThreads());
+    cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
+    cleaner.setConnectivity(m_eConnectivity);
+    cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
+    cleaner.setCleanInfNan(m_bRemoveInfNaN);
+    cleaner.setThresholdByFraction(m_bThresholdByFraction);
+
+    cleaner.process(img,m_fThreshold,m_fSigma);
+
+// Original threading code. Threading done by module
+//    if (m_bThreading)
+//        return ProcessParallelStd(img);
+//    else
+//        return ProcessSingle(img);
 
     return 0;
 }

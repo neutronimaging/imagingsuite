@@ -5,6 +5,7 @@
 #include "../include/ProcessModuleBase.h"
 
 #include "../include/ModuleException.h"
+#include <thread>
 
 ProcessModuleBase::ProcessModuleBase(std::string name,kipl::interactors::InteractionBase *interactor) :
  logger(name),
@@ -50,6 +51,23 @@ int ProcessModuleBase::Process(kipl::base::TImage<float,3> &img, std::map<std::s
 	timer.Toc();
 
     return res;
+}
+
+void ProcessModuleBase::setNumberOfThreads(int N)
+{
+    if (N<1)
+    {
+        nNumberOfThreads = std::thread::hardware_concurrency();
+    }
+    else
+    {
+        nNumberOfThreads = N;
+    }
+}
+
+int ProcessModuleBase::numberOfThreads()
+{
+    return numberOfThreads();
 }
 
 void ProcessModuleBase::resetTimer()

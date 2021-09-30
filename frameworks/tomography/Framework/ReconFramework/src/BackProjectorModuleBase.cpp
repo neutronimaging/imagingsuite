@@ -7,6 +7,7 @@
 #include <ParameterHandling.h>
 #include <strings/miscstring.h>
 #include <ModuleException.h>
+#include <thread>
 
 BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor) :
     logger(name),
@@ -81,6 +82,23 @@ std::map<string, string> BackProjectorModuleBase::GetParameters()
    params["usecircularmask"] = m_bBuildCircleMask ? "true" : "false" ;
 
    return params;
+}
+
+void BackProjectorModuleBase::setNumberOfThreads(int N)
+{
+    if (N<1)
+    {
+        nNumberOfThreads = std::thread::hardware_concurrency();
+    }
+    else
+    {
+        nNumberOfThreads = N;
+    }
+}
+
+int BackProjectorModuleBase::numberOfThreads()
+{
+    return nNumberOfThreads;
 }
 
 
