@@ -39,6 +39,7 @@ public:
         kipl::logging::Logger::LogLevel eLogLevel; ///< Default log level.
         bool bValidateData;
         std::string WriteXML(int indent=0);          ///< Serializes the settings.
+        int nMaxThreads;
 	};
 
     /// Projection configuration settings

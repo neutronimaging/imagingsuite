@@ -258,6 +258,9 @@ void ReconConfig::ParseSystem(xmlTextReaderPtr reader)
 
             if (sName=="validate")
                 System.bValidateData=kipl::strings::string2bool(sValue);
+
+            if (sName=="maxthreads")
+                System.nMaxThreads=std::stoi(sValue);
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -560,13 +563,15 @@ std::string ReconConfig::cUserInformation::WriteXML(int indent)
 ReconConfig::cSystem::cSystem(): 
 	nMemory(1500ul),
     eLogLevel(kipl::logging::Logger::LogMessage),
-    bValidateData(false)
+    bValidateData(false),
+    nMaxThreads(-1)
 {}
 
 ReconConfig::cSystem::cSystem(const cSystem &a) : 
 	nMemory(a.nMemory), 
     eLogLevel(a.eLogLevel),
-    bValidateData(a.bValidateData)
+    bValidateData(a.bValidateData),
+    nMaxThreads(a.nMaxThreads)
 {}
 
 ReconConfig::cSystem & ReconConfig::cSystem::operator=(const cSystem &a) 
@@ -574,6 +579,7 @@ ReconConfig::cSystem & ReconConfig::cSystem::operator=(const cSystem &a)
     nMemory       = a.nMemory;
     eLogLevel     = a.eLogLevel;
     bValidateData = a.bValidateData;
+    nMaxThreads     = a.nMaxThreads;
 	return *this;
 }
 
@@ -586,7 +592,8 @@ std::string ReconConfig::cSystem::WriteXML(int indent)
 	str<<setw(indent+4)<<" "<<"<memory>"<<nMemory<<"</memory>"<<std::endl;
 	str<<setw(indent+4)<<"  "<<"<loglevel>"<<eLogLevel<<"</loglevel>"<<std::endl;
     str<<setw(indent+4)<<"  "<<"<validate>"<<kipl::strings::bool2string(bValidateData)<<"</validate>"<<std::endl;
-	str<<setw(indent)  <<"  "<<"</system>"<<std::endl;
+    str<<setw(indent+4)<<" "<<"<maxthreads>"<<nMaxThreads<<"</maxthreads>"<<std::endl;
+    str<<setw(indent)  <<"  "<<"</system>"<<std::endl;
 
 	return str.str();
 }		
