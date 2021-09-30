@@ -49,6 +49,7 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     m_bHaveBlackBodyROI(false),
     bExtSingleFile(true),
     fdose_ext_slice(0.0f),
+    m_MaskMethod(ImagingAlgorithms::ReferenceImageCorrection::otsuMask),
     m_AverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_IntMeth_x(SecondOrder),
     m_IntMeth_y(SecondOrder),
@@ -184,6 +185,12 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
     }
 
 
+}
+
+void ReferenceImageCorrection::SetMaskCreationMethod(ReferenceImageCorrection::eMaskCreationMethod eMaskMethod, kipl::base::TImage<float, 2> &mask)
+{
+    m_MaskMethod = eMaskMethod;
+    m_MaskImage  = mask;
 }
 
 void ReferenceImageCorrection::SetInterpolationOrderX(eInterpOrder eim_x){
@@ -3102,4 +3109,46 @@ std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrecti
     return s;
 }
 
+void string2enum(const std::string &str, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask)
+{
+    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
 
+    strmap["otsumask"]                = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
+    strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
+    strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
+    strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
+
+    try
+    {
+        emask = strmap.at(str);
+    }
+    catch (std::out_of_range &e)
+    {
+        std::ostringstream msg;
+        msg<<"Could not convert "<<str<<" to maskEnum\n"<<e.what();
+        throw ImagingException(msg.str(),__FILE__,__LINE__);
+    }
+}
+
+std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask)
+{
+
+    switch (emask)
+    {
+        case ImagingAlgorithms::ReferenceImageCorrection::otsuMask            : return "otsumask";
+        case ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask : return "manuallythresholdedmask";
+        case ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask         : return "userdefinedmask";
+        case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask       : return "referencefreemask";
+        default : throw ImagingException("Unknown mask enum",__FILE__,__LINE__);
+    }
+
+}
+
+
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod emask)
+{
+    s<<enum2string(emask);
+
+    return s;
+
+}

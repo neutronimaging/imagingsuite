@@ -22,7 +22,7 @@
 #include <ImagingException.h>
 #include <StripeFilter.h>
 #include <ReferenceImageCorrection.h>
-#include <ReferenceImageCorrectionV1.h>
+#include <ReferenceImageCorrection2.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -587,15 +587,15 @@ void TestImagingAlgorithms::StripeFilterProcessing2D()
 void TestImagingAlgorithms::RefImgCorrection_Initialization()
 {
     ImagingAlgorithms::ReferenceImageCorrection bb;
-    reference::ImagingAlgorithms::ReferenceImageCorrection bbr;
+    ImagingAlgorithms::original::ReferenceImageCorrection bbr;
 
     float radius = 5.0f;
     std::vector<int> diffroi({1,2,3,4}); // Update when I have roi data
     float tau = 0.95f;
     bool bPBvariante = false;
-    reference::ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX rxInterpOrder = reference::ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x;
-    reference::ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY ryInterpOrder = reference::ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y;
-    reference::ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod rInterpMethod = reference::ImagingAlgorithms::ReferenceImageCorrection::Polynomial;
+    ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderX rxInterpOrder = ImagingAlgorithms::original::ReferenceImageCorrection::SecondOrder_x;
+    ImagingAlgorithms::original::ReferenceImageCorrection::eInterpOrderY ryInterpOrder = ImagingAlgorithms::original::ReferenceImageCorrection::SecondOrder_y;
+    ImagingAlgorithms::original::ReferenceImageCorrection::eInterpMethod rInterpMethod = ImagingAlgorithms::original::ReferenceImageCorrection::Polynomial;
     float min_area = 50.0f;
 
     bb.setNormMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm);
@@ -617,7 +617,7 @@ void TestImagingAlgorithms::RefImgCorrection_Initialization()
 void TestImagingAlgorithms::RefImgCorrection_enums()
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
-    strmap["otsumask"]            = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
+    strmap["otsumask"]                = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
     strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
     strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
     strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;

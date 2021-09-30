@@ -46,7 +46,13 @@ public:
         ThinPlateSplines
     }; /// Options for background interpolation
 
-
+    enum eMaskCreationMethod
+    {
+        otsuMask,
+        manuallyThresholdedMask,
+        userDefinedMask,
+        referenceFreeMask
+    };
 
     ReferenceImageCorrection(kipl::interactors::InteractionBase *interactor = nullptr);
     ~ReferenceImageCorrection();
@@ -202,6 +208,8 @@ public:
                              float &dose,
                              float &dose_s);
 
+    void SetMaskCreationMethod(ReferenceImageCorrection::eMaskCreationMethod eMaskMethod, kipl::base::TImage<float, 2> &mask);
+
     void setNormMethod(ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod value) {m_ReferenceMethod = value;}
 
     void SaveBG(bool value, const std::string &path, const std::string &obname, const std::string &filemask);
@@ -282,6 +290,9 @@ protected:
     eInterpOrder m_IntMeth_x;
     eInterpOrder m_IntMeth_y;
 
+    ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod m_MaskMethod;
+    kipl::base::TImage<float,2> m_MaskImage;
+
     eInterpMethod m_InterpMethod;
 
 
@@ -313,29 +324,24 @@ protected:
 }
 
 void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
-
 std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod &erm);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod erm);
 
 void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
-
 std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions ebo);
 
 void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder &eim_x);
-
 std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder &eim_x);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpOrder eim_x);
 
 void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
-
 std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod &eint);
-
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod eint);
 
+void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(const std::string &str, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask);
+std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod &emask);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod emask);
 
 
 #endif /* REFERENCEIMAGECORRECTION_H_ */
