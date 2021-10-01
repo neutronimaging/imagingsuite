@@ -29,7 +29,7 @@ private slots:
 
     void on_buttonBox_rejected();
 
-    void on_spinCollationSize_valueChanged(int arg1);
+    void on_spinCombineSize_valueChanged(int arg1);
 
     void on_spinCollationSize_editingFinished();
 

@@ -46,6 +46,7 @@
 #include "piercingpointdialog.h"
 #include "referencefiledlg.h"
 #include "globalsettingsdialog.h"
+#include "fileconversiondialog.h"
 
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
@@ -2980,4 +2981,11 @@ void MuhRecMainWindow::on_spinFirstDark_valueChanged(int arg1)
 void MuhRecMainWindow::on_spinDarkCount_valueChanged(int arg1)
 {
     on_comboBox_projectionViewer_currentIndexChanged(2);
+}
+
+void MuhRecMainWindow::on_actionConvert_files_triggered()
+{
+    FileConversionDialog dlg(this);
+
+    dlg.exec();
 }

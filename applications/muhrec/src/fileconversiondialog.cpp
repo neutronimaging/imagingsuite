@@ -41,10 +41,18 @@ FileConversionDialog::FileConversionDialog(QWidget *parent) :
     on_comboBox_ScanOrder_currentIndexChanged(0);
     QDir dir;
     ui->lineEdit_DestinationPath->setText(dir.homePath());
-    ui->lineEdit_DestinationMask->setText("file####.tif");
+    ui->lineEdit_DestinationMask->setText("img_####.tif");
     ui->widgetROI->setCheckable(true);
-    ui->widgetROI->useROIDialog(true);
+
     ui->widgetROI->setROIColor("green");
+
+    // Hiding unstable features
+    ui->widgetROI->useROIDialog(false);
+    ui->widgetROI->hide();
+    ui->lineEdit_SkipList->hide();
+    ui->pushButton_GetSkipList->hide();
+    ui->label_skiplist->hide();
+
 }
 
 FileConversionDialog::~FileConversionDialog()
@@ -241,8 +249,8 @@ int FileConversionDialog::ConvertImages()
         crop = roi;
     }
 
-    const bool bCollate = ui->groupBox_combineImages->isChecked();
-    const int nCollate   = bCollate ? ui->spinCollationSize->value() : 1;
+    const bool bCombine = ui->groupBox_combineImages->isChecked();
+    const int nCombine   = bCombine ? ui->spinCollationSize->value() : 1;
 
     std::vector<size_t> dims(2);
 
@@ -255,9 +263,9 @@ int FileConversionDialog::ConvertImages()
     {
         dims=imgreader.imageSize(flist.front(),1.0f);
     }
-    dims.push_back(nCollate);
+    dims.push_back(nCombine);
 
-    if (bCollate==true)
+    if (bCombine==true)
         img3d.resize(dims);
 
     ImagingAlgorithms::AverageImage avgimg;
@@ -265,9 +273,9 @@ int FileConversionDialog::ConvertImages()
     for (auto it=flist.begin(); it!=flist.end(); ) {
 
         try {
-            if (bCollate==true)
+            if (bCombine==true)
             {
-                for (int i=0; (i<nCollate) && (it!=flist.end()); ++i) {
+                for (int i=0; (i<nCombine) && (it!=flist.end()); ++i) {
                     img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,crop);
                     std::copy(img.GetDataPtr(),img.GetDataPtr()+img.Size(),img3d.GetLinePtr(0,i));
                     ++it;
@@ -278,7 +286,7 @@ int FileConversionDialog::ConvertImages()
                 img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,crop);
                 ++it;
             }
-            filecnt+=nCollate;
+            filecnt+=nCombine;
         }
         catch (kipl::base::KiplException &e)
         {
@@ -384,7 +392,7 @@ void FileConversionDialog::on_buttonBox_rejected()
         filecnt=ui->progressBar->maximum()+1;
 }
 
-void FileConversionDialog::on_spinCollationSize_valueChanged(int arg1)
+void FileConversionDialog::on_spinCombineSize_valueChanged(int arg1)
 {
    std::ostringstream msg;
 
@@ -408,13 +416,13 @@ void FileConversionDialog::on_spinCollationSize_valueChanged(int arg1)
 
    int N=static_cast<int>(plist.size());
    int rest = N % arg1;
-   msg<<N/arg1<<" files"<<(rest==0 ? "" : " with a rest ")<<rest;
+   msg<<N/arg1<<" files with a rest of "<<rest<<" files";
    ui->labelNumberOfFiles->setText(QString::fromStdString(msg.str()));
 }
 
 void FileConversionDialog::on_spinCollationSize_editingFinished()
 {
-    on_spinCollationSize_valueChanged(ui->spinCollationSize->value());
+    on_spinCombineSize_valueChanged(ui->spinCollationSize->value());
 }
 
 void FileConversionDialog::on_comboBox_ScanOrder_currentIndexChanged(int index)

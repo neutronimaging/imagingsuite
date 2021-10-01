@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>693</width>
+    <width>863</width>
     <height>811</height>
    </rect>
   </property>
@@ -44,7 +44,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="label_skiplist">
               <property name="text">
                <string>Skip list</string>
               </property>
@@ -97,7 +97,7 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QSpinBox" name="spinCollationSize">
+                <widget class="QSpinBox" name="spinComobineSize">
                  <property name="minimum">
                   <number>1</number>
                  </property>
@@ -147,6 +147,13 @@
                  </item>
                 </widget>
                </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_rest">
+                 <property name="text">
+                  <string>Files</string>
+                 </property>
+                </widget>
+               </item>
                <item row="2" column="1">
                 <widget class="QLabel" name="labelNumberOfFiles">
                  <property name="text">
@@ -154,10 +161,86 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_rest">
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_spotclean">
+              <property name="title">
+               <string>Spot cleaning</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_3">
+               <item row="0" column="1">
+                <widget class="QComboBox" name="comboBox_spotcleanmethod">
+                 <property name="currentIndex">
+                  <number>2</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Dark</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Bright</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Dark and Bright</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Holes (Legacy)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Peaks (Legacy)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Both (Legacy)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <item>
+                  <widget class="QLabel" name="label">
+                   <property name="text">
+                    <string>Method</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_6">
                  <property name="text">
-                  <string>Files</string>
+                  <string>Threshold</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="doubleSpinBox_spotclean_threshold">
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.010000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.950000000000000</double>
                  </property>
                 </widget>
                </item>
