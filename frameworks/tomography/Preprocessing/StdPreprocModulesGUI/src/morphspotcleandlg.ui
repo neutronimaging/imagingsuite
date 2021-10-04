@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>773</width>
-    <height>721</height>
+    <width>991</width>
+    <height>814</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -164,36 +164,36 @@
           <string>Selects the type of outliers to remove.</string>
          </property>
          <property name="currentIndex">
-          <number>5</number>
+          <number>2</number>
          </property>
          <item>
           <property name="text">
-           <string>Dark (experimental)</string>
+           <string>Dark</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Bright (experimental)</string>
+           <string>Bright</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>All (experimental)</string>
+           <string>Dark and Bright</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Holes</string>
+           <string>Holes (Legacy)</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Peaks</string>
+           <string>Peaks (Legacy)</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Both</string>
+           <string>Both (Legacy)</string>
           </property>
          </item>
         </widget>

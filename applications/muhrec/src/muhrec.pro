@@ -70,7 +70,8 @@ SOURCES += main.cpp\
     dialogtoobig.cpp \
     piercingpointdialog.cpp \
     referencefiledlg.cpp \
-    globalsettingsdialog.cpp
+    globalsettingsdialog.cpp \
+    fileconversiondialog.cpp
 
 HEADERS  += muhrecmainwindow.h \
     MuhrecInteractor.h \
@@ -85,7 +86,8 @@ HEADERS  += muhrecmainwindow.h \
     dialogtoobig.h \
     piercingpointdialog.h \
     referencefiledlg.h \
-    globalsettingsdialog.h
+    globalsettingsdialog.h \
+    fileconversiondialog.h
 
 FORMS    += muhrecmainwindow.ui \
     configuregeometrydialog.ui \
@@ -97,34 +99,38 @@ FORMS    += muhrecmainwindow.ui \
     dialogtoobig.ui \
     piercingpointdialog.ui \
     referencefiledlg.ui \
-    globalsettingsdialog.ui
+    globalsettingsdialog.ui \
+    fileconversiondialog.ui
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging -lReaderGUI
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging -lReaderGUI
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
-DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
+DEPENDPATH  += $$PWD/../../../core/kipl/kipl/include
 
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
-DEPENDPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
+DEPENDPATH  += $$PWD/../../../GUI/qt/QtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
-DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
+DEPENDPATH  += $$PWD/../../../GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtImaging
-DEPENDPATH += $$PWD/../../../GUI/qt/QtImaging
+DEPENDPATH  += $$PWD/../../../GUI/qt/QtImaging
 
 INCLUDEPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/include
-DEPENDPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
+DEPENDPATH  += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src
 
 INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
-DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include
+DEPENDPATH  += $$PWD/../../../core/modules/ModuleConfig/include
 
-INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig/include
-DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig/include
+INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig
+DEPENDPATH  += $$PWD/../../../core/modules/ReaderConfig
+
+INCLUDEPATH += $$PWD/../../../core/modules/ReaderGUI
+DEPENDPATH  += $$PWD/../../../core/modules/ReaderGUI
 
 INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
-DEPENDPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/src
+DEPENDPATH  += $$PWD/../../../core/algorithms/ImagingAlgorithms/src
 
 
 macx: {
