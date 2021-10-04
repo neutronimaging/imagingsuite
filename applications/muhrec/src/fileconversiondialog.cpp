@@ -22,6 +22,7 @@
 #include <strings/string2array.h>
 
 #include <averageimage.h>
+#include <MorphSpotClean.h>
 #include <readerexception.h>
 
 #include "fileconversiondialog.h"
@@ -43,12 +44,12 @@ FileConversionDialog::FileConversionDialog(QWidget *parent) :
     ui->lineEdit_DestinationPath->setText(dir.homePath());
     ui->lineEdit_DestinationMask->setText("img_####.tif");
     ui->widgetROI->setCheckable(true);
-
     ui->widgetROI->setROIColor("green");
 
     // Hiding unstable features
     ui->widgetROI->useROIDialog(false);
-    ui->widgetROI->hide();
+//    ui->widgetROI->hide();
+    ui->widgetROI->setChecked(false);
     ui->lineEdit_SkipList->hide();
     ui->pushButton_GetSkipList->hide();
     ui->label_skiplist->hide();
@@ -119,6 +120,8 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
         return;
     }
 
+    ui->progressBar->setMinimum(0);
+    ui->progressBar->setMaximum(ll.size());
     ext1=kipl::strings::filenames::GetFileExtension(ll.front().m_sFilemask);
 
     for (auto it=ll.begin(); it!=ll.end(); it++)
@@ -165,8 +168,10 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     QFuture<int> progress_thread = QtConcurrent::run(this,&FileConversionDialog::Progress);
     QFuture<int> proc_thread     = QtConcurrent::run(this,&FileConversionDialog::Process, ext1==ext2);
 
-    progress_thread.waitForFinished();
     proc_thread.waitForFinished();
+    ui->progressBar->setMaximum(filecnt-1);
+    progress_thread.waitForFinished();
+
 
     ui->progressBar->setValue(0);
     logger(logger.LogVerbose,"Threads are joined");
@@ -175,9 +180,11 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
 int FileConversionDialog::Process(bool sameext)
 {
     int res=0;
+
     if ((sameext) &&
         (ui->widgetROI->isChecked() == false) &&
-        (ui->groupBox_combineImages->isChecked() == false))
+        (ui->groupBox_combineImages->isChecked() == false) &&
+        (ui->groupBox_spotclean->isChecked()== false))
     {
         res=CopyImages();
     }
@@ -185,8 +192,6 @@ int FileConversionDialog::Process(bool sameext)
     {
         res=ConvertImages();
     }
-
-
 
     return res;
 }
@@ -207,7 +212,8 @@ int FileConversionDialog::CopyImages()
 
     int destcnt=ui->spinBox_FirstDestinationIndex->value();
 
-    for (auto it=flist.begin(); it!=flist.end(); ++it) {
+    for (auto it=flist.begin(); it!=flist.end(); ++it)
+    {
         kipl::strings::filenames::MakeFileName(destmask,destcnt,destname,ext,'#','0',false);
 
         if (QFile::copy(QString::fromStdString(*it),QString::fromStdString(destname))==false)
@@ -243,50 +249,88 @@ int FileConversionDialog::ConvertImages()
 
     std::vector<size_t> roi={0,0,1,1};
     std::vector<size_t> crop;
-    if (ui->widgetROI->isChecked() == true) {
+    if (ui->widgetROI->isChecked() == true)
+    {
         logger.message("using ROI");
         ui->widgetROI->getROI(roi);
         crop = roi;
     }
 
-    const bool bCombine = ui->groupBox_combineImages->isChecked();
-    const int nCombine   = bCombine ? ui->spinCollationSize->value() : 1;
+    const bool bCombine  = ui->groupBox_combineImages->isChecked();
+    const int  nCombine  = ui->spinCombineSize->value();
 
     std::vector<size_t> dims(2);
 
+    dims=imgreader.imageSize(flist.front(),1.0f);
     if (!crop.empty())
     {
         dims[0]=crop[2]-crop[0];
         dims[1]=crop[3]-crop[1];
     }
-    else
-    {
-        dims=imgreader.imageSize(flist.front(),1.0f);
-    }
-    dims.push_back(nCombine);
 
-    if (bCombine==true)
-        img3d.resize(dims);
+    msg.str(""); msg<<"Img3d size "<<dims[0]<<", "<<dims[1]<<", "<<dims[2]<<", "<<nCombine<< ", "<< (bCombine ?"true" : "false");
+    logger.message(msg.str());
+    std::vector<size_t> dims3d = {dims[0],dims[1],static_cast<size_t>(nCombine)} ;
+    img3d.resize(dims3d);
+
+    msg.str(""); msg<<"Img3d size "<<img3d.Size(0)<<", "<<img3d.Size(1)<<", "<<img3d.Size(2);
+    logger.message(msg.str());
 
     ImagingAlgorithms::AverageImage avgimg;
-    errmsg.str("");
-    for (auto it=flist.begin(); it!=flist.end(); ) {
+    ImagingAlgorithms::MorphSpotClean *spotclean=nullptr;
 
-        try {
+    if (ui->groupBox_spotclean->isChecked())
+    {
+        spotclean = new ImagingAlgorithms::MorphSpotClean;
+        spotclean->setCleanMethod(static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboBox_spotcleanmethod->currentIndex()),
+                                  ImagingAlgorithms::MorphCleanReplace);
+        spotclean->setDetectionStrelSize(5);
+        spotclean->setThresholdByFraction(true);
+        spotclean->useThreading(true);
+
+    }
+
+    errmsg.str("");
+    for (auto it=flist.begin(); it!=flist.end(); )
+    {
+
+        try
+        {
             if (bCombine==true)
             {
-                for (int i=0; (i<nCombine) && (it!=flist.end()); ++i) {
+                for (int i=0; (i<nCombine) && (it!=flist.end()); ++i)
+                {
                     img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,crop);
-                    std::copy(img.GetDataPtr(),img.GetDataPtr()+img.Size(),img3d.GetLinePtr(0,i));
-                    ++it;
+//                    img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f);
+                    if (spotclean!=nullptr)
+                    {
+                        spotclean->process(img,ui->doubleSpinBox_spotclean_threshold->value(),0.01);
+                    }
+                   std::copy_n(img.GetDataPtr(),img.Size(),img3d.GetLinePtr(0,i));
+                   ++it;
                 }
+
                 img=avgimg(img3d,static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboAverageMethod->currentIndex()));
             }
-            else {
+            else
+            {
                 img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,crop);
+//                img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1);
+                if (spotclean!=nullptr)
+                {
+                    spotclean->process(img,ui->doubleSpinBox_spotclean_threshold->value(),0.01);
+                }
                 ++it;
             }
             filecnt+=nCombine;
+        }
+        catch (ReaderException &e)
+        {
+            errmsg.str("");
+            errmsg<<"Failed to read "<<destname;
+            dlg.setText(QString::fromStdString(errmsg.str()));
+            dlg.setDetailedText(QString::fromStdString(e.what()));
+            logger(logger.LogError,errmsg.str());
         }
         catch (kipl::base::KiplException &e)
         {
@@ -373,7 +417,7 @@ int FileConversionDialog::Progress()
 {
     logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
 
-  //  while (filecnt<ui->progressBar->maximum() && !proc_thread.isFinished()){
+//   while (filecnt<ui->progressBar->maximum() && !proc_thread.isFinished())
     while (filecnt<ui->progressBar->maximum())
     {
         ui->progressBar->setValue(filecnt);
@@ -398,7 +442,8 @@ void FileConversionDialog::on_spinCombineSize_valueChanged(int arg1)
 
    auto ll=ui->ImageLoaderConfig->getList();
 
-   if (ll.empty()==true) {
+   if (ll.empty()==true)
+   {
        logger(logger.LogWarning,"Empty image loader.");
        return;
    }
@@ -414,26 +459,26 @@ void FileConversionDialog::on_spinCombineSize_valueChanged(int arg1)
                                                              ui->spinBox_goldenFirstIdx->value(),
                                                              ui->comboBox_ScanLength->currentIndex()==0 ? 180.0: 360.0);
 
-   int N=static_cast<int>(plist.size());
+   int N    = static_cast<int>(plist.size());
    int rest = N % arg1;
    msg<<N/arg1<<" files with a rest of "<<rest<<" files";
    ui->labelNumberOfFiles->setText(QString::fromStdString(msg.str()));
 }
 
-void FileConversionDialog::on_spinCollationSize_editingFinished()
+void FileConversionDialog::on_spinCombineSize_editingFinished()
 {
-    on_spinCombineSize_valueChanged(ui->spinCollationSize->value());
+    on_spinCombineSize_valueChanged(ui->spinCombineSize->value());
 }
 
 void FileConversionDialog::on_comboBox_ScanOrder_currentIndexChanged(int index)
 {
-    if (0<index) {
+    if (0<index)
+    {
         ui->label_scanlength->show();
         ui->comboBox_ScanLength->show();
-
-
     }
-    else {
+    else
+    {
         ui->label_scanlength->hide();
         ui->comboBox_ScanLength->hide();
     }
@@ -445,7 +490,8 @@ void FileConversionDialog::on_ImageLoaderConfig_readerListModified()
 
     auto ll=ui->ImageLoaderConfig->getList();
     kipl::base::TImage<float,2> img;
-    if (ll.empty()==true) {
+    if (ll.empty()==true)
+    {
         logger(logger.LogWarning,"Empty image loader.");
 
         ui->widgetROI->setSelectionImage(img);

@@ -31,7 +31,7 @@ private slots:
 
     void on_spinCombineSize_valueChanged(int arg1);
 
-    void on_spinCollationSize_editingFinished();
+    void on_spinCombineSize_editingFinished();
 
     void on_comboBox_ScanOrder_currentIndexChanged(int index);
 
