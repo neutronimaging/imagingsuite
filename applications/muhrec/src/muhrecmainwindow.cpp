@@ -2849,6 +2849,8 @@ void MuhRecMainWindow::UpdateCBCTDistances()
     {
         ui->doubleSpinBox_magnification->setValue(ui->dspinSDD->value()/ui->dspinSOD->value());
     }
+    double voxelsize = ui->dspinResolution->value()/ui->doubleSpinBox_magnification->value();
+    ui->label_voxelsize->setText(QString::number(voxelsize,'f',5));
 }
 
 void MuhRecMainWindow::UpdatePiercingPoint()
