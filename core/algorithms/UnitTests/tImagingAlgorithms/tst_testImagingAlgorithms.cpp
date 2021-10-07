@@ -32,6 +32,8 @@ public:
     
 private Q_SLOTS:
     void PixelInfo();
+
+private:
     void MorphSpotClean_Initialization();
     void MorphSpotClean_CleanHoles();
     void MorphSpotClean_CleanPeaks();
@@ -56,13 +58,13 @@ private Q_SLOTS:
     void RefImgCorrection_Initialization();
 
     void RefImgCorrection_enums();
-private:
+
     void MorphSpotClean_ListAlgorithm();
 private:
     kipl::base::TImage<float,2> holes;
     std::map<size_t,float> points;
-    size_t pos1;
-    size_t pos2;
+//    size_t pos1;
+//    size_t pos2;
 
 };
 
@@ -282,26 +284,38 @@ void TestImagingAlgorithms::AverageImage_Processing()
 
     res=avg(stack,ImagingAlgorithms::AverageImage::ImageSum);
     float r0=res[0];
+    QCOMPARE(res.Size(0),dims[0]);
+    QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,15.0f);
 
     res=avg(stack,ImagingAlgorithms::AverageImage::ImageAverage);
     r0=res[0];
+    QCOMPARE(res.Size(0),dims[0]);
+    QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,3.0f);
 
     res=avg(stack,ImagingAlgorithms::AverageImage::ImageWeightedAverage);
     r0=res[0];
+    QCOMPARE(res.Size(0),dims[0]);
+    QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,3.0f);
 
     res=avg(stack,ImagingAlgorithms::AverageImage::ImageMedian);
     r0=res[0];
+    QCOMPARE(res.Size(0),dims[0]);
+    QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,3.0f);
 
     res=avg(stack,ImagingAlgorithms::AverageImage::ImageMin);
     r0=res[0];
+    QCOMPARE(res.Size(0),dims[0]);
+    QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,1.0f);
 
     res=avg(stack,ImagingAlgorithms::AverageImage::ImageMax);
     r0=res[0];
+    QCOMPARE(res.Size(0),dims[0]);
+    QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,5.0f);
 }
 
