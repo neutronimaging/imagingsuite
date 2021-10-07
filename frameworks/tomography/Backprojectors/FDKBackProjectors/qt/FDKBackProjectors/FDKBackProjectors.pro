@@ -57,7 +57,8 @@ SOURCES += ../../src/fdkbackproj.cpp  \
         ../../src/genericbp.cpp \
         ../../src/fdkreconbase.cpp \
         ../../src/fdkbp.cpp \
-        ../../src/fdkbp_single.cpp
+        ../../src/fdkbp_single.cpp \
+        ../../src/fdkbp_single2.cpp
 #        ../../src/ramp_filter.cpp
 #        ../../src/fdk.cxx \
 #        ../../src/bowtie_correction.cxx \
@@ -76,8 +77,9 @@ HEADERS += ../../src/fdkbackproj.h \
 	../../src/fdkbackproj_global.h \
 	../../src/genericbp.h \
         ../../src/fdkreconbase.h \
-         ../../src/fdkbp.h \
-        ../../src/fdkbp_single.h
+        ../../src/fdkbp.h \
+        ../../src/fdkbp_single.h \
+        ../../src/fdkbp_single2.h
 #        ../../src/ramp_filter.h
 #        ../../src/fdk.h \
 #        ../../src/bowtie_correction.h \
