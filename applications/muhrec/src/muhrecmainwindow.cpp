@@ -46,6 +46,7 @@
 #include "piercingpointdialog.h"
 #include "referencefiledlg.h"
 #include "globalsettingsdialog.h"
+#include "fileconversiondialog.h"
 
 
 MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
@@ -2856,6 +2857,8 @@ void MuhRecMainWindow::UpdateCBCTDistances()
     {
         ui->doubleSpinBox_magnification->setValue(ui->dspinSDD->value()/ui->dspinSOD->value());
     }
+    double voxelsize = ui->dspinResolution->value()/ui->doubleSpinBox_magnification->value();
+    ui->label_voxelsize->setText(QString::number(voxelsize,'f',5));
 }
 
 void MuhRecMainWindow::UpdatePiercingPoint()
@@ -2988,4 +2991,11 @@ void MuhRecMainWindow::on_spinFirstDark_valueChanged(int arg1)
 void MuhRecMainWindow::on_spinDarkCount_valueChanged(int arg1)
 {
     on_comboBox_projectionViewer_currentIndexChanged(2);
+}
+
+void MuhRecMainWindow::on_actionConvert_files_triggered()
+{
+    FileConversionDialog dlg(this);
+
+    dlg.exec();
 }
