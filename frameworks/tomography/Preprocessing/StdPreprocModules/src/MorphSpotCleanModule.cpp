@@ -152,12 +152,6 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::ma
 
     cleaner.process(img,m_fThreshold,m_fSigma);
 
-// Original threading code. Threading done by module
-//    if (m_bThreading)
-//        return ProcessParallelStd(img);
-//    else
-//        return ProcessSingle(img);
-
     return 0;
 }
 

@@ -55,13 +55,15 @@ int ProcessModuleBase::Process(kipl::base::TImage<float,3> &img, std::map<std::s
 
 void ProcessModuleBase::setNumberOfThreads(int N)
 {
-    if (N<1)
+    int hwMaxThreads = std::thread::hardware_concurrency();
+
+    if ((N<1) || (hwMaxThreads < N))
     {
-        nNumberOfThreads = std::thread::hardware_concurrency();
+        nMaxThreads = hwMaxThreads;
     }
     else
     {
-        nNumberOfThreads = N;
+        nMaxThreads = N;
     }
 }
 

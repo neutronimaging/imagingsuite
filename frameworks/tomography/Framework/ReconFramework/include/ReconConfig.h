@@ -40,6 +40,9 @@ public:
         bool bValidateData;
         std::string WriteXML(int indent=0);          ///< Serializes the settings.
         int nMaxThreads;
+
+    private:
+        void setNumberOfThreads(int N);
 	};
 
     /// Projection configuration settings

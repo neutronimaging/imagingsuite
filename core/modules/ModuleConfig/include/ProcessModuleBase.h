@@ -101,7 +101,7 @@ protected:
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     std::vector<Publication> publications;
     bool m_bThreading;
-    int nNumberOfThreads;
+    int nMaxThreads;
 };
 
 

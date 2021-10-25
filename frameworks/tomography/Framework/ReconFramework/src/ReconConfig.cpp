@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <thread>
 
 #include <averageimage.h>
 
@@ -565,14 +566,18 @@ ReconConfig::cSystem::cSystem():
     eLogLevel(kipl::logging::Logger::LogMessage),
     bValidateData(false),
     nMaxThreads(-1)
-{}
+{
+    setNumberOfThreads(nMaxThreads);
+}
 
 ReconConfig::cSystem::cSystem(const cSystem &a) : 
 	nMemory(a.nMemory), 
     eLogLevel(a.eLogLevel),
     bValidateData(a.bValidateData),
     nMaxThreads(a.nMaxThreads)
-{}
+{
+    setNumberOfThreads(nMaxThreads);
+}
 
 ReconConfig::cSystem & ReconConfig::cSystem::operator=(const cSystem &a) 
 {
@@ -580,6 +585,9 @@ ReconConfig::cSystem & ReconConfig::cSystem::operator=(const cSystem &a)
     eLogLevel     = a.eLogLevel;
     bValidateData = a.bValidateData;
     nMaxThreads     = a.nMaxThreads;
+
+    setNumberOfThreads(a.nMaxThreads);
+
 	return *this;
 }
 
@@ -597,6 +605,20 @@ std::string ReconConfig::cSystem::WriteXML(int indent)
 
 	return str.str();
 }		
+
+void ReconConfig::cSystem::setNumberOfThreads(int N)
+{
+    int hwMaxThreads = std::thread::hardware_concurrency();
+
+    if ((N<1) || (hwMaxThreads<N))
+    {
+        nMaxThreads = hwMaxThreads;
+    }
+    else
+    {
+        nMaxThreads = N;
+    }
+}
 
 //---------
 ReconConfig::cProjections::cProjections() :

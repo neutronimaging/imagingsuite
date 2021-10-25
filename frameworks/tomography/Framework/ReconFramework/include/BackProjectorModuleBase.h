@@ -132,7 +132,7 @@ protected:
     std::string m_sApplication;                  ///< The name of the application calling the module
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     std::vector<Publication> publications;
-    int nNumberOfThreads;
+    int nMaxThreads;
 };
 
 #endif

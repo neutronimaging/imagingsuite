@@ -556,9 +556,10 @@ bool MorphSpotClean::isThreaded()
 
 void MorphSpotClean::setNumberOfThreads(int N)
 {
+    int hwMaxThreads = std::thread::hardware_concurrency();
     if (N<1)
     {
-        m_nNumberOfThreads = std::thread::hardware_concurrency();
+        m_nNumberOfThreads = hwMaxThreads;
     }
     else
     {

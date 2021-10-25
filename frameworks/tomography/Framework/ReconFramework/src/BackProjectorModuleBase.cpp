@@ -64,6 +64,8 @@ size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,3> proj, std::m
 
 int BackProjectorModuleBase::Configure(ReconConfig config, std::map<string, string> parameters)
 {
+    setNumberOfThreads(config.System.nMaxThreads);
+
     try {
         m_bBuildCircleMask = kipl::strings::string2bool(GetStringParameter(parameters,"usecircularmask"));
     }
@@ -86,19 +88,21 @@ std::map<string, string> BackProjectorModuleBase::GetParameters()
 
 void BackProjectorModuleBase::setNumberOfThreads(int N)
 {
-    if (N<1)
+    int hwMaxThreads = std::thread::hardware_concurrency();
+
+    if ((N<1) || (hwMaxThreads<N))
     {
-        nNumberOfThreads = std::thread::hardware_concurrency();
+        nMaxThreads = hwMaxThreads ;
     }
     else
     {
-        nNumberOfThreads = N;
+        nMaxThreads = N;
     }
 }
 
 int BackProjectorModuleBase::numberOfThreads()
 {
-    return nNumberOfThreads;
+    return nMaxThreads;
 }
 
 
