@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <tuple>
 
 #include <armadillo>
 
@@ -294,7 +295,6 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     double Gaussian::operator()(double x)
     {
-        int i;
         double arg,ex;
 
         double y=0.0;
@@ -308,7 +308,6 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Gaussian::operator()(double x, double &y, arma::vec & dyda)
     {
-        int i;
         long double fac,ex,arg;
 
         if (dyda.n_elem!=m_Npars)
@@ -328,8 +327,9 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         return 1;
     }
 
-    int Gaussian::Hessian(double UNUSED(x), arma::mat &UNUSED)
+    int Gaussian::Hessian(double UNUSED(x), arma::mat &m)
     {
+        std::ignore=m;
 
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
@@ -342,8 +342,11 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         */
     }
 
-    int Gaussian::Jacobian(double UNUSED(x), arma::mat & UNUSED(jac))
+    int Gaussian::Jacobian(double x, arma::mat & jac)
     {
+        std::ignore = x;
+        std::ignore = jac;
+
         std::cerr<<"The Jacobian is not available"<<std::endl;
         return 1;
         /*
@@ -356,13 +359,13 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Gaussian::printPars()
     {
-        int i;
+
         char *est=new char[m_Npars];
 
-        for (i=0; i<m_Npars; i++)
+        for (int i=0; i<m_Npars; i++)
             est[i]=m_lock[i] ? ' ': '*';
 
-        for (i=0; i<m_Npars; i+=3)
+        for (int i=0; i<m_Npars; i+=3)
         {
             std::cout<<est[i]  <<"A="<<m_pars[i]  <<" "
                 <<est[i+1]<<"m="<<m_pars[i+1]<<" "
@@ -414,8 +417,10 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         return 1;
     }
 
-    int SumOfGaussians::Hessian(double UNUSED(x), arma::mat &UNUSED)
+    int SumOfGaussians::Hessian(double x, arma::mat &m)
     {
+        std::ignore = x;
+        std::ignore = m;
 
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
@@ -428,8 +433,11 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         */
     }
 
-    int SumOfGaussians::Jacobian(double UNUSED(x), arma::mat & UNUSED(jac))
+    int SumOfGaussians::Jacobian(double x, arma::mat & jac)
     {
+        std::ignore = x;
+        std::ignore = jac;
+
         std::cerr<<"The Jacobian is not available"<<std::endl;
         return 1;
         /*
@@ -472,6 +480,9 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Voight::operator()(double x, double &y, arma::vec &dyda)
     {
+        std::ignore = y;
+        std::ignore = dyda;
+
         long double diff=static_cast<long double>(x-m_pars[1]);
         x=m_pars[0]*exp(-m_pars[2]*fabs(diff)-(m_pars[3]*diff*diff*0.5));
 
@@ -480,12 +491,17 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Voight::Hessian(double x, arma::mat &hes)
     {
+        std::ignore = x;
+        std::ignore = hes;
 
         return -1;
     }
 
     int Voight::Jacobian(double x, arma::mat &jac)
     {
+        std::ignore = x;
+        std::ignore = jac;
+
         return 0;
     }
 
@@ -518,6 +534,8 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Lorenzian::operator()(double x, double &y, arma::vec & dyda)
     {
+        std::ignore = dyda;
+
         y=m_pars[0]/(dPi*(x*x+m_pars[0]*m_pars[0]));
 
         return 1;
@@ -525,11 +543,17 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Lorenzian::Hessian(double x, arma::mat &hes)
     {
+        std::ignore = x;
+        std::ignore = hes;
+
         return -1;
     }
 
     int Lorenzian::Jacobian(double x, arma::mat &jac)
     {
+        std::ignore = x;
+        std::ignore = jac;
+
         return -1;
     }
 
