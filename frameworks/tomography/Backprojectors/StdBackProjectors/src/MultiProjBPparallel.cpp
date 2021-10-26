@@ -244,7 +244,7 @@ void MultiProjectionBPparallel::BackProjectSTL(int first, int last)
 
         const float centerinc    = 4*tan(mConfig.ProjectionInfo.fTiltAngle*fPi/180); // The SSE requires increments of 4
 
-        for (int y=first; y<=last; y++)
+        for (int y=first; y<last; y++)
         {
             const size_t cfStartX = mask[y-1].first;
             const size_t cfStopX  = mask[y-1].second;
@@ -296,7 +296,7 @@ void MultiProjectionBPparallel::BackProjectSTL(int first, int last)
     }
     else
     {
-        for (int y=first; y<=last; y++)
+        for (int y=first; y<last; y++)
         {
             const size_t cfStartX = mask[y-1].first;
             const size_t cfStopX  = mask[y-1].second;
