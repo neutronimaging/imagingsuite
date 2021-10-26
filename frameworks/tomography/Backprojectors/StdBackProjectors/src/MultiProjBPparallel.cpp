@@ -62,6 +62,13 @@ void MultiProjectionBPparallel::BackProjectOpenMP()
         ptrdiff_t y=0;
         #pragma omp parallel
         {
+            const size_t SizeV4		   = projections.Size(0)/4;
+            const int SizeUm2	   	   = static_cast<int>(SizeU-2);
+	
+#if defined (OMP)
+    omp_set_number_of_threads(nMaxThreads);
+#endif
+
             __m128 column[2048];
             __m128 a,b;
             float fPosU=0.0f;
@@ -122,7 +129,8 @@ void MultiProjectionBPparallel::BackProjectOpenMP()
             }
         }
     }
-    else {
+    else
+    {
         ptrdiff_t y=0;
         #pragma omp parallel
         {

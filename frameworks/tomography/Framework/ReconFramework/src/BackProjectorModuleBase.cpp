@@ -16,7 +16,9 @@ BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::s
     m_sModuleName(name),
     m_bBuildCircleMask(true),
 	m_sApplication(application),
-    m_Interactor(interactor)
+    m_Interactor(interactor),
+    nMaxThreads(-1)
+
 {
 	logger(kipl::logging::Logger::LogMessage,"C'tor BackProjBase");
     if (m_Interactor!=nullptr) {
@@ -26,6 +28,7 @@ BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::s
 		logger(kipl::logging::Logger::LogVerbose,"An interactor was not provided");
 
 	}
+    setNumberOfThreads(-1);
 }
 
 BackProjectorModuleBase::~BackProjectorModuleBase(void)
