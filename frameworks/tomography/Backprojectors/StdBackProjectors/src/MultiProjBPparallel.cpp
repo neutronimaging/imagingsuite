@@ -43,11 +43,17 @@ void MultiProjectionBPparallel::BackProject()
 	const int SizeUm2	   	   = static_cast<int>(SizeU-2);
 	const size_t NProjections  = nProjectionBufferSize;
 	
+#if defined (OMP)
+    omp_set_number_of_threads(nMaxThreads);
+#endif
+
 	// This back projection is made for pillars in z
 	if (mConfig.ProjectionInfo.bCorrectTilt) {
 		msg.str("");
 		msg<<"Tilting axis by "<<mConfig.ProjectionInfo.fTiltAngle<<" degrees at "<<mConfig.ProjectionInfo.roi[1];
 		logger(kipl::logging::Logger::LogVerbose,msg.str());
+
+
 
 		ptrdiff_t y=0;
 		#pragma omp parallel
