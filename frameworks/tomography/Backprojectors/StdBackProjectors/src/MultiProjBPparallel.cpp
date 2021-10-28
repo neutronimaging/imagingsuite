@@ -12,6 +12,8 @@
 #include <iostream>
 #include <emmintrin.h>
 #include <cmath>
+#include <functional>
+#include <thread>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
