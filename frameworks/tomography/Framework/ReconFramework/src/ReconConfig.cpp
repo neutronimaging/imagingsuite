@@ -148,12 +148,20 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             msg<<"Failed to parse argument "<<e.what();
             logger(kipl::logging::Logger::LogWarning,msg.str());
         }
-        if (group=="projections") {
+        if (group=="userinformation") {
             if (var=="operator")      UserInformation.sOperator      = value;
             if (var=="instrument")    UserInformation.sInstrument    = value;
             if (var=="projectnumber") UserInformation.sProjectNumber = value;
             if (var=="sample")        UserInformation.sSample        = value;
             if (var=="comment")       UserInformation.sComment       = value;
+        }
+
+        if (group=="system")
+        {
+            if (var=="memory") System.nMemory = std::stoul(value);
+            if (var=="loglevel") string2enum(value,System.eLogLevel);
+            if (var=="validate") System.bValidateData = kipl::strings::string2bool(value);
+            if (var=="maxthreads") System.nMaxThreads = std::stoi(value);
         }
 
         if (group=="projections") {

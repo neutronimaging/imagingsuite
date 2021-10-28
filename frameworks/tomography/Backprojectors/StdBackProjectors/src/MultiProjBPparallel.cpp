@@ -196,26 +196,28 @@ void MultiProjectionBPparallel::BackProjectSTL()
     msg<<"Tilting axis by "<<mConfig.ProjectionInfo.fTiltAngle<<" degrees at "<<mConfig.ProjectionInfo.roi[1];
     logger(kipl::logging::Logger::LogVerbose,msg.str());
 
-    const int SizeY      = mask.size();	   // The mask size is used since there may be less elements per row than the matrix size.
-
-    int nThreads = std::min(nMaxThreads,SizeY);
-
-    int blockSize  = SizeY / nThreads;
-    int blockRest = SizeY % nThreads;
-
     std::vector<std::thread> threads;
+//    const int SizeY      = mask.size();	   // The mask size is used since there may be less elements per row than the matrix size.
 
-    int begin = 1;
-    int end   = blockSize + (blockRest>0 ? 1 :0) ;
+//    int nThreads = std::min(nMaxThreads,SizeY);
+//    int blockSize  = SizeY / nThreads;
+//    int blockRest = SizeY % nThreads;
 
-    for (int i = 0; i < nThreads; ++i)
+//    int begin = 1;
+//    int end   = blockSize + (blockRest>0 ? 1 :0) ;
+
+//    for (int i = 0; i < nThreads; ++i)
+//    {   // spawn threads
+
+//        threads.push_back(std::thread([=] { BackProjectSTL(begin,end); }));
+
+//        --blockRest;
+//        begin  = end;
+//        end   += blockSize + (blockRest>0 ? 1 :0) ;
+//    }
+    for (auto const & block : lineBlocks)
     {   // spawn threads
-
-        threads.push_back(std::thread([=] { BackProjectSTL(begin,end); }));
-
-        --blockRest;
-        begin  = end;
-        end   += blockSize + (blockRest>0 ? 1 :0) ;
+        threads.push_back(std::thread([=] { BackProjectSTL(block.first,block.second); }));
     }
 
     // call join() on each thread in turn
