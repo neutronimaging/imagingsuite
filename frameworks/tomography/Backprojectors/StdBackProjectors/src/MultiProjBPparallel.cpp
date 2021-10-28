@@ -39,7 +39,11 @@ void MultiProjectionBPparallel::BackProject()
 #if defined (__APPLE__)
     BackProjectSTL();
 #else
-    BackProjectOpenMP();
+    switch (mConfig.System.eThreadMethod)
+    {
+        case kipl::base::threadingSTL :    BackProjectSTL();    break;
+        case kipl::base::threadingOpenMP : BackProjectOpenMP(); break;
+    }
 #endif
 
 }

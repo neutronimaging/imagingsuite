@@ -158,10 +158,11 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
 
         if (group=="system")
         {
-            if (var=="memory") System.nMemory = std::stoul(value);
-            if (var=="loglevel") string2enum(value,System.eLogLevel);
-            if (var=="validate") System.bValidateData = kipl::strings::string2bool(value);
-            if (var=="maxthreads") System.nMaxThreads = std::stoi(value);
+            if (var=="memory")       System.nMemory = std::stoul(value);
+            if (var=="loglevel")     string2enum(value,System.eLogLevel);
+            if (var=="validate")     System.bValidateData = kipl::strings::string2bool(value);
+            if (var=="maxthreads")   System.nMaxThreads = std::stoi(value);
+            if (var=="threadmethod") string2enum(value,System.eThreadMethod);
         }
 
         if (group=="projections") {
@@ -270,6 +271,9 @@ void ReconConfig::ParseSystem(xmlTextReaderPtr reader)
 
             if (sName=="maxthreads")
                 System.nMaxThreads=std::stoi(sValue);
+
+            if (sName=="threadmethod")
+                string2enum(sValue,System.eThreadMethod);
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -573,7 +577,8 @@ ReconConfig::cSystem::cSystem():
 	nMemory(1500ul),
     eLogLevel(kipl::logging::Logger::LogMessage),
     bValidateData(false),
-    nMaxThreads(-1)
+    nMaxThreads(-1),
+    eThreadMethod(kipl::base::threadingSTL)
 {
     setNumberOfThreads(nMaxThreads);
 }
@@ -582,7 +587,8 @@ ReconConfig::cSystem::cSystem(const cSystem &a) :
 	nMemory(a.nMemory), 
     eLogLevel(a.eLogLevel),
     bValidateData(a.bValidateData),
-    nMaxThreads(a.nMaxThreads)
+    nMaxThreads(a.nMaxThreads),
+    eThreadMethod(a.eThreadMethod)
 {
     setNumberOfThreads(nMaxThreads);
 }
@@ -592,7 +598,8 @@ ReconConfig::cSystem & ReconConfig::cSystem::operator=(const cSystem &a)
     nMemory       = a.nMemory;
     eLogLevel     = a.eLogLevel;
     bValidateData = a.bValidateData;
-    nMaxThreads     = a.nMaxThreads;
+    nMaxThreads   = a.nMaxThreads;
+    eThreadMethod = a.eThreadMethod;
 
     setNumberOfThreads(a.nMaxThreads);
 
@@ -609,6 +616,7 @@ std::string ReconConfig::cSystem::WriteXML(int indent)
 	str<<setw(indent+4)<<"  "<<"<loglevel>"<<eLogLevel<<"</loglevel>"<<std::endl;
     str<<setw(indent+4)<<"  "<<"<validate>"<<kipl::strings::bool2string(bValidateData)<<"</validate>"<<std::endl;
     str<<setw(indent+4)<<" "<<"<maxthreads>"<<nMaxThreads<<"</maxthreads>"<<std::endl;
+    str<<setw(indent+4)<<" "<<"<threadmethod>"<<eThreadMethod<<"</threadmethod>"<<std::endl;
     str<<setw(indent)  <<"  "<<"</system>"<<std::endl;
 
 	return str.str();

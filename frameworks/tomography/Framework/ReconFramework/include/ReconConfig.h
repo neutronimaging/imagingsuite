@@ -40,6 +40,7 @@ public:
         bool bValidateData;
         std::string WriteXML(int indent=0);          ///< Serializes the settings.
         int nMaxThreads;
+        kipl::base::eThreadingMethod eThreadMethod; ///< preferred threading method. Only used if supported.
 
     private:
         void setNumberOfThreads(int N);
