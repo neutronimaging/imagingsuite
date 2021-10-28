@@ -121,7 +121,6 @@ int BackProjectorModuleBase::numberOfThreads()
 
 kipl::base::TImage<float,2> BackProjectorModuleBase::GetSlice(size_t idx)
 {
-
     std::ostringstream msg;
 	size_t origin[2]={0,0};
     std::vector<size_t> dims(2,0UL);
@@ -310,13 +309,15 @@ void BackProjectorModuleBase::BuildCircleMask()
     {
         block.first = line;
         size_t cumsum = 0UL;
-        for ( ; (cumsum<blockSize) && (it != mask.end()) ; ++it)
+        for ( ; (cumsum<blockSize) && (it != mask.end()) ; ++it, ++line)
         {
             cumsum += it->second - it->first;
-
-            ++line;
         }
-        block.second = line;
+        if (line<mask.size())
+            block.second = line;
+        else
+            block.second = mask.size() - 1;
     }
+
 
 }
