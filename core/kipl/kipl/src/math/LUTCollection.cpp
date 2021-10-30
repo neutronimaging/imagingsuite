@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <tuple>
 
 #include "../../include/math/LUTCollection.h"
 #include "../../include/base/KiplException.h"
@@ -18,6 +19,9 @@ LogLUT::~LogLUT()
 
 void LogLUT::BuildLUT(size_t len, float lo, float hi)
 {
+    std::ignore = len;
+    std::ignore = hi;
+
 	float x=lo;
 	float delta=1.0f/Slope();
 	size_t i=0;
@@ -70,6 +74,8 @@ float SigmoidLUT::LowerLimit(float lambda, float sigma)
 
 void SigmoidLUT::BuildLUT(size_t len, float lo, float hi)
 {
+    std::ignore = hi;
+
 	const float invwidth=1.0f/fSigma;
 	
 	const float delta=1.0f/Slope();
@@ -92,6 +98,8 @@ PowLUT::~PowLUT()
 
 void PowLUT::BuildLUT(size_t len, float lo, float hi)
 {
+    std::ignore = hi;
+
 	const float delta=1.0f/Slope();
 	float x=lo;
 	
@@ -117,6 +125,8 @@ GaussLUT::~GaussLUT()
 
 void GaussLUT::BuildLUT(size_t len, float lo, float hi)
 {
+    std::ignore = hi;
+
 	const float delta=1.0f/Slope();
 	float x=lo;
 	

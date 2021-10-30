@@ -69,7 +69,7 @@ void ProcessModuleBase::setNumberOfThreads(int N)
 
 int ProcessModuleBase::numberOfThreads()
 {
-    return numberOfThreads();
+    return nMaxThreads;
 }
 
 void ProcessModuleBase::resetTimer()

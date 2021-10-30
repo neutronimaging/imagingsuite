@@ -132,11 +132,13 @@ std::map<std::string, std::string> MorphSpotCleanModule::GetParameters()
 
 bool MorphSpotCleanModule::SetROI(const std::vector<size_t> &roi)
 {
+    std::ignore = roi;
     return false;
 }
 
-int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
+int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
+    std::ignore = coeff;
     logger(logger.LogMessage,"ProcessCore");
 
     // Threading done by cleaner class
@@ -156,8 +158,10 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::ma
 }
 
 
-int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & UNUSED(coeff))
+int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
 {
+    std::ignore = coeff;
+
     std::ostringstream msg;
     ImagingAlgorithms::MorphSpotClean cleaner;
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
