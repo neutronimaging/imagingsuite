@@ -21,7 +21,7 @@ void GlobalSettingsDialog::setConfig(ReconConfig &config)
     ui->spinBox_memory->setValue(config.System.nMemory);
     ui->checkBox_validateData->setChecked(config.System.bValidateData);
     ui->spinBox_threads->setValue(config.System.nMaxThreads);
-    ui->comboBox_threadMethod->setCurrentText(QString::fromStdString(enum2string(config.System.eThreadMethod).substr(8)));
+    ui->comboBox_threadMethod->setCurrentIndex(static_cast<int>(config.System.eThreadMethod));
 }
 
 void GlobalSettingsDialog::updateConfig(ReconConfig &config)
