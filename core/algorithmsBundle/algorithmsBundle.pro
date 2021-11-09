@@ -7,5 +7,6 @@ SUBDIRS = \
     ../algorithms/UnitTests/tAdvancedFilters \
     ../algorithms/UnitTests/tImagingAlgorithms \
     ../algorithms/UnitTests/tImagingQAAlgorithms\
-    ../algorithms/UnitTests/tKiplAdvFilters
+    ../algorithms/UnitTests/tKiplAdvFilters \
+    ../algorithms/UnitTests/tReferenceImageCorrection
 

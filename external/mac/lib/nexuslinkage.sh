@@ -29,3 +29,11 @@ install_name_tool -change /usr/lib/libz.1.dylib libz.1.dylib libhdf5_cpp.11.dyli
 install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5_hl.10.dylib  libhdf5_hl.10.dylib libhdf5_hl.10.dylib
 install_name_tool -change /usr/local/opt/szip/lib/libsz.2.dylib libsz.2.dylib libhdf5_hl.10.dylib
 install_name_tool -change /usr/lib/libz.1.dylib libz.1.dylib libhdf5_hl.10.dylib
+
+if [ ! -f libNeXus.1.dylib ]; then
+    ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
+fi
+
+if [ ! -f libNeXusCPP.1.dylib ]; then
+    ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
+fi

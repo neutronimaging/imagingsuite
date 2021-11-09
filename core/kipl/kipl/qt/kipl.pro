@@ -396,24 +396,24 @@ exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {
 
 }
 
-symbian {
-    MMP_RULES += EXPORTUNFROZEN
-    TARGET.UID3 = 0xE96935EB
-    TARGET.CAPABILITY = 
-    TARGET.EPOCALLOWDLLDATA = 1
-    addFiles.sources = kipl.dll
-    addFiles.path = !:/sys/bin
-    DEPLOYMENT += addFiles
-}
+#symbian {
+#    MMP_RULES += EXPORTUNFROZEN
+#    TARGET.UID3 = 0xE96935EB
+#    TARGET.CAPABILITY =
+#    TARGET.EPOCALLOWDLLDATA = 1
+#    addFiles.sources = kipl.dll
+#    addFiles.path = !:/sys/bin
+#    DEPLOYMENT += addFiles
+#}
 
-unix:!symbian {
-    maemo5 {
-        target.path = /opt/usr/lib
-    } else {
-        target.path = /usr/lib
-    }
-    INSTALLS += target
-}
+#unix:!symbian {
+#    maemo5 {
+#        target.path = /opt/usr/lib
+#    } else {
+#        target.path = /usr/lib
+#    }
+#    INSTALLS += target
+#}
 
 DISTFILES += \
     ../include/filters/nonlocalmeans.txt
