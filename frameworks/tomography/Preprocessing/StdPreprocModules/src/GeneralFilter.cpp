@@ -1,4 +1,5 @@
 //<LICENSE>
+
 #include "../include/StdPreprocModules_global.h"
 
 #include <algorithm>
@@ -43,7 +44,7 @@ std::map<std::string, std::string> GeneralFilter::GetParameters()
 	return parameters;
 }
 
-bool GeneralFilter::SetROI(size_t *roi)
+bool GeneralFilter::SetROI(const std::vector<size_t> &roi)
 {
 	return false;
 }
