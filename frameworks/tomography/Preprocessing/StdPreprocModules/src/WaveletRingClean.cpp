@@ -66,6 +66,7 @@ bool WaveletRingClean::SetROI(const std::vector<size_t> &roi)
 
 int WaveletRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
+    m_nCounter = 0;
 	int retval=0;
     if (m_bThreading)
 		retval=ProcessParallel(img,coeff);
@@ -213,7 +214,9 @@ int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<flo
             ExtractSinogram(*img,sinogram,firstSinogram + j);
 
             filter->process(sinogram);
+            ++m_nCounter;
 
+            UpdateStatus(static_cast<float>(m_nCounter)/static_cast<float>(img->Size(2)),"Wavelet ring clean");
             InsertSinogram(sinogram,*img,j);
         }
         delete filter;

@@ -1804,7 +1804,8 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections,
     logger(kipl::logging::Logger::LogMessage,msg.str());
     msg.str("");
     m_BackProjector->GetModule()->SetROI(roi);
-    if (!UpdateProgress(0.95f, "Back projection"))
+
+    if (!UpdateProgress(m_Interactor->CurrentOverallProgress(), "Back projection"))
     {
         try {
             logger(kipl::logging::Logger::LogMessage,"Back projection started.");
