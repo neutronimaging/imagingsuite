@@ -199,11 +199,11 @@ int MorphSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
     cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
     cleaner.setCleanInfNan(m_bRemoveInfNaN);
     cleaner.setThresholdByFraction(m_bThresholdByFraction);
-
+    m_nCounter=0;
     msg.str("");
     try {
-        for (i=0; (i<N) && (UpdateStatus(float(i)/N,m_sModuleName)==false); i++) {
-
+        for (i=0; (i<N) && (UpdateStatus(float(m_nCounter)/N,m_sModuleName)==false); ++i,++m_nCounter)
+        {
             memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
             cleaner.process(proj,m_fThreshold,m_fSigma);
             memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
@@ -294,6 +294,7 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
 
     kipl::base::Transpose<float> transpose;
     transpose.bUseReference=true;
+    m_nCounter = 0;
     try
     {
         ImagingAlgorithms::MorphSpotClean cleaner;
@@ -305,6 +306,8 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
 
         for (i=0; i<N; i++)
         {
+            ++m_nCounter;
+            UpdateStatus(static_cast<float>(m_nCounter)/static_cast<float>(img->Size(2)),"MorphSpotClean");
             std::copy_n(img->GetLinePtr(0,firstSlice+i),proj.Size(),proj.GetDataPtr());
 
             if (m_bTranspose)

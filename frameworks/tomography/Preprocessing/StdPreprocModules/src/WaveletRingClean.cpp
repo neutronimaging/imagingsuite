@@ -69,7 +69,7 @@ int WaveletRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<st
     m_nCounter = 0;
 	int retval=0;
     if (m_bThreading)
-		retval=ProcessParallel(img,coeff);
+        retval=ProcessParallelStd(img);
 	else
 		retval=ProcessSingle(img,coeff);
 
@@ -80,27 +80,32 @@ int WaveletRingClean::ProcessSingle(kipl::base::TImage<float,3> & img, std::map<
 {
     std::vector<size_t> dims={img.Size(0), img.Size(2)};
 	bool fail=false;
-		kipl::base::TImage<float,2> sinogram;
-        ImagingAlgorithms::StripeFilter *filter=nullptr;
-		try {
-			filter=new ImagingAlgorithms::StripeFilter(dims,m_sWName,m_nDecNum, m_fSigma);
-		}
-		catch (kipl::base::KiplException &e) {
-				logger(kipl::logging::Logger::LogError,e.what());
-				fail=true;
-		}
-		if (!fail) {
-            const size_t N=img.Size(1);
-            for (size_t j=0; (j<N) && (UpdateStatus(float(j)/N,m_sModuleName)==false); ++j)
-			{
-				ExtractSinogram(img,sinogram,j);
 
-                filter->process(sinogram);
+    kipl::base::TImage<float,2> sinogram;
+    ImagingAlgorithms::StripeFilter *filter=nullptr;
 
-				InsertSinogram(sinogram,img,j);
-			}
-			delete filter;
-		}
+    try
+    {
+        filter=new ImagingAlgorithms::StripeFilter(dims,m_sWName,m_nDecNum, m_fSigma);
+    }
+    catch (kipl::base::KiplException &e)
+    {
+            logger(kipl::logging::Logger::LogError,e.what());
+            fail=true;
+    }
+
+    if (!fail) {
+        const size_t N=img.Size(2);
+        for (size_t j=0; (j<N) && (UpdateStatus(float(j)/N,m_sModuleName)==false); ++j)
+        {
+            ExtractSinogram(img,sinogram,j);
+
+            filter->process(sinogram);
+
+            InsertSinogram(sinogram,img,j);
+        }
+        delete filter;
+    }
 
 	if (fail) {
 		throw ReconException("Failed to process the projections using stripe filter.",__FILE__,__LINE__);
@@ -129,10 +134,13 @@ int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::ma
 				fail=true;
 			}
 		}
-		if (!fail) {
+        if (!fail)
+        {
 			#pragma omp for
             for (int j=0; j<N; j++)
 			{
+                ++m_nCounter;
+                UpdateStatus(static_cast<float>(j)/static_cast<float>(N),"Wavelet ring clean (OMP)");
 				std::cout<<"Processing sinogram "<<j<<std::endl;
 				ExtractSinogram(img,sinogram,j);
 
@@ -165,6 +173,7 @@ int WaveletRingClean::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     msg.str("");
     msg<<N<<" sinograms on "<<concurentThreadsSupported<<" threads, "<<M<<" sinograms per thread";
     logger(logger.LogMessage,msg.str());
+    m_nCounter = 0;
 
     for(size_t i = 0; i < concurentThreadsSupported; ++i)
     {
@@ -195,7 +204,8 @@ int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<flo
 
     kipl::base::TImage<float,2> sinogram;
     ImagingAlgorithms::StripeFilter *filter=nullptr;
-    try {
+    try
+    {
         filter = new ImagingAlgorithms::StripeFilter(dims,m_sWName,m_nDecNum, m_fSigma);
     }
     catch (kipl::base::KiplException &e)
@@ -210,13 +220,12 @@ int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<flo
     {
         for (size_t j=0; j<N; j++)
         {
-            std::cout<<"Processing sinogram "<<j<<std::endl;
             ExtractSinogram(*img,sinogram,firstSinogram + j);
 
             filter->process(sinogram);
             ++m_nCounter;
 
-            UpdateStatus(static_cast<float>(m_nCounter)/static_cast<float>(img->Size(2)),"Wavelet ring clean");
+            UpdateStatus(static_cast<float>(m_nCounter.load())/static_cast<float>(img->Size(1)),"Wavelet ring-clean parallel");
             InsertSinogram(sinogram,*img,j);
         }
         delete filter;
