@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 set(TARGET_NAME "StdBackProjectors")
-project(kipl LANGUAGES CXX)
+project(StdBackProjectors VERSION 1.0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 11)
@@ -52,7 +52,6 @@ add_library(${TARGET_NAME} SHARED
 
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 target_compile_definitions(${TARGET_NAME} PRIVATE STDBACKPROJECTORS_LIBRARY HAVE_NEXUS)
 
