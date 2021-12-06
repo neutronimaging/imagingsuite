@@ -62,6 +62,7 @@ SOURCES += \
     ../../src/ImagingException.cpp \
     ../../src/TranslateProjections.cpp \
     ../../src/MorphSpotClean.cpp \
+    ../../src/fovmask.cpp \
     ../../src/normalizeimage.cpp \
     ../../src/pixelinfo.cpp \
     ../../src/gammaclean.cpp \
@@ -78,6 +79,7 @@ HEADERS += \
     ../../include/ImagingException.h \
     ../../include/TranslateProjections.h \
     ../../include/MorphSpotClean.h \
+    ../../include/fovmask.h \
     ../../include/normalizeimage.h \
     ../../include/pixelinfo.h \
     ../../include/ImagingAlgorithms_global.h \
