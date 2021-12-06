@@ -175,12 +175,20 @@ int WaveletRingClean::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     logger(logger.LogMessage,msg.str());
     m_nCounter = 0;
 
+    size_t begin = 0;
+    size_t end   = 0;
+    size_t rest  = N % concurentThreadsSupported ; // Take care of the rest slices
+
     for(size_t i = 0; i < concurentThreadsSupported; ++i)
     {
-        // spawn threads
-        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
+        if (rest--)
+            end = begin+M+1;
+        else
+            end = begin + M;
+
         auto pImg = &img;
-        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,i*M,M+rest); }));
+        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,begin,end); }));
+        begin = end;
     }
 
     // call join() on each thread in turn

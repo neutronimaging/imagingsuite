@@ -204,9 +204,11 @@ int MorphSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
     try {
         for (i=0; (i<N) && (UpdateStatus(float(m_nCounter)/N,m_sModuleName)==false); ++i,++m_nCounter)
         {
-            memcpy(proj.GetDataPtr(),img.GetLinePtr(0,i),proj.Size()*sizeof(float));
+            std::copy_n(img.GetLinePtr(0,i),proj.Size(),proj.GetDataPtr());
+
             cleaner.process(proj,m_fThreshold,m_fSigma);
-            memcpy(img.GetLinePtr(0,i),proj.GetDataPtr(),proj.Size()*sizeof(float));
+
+            std::copy_n(proj.GetDataPtr(),proj.Size(),img.GetLinePtr(0,i));
         }
     }
     catch (ImagingException & e) {
@@ -265,12 +267,22 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     msg<<N<<" projections on "<<concurentThreadsSupported<<" threads, "<<M<<" projections per thread";
     logger(logger.LogMessage,msg.str());
 
+    size_t begin = 0;
+    size_t end   = 0;
+    size_t rest  = N % concurentThreadsSupported ; // Take care of the rest slices
+
     for(size_t i = 0; i < concurentThreadsSupported; ++i)
     {
+        if (rest--)
+            end = begin+M+1;
+        else
+            end = begin + M;
+
         // spawn threads
-        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
+
         auto pImg = &img;
-        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,i*M,M+rest); }));
+        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,begin,end); }));
+        begin = end;
     }
 
     // call join() on each thread in turn
