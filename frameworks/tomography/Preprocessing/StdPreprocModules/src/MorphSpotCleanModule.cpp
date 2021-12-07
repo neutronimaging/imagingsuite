@@ -269,12 +269,14 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
 
     size_t begin = 0;
     size_t end   = 0;
-    size_t rest  = N % concurentThreadsSupported ; // Take care of the rest slices
+    ptrdiff_t rest  = N % concurentThreadsSupported ; // Take care of the rest slices
 
-    for(size_t i = 0; i < concurentThreadsSupported; ++i)
+    for(size_t i = 0; i < concurentThreadsSupported; ++i,--rest)
     {
-        if (rest--)
+        if ( 0 < rest )
+        {
             end = begin+M+1;
+        }
         else
             end = begin + M;
 
@@ -292,12 +294,12 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     return 0;
 }
 
-int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSlice, size_t N)
+int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t begin, size_t end)
 {
     std::ostringstream msg;
     size_t i;
 
-    msg<<"Starting morphclean thread number="<<tid<<", N="<<N;
+    msg<<"Starting morphclean thread number="<<tid<<", N="<<end-begin;
     logger.verbose(msg.str());
     msg.str("");
     msg<<"Thread "<<tid<<" progress :";
@@ -316,11 +318,11 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
         cleaner.setCleanInfNan(m_bRemoveInfNaN);
         cleaner.setThresholdByFraction(m_bThresholdByFraction);
 
-        for (i=0; i<N; i++)
+        for (i=begin; i<end; ++i)
         {
             ++m_nCounter;
             UpdateStatus(static_cast<float>(m_nCounter)/static_cast<float>(img->Size(2)),"MorphSpotClean");
-            std::copy_n(img->GetLinePtr(0,firstSlice+i),proj.Size(),proj.GetDataPtr());
+            std::copy_n(img->GetLinePtr(0,i),proj.Size(),proj.GetDataPtr());
 
             if (m_bTranspose)
             {
@@ -333,7 +335,7 @@ int MorphSpotCleanModule::ProcessParallelStdBlock(size_t tid, kipl::base::TImage
                 cleaner.process(proj,this->m_fThreshold,this->m_fSigma);
             }
 
-            std::copy_n(proj.GetDataPtr(),proj.Size(),img->GetLinePtr(0,firstSlice+i));
+            std::copy_n(proj.GetDataPtr(),proj.Size(),img->GetLinePtr(0,i));
 
             msg<<".";
         }

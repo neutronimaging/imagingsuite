@@ -177,12 +177,12 @@ int WaveletRingClean::ProcessParallelStd(kipl::base::TImage<float,3> & img)
 
     size_t begin = 0;
     size_t end   = 0;
-    size_t rest  = N % concurentThreadsSupported ; // Take care of the rest slices
+    ptrdiff_t rest  = N % concurentThreadsSupported ; // Take care of the rest slices
 
-    for(size_t i = 0; i < concurentThreadsSupported; ++i)
+    for(size_t i = 0; i < concurentThreadsSupported; ++i,--rest)
     {
-        if (rest--)
-            end = begin+M+1;
+        if ( 0 < rest )
+            end = begin + M + 1;
         else
             end = begin + M;
 
@@ -198,12 +198,12 @@ int WaveletRingClean::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     return 0;
 }
 
-int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSinogram, size_t N)
+int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t begin, size_t end)
 {
     std::ostringstream msg;
     bool fail = false;
 
-    msg<<"Starting waveletringclean thread number="<<tid<<", N="<<N;
+    msg<<"Starting waveletringclean thread number="<<tid<<", N="<<end-begin;
     logger.verbose(msg.str());
     msg.str("");
     msg<<"Thread "<<tid<<" progress :";
@@ -226,9 +226,9 @@ int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<flo
 
     if (!fail)
     {
-        for (size_t j=0; j<N; j++)
+        for (size_t j=begin; j<end; j++)
         {
-            ExtractSinogram(*img,sinogram,firstSinogram + j);
+            ExtractSinogram(*img,sinogram,j);
 
             filter->process(sinogram);
             ++m_nCounter;
