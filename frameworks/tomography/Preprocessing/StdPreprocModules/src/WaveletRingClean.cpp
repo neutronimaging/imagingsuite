@@ -7,6 +7,7 @@
 #include <StripeFilter.h>
 #include <ReconException.h>
 #include <functional>
+#include <tuple>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -61,6 +62,8 @@ std::map<std::string, std::string> WaveletRingClean::GetParameters()
 
 bool WaveletRingClean::SetROI(const std::vector<size_t> &roi)
 {
+    std::ignore = roi;
+
 	return false;
 }
 
@@ -175,12 +178,20 @@ int WaveletRingClean::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     logger(logger.LogMessage,msg.str());
     m_nCounter = 0;
 
-    for(size_t i = 0; i < concurentThreadsSupported; ++i)
+    size_t begin = 0;
+    size_t end   = 0;
+    ptrdiff_t rest  = N % concurentThreadsSupported ; // Take care of the rest slices
+
+    for(size_t i = 0; i < concurentThreadsSupported; ++i,--rest)
     {
-        // spawn threads
-        size_t rest=(i==concurentThreadsSupported-1)*(N % concurentThreadsSupported); // Take care of the rest slices
+        if ( 0 < rest )
+            end = begin + M + 1;
+        else
+            end = begin + M;
+
         auto pImg = &img;
-        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,i*M,M+rest); }));
+        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,begin,end); }));
+        begin = end;
     }
 
     // call join() on each thread in turn
@@ -190,12 +201,12 @@ int WaveletRingClean::ProcessParallelStd(kipl::base::TImage<float,3> & img)
     return 0;
 }
 
-int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSinogram, size_t N)
+int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t begin, size_t end)
 {
     std::ostringstream msg;
     bool fail = false;
 
-    msg<<"Starting waveletringclean thread number="<<tid<<", N="<<N;
+    msg<<"Starting waveletringclean thread number="<<tid<<", N="<<end-begin;
     logger.verbose(msg.str());
     msg.str("");
     msg<<"Thread "<<tid<<" progress :";
@@ -218,9 +229,9 @@ int WaveletRingClean::ProcessParallelStdBlock(size_t tid, kipl::base::TImage<flo
 
     if (!fail)
     {
-        for (size_t j=0; j<N; j++)
+        for (size_t j=begin; j<end; j++)
         {
-            ExtractSinogram(*img,sinogram,firstSinogram + j);
+            ExtractSinogram(*img,sinogram,j);
 
             filter->process(sinogram);
             ++m_nCounter;
