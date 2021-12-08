@@ -7,6 +7,7 @@
 #include <StripeFilter.h>
 #include <ReconException.h>
 #include <functional>
+#include <tuple>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -61,6 +62,8 @@ std::map<std::string, std::string> WaveletRingClean::GetParameters()
 
 bool WaveletRingClean::SetROI(const std::vector<size_t> &roi)
 {
+    std::ignore = roi;
+
 	return false;
 }
 

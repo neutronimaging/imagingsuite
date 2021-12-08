@@ -206,7 +206,8 @@ void MuhRecMainWindow::SetupCallBacks()
     ui->widgetMatrixROI->setAutoHideROI(true);
     ui->widgetMatrixROI->setAllowUpdateImageDims(false);
     ui->widgetMatrixROI->setCheckable(true);
-    ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);    ui->widgetMatrixROI->updateViewer();
+    ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
+    ui->widgetMatrixROI->updateViewer();
 
     CenterOfRotationChanged();
 }
@@ -592,13 +593,18 @@ void MuhRecMainWindow::MatrixROIChanged(int x)
 
 void MuhRecMainWindow::MenuFileNew()
 {
-    if (m_pEngine!=nullptr) {
+    if (m_pEngine!=nullptr)
+    {
         delete m_pEngine;
         m_pEngine=nullptr;
     }
 
 
     LoadDefaults(false);
+    ui->projectionViewer->clear_marker();
+    ui->projectionViewer->clear_plot();
+    ui->projectionViewer->clear_rectangle();
+
 }
 
 void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
@@ -702,11 +708,21 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
          UpdateDialog();
     }
+    else
+    {
+        ui->widgetProjectionROI->updateViewer();
+        ui->widgetDoseROI->updateViewer();
+        ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
+    }
+
     m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
 
 //    UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     m_sConfigFilename=m_sHomePath+"noname.xml";
+    ui->plotHistogram->clearAllCursors();
+    ui->plotHistogram->clearAllCurves();
+
 }
 
 void MuhRecMainWindow::MenuFileOpen()
@@ -1391,6 +1407,7 @@ void MuhRecMainWindow::UpdateDialog()
     ui->dspinGrayHigh->setValue(m_Config.MatrixInfo.fGrayInterval[1]);
 
     ui->widgetMatrixROI->setROI(m_Config.MatrixInfo.roi,true);
+    ui->widgetMatrixROI->setCheckable(true);
     ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
 
     ui->editDestPath->setText(QString::fromStdString(m_Config.MatrixInfo.sDestinationPath));
