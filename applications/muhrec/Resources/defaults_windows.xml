@@ -85,7 +85,7 @@
 	                <clampdata>false</clampdata>
                     <cleanmethod>morphcleanreplace</cleanmethod>
                     <connectivity>conn4</connectivity>
-                    <detectionmethod>morphdetectpeaks</detectionmethod>
+                    <detectionmethod>morphdetectallspots</detectionmethod>
                     <thresholdbyfraction>true</thresholdbyfraction>
                     <edgesmooth>5</edgesmooth>
                     <maxarea>30</maxarea>

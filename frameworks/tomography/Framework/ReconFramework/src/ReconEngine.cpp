@@ -531,7 +531,6 @@ int ReconEngine::Process(const std::vector<size_t>  &roi)
         {
             ++moduleCnt;
 
-            //UpdateProgress(moduleCnt/fNumberOfModules,module->GetModule()->ModuleName());
             module->GetModule()->Process(projection,parameters);
 		}
 
@@ -1077,8 +1076,7 @@ int ReconEngine::Run3DFull()
             logger.message(msg.str());
             if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
             {
-                if (m_Interactor!=nullptr)
-                    m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
+                UpdateProgress(static_cast<float>(nProcessedBlocks)/static_cast<float>(nTotalBlocks),"Starting block");
 
                 std::vector<size_t> CBCT_roi(4,0UL);
                 CBCT_roi[0] = m_Config.ProjectionInfo.roi[0];
@@ -1149,8 +1147,7 @@ int ReconEngine::Run3DFull()
             }
             else
             {
-                    if (m_Interactor!=nullptr)
-                        m_Interactor->SetOverallProgress(float(nProcessedBlocks/float(nTotalBlocks)));
+                    UpdateProgress(static_cast<float>(nProcessedBlocks)/static_cast<float>(nTotalBlocks),"Starting block");
                     nProcessedProjections=0;
                     m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
 
@@ -1325,7 +1322,6 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
             ++moduleCnt;
 
             moduleName = module->GetModule()->ModuleName();
-            //UpdateProgress(moduleCnt/fNumberOfModules,moduleName);
 
 			msg.str("");
             msg<<"Setting ROI for module "<< moduleName;
@@ -1399,20 +1395,24 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
 
+    float progress = m_Interactor->CurrentOverallProgress();
+    float progressIncrement = 1.0f/(fNumberOfModules*nTotalBlocks);
+
     try
     {
         for (auto &module : m_PreprocList)
         {
             ++moduleCnt;
 
-            //UpdateProgress(moduleCnt/fNumberOfModules,module->GetModule()->ModuleName());
             if (module->GetModule()->ModuleName()==sLastModule)
                 break;
 
 			msg.str("");
             msg<<"Processing: "<<module->GetModule()->ModuleName();
+            progress += progressIncrement;
 			logger(kipl::logging::Logger::LogMessage,msg.str());
-            if (!(m_bCancel=UpdateProgress(moduleCnt/fNumberOfModules, msg.str()))) {
+            if (!(m_bCancel=UpdateProgress(progressIncrement, msg.str())))
+            {
                 module->GetModule()->Process(projections,parameters);
             }
 			else
@@ -1628,21 +1628,20 @@ int ReconEngine::Process3D(const std::vector<size_t> &roi)
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
 
-    float moduleCnt=0.0f;
+    float progress = m_Interactor->CurrentOverallProgress();
     float fNumberOfModules=static_cast<float>(m_PreprocList.size())+1;
-
+    float progressIncrement = 1/(fNumberOfModules*nTotalBlocks);
     try
     {
         for (auto &module : m_PreprocList)
         {
             moduleName = module->GetModule()->ModuleName();
-            ++moduleCnt;
 
-            //UpdateProgress(moduleCnt/fNumberOfModules,moduleName);
 			msg.str("");
             msg<<"Processing: "<< moduleName;
+            progress += progressIncrement;
 			logger(kipl::logging::Logger::LogMessage,msg.str());
-            if (!(m_bCancel=UpdateProgress(moduleCnt/fNumberOfModules, msg.str())))
+            if (!(m_bCancel=UpdateProgress(progress, msg.str())))
                 module->GetModule()->Process(ext_projections,parameters);
 			else
 				break;
@@ -1769,7 +1768,7 @@ int ReconEngine::ProcessExistingProjections3D(const std::vector<size_t> &roi)
             msg<<"Back-projecting projection block "<<i+1;
             logger(kipl::logging::Logger::LogMessage,msg.str());
             m_BackProjector->GetModule()->SetROI(it->roi);
-            m_Interactor->SetOverallProgress(float(i)/float(m_ProjectionBlocks.size()));
+            UpdateProgress(static_cast<float>(i)/static_cast<float>(m_ProjectionBlocks.size()),"Block start");
 
             res=BackProject3D(it->projections,it->roi,it->parameters);
             validateImage(it->projections.GetDataPtr(),it->projections.Size(),"Projections post recon block ProcessExistingProjections3D");
@@ -1805,7 +1804,8 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections,
     logger(kipl::logging::Logger::LogMessage,msg.str());
     msg.str("");
     m_BackProjector->GetModule()->SetROI(roi);
-    if (!UpdateProgress(0.95f, "Back projection"))
+
+    if (!UpdateProgress(m_Interactor->CurrentOverallProgress(), "Back projection"))
     {
         try {
             logger(kipl::logging::Logger::LogMessage,"Back projection started.");

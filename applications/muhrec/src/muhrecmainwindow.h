@@ -239,6 +239,8 @@ private slots:
 
     void on_spinDarkCount_valueChanged(int arg1);
 
+    void on_actionConvert_files_triggered();
+
 private:
     // Data members
     ReconConfig      m_Config;    ///<! Current configuration data

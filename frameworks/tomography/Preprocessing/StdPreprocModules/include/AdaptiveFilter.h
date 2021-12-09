@@ -16,7 +16,7 @@ public:
 	virtual ~AdaptiveFilter();
 
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-	virtual bool SetROI(size_t *roi) {return false;}
+    virtual bool SetROI(const std::vector<size_t> &roi) {return false;}
 	//virtual int Process(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
 
 	virtual std::map<std::string, std::string> GetParameters();

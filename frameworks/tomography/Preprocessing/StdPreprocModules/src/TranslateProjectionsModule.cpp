@@ -35,7 +35,7 @@ std::map<std::string, std::string> TranslateProjectionsModule::GetParameters()
     return parameters;
 }
 
-bool TranslateProjectionsModule::SetROI(size_t *roi)
+bool TranslateProjectionsModule::SetROI(const std::vector<size_t> &roi)
 {
     return false;
 }
