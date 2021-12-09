@@ -72,6 +72,12 @@ echo
 echo Reassign dependencies
 echo
 pwd
+
+# kipl
+install_name_tool -change libtiff.5.dylib @executable_path/../Frameworks/libtiff.5.dylib libkipl.1.0.0.dylib
+install_name_tool -change libxml2.2.dylib @executable_path/../Frameworks/libtiff.5.dylib libkipl.1.0.0.dylib
+install_name_tool -change libarmadillo.10.dylib @executable_path/../Frameworks/libarmadillo.10.dylib libkipl.1.0.0.dylib
+
 # imageviewer
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib imageviewer
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib imageviewer
