@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <atomic>
 
 #include <base/timage.h>
 #include <profile/Timer.h>
@@ -102,6 +103,7 @@ protected:
     std::vector<Publication> publications;
     bool m_bThreading;
     int nMaxThreads;
+    std::atomic_int m_nCounter;
 };
 
 

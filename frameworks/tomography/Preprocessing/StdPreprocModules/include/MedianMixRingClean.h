@@ -1,9 +1,4 @@
-/*
- * MedianMixRingClean.h
- *
- *  Created on: Aug 4, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 
 #ifndef MEDIANMIXRINGCLEAN_H_
 #define MEDIANMIXRINGCLEAN_H_
@@ -18,7 +13,7 @@ public:
 
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 	virtual std::map<std::string, std::string> GetParameters();
-	virtual bool SetROI(size_t *roi);
+    virtual bool SetROI(const std::vector<size_t> &roi);
 	void ProcessSinogram(kipl::base::TImage<float,2> &img, float *profile);
 	kipl::base::TImage<float,2> profile;
 protected:

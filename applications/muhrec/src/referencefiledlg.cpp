@@ -32,12 +32,12 @@ void ReferenceFileDlg::setPath(const QString &_path)
     QStringList names;
     int pos;
     fillComboBox(ui->comboBox_openBeam);
-    names<<"ob"<<"ff"<<"open"<<"flat";
+    names<<"ob"<<"ff"<<"open"<<"flat"<<"nob"<<"xob"<<"nff"<<"xff";
     pos = suggestSelection(names);
     ui->comboBox_openBeam->setCurrentIndex(pos);
 
     fillComboBox(ui->comboBox_darkCurrent);
-    names<<"dc"<<"dark"<<"di";
+    names<<"dc"<<"dark"<<"di"<<"ndc"<<"ndi"<<"xdc"<<"xdi";
     pos = suggestSelection(names);
     ui->comboBox_darkCurrent->setCurrentIndex(pos);
 }
