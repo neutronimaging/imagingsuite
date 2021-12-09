@@ -9,6 +9,7 @@
 
 #include <string>
 #include <map>
+#include <atomic>
 
 #include <base/timage.h>
 #include <profile/Timer.h>
@@ -97,6 +98,7 @@ protected:
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     std::vector<Publication> publications;
     bool m_bThreading;
+    std::atomic_int m_nCounter;
 };
 
 

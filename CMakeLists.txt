@@ -4,6 +4,10 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 # project name and supported language
 project(imagingsuite LANGUAGES CXX)
 
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+message(FATAL_ERROR “In-source_build_detected!_Create_a_build_folder_and_call_CMake_there”)
+endif()
+
 execute_process(
   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
@@ -36,7 +40,9 @@ set(CMAKE_MODULE_PATH "lib" )
 # for testing we will need the python interpreter
 find_package(PythonInterp REQUIRED)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 if("${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" VERSION_LESS "3.5")
   message(
@@ -118,14 +124,6 @@ set(INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 
 set(EXPORT_NAME ${PROJECT_NAME}-targets)
 
-# if(NOT APPLE)
-#   set(CMAKE_INSTALL_RPATH $ORIGIN)
-# else()
-#   set(CMAKE_INSTALL_RPATH @loader_path)
-#  # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-#   set(CMAKE_BUILD_WITH_INSTALL_RPATH YES)
-# endif()
-
 # Core libraries
 add_subdirectory(core/kipl/kipl)
 add_subdirectory(core/algorithms/ImagingAlgorithms)
@@ -192,13 +190,13 @@ if(DYNAMIC_LIB)
   endif()
   if (APPLE)
     install(FILES 
-    # ../lib/libkipl.1.0.0.dylib 
-    # ../lib/libModuleConfig.1.0.0.dylib 
-    # ../lib/libReconFramework.1.0.0.dylib
-    # ../lib/libStdBackProjectors.1.0.0.dylib
-    # ../lib/libFDKBackProjectors.1.0.0.dylib
-    # ../lib/libImagingAlgorithms.1.0.0.dylib
-    # ../lib/libReaderConfig.1.0.0.dylib
+    ../lib/libkipl.1.0.0.dylib 
+    ../lib/libModuleConfig.1.0.0.dylib 
+    ../lib/libReconFramework.1.0.0.dylib
+    ../lib/libStdBackProjectors.1.0.0.dylib
+    ../lib/libFDKBackProjectors.1.0.0.dylib
+    ../lib/libImagingAlgorithms.1.0.0.dylib
+    ../lib/libReaderConfig.1.0.0.dylib
     external/mac/lib/libNeXus.1.0.0.dylib	
     external/mac/lib//libhdf5_cpp.11.dylib
     external/mac/lib//libNeXusCPP.1.0.0.dylib

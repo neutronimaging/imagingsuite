@@ -29,7 +29,7 @@ std::map<std::string, std::string> CameraStripeClean::GetParameters()
     return parameters;
 }
 
-bool CameraStripeClean::SetROI(size_t *roi)
+bool CameraStripeClean::SetROI(const std::vector<size_t> &roi)
 {
     return false;
 }

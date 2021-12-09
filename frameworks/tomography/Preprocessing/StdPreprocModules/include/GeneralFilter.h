@@ -1,9 +1,4 @@
-/*
- * GeneralFilter.h
- *
- *  Created on: Jun 22, 2011
- *      Author: kaestner
- */
+//<LICENSE>
 
 #ifndef GENERALFILTER_H_
 #define GENERALFILTER_H_
@@ -25,7 +20,7 @@ public:
 	
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 	virtual std::map<std::string, std::string> GetParameters();
-	virtual bool SetROI(size_t *roi);
+    virtual bool SetROI(const std::vector<size_t> &roi);
 protected:
     eGeneralFilter filterType;
     float filterSize;
