@@ -1069,13 +1069,13 @@ int ReconEngine::Run3DFull()
              ++nProcessedBlocks)
         {
             msg.str("");
-            msg<<__FUNCTION__<<"Run3DFull Processing block "<<nProcessedBlocks<<"\n     ROI = ["
+            msg<<"Run3DFull Processing block "<<nProcessedBlocks<<"\n     ROI = ["
                 <<m_Config.ProjectionInfo.roi[0]<<", "
                 <<m_Config.ProjectionInfo.roi[1]<<", "
                 <<m_Config.ProjectionInfo.roi[2]<<", "
                 <<m_Config.ProjectionInfo.roi[3]<<"]";
 
-            logger.message(msg.str());
+            logger.message(msg.str(),__FUNCTION__);
             if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Cone)
             {
                 UpdateProgress(static_cast<float>(nProcessedBlocks)/static_cast<float>(nTotalBlocks),"Starting block");
@@ -1142,7 +1142,7 @@ int ReconEngine::Run3DFull()
                    CBCT_roi[3] +=8;
 
                 msg.str("");
-                msg<<__FUNCTION__<<" CBCT Processing block "<<nProcessedBlocks<<"\n     ROI = ["
+                msg<<"CBCT Processing block "<<nProcessedBlocks<<"\n     ROI = ["
                     <<m_Config.ProjectionInfo.roi[0]<<", "
                     <<m_Config.ProjectionInfo.roi[1]<<", "
                     <<m_Config.ProjectionInfo.roi[2]<<", "
@@ -1152,7 +1152,7 @@ int ReconEngine::Run3DFull()
                     <<CBCT_roi[1]<<", "
                     <<CBCT_roi[2]<<", "
                     <<CBCT_roi[3]<<"]\n";
-                logger(kipl::logging::Logger::LogMessage,msg.str());
+                logger.message(msg.str(),__FUNCTION__);
 
                 CBroi = m_Config.ProjectionInfo.roi;
 
@@ -1167,13 +1167,13 @@ int ReconEngine::Run3DFull()
                     m_Config.ProjectionInfo.roi[3]=m_Config.ProjectionInfo.roi[1]+nSliceBlock;
 
                     msg.str("");
-                    msg<<__FUNCTION__<<" Processing block "<<nProcessedBlocks<<" ["
+                    msg<<"Processing block "<<nProcessedBlocks<<" ["
                         <<m_Config.ProjectionInfo.roi[0]<<", "
                         <<m_Config.ProjectionInfo.roi[1]<<", "
                         <<m_Config.ProjectionInfo.roi[2]<<", "
                         <<m_Config.ProjectionInfo.roi[3]<<"]";
 
-                    logger.message(msg.str());
+                    logger.message(msg.str(),__FUNCTION__);
 
                     result=Process3D(m_Config.ProjectionInfo.roi);
                     m_Config.ProjectionInfo.roi[1]=m_Config.ProjectionInfo.roi[3];
