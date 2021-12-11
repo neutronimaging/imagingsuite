@@ -61,12 +61,9 @@ bool NormBase::SetROI(const std::vector<size_t> &roi)
 {
 	std::stringstream msg;
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
-	logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str(),__FUNCTION__);
 	LoadReferenceImages(roi);
     nNormRegion = nOriginalNormRegion;
-
-	size_t roix=roi[2]-roi[0];
-	size_t roiy=roi[3]-roi[1];
 
 	return true;
 }
@@ -141,7 +138,7 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
     if (N!=0)
     {
         msg.str(""); msg<<"Loading "<<N<<" reference images";
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+        logger.message(msg.str(),__FUNCTION__);
 
         float *fDoses=new float[N];
 
@@ -242,9 +239,11 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
         delete [] tempdata;
         delete [] fDoses;
 
-        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-             float *pFlat=refimg.GetDataPtr();
-            for (size_t i=1; i<refimg.Size(1); i++) {
+        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
+        {
+            float *pFlat=refimg.GetDataPtr();
+            for (size_t i=1; i<refimg.Size(1); i++)
+            {
                 memcpy(refimg.GetLinePtr(i), pFlat, sizeof(float)*refimg.Size(0));
 
             }
@@ -262,9 +261,10 @@ std::map<std::string, std::string> NormBase::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
 
-    parameters["usenormregion"]=kipl::strings::bool2string(bUseNormROI);
-    parameters["uselut"]=kipl::strings::bool2string(bUseLUT);
-    parameters["referenceaverage"]=enum2string(m_ReferenceAvagerage);
+    parameters["usenormregion"]    = kipl::strings::bool2string(bUseNormROI);
+    parameters["uselut"]           = kipl::strings::bool2string(bUseLUT);
+    parameters["referenceaverage"] = enum2string(m_ReferenceAvagerage);
+
 	return parameters;
 }
 

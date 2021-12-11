@@ -69,25 +69,25 @@ public:
 	/// \brief Log a message
 	/// \param severity The log level of the current log message
 	/// \param message A string containing the message
-	void operator()(LogLevel severity, std::string message);
+    void operator()(LogLevel severity, const std::string &message, const std::string &functionName="");
 
     /// \brief Log a message
     /// \param severity The log level of the current log message
     /// \param message A string containing the message
-    void operator()(LogLevel severity, std::stringstream & message);
+    void operator()(LogLevel severity, std::stringstream & message, const std::string &functionName="");
 
-    void error(const std::string message);
-    void warning(const std::string message);
-    void message(const std::string message);
-    void verbose(const std::string message);
-    void debug(const std::string message);
+    void error(  const std::string &message, const std::string &functionName="");
+    void warning(const std::string &message, const std::string &functionName="");
+    void message(const std::string &message, const std::string &functionName="");
+    void verbose(const std::string &message, const std::string &functionName="");
+    void debug(  const std::string &message, const std::string &functionName="");
 
 protected:
 
 	/// \brief Back-end of the log writer
 	/// \param s The log level of the current log message
 	/// \param message A string containing the message
-	static void WriteMessage(LogLevel s, std::string message);
+    static void WriteMessage(LogLevel s, const std::string &message);
 #ifdef MULTITARGETS
     /// \brief
     static std::list<LogWriter *> LogTargets;   //!< Refence to the global log target. Experimental approach to allow several log targets. It is still not stable
