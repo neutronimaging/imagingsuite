@@ -102,7 +102,7 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
 
         msg.str("");
         msg<<N<<" projections on "<<concurentThreadsSupported<<" threads, "<<M<<" projections per thread";
-        logger(logger.LogMessage,msg.str());
+        logger.message(msg.str());
         int restCnt = N % concurentThreadsSupported;
         int begin = 0;
         int end   = M + (restCnt>0 ? 1 :0) ;
@@ -192,9 +192,6 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
 
     std::ostringstream msg;
 
-    logger.message(msg.str());
-
-
     std::vector<float> threshold = m_fThreshold;
     std::vector<float> sigma     = m_fSigma;
 
@@ -233,7 +230,7 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
 
     msg.str("");
     msg<<"Thresholds: Dark="<<threshold[0]<<"("<<sigma[0]<<"), Bright="<<threshold[1]<<"("<<sigma[1]<<")";
-    logger.message(msg.str());
+    logger.verbose(msg.str());
 
     float *pImg   = padded.GetDataPtr();
     float *pHoles = noholes.GetDataPtr();
