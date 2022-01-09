@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += svg widgets charts printsupport
-#QT       += core gui
+QT       += core gui
 CONFIG += c++11
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
@@ -41,13 +41,16 @@ unix {
 }
 
 win32 {
+    INCLUDEPATH += $$PWD/../../../../ExternalDependencies/windows/include/libxml2
     INCLUDEPATH += ../../../external/include
     LIBPATH += ../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lQtAddons -lQtModuleConfigure -lModuleConfig -lReaderConfig -lReaderGUI
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lQtAddons -lQtModuleConfigure -lModuleConfig -lReaderConfig -lReaderGUI
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug/
+
+LIBS += -lkipl -lQtAddons -lQtModuleConfigure -lModuleConfig -lReaderConfig -lReaderGUI
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include

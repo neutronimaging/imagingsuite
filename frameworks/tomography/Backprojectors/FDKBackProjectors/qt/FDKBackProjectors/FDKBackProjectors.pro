@@ -43,10 +43,15 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH  += ../../../../../../external/include ../../../../../../external/include/cfitsio
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio -llibfftw3-3 -llibfftw3f-3
+
+    QMAKE_LIBDIR += $$PWD/../../../../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH  += $$PWD/../../../../../../../ExternalDependencies/windows/include/cfitsio
+    INCLUDEPATH  += $$PWD/../../../../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$PWD/../../../../../../external/include
+    QMAKE_LIBDIR += $$PWD/../../../../../../external/lib64
+
+    LIBS += -llibxml2 -llibtiff -lcfitsio -llibfftw3-3 -llibfftw3f-3
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -91,8 +96,8 @@ HEADERS += ../../src/fdkbackproj.h \
 #        ../../src/volume.h \
 #        ../../src/threding.h
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/ -lkipl -lModuleConfig -lReconFramework
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/ -lkipl -lModuleConfig -lReconFramework -lReconAlgorithms
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
 
 LIBS += -lkipl -lModuleConfig -lImagingAlgorithms -lReaderConfig -lReconFramework
 

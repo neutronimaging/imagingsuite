@@ -67,10 +67,14 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH  += $$PWD/../../../../../../external/include $$PWD/../../../../../../external/include/cfitsio $$PWD/../../../../../../external/include/libxml2
+
+    QMAKE_LIBDIR += $$PWD/../../../../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH  += $$PWD/../../../../../../../ExternalDependencies/windows/include/cfitsio
+    INCLUDEPATH  += $$PWD/../../../../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$PWD/../../../../../../external/include
     QMAKE_LIBDIR += $$PWD/../../../../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 
 #    exists($$PWD/../../../../../../external/lib64/nexus/*NeXus*) {

@@ -50,10 +50,15 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH  += $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio $$PWD/../../../external/include/libxml2
+
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH  += $$PWD/../../../external/include
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -84,5 +89,40 @@ DEPENDPATH += $$PWD/../../../core/kipl/kipl/src
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
 DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
 
+unix:!mac {
+    message("-lNeXus exists")
+    DEFINES += HAVE_NEXUS
+    LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu
+    LIBS += -lNeXus -lNeXusCPP
+}
 
+unix:mac {
+exists($$PWD/../../../external/mac/lib/*NeXus*) {
+    DEFINES += HAVE_NEXUS
+
+    INCLUDEPATH += $$PWD/../../../external/mac/include $$PWD/../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../external/mac/include $$PWD/../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+
+    LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+
+
+}
+else {
+message("-lNeXus does not exists $$HEADERS")
+}
+
+}
+
+win32 {
+
+exists($$PWD/../../../external/lib64/nexus/*NeXus*) {
+
+    message("-lNeXus exists")
+    DEFINES += HAVE_NEXUS
+    INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
+    QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
+
+    LIBS +=  -lNeXus -lNeXusCPP
+}
+}
 
