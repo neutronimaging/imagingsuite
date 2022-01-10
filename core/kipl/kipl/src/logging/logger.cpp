@@ -75,54 +75,56 @@ void Logger::SetLogLevel(LogLevel level)
 	Logger::CurrentLogLevel=level;
 }
 
-void Logger::operator()(LogLevel severity, std::string message)
+void Logger::operator()(LogLevel severity, const string &message, const std::string &functionName)
 {	
 	std::ostringstream ostr;
-	ostr<<sLogOrigin<<": "<<message;
-	
-	WriteMessage(severity, ostr.str());
-	
+    if (functionName.empty())
+        ostr<<sLogOrigin<<" -- "<<message;
+    else
+        ostr<<sLogOrigin<<":"<<functionName<<" -- "<<message;
+
+    WriteMessage(severity, ostr.str());
 }
 
 /// \brief Log a message
 /// \param severity The log level of the current log message
 /// \param message A string containing the message
-void Logger::operator()(LogLevel severity, std::stringstream & message)
+void Logger::operator()(LogLevel severity, std::stringstream & message, const std::string &functionName)
 {
-    operator ()(severity,message.str());
+    operator ()(severity,message.str(),functionName);
 }
 
-void Logger::error(const std::string message)
+void Logger::error(const std::string &message, const string &functionName)
 {
-    WriteMessage(LogError, message);
-
+    operator()(LogError,message,functionName);
 }
 
-void Logger::warning(const std::string message)
+void Logger::warning(const std::string &message, const string &functionName)
 {
-    WriteMessage(LogWarning, message);
+    operator()(LogWarning,message,functionName);
 }
 
-void Logger::message(const std::string message)
+void Logger::message(const std::string &message, const string &functionName)
 {
-    WriteMessage(LogMessage, message);
+    operator()(LogMessage,message,functionName);
 }
 
-void Logger::verbose(const std::string message)
+void Logger::verbose(const std::string &message, const string &functionName)
 {
-    WriteMessage(LogVerbose, message);
+    operator()(LogVerbose,message,functionName);
 }
 
-void Logger::debug(const std::string message)
+void Logger::debug(const string &message, const string &functionName)
 {
-    WriteMessage(LogDebug, message);
+    operator()(LogDebug,message,functionName);
 }
 
-void Logger::WriteMessage(LogLevel s, std::string message)
+void Logger::WriteMessage(LogLevel s, const std::string &message)
 {
     std::lock_guard<std::mutex> lock(m_LoggerMutex);
 
-	if (s<=CurrentLogLevel) {
+    if (s<=CurrentLogLevel)
+    {
 		stringstream msg;
 		msg<<"["<<s<<"] "<<message<<std::endl;
 #ifdef MULTITARGET
