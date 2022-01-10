@@ -13,7 +13,7 @@ CONFIG += c++11
 
 DEFINES += VERSION=\\\"$$VERSION\\\"
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../Applications
+CONFIG(release, debug|release):    DESTDIR = $$PWD/../../../../Applications
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../Applications/debug
 
 unix:!symbian {
@@ -46,10 +46,16 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH  += $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../ExternalDependencies/windows/lib
+
+    INCLUDEPATH  += $$PWD/../../../external/include
+    QMAKE_LIBDIR += $$PWD/../../../external/lib64
+
+    LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -102,8 +108,10 @@ FORMS    += muhrecmainwindow.ui \
     globalsettingsdialog.ui \
     fileconversiondialog.ui
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging -lReaderGUI
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging -lReaderGUI
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug
+
+LIBS += -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms -lReaderConfig -lQtImaging -lReaderGUI
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH  += $$PWD/../../../core/kipl/kipl/include

@@ -132,11 +132,14 @@ win32 {
     QMAKE_LFLAGS += /MACHINE:X64
     }
 
+    INCLUDEPATH += $$PWD/../../../../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH += $$PWD/../../../../../../../ExternalDependencies/windows/include/cfitsio
+    LIBPATH     += $$PWD/../../../../../../../ExternalDependencies/windows/lib
     INCLUDEPATH += ../../../../../../external/include
-    INCLUDEPATH += ../../../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
 
-    LIBS +=  -llibtiff -lcfitsio -llibxml2_dll
+    LIBS += -llibxml2
+    LIBS += -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 

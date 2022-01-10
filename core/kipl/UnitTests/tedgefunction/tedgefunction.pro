@@ -11,6 +11,12 @@ TEMPLATE = app
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/
 
+win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+        QMAKE_LFLAGS += /MACHINE:X64
+    }
+}
+
 SOURCES +=  tst_tedgefunction.cpp
 
 
