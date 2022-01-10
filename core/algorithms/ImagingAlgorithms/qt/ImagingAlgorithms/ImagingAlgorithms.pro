@@ -20,12 +20,14 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += "$$PWD/../../../../../external/include" "$$PWD/../../../../../external/include/cfitsio"
+    INCLUDEPATH += $$PWD/../../../../../../ExternalDependencies/windows/include
+    INCLUDEPATH += "$$PWD/../../../../../external/include"
+    INCLUDEPATH += "$$PWD/../../../../../external/include/cfitsio"
     QMAKE_LIBDIR += $$PWD/../../../../../../ExternalDependencies/windows/lib
     QMAKE_LIBDIR += $$PWD/../../../../../external/lib64
 
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    LIBS += -llibxml2 -llibtiff -lcfitsio
     LIBS += -llibopenblas
     QMAKE_CXXFLAGS += /openmp /O2
 }

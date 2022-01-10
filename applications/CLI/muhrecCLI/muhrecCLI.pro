@@ -56,10 +56,16 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../ExternalDependencies/windows/lib
+
+    INCLUDEPATH  += $$PWD/../../../external/include
+    QMAKE_LIBDIR += $$PWD/../../../external/lib64
+
+    LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
@@ -75,16 +81,10 @@ HEADERS += \
 CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../lib/
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug
 
-LIBS += -lkipl -lModuleConfig -lReconFramework -lQtAddons -lQtModuleConfigure -lImagingAlgorithms
+LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms -lQtAddons -lQtModuleConfigure
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH  += $$PWD/../../../core/kipl/kipl/include
-
-#INCLUDEPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
-#DEPENDPATH += $$PWD/../../../GUI/qt/QtModuleConfigure
-
-#INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
-#DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
 
 INCLUDEPATH += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/include
 DEPENDPATH  += $$PWD/../../../frameworks/tomography/Framework/ReconFramework/src

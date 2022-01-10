@@ -64,10 +64,16 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += "$$PWD/../../../external/src/linalg" "$$PWD/../../../external/include" "$$PWD/../../../external/include/cfitsio"
+    INCLUDEPATH += $$PWD/../../../../ExternalDependencies/windows/include
+    INCLUDEPATH += $$PWD/../../../../ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../ExternalDependencies/windows/lib
+
+    INCLUDEPATH += "$$PWD/../../../external/src/linalg" "$$PWD/../../../external/include"
     QMAKE_LIBDIR += $$PWD/../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+
+    LIBS += -llibxml2
+    LIBS += -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 

@@ -1236,6 +1236,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
         error_dlg.setText("Failed to run the reconstructor.");
         error_dlg.setDetailedText(QString::fromStdString(msg.str()));
 
+        error_dlg.setMinimumSize(512,378);
         error_dlg.exec();
         if (m_pEngine!=nullptr)
             delete m_pEngine;

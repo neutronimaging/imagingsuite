@@ -99,11 +99,14 @@ win32 {
     QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../../../external/include
-    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../../../external/include/cfitsio
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
+    INCLUDEPATH  += $$PWD/../../../../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$PWD/../../../../../../../ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH  += $$PWD/../../../../../../external/include
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../../../external/lib64
+
+    LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
     DEFINES += NOMINMAX
 }
