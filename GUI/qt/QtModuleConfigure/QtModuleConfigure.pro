@@ -36,6 +36,9 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
+
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/libxml2
+
     INCLUDEPATH += ../../../external/include
     LIBPATH += ../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
@@ -83,8 +86,10 @@ unix:!symbian {
     INSTALLS += target
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/ -lkipl -lModuleConfig -lQtAddons
-else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug/ -lkipl -lModuleConfig -lQtAddons
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib/
+else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug/
+
+LIBS += -lkipl -lModuleConfig -lQtAddons
 
 INCLUDEPATH += $$PWD/../../../core/modules/ModuleConfig/include
 DEPENDPATH += $$PWD/../../../core/modules/ModuleConfig/include

@@ -1,3 +1,5 @@
+//<LICENSE>
+
 #ifndef GAMMASPOTCLEANMODULE_H
 #define GAMMASPOTCLEANMODULE_H
 
@@ -13,7 +15,7 @@ public:
 
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
     virtual std::map<std::string, std::string> GetParameters();
-    virtual bool SetROI(size_t *roi);
+    virtual bool SetROI(const std::vector<size_t> &roi);
 
     kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
 

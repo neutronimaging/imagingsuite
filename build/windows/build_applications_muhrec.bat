@@ -10,9 +10,9 @@ cd %DEST%\build-muhrec
 
 
 %QTBINPATH%\qmake.exe -makefile ..\..\imagingsuite\applications\muhrec\src\muhrec.pro -o Makefile
-%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
-%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
-%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom\jom.exe -f Makefile.release clean
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom\jom.exe -f Makefile.release mocables all
+%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom\jom.exe -f Makefile.release
 
 echo "Build tests"
 
@@ -32,8 +32,8 @@ if exist "%1\applications\muhrec\UnitTests\%2\%2.pro" (
 	cd %3\%2
 
 	%QTBINPATH%\qmake.exe -makefile ..\..\imagingsuite\applications\muhrec\UnitTests\%2\%2.pro -o Makefile
-	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile clean
-	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile mocables all
-	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom.exe -f Makefile release
+	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom\jom.exe -f Makefile.release clean
+	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom\jom.exe -f Makefile.release mocables all
+	%QTBINPATH%\..\..\..\Tools\QtCreator\bin\jom\jom.exe -f Makefile.release
 )
 goto :eof
