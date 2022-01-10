@@ -43,7 +43,7 @@ std::map<std::string, std::string> MedianMixRingClean::GetParameters()
 	return parameters;
 }
 
-bool MedianMixRingClean::SetROI(size_t *roi)
+bool MedianMixRingClean::SetROI(const std::vector<size_t> &roi)
 {
 	return false;
 }

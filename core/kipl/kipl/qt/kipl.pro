@@ -10,6 +10,7 @@
 TARGET    = kipl
 TEMPLATE  = lib
 CONFIG   += c++11
+DEFINES  += KIPL_LIBRARY
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
@@ -40,10 +41,11 @@ win32 {
     QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += $$PWD/../../../../external/include
-    INCLUDEPATH += ../../../../external/include/cfitsio
-    QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_LIBDIR += $$PWD/../../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH += $$PWD/../../../../../ExternalDependencies/windows/include/cfitsio
+    INCLUDEPATH += $$PWD/../../../../external/include
+    QMAKE_LIBDIR += $$PWD/../../../../external/lib64
+
     QMAKE_CXXFLAGS += /openmp /O2
 
     DEFINES += NOMINMAX
@@ -51,9 +53,6 @@ win32 {
     LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
     LIBS += -llibopenblas
 }
-
-
-DEFINES += KIPL_LIBRARY
 
 SOURCES += \
     ../src/math/sums.cpp \

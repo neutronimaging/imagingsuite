@@ -1,4 +1,5 @@
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "../include/StdPreprocModules_global.h"
 #include "../include/GammaSpotCleanModule.h"
 #include <ParameterHandling.h>
@@ -48,7 +49,7 @@ std::map<std::string, std::string> GammaSpotCleanModule::GetParameters()
     return parameters;
 }
 
-bool GammaSpotCleanModule::SetROI(size_t * UNUSED(roi))
+bool GammaSpotCleanModule::SetROI(const std::vector<size_t> &UNUSED)
 {
     return false;
 }
