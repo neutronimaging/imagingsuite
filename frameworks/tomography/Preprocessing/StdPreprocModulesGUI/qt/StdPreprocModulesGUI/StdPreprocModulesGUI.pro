@@ -10,8 +10,10 @@ TARGET = StdPreprocModulesGUI
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
+REPOS=$$PWD/../../../../../../..
+
+CONFIG(release, debug|release): DESTDIR = $$REPOS/lib
+else:CONFIG(debug, debug|release): DESTDIR = $$REPOS/lib/debug
 
 DEFINES += STDPREPROCMODULESGUI_LIBRARY
 
@@ -82,20 +84,20 @@ win32 {
         QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH  += $$PWD/../../../../../../../ExternalDependencies/windows/include
-    INCLUDEPATH  += $$PWD/../../../../../../../ExternalDependencies/windows/include/libxml2
-    INCLUDEPATH  += $$PWD/../../../../../../../ExternalDependencies/windows/include/cfitsio
-    QMAKE_LIBDIR += $$PWD/../../../../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH  += $$REPOS/ExternalDependencies/windows/include
+    INCLUDEPATH  += $$REPOS/ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$REPOS/ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$REPOS/ExternalDependencies/windows/lib
 
-    INCLUDEPATH  += $$PWD/../../../../../../external/include
-    QMAKE_LIBDIR += $$PWD/../../../../../../external/lib64
+    INCLUDEPATH  += $$REPOS/imaginsuite/external/include
+    QMAKE_LIBDIR += $$REPOS/imaginsuite/external/lib64
 
     LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
+CONFIG(release, debug|release): LIBS += -L$$REPOS/lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$REPOS/lib/debug/
 
 LIBS += -lkipl -lQtModuleConfigure -lQtAddons -lImagingAlgorithms -lReconFramework -lModuleConfig -lStdPreprocModules
 
