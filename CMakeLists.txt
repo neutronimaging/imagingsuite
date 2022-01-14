@@ -124,6 +124,14 @@ set(INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 
 set(EXPORT_NAME ${PROJECT_NAME}-targets)
 
+if(NOT APPLE)
+  set(CMAKE_INSTALL_RPATH $ORIGIN)
+else()
+  set(CMAKE_INSTALL_RPATH @loader_path)
+ # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH YES)
+endif()
+
 # Core libraries
 add_subdirectory(core/kipl/kipl)
 add_subdirectory(core/algorithms/ImagingAlgorithms)
@@ -165,19 +173,19 @@ if(DYNAMIC_LIB)
   if (LINUX)
     print('Linux')
     install(FILES 
-      #../lib/libkipl.so.1.0.0 
-      # ../lib/libModuleConfig.so.1.0.0 
-      # ../lib/libReconFramework.so.1.0.0
-      # ../lib/libStdBackProjectors.so.1.0.0
-      # ../lib/libFDKBackProjectors.so.1.0.0
-      # ../lib/libImagingAlgorithms.so.1.0.0
-      # ../lib/libReaderConfig.so.1.0.0
-      # ../lib/libNeXus.so.1.0.0	
-      # ../lib/libhdf5_cpp.so.11
-      # ../lib/libNeXusCPP.so.1.0.0
-      # ../lib/libhdf5_hl.so.10
-      # ../lib/libhdf5.so.10	
-      # ../lib/libsz.so.2
+      ../lib/libkipl.so.1.0.0 
+      ../lib/libModuleConfig.so.1.0.0 
+      ../lib/libReconFramework.so.1.0.0
+      ../lib/libStdBackProjectors.so.1.0.0
+      ../lib/libFDKBackProjectors.so.1.0.0
+      ../lib/libImagingAlgorithms.so.1.0.0
+      ../lib/libReaderConfig.so.1.0.0
+      ../lib/libNeXus.so.1.0.0	
+      ../lib/libhdf5_cpp.so.11
+      ../lib/libNeXusCPP.so.1.0.0
+      ../lib/libhdf5_hl.so.10
+      ../lib/libhdf5.so.10	
+      ../lib/libsz.so.2
 
   #    /opt/local/lib/libxml2.2.dylib 
   #    /opt/local/lib/libtiff.5.dylib
