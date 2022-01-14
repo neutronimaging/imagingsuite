@@ -8,7 +8,7 @@
 #include <ReconException.h>
 #include <functional>
 #include <tuple>
-#ifdef _OPENMP
+#ifdef OMP
 #include <omp.h>
 #endif
 #include <math/mathconstants.h>
@@ -171,6 +171,7 @@ int WaveletRingClean::ProcessParallelStd(kipl::base::TImage<float,3> & img)
 {
     std::ostringstream msg;
 
+    const size_t concurentThreadsSupported = nMaxThreads;
     std::vector<std::thread> threads;
     const size_t N = img.Size(1);
 
