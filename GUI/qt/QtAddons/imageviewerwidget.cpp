@@ -39,7 +39,7 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     copyImageAct(nullptr)
 {
     QPalette palette;
-    palette.setColor(QPalette::Background,Qt::black);
+    palette.setColor(QPalette::Window,Qt::black);
     setAutoFillBackground(true);
     setPalette(palette);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

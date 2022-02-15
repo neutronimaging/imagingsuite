@@ -132,6 +132,7 @@ add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(frameworks/tomography/Framework/ReconFramework)
 add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
 add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+add_subdirectory(GUI/qt/QtAddons)
 
 # Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)

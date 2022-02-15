@@ -6,13 +6,12 @@
 #include <map>
 #include <vector>
 #include <QWidget>
-#include <QLineSeries>
+#include <QtCharts/QLineSeries>
 #include <QAction>
 
 #include "callout.h"
 #include "plotcursor.h"
 #include <logging/logger.h>
-
 
 namespace Ui {
 class PlotWidget;
@@ -35,8 +34,8 @@ public:
     /// \param id The index number of the plot to set
     /// \param series the plot data
     /// \param deleteData A flag to indicate that the series container shall be deleted in the method. This is in particular necessary for the update case.
-    void setCurveData(int id, QtCharts::QLineSeries *series, bool deleteData=true);
-    void setDataSeries(int id, QtCharts::QAbstractSeries *series, bool deleteData=true);
+    void setCurveData(int id, QLineSeries *series, bool deleteData=true);
+    void setDataSeries(int id, QAbstractSeries *series, bool deleteData=true);
     void clearCurve(int id);
     void clearAllCurves();
     void setPointsVisible(int n=-1);
@@ -75,9 +74,9 @@ private:
     void updateCursors();
 
     Ui::PlotWidget *ui;
-    std::map<int, QtCharts::QAbstractSeries *> seriesmap;
+    std::map<int, QAbstractSeries *> seriesmap;
     std::map<int, PlotCursor *> cursors;
-    std::map<int, QtCharts::QLineSeries *> cursormap;
+    std::map<int, QLineSeries *> cursormap;
 
     int m_nPointsVisible;
     double minX;

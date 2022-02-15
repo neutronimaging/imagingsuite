@@ -7,7 +7,12 @@
 #include <sstream>
 #include <cmath>
 #include <cstring>
-#include <xmmintrin.h>
+#ifdef __x86_64__
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#else
+    #include <sse2neon.h>
+#endif
 #include <algorithm>
 
 #include "../KiplException.h"

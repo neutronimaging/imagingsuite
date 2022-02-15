@@ -10,8 +10,14 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <emmintrin.h>
 #include <cmath>
+
+#ifdef __x86_64__
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#else
+    #include <sse2neon.h>
+#endif
 
 NearestNeighborBP::NearestNeighborBP(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Nearest Neighbor BP",StdBackProjectorBase::MatrixZXY, interactor)

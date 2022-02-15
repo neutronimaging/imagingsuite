@@ -4,9 +4,15 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <emmintrin.h>
 #include <cmath>
 #include <math.h>
+
+#ifdef __x86_64__
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#else
+    #include <sse2neon.h>
+#endif
 
 #include "fftw3.h"
 

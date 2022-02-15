@@ -42,7 +42,7 @@ PlotWidget::~PlotWidget()
 
 void PlotWidget::setCurveData(int id, const QVector<QPointF> &data, QString name)
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
     int i=0;
     for (auto it=data.begin(); it!=data.end(); ++it, ++i)
         series->append(it->x(),it->y());
@@ -55,7 +55,7 @@ void PlotWidget::setCurveData(int id, const QVector<QPointF> &data, QString name
 
 void PlotWidget::setCurveData(int id, const std::vector<float> &x, const std::vector<float> &y, QString name)
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
 
     if (x.size() != y.size())
         throw kipl::base::DimsException("PlotWidget got size mismatch in the vector lengths",__FILE__,__LINE__);
@@ -73,7 +73,7 @@ void PlotWidget::setCurveData(int id, const std::vector<float> &x, const std::ve
 
 void PlotWidget::setCurveData(int id, const std::map<float, float> &data, QString name)
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
 
     for (auto const &item : data)
         series->append(item.first,item.second);
@@ -86,7 +86,7 @@ void PlotWidget::setCurveData(int id, const std::map<float, float> &data, QStrin
 
 void PlotWidget::setCurveData(int id, const float * const x, const float * const y, const int N, QString name)
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
 
     for (int i=0; i<N ; ++i)
         series->append(qreal(x[i]),qreal(y[i]));
@@ -99,7 +99,7 @@ void PlotWidget::setCurveData(int id, const float * const x, const float * const
 
 void PlotWidget::setCurveData(int id, const float * const x, const size_t * const y, const int N, QString name)
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
 
     for (int i=0; i<N ; ++i)
         series->append(qreal(x[i]),qreal(y[i]));
@@ -554,14 +554,12 @@ void PlotWidget::updateCursors()
 
     for (const auto &c : cursors)
     {
-        QtCharts::QLineSeries *line=nullptr;
+        QLineSeries *line=nullptr;
         auto it=cursormap.find(c.first);
         if (it==cursormap.end())
         {
-            line=new QtCharts::QLineSeries();
+            line=new QLineSeries();
             cursormap.insert(std::make_pair(c.first,line));
-
-
 
             line->setPointsVisible(false);
 

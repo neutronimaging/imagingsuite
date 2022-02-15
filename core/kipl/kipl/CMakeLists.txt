@@ -4,7 +4,7 @@ set(TARGET_NAME "kipl")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
@@ -16,6 +16,8 @@ include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../external/mac/include/
+    ../../../../ExternalDependencies/macos/include
+    ../../../../ExternalDependencies/macos/include/nexus
     ../../../external/mac/include/nexus
     ../../../external/mac/include/hdf5
     )
@@ -323,16 +325,24 @@ target_compile_definitions(${TARGET_NAME} PRIVATE KIPL_LIBRARY HAVE_NEXUS)
 
 add_definitions(-DHAVE_NEXUS)
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../external/mac/lib/
-    )
-
+message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (APPLE)
-	target_link_libraries(${TARGET_NAME}
+    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+        target_link_directories(${TARGET_NAME} PRIVATE
+            /opt/local/lib
+            ../../../../ExternalDependencies/macos/arm64/lib
+            )
+    else()
+        target_link_directories(${TARGET_NAME} PRIVATE
+            /opt/local/lib
+            ../../../external/mac/lib/
+            )
+    endif()
+
+    target_link_libraries(${TARGET_NAME}
     		PRIVATE
     			xml2
-			    fftw3
+                        fftw3
     			fftw3f
     			cfitsio
     			tiff

@@ -10,12 +10,18 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <emmintrin.h>
+
 #include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
+#ifdef __x86_64__
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#else
+    #include <sse2neon.h>
+#endif
 MultiProjectionBPparallel::MultiProjectionBPparallel(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Multi projection BP parallel",StdBackProjectorBase::MatrixZXY, interactor)
 {

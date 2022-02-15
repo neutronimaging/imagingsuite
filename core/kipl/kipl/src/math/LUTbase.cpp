@@ -3,8 +3,12 @@
 #include <iostream>
 #include <sstream>
 
-#include "emmintrin.h" // why in "" and not <>?
-#include "xmmintrin.h"
+#ifdef __x86_64__
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#else
+    #include <sse2neon.h>
+#endif
 
 #include "../../include/math/LUTbase.h"
 #include "../../include/base/core/quad.h"

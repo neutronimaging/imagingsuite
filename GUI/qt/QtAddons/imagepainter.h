@@ -12,6 +12,7 @@
 #include <QColor>
 #include <QRect>
 #include <QPainter>
+#include <QPair>
 
 #include <logging/logger.h>
 #include <base/timage.h>

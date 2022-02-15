@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include <QLine>
+#include <QPair>
 #include <QDebug>
 
 #include <math/image_statistics.h>

@@ -23,7 +23,7 @@
   <customwidget>
    <class>QChartView</class>
    <extends>QWidget</extends>
-   <header location="global">QtCharts</header>
+   <header location="global">QtCharts/QtCharts</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

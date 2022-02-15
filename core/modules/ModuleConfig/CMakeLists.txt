@@ -4,7 +4,7 @@ set(TARGET_NAME "ModuleConfig")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
@@ -16,6 +16,8 @@ include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../external/mac/include/
+    ../../../../ExternalDependencies/macos/include
+    ../../../../ExternalDependencies/macos/include/nexus
     ../../../external/mac/include/nexus
     ../../../external/mac/include/hdf5
     )

@@ -1,6 +1,12 @@
 //<LICENCE>
 
-#include <emmintrin.h>
+#ifdef __x86_64__
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#else
+    #include <sse2neon.h>
+#endif
+
 #include <cstddef>
 #include "../../../include/base/core/imagearithmetics.h"
 

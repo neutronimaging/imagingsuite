@@ -4,7 +4,7 @@ set(TARGET_NAME "StdBackProjectors")
 project(StdBackProjectors VERSION 1.0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
@@ -13,8 +13,10 @@ include_directories(
     /usr/include/libxml2
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../external/src/linalg
+    #../../../../external/src/linalg
     ../../../../core/modules/ModuleConfig/include
+    ../../../../../ExternalDependencies/macos/include
+    ../../../../../ExternalDependencies/macos/include/nexus
     ../../../../external/mac/include/
     ../../../../external/mac/include/nexus
     ../../../../external/mac/include/hdf5
@@ -22,7 +24,7 @@ include_directories(
     )
 
 # link_directories(../../../../lib /opt/local/lib ../../../../external/mac/lib)
-link_directories(/opt/local/lib ../../../../external/mac/lib)
+# link_directories(/opt/local/lib ../../../../external/mac/lib)
 
 set(INC_FILES
     include/StdBackProjectors.h
@@ -57,12 +59,20 @@ target_compile_definitions(${TARGET_NAME} PRIVATE STDBACKPROJECTORS_LIBRARY HAVE
 
 add_definitions(-DHAVE_NEXUS)
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../../external/mac/lib
-    )
-
+message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (APPLE)
+    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+        target_link_directories(${TARGET_NAME} PRIVATE
+            /opt/local/lib
+            ../../../../../ExternalDependencies/macos/arm64/lib
+            )
+    else()
+        target_link_directories(${TARGET_NAME} PRIVATE
+            /opt/local/lib
+            ../../../../external/mac/lib/
+            )
+    endif()
+
     target_link_libraries(${TARGET_NAME}
         PRIVATE
         kipl
