@@ -116,7 +116,7 @@ int ReadFITS(kipl::base::TImage<ImgType,2> &src,const std::string & fname, const
 		{
 			char err_text[512];
             fits_get_errstatus(status, err_text);
-            std::stringstream msg;
+            msg.str("");
             msg<<"ReadFITS: "<<err_text<<" ("<<fname<<")";
             throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 		}

@@ -49,8 +49,6 @@ void LUTbase::Resize(size_t len, float lo, float hi)
 
 void LUTbase::InPlace(float *data, const size_t N)
 {
-	size_t pos=reinterpret_cast<size_t>(data);
-	
 	BasicLUT(data,N);
 
 	//if ((pos & 3)==0) {
@@ -66,13 +64,16 @@ void LUTbase::BasicLUT(float *data, const size_t N)
 {
 	size_t index=0;
 
-	for (size_t i=0; i<N; i++) {
+    for (size_t i=0; i<N; i++)
+    {
 		float val=data[i];
-		if (val<fLow) {
+        if (val<fLow)
+        {
 			data[i]=fLUT[0];
 			continue;
 		}
-		else if (fHigh<val) {
+        else if (fHigh<val)
+        {
 			data[i]=fLUT[nLUT-1];
 			continue;
 		} 
@@ -95,20 +96,23 @@ void LUTbase::SSELUT(float *data, const size_t N)
 	const size_t N4=N>>2;
 	
 	float *pData=data;
-	for (size_t i=0; i<N4; i++, pData+=4) {
+    for (size_t i=0; i<N4; i++, pData+=4)
+    {
 		val.xmm=_mm_load_ps(pData);
 		val.xmm=_mm_max_ps(val.xmm,lo128);
 		_mm_store_ps(pData,val.xmm);
 	}
 	
-	for (size_t i=0; i<N4; i++, pData+=4) {
+    for (size_t i=0; i<N4; i++, pData+=4)
+    {
 		val.xmm=_mm_load_ps(pData);
 		val.xmm=_mm_min_ps(val.xmm,hi128);
 		_mm_store_ps(pData,val.xmm);
 	}
 	
 	pData=data;
-	for (size_t i=0; i<N4; i++, pData+=4) {
+    for (size_t i=0; i<N4; i++, pData+=4)
+    {
 		val.xmm=_mm_load_ps(pData);
 		val.xmm=_mm_add_ps(_mm_mul_ps(val.xmm,slope128), intercept128);
 		index.xmm= _mm_cvtps_epi32(val.xmm);
@@ -124,10 +128,12 @@ void LUTbase::SSELUT(float *data, const size_t N)
 
 float LUTbase::operator()(const float val)
 {
-	if (val<fLow) {
+    if (val<fLow)
+    {
 		return fLUT[0];
 	}
-	else if (fHigh<val) {
+    else if (fHigh<val)
+    {
 		return fLUT[nLUT-1];
 	} 
 

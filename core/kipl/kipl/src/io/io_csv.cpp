@@ -12,6 +12,8 @@ namespace kipl {
 namespace io {
     std::map<std::string, std::vector<float> > readCSV(const std::string &fname, char delim, bool haveHeader)
     {
+       std::ignore = delim;
+
        std::map<std::string, std::vector<float> > columns;
 
        // Reads a CSV file into a vector of <string, vector<int>> pairs where

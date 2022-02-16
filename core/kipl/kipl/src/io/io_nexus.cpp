@@ -6,7 +6,8 @@
 
 namespace kipl { namespace io{
 
-int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
+int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles)
+{
 //int GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
     kipl::logging::Logger logger("GetNexusInfo");
     NeXus::File file(fname);
@@ -20,8 +21,10 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
     file.openGroup("entry", "NXentry");
     attr_infos = file.getAttrInfos(); // check how many or assuming that there is only one NXentry entry ?
     map<string, string> entries = file.getEntries();
-    for (map<string,string>::const_iterator it = entries.begin();        it != entries.end(); ++it) {
-        if(it->second=="NXdata") {
+    for (map<string,string>::const_iterator it = entries.begin();        it != entries.end(); ++it)
+    {
+        if(it->second=="NXdata")
+        {
 
             file.openGroup(it->first, it->second);
             attr_infos = file.getAttrInfos();
@@ -31,13 +34,15 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
 
 
             for (map<string,string>::const_iterator it_data = entries_data.begin();
-                 it_data != entries_data.end(); it_data++) {
+                 it_data != entries_data.end(); it_data++)
+            {
 
                     file.openData(it_data->first);
                     attr_infos = file.getAttrInfos();
 
                     for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin();
-                         it_att != attr_infos.end(); it_att++) {
+                         it_att != attr_infos.end(); it_att++)
+                    {
 
 //                      cout << "   " << it_att->name << " = ";
 //                      if (it_att->type == NeXus::CHAR) {
@@ -45,8 +50,8 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
 //                      }
 //                      cout << endl;
 
-                      if (it_att->name=="signal"){
-
+                      if (it_att->name=="signal")
+                      {
                           size_t img_size[3] = {static_cast<size_t>(file.getInfo().dims[2]), static_cast<size_t>(file.getInfo().dims[1]), static_cast<size_t>(file.getInfo().dims[0])};
 
                           NofImg[0]=0;
@@ -55,8 +60,10 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
                           }
                       }
 
-                    if (ScanAngles!=nullptr) {
-                        if  (it_data->first=="rf"){
+                    if (ScanAngles!=nullptr)
+                    {
+                        if  (it_data->first=="rf")
+                        {
                             float *angles;
                             angles = new float[file.getInfo().dims[0]];
                             // want to get the angles
@@ -98,9 +105,10 @@ std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
     file.openGroup("entry", "NXentry");
     attr_infos = file.getAttrInfos(); // check how many or assuming that there is only one NXentry entry ?
     map<string, string> entries = file.getEntries();
-    for (map<string,string>::const_iterator it = entries.begin();        it != entries.end(); ++it) {
-        if(it->second=="NXdata") {
-
+    for (map<string,string>::const_iterator it = entries.begin();        it != entries.end(); ++it)
+    {
+        if(it->second=="NXdata")
+        {
             file.openGroup(it->first, it->second);
             attr_infos = file.getAttrInfos();
 

@@ -457,7 +457,10 @@ int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, fl
 ///	\param fname file name of the destination file (including extension .hdf)
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size, size_t first_slice, size_t last_slice) {
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size, size_t first_slice, size_t last_slice)
+{
+    std::ignore = first_slice;
+    std::ignore = last_slice;
 
 //    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
 //    float t[1000], phi[50];
@@ -615,8 +618,9 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> img, const char *fname, Im
 /// \param p_size pixel size of the reconstructed datas
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img) {
-
+int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
+    std::ignore = img;
 
     float *mysize = &p_size;
     int  i = 1;
@@ -668,8 +672,9 @@ int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::b
 /// \param p_size pixel size of the reconstructed datas
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img) {
-
+int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
+    std::ignore = img;
 
     float *mysize = &p_size;
     int  i = 1;
@@ -681,13 +686,13 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
 
     NXhandle file_id;
 
-/* Open output file and output global attributes */
+// Open output file and output global attributes
     NXopen (fname, NXACC_CREATE5, &file_id);
       NXputattr (file_id, "user_name", "Jane Doe", 10, NX_CHAR);
-/* Open top-level NXentry group */
+// Open top-level NXentry group
       NXmakegroup (file_id, "entry", "NXentry");
       NXopengroup (file_id, "entry", "NXentry");
-/* Open NXdata group within NXentry group */
+// Open NXdata group within NXentry group
         NXmakegroup (file_id, "Data1", "NXdata");
         NXopengroup (file_id, "Data1", "NXdata");
 
@@ -698,7 +703,7 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
             NXputattr (file_id, "signal", &i, 1, NX_INT32);
           NXclosedata (file_id);
 
-/*      Pixel spacing */
+//     Pixel spacing
        NXmakedata (file_id, "x_pixel_size", NX_FLOAT32, 1, &i);
        NXopendata (file_id, "x_pixel_size");
           NXputdata(file_id, mysize);
@@ -706,7 +711,7 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
       NXclosedata(file_id);
 
 
-/* Close NXentry and NXdata groups and close file */
+// Close NXentry and NXdata groups and close file
         NXclosegroup (file_id);
       NXclosegroup (file_id);
     NXclose (&file_id); // this should close the file
