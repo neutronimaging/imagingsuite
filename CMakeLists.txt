@@ -188,13 +188,13 @@ if(DYNAMIC_LIB)
   endif()
   if (APPLE)
     install(FILES 
-    ../lib/libkipl.1.0.0.dylib 
-    ../lib/libModuleConfig.1.0.0.dylib 
-    ../lib/libReconFramework.1.0.0.dylib
-    ../lib/libStdBackProjectors.1.0.0.dylib
-    ../lib/libFDKBackProjectors.1.0.0.dylib
-    ../lib/libImagingAlgorithms.1.0.0.dylib
-    ../lib/libReaderConfig.1.0.0.dylib
+#    ../lib/libkipl.1.0.0.dylib
+#    ../lib/libModuleConfig.1.0.0.dylib
+#    ../lib/libReconFramework.1.0.0.dylib
+#    ../lib/libStdBackProjectors.1.0.0.dylib
+#    ../lib/libFDKBackProjectors.1.0.0.dylib
+#    ../lib/libImagingAlgorithms.1.0.0.dylib
+#    ../lib/libReaderConfig.1.0.0.dylib
     external/mac/lib/libNeXus.1.0.0.dylib	
     external/mac/lib//libhdf5_cpp.11.dylib
     external/mac/lib//libNeXusCPP.1.0.0.dylib
