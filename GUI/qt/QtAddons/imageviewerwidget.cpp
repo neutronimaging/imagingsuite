@@ -274,7 +274,7 @@ void ImageViewerWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void ImageViewerWidget::enterEvent(QEvent *)
+void ImageViewerWidget::enterEvent(QEnterEvent *)
 {
   // logger(kipl::logging::Logger::LogMessage,"Entered");
 

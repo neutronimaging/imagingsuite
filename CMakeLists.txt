@@ -1,12 +1,9 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-# project name and supported language
-project(imagingsuite LANGUAGES CXX)
-
-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-message(FATAL_ERROR “In-source_build_detected!_Create_a_build_folder_and_call_CMake_there”)
-endif()
+#if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+#message(FATAL_ERROR “In-source_build_detected!_Create_a_build_folder_and_call_CMake_there”)
+#endif()
 
 execute_process(
   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
@@ -14,8 +11,8 @@ execute_process(
   OUTPUT_VARIABLE IMGSUITE_VERSION
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-#project(imagingsuite VERSION ${IMGSUITE_VERSION})
-project(imagingsuite VERSION 4.2.1)
+
+project(imagingsuite VERSION 4.2.1 LANGUAGES CXX)
 
 # require C++17
 if(NOT DEFINED CMAKE_CXX_STANDARD)

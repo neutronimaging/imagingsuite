@@ -82,8 +82,8 @@ public:
 
  //   void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp; queue_draw(); }
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+    QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
     void LinkImageViewer(QtAddons::ImageViewerWidget *w, bool connect=true);
     void ClearLinkedImageViewers(QtAddons::ImageViewerWidget *w=nullptr);
 public slots:
@@ -98,13 +98,13 @@ private slots:
 
 protected:
     void setupActions();
-    virtual void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent * event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void enterEvent(QEvent *);
-    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void paintEvent(QPaintEvent *event) override;
+    virtual void resizeEvent(QResizeEvent * event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    virtual void enterEvent(QEnterEvent *) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 //    void wheelEvent(QWheelEvent *event);
         
 protected:
