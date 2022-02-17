@@ -2,6 +2,7 @@
 #include "ui_findskiplistdialog.h"
 
 #include <QMessageBox>
+#include <QFile>
 
 #include <strings/filenames.h>
 #include <base/timage.h>
