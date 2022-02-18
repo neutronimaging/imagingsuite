@@ -134,6 +134,7 @@ add_subdirectory(GUI/qt/QtAddons)
 add_subdirectory(GUI/qt/QtImaging)
 add_subdirectory(core/modules/ReaderGUI)
 add_subdirectory(GUI/qt/QtModuleConfigure)
+add_subdirectory(GUI/qt/WidgetTests)
 
 # Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)

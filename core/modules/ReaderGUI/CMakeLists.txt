@@ -76,3 +76,5 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     )
 
 target_compile_definitions(${TARGET_NAME} PRIVATE READERGUI_LIBRARY)
+
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

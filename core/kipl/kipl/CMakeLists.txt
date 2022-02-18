@@ -388,4 +388,5 @@ if (UNIX AND NOT APPLE)
             )
     endif()
 endif()
+
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
