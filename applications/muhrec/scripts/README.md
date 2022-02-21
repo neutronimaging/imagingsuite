@@ -40,6 +40,7 @@ The entries in the timing file look like
                     "sizex":555, 
                     "sizey":555, 
                     "sizez":100},
+        "system":{  "threads":8},
         "timing":{  "FullLogNorm":213.735, 
                     "MorphSpotClean":1432.24, 
                     "Multi projection BP parallel":8995.26, 
