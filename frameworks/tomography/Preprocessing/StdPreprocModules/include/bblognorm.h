@@ -48,6 +48,7 @@ protected:
 
     std::string blackbodyexternalname;
     std::string blackbodysampleexternalname;
+    std::string blackbodyexternalmaskname; /// name of user provided mask
 
     size_t nBBextCount; /// number of preprocessed BB images;
     size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images
@@ -150,6 +151,7 @@ private:
     ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX m_xInterpOrder; /// order chosen for interpolation along the X direction
     ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY m_yInterpOrder; /// order chosen for interpolation along the Y direction
     ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod m_InterpMethod; /// interpolation method
+    ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod m_maskCreationMethod;
     bool updateStatus(float val, std::string msg);
 
 };

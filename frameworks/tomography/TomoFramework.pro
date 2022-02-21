@@ -3,7 +3,8 @@ TEMPLATE = subdirs
 SUBDIRS += \
     Framework/ReconFramework/qt/ReconFramework \
     Framework/ReconAlgorithms/ReconAlgorithms \
-    UnitTests/tFrameWork \
+    UnitTests/tBBLogNorm \
+    UnitTests/tFramework \
     UnitTests/tReconAlgorithms/AlgorithmTester
 
     
