@@ -63,6 +63,10 @@ public:
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
     virtual void SetROI(const std::vector<size_t> &roi)=0;
 
+    void setNumberOfThreads(int N);
+
+    int numberOfThreads();
+
     /// Get the reconstructed matrix
     /// \returns The matrix as TImage object
 	kipl::base::TImage<float,3> GetVolume() {return volume;}
@@ -122,12 +126,15 @@ protected:
     kipl::base::TImage<float,3> volume;          ///< The matrix where the back-projection is stored during the process.
     bool m_bBuildCircleMask;
     std::vector<std::pair<size_t,size_t> > mask; ///< List of start and stop positions forming a masked area where the data is reconstructed.
+    size_t maskArea;
+    std::vector<std::pair<size_t,size_t> > lineBlocks; ///< List of start and stop positions forming a masked area where the data is reconstructed.
     kipl::profile::Timer timer;                  ///< A timer used to measure the exectution time of the back-projctor.
 //    std::vector<size_t> MatrixDims;
 
     std::string m_sApplication;                  ///< The name of the application calling the module
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     std::vector<Publication> publications;
+    int nMaxThreads;
 };
 
 #endif

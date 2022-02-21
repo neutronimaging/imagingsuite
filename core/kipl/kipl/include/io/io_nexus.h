@@ -457,7 +457,10 @@ int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, fl
 ///	\param fname file name of the destination file (including extension .hdf)
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size, size_t first_slice, size_t last_slice) {
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size, size_t first_slice, size_t last_slice)
+{
+    std::ignore = first_slice;
+    std::ignore = last_slice;
 
 //    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
 //    float t[1000], phi[50];
@@ -616,7 +619,7 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> img, const char *fname, Im
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
 int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img) {
-
+    std::ignore = img;
 
     float *mysize = &p_size;
     int  i = 1;
@@ -669,7 +672,7 @@ int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::b
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
 int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img) {
-
+    std::ignore = img;
 
     float *mysize = &p_size;
     int  i = 1;

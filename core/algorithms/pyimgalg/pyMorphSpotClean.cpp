@@ -40,6 +40,13 @@ void bindMorphSpotClean(py::module &m)
                  &ImagingAlgorithms::MorphSpotClean::isThreaded,
                  "Tells if threaded processing is used");
 
+    mscClass.def("setNumberOfThreads", &ImagingAlgorithms::MorphSpotClean::setNumberOfThreads,
+                "Set the number of threads to use for the processing. Values less than one and greater than the number of availble cores will default to the number of physical cores",
+                py::arg("N"));
+                
+    mscClass.def("numberOfThreads",  &ImagingAlgorithms::MorphSpotClean::numberOfThreads,
+                "Tells how many threads are currently used for the processing");
+
     mscClass.def("setCleanMethod",
                  &ImagingAlgorithms::MorphSpotClean::setCleanMethod,
                  "Returns the current list of coefficients",

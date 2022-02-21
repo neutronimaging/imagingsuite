@@ -36,6 +36,7 @@ do
         make -f Makefile clean
         make -f Makefile mocables all
         make -f Makefile 
+
 	fi
 
 done

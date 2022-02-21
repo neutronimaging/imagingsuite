@@ -501,3 +501,51 @@ void string2enum(const std::string &str, kipl::base::eOperatingSystem &os)
     else
         throw kipl::base::KiplException("Could not transform string to an operating system enum", __FILE__, __LINE__);
 }
+
+
+
+std::ostream & operator<<(std::ostream & s, kipl::base::eThreadingMethod &tm)
+{
+    s<<enum2string(tm);
+
+    return s;
+}
+
+std::string enum2string(const kipl::base::eThreadingMethod &tm)
+{
+    std::map<kipl::base::eThreadingMethod, std::string> tmMap;
+
+    tmMap[kipl::base::threadingSTL]    = "threadingSTL";
+    tmMap[kipl::base::threadingOpenMP] = "threadingOpenMP";
+
+    try
+    {
+        return tmMap.at(tm);
+    }
+    catch (std::out_of_range &e)
+    {
+        throw kipl::base::KiplException("Could not transform string to a threading method enum", __FILE__, __LINE__);
+    }
+
+    return "fail";
+}
+
+void  string2enum(const std::string &str, kipl::base::eThreadingMethod &tm)
+{
+    std::map<std::string,kipl::base::eThreadingMethod> tmMap;
+
+    tmMap["threadingSTL"]    = kipl::base::threadingSTL;
+    tmMap["threadingOpenMP"] = kipl::base::threadingOpenMP;
+
+    try
+    {
+        tm=tmMap.at(str);
+    }
+    catch (std::out_of_range &e)
+    {
+        throw kipl::base::KiplException("Could not transform string to a threading method enum", __FILE__, __LINE__);
+    }
+
+
+
+}

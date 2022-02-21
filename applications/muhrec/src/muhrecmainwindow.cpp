@@ -717,6 +717,9 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
     m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
 
+    ui->plotHistogram->clearAllCurves();
+    ui->plotHistogram->clearAllCursors();
+
 //    UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     m_sConfigFilename=m_sHomePath+"noname.xml";
@@ -777,6 +780,11 @@ void MuhRecMainWindow::MenuFileOpen()
     ProjectionIndexChanged(0);
     ui->spinSlicesFirst->setValue(firstSlice);
     ui->spinSlicesLast->setValue(lastSlice);
+
+    ui->plotHistogram->clearAllCurves();
+    ui->plotHistogram->clearAllCursors();
+
+    ui->sliceViewer->clear_viewer();
 
     SlicesChanged(0);
 }
