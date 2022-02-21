@@ -24,8 +24,12 @@ import makeprojections as mp
 
 ## Run the tests
 The test are set up to test different configurations of 
+
+__Data size__
 - Image size. The projection images are quadratic.
 - Number of projections. The number of projections are typically chosen to be the same as the image width.
+
+__Run conditions__
 - Number of threads used.
 - Number of repetitions. In a standard run we use 10 repetitions of the same data set.
 
