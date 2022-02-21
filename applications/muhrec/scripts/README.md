@@ -53,6 +53,7 @@ The entries in the timing file look like
     }
 ```
 
-The file needs to be edited before loading it in the evaluation notebook. The last line ends with a comma ```,```, please replace by a linefeed and closing curly bracket ```}```.
+__Attention!!!__ The file needs to be edited before loading it in the evaluation notebook. The last line ends with a comma ```,```, please replace by a linefeed and closing curly bracket ```}```.
+
 
 
