@@ -1,19 +1,38 @@
 import sys, os
+from tkinter import CENTER
+from subprocess import call
+from tqdm import tqdm
+
 sys.path.append('../../../../TestData/generators')
 import makeprojections as mp
 
 def build_data_set(image_size,image_sizes,data_path) :
     if not os.path.exists(data_path) :
         os.mkdir(data_path)
-    mp.makeTomodata(image_size,100,100,data_path,"proj_{0:04}.tif",image_size,10)
+    mp.makeTomodata(image_size,100,100,data_path,"proj_{0:05}.tif",image_size,10)
 
 
 def run_muhrec(image_size, n_projections, n_reconstructions, n_threads,data_path) :
     # Create data
 
+    callargs = []
+    callargs.append('<absolute path to muhrec>')
+    callargs.append('-f')
+    callargs.append('<absolute path to config.xml>')
+    callargs.append('projections::maxthreads={0}'.format(n_threads))
+    callargs.append('projections::lastindex={0}'.format(0))
+    callargs.append('projections::firstindex={0}'.format(n_projections))
+    callargs.append('projections::center={0}'.format(image_size/2))
+    callargs.append("projections::filemask={0}/proj_{1}/proj_#####.tif".format(data_path,image_size))
+    callargs.append('projections::path={0}/proj_{1}/'.format(data_path))
+    callargs.append("projections::obfilemask={0}/proj_{1}/ob_#####.tif".format(data_path,image_size))
+    callargs.append("projections::dcfilemask={0}/proj_{1}/dc_#####.tif".format(data_path,image_size))
+    callargs.append('matrix::path={0}/proj_{1}/'.format(data_path,image_size))
+    callargs.append("matrix::matrixname={0}/proj_{1}/recon_#####.tif".format())
+
     # run muhrec several times
-    #for i in range(n_reconstructions) :
-    print('hepp')
+    for i in tqdm(range(n_reconstructions)) :
+        call(callargs)
 
 def performance_runner() :
     n_threads   = [1,2,4,8,16,32,64]
