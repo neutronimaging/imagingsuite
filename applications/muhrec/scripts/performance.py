@@ -19,7 +19,7 @@ def run_muhrec(image_size, n_projections, n_reconstructions, n_threads,data_path
     callargs.append('<absolute path to muhrec>')
     callargs.append('-f')
     callargs.append('<absolute path to config.xml>')
-    callargs.append('projections::maxthreads={0}'.format(n_threads))
+    callargs.append('system::maxthreads={}'.format(n_threads))
     callargs.append('projections::lastindex={0}'.format(0))
     callargs.append('projections::firstindex={0}'.format(n_projections))
     callargs.append('projections::center={0}'.format(image_size/2))
@@ -32,6 +32,7 @@ def run_muhrec(image_size, n_projections, n_reconstructions, n_threads,data_path
 
     # run muhrec several times
     for i in tqdm(range(n_reconstructions)) :
+        callargs.append("matrix::matrixname={0}/proj_{1}/recon_run{2:02}_#####.tif".format(data_path,image_size,i))
         call(callargs)
 
 def performance_runner() :
