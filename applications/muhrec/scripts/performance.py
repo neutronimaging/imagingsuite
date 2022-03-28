@@ -1,5 +1,6 @@
 import sys, os
 import pathlib
+import shutil
 from tkinter import CENTER
 from subprocess import call
 from tqdm import tqdm
@@ -9,8 +10,7 @@ from os.path import expanduser
 home = expanduser("~")
 
 def build_data_set(image_size,image_sizes,data_path) :
-    if not os.path.exists(data_path) :
-        os.mkdirs(data_path,exist_ok=True)
+    pathlib.Path(data_path).mkdir(parents=True,exist_ok=True)
 
     mp.makeTomodata(image_size,100,100,data_path,"proj_{0:05}.tif",image_size,10)
 
@@ -24,7 +24,7 @@ def run_muhrec(image_size, n_projections, n_reconstructions, n_threads,data_path
     callargs = []
     callargs.append('./muhrec')
     callargs.append('-f')
-    callargs.append('PerformanceRecon.xml')
+    callargs.append('CurrentRecon.xml')
     callargs.append('system:maxthreads={}'.format(n_threads))
     callargs.append('projections:firstindex={0}'.format(0))
     callargs.append('projections:lastindex={0}'.format(n_projections-1))
@@ -41,9 +41,11 @@ def run_muhrec(image_size, n_projections, n_reconstructions, n_threads,data_path
         callargs[-1]="matrix:matrixname=recon{0}_run{1:02}_#####.tif".format(image_size,i)
         call(callargs)
 
+    return recon_path
+
 def performance_runner() :
-    n_threads   = [1] #,2,4,8,16,32,64]
-    image_sizes = [128] #,256,378,512,768,1024,2048] 
+    n_threads   = [1,2,4,8,16,32]
+    image_sizes = [128,256,378,512,768,1024,2048] 
     n_reconstructions = 10
     data_home=home+'/projections'
     if not os.path.exists(data_home) :
@@ -53,7 +55,8 @@ def performance_runner() :
         build_data_set(image_size,image_sizes,data_path)
 
         for threads in n_threads :
-            run_muhrec(image_size,image_size,n_reconstructions,threads,data_path)
+            recon_path=run_muhrec(image_size,image_size,n_reconstructions,threads,data_path)
+            shutil.rmtree(recon_path)
 
 def main(argv) :
     for arg in argv[1:]:
