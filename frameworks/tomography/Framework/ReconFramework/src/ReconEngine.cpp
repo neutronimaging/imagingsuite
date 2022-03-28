@@ -1409,7 +1409,7 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
 
-    float progress = m_Interactor->CurrentOverallProgress();
+    float progress = CurrentOverallProgress();
     float progressIncrement = 1.0f/(fNumberOfModules*nTotalBlocks);
 
     try
@@ -1642,7 +1642,7 @@ int ReconEngine::Process3D(const std::vector<size_t> &roi)
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
 
-    float progress = m_Interactor->CurrentOverallProgress();
+    float progress = CurrentOverallProgress();
     float fNumberOfModules=static_cast<float>(m_PreprocList.size())+1;
     float progressIncrement = 1/(fNumberOfModules*nTotalBlocks);
     try
@@ -1819,7 +1819,7 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections,
     msg.str("");
     m_BackProjector->GetModule()->SetROI(roi);
 
-    if (!UpdateProgress(m_Interactor->CurrentOverallProgress(), "Back projection"))
+    if (!UpdateProgress(CurrentOverallProgress(), "Back projection"))
     {
         try {
             logger(kipl::logging::Logger::LogMessage,"Back projection started.");
@@ -1874,6 +1874,16 @@ bool ReconEngine::UpdateProgress(float val, std::string msg)
     }
 
     return false;
+}
+
+float ReconEngine::CurrentOverallProgress()
+{
+    float progress=0.0f;
+    if (m_Interactor!=nullptr)
+    {
+        progress=m_Interactor->CurrentOverallProgress();
+    }
+    return progress;
 }
 
 size_t ReconEngine::validateImage(float *data, size_t N, const string &description)
