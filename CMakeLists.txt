@@ -127,14 +127,20 @@ add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/AdvancedFilters)
 add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(core/modules/ReaderConfig)
-add_subdirectory(frameworks/tomography/Framework/ReconFramework)
-add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
-add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 add_subdirectory(GUI/qt/QtAddons)
 add_subdirectory(GUI/qt/QtImaging)
 add_subdirectory(core/modules/ReaderGUI)
 add_subdirectory(GUI/qt/QtModuleConfigure)
 add_subdirectory(GUI/qt/WidgetTests)
+
+# Tomography
+add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
+add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
+add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
+
+
 
 # Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)
