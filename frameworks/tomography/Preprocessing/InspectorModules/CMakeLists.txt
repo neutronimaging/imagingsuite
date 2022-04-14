@@ -1,16 +1,19 @@
 cmake_minimum_required(VERSION 3.14)
 
 set(TARGET_NAME "InspectorModules")
-project(InspectorModules VERSION 1.0.1 LANGUAGES CXX)
+project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include_directories(
     ../../../../core/kipl/kipl/include
     /opt/local/include
     /opt/local/include/libxml2
-    ../../../../external/src/linalg
+    ../../Framework/ReconFramework/include/
+    ../../../../core/algorithms/ImagingAlgorithms/include
+#    ../../../../external/src/linalg
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
     ../../../../external/mac/include/
@@ -29,7 +32,7 @@ set(INC_FILES
   inspectormodules_global.h
 )
 
-set (SRC_FILES
+set(SRC_FILES
   CountNANs.cpp
   ProjectionInspector.cpp
   getimagesize.cpp
@@ -37,17 +40,19 @@ set (SRC_FILES
   SaveProjections.cpp
 )
 
-add_library(${TARGE_NAME} SHARED
+add_library(${TARGET_NAME} SHARED
   ${SRC_FILES}
   ${INC_FILES}
 )
 
-set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE STDBACKPROJECTORS_LIBRARY HAVE_NEXUS)
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
+# target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULES_LIBRARY HAVE_NEXUS)
 
 add_definitions(-DHAVE_NEXUS)
-
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (APPLE)

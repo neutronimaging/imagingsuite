@@ -140,6 +140,9 @@ add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
+# Tomography GUI
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+
 
 
 # Binder modules
