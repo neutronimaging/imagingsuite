@@ -19,7 +19,6 @@ include_directories(
     /opt/local/include
     /opt/local/include/libxml2
     ../../Framework/ReconFramework/include/
-#    ../../../../external/src/linalg
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/algorithms/ImagingAlgorithms/include

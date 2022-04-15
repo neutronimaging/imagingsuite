@@ -142,6 +142,7 @@ add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
 # Tomography GUI
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
 
 
 
