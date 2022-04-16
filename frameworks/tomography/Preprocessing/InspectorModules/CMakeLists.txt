@@ -13,7 +13,8 @@ include_directories(
     /opt/local/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
-#    ../../../../external/src/linalg
+    ../../../../../ExternalDependencies/macos/include
+#   ../../../../external/src/linalg
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
     ../../../../external/mac/include/

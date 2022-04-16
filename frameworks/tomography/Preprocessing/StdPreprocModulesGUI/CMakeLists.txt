@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
-#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts PrintSupport REQUIRED)
+
 message("Using Qt${QT_VERSION_MAJOR}")
 
 include_directories(
@@ -25,6 +25,7 @@ include_directories(
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
     ../StdPreprocModules/include
+    ../../../../../ExternalDependencies/macos/include
     ../../../../external/mac/include/
     ../../../../external/mac/include/nexus
     ../../../../external/mac/include/hdf5
@@ -106,7 +107,7 @@ add_library(${TARGET_NAME} SHARED
           Qt${QT_VERSION_MAJOR}::Core
           Qt${QT_VERSION_MAJOR}::Widgets
           Qt${QT_VERSION_MAJOR}::Charts
-          Qt${QT_VERSION_MAJOR}::PrintSupport
+ #         Qt${QT_VERSION_MAJOR}::PrintSupport
           kipl
           ImagingAlgorithms
           ModuleConfig
@@ -127,6 +128,6 @@ add_library(${TARGET_NAME} SHARED
       )
   endif()
 
-  target_compile_definitions(${TARGET_NAME} PRIVATE QTADDONS_LIBRARY)
+  target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULESGUI_LIBRARY)
 
   install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

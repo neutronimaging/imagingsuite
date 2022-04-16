@@ -10,9 +10,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
-#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts PrintSupport REQUIRED)
+# find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
+# find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
+
+find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Charts )
+
 message("Using Qt${QT_VERSION_MAJOR}")
 
 include_directories(
@@ -25,6 +28,7 @@ include_directories(
     ../../../../GUI/qt/QtModuleConfigure/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../../ExternalDependencies/macos/include
     ../../../../external/mac/include/
     ../../../../external/mac/include/nexus
     ../../../../external/mac/include/hdf5
@@ -57,7 +61,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-# target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULES_LIBRARY HAVE_NEXUS)
+# target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULESGUI_LIBRARY HAVE_NEXUS)
 
 add_definitions(-DHAVE_NEXUS)
 
@@ -80,7 +84,7 @@ if (APPLE)
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Charts
-        Qt${QT_VERSION_MAJOR}::PrintSupport
+    #    Qt${QT_VERSION_MAJOR}::PrintSupport
         kipl
         ImagingAlgorithms
         ModuleConfig

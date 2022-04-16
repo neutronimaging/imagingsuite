@@ -12,9 +12,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
 
-find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
+#find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
+#find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
+
+#find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
-#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts PrintSupport REQUIRED)
+
 message("Using Qt${QT_VERSION_MAJOR}")
 
 include_directories(
@@ -97,6 +100,7 @@ add_library(${TARGET_NAME} SHARED
   ${INC_FILES}
   ${UI_FILES}
 )
+
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core

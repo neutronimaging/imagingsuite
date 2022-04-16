@@ -14,8 +14,16 @@
 #include <morphology/morphology.h>
 #include <morphology/morphdist.h>
 #include <morphology/morphfilters.h>
-#include <emmintrin.h>
-#include <xmmintrin.h>
+
+
+#ifdef __x86_64__
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#else
+    #include <sse2neon.h>
+#endif
+
+
 #include <iostream>
 #include <set>
 #include <strings/miscstring.h>
