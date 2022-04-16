@@ -144,7 +144,8 @@ add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
 
-
+# applications
+add_subdirectory(applications/muhrec)
 
 # Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)
