@@ -329,8 +329,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Gaussian::Hessian(double x, arma::mat &hes)
     {
-
-        std::ignore=m;
+        std::ignore=hes;
 
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
@@ -424,12 +423,10 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
 
-        /*
-        if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
-        hes.newsize(m_Npars,m_Npars);
+        // if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
+        // hes.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+        // return 1;
     }
 
     int SumOfGaussians::Jacobian(double x, arma::mat & jac)
@@ -500,7 +497,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
     {
         std::ignore = x;
         std::ignore = jac;
-        
+
         return 0;
     }
 
@@ -544,10 +541,6 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
     {
         std::ignore = x;
         std::ignore = hes;
-<<<<<<< HEAD
-=======
-
->>>>>>> master
         return -1;
     }
 
