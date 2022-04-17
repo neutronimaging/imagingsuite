@@ -945,6 +945,7 @@ int ReconEngine::Run3D(bool bRerunBackproj)
                                 {"sizez",std::to_string(m_Config.MatrixInfo.nDims[2])},
                                };
 
+        timingLogList["system"]= {{"threads",std::to_string(m_Config.System.nMaxThreads)}};
         ProcessTimingLogger ptl(ReconConfig::homePath()+"/.imagingtools/recontiming.json");
 
         ptl.addLogEntry(timingLogList);
@@ -973,8 +974,6 @@ int ReconEngine::Run3D(bool bRerunBackproj)
         msg<<"Run3D failed with an unknown error";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
-
-
 
     return res;
 }

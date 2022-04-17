@@ -10,6 +10,8 @@
     <system>
         <memory>8000</memory>
         <loglevel>message</loglevel>
+        <validate>false</validate>
+        <maxthreads>-1</maxthreads>
     </system>
     <projections>
 	<beamgeometry>parallel</beamgeometry>

@@ -67,6 +67,8 @@ public:
     void detectionImage(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks, bool removeBias);
     void useThreading(bool x);
     bool isThreaded();
+    void setNumberOfThreads(int N);
+    int numberOfThreads();
 //    const kipl::base::TImage<float> & getNoHoles();
 //    const kipl::base::TImage<float> & getNoPeaks();
 
@@ -110,6 +112,7 @@ protected:
     kipl::base::TImage<float,2> CleanByArray(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels);
 
     bool m_bUseThreading;
+    int m_nNumberOfThreads;
     kipl::base::eConnectivity m_eConnectivity;
     eMorphCleanMethod              m_eMorphClean;
     eMorphDetectionMethod          m_eMorphDetect;

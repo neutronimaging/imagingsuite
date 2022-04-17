@@ -19,6 +19,7 @@ MorphSpotClean::MorphSpotClean() :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
     m_bUseThreading(true),
+    m_nNumberOfThreads(-1),
     m_eConnectivity(kipl::base::conn8),
     m_eMorphClean(MorphCleanReplace),
     m_eMorphDetect(MorphDetectHoles),
@@ -35,7 +36,7 @@ MorphSpotClean::MorphSpotClean() :
     m_fSigma{0.025f,0.025f},
     m_LUT(1<<15,0.1f,0.0075f)
 {
-
+    setNumberOfThreads(m_nNumberOfThreads);
 }
 
 
@@ -92,11 +93,9 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
     {
         std::ostringstream msg;
         const size_t N = img.Size(2);
-        const size_t concurentThreadsSupported = std::min(std::thread::hardware_concurrency(),static_cast<unsigned int>(N));
-
+        const size_t concurentThreadsSupported = std::min(m_nNumberOfThreads,static_cast<int>(N));
 
         std::vector<std::thread> threads;
-
 
         size_t M=N/concurentThreadsSupported;
 
@@ -550,6 +549,28 @@ void MorphSpotClean::useThreading(bool x)
 bool MorphSpotClean::isThreaded()
 {
     return m_bUseThreading;
+}
+
+void MorphSpotClean::setNumberOfThreads(int N)
+{
+    int hwMaxThreads = std::thread::hardware_concurrency();
+
+    if ((hwMaxThreads<N) || (N<1))
+    {
+        m_nNumberOfThreads = hwMaxThreads;
+    }
+    else
+    {
+        m_nNumberOfThreads = N;
+    }
+    std::ostringstream msg;
+    msg<<"Using "<<m_nNumberOfThreads<<" threads";
+    logger.message(msg.str());
+}
+
+int MorphSpotClean::numberOfThreads()
+{
+    return m_nNumberOfThreads;
 }
 
 kipl::base::TImage<float,2> MorphSpotClean::DetectHoles(kipl::base::TImage<float,2> img)

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <tuple>
 
 #include <armadillo>
 
@@ -328,7 +329,9 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Gaussian::Hessian(double x, arma::mat &hes)
     {
-        std::ignore = hes;
+
+        std::ignore=m;
+
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
 
@@ -341,6 +344,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Gaussian::Jacobian(double x, arma::mat & jac)
     {
+        std::ignore = x;
         std::ignore = jac;
 
         std::cerr<<"The Jacobian is not available"<<std::endl;
@@ -354,13 +358,13 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Gaussian::printPars()
     {
-        int i;
+
         char *est=new char[m_Npars];
 
-        for (i=0; i<m_Npars; i++)
+        for (int i=0; i<m_Npars; i++)
             est[i]=m_lock[i] ? ' ': '*';
 
-        for (i=0; i<m_Npars; i+=3)
+        for (int i=0; i<m_Npars; i+=3)
         {
             std::cout<<est[i]  <<"A="<<m_pars[i]  <<" "
                 <<est[i+1]<<"m="<<m_pars[i+1]<<" "
@@ -435,12 +439,12 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
         std::cerr<<"The Jacobian is not available"<<std::endl;
         return 1;
-        /*
-        if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
-        jac.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+        // if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
+        // jac.newsize(m_Npars,m_Npars);
+
+        // return 1;
+
     }
 
     int SumOfGaussians::printPars()
@@ -475,6 +479,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Voight::operator()(double x, double &y, arma::vec &dyda)
     {
+        std::ignore = y;
         std::ignore = dyda;
 
         long double diff=static_cast<long double>(x-m_pars[1]);
@@ -495,6 +500,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
     {
         std::ignore = x;
         std::ignore = jac;
+        
         return 0;
     }
 
@@ -538,6 +544,10 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
     {
         std::ignore = x;
         std::ignore = hes;
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
         return -1;
     }
 

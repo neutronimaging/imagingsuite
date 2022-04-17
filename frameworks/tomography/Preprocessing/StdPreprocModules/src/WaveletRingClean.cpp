@@ -8,7 +8,7 @@
 #include <ReconException.h>
 #include <functional>
 #include <tuple>
-#ifdef _OPENMP
+#ifdef OMP
 #include <omp.h>
 #endif
 #include <math/mathconstants.h>
@@ -35,14 +35,14 @@ WaveletRingClean::~WaveletRingClean()
 {
 }
 
-int WaveletRingClean::Configure(ReconConfig UNUSED(config), std::map<std::string, std::string> parameters)
+int WaveletRingClean::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
 	m_sWName              = GetStringParameter(parameters,"wname");
 	m_fSigma              = GetFloatParameter(parameters,"sigma");
 	m_nDecNum             = GetIntParameter(parameters,"decnum");
 	string2enum(GetStringParameter(parameters,"method"),m_eCleanMethod);
     m_bThreading          = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
-
+    setNumberOfThreads(config.System.nMaxThreads);
 
 	return 0;
 }
@@ -123,6 +123,11 @@ int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::ma
     std::vector<size_t> dims={img.Size(0), img.Size(2)};
 	bool fail=false;
     int N=static_cast<int>(img.Size(1));
+
+#if defined (OMP)
+    omp_set_max_threads(nMaxThreads);
+#endif
+
 	#pragma omp parallel
 	{
 		kipl::base::TImage<float,2> sinogram;
@@ -165,16 +170,15 @@ int WaveletRingClean::ProcessParallel(kipl::base::TImage<float,3> & img, std::ma
 int WaveletRingClean::ProcessParallelStd(kipl::base::TImage<float,3> & img)
 {
     std::ostringstream msg;
-    const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
 
-
+    const size_t concurentThreadsSupported = nMaxThreads;
     std::vector<std::thread> threads;
     const size_t N = img.Size(1);
 
-    size_t M=N/concurentThreadsSupported;
+    size_t M=N/nMaxThreads;
 
     msg.str("");
-    msg<<N<<" sinograms on "<<concurentThreadsSupported<<" threads, "<<M<<" sinograms per thread";
+    msg<<N<<" sinograms on "<<nMaxThreads<<" threads, "<<M<<" sinograms per thread";
     logger(logger.LogMessage,msg.str());
     m_nCounter = 0;
 

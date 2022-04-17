@@ -60,6 +60,10 @@ public:
     /// \returns A string containing the module name
 	std::string ModuleName() {return m_sModuleName;}
 
+    void setNumberOfThreads(int N);
+
+    int numberOfThreads();
+
     /// The time used to process data wth the module.
     /// \returns The elapsed time in seconds.
     double execTime() {return timer.cumulativeTime();}
@@ -98,6 +102,7 @@ protected:
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     std::vector<Publication> publications;
     bool m_bThreading;
+    int nMaxThreads;
     std::atomic_int m_nCounter;
 };
 

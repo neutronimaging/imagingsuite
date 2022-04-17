@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <tuple>
 
 #include "../../include/math/LUTCollection.h"
 #include "../../include/base/KiplException.h"
