@@ -10,24 +10,27 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Charts REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
+#find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Charts Concurrent REQUIRED)
 #find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
 
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
-    ../../../core/kipl/kipl/include
-    ../../../core/modules/ModuleConfig/include
-    ../../../core/modules/ReaderConfig
-    ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../GUI/qt/QtAddons
-    ../../../GUI/qt/QtModuleConfigure
-    ../../../core/modules/ReaderGUI
-    ../../../external/mac/include/
-    ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/hdf5
+    ../../core/kipl/kipl/include
+    ../../core/modules/ModuleConfig/include
+    ../../core/modules/ReaderConfig
+    ../../core/algorithms/ImagingAlgorithms/include
+    ../../GUI/qt/QtAddons
+    ../../GUI/qt/QtImaging
+    ../../GUI/qt/QtModuleConfigure
+    ../../core/modules/ReaderGUI
+    ../../frameworks/tomography/Framework/ReconFramework/include/
+    ../../core/algorithms/ImagingAlgorithms/include
+    ../../external/mac/include/
+    ../../../ExternalDependencies/macos/include
+    ../../../ExternalDependencies/macos/include/nexus
+    ../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 
@@ -36,7 +39,7 @@ set(SRC_FILES
     src/moduleconfigprogressdialog.cpp
     src/PreProcModuleConfigurator.cpp
     src/muhrecmainwindow.cpp
-    src/ReconReport.cpp
+#    src/ReconReport.cpp
     src/piercingpointdialog.cpp
     src/configuregeometrydialog.cpp
     src/preferencesdialog.cpp
@@ -56,7 +59,7 @@ set(INC_FILES
     src/moduleconfigprogressdialog.h
     src/PreProcModuleConfigurator.h
     src/muhrecmainwindow.h
-    src/ReconReport.h
+#    src/ReconReport.h
     src/piercingpointdialog.h
     src/configuregeometrydialog.h
     src/preferencesdialog.h
@@ -87,34 +90,30 @@ set(UI_FILES
 
 message(App Qt${QT_VERSION_MAJOR})
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+#if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${TARGET_NAME}
         MANUAL_FINALIZATION
         ${SRC_FILES}
         ${INC_FILES}
         ${UI_FILES}
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET untitled4 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(${TARGET_NAME} SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(${TARGET_NAME}
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
+#else()
+#        add_executable(${TARGET_NAME}
+#            ${PROJECT_SOURCES}
+#        )
+#endif()
+
+link_directories(../../../lib /opt/local/lib )
+
+target_link_directories(${TARGET_NAME} PRIVATE
+    /opt/local/lib
+    ../../../external/mac/lib/
+    )
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Concurrent
     kipl
     ModuleConfig
     ImagingAlgorithms
@@ -122,6 +121,11 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     QtAddons
     ReaderGUI
     QtModuleConfigure
+    ReconFramework
+    QtImaging
+    armadillo
+    lapack
+    blas
 )
 
 set_target_properties(${TARGET_NAME} PROPERTIES

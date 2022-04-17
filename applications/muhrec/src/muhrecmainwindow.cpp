@@ -513,7 +513,7 @@ void MuhRecMainWindow::CenterOfRotationChanged()
         coords[1].setX(coords[1].x()+tantilt*(coords[1].y()-pivot));
     }
 
-    ui->projectionViewer->set_plot(coords,QColor("red").light(),0);
+    ui->projectionViewer->set_plot(coords,QColor("organgered"),0);
 }
 
 void MuhRecMainWindow::StoreGeometrySetting()
