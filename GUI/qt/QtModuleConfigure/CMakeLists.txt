@@ -37,6 +37,7 @@ set(SRC_FILES
     ModuleConfigurator.cpp
     AddModuleDialog.cpp
     ConfiguratorDialogBase.cpp
+    singlemodulesettingsdialog.cpp
     stdafx.cpp
 ) 
 
@@ -51,10 +52,12 @@ set (INC_FILES
     QListWidgetModuleItem.h
     ConfiguratorDialogBase.h
     stdafx.h
+    singlemodulesettingsdialog.h
 )
 
-set (UI_FILES
 
+set (UI_FILES
+    singlemodulesettingsdialog.ui
 )
 
 add_library(${TARGET_NAME} SHARED
