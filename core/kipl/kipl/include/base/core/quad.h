@@ -3,11 +3,11 @@
 #ifndef QUAD_H_
 #define QUAD_H_
 
-#ifdef __x86_64__
+#ifdef __aarch64__
+    #include <sse2neon.h>
+#else
     #include <xmmintrin.h>
     #include <emmintrin.h>
-#else
-    #include <sse2neon.h>
 #endif
 
 namespace kipl { namespace base { 

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cmath>
+#include <tuple>
 
 #include "../../include/generators/SignalGenerator.h"
 

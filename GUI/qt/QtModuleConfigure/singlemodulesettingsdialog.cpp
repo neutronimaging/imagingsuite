@@ -74,7 +74,7 @@ ModuleConfig SingleModuleSettingsDialog::getModule()
 
 int SingleModuleSettingsDialog::exec()
 {
-    QDialog::exec();
+    return QDialog::exec();
 }
 
 int SingleModuleSettingsDialog::UpdateModuleCombobox(QString fname, bool bSetFirstIndex)

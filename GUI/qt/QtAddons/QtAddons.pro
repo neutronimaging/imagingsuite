@@ -4,11 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets charts printsupport
+QT       += core
+QT       += widgets
+QT       += charts
+QT       += printsupport
 
-TARGET = QtAddons
-TEMPLATE = lib
-CONFIG += c++17
+TARGET    = QtAddons
+TEMPLATE  = lib
+CONFIG   += c++17
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug

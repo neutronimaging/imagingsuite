@@ -2,6 +2,8 @@
 
 #include "../../include/base/imagesamplers.h"
 
+#include <tuple>
+
 namespace kipl { namespace base {
 
 void BinDimensions(size_t const * const origdims, size_t const * const nbin,size_t const * const resultdims)

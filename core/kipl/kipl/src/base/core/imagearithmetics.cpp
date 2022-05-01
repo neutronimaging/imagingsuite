@@ -1,10 +1,10 @@
 //<LICENCE>
 
-#ifdef __x86_64__
+#ifdef __aarch64__
+    #include <sse2neon.h>
+#else
     #include <xmmintrin.h>
     #include <emmintrin.h>
-#else
-    #include <sse2neon.h>
 #endif
 
 #include <cstddef>
