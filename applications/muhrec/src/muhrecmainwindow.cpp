@@ -2749,7 +2749,9 @@ void MuhRecMainWindow::on_actionGlobal_settings_triggered()
 
 void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
 {
-    PixelSizeDlg dlg(this);
+    std::string projpath = m_Config.ProjectionInfo.sFileMask;
+    projpath = projpath.substr(0,projpath.find_last_of(kipl::strings::filenames::slash));
+    PixelSizeDlg dlg(this,projpath);
 
     int res=0;
 

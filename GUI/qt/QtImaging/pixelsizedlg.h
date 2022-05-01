@@ -19,7 +19,7 @@ class QTIMAGINGSHARED_EXPORT PixelSizeDlg : public QDialog
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit PixelSizeDlg(QWidget *parent = nullptr);
+    explicit PixelSizeDlg(QWidget *parent = nullptr, const std::string &pathhint=std::string() );
     ~PixelSizeDlg();
 
     float pixelSize();
@@ -56,6 +56,7 @@ private:
     std::vector<std::pair<float,float>> edgePositions1;
 
     std::string fname;
+    std::string path;
     kipl::base::TImage<float,2> img;
 };
 

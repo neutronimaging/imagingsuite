@@ -22,15 +22,17 @@
 
 #include <readerexception.h>
 
-PixelSizeDlg::PixelSizeDlg(QWidget *parent) :
+PixelSizeDlg::PixelSizeDlg(QWidget *parent, const std::string &pathhint) :
     QDialog(parent),
     logger("PixelSizeDlg"),
     ui(new Ui::PixelSizeDlg),
-    mPixelSize(0.1f)
+    mPixelSize(0.1f),
+    path(pathhint)
 {
     ui->setupUi(this);
     ui->roi->registerViewer(ui->viewer);
     ui->roi->setROIColor("red");
+    logger.message(path);
 }
 
 PixelSizeDlg::~PixelSizeDlg()
@@ -215,9 +217,17 @@ void PixelSizeDlg::on_lineEdit_FileName_returnPressed()
 
 void PixelSizeDlg::on_pushButton_Browse_clicked()
 {
+    QString dlgpath = ui->lineEdit_FileName->text();
+
+    if (dlgpath.isEmpty() && !path.empty())
+    {
+        dlgpath = QString::fromStdString(path);
+    }
+
+
     QString fname=QFileDialog::getOpenFileName(this,
                                       tr("Select an image to measure the pixel size"),
-                                      ui->lineEdit_FileName->text());
+                                      dlgpath);
     ui->lineEdit_FileName->setText(fname);
 
     loadImage(fname);
