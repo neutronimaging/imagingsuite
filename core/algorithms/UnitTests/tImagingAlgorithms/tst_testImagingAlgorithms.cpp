@@ -59,19 +59,22 @@ private Q_SLOTS:
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
+    std::string dataPath;
     kipl::base::TImage<float,2> holes;
     std::map<size_t,float> points;
     size_t pos1;
     size_t pos2;
 
+
 };
 
-TestImagingAlgorithms::TestImagingAlgorithms()
+TestImagingAlgorithms::TestImagingAlgorithms() :
+    dataPath("../../../../../TestData/")
 {
 #ifndef DEBUG
-    kipl::io::ReadTIFF(holes,"../TestData/2D/tiff/spots/balls.tif");
+    kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
 #else
-    kipl::io::ReadTIFF(holes,"../../TestData/2D/tiff/spots/balls.tif");
+    kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
 #endif
 }
 
@@ -513,9 +516,9 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
 {
     kipl::base::TImage<float,2> sino;
 #ifdef DEBUG
-    kipl::io::ReadTIFF(sino,"../../TestData/2D/tiff/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #else
-    kipl::io::ReadTIFF(sino,"../TestData/2D/tiff/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #endif
 
     ImagingAlgorithms::ProjectionFilter pf(nullptr);
@@ -532,9 +535,9 @@ void TestImagingAlgorithms::StripeFilterParameters()
 {
    kipl::base::TImage<float,2> sino;
 #ifdef DEBUG
-   kipl::io::ReadTIFF(sino,"../../TestData/2D/tiff/woodsino_0200.tif");
+   kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #else
-   kipl::io::ReadTIFF(sino,"../TestData/2D/tiff/woodsino_0200.tif");
+   kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #endif
    ImagingAlgorithms::StripeFilter sf(sino.dims(),"daub17",4,0.21f);
    QCOMPARE(static_cast<size_t>(sf.dims()[0]),sino.Size(0));
@@ -573,9 +576,9 @@ void TestImagingAlgorithms::StripeFilterProcessing2D()
 {
     kipl::base::TImage<float,2> sino;
 #ifdef DEBUG
-    kipl::io::ReadTIFF(sino,"../../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #else
-    kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #endif
     ImagingAlgorithms::StripeFilter sf(sino.dims(),"daub17",4,0.21f);
 

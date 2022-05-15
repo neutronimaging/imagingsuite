@@ -71,6 +71,7 @@ SOURCES += \
     ../../src/piercingpointestimator.cpp \
     ../../src/ReferenceImageCorrection.cpp \
     ../../src/projectionfilter.cpp \
+    ../../src/projectionseriescorrection.cpp \
     ../../src/tomocenter.cpp
 
 HEADERS += \
@@ -88,6 +89,7 @@ HEADERS += \
     ../../include/piercingpointestimator.h \
     ../../include/ReferenceImageCorrection.h \
     ../../include/projectionfilter.h \
+    ../../include/projectionseriescorrection.h \
     ../../include/tomocenter.h
 
 

@@ -61,6 +61,7 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   add_definitions(-DVERSION="${GIT_VERSION_INFO}")
 endif()
 
+include(CTest)
 include(FetchContent)
 
 FetchContent_Declare(
@@ -131,7 +132,11 @@ endif()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
+add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
+
 add_subdirectory(core/algorithms/ImagingAlgorithms)
+add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+
 add_subdirectory(core/algorithms/AdvancedFilters)
 add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(core/modules/ReaderConfig)
@@ -246,7 +251,7 @@ if(DYNAMIC_LIB)
 endif(DYNAMIC_LIB)
 
 # turn on testing
-#enable_testing()
+enable_testing()
 
 message(${CMAKE_CURRENT_SOURCE_DIR})
 ## define test
