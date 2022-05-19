@@ -31,14 +31,14 @@ protected:
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
     std::vector<float> m_fThreshold;
     std::vector<float> m_fSigma;
-    bool m_bThresholdByFraction;
-    int m_nEdgeSmoothLength;
-    int m_nMaxArea;
-    bool m_bRemoveInfNaN;
-    bool m_bClampData;
+    bool  m_bThresholdByFraction;
+    int   m_nEdgeSmoothLength;
+    int   m_nMaxArea;
+    bool  m_bRemoveInfNaN;
+    bool  m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    bool m_bTranspose;
+    bool  m_bTranspose;
 };
 
 #endif // MORPHSPOTCLEANMODULE_H

@@ -15,7 +15,7 @@
 
 namespace ImagingAlgorithms {
 
-MorphSpotClean::MorphSpotClean() :
+MorphSpotClean::MorphSpotClean(kipl::interactors::InteractionBase *interactor) :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
     m_bUseThreading(true),
@@ -34,7 +34,10 @@ MorphSpotClean::MorphSpotClean() :
     m_fMaxLevel(7.0f), // This corresponds to 0.1% transmission
     m_fThreshold{0.95f,0.95f},
     m_fSigma{0.025f,0.025f},
-    m_LUT(1<<15,0.1f,0.0075f)
+    m_LUT(1<<15,0.1f,0.0075f),
+    m_nCounter(0),
+    m_interactor(interactor)
+
 {
     setNumberOfThreads(m_nNumberOfThreads);
 }
@@ -89,8 +92,11 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, float th, float 
 
 void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<float> &th, std::vector<float> &sigma)
 {
+    m_nCounter = 0;
+
     if (m_bUseThreading)
     {
+        logger.message("Multi-threaded processing");
         std::ostringstream msg;
         const size_t N = img.Size(2);
         const size_t concurentThreadsSupported = std::min(m_nNumberOfThreads,static_cast<int>(N));
@@ -116,6 +122,9 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
             begin  = end;
             end   += M + (restCnt>0 ? 1 :0) ;
         }
+        msg.str("");
+        msg<<"Started "<<threads.size()<<" threads";
+        logger.message(msg.str());
 
         // call join() on each thread in turn
         for_each(threads.begin(), threads.end(),
@@ -123,6 +132,7 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
     }
     else
     {
+        logger.message("Single thread processing");
         process(&img,0UL,img.Size(2),th,sigma);
     }
 }
@@ -137,6 +147,8 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> *pImg, size_t first, s
         std::copy_n(img.GetLinePtr(i),slice.Size(),slice.GetDataPtr());
         process(slice,th,sigma);
         std::copy_n(slice.GetDataPtr(), slice.Size(),img.GetLinePtr(i));
+        ++m_nCounter;
+        UpdateStatus(static_cast<float>(m_nCounter.load())/static_cast<float>(pImg->Size(2)),"MorphSpotClean");
     }
 }
 
@@ -807,11 +819,13 @@ int MorphSpotClean::Neighborhood(float * pImg, int idx, float * neigborhood)
     int start = first_line < idx       ? 0 : (idx!=0 ? 3: 4);
     int stop  = idx        < last_line ? 8 : 5;
 
-    for (int i=start; i<stop ; i++) {
+    for (int i=start; i<stop ; i++)
+    {
         float val=pImg[idx+ng[i]];
-        if (val!=mark) {
+        if (val!=mark)
+        {
             neigborhood[cnt]=val;
-            cnt++;
+            ++cnt;
         }
     }
 
@@ -827,6 +841,14 @@ int MorphSpotClean::Neighborhood(float * pImg, int idx, float * neigborhood)
 //    return nopeaks;
 //}
 
+bool MorphSpotClean::UpdateStatus(float val, std::string msg)
+{
+    if (m_interactor!=nullptr) {
+        return m_interactor->SetProgress(val,msg);
+    }
+
+    return false;
+}
 }
 
 //********************************

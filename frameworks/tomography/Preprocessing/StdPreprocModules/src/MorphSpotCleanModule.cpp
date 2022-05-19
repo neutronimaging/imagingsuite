@@ -139,11 +139,11 @@ bool MorphSpotCleanModule::SetROI(const std::vector<size_t> &roi)
 int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
     std::ignore = coeff;
-    logger(logger.LogMessage,"ProcessCore");
+    logger.message("ProcessCore");
 
     // Threading done by cleaner class
 
-    ImagingAlgorithms::MorphSpotClean cleaner;
+    ImagingAlgorithms::MorphSpotClean cleaner(m_Interactor);
     cleaner.useThreading(m_bThreading);
     cleaner.setNumberOfThreads(numberOfThreads());
     cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);

@@ -15,6 +15,7 @@
 #include <logging/logger.h>
 #include <containers/ArrayBuffer.h>
 #include <math/LUTCollection.h>
+#include <interactors/interactionbase.h>
 
 #include "pixelinfo.h"
 
@@ -40,7 +41,7 @@ class IMAGINGALGORITHMSSHARED_EXPORT MorphSpotClean
     kipl::logging::Logger logger;
     const float mark;
 public:
-    MorphSpotClean();
+    MorphSpotClean(kipl::interactors::InteractionBase *interactor=nullptr);
     void process(kipl::base::TImage<float,2> &img, float th, float sigma);
     void process(kipl::base::TImage<float,2> &img, std::vector<float> &th, std::vector<float> &sigma);
 
@@ -67,6 +68,9 @@ public:
     void detectionImage(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks, bool removeBias);
     void useThreading(bool x);
     bool isThreaded();
+
+    /// \brief Set number of allowed threads.
+    /// \param N is a value between 0 and number of available cores. 0 = use max available cores.
     void setNumberOfThreads(int N);
     int numberOfThreads();
 //    const kipl::base::TImage<float> & getNoHoles();
@@ -95,6 +99,8 @@ protected:
     /// \param neigborhood preallocated array to carry the extracted neighbors
     /// \returns number of extracted pixels in the array
     int Neighborhood(float * pImg, int idx, float * neigborhood);
+
+    bool UpdateStatus(float val, std::string msg);
 
     kipl::base::TImage<float,2> DetectSpots(kipl::base::TImage<float,2> img, kipl::containers::ArrayBuffer<PixelInfo> *pixels);
     kipl::base::TImage<float,2> DetectHoles(kipl::base::TImage<float,2> img);
@@ -134,6 +140,10 @@ protected:
     int ng[8];
     int first_line;
     int last_line;
+
+    std::atomic_int m_nCounter;
+
+    kipl::interactors::InteractionBase *m_interactor;
 };
 
 }
