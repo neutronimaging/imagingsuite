@@ -47,6 +47,7 @@ include/bblognorm.h
 include/GeneralFilter.h
 include/PreprocEnums.h
 include/StdPreprocModules.h
+include/projectionseriescorrectionmodule.h
 )
 
 set(SRC_FILES 
@@ -72,6 +73,7 @@ set(SRC_FILES
   src/PolynomialCorrectionModule.cpp
   src/PreprocEnums.cpp
   src/ProjectionFilter.cpp
+  src/projectionseriescorrectionmodule.cpp
 )
 
 # target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY HAVE_NEXUS)

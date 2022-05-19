@@ -12,6 +12,7 @@
 #include <base/timage.h>
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
+#include <io/io_csv.h>
 
 #include <MorphSpotClean.h>
 #include <averageimage.h>
@@ -22,6 +23,7 @@
 #include <ImagingException.h>
 #include <StripeFilter.h>
 #include <ReferenceImageCorrection.h>
+#include <projectionseriescorrection.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -56,6 +58,10 @@ private Q_SLOTS:
     void RefImgCorrection_Initialization();
 
     void RefImgCorrection_enums();
+
+    void ProjSeriesCorr_Enums();
+    void ProjSeriesCorr_Detection();
+    void ProjSeriesCorr_Correction();
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
@@ -69,7 +75,8 @@ private:
 };
 
 TestImagingAlgorithms::TestImagingAlgorithms() :
-    dataPath("../../../../../TestData/")
+//    dataPath("../../../../../TestData/")
+    dataPath("../TestData/")
 {
 #ifndef DEBUG
     kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
@@ -594,7 +601,7 @@ void TestImagingAlgorithms::RefImgCorrection_Initialization()
 void TestImagingAlgorithms::RefImgCorrection_enums()
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
-    strmap["otsumask"]            = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
+    strmap["otsumask"]                = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
     strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
     strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
     strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
@@ -609,6 +616,56 @@ void TestImagingAlgorithms::RefImgCorrection_enums()
     em=static_cast<ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod>(9999);
     QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
     QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+}
+
+void TestImagingAlgorithms::ProjSeriesCorr_Enums()
+{
+    {
+        std::map<std::string, ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierDetection> strmap;
+        strmap["fixedthreshold"] = ImagingAlgorithms::ProjectionSeriesCorrection::FixedThreshold;
+        strmap["mad"]            = ImagingAlgorithms::ProjectionSeriesCorrection::MAD;
+
+        ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierDetection em;
+        for (auto & item : strmap)
+        {
+            QCOMPARE(item.first,enum2string(item.second));
+            string2enum(item.first,em);
+            QCOMPARE(item.second,em);
+        }
+        em=static_cast<ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierDetection>(9999);
+        QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
+        QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+    }
+
+    {
+        std::map<std::string, ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierReplacement> strmap;
+        strmap["neighboraverage"] = ImagingAlgorithms::ProjectionSeriesCorrection::NeighborAverage;
+        strmap["weightedaverage"] = ImagingAlgorithms::ProjectionSeriesCorrection::WeightedAverage;
+
+        ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierReplacement em;
+        for (auto & item : strmap)
+        {
+            QCOMPARE(item.first,enum2string(item.second));
+            string2enum(item.first,em);
+            QCOMPARE(item.second,em);
+        }
+        em=static_cast<ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierReplacement>(9999);
+        QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
+        QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+    }
+}
+
+void TestImagingAlgorithms::ProjSeriesCorr_Detection()
+{
+ auto data=kipl::io::readCSV(dataPath+"1D/dosedata.txt",',',false);
+ auto doses = data["1"];
+
+ qDebug() << doses.size();
+}
+
+void TestImagingAlgorithms::ProjSeriesCorr_Correction()
+{
+
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)

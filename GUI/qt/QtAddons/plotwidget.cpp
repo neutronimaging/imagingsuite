@@ -261,9 +261,6 @@ void PlotWidget::updateAxes()
     findMinMax();
 
     auto axes = ui->chart->chart()->axes();
-    std::ostringstream msg;
-
-    logger.message(msg.str());
 
     if (minX!=std::numeric_limits<double>::max())
         axes[0]->setMin(minX);

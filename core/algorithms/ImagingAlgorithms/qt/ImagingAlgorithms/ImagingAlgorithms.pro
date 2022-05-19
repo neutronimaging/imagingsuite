@@ -48,6 +48,7 @@ unix {
     {
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
+        INCLUDEPATH += ../../../../../../ExternalDependencies/macos/include/
         QMAKE_LIBDIR += /opt/local/lib
 
         LIBS += -L/opt/local/lib/ -lxml2 -larmadillo -ltiff -llapack -lblas

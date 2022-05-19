@@ -22,6 +22,7 @@
 #include "../include/GammaSpotCleanModule.h"
 #include "../include/CameraStripeClean.h"
 #include "../include/bblognorm.h"
+#include "../include/projectionseriescorrectionmodule.h"
 
 #include <base/KiplException.h>
 #include <ModuleException.h>
@@ -114,6 +115,9 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
         if (sName=="CameraStripeClean")
             return new CameraStripeClean;
+
+        if (sName=="ProjectionSeriesCorrection")
+            return new ProjectionSeriesCorrectionModule;
 	}
 
     return nullptr;
@@ -246,6 +250,9 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
 
     CameraStripeClean csc;
     modulelist->operator []("CameraStripeClean")=csc.GetParameters();
+
+    ProjectionSeriesCorrectionModule pscml;
+    modulelist->operator []("ProjectionSeriesCorrection")=pscml.GetParameters();
 
 	return 0;
 }

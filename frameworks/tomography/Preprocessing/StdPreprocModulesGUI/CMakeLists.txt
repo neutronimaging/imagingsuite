@@ -48,8 +48,10 @@ set(INC_FILES
     src/polynomialcorrectiondlg.h
     src/projectionfilterdlg.h
     src/stdpreprocmodulesgui.h
+    src/projectionseriescorrectiondlg.h
     src/targetver.h
 )
+
 
 set(SRC_FILES 
     src/FullLogNormDlg.cpp
@@ -64,6 +66,7 @@ set(SRC_FILES
     src/projectionfilterdlg.cpp
     src/datascalerdlg.cpp
     src/stdpreprocmodulesgui.cpp
+    src/projectionseriescorrectiondlg.cpp
 )
 
 set(UI_FILES
@@ -78,6 +81,7 @@ set(UI_FILES
     src/bblognormdlg.ui
     src/projectionfilterdlg.ui
     src/datascalerdlg.ui
+    src/projectionseriescorrectiondlg.ui
 )
 
 # target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY HAVE_NEXUS)

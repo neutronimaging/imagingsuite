@@ -74,9 +74,9 @@ fi
 `$CPCMD $REPOSPATH/ExternalDependencies/macos/arm64/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/ExternalDependencies/macos/arm64/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libhdf5.10.dylib    $DEST/Contents/Frameworks`
-`$CPCMD /opt/local/liblibhdf5_cpp.dylib $DEST/Contents/Frameworks`
-`$CPCMD /opt/local/liblibhdf5_hl.dylib  $DEST/Contents/Frameworks`
-`$CPCMD /opt/local/liblibsz.2.dylib        $DEST/Contents/Frameworks`
+`$CPCMD /opt/local/lib/libhdf5_cpp.dylib $DEST/Contents/Frameworks`
+`$CPCMD /opt/local/lib/libhdf5_hl.dylib  $DEST/Contents/Frameworks`
+`$CPCMD /opt/local/lib/libsz.2.dylib        $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libarmadillo*.dylib $DEST/Contents/Frameworks`
 
 if [ -e "$REPOSPATH/Applications/muhrecCLI" ]; then

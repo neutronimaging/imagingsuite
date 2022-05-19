@@ -2936,13 +2936,6 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eRefe
 
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod erm)
-{
-    s<<enum2string(erm);
-
-    return s;
-}
-
 void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions > bb_options;
