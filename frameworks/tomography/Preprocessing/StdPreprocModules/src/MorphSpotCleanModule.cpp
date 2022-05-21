@@ -154,6 +154,7 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::ma
 
     cleaner.process(img,m_fThreshold,m_fSigma);
 
+
     return 0;
 }
 

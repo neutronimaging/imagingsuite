@@ -68,6 +68,7 @@ public:
     void detectionImage(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks, bool removeBias);
     void useThreading(bool x);
     bool isThreaded();
+    std::string dumpParameters();
 
     /// \brief Set number of allowed threads.
     /// \param N is a value between 0 and number of available cores. 0 = use max available cores.
