@@ -44,8 +44,8 @@ def run_muhrec(image_size, n_projections, n_reconstructions, n_threads,data_path
     return recon_path
 
 def performance_runner() :
-    n_threads   = [1,2,4,8,16,32]
-    image_sizes = [128,256,378,512,768,1024,2048] 
+    n_threads   = [1] #[1,2,4,8,16,32]
+    image_sizes = [128,256,378,512,768,1024,1536,2048] 
     n_reconstructions = 10
     data_home=home+'/projections'
     if not os.path.exists(data_home) :
