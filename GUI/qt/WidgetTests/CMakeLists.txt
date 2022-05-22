@@ -17,6 +17,7 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Charts REQUIRED)
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
+    /usr/include/libxml2
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../core/modules/ReaderConfig
@@ -63,9 +64,18 @@ else()
     endif()
 endif()
 
+link_directories(../../../lib /opt/local/lib  /usr/lib/x86_64-linux-gnu )
+
+target_link_directories(${TARGET_NAME} PRIVATE
+    /opt/local/lib
+    ../../../external/mac/lib/
+
+    )
+
 target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
+    xml2
     kipl
     ModuleConfig
     ImagingAlgorithms

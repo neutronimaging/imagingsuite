@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <atomic>
 
 #include "ImagingAlgorithms_global.h"
 #include <base/timage.h>

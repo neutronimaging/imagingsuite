@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 set(TARGET_NAME "StdPreprocModulesGUI")
-project(kipl LANGUAGES CXX)
+project(${TARGET_NAME} LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
@@ -10,14 +10,18 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
+# find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
+# find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
+
+find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
 message("Using Qt${QT_VERSION_MAJOR}")
 
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
+    /usr/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
@@ -130,6 +134,32 @@ add_library(${TARGET_NAME} SHARED
           NeXus.1.0.0
           NeXusCPP.1.0.0
       )
+  endif()
+
+  if (LINUX)
+    target_link_libraries(${TARGET_NAME}
+        PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Charts
+        kipl
+        ImagingAlgorithms
+        ModuleConfig
+        ReconFramework
+        QtAddons
+        QtModuleConfigure
+        StdPreprocModules
+        xml2
+        fftw3
+        fftw3f
+        cfitsio
+        tiff
+        armadillo
+        lapack
+        blas
+#        NeXus.1.0.0
+#        NeXusCPP.1.0.0
+    )
   endif()
 
   target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULESGUI_LIBRARY)

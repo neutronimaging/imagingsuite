@@ -67,6 +67,7 @@ add_definitions(-DHAVE_NEXUS)
 target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
     ../../../external/mac/lib/
+    /usr/lib/x86_64-linux-gnu
     )
 
 if (APPLE)

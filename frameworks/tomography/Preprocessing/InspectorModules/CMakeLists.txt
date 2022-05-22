@@ -11,6 +11,7 @@ include_directories(
     ../../../../core/kipl/kipl/include
     /opt/local/include
     /opt/local/include/libxml2
+    /usr/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../../ExternalDependencies/macos/include
