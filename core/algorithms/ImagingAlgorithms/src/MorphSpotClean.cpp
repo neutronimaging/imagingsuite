@@ -632,7 +632,7 @@ void MorphSpotClean::setNumberOfThreads(int N)
     }
     std::ostringstream msg;
     msg<<"Using "<<m_nNumberOfThreads<<" threads";
-    logger.message(msg.str());
+    logger.verbose(msg.str());
 }
 
 int MorphSpotClean::numberOfThreads()
