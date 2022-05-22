@@ -92,8 +92,8 @@ win32 {
     INCLUDEPATH  += $$REPOS/ExternalDependencies/windows/include/cfitsio
     QMAKE_LIBDIR += $$REPOS/ExternalDependencies/windows/lib
 
-    INCLUDEPATH  += $$REPOS/imaginsuite/external/include
-    QMAKE_LIBDIR += $$REPOS/imaginsuite/external/lib64
+    INCLUDEPATH  += $$REPOS/imagingsuite/external/include
+    QMAKE_LIBDIR += $$REPOS/imagingsuite/external/lib64
 
     LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
