@@ -109,7 +109,7 @@ DiffusionWorker<ImgType>::DiffusionWorker(float Tau,
 	lambda=Lambda;
 	
 	float Kernel[256];
-	int N=(int)floor(2.5*sigma);
+    int N=static_cast<int>(floor(2.5*sigma));
 	float sum=0;
 	int i;
 	for (i=-N; i<=N; i++) 

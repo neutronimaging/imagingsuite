@@ -519,7 +519,7 @@ void ImageViewerWidget::set_image(float const * const data, const std::vector<si
     float mi,ma;
     m_ImagePainter.getImageMinMax(&mi,&ma);
 
-    QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
+    QRect rect=QRect(0,0,static_cast<int>(dims[0]),static_cast<int>(dims[1]));
 
     emit newImageDims(rect);
 }
@@ -541,7 +541,7 @@ void ImageViewerWidget::set_image(float const * const data, const std::vector<si
 
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
 
-    QRect rect=QRect(0,0,(int)dims[0],(int)dims[1]);
+    QRect rect=QRect(0,0,static_cast<int>(dims[0]),static_cast<int>(dims[1]));
 
     emit newImageDims(rect);
 }

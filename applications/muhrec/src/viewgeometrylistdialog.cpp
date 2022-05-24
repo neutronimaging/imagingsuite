@@ -113,7 +113,7 @@ QPixmap ViewGeometryListDialog::CreateIconFromImage(kipl::base::TImage<float,2> 
 
     uchar * buffer=new uchar[img.Size()+1024];
 
-    sprintf((char *)buffer,"P5\n%d\n%d\n255\n",(int)img.Size(0),(int)img.Size(1));
+    sprintf((char *)buffer,"P5\n%d\n%d\n255\n",static_cast<int>(img.Size(0)),static_cast<int>(img.Size(1)));
     int offset=strlen((char *)buffer);
 
     float scale = 255/(hi-lo);
@@ -223,7 +223,7 @@ void ViewGeometryListDialog::ComputeTilt()
             m_fCenter+= m_fPivot*m_fTilt;
             m_fTilt   = -180.0f / fPi *atan(m_fTilt);
 
-            m_eChangeConfigFields = m_eChangeConfigFields | (int)ConfigField_Tilt;
+            m_eChangeConfigFields = m_eChangeConfigFields | static_cast<int>(ConfigField_Tilt);
             msg.str("");
             ui->labelTilt->setText(QString("%1").arg(m_fTilt,0,'g',4));
             ui->labelCenter->setText(QString("%1").arg(m_fCenter,0,'g',4));

@@ -555,7 +555,7 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> &src,
 
      for (int x = 0; x < static_cast<int>(dst.Size(0)); x++)
      {
-    	get_col(tmp,dstcol,x,0,(int)tmp.Size(1));
+        get_col(tmp,dstcol,x,0,static_cast<int>(tmp.Size(1)));
 
 		switch (padtype) {
 			case kipl::base::PadMirror   : pad_mirror(dstcol,h,col,filter_width);   break;
