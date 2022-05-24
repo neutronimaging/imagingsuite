@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 set(TARGET_NAME "InspectorModulesGUI")
-project(kipl LANGUAGES CXX)
+project(InspectorModulesGUI LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
@@ -22,6 +22,7 @@ include_directories(
     ../../../../core/kipl/kipl/include
     /opt/local/include
     /opt/local/include/libxml2
+    /usr/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../GUI/qt/QtAddons/
@@ -32,6 +33,7 @@ include_directories(
     ../../../../external/mac/include/
     ../../../../external/mac/include/nexus
     ../../../../external/mac/include/hdf5
+
     )
 
 link_directories(../../../../../lib /opt/local/lib )
@@ -104,5 +106,73 @@ if (APPLE)
         NeXusCPP.1.0.0
     )
 endif()
+
+#if (APPLE)
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+        target_link_directories(${TARGET_NAME} PRIVATE
+            /opt/local/lib
+            ../../../../../ExternalDependencies/macos/arm64/lib
+            )
+    else()
+        target_link_directories(${TARGET_NAME} PRIVATE
+            /opt/local/lib
+            ../../../../external/mac/lib/
+            )
+    endif()
+
+    target_link_libraries(${TARGET_NAME}
+        PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Charts
+    #    Qt${QT_VERSION_MAJOR}::PrintSupport
+        kipl
+        ImagingAlgorithms
+        ModuleConfig
+        ReconFramework
+        QtAddons
+        QtModuleConfigure
+        InspectorModules
+        xml2
+        fftw3
+        fftw3f
+        cfitsio
+        tiff
+        armadillo
+        lapack
+        blas
+        NeXus.1.0.0
+        NeXusCPP.1.0.0
+    )
+endif()
+
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  target_link_libraries(${TARGET_NAME} PRIVATE
+
+      Qt${QT_VERSION_MAJOR}::Core
+      Qt${QT_VERSION_MAJOR}::Widgets
+      Qt${QT_VERSION_MAJOR}::Charts
+  #    Qt${QT_VERSION_MAJOR}::PrintSupport
+      kipl
+      ImagingAlgorithms
+      ModuleConfig
+      ReconFramework
+      QtAddons
+      QtModuleConfigure
+      InspectorModules
+      xml2
+      fftw3
+      fftw3f
+      cfitsio
+      tiff
+      armadillo
+      lapack
+      blas
+      # NeXus.1.0.0
+      # NeXusCPP.1.0.0
+  )
+endif()
+
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

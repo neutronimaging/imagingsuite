@@ -33,7 +33,7 @@ include_directories(
     ../../../../external/mac/include/
     ../../../../external/mac/include/nexus
     ../../../../external/mac/include/hdf5
-    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    #Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 
 link_directories(../../../../../lib /opt/local/lib )
@@ -95,7 +95,8 @@ add_library(${TARGET_NAME} SHARED
   )
 
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
-  if (APPLE)
+  #if (APPLE)
+  if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
       if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
           target_link_directories(${TARGET_NAME} PRIVATE
               /opt/local/lib
@@ -133,7 +134,7 @@ add_library(${TARGET_NAME} SHARED
       )
   endif()
 
-  if (LINUX)
+  if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(${TARGET_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
