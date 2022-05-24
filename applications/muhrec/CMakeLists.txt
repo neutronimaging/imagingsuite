@@ -17,6 +17,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
+    /usr/include/libxml2
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
     ../../core/modules/ReaderConfig
@@ -137,6 +138,7 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     QtModuleConfigure
     ReconFramework
     QtImaging
+    xml2
     armadillo
     lapack
     blas

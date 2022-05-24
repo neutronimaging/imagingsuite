@@ -88,8 +88,6 @@ set(UI_FILES
     src/projectionseriescorrectiondlg.ui
 )
 
-# target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY HAVE_NEXUS)
-
 add_library(${TARGET_NAME} SHARED
   ${SRC_FILES}
   ${INC_FILES}
@@ -110,11 +108,10 @@ add_library(${TARGET_NAME} SHARED
               )
       endif()
   
-      target_link_libraries(${TARGET_NAME}
-          PRIVATE
+      target_link_libraries(${TARGET_NAME} PRIVATE
           Qt${QT_VERSION_MAJOR}::Core
           Qt${QT_VERSION_MAJOR}::Widgets
-          Qt${QT_VERSION_MAJOR}::Charts
+ #         Qt${QT_VERSION_MAJOR}::Charts
  #         Qt${QT_VERSION_MAJOR}::PrintSupport
           kipl
           ImagingAlgorithms
@@ -137,8 +134,7 @@ add_library(${TARGET_NAME} SHARED
   endif()
 
   if (LINUX)
-    target_link_libraries(${TARGET_NAME}
-        PRIVATE
+    target_link_libraries(${TARGET_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Charts

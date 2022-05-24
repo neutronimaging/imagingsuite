@@ -155,8 +155,9 @@ add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
 # Tomography GUI
-add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
 
 # applications
 add_subdirectory(applications/muhrec)
