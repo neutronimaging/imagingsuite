@@ -1,17 +1,17 @@
 //<LICENSE>
 
-#ifndef PROJECTIONSERIESCORRECTIONMODULE_H
-#define PROJECTIONSERIESCORRECTIONMODULE_H
+#ifndef ReplaceUnderexposedMODULE_H
+#define ReplaceUnderexposedMODULE_H
 
 #include "StdPreprocModules_global.h"
 #include <PreprocModuleBase.h>
-#include <projectionseriescorrection.h>
+#include <ReplaceUnderexposed.h>
 #include <interactors/interactionbase.h>
 
-class ProjectionSeriesCorrectionModule : public PreprocModuleBase
+class ReplaceUnderexposedModule : public PreprocModuleBase
 {
 public:
-    ProjectionSeriesCorrectionModule(kipl::interactors::InteractionBase *interactor=nullptr);
+    ReplaceUnderexposedModule(kipl::interactors::InteractionBase *interactor=nullptr);
 
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
     virtual std::map<std::string, std::string> GetParameters();
@@ -20,8 +20,8 @@ protected:
     virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
 
-    ImagingAlgorithms::ProjectionSeriesCorrection psc;
+    ImagingAlgorithms::ReplaceUnderexposed psc;
     float threshold;
 };
 
-#endif // PROJECTIONSERIESCORRECTIONMODULE_H
+#endif // ReplaceUnderexposedMODULE_H

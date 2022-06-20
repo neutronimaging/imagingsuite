@@ -1,5 +1,5 @@
-#include "projectionseriescorrectiondlg.h"
-#include "ui_projectionseriescorrectiondlg.h"
+#include "ReplaceUnderexposeddlg.h"
+#include "ui_ReplaceUnderexposeddlg.h"
 
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
@@ -12,7 +12,7 @@
 #include <ParameterHandling.h>
 #include <ModuleException.h>
 #include <ProjectionReader.h>
-#include <projectionseriescorrection.h>
+#include <ReplaceUnderexposed.h>
 
 #include <plotcursor.h>
 
@@ -20,19 +20,19 @@
 #include <numeric>
 #include <tuple>
 
-ProjectionSeriesCorrectionDlg::ProjectionSeriesCorrectionDlg(QWidget *parent) :
-    ConfiguratorDialogBase("ProjectionSeriesCorrectionDlg",true,true,true,parent),
-    ui(new Ui::ProjectionSeriesCorrectionDlg)
+ReplaceUnderexposedDlg::ReplaceUnderexposedDlg(QWidget *parent) :
+    ConfiguratorDialogBase("ReplaceUnderexposedDlg",true,true,true,parent),
+    ui(new Ui::ReplaceUnderexposedDlg)
 {
     ui->setupUi(this);
 }
 
-ProjectionSeriesCorrectionDlg::~ProjectionSeriesCorrectionDlg()
+ReplaceUnderexposedDlg::~ReplaceUnderexposedDlg()
 {
     delete ui;
 }
 
-int ProjectionSeriesCorrectionDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img)
+int ReplaceUnderexposedDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img)
 {
     std::ignore = img;
 
@@ -96,19 +96,19 @@ int ProjectionSeriesCorrectionDlg::exec(ConfigBase *config, std::map<string, str
     return false;
 }
 
-void ProjectionSeriesCorrectionDlg::on_doubleSpinBox_threshold_valueChanged(double arg1)
+void ReplaceUnderexposedDlg::on_doubleSpinBox_threshold_valueChanged(double arg1)
 {
     std::ignore = arg1;
     ApplyParameters();
 }
 
 
-void ProjectionSeriesCorrectionDlg::on_doubleSpinBox_threshold_editingFinished()
+void ReplaceUnderexposedDlg::on_doubleSpinBox_threshold_editingFinished()
 {
     ApplyParameters();
 }
 
-void ProjectionSeriesCorrectionDlg::ApplyParameters()
+void ReplaceUnderexposedDlg::ApplyParameters()
 {
     UpdateParameters();
 
@@ -116,7 +116,7 @@ void ProjectionSeriesCorrectionDlg::ApplyParameters()
                                                    QColor(Qt::green),
                                                    QtAddons::PlotCursor::Horizontal,
                                                    "Threshold"));
-    ImagingAlgorithms::ProjectionSeriesCorrection psc;
+    ImagingAlgorithms::ReplaceUnderexposed psc;
 
     auto res = psc.detectUnderExposure(doselist,threshold);
     QString label;
@@ -124,7 +124,7 @@ void ProjectionSeriesCorrectionDlg::ApplyParameters()
     ui->label_projcount->setText(label);
 }
 
-void ProjectionSeriesCorrectionDlg::UpdateDialog()
+void ReplaceUnderexposedDlg::UpdateDialog()
 {
     ui->doubleSpinBox_threshold->setValue(threshold);
     std::vector<float> x(doselist.size());
@@ -132,17 +132,17 @@ void ProjectionSeriesCorrectionDlg::UpdateDialog()
     ui->plot->setCurveData(0,x,doselist,"Dose");
 }
 
-void ProjectionSeriesCorrectionDlg::UpdateParameters()
+void ReplaceUnderexposedDlg::UpdateParameters()
 {
     threshold = ui->doubleSpinBox_threshold->value();
 }
 
-void ProjectionSeriesCorrectionDlg::UpdateParameterList(std::map<string, string> &parameters)
+void ReplaceUnderexposedDlg::UpdateParameterList(std::map<string, string> &parameters)
 {
     parameters["threshold"] = std::to_string(threshold);
 }
 
-void ProjectionSeriesCorrectionDlg::LoadDoseList(ReconConfig &config)
+void ReplaceUnderexposedDlg::LoadDoseList(ReconConfig &config)
 {
     ostringstream    msg;
     ProjectionReader reader;

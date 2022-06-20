@@ -1,18 +1,18 @@
 //<LICENSE>
 
-#include "../include/projectionseriescorrectionmodule.h"
+#include "../include/ReplaceUnderexposedmodule.h"
 #include <ModuleException.h>
 #include <tuple>
 #include <ParameterHandling.h>
 #include <strings/miscstring.h>
-ProjectionSeriesCorrectionModule::ProjectionSeriesCorrectionModule(kipl::interactors::InteractionBase *interactor) :
-    PreprocModuleBase("ProjectionSeriesCorrection",interactor),
+ReplaceUnderexposedModule::ReplaceUnderexposedModule(kipl::interactors::InteractionBase *interactor) :
+    PreprocModuleBase("ReplaceUnderexposed",interactor),
     threshold(1000.0f)
 {
 
 }
 
-int ProjectionSeriesCorrectionModule::Configure(ReconConfig config, std::map<string, string> parameters)
+int ReplaceUnderexposedModule::Configure(ReconConfig config, std::map<string, string> parameters)
 {
     std::ignore = config;
 
@@ -21,7 +21,7 @@ int ProjectionSeriesCorrectionModule::Configure(ReconConfig config, std::map<str
     return 1;
 }
 
-std::map<string, string> ProjectionSeriesCorrectionModule::GetParameters()
+std::map<string, string> ReplaceUnderexposedModule::GetParameters()
 {
     std::map<string, string> parameters;
     parameters["threshold"]=std::to_string(threshold);
@@ -29,13 +29,13 @@ std::map<string, string> ProjectionSeriesCorrectionModule::GetParameters()
     return parameters;
 }
 
-bool ProjectionSeriesCorrectionModule::SetROI(const std::vector<size_t> &roi)
+bool ReplaceUnderexposedModule::SetROI(const std::vector<size_t> &roi)
 {
     std::ignore = roi;
     return false;
 }
 
-int ProjectionSeriesCorrectionModule::ProcessCore(kipl::base::TImage<float, 2> &img,
+int ReplaceUnderexposedModule::ProcessCore(kipl::base::TImage<float, 2> &img,
                                                   std::map<string, string> &coeff)
 {
     std::ignore = img;
@@ -46,7 +46,7 @@ int ProjectionSeriesCorrectionModule::ProcessCore(kipl::base::TImage<float, 2> &
     return 0;
 }
 
-int ProjectionSeriesCorrectionModule::ProcessCore(kipl::base::TImage<float, 3> &img, std::map<string, string> &coeff)
+int ReplaceUnderexposedModule::ProcessCore(kipl::base::TImage<float, 3> &img, std::map<string, string> &coeff)
 {
     std::ostringstream msg;
     std::vector<float> doses;

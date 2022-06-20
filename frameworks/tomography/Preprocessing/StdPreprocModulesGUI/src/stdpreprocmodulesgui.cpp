@@ -16,7 +16,7 @@
 #include "adaptivefilterdlg.h"
 #include "generalfilterdlg.h"
 #include "bblognormdlg.h"
-#include "projectionseriescorrectiondlg.h"
+#include "ReplaceUnderexposeddlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -74,8 +74,8 @@ STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, co
         if (sName=="MorphSpotClean")
             return new MorphSpotCleanDlg;
 
-        if (sName=="ProjectionSeriesCorrection")
-            return new ProjectionSeriesCorrectionDlg;
+        if (sName=="ReplaceUnderexposed")
+            return new ReplaceUnderexposedDlg;
 
 	}	
     return nullptr;

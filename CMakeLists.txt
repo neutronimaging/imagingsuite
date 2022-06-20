@@ -136,6 +136,7 @@ add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+add_subdirectory(core/algorithms/ImagingQAAlgorithms)
 
 add_subdirectory(core/algorithms/AdvancedFilters)
 add_subdirectory(core/modules/ModuleConfig)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(TARGET_NAME "ImagingAlgorithms")
+set(TARGET_NAME "ImagingQAAlgorithms")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -11,7 +11,7 @@ include_directories(
     /opt/local/include
     /opt/local/include/libxml2
     ../../../core/kipl/kipl/include
-    ../../../external/src/linalg
+    # ../../../external/src/linalg
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../external/mac/include/
@@ -20,47 +20,27 @@ include_directories(
     ../../../external/mac/include/hdf5
     )
 
-
-#include_directories(../../kipl/kipl/include /opt/local/include ../../../external/src/linalg)
-
-
 link_directories(../../../../lib /opt/local/lib )
 
 set(INC_FILES
-  include/StripeFilter.h  
-  include/SpotClean.h  
-  include/PolynomialCorrection.h  
-  include/ImagingException.h  
-  include/TranslateProjections.h  
-  include/MorphSpotClean.h  
-  include/pixelinfo.h  
-  include/projectionfilter.h
-  include/ImagingAlgorithms_global.h  
-  include/gammaclean.h  
-  include/averageimage.h  
-  include/piercingpointestimator.h  
-  include/ReferenceImageCorrection.h  
-  include/ReplaceUnderexposed.h
-  include/tomocenter.h
-  include/normalizeimage.h
+  ballanalysis.h
+  collimationestimator.h
+  imagingqaalgorithms.h
+  profileextractor.h
+  ballassemblyanalysis.h
+  contrastsampleanalysis.h
+  imagingqaalgorithms_global.h
+  resolutionestimators.h
 )
 
 set(SRC_FILES
-  src/StripeFilter.cpp  
-  src/SpotClean.cpp  
-  src/PolynomialCorrection.cpp  
-  src/ImagingException.cpp  
-  src/TranslateProjections.cpp  
-  src/MorphSpotClean.cpp  
-  src/pixelinfo.cpp
-  src/projectionfilter.cpp
-  src/gammaclean.cpp  
-  src/averageimage.cpp  
-  src/piercingpointestimator.cpp  
-  src/ReferenceImageCorrection.cpp  
-  src/ReplaceUnderexposed.cpp
-  src/tomocenter.cpp  
-  src/normalizeimage.cpp
+  ballanalysis.cpp
+  collimationestimator.cpp
+  imagingqaalgorithms.cpp
+  resolutionestimators.cpp
+  ballassemblyanalysis.cpp
+  contrastsampleanalysis.cpp
+  profileextractor.cpp
 )
 
 
@@ -80,6 +60,7 @@ target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
     ../../../external/mac/lib/
     )
+    
 if (APPLE)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
