@@ -41,6 +41,13 @@
       <item>
        <widget class="QSpinBox" name="spinBox"/>
       </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_showLog">
+        <property name="text">
+         <string>Show log</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -96,6 +103,9 @@
    <extends>QWidget</extends>
    <header location="global">imageviewerwidget.h</header>
    <container>1</container>
+   <slots>
+    <signal>levelsChanged(float,float)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
