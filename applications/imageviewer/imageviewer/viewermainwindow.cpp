@@ -139,6 +139,11 @@ void ViewerMainWindow::updateView(const std::string &fname)
     float low,high;
     ui->viewer->get_levels(&low,&high);
     ui->viewer->set_image(img.GetDataPtr(),img.dims(),low,high);
+    QString statusText;
+
+    statusText=QString::fromStdString(fname)+QString(": ( %1 x %2 )").arg(img.Size(0)).arg(img.Size(1));
+
+    ui->statusBar->showMessage(statusText);
 }
 
 void ViewerMainWindow::on_horizontalSlider_sliderMoved(int position)
