@@ -143,4 +143,26 @@ std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
 
 }
 
+size_t nexusTypeSize(NeXus::NXnumtype nt)
+{
+    switch (nt)
+    {
+        case NeXus::FLOAT32 : return 4;
+        case NeXus::FLOAT64 : return 8;
+        case NeXus::INT8    : return 1;
+        case NeXus::UINT8   : return 1;
+        case NeXus::INT16   : return 2;
+        case NeXus::UINT16  : return 2;
+        case NeXus::INT32   : return 4;
+        case NeXus::UINT32  : return 4;
+        case NeXus::INT64   : return 8;
+        case NeXus::UINT64  : return 8;
+        case NeXus::CHAR    : return 1;
+        default:
+            throw kipl::base::KiplException("Unknown NeXus type in nexusTypeSize()",__FILE__,__LINE__);
+    }
+
+    return 1;
+}
+
 }}

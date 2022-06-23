@@ -36,6 +36,9 @@ ViewerMainWindow::ViewerMainWindow(QWidget *parent) :
     logdlg(this),
     isMultiFrame(false)
 {
+    logdlg.setModal(false);
+    kipl::logging::Logger::AddLogTarget(logdlg);
+
     ui->setupUi(this);
     QStringList args=QApplication::arguments();
 
@@ -68,7 +71,12 @@ ViewerMainWindow::~ViewerMainWindow()
 
 void ViewerMainWindow::on_actionOpen_triggered()
 {
+    QString fileName = QFileDialog::getOpenFileName(this, "Open File",
+                                                    "./",
+                                                    "Images (*.fits *.hdf *.tif)");
 
+    updateView(fileName.toStdString());
+    ui->viewer->set_levels(kipl::base::quantile99);
 }
 
 void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &img)
@@ -124,29 +132,32 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
     }
 }
 
+void ViewerMainWindow::updateView(const std::string &fname)
+{
+    kipl::base::TImage<float,2> img;
+    LoadImage(fname,img);
+    float low,high;
+    ui->viewer->get_levels(&low,&high);
+    ui->viewer->set_image(img.GetDataPtr(),img.dims(),low,high);
+}
+
 void ViewerMainWindow::on_horizontalSlider_sliderMoved(int position)
 {
     QSignalBlocker blockspin(ui->spinBox);
     QSignalBlocker blockslider(ui->horizontalSlider);
-    kipl::base::TImage<float,2> img;
     ui->spinBox->setValue(position);
-    LoadImage(m_fname,img);
-    float low,high;
-    ui->viewer->get_levels(&low,&high);
-    ui->viewer->set_image(img.GetDataPtr(),img.dims(),low,high);
 
+    updateView(m_fname);
 }
 
 void ViewerMainWindow::on_spinBox_valueChanged(int arg1)
 {
     QSignalBlocker blockspin(ui->spinBox);
     QSignalBlocker blockslider(ui->horizontalSlider);
-    kipl::base::TImage<float,2> img;
+
     ui->horizontalSlider->setValue(arg1);
-    LoadImage(m_fname,img);
-    float low,high;
-    ui->viewer->get_levels(&low,&high);
-    ui->viewer->set_image(img.GetDataPtr(),img.dims(),low,high);
+
+    updateView(m_fname);
 }
 
 void ViewerMainWindow::dragEnterEvent(QDragEnterEvent *e)
@@ -165,9 +176,7 @@ void ViewerMainWindow::dropEvent(QDropEvent *e)
         QString fileName = url.toLocalFile();
         qDebug() << "Dropped file:" << fileName;
 
-        kipl::base::TImage<float,2> img;
-        LoadImage(fileName.toStdString(),img);
-        ui->viewer->set_image(img.GetDataPtr(),img.dims());
+        updateView(fileName.toStdString());
         ui->viewer->set_levels(kipl::base::quantile99);
     }
 }

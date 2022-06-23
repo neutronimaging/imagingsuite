@@ -37,6 +37,7 @@ private slots:
 
 private:
     void LoadImage(std::string fname,kipl::base::TImage<float,2> &img);
+    void updateView(const std::string &fname);
     Ui::ViewerMainWindow *ui;
     QtAddons::LoggingDialog logdlg;
 
