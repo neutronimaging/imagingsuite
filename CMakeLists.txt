@@ -132,41 +132,41 @@ endif()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
-add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
+# add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
 
-add_subdirectory(core/algorithms/ImagingAlgorithms)
-add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+# add_subdirectory(core/algorithms/ImagingAlgorithms)
+# add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
-add_subdirectory(core/algorithms/AdvancedFilters)
-add_subdirectory(core/modules/ModuleConfig)
-add_subdirectory(core/modules/ReaderConfig)
-add_subdirectory(GUI/qt/QtAddons)
-add_subdirectory(GUI/qt/QtImaging)
-add_subdirectory(core/modules/ReaderGUI)
-add_subdirectory(GUI/qt/QtModuleConfigure)
-#add_subdirectory(GUI/qt/WidgetTests)
+# add_subdirectory(core/algorithms/AdvancedFilters)
+# add_subdirectory(core/modules/ModuleConfig)
+# add_subdirectory(core/modules/ReaderConfig)
+# add_subdirectory(GUI/qt/QtAddons)
+# add_subdirectory(GUI/qt/QtImaging)
+# add_subdirectory(core/modules/ReaderGUI)
+# add_subdirectory(GUI/qt/QtModuleConfigure)
+# #add_subdirectory(GUI/qt/WidgetTests)
 
-# Tomography
-add_subdirectory(frameworks/tomography/Framework/ReconFramework)
-add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
-add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
-add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
-add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
-add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
+# # Tomography
+# add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+# add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
+# add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
+# add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+# add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
+# add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
-# Tomography GUI
+# # Tomography GUI
 
-add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
-add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+# add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
+# add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
 
-# applications
-add_subdirectory(applications/muhrec)
-add_subdirectory(applications/imageviewer)
+# # applications
+# add_subdirectory(applications/muhrec)
+# add_subdirectory(applications/imageviewer)
 
-# Binder modules
-add_subdirectory(frameworks/tomography/pyMuhRec)
-add_subdirectory(core/algorithms/pyimgalg)
-add_subdirectory(core/algorithms/pyadvancedfilters)
+# # Binder modules
+# add_subdirectory(frameworks/tomography/pyMuhRec)
+# add_subdirectory(core/algorithms/pyimgalg)
+# add_subdirectory(core/algorithms/pyadvancedfilters)
 
 if(DYNAMIC_LIB)
   # install(
