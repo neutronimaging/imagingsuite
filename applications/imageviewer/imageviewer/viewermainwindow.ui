@@ -58,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>694</width>
-     <height>22</height>
+     <height>37</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -69,7 +69,14 @@
     <addaction name="actionSave_as"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuAnalysis">
+    <property name="title">
+     <string>Analysis</string>
+    </property>
+    <addaction name="actionMeasure_pixel_size"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuAnalysis"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -93,6 +100,11 @@
   <action name="actionSave_as">
    <property name="text">
     <string>Save as</string>
+   </property>
+  </action>
+  <action name="actionMeasure_pixel_size">
+   <property name="text">
+    <string>Measure pixel size</string>
    </property>
   </action>
  </widget>

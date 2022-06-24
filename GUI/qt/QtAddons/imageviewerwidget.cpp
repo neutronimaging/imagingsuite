@@ -532,21 +532,29 @@ QRect ImageViewerWidget::get_marked_roi()
     return roiRect;
 }
 
-void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> &dims, const float low, const float high)
+void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> &dims, const float low, const float high, bool keep_roi)
 {
     QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.setImage(data,dims,low,high);
-    roiRect.setRect(0,0,1,1);
-    rubberBandRect.setRect(0,0,1,1);
 
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
+    if (!keep_roi)
+    {
+        roiRect.setRect(0,0,1,1);
+        rubberBandRect.setRect(0,0,1,1);
+    }
+    else
+    {
+        paintEvent(nullptr);
+        m_infoDialog.updateInfo(m_ImagePainter.getImage(), roiRect);
+    }
 
     QRect rect=QRect(0,0,static_cast<int>(dims[0]),static_cast<int>(dims[1]));
 
     emit newImageDims(rect);
 }
 
-void ImageViewerWidget::getImageDims(int &x, int &y)
+void ImageViewerWidget::image_dims(int &x, int &y)
 {
     auto dims=m_ImagePainter.imageDims();
     x=dims[0];

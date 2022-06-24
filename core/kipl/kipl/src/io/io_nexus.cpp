@@ -94,6 +94,8 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
 
 std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
 {
+    kipl::logging::Logger logger("GetNexusDims");
+    std::ostringstream msg;
     std::vector<size_t> dims;
     NeXus::File file(fname.c_str());
 
@@ -107,7 +109,7 @@ std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
     map<string, string> entries = file.getEntries();
     for (map<string,string>::const_iterator it = entries.begin();        it != entries.end(); ++it)
     {
-        if(it->second=="NXdata")
+        if ((it->second=="NXdata") || (it->second=="Nxdata"))
         {
             file.openGroup(it->first, it->second);
             attr_infos = file.getAttrInfos();
@@ -126,8 +128,13 @@ std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
                 {
                           if (it_att->name=="signal")
                           {
-                              dims = std::vector<size_t>({  static_cast<size_t>(file.getInfo().dims[2]),
-                                                            static_cast<size_t>(file.getInfo().dims[1])  });
+                              if (file.getInfo().dims[0]==1)
+                                    dims = std::vector<size_t>{  static_cast<size_t>(file.getInfo().dims[2]),
+                                                                 static_cast<size_t>(file.getInfo().dims[1])  };
+                                else
+                                    dims = std::vector<size_t>{    static_cast<size_t>(file.getInfo().dims[2]),
+                                                                   static_cast<size_t>(file.getInfo().dims[1]),
+                                                                   static_cast<size_t>(file.getInfo().dims[0]) };
                           }
                 }
                 file.closeData();
