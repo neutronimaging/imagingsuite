@@ -139,7 +139,7 @@ add_subdirectory(core/algorithms/ImagingAlgorithms)
 
 add_subdirectory(core/algorithms/AdvancedFilters)
 add_subdirectory(core/modules/ModuleConfig)
-# add_subdirectory(core/modules/ReaderConfig)
+add_subdirectory(core/modules/ReaderConfig)
 # add_subdirectory(GUI/qt/QtAddons)
 # add_subdirectory(GUI/qt/QtImaging)
 # add_subdirectory(core/modules/ReaderGUI)
@@ -147,7 +147,7 @@ add_subdirectory(core/modules/ModuleConfig)
 # #add_subdirectory(GUI/qt/WidgetTests)
 
 # # Tomography
-# add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+add_subdirectory(frameworks/tomography/Framework/ReconFramework)
 # add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
 # add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
 # add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
