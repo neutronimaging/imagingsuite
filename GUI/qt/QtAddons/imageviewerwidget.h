@@ -58,7 +58,7 @@ public:
     ImageViewerWidget(QWidget *parent = nullptr);
     ~ImageViewerWidget();
 
-    void set_image(float const * const data, const std::vector<size_t> &dims);
+    void set_image(float const * const data, const std::vector<size_t> &dims, bool keep_roi=false);
     void set_image(float const * const data, const std::vector<size_t> & dims, const float low, const float high, bool keep_roi=false);
     void image_dims(int &x, int &y);
     void set_plot(QVector<QPointF> data, QColor color, int idx);
@@ -113,11 +113,12 @@ protected:
     void saveImage(const QString &fname);
 
     ImagePainter m_ImagePainter;
-    void updateRubberBandRegion();
+
     void showToolTip(QPoint position, QString message);
     void refreshPixmap();
     QRect rubberBandRect;
     QRubberBand m_rubberBandLine;
+    QRubberBand m_rubberBandBox;
     QPoint m_rubberBandOrigin;
     eRubberBandStatus m_RubberBandStatus;
     QRect roiRect;
