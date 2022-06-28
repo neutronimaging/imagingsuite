@@ -52,7 +52,7 @@ set(INC_FILES
     src/polynomialcorrectiondlg.h
     src/projectionfilterdlg.h
     src/stdpreprocmodulesgui.h
-    src/projectionseriescorrectiondlg.h
+    src/ReplaceUnderexposedDlg.h
     src/targetver.h
 )
 
@@ -70,7 +70,7 @@ set(SRC_FILES
     src/projectionfilterdlg.cpp
     src/datascalerdlg.cpp
     src/stdpreprocmodulesgui.cpp
-    src/projectionseriescorrectiondlg.cpp
+    src/ReplaceUnderexposedDlg.cpp
 )
 
 set(UI_FILES
@@ -85,7 +85,7 @@ set(UI_FILES
     src/bblognormdlg.ui
     src/projectionfilterdlg.ui
     src/datascalerdlg.ui
-    src/projectionseriescorrectiondlg.ui
+    src/ReplaceUnderexposedDlg.ui
 )
 
 add_library(${TARGET_NAME} SHARED

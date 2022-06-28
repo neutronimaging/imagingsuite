@@ -10,6 +10,7 @@
 #include "../strings/filenames.h"
 #include "../base/kiplenums.h"
 #include "../math/sums.h"
+#include "../logging/logger.h"
 
 #include <iostream>
 #include <iomanip>
@@ -50,6 +51,7 @@ namespace kipl { namespace io {
 template <class ImgType, size_t NDim>
 int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, size_t number, const std::vector<size_t> & nCrop)
 {
+    kipl::logging::Logger logger("ReadNexus");
     std::stringstream msg;
 
     NeXus::File file(fname);
@@ -69,7 +71,8 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
             map<string, string> entries_data = file.getEntries();
 
             for (map<string,string>::const_iterator it_data = entries_data.begin();
-                 it_data != entries_data.end(); it_data++) {
+                 it_data != entries_data.end(); it_data++)
+            {
                 file.openData(it_data->first);
                 attr_infos = file.getAttrInfos();
                 for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin(); it_att != attr_infos.end(); it_att++)
@@ -117,8 +120,8 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
                       slab_size.push_back(img_size[1]);
                       slab_size.push_back(img_size[0]);
 
-
-                      try{
+                      try
+                      {
                         file.getSlab(slab, slab_start, slab_size);
                       }
                       catch (const std::bad_alloc & E) {
@@ -297,6 +300,8 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const std::string &fna
 template <class ImgType, size_t NDim>
 int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const std::string &fname)
 {
+
+
     std::stringstream msg;
     NeXus::File file(fname.c_str());
 

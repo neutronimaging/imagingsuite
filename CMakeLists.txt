@@ -134,7 +134,7 @@ endif()
 add_subdirectory(core/kipl/kipl)
 # add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
 
-# add_subdirectory(core/algorithms/ImagingAlgorithms)
+add_subdirectory(core/algorithms/ImagingAlgorithms)
 # add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
 # add_subdirectory(core/algorithms/AdvancedFilters)

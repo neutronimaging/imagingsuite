@@ -33,6 +33,7 @@ ViewerMainWindow::ViewerMainWindow(QWidget *parent) :
     QMainWindow(parent),
     logger("ViewerMainWindow"),
     ui(new Ui::ViewerMainWindow),
+    logdlg(this),
     isMultiFrame(false)
 {
     ui->setupUi(this);
@@ -83,10 +84,13 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
             case kipl::io::ExtensionDAT  : std::cout<<"Image format not supported"<<std::endl; break;
             case kipl::io::ExtensionXML  : std::cout<<"Image format not supported"<<std::endl; break;
             case kipl::io::ExtensionRAW  : std::cout<<"Image format not supported"<<std::endl; break;
+            case kipl::io::ExtensionJPG  : std::cout<<"Image format not supported"<<std::endl; break;
             case kipl::io::ExtensionFITS : kipl::io::ReadFITS(img,fname); break;
             case kipl::io::ExtensionTIFF : kipl::io::ReadTIFF(img,fname); break;
             case kipl::io::ExtensionPNG  : std::cout<<"Image format not supported"<<std::endl; break;
             case kipl::io::ExtensionHDF  :
+            case kipl::io::ExtensionHDF4 :
+            case kipl::io::ExtensionHDF5 :
             {
                 kipl::io::ReadNexus(img,fname,0,{});
                 break;
@@ -213,3 +217,18 @@ void ViewerMainWindow::on_actionSave_as_triggered()
         msg.str(""); msg<<"Saving to:"<<destname;
     }
 }
+
+
+
+void ViewerMainWindow::on_pushButton_showLog_clicked()
+{
+    if (logdlg.isHidden())
+    {
+        logdlg.show();
+    }
+    else
+    {
+        logdlg.hide();
+    }
+}
+

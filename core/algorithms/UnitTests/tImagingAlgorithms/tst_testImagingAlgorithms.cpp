@@ -23,7 +23,7 @@
 #include <ImagingException.h>
 #include <StripeFilter.h>
 #include <ReferenceImageCorrection.h>
-#include <projectionseriescorrection.h>
+#include <ReplaceUnderexposed.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -621,35 +621,35 @@ void TestImagingAlgorithms::RefImgCorrection_enums()
 void TestImagingAlgorithms::ProjSeriesCorr_Enums()
 {
     {
-        std::map<std::string, ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierDetection> strmap;
-        strmap["fixedthreshold"] = ImagingAlgorithms::ProjectionSeriesCorrection::FixedThreshold;
-        strmap["mad"]            = ImagingAlgorithms::ProjectionSeriesCorrection::MAD;
+        std::map<std::string, ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection> strmap;
+        strmap["fixedthreshold"] = ImagingAlgorithms::ReplaceUnderexposed::FixedThreshold;
+        strmap["mad"]            = ImagingAlgorithms::ReplaceUnderexposed::MAD;
 
-        ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierDetection em;
+        ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection em;
         for (auto & item : strmap)
         {
             QCOMPARE(item.first,enum2string(item.second));
             string2enum(item.first,em);
             QCOMPARE(item.second,em);
         }
-        em=static_cast<ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierDetection>(9999);
+        em=static_cast<ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection>(9999);
         QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
         QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
     }
 
     {
-        std::map<std::string, ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierReplacement> strmap;
-        strmap["neighboraverage"] = ImagingAlgorithms::ProjectionSeriesCorrection::NeighborAverage;
-        strmap["weightedaverage"] = ImagingAlgorithms::ProjectionSeriesCorrection::WeightedAverage;
+        std::map<std::string, ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement> strmap;
+        strmap["neighboraverage"] = ImagingAlgorithms::ReplaceUnderexposed::NeighborAverage;
+        strmap["weightedaverage"] = ImagingAlgorithms::ReplaceUnderexposed::WeightedAverage;
 
-        ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierReplacement em;
+        ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement em;
         for (auto & item : strmap)
         {
             QCOMPARE(item.first,enum2string(item.second));
             string2enum(item.first,em);
             QCOMPARE(item.second,em);
         }
-        em=static_cast<ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierReplacement>(9999);
+        em=static_cast<ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement>(9999);
         QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
         QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
     }

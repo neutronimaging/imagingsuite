@@ -1,5 +1,5 @@
-#ifndef PROJECTIONSERIESCORRECTION_H
-#define PROJECTIONSERIESCORRECTION_H
+#ifndef ReplaceUnderexposed_H
+#define ReplaceUnderexposed_H
 
 #include "ImagingAlgorithms_global.h"
 
@@ -11,7 +11,7 @@
 namespace ImagingAlgorithms
 {
 
-class IMAGINGALGORITHMSSHARED_EXPORT ProjectionSeriesCorrection
+class IMAGINGALGORITHMSSHARED_EXPORT ReplaceUnderexposed
 {
 private:
     kipl::logging::Logger logger;
@@ -28,8 +28,8 @@ public:
         WeightedAverage
     };
 
-    ProjectionSeriesCorrection();
-    ProjectionSeriesCorrection(float                  th,
+    ReplaceUnderexposed();
+    ReplaceUnderexposed(float                  th,
                                eDoseOutlierDetection   dmethod,
                                eDoseOutlierReplacement rmethod);
 
@@ -46,15 +46,15 @@ private:
 }
 
 void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(const std::string &str,
-                                                          ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierDetection &dod);
-std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierDetection dod);
+                                                          ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection &dod);
+std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection dod);
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s,
-                                                         ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierDetection dod);
+                                                         ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection dod);
 
 void         IMAGINGALGORITHMSSHARED_EXPORT   string2enum(const std::string &str,
-                                                          ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierReplacement &dor);
-std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierReplacement dor);
+                                                          ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement &dor);
+std::string  IMAGINGALGORITHMSSHARED_EXPORT   enum2string(ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement dor);
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s,
-                                                         ImagingAlgorithms::ProjectionSeriesCorrection::eDoseOutlierReplacement &dor);
+                                                         ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement &dor);
 
-#endif // PROJECTIONSERIESCORRECTION_H
+#endif // ReplaceUnderexposed_H
