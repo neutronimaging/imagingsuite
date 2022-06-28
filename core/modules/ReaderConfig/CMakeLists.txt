@@ -32,13 +32,11 @@ include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../external/include/
     ../../../../ExternalDependencies/windows/include
     ../../../../ExternalDependencies/windows/include/nexus
     ../../../../ExternalDependencies/windows/include/cfitsio
     ../../../../ExternalDependencies/windows/include/libxml2
-    ../../../external/mac/include/nexus
-    ../../../external/mac/include/hdf5
+    ../../../external/include/
     )
 endif()
 
