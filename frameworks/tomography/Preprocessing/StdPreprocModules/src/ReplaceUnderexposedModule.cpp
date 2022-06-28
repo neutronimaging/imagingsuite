@@ -1,6 +1,6 @@
 //<LICENSE>
 
-#include "../include/ReplaceUnderexposedmodule.h"
+#include "../include/ReplaceUnderexposedModule.h"
 #include <ModuleException.h>
 #include <tuple>
 #include <ParameterHandling.h>
