@@ -17,7 +17,7 @@ find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts )
 
 message("Using Qt${QT_VERSION_MAJOR}")
-
+if (APPLE)
 include_directories(
     ../../../../core/kipl/kipl/include
     /opt/local/include
@@ -35,6 +35,20 @@ include_directories(
     ../../../../external/mac/include/hdf5
 
     )
+endif()
+
+if (WIN32)
+include_directories(
+    ../../../../core/kipl/kipl/include
+    ../../Framework/ReconFramework/include/
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    ../../../../GUI/qt/QtAddons/
+    ../../../../GUI/qt/QtModuleConfigure/
+    ../../../../core/modules/ModuleConfig/include
+    ../../../../../ExternalDependencies/windows/include
+    ../../../../../ExternalDependencies/windows/include/libxml2
+    )
+endif()
 
 link_directories(../../../../../lib /opt/local/lib )
 
@@ -63,30 +77,24 @@ set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-# target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULESGUI_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULESGUI_LIBRARY HAVE_NEXUS)
 
 add_definitions(-DHAVE_NEXUS)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
-if (APPLE)
-    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../../../ExternalDependencies/macos/arm64/lib
-            )
-    else()
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../../external/mac/lib/
-            )
-    endif()
 
+if (WIN32)
+
+    target_link_directories(${TARGET_NAME} PRIVATE
+        ../../../../../ExternalDependencies/windows/lib
+        ../../../../../imagingsuite/external/lib64
+        ../../../../../imagingsuite/external/lib64/nexus
+        )
     target_link_libraries(${TARGET_NAME}
         PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Charts
-    #    Qt${QT_VERSION_MAJOR}::PrintSupport
         kipl
         ImagingAlgorithms
         ModuleConfig
@@ -94,20 +102,14 @@ if (APPLE)
         QtAddons
         QtModuleConfigure
         InspectorModules
-        xml2
-        fftw3
-        fftw3f
+        libxml2
         cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus.1.0.0
-        NeXusCPP.1.0.0
+        libtiff
+        NeXus
+        NeXusCPP
     )
 endif()
 
-#if (APPLE)
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
         target_link_directories(${TARGET_NAME} PRIVATE

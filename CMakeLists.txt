@@ -140,10 +140,10 @@ add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/AdvancedFilters)
 add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(core/modules/ReaderConfig)
-# add_subdirectory(GUI/qt/QtAddons)
-# add_subdirectory(GUI/qt/QtImaging)
-# add_subdirectory(core/modules/ReaderGUI)
-# add_subdirectory(GUI/qt/QtModuleConfigure)
+add_subdirectory(GUI/qt/QtAddons)
+add_subdirectory(GUI/qt/QtImaging)
+add_subdirectory(core/modules/ReaderGUI)
+add_subdirectory(GUI/qt/QtModuleConfigure)
 # #add_subdirectory(GUI/qt/WidgetTests)
 
 # # Tomography
@@ -154,13 +154,17 @@ add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
-# # Tomography GUI
+# Tomography GUI
+add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
 
-# add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
-# add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+# applications
+add_subdirectory(applications/muhrec)
+# if (WIN32)
+#   add_subdirectory(applications/verticalslicer)
+#   add_subdirectory(applications/multiframesplitter)
+# endif()
 
-# # applications
-# add_subdirectory(applications/muhrec)
 # add_subdirectory(applications/imageviewer)
 
 # # Binder modules
@@ -249,6 +253,24 @@ if(DYNAMIC_LIB)
   endif()
   
 
+  if (WIN32)
+  install(FILES 
+  external/windows/lib64/nexus/libNeXus.dll	
+  external/windows/lib64/hdf5/libhdf5_cpp.dll
+  external/windows/lib64/nexus/libNeXusCPP.dll
+  external/windows/lib64/hdf5/libhdf5_hl.dll
+  external/windows/lib64/hdf5/libhdf5.dll
+  external/windows/lib64/libsz.2.dylib
+  external/windows/lib64/libtiff.dll
+  external/windows/lib64/libfftw3.3.dylib
+  external/windows/lib64/libfftw3f.3.dylib
+  ../ExternalDependencies/windows/lib/libxml2.dll 
+  ../ExternalDependencies/windows/lib/libopenblas.dll
+  ../ExternalDependencies/windows/lib/cfitsio.dll
+
+
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+endif()
 
 endif(DYNAMIC_LIB)
 
