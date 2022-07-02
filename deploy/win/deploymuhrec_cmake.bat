@@ -51,6 +51,7 @@ copy %REPOS%\ExternalDependencies\windows\bin\libxml2.dll .
 
 
 copy %BDEST%\Applications\MuhRec.exe .
+copy %BDEST%\Applications\ImageViewer.exe .
 rem copy %REPOS%\Applications\MuhRecCLI.exe .
 rem copy %REPOS%\lib\verticalslicer.exe
 rem copy %REPOS%\lib\multiframesplitter.exe
@@ -62,6 +63,7 @@ cd %QTBINPATH%
 rem windeployqt %DEST%\verticalslicer.exe
 rem windeployqt %DEST%\multiframesplitter.exe
 windeployqt %DEST%\muhrec.exe
+windeployqt %DEST%\ImageViewer.exe
 rem windeployqt %DEST%\muhrecCLI.exe
 
 copy Qt6PrintSupport.dll %DEST%

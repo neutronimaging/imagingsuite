@@ -161,11 +161,12 @@ add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
 # applications
 add_subdirectory(applications/muhrec)
 # if (WIN32)
+#   add_subdirectory(applications/muhrecCLI)
 #   add_subdirectory(applications/verticalslicer)
 #   add_subdirectory(applications/multiframesplitter)
 # endif()
 
-# add_subdirectory(applications/imageviewer)
+add_subdirectory(applications/imageviewer)
 
 # # Binder modules
 # add_subdirectory(frameworks/tomography/pyMuhRec)
@@ -267,7 +268,6 @@ if(DYNAMIC_LIB)
   ../ExternalDependencies/windows/lib/libxml2.dll 
   ../ExternalDependencies/windows/lib/libopenblas.dll
   ../ExternalDependencies/windows/lib/cfitsio.dll
-
 
   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
