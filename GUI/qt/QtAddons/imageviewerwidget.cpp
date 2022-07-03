@@ -289,19 +289,11 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
         {
             if (rect.contains(origin))
             {
-                if (rubberBandRect.contains(origin))
-                {
-                    logger.message("Moving ROI");
-                    m_RubberBandStatus = RubberBandMove;
-                }
-                else
-                {
-                    m_RubberBandStatus = RubberBandDrag;
-                    m_rubberBandBox.setGeometry(QRect(origin, QSize()));
-                    rubberBandRect = m_rubberBandBox.rect();
-                    m_rubberBandBox.show();
-                    setCursor(Qt::CrossCursor);
-                }
+                m_RubberBandStatus = RubberBandDrag;
+                m_rubberBandBox.setGeometry(QRect(origin, QSize()));
+                rubberBandRect = m_rubberBandBox.rect();
+                m_rubberBandBox.show();
+                setCursor(Qt::CrossCursor);
             }
             rubberBandRect = QRect(origin.x(),origin.y(),m_rubberBandBox.rect().width(),m_rubberBandBox.rect().height());
         }
@@ -343,25 +335,25 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
         m_rubberBandBox.setGeometry(QRect(m_rubberBandOrigin, origin).normalized());
         rubberBandRect = m_rubberBandBox.rect();
     }
-    else if (m_RubberBandStatus == RubberBandMove)
-    {
-        const int w=10;
-        QRect r0 = QRect(m_rubberBandOrigin.x()-w,
-                         m_rubberBandOrigin.y()-w,
-                         rubberBandRect.width()+2*w,
-                         rubberBandRect.height()+2*w);
-        QRect r1 = QRect(m_rubberBandOrigin.x()+w,
-                         m_rubberBandOrigin.y()+w,
-                         rubberBandRect.width()-2*w,
-                         rubberBandRect.height()-2*w);
+//    else if (m_RubberBandStatus == RubberBandMove)
+//    {
+//        const int w=10;
+//        QRect r0 = QRect(m_rubberBandOrigin.x()-w,
+//                         m_rubberBandOrigin.y()-w,
+//                         rubberBandRect.width()+2*w,
+//                         rubberBandRect.height()+2*w);
+//        QRect r1 = QRect(m_rubberBandOrigin.x()+w,
+//                         m_rubberBandOrigin.y()+w,
+//                         rubberBandRect.width()-2*w,
+//                         rubberBandRect.height()-2*w);
 
-        if ((r0.contains(origin)==true) && (r1.contains(origin)==false))
-        {
-            m_rubberBandBox.move(origin);
-            QRect r = m_rubberBandBox.rect();
-            rubberBandRect = r;
-        }
-    }
+//        if ((r0.contains(origin)==true) && (r1.contains(origin)==false))
+//        {
+//            m_rubberBandBox.move(origin);
+//            QRect r = m_rubberBandBox.rect();
+//            rubberBandRect = r;
+//        }
+//    }
 
     if (m_MouseMode==ViewerProfile)
         m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, origin).normalized());

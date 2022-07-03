@@ -54,6 +54,7 @@ set(SRC_FILES
   facestyles.cpp
   plotcursor.cpp
   roidialog.cpp 
+  imgviewerprofiledialog.cpp
 ) 
 
 set (INC_FILES
@@ -79,6 +80,7 @@ set (INC_FILES
   facestyles.h
   plotcursor.h
   roidialog.h
+  imgviewerprofiledialog.h
 )
 
 set (UI_FILES
@@ -93,6 +95,7 @@ set (UI_FILES
     plotwidget.ui
     setgraylevelsdlg.ui
     roidialog.ui
+    imgviewerprofiledialog.ui
 )
 
 add_library(${TARGET_NAME} SHARED
