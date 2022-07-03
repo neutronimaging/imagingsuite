@@ -52,7 +52,7 @@ copy %REPOS%\ExternalDependencies\windows\bin\libxml2.dll .
 
 copy %BDEST%\Applications\MuhRec.exe .
 copy %BDEST%\Applications\ImageViewer.exe .
-rem copy %REPOS%\Applications\MuhRecCLI.exe .
+copy %BDEST%\lib\MuhRecCLI.exe .
 rem copy %REPOS%\lib\verticalslicer.exe
 rem copy %REPOS%\lib\multiframesplitter.exe
 
