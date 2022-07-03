@@ -82,9 +82,11 @@ void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *intera
 
 #ifdef _MSC_VER
     std::wstring so(m_sSharedObject.length(), ' ');
-
-    copy(m_sSharedObject.begin(), m_sSharedObject.end(), so.begin());
-    hinstLib = LoadLibrary(so.c_str());
+    char * str=new char[m_sSharedObject.length()+4];
+//    copy(m_sSharedObject.begin(), m_sSharedObject.end(), so.begin());
+    copy(m_sSharedObject.begin(), m_sSharedObject.end(), str);
+    hinstLib = LoadLibrary(str);
+    delete [] str;
 #else
     hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif

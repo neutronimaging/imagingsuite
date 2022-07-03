@@ -5,9 +5,9 @@
 #include <sstream>
 #include <vector>
 
-#include <QCoreApplication>
-#include <QVector>
-#include <QDebug>
+//#include <QCoreApplication>
+//#include <QVector>
+//#include <QDebug>
 
 #include <ReconFactory.h>
 #include <ReconEngine.h>
@@ -21,15 +21,28 @@
 
 #include "muhreccli.h"
 
-MuhRecCLI::MuhRecCLI(QCoreApplication *a) :
-    logger("MuhRecCLI"),
-    app(a)
-{
-    QVector<QString> qargs=app->arguments().toVector();
+//MuhRecCLI::MuhRecCLI(QCoreApplication *a) :
+//    logger("MuhRecCLI"),
+//    app(a)
+//{
+//    QVector<QString> qargs=app->arguments().toVector();
 
-    for (int i=0; i<qargs.size(); i++) {
-        args.push_back(qargs[i].toStdString());
-    }
+//    for (int i=0; i<qargs.size(); i++) {
+//        args.push_back(qargs[i].toStdString());
+//    }
+//    applicationPath = QCoreApplication::applicationDirPath().toStdString();
+//}
+
+MuhRecCLI::MuhRecCLI(int argc, char ** argv) :
+    logger("MuhRecCLI")
+//    app(nullptr)
+{
+    for (int i=0; i<argc ; ++i)
+        args.push_back(argv[i]);
+
+    applicationPath = args[0];
+    applicationPath = applicationPath.substr(0,applicationPath.find_last_of(kipl::strings::filenames::slash));
+
 }
 
 int MuhRecCLI::exec()
@@ -39,13 +52,17 @@ int MuhRecCLI::exec()
 #ifdef _OPENMP
     omp_set_nested(1);
 #endif
+    logger(kipl::logging::Logger::LogMessage,"MuhRec is running in CLI mode");
 
-    if (2<args.size()) {
-        if (args[1]=="-f") {
-            logger(kipl::logging::Logger::LogMessage,"MuhRec3 is running in CLI mode");
-            try {
+    if (2<args.size())
+    {
+        if (args[1]=="-f")
+        {
+
+            try
+            {
                 logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
-                ReconConfig config(QCoreApplication::applicationDirPath().toStdString());
+                ReconConfig config(applicationPath);
 
                 config.LoadConfigFile(args[2],"reconstructor");
                 config.GetCommandLinePars(args);
@@ -103,7 +120,7 @@ int MuhRecCLI::exec()
         }
     }
     else {
-         std::cerr<<"Empty call"<<std::endl;
+        logger(kipl::logging::Logger::LogError,"No arguments provided.");
         return -7;
     }
 

@@ -22,7 +22,7 @@
 #include "../include/GammaSpotCleanModule.h"
 #include "../include/CameraStripeClean.h"
 #include "../include/bblognorm.h"
-#include "../include/ReplaceUnderexposedmodule.h"
+#include "../include/ReplaceUnderexposedModule.h"
 
 #include <base/KiplException.h>
 #include <ModuleException.h>

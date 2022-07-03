@@ -7,6 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (APPLE)
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
@@ -19,8 +20,24 @@ include_directories(
     ../../../../ExternalDependencies/macos/include/nexus
     ../../../external/mac/include/hdf5
     )
+endif()
 
-
+if (WIN32)
+    include_directories(
+        /opt/local/include
+        /opt/local/include/libxml2
+        ../../../core/kipl/kipl/include
+        ../../../external/src/linalg
+        ../../../core/kipl/kipl/include
+        ../../../core/modules/ModuleConfig/include
+        ../../../external/include/
+        ../../../../ExternalDependencies/windows/include
+        ../../../../ExternalDependencies/windows/include/nexus
+        ../../../../ExternalDependencies/windows/include/cfitsio
+        ../../../external/mac/include/nexus
+        ../../../external/mac/include/hdf5
+        )
+endif()
 #include_directories(../../kipl/kipl/include /opt/local/include ../../../external/src/linalg)
 
 
@@ -95,6 +112,29 @@ target_link_libraries(${TARGET_NAME}
     NeXus.1.0.0
     NeXusCPP.1.0.0
   )
+endif()
+
+if (WIN32)
+    target_link_directories(${TARGET_NAME} PRIVATE
+    ../../../../ExternalDependencies/windows/lib
+    ../../../../imagingsuite/external/lib64
+    ../../../../imagingsuite/external/lib64/nexus
+    )
+    
+    target_link_libraries(${TARGET_NAME}
+    PRIVATE
+        kipl
+        libxml2
+        cfitsio
+        libtiff
+        liblapack
+        libopenblas
+        libfftw3-3
+        libfftw3f-3
+        NeXus
+        NeXusCPP
+        Iphlpapi
+    )
 endif()
 
 if (UNIX AND NOT APPLE)

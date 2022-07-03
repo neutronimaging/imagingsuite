@@ -16,7 +16,7 @@
 #include "adaptivefilterdlg.h"
 #include "generalfilterdlg.h"
 #include "bblognormdlg.h"
-#include "ReplaceUnderexposeddlg.h"
+#include "ReplaceUnderexposedDlg.h"
 
 class ConfiguratorDialogBase;
 
