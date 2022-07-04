@@ -81,7 +81,7 @@ void ModuleItemBase::LoadModuleObject(kipl::interactors::InteractionBase *intera
     std::ostringstream msg;
 
 #ifdef _MSC_VER
-    std::wstring so(m_sSharedObject.length(), ' ');
+//    std::wstring so(m_sSharedObject.length(), ' ');
     char * str=new char[m_sSharedObject.length()+4];
 //    copy(m_sSharedObject.begin(), m_sSharedObject.end(), so.begin());
     copy(m_sSharedObject.begin(), m_sSharedObject.end(), str);

@@ -96,7 +96,12 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   add_definitions(-DIMGSUITE_VERSION="${GIT_VERSION_INFO}")
 endif()
 
-if(NOT WIN32)
+if(WIN32)
+add_compile_options(
+  /openmp 
+  /O2
+  )
+else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
   add_compile_options(
     -Wall
