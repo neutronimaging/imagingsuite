@@ -4,6 +4,7 @@ DEST="$DIRECTORY/ImageViewer.app"
 REPOSPATH=$WORKSPACE
 QTPATH=$QTBINPATH
 
+ARCH=`uname -m`
 GITVER=`git rev-parse --short HEAD`
 
 if [ ! -d "$DIRECTORY" ]; then
@@ -39,8 +40,8 @@ fi
 `$CPCMD $REPOSPATH/install/lib/libQtModuleConfigure.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/install/lib/libQtImaging.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/install/lib/libImagingAlgorithms.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/ExternalDependencies/macos/arm64/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/ExternalDependencies/macos/arm64/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libhdf5.10.dylib    $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libhdf5_cpp.dylib $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libhdf5_hl.dylib  $DEST/Contents/Frameworks`
@@ -80,7 +81,7 @@ echo
 pwd
 
 install_name_tool -add_rpath @executable_path/../Frameworks ImageViewer
-
+cd ../Frameworks
 # # kipl
 # install_name_tool -change libtiff.5.dylib @executable_path/../Frameworks/libtiff.5.dylib libkipl.1.0.0.dylib
 # install_name_tool -change libxml2.2.dylib @executable_path/../Frameworks/libtiff.5.dylib libkipl.1.0.0.dylib
@@ -114,11 +115,9 @@ install_name_tool -add_rpath @executable_path/../Frameworks ImageViewer
 # install_name_tool -change libcfitsio.1.dylib @executable_path/../Frameworks/libcfitsio.dylib libReaderConfig.1.0.0.dylib
 
 # #nexus_related
-# install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libkipl.1.0.0.dylib
-# install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libkipl.1.0.0.dylib
-# install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib libNexus.1.dylib
-# install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib libNexusCPP.1.dylib
-# install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libNexusCPP.1.dylib
+install_name_tool -change libNeXus.1.dylib @rpath/Frameworks/libNeXus.1.dylib libkipl.dylib
+install_name_tool -change libNeXusCPP.1.dylib @rpath/Frameworks/libNeXusCPP.1.dylib libkipl.dylib
+install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libNexusCPP.1.0.0.dylib
 
 # install_name_tool -change /usr/local/Cellar/hdf5/1.8.16_1/lib/libhdf5.10.dylib @executable_path/../Frameworks/libhdf5.10.dylib libhdf5_cpp.11.dylib
 # install_name_tool -change /usr/local/Cellar/hdf5/1.8.16_1/lib/libhdf5.10.dylib @executable_path/../Frameworks/libhdf5.10.dylib libhdf5_hl.10.dylib
@@ -158,4 +157,4 @@ fi
 
 cp -r $DEST /tmp/imageviewer
 
-hdiutil create -volname ImageViewer -srcfolder /tmp/imageviewer -ov -format UDZO $DIRECTORY/ImageViewer_build-$GITVER-`date +%Y%m%d`.dmg
+hdiutil create -volname ImageViewer -srcfolder /tmp/imageviewer -ov -format UDZO $DIRECTORY/ImageViewer_$ARCH-build-$GITVER-`date +%Y%m%d`.dmg

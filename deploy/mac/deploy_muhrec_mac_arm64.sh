@@ -4,6 +4,8 @@ DEST="$DIRECTORY/MuhRec.app"
 REPOSPATH=$WORKSPACE
 QTPATH=$QTBINPATH
 
+ARCH=`uname -m`
+
 GITVER=`git rev-parse --short HEAD`
 
 if [ ! -d "$DIRECTORY" ]; then
@@ -55,6 +57,7 @@ fi
 # `$CPCMD /opt/local/lib/libsz.2.dylib        $DEST/Contents/MacOS`
 # `$CPCMD /opt/local/lib/libarmadillo*.dylib $DEST/Contents/MacOS`
 
+
 `$CPCMD $REPOSPATH/install/lib/libImagingAlgorithms.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/install/lib/libModuleConfig.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/install/lib/libQtAddons.dylib $DEST/Contents/Frameworks`
@@ -71,8 +74,8 @@ fi
 `$CPCMD $REPOSPATH/install/lib/libInspectorModulesGUI.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/install/lib/libInspectorModules.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/install/lib/libFDKBackProjectors.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/ExternalDependencies/macos/arm64/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/ExternalDependencies/macos/arm64/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libhdf5.10.dylib    $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libhdf5_cpp.dylib $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libhdf5_hl.dylib  $DEST/Contents/Frameworks`

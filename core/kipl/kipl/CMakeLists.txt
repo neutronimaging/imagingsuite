@@ -319,7 +319,7 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
-set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+#set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_compile_definitions(${TARGET_NAME} PRIVATE KIPL_LIBRARY HAVE_NEXUS)
 
@@ -327,22 +327,16 @@ add_definitions(-DHAVE_NEXUS)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (APPLE)
-    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../../ExternalDependencies/macos/arm64/lib
-            )
-    else()
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../external/mac/lib/
-            )
-    endif()
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../../external/mac/lib/
+        )
 
     target_link_libraries(${TARGET_NAME}
     		PRIVATE
     			xml2
-                        fftw3
+                fftw3
     			fftw3f
     			cfitsio
     			tiff

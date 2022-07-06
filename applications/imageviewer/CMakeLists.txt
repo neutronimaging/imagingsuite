@@ -84,7 +84,7 @@ link_directories(../../../lib /opt/local/lib )
 
 target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
-    ../../../ExternalDependencies/macos/arm64/lib
+    ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
     ../../external/mac/lib/
     )
 

@@ -80,6 +80,7 @@ target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
     ../../../external/mac/lib/
     )
+    
 if (APPLE)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
