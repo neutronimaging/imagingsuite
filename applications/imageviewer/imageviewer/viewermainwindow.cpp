@@ -21,6 +21,7 @@
 #include <io/io_vivaseq.h>
 #include <io/io_nexus.h>
 #include <math/sums.h>
+#include <pixelsizedlg.h>
 
 #include <imagewriter.h>
 
@@ -36,6 +37,9 @@ ViewerMainWindow::ViewerMainWindow(QWidget *parent) :
     logdlg(this),
     isMultiFrame(false)
 {
+    logdlg.setModal(false);
+    kipl::logging::Logger::AddLogTarget(logdlg);
+
     ui->setupUi(this);
     QStringList args=QApplication::arguments();
 
@@ -68,31 +72,54 @@ ViewerMainWindow::~ViewerMainWindow()
 
 void ViewerMainWindow::on_actionOpen_triggered()
 {
+    QString fileName = QFileDialog::getOpenFileName(this, "Open File",
+                                                    "./",
+                                                    "Images (*.fits *.hdf *.tif)");
 
+    updateView(fileName.toStdString());
+    ui->viewer->set_levels(kipl::base::quantile99);
 }
 
 void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &img)
 {
+    std::ostringstream msg;
     if (QFile::exists(QString::fromStdString(fname)))
     {
         isMultiFrame = false;
         m_ext = kipl::io::GetFileExtensionType(fname);
         switch (m_ext)
         {
-            case kipl::io::ExtensionTXT  : std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionDMP  : std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionDAT  : std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionXML  : std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionRAW  : std::cout<<"Image format not supported"<<std::endl; break;
-            case kipl::io::ExtensionJPG  : std::cout<<"Image format not supported"<<std::endl; break;
+            case kipl::io::ExtensionTXT  : logger.message("Image format not supported"); break;
+            case kipl::io::ExtensionDMP  : logger.message("Image format not supported"); break;
+            case kipl::io::ExtensionDAT  : logger.message("Image format not supported"); break;
+            case kipl::io::ExtensionXML  : logger.message("Image format not supported"); break;
+            case kipl::io::ExtensionRAW  : logger.message("Image format not supported"); break;
+            case kipl::io::ExtensionJPG  : logger.message("Image format not supported"); break;
             case kipl::io::ExtensionFITS : kipl::io::ReadFITS(img,fname); break;
             case kipl::io::ExtensionTIFF : kipl::io::ReadTIFF(img,fname); break;
-            case kipl::io::ExtensionPNG  : std::cout<<"Image format not supported"<<std::endl; break;
+            case kipl::io::ExtensionPNG  : logger.message("Image format not supported"); break;
             case kipl::io::ExtensionHDF  :
             case kipl::io::ExtensionHDF4 :
             case kipl::io::ExtensionHDF5 :
             {
-                kipl::io::ReadNexus(img,fname,0,{});
+                auto dims=kipl::io::GetNexusDims(fname);
+
+                int idx = 0;
+                if (dims.size()==3)
+                {
+                    isMultiFrame = true;
+                    if (fname!=m_fname)
+                    {
+                        ui->horizontalSlider->setMinimum(0);
+                        ui->horizontalSlider->setMaximum(dims[2]-1);
+                        ui->spinBox->setMinimum(0);
+                        ui->spinBox->setMaximum(dims[2]-1);
+                        ui->horizontalSlider->setValue(0);
+                    }
+                    idx = ui->horizontalSlider->value();
+                }
+
+                kipl::io::ReadNexus(img,fname,idx,{});
                 break;
             }
 
@@ -124,29 +151,37 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
     }
 }
 
+void ViewerMainWindow::updateView(const std::string &fname)
+{
+    LoadImage(fname,currentImage);
+    float low,high;
+    auto roi = ui->viewer->get_marked_roi();
+    ui->viewer->get_levels(&low,&high);
+    ui->viewer->set_image(currentImage.GetDataPtr(),currentImage.dims(),low,high,true);
+    QString statusText;
+
+    statusText=QString::fromStdString(fname)+QString(": ( %1 x %2 )").arg(currentImage.Size(0)).arg(currentImage.Size(1));
+
+    ui->statusBar->showMessage(statusText);
+}
+
 void ViewerMainWindow::on_horizontalSlider_sliderMoved(int position)
 {
     QSignalBlocker blockspin(ui->spinBox);
     QSignalBlocker blockslider(ui->horizontalSlider);
-    kipl::base::TImage<float,2> img;
     ui->spinBox->setValue(position);
-    LoadImage(m_fname,img);
-    float low,high;
-    ui->viewer->get_levels(&low,&high);
-    ui->viewer->set_image(img.GetDataPtr(),img.dims(),low,high);
 
+    updateView(m_fname);
 }
 
 void ViewerMainWindow::on_spinBox_valueChanged(int arg1)
 {
     QSignalBlocker blockspin(ui->spinBox);
     QSignalBlocker blockslider(ui->horizontalSlider);
-    kipl::base::TImage<float,2> img;
+
     ui->horizontalSlider->setValue(arg1);
-    LoadImage(m_fname,img);
-    float low,high;
-    ui->viewer->get_levels(&low,&high);
-    ui->viewer->set_image(img.GetDataPtr(),img.dims(),low,high);
+
+    updateView(m_fname);
 }
 
 void ViewerMainWindow::dragEnterEvent(QDragEnterEvent *e)
@@ -165,9 +200,7 @@ void ViewerMainWindow::dropEvent(QDropEvent *e)
         QString fileName = url.toLocalFile();
         qDebug() << "Dropped file:" << fileName;
 
-        kipl::base::TImage<float,2> img;
-        LoadImage(fileName.toStdString(),img);
-        ui->viewer->set_image(img.GetDataPtr(),img.dims());
+        updateView(fileName.toStdString());
         ui->viewer->set_levels(kipl::base::quantile99);
     }
 }
@@ -203,18 +236,19 @@ void ViewerMainWindow::on_actionSave_as_triggered()
             std::string destname;
             ImageWriter writer;
             kipl::base::TImage<float,2> img;
-            for (int i=first; i<=last; ++i) {
+            for (int i=first; i<=last; ++i)
+            {
                 kipl::io::ReadViVaSEQ(m_fname,img,i);
 
                 kipl::strings::filenames::MakeFileName(fmask,i,destname,ext,'#','0');
-                writer.write(img,destname);
+                writer.write(currentImage,destname);
             }
         }
     }
     else {
         std::string destname=QFileDialog::getSaveFileName(this,"Save image as",QString::fromStdString(path)).toStdString();
 
-        msg.str(""); msg<<"Saving to:"<<destname;
+        kipl::io::WriteTIFF(currentImage,destname);
     }
 }
 
@@ -230,5 +264,15 @@ void ViewerMainWindow::on_pushButton_showLog_clicked()
     {
         logdlg.hide();
     }
+}
+
+
+void ViewerMainWindow::on_actionMeasure_pixel_size_triggered()
+{
+    PixelSizeDlg psdlg(this);
+
+    psdlg.setImage(currentImage);
+    psdlg.exec();
+
 }
 

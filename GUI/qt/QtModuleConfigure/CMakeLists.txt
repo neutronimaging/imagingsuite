@@ -17,6 +17,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
 #find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts PrintSupport REQUIRED)
 message("Using Qt${QT_VERSION_MAJOR}")
 
+if (APPLE)
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
@@ -29,6 +30,31 @@ include_directories(
     ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
+endif()
+
+if (WIN32)
+include_directories(
+    ../QtAddons
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    ../../../core/modules/ReaderConfig
+    ../../../core/algorithms/ImagingAlgorithms/include
+    ../../../../ExternalDependencies/windows/include
+    ../../../../ExternalDependencies/windows/include/nexus
+    ../../../../ExternalDependencies/windows/include/libxml2
+    ../../../../ExternalDependencies/windows/include/cfitsio
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
+
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
 
 set(SRC_FILES
     qtmoduleconfigure.cpp

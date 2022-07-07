@@ -1,5 +1,5 @@
-#include "ReplaceUnderexposeddlg.h"
-#include "ui_ReplaceUnderexposeddlg.h"
+#include "ReplaceUnderexposedDlg.h"
+#include "ui_ReplaceUnderexposedDlg.h"
 
 #include <strings/miscstring.h>
 #include <strings/string2array.h>

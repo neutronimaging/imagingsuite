@@ -70,7 +70,7 @@ void uxROIWidget::updateBounds()
 {
     if ((allowUpdateImageDims==true) && (hViewer!=nullptr)) {
         int x,y;
-        hViewer->getImageDims(x,y);
+        hViewer->image_dims(x,y);
         setBoundingBox(0,0,x-1,y-1);
     }
 }

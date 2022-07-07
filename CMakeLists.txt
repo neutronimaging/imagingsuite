@@ -96,7 +96,12 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   add_definitions(-DIMGSUITE_VERSION="${GIT_VERSION_INFO}")
 endif()
 
-if(NOT WIN32)
+if(WIN32)
+add_compile_options(
+  /openmp 
+  /O2
+  )
+else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
   add_compile_options(
     -Wall
@@ -132,11 +137,10 @@ endif()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
-add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
+# add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
-add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
-add_subdirectory(core/algorithms/ImagingQAAlgorithms)
+# add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
 add_subdirectory(core/algorithms/AdvancedFilters)
 add_subdirectory(core/modules/ModuleConfig)
@@ -145,9 +149,9 @@ add_subdirectory(GUI/qt/QtAddons)
 add_subdirectory(GUI/qt/QtImaging)
 add_subdirectory(core/modules/ReaderGUI)
 add_subdirectory(GUI/qt/QtModuleConfigure)
-#add_subdirectory(GUI/qt/WidgetTests)
+# #add_subdirectory(GUI/qt/WidgetTests)
 
-# Tomography
+# # Tomography
 add_subdirectory(frameworks/tomography/Framework/ReconFramework)
 add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
 add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
@@ -156,18 +160,23 @@ add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
 # Tomography GUI
-
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
 
 # applications
 add_subdirectory(applications/muhrec)
+if (WIN32)
+   add_subdirectory(applications/CLI/muhrecCLI)
+#   add_subdirectory(applications/verticalslicer)
+#   add_subdirectory(applications/multiframesplitter)
+endif()
+
 add_subdirectory(applications/imageviewer)
 
-# Binder modules
-add_subdirectory(frameworks/tomography/pyMuhRec)
-add_subdirectory(core/algorithms/pyimgalg)
-add_subdirectory(core/algorithms/pyadvancedfilters)
+# # Binder modules
+# add_subdirectory(frameworks/tomography/pyMuhRec)
+# add_subdirectory(core/algorithms/pyimgalg)
+# add_subdirectory(core/algorithms/pyadvancedfilters)
 
 if(DYNAMIC_LIB)
   # install(
@@ -250,6 +259,23 @@ if(DYNAMIC_LIB)
   endif()
   
 
+  if (WIN32)
+  install(FILES 
+  external/windows/lib64/nexus/libNeXus.dll	
+  external/windows/lib64/hdf5/libhdf5_cpp.dll
+  external/windows/lib64/nexus/libNeXusCPP.dll
+  external/windows/lib64/hdf5/libhdf5_hl.dll
+  external/windows/lib64/hdf5/libhdf5.dll
+  external/windows/lib64/libsz.2.dylib
+  external/windows/lib64/libtiff.dll
+  external/windows/lib64/libfftw3.3.dylib
+  external/windows/lib64/libfftw3f.3.dylib
+  ../ExternalDependencies/windows/lib/libxml2.dll 
+  ../ExternalDependencies/windows/lib/libopenblas.dll
+  ../ExternalDependencies/windows/lib/cfitsio.dll
+
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+endif()
 
 endif(DYNAMIC_LIB)
 

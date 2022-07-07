@@ -18,6 +18,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts )
 #find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts PrintSupport REQUIRED)
 message("Using Qt${QT_VERSION_MAJOR}")
 
+if (APPLE)
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
@@ -33,6 +34,32 @@ include_directories(
     ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
+endif()
+
+if (WIN32)
+include_directories(
+    ../QtAddons
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    ../../../core/modules/ReaderConfig
+    ../../../core/algorithms/ImagingAlgorithms/include
+    ../../../../ExternalDependencies/windows/include
+    ../../../../ExternalDependencies/windows/include/libxml2
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
+
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../QtAddons
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    ../../../core/modules/ReaderConfig
+    ../../../core/algorithms/ImagingAlgorithms/include
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
 
 set(SRC_FILES
     qtimaging.cpp
@@ -55,6 +82,7 @@ add_library(${TARGET_NAME} SHARED
   ${UI_FILES}
 )
 
+if (APPLE)
 target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
     ../../../external/mac/lib/
@@ -71,6 +99,39 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     lapack
     blas
     )
+endif()
+
+if (WIN32)
+
+target_link_libraries(${TARGET_NAME} PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+#    Qt${QT_VERSION_MAJOR}::Charts
+    kipl
+    ReaderConfig
+    QtAddons
+    ImagingAlgorithms
+ #   armadillo
+ #   lapack
+ #   blas
+    )
+endif()
+
+if (UNIX)
+
+target_link_libraries(${TARGET_NAME} PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+#    Qt${QT_VERSION_MAJOR}::Charts
+    kipl
+    ReaderConfig
+    QtAddons
+    ImagingAlgorithms
+ #   armadillo
+ #   lapack
+ #   blas
+    )
+endif()
 
 target_compile_definitions(${TARGET_NAME} PRIVATE QTIMAGING_LIBRARY)
 

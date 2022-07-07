@@ -14,6 +14,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
 #find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Charts Concurrent REQUIRED)
 #find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
 
+if (APPLE)
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
@@ -34,6 +35,46 @@ include_directories(
     ../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
+endif()
+
+if (WIN32)
+include_directories(
+    ../../core/kipl/kipl/include
+    ../../core/modules/ModuleConfig/include
+    ../../core/modules/ReaderConfig
+    ../../core/algorithms/ImagingAlgorithms/include
+    ../../GUI/qt/QtAddons
+    ../../GUI/qt/QtImaging
+    ../../GUI/qt/QtModuleConfigure
+    ../../core/modules/ReaderGUI
+    ../../frameworks/tomography/Framework/ReconFramework/include/
+    ../../core/algorithms/ImagingAlgorithms/include
+    ../../../ExternalDependencies/windows/include
+    ../../../ExternalDependencies/windows/include/libxml2
+    ../../../ExternalDependencies/windows/include/nexus
+    ../../external/include/
+    ../../external/mac/include/hdf5
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
+
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../../core/kipl/kipl/include
+    ../../core/modules/ModuleConfig/include
+    ../../core/modules/ReaderConfig
+    ../../core/algorithms/ImagingAlgorithms/include
+    ../../GUI/qt/QtAddons
+    ../../GUI/qt/QtImaging
+    ../../GUI/qt/QtModuleConfigure
+    ../../core/modules/ReaderGUI
+    ../../frameworks/tomography/Framework/ReconFramework/include/
+    ../../core/algorithms/ImagingAlgorithms/include
+
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
 
 set(SRC_FILES
     src/MuhrecInteractor.cpp
@@ -96,6 +137,7 @@ set(MACOSX_BUNDLE_ICON_FILE muh4_icon.icns)
 
 # And the following tells CMake where to find and install the file itself.
 set(app_icon_macos "${CMAKE_CURRENT_SOURCE_DIR}/src/muh4_icon.icns")
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/src/muhrec_icon.rc")
 set_source_files_properties(${app_icon_macos} PROPERTIES
         MACOSX_PACKAGE_LOCATION "Resources")
 
@@ -111,6 +153,7 @@ message(App Qt${QT_VERSION_MAJOR})
         ${INC_FILES}
         ${UI_FILES}
         ${app_icon_macos}
+        ${APP_ICON_RESOURCE_WINDOWS}
     )
 #else()
 #        add_executable(${TARGET_NAME}
@@ -118,32 +161,84 @@ message(App Qt${QT_VERSION_MAJOR})
 #        )
 #endif()
 
-link_directories(../../../lib /opt/local/lib )
+if (APPLE)
+    link_directories(../../../lib /opt/local/lib )
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../external/mac/lib/
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../external/mac/lib/
+        )
+
+    target_link_libraries(${TARGET_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Concurrent
+        kipl
+        ModuleConfig
+        ImagingAlgorithms
+        ReaderConfig
+        QtAddons
+        ReaderGUI
+        QtModuleConfigure
+        ReconFramework
+        QtImaging
+        xml2
+        armadillo
+        lapack
+        blas
     )
+endif()
 
-target_link_libraries(${TARGET_NAME} PRIVATE
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Concurrent
-    kipl
-    ModuleConfig
-    ImagingAlgorithms
-    ReaderConfig
-    QtAddons
-    ReaderGUI
-    QtModuleConfigure
-    ReconFramework
-    QtImaging
-    xml2
-    armadillo
-    lapack
-    blas
-)
+if (WIN32)
+    target_link_directories(${TARGET_NAME} PRIVATE
+        ../../../../ExternalDependencies/windows/lib
+        )
 
+    target_link_libraries(${TARGET_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Concurrent
+        kipl
+        ModuleConfig
+        ImagingAlgorithms
+        ReaderConfig
+        QtAddons
+        ReaderGUI
+        QtModuleConfigure
+        ReconFramework
+        QtImaging
+        #libxml2
+        #armadillo
+        #lapack
+        #blas
+    )
+endif()
+
+if (UNIX)
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    #     /opt/local/lib
+    #     ../../../external/mac/lib/
+    #     )
+
+    target_link_libraries(${TARGET_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Concurrent
+        kipl
+        ModuleConfig
+        ImagingAlgorithms
+        ReaderConfig
+        QtAddons
+        ReaderGUI
+        QtModuleConfigure
+        ReconFramework
+        QtImaging
+        xml2
+        armadillo
+        lapack
+        blas
+    )
+endif()
 set_target_properties(${TARGET_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER ch.psi.muhrec
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
