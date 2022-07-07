@@ -44,6 +44,8 @@ using namespace std;
 
 namespace kipl { namespace io {
 
+size_t KIPLSHARED_EXPORT nexusTypeSize(NeXus::NXnumtype nt);
+
 /// \brief Read the image data content from Nexus file and stores it in the data type specified by the image
 ///	\param src the image to be stored
 ///	\param fname file name of the destination file (including extension .hdf)
@@ -51,7 +53,7 @@ namespace kipl { namespace io {
 template <class ImgType, size_t NDim>
 int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, size_t number, const std::vector<size_t> & nCrop)
 {
-    kipl::logging::Logger logger("ReadNexus");
+    kipl::logging::Logger logger("ReadNexus (full)");
     std::stringstream msg;
 
     NeXus::File file(fname);
@@ -62,28 +64,26 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
     attr_infos = file.getAttrInfos(); // check how many or assuming that there is only one?
     map<string, string> entries = file.getEntries();
 
+    msg.str("");
+    msg<<"# file entries = "<< entries.size(); logger.verbose(msg.str());
 
-    for (map<string,string>::const_iterator it = entries.begin();it != entries.end(); ++it) {
-        if(it->second=="NXdata") {
-            file.openGroup(it->first, it->second);
+    for (const auto & entry : entries)
+    {
+        logger.verbose(entry.second);
+        if ((entry.second=="NXdata") || (entry.second=="Nxdata"))
+        {
+            file.openGroup(entry.first, entry.second);
             attr_infos = file.getAttrInfos();
-
             map<string, string> entries_data = file.getEntries();
 
-            for (map<string,string>::const_iterator it_data = entries_data.begin();
-                 it_data != entries_data.end(); it_data++)
+            for (const auto & data_entry: entries_data)
             {
-                file.openData(it_data->first);
+                file.openData(data_entry.first);
                 attr_infos = file.getAttrInfos();
-                for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin(); it_att != attr_infos.end(); it_att++)
+                for (const auto & attribute : attr_infos)
                 {
-//                  cout << "   " << it_att->name << " = ";
-//                  if (it_att->type == NeXus::CHAR) {
-//                    cout << file.getStrAttr(*it_att);
-//                  }
-//                  cout << endl;
 
-                  if (it_att->name=="signal")
+                  if (attribute.name=="signal")
                   {
                       size_t img_size[3];
 
@@ -99,49 +99,39 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
                           img_size[1] = nCrop[3]-nCrop[1];
                           img_size[2] = file.getInfo().dims[0];
                       }
+                      int8_t *slab=new int8_t[img_size[0]*img_size[1]*nexusTypeSize(file.getInfo().type)];
 
-                      int16_t *slab=new int16_t[img_size[0]*img_size[1]]; // assuming images are all int_16.. but possibly this can be read from nexus info..
-
-                      vector<int> slab_start;
-                      slab_start.push_back(number);
-                      if (nCrop.empty())
+                      vector<int> slab_start{static_cast<int>(number),0,0};
+                      if ( !nCrop.empty() )
                       {
-                          slab_start.push_back(0);
-                          slab_start.push_back(0);
+                          slab_start[1] = nCrop[1];
+                          slab_start[2] = nCrop[0];
                       }
-                      else
-                      {
-                          slab_start.push_back(nCrop[1]);
-                          slab_start.push_back(nCrop[0]);
 
-                      }
-                      vector<int> slab_size;
-                      slab_size.push_back(1);
-                      slab_size.push_back(img_size[1]);
-                      slab_size.push_back(img_size[0]);
+                      vector<int> slab_size{1,static_cast<int>(img_size[1]),static_cast<int>(img_size[0])};
 
                       try
                       {
                         file.getSlab(slab, slab_start, slab_size);
                       }
-                      catch (const std::bad_alloc & E) {
+                      catch (const std::bad_alloc & E)
+                      {
                               msg.str("");
                               msg<<"ReadNexus file.getSlab caused an STL exception: "<<E.what();
                               throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
-                      catch (NeXus::Exception &e){
+                      catch (NeXus::Exception &e)
+                      {
                           msg.str("");
                           msg<<"ReadNexus file.getSlab caused an NeXus exception: "<<e.what();
                           throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
-                      catch (...){
+                      catch (...)
+                      {
                           msg.str("");
                           msg<<"ReadNexus file.getSlab caused an unknown exception: ";
                           throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
-
-
-
 
                       std::vector<size_t> size2D = { img_size[0],
                                                      img_size[1],
@@ -149,11 +139,21 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
                       img.resize(size2D);
                       ImgType *pslice = img.GetDataPtr();
 
-                      // casting to ImgType
-//                      std::copy_n(pslice,img.Size(),slab);
-                      for (size_t i=0; i<img.Size();++i)
+                      switch (file.getInfo().type)
                       {
-                          pslice[i] = static_cast<ImgType>(slab[i]);
+                          case NeXus::FLOAT32 : copy_n(reinterpret_cast<float*>(slab),    img.Size(),pslice); break;
+                          case NeXus::FLOAT64 : copy_n(reinterpret_cast<double*>(slab),   img.Size(),pslice); break;
+                          case NeXus::INT8    : copy_n(reinterpret_cast<int8_t*>(slab),   img.Size(),pslice); break;
+                          case NeXus::UINT8   : copy_n(reinterpret_cast<uint8_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::INT16   : copy_n(reinterpret_cast<int16_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::UINT16  : copy_n(reinterpret_cast<uint16_t*>(slab), img.Size(),pslice); break;
+                          case NeXus::INT32   : copy_n(reinterpret_cast<int32_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::UINT32  : copy_n(reinterpret_cast<uint32_t*>(slab), img.Size(),pslice); break;
+                          case NeXus::INT64   : copy_n(reinterpret_cast<int64_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::UINT64  : copy_n(reinterpret_cast<uint64_t*>(slab), img.Size(),pslice); break;
+                          case NeXus::CHAR    : copy_n(reinterpret_cast<char*>(slab),     img.Size(),pslice); break;
+                          default:
+                              throw kipl::base::KiplException("Unknown NeXus type in nexusTypeSize()",__FILE__,__LINE__);
                       }
 
                   }

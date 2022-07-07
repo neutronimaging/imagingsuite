@@ -94,6 +94,8 @@ int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *Sc
 
 std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
 {
+    kipl::logging::Logger logger("GetNexusDims");
+    std::ostringstream msg;
     std::vector<size_t> dims;
     NeXus::File file(fname.c_str());
 
@@ -107,7 +109,7 @@ std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
     map<string, string> entries = file.getEntries();
     for (map<string,string>::const_iterator it = entries.begin();        it != entries.end(); ++it)
     {
-        if(it->second=="NXdata")
+        if ((it->second=="NXdata") || (it->second=="Nxdata"))
         {
             file.openGroup(it->first, it->second);
             attr_infos = file.getAttrInfos();
@@ -126,8 +128,13 @@ std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
                 {
                           if (it_att->name=="signal")
                           {
-                              dims = std::vector<size_t>({  static_cast<size_t>(file.getInfo().dims[2]),
-                                                            static_cast<size_t>(file.getInfo().dims[1])  });
+                              if (file.getInfo().dims[0]==1)
+                                    dims = std::vector<size_t>{  static_cast<size_t>(file.getInfo().dims[2]),
+                                                                 static_cast<size_t>(file.getInfo().dims[1])  };
+                                else
+                                    dims = std::vector<size_t>{    static_cast<size_t>(file.getInfo().dims[2]),
+                                                                   static_cast<size_t>(file.getInfo().dims[1]),
+                                                                   static_cast<size_t>(file.getInfo().dims[0]) };
                           }
                 }
                 file.closeData();
@@ -141,6 +148,28 @@ std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
     file.close();
     return dims;
 
+}
+
+size_t nexusTypeSize(NeXus::NXnumtype nt)
+{
+    switch (nt)
+    {
+        case NeXus::FLOAT32 : return 4;
+        case NeXus::FLOAT64 : return 8;
+        case NeXus::INT8    : return 1;
+        case NeXus::UINT8   : return 1;
+        case NeXus::INT16   : return 2;
+        case NeXus::UINT16  : return 2;
+        case NeXus::INT32   : return 4;
+        case NeXus::UINT32  : return 4;
+        case NeXus::INT64   : return 8;
+        case NeXus::UINT64  : return 8;
+        case NeXus::CHAR    : return 1;
+        default:
+            throw kipl::base::KiplException("Unknown NeXus type in nexusTypeSize()",__FILE__,__LINE__);
+    }
+
+    return 1;
 }
 
 }}

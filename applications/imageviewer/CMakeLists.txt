@@ -14,6 +14,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
 #find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Charts Concurrent REQUIRED)
 #find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
 
+if (APPLE)
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
@@ -34,6 +35,28 @@ include_directories(
     # ../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
+endif()
+
+if (WIN32)
+include_directories(
+    ../../core/kipl/kipl/include
+    ../../core/modules/ModuleConfig/include
+    ../../core/modules/ReaderConfig
+    ../../core/algorithms/ImagingAlgorithms/include
+    ../../GUI/qt/QtAddons
+    ../../GUI/qt/QtImaging
+    ../../GUI/qt/QtModuleConfigure
+    ../../core/modules/ReaderGUI
+    ../../frameworks/tomography/Framework/ReconFramework/include/
+    ../../core/algorithms/ImagingAlgorithms/include
+    ../../../ExternalDependencies/windows/include
+    ../../../ExternalDependencies/windows/include/cfitsio
+    ../../../ExternalDependencies/windows/include/libxml2
+    ../../../ExternalDependencies/windows/include/nexus
+    ../../external/include/
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
 
 set(SRC_FILES
     imageviewer/main.cpp
@@ -60,7 +83,7 @@ set(MACOSX_BUNDLE_ICON_FILE viewer_icon.icns)
 set(app_icon_macos "${CMAKE_CURRENT_SOURCE_DIR}/imageviewer/viewer_icon.icns")
 set_source_files_properties(${app_icon_macos} PROPERTIES
         MACOSX_PACKAGE_LOCATION "Resources")
-
+        set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/imageviewer/viewer_icon.rc")
 # qt_add_executable(${TARGET_NAME} MACOSX_BUNDLE  ${app_icon_macos})
 
 message(App Qt${QT_VERSION_MAJOR})
@@ -73,6 +96,7 @@ message(App Qt${QT_VERSION_MAJOR})
         ${INC_FILES}
         ${UI_FILES}
         ${app_icon_macos}
+        ${APP_ICON_RESOURCE_WINDOWS}
     )
 #else()
 #        add_executable(${TARGET_NAME}
@@ -80,6 +104,7 @@ message(App Qt${QT_VERSION_MAJOR})
 #        )
 #endif()
 
+if (APPLE)
 link_directories(../../../lib /opt/local/lib )
 
 if (APPLE)
@@ -104,13 +129,13 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     NeXus
     NeXusCPP
     QtModuleConfigure
-#    ReconFramework
+    ReconFramework
     QtImaging
     xml2
     armadillo
     lapack
     blas
-    tiff
+    libtiff
     cfitsio
     hdf5
 )
@@ -121,8 +146,7 @@ target_link_directories(${TARGET_NAME} PRIVATE
     /usr/lib/x86_64-linux-gnu/
     /usr/lib/x86_64-linux-gnu/hdf5/serial
     )
-
-target_link_libraries(${TARGET_NAME} PRIVATE
+    target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Concurrent
@@ -140,6 +164,41 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     tiff
     cfitsio
     hdf5
+    xml2
+    NeXus
+    NeXusCPP
+)
+endif()
+
+
+if (WIN32)
+link_directories(../../../lib /opt/local/lib )
+
+target_link_directories(${TARGET_NAME} PRIVATE
+    /opt/local/lib
+    ../../../ExternalDependencies/windows/lib
+    ../../external/lib64/
+    ../../external/lib64/nexus
+    )
+
+target_link_libraries(${TARGET_NAME} PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Concurrent
+    kipl
+    ModuleConfig
+    ImagingAlgorithms
+    ReaderConfig
+    QtAddons
+    ReaderGUI
+    QtModuleConfigure
+    QtImaging
+    armadillo
+    lapack
+    blas
+    libtiff
+    cfitsio
+    #hdf5
     xml2
     NeXus
     NeXusCPP

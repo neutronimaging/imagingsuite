@@ -40,6 +40,14 @@ PixelSizeDlg::~PixelSizeDlg()
     delete ui;
 }
 
+void PixelSizeDlg::setImage(kipl::base::TImage<float, 2> & img)
+{
+    std::vector<size_t> dims={3,3};
+    kipl::filters::TMedianFilter<float,2> medfilt(dims);
+    currentImage=medfilt(img);
+    ui->viewer->set_image(currentImage.GetDataPtr(),currentImage.dims());
+}
+
 float PixelSizeDlg::pixelSize()
 {
     return mPixelSize;
@@ -238,7 +246,7 @@ void PixelSizeDlg::on_pushButton_Analyze_clicked()
     size_t roi[4];
 
     ui->roi->getROI(roi);
-    if (img.Size()==0) {
+    if (currentImage.Size()==0) {
         QMessageBox::warning(this,"No image","You have to load an image before you can analyse.",QMessageBox::Ok);
         logger(logger.LogMessage,"No image loaded.");
 
@@ -258,7 +266,7 @@ void PixelSizeDlg::on_pushButton_Analyze_clicked()
         return;
     }
 
-    pixelDistance=getDistance2(img,roi);
+    pixelDistance=getDistance2(currentImage,roi);
     mPixelSize=ui->doubleSpinBox_Distance->value()/pixelDistance;
     std::ostringstream msg;
     msg<<"Distance: "<<ui->doubleSpinBox_Distance->value()<<" mm/"<<pixelDistance<<" px, pixelSize: "<<mPixelSize<<" mm/pixel";
@@ -276,7 +284,7 @@ void PixelSizeDlg::loadImage(QString fn)
     ImageReader reader;
 
     try {
-        img=reader.Read(fname);
+        currentImage=reader.Read(fname);
     }
     catch (ReaderException &e) {
         QMessageBox::warning(this,"Warning","Image could not be loaded",QMessageBox::Ok);
@@ -293,8 +301,8 @@ void PixelSizeDlg::loadImage(QString fn)
 
     std::vector<size_t> dims={3,3};
     kipl::filters::TMedianFilter<float,2> medfilt(dims);
-    img=medfilt(img);
-    ui->viewer->set_image(img.GetDataPtr(),img.dims());
+    currentImage=medfilt(currentImage);
+    ui->viewer->set_image(currentImage.GetDataPtr(),currentImage.dims());
 }
 
 void PixelSizeDlg::plotEdge(std::vector<std::pair<float, float> > &ep, QColor c, int idx)

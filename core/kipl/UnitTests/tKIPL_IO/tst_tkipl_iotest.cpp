@@ -6,6 +6,7 @@
 #include <base/timage.h>
 #include <io/io_tiff.h>
 
+
 class tKIPL_IOTest : public QObject
 {
     Q_OBJECT
@@ -19,6 +20,7 @@ private Q_SLOTS:
     void testMultiFrameReadTIFF();
     void testMultiFrameWriteTIFF();
     void testDataTypesWriteTIFF();
+    void testReadNexus();
 
 };
 
@@ -138,6 +140,11 @@ void tKIPL_IOTest::testDataTypesWriteTIFF()
     QCOMPARE(res.Size(1),fimg.Size(1));
     for (size_t i = 0 ; i<fimg.Size(); ++i)
         QCOMPARE(res[i],fmod(floor(fimg[i]),256.0f));
+
+}
+
+void tKIPL_IOTest::testReadNexus()
+{
 
 }
 

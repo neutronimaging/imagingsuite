@@ -22,6 +22,7 @@ public:
     explicit PixelSizeDlg(QWidget *parent = nullptr, const std::string &pathhint=std::string() );
     ~PixelSizeDlg();
 
+    void setImage(kipl::base::TImage<float,2> &img);
     float pixelSize();
     float getDistance(kipl::base::TImage<float,2> &im, size_t *roi);
     float getDistance2(kipl::base::TImage<float,2> &im, size_t *roi);
@@ -57,7 +58,7 @@ private:
 
     std::string fname;
     std::string path;
-    kipl::base::TImage<float,2> img;
+    kipl::base::TImage<float,2> currentImage;
 };
 
 #endif // PIXELSIZEDLG_H
