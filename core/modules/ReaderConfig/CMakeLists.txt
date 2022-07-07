@@ -59,12 +59,14 @@ target_compile_definitions(${TARGET_NAME} PRIVATE READERCONFIG_LIBRARY HAVE_NEXU
 
 add_definitions(-DHAVE_NEXUS)
 
+
+
+if (APPLE)
 target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
     ../../../external/mac/lib/
     )
 
-if (APPLE)
 target_link_libraries(${TARGET_NAME}
     PRIVATE
     kipl
@@ -82,7 +84,10 @@ target_link_libraries(${TARGET_NAME}
   )
 endif()
 
-if (LINUX)
+if (UNIX)
+target_link_directories(${TARGET_NAME} PRIVATE
+    /usr/lib/x86_64-linux-gnu/
+    )
 target_link_libraries(${TARGET_NAME}
     PRIVATE
     kipl

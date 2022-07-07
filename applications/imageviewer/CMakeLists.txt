@@ -82,8 +82,11 @@ message(App Qt${QT_VERSION_MAJOR})
 
 link_directories(../../../lib /opt/local/lib )
 
+if (APPLE)
 target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
+    /usr/lib/x86_64-linux-gnu/
+    /usr/lib/x86_64-linux-gnu/hdf5/serial
     ../../../ExternalDependencies/macos/arm64/lib
     ../../external/mac/lib/
     )
@@ -111,7 +114,37 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     cfitsio
     hdf5
 )
+endif()
 
+if (UNIX)
+target_link_directories(${TARGET_NAME} PRIVATE
+    /usr/lib/x86_64-linux-gnu/
+    /usr/lib/x86_64-linux-gnu/hdf5/serial
+    )
+
+target_link_libraries(${TARGET_NAME} PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Concurrent
+    kipl
+    ModuleConfig
+    ImagingAlgorithms
+    ReaderConfig
+    QtAddons
+    ReaderGUI
+    QtModuleConfigure
+    QtImaging
+    armadillo
+    lapack
+    blas
+    tiff
+    cfitsio
+    hdf5
+    xml2
+    NeXus
+    NeXusCPP
+)
+endif()
 set_target_properties(${TARGET_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER ch.psi.imageviewer
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
