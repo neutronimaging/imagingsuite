@@ -58,6 +58,24 @@ include_directories(
     )
 endif()
 
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../../core/kipl/kipl/include
+    ../../core/modules/ModuleConfig/include
+    ../../core/modules/ReaderConfig
+    ../../core/algorithms/ImagingAlgorithms/include
+    ../../GUI/qt/QtAddons
+    ../../GUI/qt/QtImaging
+    ../../GUI/qt/QtModuleConfigure
+    ../../core/modules/ReaderGUI
+    ../../frameworks/tomography/Framework/ReconFramework/include/
+    ../../core/algorithms/ImagingAlgorithms/include
+
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
+
 set(SRC_FILES
     src/MuhrecInteractor.cpp
     src/moduleconfigprogressdialog.cpp
@@ -196,6 +214,31 @@ if (WIN32)
     )
 endif()
 
+if (UNIX)
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    #     /opt/local/lib
+    #     ../../../external/mac/lib/
+    #     )
+
+    target_link_libraries(${TARGET_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Concurrent
+        kipl
+        ModuleConfig
+        ImagingAlgorithms
+        ReaderConfig
+        QtAddons
+        ReaderGUI
+        QtModuleConfigure
+        ReconFramework
+        QtImaging
+        xml2
+        armadillo
+        lapack
+        blas
+    )
+endif()
 set_target_properties(${TARGET_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER ch.psi.muhrec
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

@@ -58,6 +58,23 @@ include_directories(
     )
 endif()
 
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../../core/kipl/kipl/include
+    ../../core/modules/ModuleConfig/include
+    ../../core/modules/ReaderConfig
+    ../../core/algorithms/ImagingAlgorithms/include
+    ../../GUI/qt/QtAddons
+    ../../GUI/qt/QtImaging
+    ../../GUI/qt/QtModuleConfigure
+    ../../core/modules/ReaderGUI
+    ../../frameworks/tomography/Framework/ReconFramework/include/
+    ../../core/algorithms/ImagingAlgorithms/include
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
+
 set(SRC_FILES
     imageviewer/main.cpp
     imageviewer/viewermainwindow.cpp
@@ -107,7 +124,6 @@ message(App Qt${QT_VERSION_MAJOR})
 if (APPLE)
 link_directories(../../../lib /opt/local/lib )
 
-if (APPLE)
 target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
     /usr/lib/x86_64-linux-gnu/

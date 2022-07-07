@@ -40,6 +40,17 @@ include_directories(
     )
 endif()
 
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../../../core/kipl/kipl/include
+    ../../../core/algorithms/ImagingAlgorithms/include
+    ../../../external/src/linalg
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    )
+endif()
+
 link_directories(../../../../lib /opt/local/lib )
 
 set(INC_FILES
@@ -78,11 +89,7 @@ add_definitions(-DHAVE_NEXUS)
 
 
 
-if (APPLE)
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../external/mac/lib/
-    )
+
 
 if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
@@ -110,7 +117,12 @@ if (WIN32)
 endif()
 
 if (APPLE)
-target_link_libraries(${TARGET_NAME}
+target_link_directories(${TARGET_NAME} PRIVATE
+    /opt/local/lib
+    ../../../external/mac/lib/
+    )
+
+    target_link_libraries(${TARGET_NAME}
     PRIVATE
     kipl
     ImagingAlgorithms

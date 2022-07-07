@@ -40,6 +40,18 @@ include_directories(
     )
 endif()
 
+if (UNIX)
+include_directories(
+    /opt/local/include
+    /opt/local/include/libxml2
+    /usr/include/libxml2
+    ../../../../../core/kipl/kipl/include
+    ../../../../../core/algorithms/ImagingAlgorithms/include
+    ../../../../../external/src/linalg
+    ../../../../../core/modules/ModuleConfig/include
+    )
+endif()
+
 set(INC_FILES
     backprojectorbase.h
     nnforwardprojector.h

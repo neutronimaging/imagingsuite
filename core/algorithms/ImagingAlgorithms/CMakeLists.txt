@@ -34,9 +34,22 @@ if (WIN32)
         ../../../../ExternalDependencies/windows/include
         ../../../../ExternalDependencies/windows/include/nexus
         ../../../../ExternalDependencies/windows/include/cfitsio
-        ../../../external/mac/include/nexus
-        ../../../external/mac/include/hdf5
         )
+endif()
+
+if (UNIX)
+include_directories(
+    /opt/local/include
+    /opt/local/include/libxml2
+    ../../../core/kipl/kipl/include
+    ../../../external/src/linalg
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    ../../../external/mac/include/
+    ../../../../ExternalDependencies/macos/include
+    ../../../../ExternalDependencies/macos/include/nexus
+    ../../../external/mac/include/hdf5
+    )
 endif()
 #include_directories(../../kipl/kipl/include /opt/local/include ../../../external/src/linalg)
 

@@ -54,6 +54,19 @@ include_directories(
     )
 endif()
 
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../QtAddons
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    ../../../core/modules/ReaderConfig
+    ../../../core/algorithms/ImagingAlgorithms/include
+    ../../../GUI/qt/QtAddons
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
+
 set(SRC_FILES
     readergui.cpp
     readerconfiglistwidget.cpp

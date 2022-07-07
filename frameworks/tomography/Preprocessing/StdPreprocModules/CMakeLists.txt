@@ -38,6 +38,16 @@ if (WIN32)
         )
 endif()
 
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../../Framework/ReconFramework/include/
+    ../../../../core/kipl/kipl/include
+    ../../../../core/modules/ModuleConfig/include
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    )
+endif()
+
 link_directories(../../../../../lib /opt/local/lib )
 
 set(INC_FILES

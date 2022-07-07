@@ -57,6 +57,20 @@ include_directories(
 
 endif()
 
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../../Framework/ReconFramework/include/
+    ../../../../core/kipl/kipl/include
+    ../../../../core/modules/ModuleConfig/include
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    ../../../../GUI/qt/QtAddons/
+    ../../../../GUI/qt/QtModuleConfigure/
+    ../StdPreprocModules/include
+
+    )
+
+endif()
 
 set(INC_FILES
     src/FullLogNormDlg.h

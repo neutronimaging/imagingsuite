@@ -39,6 +39,17 @@ include_directories(
     )
 endif()
 
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../../../../core/kipl/kipl/include
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    ../../../../external/src/linalg
+    ../../../../core/modules/ModuleConfig/include
+    ../../Framework/ReconFramework/include
+    )
+endif()
+
 
 # link_directories(../../../../lib /opt/local/lib ../../../../external/mac/lib)
 #link_directories(/opt/local/lib ../../../../external/mac/lib)

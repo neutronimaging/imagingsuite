@@ -49,6 +49,17 @@ include_directories(
     )
 endif()
 
+if (UNIX)
+include_directories(
+    /usr/include/libxml2
+    ../QtAddons
+    ../../../core/kipl/kipl/include
+    ../../../core/modules/ModuleConfig/include
+    ../../../core/modules/ReaderConfig
+    ../../../core/algorithms/ImagingAlgorithms/include
+    Qt6Widgets_INCLUDE_DIRS/QtCharts
+    )
+endif()
 
 set(SRC_FILES
     qtimaging.cpp
@@ -106,7 +117,21 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     )
 endif()
 
+if (UNIX)
 
+target_link_libraries(${TARGET_NAME} PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+#    Qt${QT_VERSION_MAJOR}::Charts
+    kipl
+    ReaderConfig
+    QtAddons
+    ImagingAlgorithms
+ #   armadillo
+ #   lapack
+ #   blas
+    )
+endif()
 
 target_compile_definitions(${TARGET_NAME} PRIVATE QTIMAGING_LIBRARY)
 
