@@ -532,7 +532,7 @@ QRect ImageViewerWidget::get_marked_roi()
     return roiRect;
 }
 
-void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> &dims, const float low, const float high)
+void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> &dims, float low, float high)
 {
     QMutexLocker locker(&m_ImageMutex);
     m_ImagePainter.setImage(data,dims,low,high);

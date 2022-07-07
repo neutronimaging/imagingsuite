@@ -59,7 +59,7 @@ public:
     ~ImageViewerWidget();
 
     void set_image(float const * const data, const std::vector<size_t> &dims);
-    void set_image(float const * const data, const std::vector<size_t> & dims, const float low, const float high);
+    void set_image(float const * const data, const std::vector<size_t> & dims, float low, float high);
     void getImageDims(int &x, int &y);
     void set_plot(QVector<QPointF> data, QColor color, int idx);
     void clear_plot(int idx=-1);

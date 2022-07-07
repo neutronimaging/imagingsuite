@@ -159,6 +159,7 @@ cd $DEST/Contents/MacOS
 
 # muhrec
 install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
+
 #install_name_tool -add_rpath "@executable_path" MuhRec
 #install_name_tool -add_rpath "@loader_path/../lib" MuhRec
 #install_name_tool -change @rpath/libReaderGUI.dylib libReaderGUI.dylib MuhRec
