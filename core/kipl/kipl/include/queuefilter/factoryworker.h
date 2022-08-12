@@ -136,7 +136,7 @@ int FactoryWorker<ImgType>::ProduceWorker(const string & description)
 				if (Parenc::ParseString(description,"support",support))
 					support=2.5f;
 				
-				NKernel2=(int)floor(support*sigma);
+                NKernel2=static_cast<int>(floor(support*sigma));
 				sigma=sigma*sigma;
 				sum=0.0f;
 				for (i=0, j=-NKernel2; j<=NKernel2; i++,j++) {

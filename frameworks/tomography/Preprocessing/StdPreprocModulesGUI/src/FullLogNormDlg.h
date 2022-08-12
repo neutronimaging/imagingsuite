@@ -3,7 +3,6 @@
 #ifndef FULLLOGNORMDLG_H
 #define FULLLOGNORMDLG_H
 
-//#include <QDialog>
 #include "StdPreprocModulesGUI_global.h"
 
 #include <averageimage.h>

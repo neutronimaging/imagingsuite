@@ -10,8 +10,14 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <emmintrin.h>
 #include <cmath>
+
+#ifdef __aarch64__
+    #include <sse2neon.h>
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
 
 MultiProjectionBP::MultiProjectionBP(kipl::interactors::InteractionBase *interactor) :
 	StdBackProjectorBase("Multi projection BP",StdBackProjectorBase::MatrixZXY, interactor)

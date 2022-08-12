@@ -14,6 +14,7 @@
 #include <strings/filenames.h>
 #include <io/io_stack.h>
 #include <io/analyzefileext.h>
+#include <io/io_nexus.h>
 
 class kiplIOTest : public QObject
 {
@@ -37,6 +38,7 @@ private Q_SLOTS:
     void testTIFF32();
     void testTIFFclamp();
     void testIOStack_enums();
+    void testReadNexus();
 };
 
 kiplIOTest::kiplIOTest()
@@ -308,7 +310,7 @@ void kiplIOTest::testTIFF32()
 void kiplIOTest::testTIFFclamp()
 {
     QSKIP("Seems to crash");
-    QWARN("Test accepts a difference of +-1");
+    //QWARN("Test accepts a difference of +-1");
     std::ostringstream msg;
     std::vector<size_t> dims={100,110,120};
 
@@ -420,6 +422,15 @@ void kiplIOTest::testIOStack_enums()
     QCOMPARE(enum2string(kipl::io::PNG8bits),             std::string("PNG8bits"));
     QCOMPARE(enum2string(kipl::io::PNG16bits),            std::string("PNG16bits"));
 
+}
+
+void kiplIOTest::testReadNexus()
+{
+    kipl::base::TImage<float,2> img;
+    std::string fname = "/Users/kaestner/git/TestData/boa2021n000370.hdf";
+
+    kipl::io::ReadNexus(img,fname,0,{});
+    qDebug() <<"Size:"<<img.Size();
 }
 
 QTEST_APPLESS_MAIN(kiplIOTest)

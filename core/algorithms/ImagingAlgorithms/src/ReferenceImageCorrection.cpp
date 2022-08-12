@@ -2295,7 +2295,7 @@ float * ReferenceImageCorrection::ReplicateParameters(float *param, size_t n)
 int* ReferenceImageCorrection::repeat_matrix(int* source, int count, int expand)
 {
     int i, j;
-    int* target = (int*)malloc(sizeof(int)*count * expand);
+    int* target = reinterpret_cast<int*>(malloc(sizeof(int)*count * expand));
     for (i = 0; i < count; ++i) {
         for (j = 0; j < expand; ++j) {
             target[i * expand + j] = source[i];
@@ -2934,13 +2934,6 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eRefe
     }
     return  str;
 
-}
-
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod erm)
-{
-    s<<enum2string(erm);
-
-    return s;
 }
 
 void  string2enum(std::string str, ImagingAlgorithms::ReferenceImageCorrection::eBBOptions &ebo)

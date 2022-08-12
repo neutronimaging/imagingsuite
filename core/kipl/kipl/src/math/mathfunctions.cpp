@@ -2,8 +2,12 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <xmmintrin.h>
-#include <emmintrin.h>
+#ifdef __aarch64__
+    #include <sse2neon.h>
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
 
 namespace kipl { namespace math {
 

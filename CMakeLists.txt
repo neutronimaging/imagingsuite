@@ -1,12 +1,9 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-# project name and supported language
-project(imagingsuite LANGUAGES CXX)
-
-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-message(FATAL_ERROR “In-source_build_detected!_Create_a_build_folder_and_call_CMake_there”)
-endif()
+#if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+#message(FATAL_ERROR “In-source_build_detected!_Create_a_build_folder_and_call_CMake_there”)
+#endif()
 
 execute_process(
   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
@@ -14,8 +11,8 @@ execute_process(
   OUTPUT_VARIABLE IMGSUITE_VERSION
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-#project(imagingsuite VERSION ${IMGSUITE_VERSION})
-project(imagingsuite VERSION 4.2.1)
+
+project(imagingsuite VERSION 4.2.1 LANGUAGES CXX)
 
 # require C++17
 if(NOT DEFINED CMAKE_CXX_STANDARD)
@@ -64,6 +61,7 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   add_definitions(-DVERSION="${GIT_VERSION_INFO}")
 endif()
 
+include(CTest)
 include(FetchContent)
 
 FetchContent_Declare(
@@ -98,7 +96,12 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   add_definitions(-DIMGSUITE_VERSION="${GIT_VERSION_INFO}")
 endif()
 
-if(NOT WIN32)
+if(WIN32)
+add_compile_options(
+  /openmp 
+  /O2
+  )
+else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-omit-frame-pointer")
   add_compile_options(
     -Wall
@@ -134,17 +137,46 @@ endif()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
+# add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
+
 add_subdirectory(core/algorithms/ImagingAlgorithms)
+# add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+
 add_subdirectory(core/algorithms/AdvancedFilters)
 add_subdirectory(core/modules/ModuleConfig)
+add_subdirectory(core/modules/ReaderConfig)
+add_subdirectory(GUI/qt/QtAddons)
+add_subdirectory(GUI/qt/QtImaging)
+add_subdirectory(core/modules/ReaderGUI)
+add_subdirectory(GUI/qt/QtModuleConfigure)
+# #add_subdirectory(GUI/qt/WidgetTests)
+
+# # Tomography
 add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
 add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
 add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
+add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
-# Binder modules
-add_subdirectory(frameworks/tomography/pyMuhRec)
-add_subdirectory(core/algorithms/pyimgalg)
-add_subdirectory(core/algorithms/pyadvancedfilters)
+# Tomography GUI
+add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+
+# applications
+add_subdirectory(applications/muhrec)
+if (WIN32)
+   add_subdirectory(applications/CLI/muhrecCLI)
+#   add_subdirectory(applications/verticalslicer)
+#   add_subdirectory(applications/multiframesplitter)
+endif()
+
+add_subdirectory(applications/imageviewer)
+
+# # Binder modules
+# add_subdirectory(frameworks/tomography/pyMuhRec)
+# add_subdirectory(core/algorithms/pyimgalg)
+# add_subdirectory(core/algorithms/pyadvancedfilters)
 
 if(DYNAMIC_LIB)
   # install(
@@ -198,13 +230,13 @@ if(DYNAMIC_LIB)
   endif()
   if (APPLE)
     install(FILES 
-    ../lib/libkipl.1.0.0.dylib 
-    ../lib/libModuleConfig.1.0.0.dylib 
-    ../lib/libReconFramework.1.0.0.dylib
-    ../lib/libStdBackProjectors.1.0.0.dylib
-    ../lib/libFDKBackProjectors.1.0.0.dylib
-    ../lib/libImagingAlgorithms.1.0.0.dylib
-    ../lib/libReaderConfig.1.0.0.dylib
+#    ../lib/libkipl.1.0.0.dylib
+#    ../lib/libModuleConfig.1.0.0.dylib
+#    ../lib/libReconFramework.1.0.0.dylib
+#    ../lib/libStdBackProjectors.1.0.0.dylib
+#    ../lib/libFDKBackProjectors.1.0.0.dylib
+#    ../lib/libImagingAlgorithms.1.0.0.dylib
+#    ../lib/libReaderConfig.1.0.0.dylib
     external/mac/lib/libNeXus.1.0.0.dylib	
     external/mac/lib//libhdf5_cpp.11.dylib
     external/mac/lib//libNeXusCPP.1.0.0.dylib
@@ -227,11 +259,28 @@ if(DYNAMIC_LIB)
   endif()
   
 
+  if (WIN32)
+  install(FILES 
+  external/windows/lib64/nexus/libNeXus.dll	
+  external/windows/lib64/hdf5/libhdf5_cpp.dll
+  external/windows/lib64/nexus/libNeXusCPP.dll
+  external/windows/lib64/hdf5/libhdf5_hl.dll
+  external/windows/lib64/hdf5/libhdf5.dll
+  external/windows/lib64/libsz.2.dylib
+  external/windows/lib64/libtiff.dll
+  external/windows/lib64/libfftw3.3.dylib
+  external/windows/lib64/libfftw3f.3.dylib
+  ../ExternalDependencies/windows/lib/libxml2.dll 
+  ../ExternalDependencies/windows/lib/libopenblas.dll
+  ../ExternalDependencies/windows/lib/cfitsio.dll
+
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+endif()
 
 endif(DYNAMIC_LIB)
 
 # turn on testing
-#enable_testing()
+enable_testing()
 
 message(${CMAKE_CURRENT_SOURCE_DIR})
 ## define test

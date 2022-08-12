@@ -12,6 +12,7 @@
 #include <base/timage.h>
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
+#include <io/io_csv.h>
 
 #include <MorphSpotClean.h>
 #include <averageimage.h>
@@ -22,6 +23,7 @@
 #include <ImagingException.h>
 #include <StripeFilter.h>
 #include <ReferenceImageCorrection.h>
+#include <ReplaceUnderexposed.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -56,22 +58,30 @@ private Q_SLOTS:
     void RefImgCorrection_Initialization();
 
     void RefImgCorrection_enums();
+
+    void ProjSeriesCorr_Enums();
+    void ProjSeriesCorr_Detection();
+    void ProjSeriesCorr_Correction();
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
+    std::string dataPath;
     kipl::base::TImage<float,2> holes;
     std::map<size_t,float> points;
     size_t pos1;
     size_t pos2;
 
+
 };
 
-TestImagingAlgorithms::TestImagingAlgorithms()
+TestImagingAlgorithms::TestImagingAlgorithms() :
+//    dataPath("../../../../../TestData/")
+    dataPath("../TestData/")
 {
 #ifndef DEBUG
-    kipl::io::ReadTIFF(holes,"../TestData/2D/tiff/spots/balls.tif");
+    kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
 #else
-    kipl::io::ReadTIFF(holes,"../../TestData/2D/tiff/spots/balls.tif");
+    kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
 #endif
 }
 
@@ -513,9 +523,9 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
 {
     kipl::base::TImage<float,2> sino;
 #ifdef DEBUG
-    kipl::io::ReadTIFF(sino,"../../TestData/2D/tiff/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #else
-    kipl::io::ReadTIFF(sino,"../TestData/2D/tiff/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #endif
 
     ImagingAlgorithms::ProjectionFilter pf(nullptr);
@@ -532,9 +542,9 @@ void TestImagingAlgorithms::StripeFilterParameters()
 {
    kipl::base::TImage<float,2> sino;
 #ifdef DEBUG
-   kipl::io::ReadTIFF(sino,"../../TestData/2D/tiff/woodsino_0200.tif");
+   kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #else
-   kipl::io::ReadTIFF(sino,"../TestData/2D/tiff/woodsino_0200.tif");
+   kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #endif
    ImagingAlgorithms::StripeFilter sf(sino.dims(),"daub17",4,0.21f);
    QCOMPARE(static_cast<size_t>(sf.dims()[0]),sino.Size(0));
@@ -573,9 +583,9 @@ void TestImagingAlgorithms::StripeFilterProcessing2D()
 {
     kipl::base::TImage<float,2> sino;
 #ifdef DEBUG
-    kipl::io::ReadTIFF(sino,"../../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #else
-    kipl::io::ReadTIFF(sino,"../imagingsuite/core/algorithms/UnitTests/data/woodsino_0200.tif");
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
 #endif
     ImagingAlgorithms::StripeFilter sf(sino.dims(),"daub17",4,0.21f);
 
@@ -591,7 +601,7 @@ void TestImagingAlgorithms::RefImgCorrection_Initialization()
 void TestImagingAlgorithms::RefImgCorrection_enums()
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
-    strmap["otsumask"]            = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
+    strmap["otsumask"]                = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
     strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
     strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
     strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
@@ -606,6 +616,56 @@ void TestImagingAlgorithms::RefImgCorrection_enums()
     em=static_cast<ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod>(9999);
     QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
     QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+}
+
+void TestImagingAlgorithms::ProjSeriesCorr_Enums()
+{
+    {
+        std::map<std::string, ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection> strmap;
+        strmap["fixedthreshold"] = ImagingAlgorithms::ReplaceUnderexposed::FixedThreshold;
+        strmap["mad"]            = ImagingAlgorithms::ReplaceUnderexposed::MAD;
+
+        ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection em;
+        for (auto & item : strmap)
+        {
+            QCOMPARE(item.first,enum2string(item.second));
+            string2enum(item.first,em);
+            QCOMPARE(item.second,em);
+        }
+        em=static_cast<ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection>(9999);
+        QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
+        QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+    }
+
+    {
+        std::map<std::string, ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement> strmap;
+        strmap["neighboraverage"] = ImagingAlgorithms::ReplaceUnderexposed::NeighborAverage;
+        strmap["weightedaverage"] = ImagingAlgorithms::ReplaceUnderexposed::WeightedAverage;
+
+        ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement em;
+        for (auto & item : strmap)
+        {
+            QCOMPARE(item.first,enum2string(item.second));
+            string2enum(item.first,em);
+            QCOMPARE(item.second,em);
+        }
+        em=static_cast<ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement>(9999);
+        QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
+        QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+    }
+}
+
+void TestImagingAlgorithms::ProjSeriesCorr_Detection()
+{
+ auto data=kipl::io::readCSV(dataPath+"1D/dosedata.txt",',',false);
+ auto doses = data["1"];
+
+ qDebug() << doses.size();
+}
+
+void TestImagingAlgorithms::ProjSeriesCorr_Correction()
+{
+
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)

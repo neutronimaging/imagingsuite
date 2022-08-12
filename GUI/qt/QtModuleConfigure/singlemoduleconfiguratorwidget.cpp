@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "QtModuleConfigure_global.h"
 #include "singlemoduleconfiguratorwidget.h"
+#include "singlemodulesettingsdialog.h"
 #include "QListWidgetModuleItem.h"
 
 #include <iostream>
@@ -104,6 +105,7 @@ void SingleModuleConfiguratorWidget::on_ButtonConfigure_Clicked()
     }
 }
 
+namespace oldGUI {
 SingleModuleSettingsDialog::SingleModuleSettingsDialog(const std::string &sApplicationName,
                                                        const std::string &sApplicationPath,
                                                        const std::string &sDefaultModuleSource,
@@ -293,6 +295,9 @@ int SingleModuleSettingsDialog::UpdateModuleCombobox(QString fname, bool bSetFir
     for (auto &module : m_ModuleList)
     {
         m_ComboModules.addItem(QString::fromStdString(module.first));
+        msg.str("");
+        msg<<"Module "<<module.first<<" has " << module.second.size() << " parmeters.";
+        logger.message(msg.str());
     }
 
     if (bSetFirstIndex)
@@ -371,8 +376,13 @@ std::map<std::string, std::map<std::string, std::string> > SingleModuleSettingsD
 }
 void SingleModuleSettingsDialog::on_ComboBox_Changed(QString value)
 {
-    m_ModuleConfig.m_sModule=value.toStdString();
-    m_ModuleConfig.parameters=m_ModuleList[m_ModuleConfig.m_sModule];
+    m_ModuleConfig.m_sModule  = value.toStdString();
+    m_ModuleConfig.parameters = m_ModuleList[m_ModuleConfig.m_sModule];
+
+    std::ostringstream msg;
+
+    msg<<"Module"<< m_ModuleConfig.m_sModule << " has " << m_ModuleConfig.parameters.size();
+    logger.message(msg.str());
     UpdateCurrentModuleParameters();
 
 }
@@ -397,10 +407,13 @@ void SingleModuleSettingsDialog::UpdateCurrentModuleParameters()
     QTreeWidgetItem *parent = m_ParameterListView.invisibleRootItem();
     QTreeWidgetItem *item = nullptr;
 
+    std::ostringstream msg;
+    msg<<"Updating parameter list for "<<m_ModuleConfig.m_sModule<<" ("<<m_ModuleConfig.parameters.size()<<" parameters)";
+    logger.message(msg.str());
     m_ParameterListView.setColumnWidth(0,this->width()/2);
     if (!m_ModuleConfig.m_sModule.empty())
     {
-        std::map<std::string,std::string>::iterator parameters;
+//        std::map<std::string,std::string>::iterator parameters;
 
         for (const auto  & parameters : m_ModuleConfig.parameters)
         {
@@ -408,7 +421,10 @@ void SingleModuleSettingsDialog::UpdateCurrentModuleParameters()
             item->setFlags(item->flags() | Qt::ItemIsEditable);
             item->setText(0,QString::fromStdString(parameters.first));
             item->setText(1,QString::fromStdString(parameters.second));
-
+            msg.str("");
+            msg<<parameters.first<<"="<<parameters.second;
+            logger.message(msg.str());
         }
     }
+}
 }

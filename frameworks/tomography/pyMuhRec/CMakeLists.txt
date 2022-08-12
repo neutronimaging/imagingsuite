@@ -6,6 +6,8 @@
 add_definitions(-DNO_QT)
 set(TARGET_NAME "muhrectomo") 
 
+set(CMAKE_CXX_STANDARD 17)
+
 include_directories(
     /usr/include/libxml2
     /opt/local/include
@@ -14,6 +16,8 @@ include_directories(
     ../../../external/src/linalg
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
+    ../../../../ExternalDependencies/macos/include/
+    ../../../../ExternalDependencies/macos/include/nexus
     ../../../external/mac/include/
     ../../../external/mac/include/nexus
     ../../../external/mac/include/hdf5

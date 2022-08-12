@@ -1,13 +1,14 @@
 set(TARGET_NAME "advancedfilters")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/kipl/include
     /opt/local/include
     ../../../external/src/linalg
+    ../../../../ExternalDependencies/macos/include
     )
 
 link_directories(
@@ -29,13 +30,19 @@ add_library(${TARGET_NAME}
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 #set_target_properties(${TARGET_NAME} PROPERTIES CMAKE_INSTALL_RPATH "\$ORIGIN")
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../external/mac/lib
-    )
-
-
+message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (APPLE)
+    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+        target_link_directories(${TARGET_NAME} PRIVATE
+            /opt/local/lib
+            ../../../../ExternalDependencies/macos/arm64/lib
+            )
+    else()
+        target_link_directories(${TARGET_NAME} PRIVATE
+            /opt/local/lib
+            ../../../external/mac/lib/
+            )
+    endif()
 target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module

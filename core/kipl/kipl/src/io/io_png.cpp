@@ -7,6 +7,7 @@
 #include "../../include/io/io_png.h"
 #include <string>
 #include <vector>
+#include <tuple>
 
 namespace kipl {
 namespace io {

@@ -28,7 +28,8 @@ SOURCES += ../../src/stdpreprocmodulesgui.cpp \
     ../../src/SpotClean2Dlg.cpp \
     ../../src/medianmixringcleandlg.cpp \
     ../../src/generalfilterdlg.cpp \
-    ../../src/bblognormdlg.cpp
+    ../../src/bblognormdlg.cpp \
+    ../../src/ReplaceUnderexposedDlg.cpp
 
 HEADERS += ../../src/stdpreprocmodulesgui.h\
     ../../src/StdPreprocModulesGUI_global.h \
@@ -42,7 +43,8 @@ HEADERS += ../../src/stdpreprocmodulesgui.h\
     ../../src/SpotClean2Dlg.h \
     ../../src/medianmixringcleandlg.h \
     ../../src/generalfilterdlg.h \
-    ../../src/bblognormdlg.h
+    ../../src/bblognormdlg.h \
+    ../../src/ReplaceUnderexposedDlg.h
 
 
 symbian {
@@ -67,6 +69,7 @@ unix:!symbian {
         QMAKE_CXXFLAGS += -fPIC -O2
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
+        INCLUDEPATH += $$REPOS/ExternalDependencies/macos/include
         QMAKE_LIBDIR += /opt/local/lib
     }
     else {
@@ -89,8 +92,8 @@ win32 {
     INCLUDEPATH  += $$REPOS/ExternalDependencies/windows/include/cfitsio
     QMAKE_LIBDIR += $$REPOS/ExternalDependencies/windows/lib
 
-    INCLUDEPATH  += $$REPOS/imaginsuite/external/include
-    QMAKE_LIBDIR += $$REPOS/imaginsuite/external/lib64
+    INCLUDEPATH  += $$REPOS/imagingsuite/external/include
+    QMAKE_LIBDIR += $$REPOS/imagingsuite/external/lib64
 
     LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
@@ -139,5 +142,6 @@ FORMS += \
     ../../src/WaveletRingCleanDlg.ui \
     ../../src/generalfilterdlg.ui \
     ../../src/FullLogNormDlg.ui \
-    ../../src/bblognormdlg.ui
+    ../../src/bblognormdlg.ui \
+    ../../src/ReplaceUnderexposedDlg.ui
 

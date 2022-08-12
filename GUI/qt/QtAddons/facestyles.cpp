@@ -25,11 +25,11 @@ void QTADDONSSHARED_EXPORT setDarkFace(QApplication *app) {
     palette.setColor(QPalette::Button, QColor(53,53,53));
     palette.setColor(QPalette::ButtonText, Qt::white);
     palette.setColor(QPalette::BrightText, Qt::red);
-    palette.setColor(QPalette::Background, QColor("darkgray").darker());
+    palette.setColor(QPalette::Window, QColor("darkgray").darker());
     palette.setColor(QPalette::Highlight, QColor("#6db3f7"));
     palette.setColor(QPalette::HighlightedText, Qt::white);
 
-    QBrush brush = palette.background();
+    QBrush brush = palette.window();
     brush.setColor(brush.color().darker());
     palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush);
     palette.setBrush(QPalette::Disabled, QPalette::Text, brush);

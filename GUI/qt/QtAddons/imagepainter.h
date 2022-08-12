@@ -97,8 +97,8 @@ protected:
     uchar * m_cdata;   ///<! RGB Pixel buffer
 
     QVector<QRect> m_ZoomList; ///<! Stack of zoom ROIs
-    QMap<int,QPair<QRect, QColor> > m_BoxList; ///<! List of Rectangles to draw on the image
-    QMap<int,QPair<QVector<QPointF>, QColor> > m_PlotList; ///<! List of plot data to draw on the image
+    QMap<int,std::pair<QRect, QColor> > m_BoxList; ///<! List of Rectangles to draw on the image
+    QMap<int,std::pair<QVector<QPointF>, QColor> > m_PlotList; ///<! List of plot data to draw on the image
     QMap<int,QMarker > m_MarkerList;
     QVector<QPointF> m_Histogram; ///<! Histogram of the full image
 

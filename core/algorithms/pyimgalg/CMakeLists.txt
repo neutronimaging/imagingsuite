@@ -5,11 +5,14 @@
 
 set(TARGET_NAME "imgalg") 
 
+set(CMAKE_CXX_STANDARD 17)
+
 include_directories(
     ../../kipl/kipl/include 
     ../ImagingAlgorithms/include 
     /opt/local/include .
     ./../../external/pylinalg
+    ../../../../ExternalDependencies/macos/include
     )
     
 link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)

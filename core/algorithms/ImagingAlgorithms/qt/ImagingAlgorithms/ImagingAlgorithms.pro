@@ -48,6 +48,7 @@ unix {
     {
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
+        INCLUDEPATH += ../../../../../../ExternalDependencies/macos/include/
         QMAKE_LIBDIR += /opt/local/lib
 
         LIBS += -L/opt/local/lib/ -lxml2 -larmadillo -ltiff -llapack -lblas
@@ -71,6 +72,7 @@ SOURCES += \
     ../../src/piercingpointestimator.cpp \
     ../../src/ReferenceImageCorrection.cpp \
     ../../src/projectionfilter.cpp \
+    ../../src/ReplaceUnderexposed.cpp \
     ../../src/tomocenter.cpp
 
 HEADERS += \
@@ -88,6 +90,7 @@ HEADERS += \
     ../../include/piercingpointestimator.h \
     ../../include/ReferenceImageCorrection.h \
     ../../include/projectionfilter.h \
+    ../../include/ReplaceUnderexposed.h \
     ../../include/tomocenter.h
 
 

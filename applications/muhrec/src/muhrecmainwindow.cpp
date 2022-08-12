@@ -513,7 +513,8 @@ void MuhRecMainWindow::CenterOfRotationChanged()
         coords[1].setX(coords[1].x()+tantilt*(coords[1].y()-pivot));
     }
 
-    ui->projectionViewer->set_plot(coords,QColor("red").light(),0);
+//    ui->projectionViewer->set_plot(coords,QColor("red"),0);
+    ui->projectionViewer->set_plot(coords,Qt::red,0);
 }
 
 void MuhRecMainWindow::StoreGeometrySetting()
@@ -2748,7 +2749,9 @@ void MuhRecMainWindow::on_actionGlobal_settings_triggered()
 
 void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
 {
-    PixelSizeDlg dlg(this);
+    std::string projpath = m_Config.ProjectionInfo.sFileMask;
+    projpath = projpath.substr(0,projpath.find_last_of(kipl::strings::filenames::slash));
+    PixelSizeDlg dlg(this,projpath);
 
     int res=0;
 

@@ -440,12 +440,15 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::st
 int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
 	int nDose=img.Size(2);
-	float *doselist=new float[nDose];
+    std::vector<float> doselist;
 
 	std::stringstream msg;
 	
 	if (bUseNormROI==true) {
 		GetFloatParameterVector(coeff,"dose",doselist,nDose);
+        msg.str("");
+        msg<<"Dose vector length "<<doselist.size();
+        logger.message(msg.str());
 		for (int i=0; i<nDose; i++) {
 			doselist[i] = doselist[i]-fDarkDose;
 			doselist[i] = log(doselist[i]<1 ? 1.0f : doselist[i]);
@@ -575,8 +578,6 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 			}
 		}
 	}
-
-	delete [] doselist;
 
     return 0;
 }

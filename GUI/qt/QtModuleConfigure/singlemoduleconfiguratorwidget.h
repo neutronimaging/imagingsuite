@@ -54,7 +54,7 @@ protected:
 
     ModuleConfig m_ModuleConfig;
 };
-
+namespace oldGUI {
 class QTMODULECONFIGURESHARED_EXPORT SingleModuleSettingsDialog : QDialog
 {
     Q_OBJECT
@@ -100,5 +100,5 @@ private:
 
 
 };
-
+}
 #endif // SINGLEMODULECONFIGURATORWIDGET_H

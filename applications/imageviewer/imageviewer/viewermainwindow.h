@@ -7,6 +7,7 @@
 #include <base/timage.h>
 #include <io/analyzefileext.h>
 #include <logging/logger.h>
+#include <loggingdialog.h>
 
 namespace Ui {
 class ViewerMainWindow;
@@ -32,11 +33,18 @@ private slots:
 
     void on_actionSave_as_triggered();
 
+    void on_pushButton_showLog_clicked();
+
+    void on_actionMeasure_pixel_size_triggered();
+
 private:
     void LoadImage(std::string fname,kipl::base::TImage<float,2> &img);
+    void updateView(const std::string &fname);
     Ui::ViewerMainWindow *ui;
+    QtAddons::LoggingDialog logdlg;
 
     std::string m_fname;
+    kipl::base::TImage<float,2> currentImage;
     kipl::io::eExtensionTypes m_ext;
     bool isMultiFrame;
 };

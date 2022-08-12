@@ -20,6 +20,7 @@ SOURCES += \
     ../../src/WaveletRingClean.cpp \
     ../../src/TranslatedProjectionWeighting.cpp \
     ../../src/StdPreprocModules.cpp \
+    ../../src/ReplaceUnderexposedmodule.cpp \
     ../../src/stdafx.cpp \
     ../../src/SpotRingClean.cpp \
     ../../src/SpotClean2.cpp \
@@ -60,6 +61,7 @@ HEADERS += \
     ../../include/BasicRingClean.h \
     ../../include/AdaptiveFilter.h \
     ../../include/SinoSpotClean.h \
+    ../../include/ReplaceUnderexposedmodule.h \
     ../../src/stdafx.h \
     ../../include/TranslateProjectionsModule.h \
     ../../include/MorphSpotCleanModule.h \

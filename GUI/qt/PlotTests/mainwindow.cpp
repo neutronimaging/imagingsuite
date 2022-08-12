@@ -3,6 +3,7 @@
 
 #include <QLineSeries>
 #include <QString>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,13 +21,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
 
     for (int i=0; i<10; ++i)
         series->append(qreal(i),qreal(std::rand() ));
 
     QString name;
-    name.sprintf("Data %d", cnt);
+    QTextStream(&name) << "Data"<<cnt;
 
     series->setName(name);
     ui->widget->setCurveData(cnt++,series);
@@ -66,13 +67,13 @@ void MainWindow::on_pushButton_7_clicked()
 
 void MainWindow::on_pushButton_8_clicked()
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
 
     for (int i=0; i<100; ++i)
         series->append(qreal(i),qreal(std::rand() ));
 
     QString name;
-    name.sprintf("Data %d", cnt);
+    QTextStream(&name) <<"Data "<<cnt;
 
     series->setName(name);
     ui->widget->setCurveData(1,series);

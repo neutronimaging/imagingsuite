@@ -555,7 +555,7 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> &src,
 
      for (int x = 0; x < static_cast<int>(dst.Size(0)); x++)
      {
-    	get_col(tmp,dstcol,x,0,(int)tmp.Size(1));
+        get_col(tmp,dstcol,x,0,static_cast<int>(tmp.Size(1)));
 
 		switch (padtype) {
 			case kipl::base::PadMirror   : pad_mirror(dstcol,h,col,filter_width);   break;
@@ -707,8 +707,9 @@ template <typename T>
 void WaveletTransform<T>::pad_sp1(T * src, int nsrc, T * dst, int insert_pos)
 {
 	memcpy(dst+insert_pos,src,nsrc*sizeof(T));
-	double k0=std::min((src[1]-src[0])/2.0,(src[3]-src[2])/2.0);
-	double k1=std::min((src[nsrc-1]-src[nsrc-2])/2.0,(src[nsrc-3]-src[nsrc-4])/2.0);
+
+    double k1=min((src[nsrc-1]-src[nsrc-2])/2.0,(src[nsrc-3]-src[nsrc-4])/2.0);
+    double k0=min((src[1]-src[0])/2.0,(src[3]-src[2])/2.0);
 
 	for (int i=0; i<insert_pos; i++) {
 		dst[i]=src[0]+static_cast<T>(k0*(i-1-insert_pos));

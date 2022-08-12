@@ -57,8 +57,11 @@ int ModuleConfigProgressDialog::exec(ReconEngine * engine,const std::vector<size
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
 
-    QFuture<int> proc_thread=QtConcurrent::run(this,&ModuleConfigProgressDialog::process);
-    QFuture<int> progress_thread=QtConcurrent::run(this,&ModuleConfigProgressDialog::progress);
+    QFuture<int> proc_thread=QtConcurrent::run(&ModuleConfigProgressDialog::process,this);
+    QFuture<int> progress_thread=QtConcurrent::run(&ModuleConfigProgressDialog::progress,this);
+
+    // QFuture<int> proc_thread=QtConcurrent::run(this,&ModuleConfigProgressDialog::process);
+    // QFuture<int> progress_thread=QtConcurrent::run(this,&ModuleConfigProgressDialog::progress);
 
     int res=exec();
 

@@ -40,7 +40,7 @@ int Threshold_Watershed(std::vector<size_t> &hist, double height, size_t medianl
 	for (wsIt=ws.begin(), it=localMin.begin(), i=0; wsIt!= ws.end(); wsIt++,it++, i++) 
 		if (!(*wsIt)) {
 			thvec.push_back(i);
-			*wsIt=(int)height;
+            *wsIt=static_cast<int>(height);
 		}
 		else {
 			*wsIt=0;

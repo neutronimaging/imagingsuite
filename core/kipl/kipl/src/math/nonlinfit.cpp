@@ -243,7 +243,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int FitFunctionBase::setLock(const std::vector<bool> &lv)
     {
-        if (lv.size() != m_Npars)
+        if (lv.size() != static_cast<size_t>(m_Npars))
             throw kipl::base::KiplException("Lock vector is not same size as number of parameters",__FILE__,__LINE__);
 
         m_pars2fit=0;
@@ -310,7 +310,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
     {
         long double fac,ex,arg;
 
-        if (dyda.n_elem!=m_Npars)
+        if (dyda.n_elem!=static_cast<size_t>(m_Npars))
             dyda=arma::vec(m_Npars);
 
         y=0.0;
@@ -327,19 +327,18 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         return 1;
     }
 
-    int Gaussian::Hessian(double UNUSED(x), arma::mat &m)
+    int Gaussian::Hessian(double x, arma::mat &hes)
     {
-        std::ignore=m;
+        std::ignore=hes;
 
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
 
-        /*
-        if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
-        hes.newsize(m_Npars,m_Npars);
+//        if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
+//        hes.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+//        return 1;
+
     }
 
     int Gaussian::Jacobian(double x, arma::mat & jac)
@@ -349,12 +348,11 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
         std::cerr<<"The Jacobian is not available"<<std::endl;
         return 1;
-        /*
-        if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
-        jac.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+//        if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
+//        jac.newsize(m_Npars,m_Npars);
+
+//        return 1;
     }
 
     int Gaussian::printPars()
@@ -401,7 +399,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         int i;
         long double fac,ex,arg;
 
-        if (dyda.n_elem!=m_Npars)
+        if (dyda.n_elem!=static_cast<size_t>(m_Npars))
             dyda=arma::vec(m_Npars);
 
         y=0.0;
@@ -417,20 +415,18 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         return 1;
     }
 
-    int SumOfGaussians::Hessian(double x, arma::mat &m)
+    int SumOfGaussians::Hessian(double x, arma::mat &hes)
     {
         std::ignore = x;
-        std::ignore = m;
+        std::ignore = hes;
 
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
 
-        /*
-        if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
-        hes.newsize(m_Npars,m_Npars);
+        // if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
+        // hes.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+        // return 1;
     }
 
     int SumOfGaussians::Jacobian(double x, arma::mat & jac)
@@ -440,12 +436,12 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
         std::cerr<<"The Jacobian is not available"<<std::endl;
         return 1;
-        /*
-        if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
-        jac.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+        // if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
+        // jac.newsize(m_Npars,m_Npars);
+
+        // return 1;
+
     }
 
     int SumOfGaussians::printPars()
@@ -545,7 +541,6 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
     {
         std::ignore = x;
         std::ignore = hes;
-
         return -1;
     }
 

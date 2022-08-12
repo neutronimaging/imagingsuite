@@ -3,7 +3,12 @@
 #ifndef IMAGE_STATISTICS_HPP
 #define IMAGE_STATISTICS_HPP
 #include <cmath>
-#include <emmintrin.h>
+#ifdef __aarch64__
+    #include <sse2neon.h>
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
 #include <iostream>
 #include <algorithm>
 #include <stddef.h>

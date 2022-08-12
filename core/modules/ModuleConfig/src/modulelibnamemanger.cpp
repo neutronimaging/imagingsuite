@@ -74,7 +74,7 @@ std::string ModuleLibNameManger::generateMacOSLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 6 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
 
-    fullName = fullName+"/Frameworks/lib"+name+".1.0.0.dylib";
+    fullName = fullName+"/Frameworks/lib"+name+".dylib";
 
     return fullName;
 }
