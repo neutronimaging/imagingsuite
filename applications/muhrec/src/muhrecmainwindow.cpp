@@ -513,7 +513,8 @@ void MuhRecMainWindow::CenterOfRotationChanged()
         coords[1].setX(coords[1].x()+tantilt*(coords[1].y()-pivot));
     }
 
-    ui->projectionViewer->set_plot(coords,QColor("red").light(),0);
+//    ui->projectionViewer->set_plot(coords,QColor("red"),0);
+    ui->projectionViewer->set_plot(coords,Qt::red,0);
 }
 
 void MuhRecMainWindow::StoreGeometrySetting()
@@ -717,6 +718,9 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
     m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
 
+    ui->plotHistogram->clearAllCurves();
+    ui->plotHistogram->clearAllCursors();
+
 //    UpdateDialog();
     UpdateMemoryUsage(m_Config.ProjectionInfo.roi);
     m_sConfigFilename=m_sHomePath+"noname.xml";
@@ -777,6 +781,11 @@ void MuhRecMainWindow::MenuFileOpen()
     ProjectionIndexChanged(0);
     ui->spinSlicesFirst->setValue(firstSlice);
     ui->spinSlicesLast->setValue(lastSlice);
+
+    ui->plotHistogram->clearAllCurves();
+    ui->plotHistogram->clearAllCursors();
+
+    ui->sliceViewer->clear_viewer();
 
     SlicesChanged(0);
 }
@@ -2740,7 +2749,9 @@ void MuhRecMainWindow::on_actionGlobal_settings_triggered()
 
 void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
 {
-    PixelSizeDlg dlg(this);
+    std::string projpath = m_Config.ProjectionInfo.sFileMask;
+    projpath = projpath.substr(0,projpath.find_last_of(kipl::strings::filenames::slash));
+    PixelSizeDlg dlg(this,projpath);
 
     int res=0;
 

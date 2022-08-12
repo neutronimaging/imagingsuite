@@ -1145,9 +1145,9 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
         throw ReconException("Unknown image type in ProjectionReader", __FILE__, __LINE__);
 	}
 
-	parameters["weights"]=weight.str();
-	parameters["dose"]=dose.str();
-	parameters["angles"]=angle.str();
+    parameters["weights"] = weight.str();
+    parameters["dose"]    = dose.str();
+    parameters["angles"]  = angle.str();
 
 	return img;
 }

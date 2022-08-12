@@ -170,8 +170,8 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
                 break;
             case TIFFfloat :
                 ftmp.resize(tmp.dims());
-                for (size_t i=0; i<tmp.Size(); i++)
-                    ftmp[i]=tmp[i];
+                for (size_t j=0; j<tmp.Size(); ++j)
+                    ftmp[j]=tmp[j];
                 WriteTIFF(ftmp,filename,kipl::base::Float32);
                 break;
             case TIFF8bitsMultiFrame : break;

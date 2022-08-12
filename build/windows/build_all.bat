@@ -1,3 +1,5 @@
+echo %QTBINPATH%
+
 call build_core_kipl.bat 
 call build_core_algorithms.bat
 

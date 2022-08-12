@@ -54,8 +54,10 @@ double ReportGeneratorBase::MakeHeader(const std::string name)
     //msg.str(""); msg<<"Processing date: "<<timestr;
     msg.str(""); msg<<timestr;
     QString str=QString::fromStdString(msg.str());
-    int w=fm.horizontalAdvance(str);
+//    int w=fm.horizontalAdvance(str);
 
+    auto br=fm.boundingRect("-0.0000");
+    int w = br.width();
     m_Painter.drawText(m_fWidth-w-2*m_fMargin,fm.height(),str);
     m_Painter.drawLine(0,fm.height()*1.5,m_fWidth, fm.height()*1.5);
 

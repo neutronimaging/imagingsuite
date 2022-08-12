@@ -50,8 +50,8 @@ void bindReconstructor(py::module &m)
                                                                   {"usebias",         17},
                                                                   {"biasweight",      18},
                                                                   {"paddingdoubler",  19},
-                                                                  {"usecircularmask", 20}
-
+                                                                  {"usecircularmask", 20},
+                                                                  {"maxthreads",      21}
 
                                                                  };
 
@@ -139,6 +139,9 @@ void bindReconstructor(py::module &m)
                                 break;
                             case 20: // usecircularmask
                                 backprojPars[py::cast<std::string>(item.first)] = py::cast<bool>(item.second) ? "true":"false";
+                                break;
+                            case 21: // max cores
+                                config.System.nMaxThreads = py::cast<int>(item.second);
                                 break;
                             }
                         }

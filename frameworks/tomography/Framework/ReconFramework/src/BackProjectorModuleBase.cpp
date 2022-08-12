@@ -7,6 +7,8 @@
 #include <ParameterHandling.h>
 #include <strings/miscstring.h>
 #include <ModuleException.h>
+#include <thread>
+#include <tuple>
 
 BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor) :
     logger(name),
@@ -14,8 +16,11 @@ BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::s
     mConfig(""),
     m_sModuleName(name),
     m_bBuildCircleMask(true),
-	m_sApplication(application),
-    m_Interactor(interactor)
+    maskArea(0UL),
+    m_sApplication(application),
+    m_Interactor(interactor),
+    nMaxThreads(-1)
+
 {
 	logger(kipl::logging::Logger::LogMessage,"C'tor BackProjBase");
     if (m_Interactor!=nullptr) {
@@ -25,6 +30,7 @@ BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::s
 		logger(kipl::logging::Logger::LogVerbose,"An interactor was not provided");
 
 	}
+    setNumberOfThreads(-1);
 }
 
 BackProjectorModuleBase::~BackProjectorModuleBase(void)
@@ -43,6 +49,11 @@ const std::vector<Publication> &BackProjectorModuleBase::publicationList()
 
 size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
 {
+    std::ignore = proj;
+    std::ignore = angle;
+    std::ignore = weight;
+    std::ignore = bLastProjection;
+
 	std::ostringstream msg;
 
 	msg<<"Backprojector module "<<m_sModuleName<<" does not support 2D processing.";
@@ -53,6 +64,9 @@ size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,2> proj, float 
 
 size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters)
 {
+    std::ignore = proj;
+    std::ignore = parameters;
+
 	std::ostringstream msg;
 
 	msg<<"Backprojector module "<<m_sModuleName<<" does not support 3D processing.";
@@ -63,6 +77,8 @@ size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,3> proj, std::m
 
 int BackProjectorModuleBase::Configure(ReconConfig config, std::map<string, string> parameters)
 {
+    setNumberOfThreads(config.System.nMaxThreads);
+
     try {
         m_bBuildCircleMask = kipl::strings::string2bool(GetStringParameter(parameters,"usecircularmask"));
     }
@@ -83,10 +99,28 @@ std::map<string, string> BackProjectorModuleBase::GetParameters()
    return params;
 }
 
+void BackProjectorModuleBase::setNumberOfThreads(int N)
+{
+    int hwMaxThreads = std::thread::hardware_concurrency();
+
+    if ((N<1) || (hwMaxThreads<N))
+    {
+        nMaxThreads = hwMaxThreads ;
+    }
+    else
+    {
+        nMaxThreads = N;
+    }
+}
+
+int BackProjectorModuleBase::numberOfThreads()
+{
+    return nMaxThreads;
+}
+
 
 kipl::base::TImage<float,2> BackProjectorModuleBase::GetSlice(size_t idx)
 {
-
     std::ostringstream msg;
 	size_t origin[2]={0,0};
     std::vector<size_t> dims(2,0UL);
@@ -211,6 +245,7 @@ void BackProjectorModuleBase::BuildCircleMask()
         R-=floor(tan(fabs(mConfig.ProjectionInfo.fTiltAngle)*fPi/180.0f)*slices);
     }
 
+    maskArea = 0UL;
     const float R2=R*R;
     for (size_t i=0; i<nSizeY; i++)
     {
@@ -251,6 +286,9 @@ void BackProjectorModuleBase::BuildCircleMask()
                      mask[i].first=max(mask[i].first,nSizeX-mConfig.MatrixInfo.roi[2]);
                      mask[i].second=min(mask[i].second,nSizeX-mConfig.MatrixInfo.roi[0]);
                     break;
+                case ReconConfig::cProjections::BeamGeometry_Helix:
+                    throw ReconException("Helix geometry is not implemented",__FILE__,__LINE__);
+                    break;
                 }
             }
             else
@@ -259,7 +297,27 @@ void BackProjectorModuleBase::BuildCircleMask()
                 mask[i].second=0u;
             }
         }
-
+        maskArea += mask[i].second - mask[i].first;
     }
+
+    lineBlocks.resize(nMaxThreads);
+    size_t blockSize = maskArea / nMaxThreads;
+    size_t line = 0UL;
+
+    auto it = mask.begin();
+    for (auto &block : lineBlocks)
+    {
+        block.first = line;
+        size_t cumsum = 0UL;
+        for ( ; (cumsum<blockSize) && (it != mask.end()) ; ++it, ++line)
+        {
+            cumsum += it->second - it->first;
+        }
+        if (line<mask.size())
+            block.second = line;
+        else
+            block.second = mask.size() - 1;
+    }
+
 
 }

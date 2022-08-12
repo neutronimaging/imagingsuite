@@ -6,9 +6,9 @@
 
 QT       += core widgets
 
-TARGET = QtModuleConfigure
-TEMPLATE = lib
-CONFIG += c++11
+TARGET    = QtModuleConfigure
+TEMPLATE  = lib
+CONFIG   += c++17
 
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
@@ -50,6 +50,7 @@ DEFINES += QTMODULECONFIGURE_LIBRARY
 SOURCES += qtmoduleconfigure.cpp \
     modulechainconfiguratorwidget.cpp \
     singlemoduleconfiguratorwidget.cpp \
+    singlemodulesettingsdialog.cpp \
     ApplicationBase.cpp \
     ModuleConfigurator.cpp \
     AddModuleDialog.cpp \
@@ -60,12 +61,16 @@ HEADERS += qtmoduleconfigure.h\
         QtModuleConfigure_global.h \
     modulechainconfiguratorwidget.h \
     singlemoduleconfiguratorwidget.h \
+    singlemodulesettingsdialog.h \
     ApplicationBase.h \
     ModuleConfigurator.h \
     AddModuleDialog.h \
     QListWidgetModuleItem.h \
     ConfiguratorDialogBase.h \
     stdafx.h
+
+FORMS += \
+    singlemodulesettingsdialog.ui
 
 symbian {
     MMP_RULES += EXPORTUNFROZEN

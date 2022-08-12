@@ -48,6 +48,7 @@ unix {
     {
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += /opt/local/include/libxml2
+        INCLUDEPATH += ../../../../../../ExternalDependencies/macos/include/
         QMAKE_LIBDIR += /opt/local/lib
 
         LIBS += -L/opt/local/lib/ -lxml2 -larmadillo -ltiff -llapack -lblas
@@ -70,9 +71,10 @@ SOURCES += \
     ../../src/averageimage.cpp \
     ../../src/piercingpointestimator.cpp \
     ../../src/ReferenceImageCorrection.cpp \
-    ../../src/tomocenter.cpp \
     ../../src/vostripeclean.cpp \
-    ../../src/projectionfilter.cpp
+    ../../src/projectionfilter.cpp \
+    ../../src/ReplaceUnderexposed.cpp \
+    ../../src/tomocenter.cpp
 
 HEADERS += \
     ../../include/StripeFilter.h \
@@ -88,9 +90,10 @@ HEADERS += \
     ../../include/averageimage.h \
     ../../include/piercingpointestimator.h \
     ../../include/ReferenceImageCorrection.h \
-    ../../include/tomocenter.h \
     ../../include/vostripeclean.h \
-    ../../include/projectionfilter.h
+    ../../include/projectionfilter.h \
+    ../../include/ReplaceUnderexposed.h \
+    ../../include/tomocenter.h
 
 
 unix:!symbian {

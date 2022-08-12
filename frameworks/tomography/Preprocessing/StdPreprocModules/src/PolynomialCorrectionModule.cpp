@@ -45,8 +45,10 @@ std::map<std::string, std::string> PolynomialCorrection::GetParameters()
 	return parameters;
 }
 
-bool PolynomialCorrection::SetROI(size_t *roi)
+bool PolynomialCorrection::SetROI(const std::vector<size_t> &roi)
 {
+    std::ignore = roi;
+
 	return false;
 }
 

@@ -58,6 +58,11 @@ cmake ../imagingsuite -DCMAKE_INSTALL_PREFIX=../install
 
 The environment variable ```CONDA_PREFIX``` should be set automatically when you install Anaconda.
 
+You also need to add the path to the Qt-version 
+```
+-DCMAKE_PREFIX_PATH=/Users/<user name>/Qt/6.2.3/macos
+```
+
 ## Test the bindings
 Once your build is successfull you can try out if it works. First change to the install folder
 ```bash

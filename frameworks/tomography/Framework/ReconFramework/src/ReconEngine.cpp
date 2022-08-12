@@ -350,7 +350,7 @@ int ReconEngine::Run()
 	logger(kipl::logging::Logger::LogMessage,msg.str());
 	m_bCancel=false;
 	int result=0;
-    float radius = (static_cast<float>(m_Config.ProjectionInfo.roi[2])-static_cast<float>(m_Config.ProjectionInfo.roi[0]))/2;
+    //float radius = (static_cast<float>(m_Config.ProjectionInfo.roi[2])-static_cast<float>(m_Config.ProjectionInfo.roi[0]))/2;
 
 
 	try {
@@ -526,7 +526,7 @@ int ReconEngine::Process(const std::vector<size_t>  &roi)
 		logger(kipl::logging::Logger::LogVerbose, msg.str());
 
         float moduleCnt=0.0f;
-        float fNumberOfModules=static_cast<float>(m_PreprocList.size());
+        //float fNumberOfModules=static_cast<float>(m_PreprocList.size());
 
         for (auto &module : m_PreprocList)
         {
@@ -945,6 +945,7 @@ int ReconEngine::Run3D(bool bRerunBackproj)
                                 {"sizez",std::to_string(m_Config.MatrixInfo.nDims[2])},
                                };
 
+        timingLogList["system"]= {{"threads",std::to_string(m_Config.System.nMaxThreads)}};
         ProcessTimingLogger ptl(ReconConfig::homePath()+"/.imagingtools/recontiming.json");
 
         ptl.addLogEntry(timingLogList);
@@ -973,8 +974,6 @@ int ReconEngine::Run3D(bool bRerunBackproj)
         msg<<"Run3D failed with an unknown error";
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
-
-
 
     return res;
 }
@@ -1410,7 +1409,7 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
 
-    float progress = m_Interactor->CurrentOverallProgress();
+    float progress = CurrentOverallProgress();
     float progressIncrement = 1.0f/(fNumberOfModules*nTotalBlocks);
 
     try
@@ -1643,7 +1642,7 @@ int ReconEngine::Process3D(const std::vector<size_t> &roi)
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
 
-    float progress = m_Interactor->CurrentOverallProgress();
+    float progress = CurrentOverallProgress();
     float fNumberOfModules=static_cast<float>(m_PreprocList.size())+1;
     float progressIncrement = 1/(fNumberOfModules*nTotalBlocks);
     try
@@ -1770,6 +1769,7 @@ int ReconEngine::Process3D(const std::vector<size_t> &roi)
 
 int ReconEngine::ProcessExistingProjections3D(const std::vector<size_t> &roi)
 {
+    std::ignore = roi;
     std::stringstream msg;
     std::list<ProjectionBlock>::iterator it;
     int i=0;
@@ -1820,7 +1820,7 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections,
     msg.str("");
     m_BackProjector->GetModule()->SetROI(roi);
 
-    if (!UpdateProgress(m_Interactor->CurrentOverallProgress(), "Back projection"))
+    if (!UpdateProgress(CurrentOverallProgress(), "Back projection"))
     {
         try {
             logger(kipl::logging::Logger::LogMessage,"Back projection started.");
@@ -1870,11 +1870,23 @@ int ReconEngine::BackProject3D(kipl::base::TImage<float,3> & projections,
 
 bool ReconEngine::UpdateProgress(float val, std::string msg)
 {
-    if (m_Interactor!=nullptr) {
+    std::ignore = msg;
+    if (m_Interactor!=nullptr)
+    {
         return m_Interactor->SetOverallProgress(val);
     }
 
     return false;
+}
+
+float ReconEngine::CurrentOverallProgress()
+{
+    float progress=0.0f;
+    if (m_Interactor!=nullptr)
+    {
+        progress=m_Interactor->CurrentOverallProgress();
+    }
+    return progress;
 }
 
 size_t ReconEngine::validateImage(float *data, size_t N, const string &description)
@@ -1915,12 +1927,17 @@ void ReconEngine::resetTimers()
 
 void ReconEngine::MakeExtendedROI(size_t *roi, size_t margin, size_t *extroi, size_t *margins)
 {
-
+    std::ignore = roi;
+    std::ignore = margin;
+    std::ignore = extroi;
+    std::ignore = margins;
 }
 
 void ReconEngine::UnpadProjections(kipl::base::TImage<float,3> &projections, size_t *roi, size_t *margins)
 {
-
+    std::ignore = roi;
+    std::ignore = projections;
+    std::ignore = margins;
 }
 
 //==========================================

@@ -10,6 +10,8 @@
     <system>
         <memory>8000</memory>
         <loglevel>message</loglevel>
+        <validate>false</validate>
+        <maxthreads>-1</maxthreads>
     </system>
     <projections>
 	<beamgeometry>parallel</beamgeometry>
@@ -70,6 +72,7 @@
                 <modulename>FullLogNorm</modulename>
                 <sharedobject>StdPreprocModules</sharedobject>
                 <active>true</active>
+                <threading>true</threading>
                 <parameters>
                     <referenceaverage>ImageWeightedAverage</referenceaverage>
                     <uselut>false</uselut>
@@ -82,6 +85,7 @@
                 <modulename>MorphSpotClean</modulename>
                 <sharedobject>StdPreprocModules</sharedobject>
                 <active>false</active>
+                <threading>true</threading>
                 <parameters>
                     <removeinfnan>false</removeinfnan>
                     <clampdata>false</clampdata>
@@ -103,6 +107,7 @@
                 <modulename>WaveletRingClean</modulename>
                 <sharedobject>StdPreprocModules</sharedobject>
                 <active>false</active>
+                <threading>true</threading>
                 <parameters>
                     <decnum>4</decnum>
                     <method>verticalfft</method>
@@ -117,6 +122,7 @@
                 <modulename>MultiProjBP</modulename>
                 <sharedobject>StdBackProjectors</sharedobject>
                 <active>true</active>
+                <threading>true</threading>
                 <parameters>
                     <ProjectionBufferSize>16</ProjectionBufferSize>
                     <SliceBlock>32</SliceBlock>

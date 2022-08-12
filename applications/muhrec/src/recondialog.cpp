@@ -51,8 +51,8 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
 
-    QFuture<int> proc_thread=QtConcurrent::run(this,&ReconDialog::process);
-    QFuture<int> progress_thread=QtConcurrent::run(this,&ReconDialog::progress);
+    QFuture<int> proc_thread     = QtConcurrent::run(&ReconDialog::process,this);
+    QFuture<int> progress_thread = QtConcurrent::run(&ReconDialog::progress,this);
 
     qDebug() << "a0";
     int res=exec();

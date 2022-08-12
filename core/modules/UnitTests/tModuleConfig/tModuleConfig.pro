@@ -71,9 +71,10 @@ HEADERS += dummyconfig.h
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lModuleConfig -lReconFramework
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug -lkipl -lModuleConfig -lReconFramework
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug
 
+LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../kipl/kipl/include
 DEPENDPATH += $$PWD/../../../kipl/kipl/src

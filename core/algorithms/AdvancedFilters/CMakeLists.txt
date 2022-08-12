@@ -4,7 +4,7 @@ set(TARGET_NAME "AdvancedFilters")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
@@ -74,6 +74,30 @@ if (APPLE)
         blas
         NeXus.1.0.0
         NeXusCPP.1.0.0
+    )
+endif()
+
+if (WIN32)
+    target_link_directories(${TARGET_NAME} PRIVATE
+    ../../../../ExternalDependencies/windows/lib
+    ../../../../imagingsuite/external/lib64
+    ../../../../imagingsuite/external/lib64/nexus
+    )
+    
+    target_link_libraries(${TARGET_NAME}
+    PRIVATE
+        kipl
+        libxml2
+        cfitsio
+        libtiff
+        # armadillo
+        liblapack
+        libopenblas
+        libfftw3-3
+        libfftw3f-3
+        NeXus
+        NeXusCPP
+        Iphlpapi
     )
 endif()
 

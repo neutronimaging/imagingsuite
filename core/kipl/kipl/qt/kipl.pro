@@ -30,6 +30,7 @@ unix {
 
     unix:macx {
         INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += $$PWD/../../../../external/mac/include
         QMAKE_LIBDIR += /opt/local/lib
     }
 
@@ -359,15 +360,18 @@ unix:!mac {
 }
 
 unix:mac {
+message("Mac is built")
 exists($$PWD/../../../../external/mac/lib/*NeXus*) {
 
 #s    message("-lNeXus exists")
     DEFINES += HAVE_NEXUS
 
     INCLUDEPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    INCLUDEPATH += $$PWD/../../../../../ExternalDependencies/macos/include/
     DEPENDPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
 
-    LIBS += -L$$PWD/../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    #LIBS += -L$$PWD/../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    LIBS += -L$$PWD/../../../../../ExternalDependencies/macos/arm64/lib -lNeXus.1.0.0 -lNeXusCPP.1.0.0
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
 
@@ -378,6 +382,26 @@ message("-lNeXus does not exists $$HEADERS")
 
 }
 
+unix:arm64 {
+message("Apple silicon")
+exists($$PWD/../../../../external/mac/lib/*NeXus*) {
+
+#s    message("-lNeXus exists")
+    DEFINES += HAVE_NEXUS
+
+    INCLUDEPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+    DEPENDPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+
+    LIBS += -L$$PWD/../../../../../ExternalDependencies/macos/arm64/lib/libNeXus/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    SOURCES += ../src/io/io_nexus.cpp
+    HEADERS += ../include/io/io_nexus.h
+
+}
+else {
+message("-lNeXus does not exists $$HEADERS")
+}
+
+}
 win32 {
 
 exists($$PWD/../../../../external/lib64/nexus/*NeXus*) {

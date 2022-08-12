@@ -1,4 +1,5 @@
 #include <QString>
+#include <QTextStream>
 #include <QtTest>
 
 #include <thread>
@@ -689,15 +690,17 @@ void FrameWorkTest::testProjectionReader()
         std::cout<<"MirrorHorizontalCrop"<<std::endl;
         rot_ref=rot.MirrorHorizontal(m_fimg);
         crop_ref=cropper.Get(rot_ref,crop,false);
-        msg.sprintf("Size mismatch for fits reading with horizontal w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                    res_fits.Size(0),res_fits.Size(1),
-                    crop_ref.Size(0), crop_ref.Size(1));
+
+        QTextStream(&msg) << "Size mismatch for fits reading with horizontal w crop read size "<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                          <<", ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
         QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
         QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
         QVERIFY(res_fits.Size()==crop_ref.Size());
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            msg.clear();
+            QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
             QVERIFY2(res_fits[i]==crop_ref[i],msg.toStdString().c_str());
         }
 
@@ -706,15 +709,17 @@ void FrameWorkTest::testProjectionReader()
         rot_ref=rot.MirrorVertical(m_fimg);
         crop_ref=cropper.Get(rot_ref,crop,false);
 
-        msg.sprintf("Size mismatch for fits reading with vertical w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                    res_fits.Size(0),res_fits.Size(1),
-                    crop_ref.Size(0), crop_ref.Size(1));
+        msg.clear();
+        QTextStream(&msg) <<"Size mismatch for fits reading with vertical w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                          <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
         QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
         QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            msg.clear();
+            QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
             QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
         }
 
@@ -725,9 +730,9 @@ void FrameWorkTest::testProjectionReader()
 
         crop_ref=cropper.Get(rot_ref,crop,false);
 
-        msg.sprintf("Size mismatch for fits reading with horizontal/vertical w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                    res_fits.Size(0),res_fits.Size(1),
-                    crop_ref.Size(0), crop_ref.Size(1));
+        msg.clear();
+        QTextStream(&msg) <<"Size mismatch for fits reading with horizontal/vertical w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                          <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
         QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
         QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
@@ -752,15 +757,17 @@ void FrameWorkTest::testProjectionReader()
             rot_ref=rot.Rotate90(m_fimg);
             crop_ref=cropper.Get(rot_ref,crop,false);
 
-            msg.sprintf("Size mismatch for fits reading with rotate90 w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                        res_fits.Size(0),res_fits.Size(1),
-                        crop_ref.Size(0), crop_ref.Size(1));
+            msg.clear();
+            QTextStream(&msg) <<"Size mismatch for fits reading with rotate90 w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                              <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
             for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
+
                 QVERIFY2(res_fits[i]==crop_ref[i],msg.toStdString().c_str());
             }
         }
@@ -774,15 +781,18 @@ void FrameWorkTest::testProjectionReader()
 
             rot_ref=rot.Rotate180(m_fimg);
             crop_ref=cropper.Get(rot_ref,crop,false);
-            msg.sprintf("Size mismatch for fits reading with rotate180 w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                        res_fits.Size(0),res_fits.Size(1),
-                        crop_ref.Size(0), crop_ref.Size(1));
+
+            msg.clear();
+            QTextStream(&msg) <<"Size mismatch for fits reading with rotate180 w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                              <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
             for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
+
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -795,15 +805,17 @@ void FrameWorkTest::testProjectionReader()
             res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipNone,kipl::base::ImageRotate270,1.0f,crop);
             rot_ref=rot.Rotate270(m_fimg);
             crop_ref=cropper.Get(rot_ref,crop,false);
-            msg.sprintf("Size mismatch for fits reading with rotate270 w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                        res_fits.Size(0),res_fits.Size(1),
-                        crop_ref.Size(0), crop_ref.Size(1));
+
+            msg.clear();
+            QTextStream(&msg) <<"Size mismatch for fits reading with rotate270 w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                              <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
             for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -833,7 +845,8 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
             for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -853,8 +866,10 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -873,8 +888,10 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -893,8 +910,33 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
+                QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
+            }
+        }
+        catch (ReconException &e)
+        {
+            cout<<"Exception :"<<e.what()<<std::endl;
+        }
+
+        try
+        {
+            res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate90,1.0f,crop);
+
+            rot_ref=rot.Rotate90(m_fimg);
+            mirror_ref=rot.MirrorHorizontal(rot_ref);
+            crop_ref=cropper.Get(mirror_ref,crop,false);
+
+            QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
+            QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
+
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -913,12 +955,15 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
-        catch (ReconException &e) {
+        catch (ReconException &e)
+        {
             cout<<"Exception :"<<e.what()<<std::endl;
         }
 
@@ -933,28 +978,10 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
-                QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
-            }
-        }
-        catch (ReconException &e) {
-            cout<<"Exception :"<<e.what()<<std::endl;
-        }
-
-        try
-        {
-            res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate90,1.0f,crop);
-
-            rot_ref=rot.Rotate90(m_fimg);
-            mirror_ref=rot.MirrorHorizontal(rot_ref);
-            crop_ref=cropper.Get(mirror_ref,crop,false);
-
-            QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
-            QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
-
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }

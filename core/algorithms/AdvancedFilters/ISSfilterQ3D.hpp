@@ -18,8 +18,13 @@
 #include <iomanip>
 #include <sstream>
 
+#ifdef __aarch64__
+    #include <sse2neon.h>
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
 
-#include <emmintrin.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif

@@ -18,6 +18,10 @@ public:
 	virtual ~MultiProjectionBPparallel(void);
 protected:
 	virtual void BackProject();
+    void BackProjectOpenMP();
+    void BackProjectSTL();
+    void BackProjectSTL(int first, int last);
+
 };
 
 #endif

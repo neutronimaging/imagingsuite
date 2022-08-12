@@ -65,8 +65,11 @@ windeployqt %DEST%\multiframesplitter.exe
 windeployqt %DEST%\muhrec.exe
 windeployqt %DEST%\muhrecCLI.exe
 
-copy Qt5PrintSupport.dll %DEST%
-copy Qt5Charts.dll %DEST%
+copy Qt6PrintSupport.dll %DEST%
+copy Qt6Charts.dll %DEST%
+copy Qt6OpenGLWidgets.dll %DEST%
+copy Qt6OpenGl.dll %DEST%
+
 
 popd
 for /F "usebackq tokens=1,2 delims==" %%i in (`wmic os get LocalDateTime /VALUE 2^>NUL`) do if '.%%i.'=='.LocalDateTime.' set ldt=%%j

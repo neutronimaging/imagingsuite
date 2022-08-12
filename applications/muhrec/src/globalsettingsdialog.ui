@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>272</width>
-    <height>144</height>
+    <height>211</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,43 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Projection margin</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QCheckBox" name="checkBox_validateData">
+       <property name="text">
+        <string>Check for inf and nan</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Max number of threads</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QSpinBox" name="spinBox_threads">
+       <property name="toolTip">
+        <string>Setting the number of threads to use for the processing. The dafault value -1 is using the available number of cores.</string>
+       </property>
+       <property name="minimum">
+        <number>-1</number>
+       </property>
+       <property name="maximum">
+        <number>256</number>
+       </property>
+       <property name="value">
+        <number>-1</number>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="1">
       <widget class="QSpinBox" name="spinBox_margin">
        <property name="toolTip">
@@ -55,18 +92,25 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Projection margin</string>
+        <string>Threading method</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QCheckBox" name="checkBox_validateData">
-       <property name="text">
-        <string>Check for inf and nan</string>
-       </property>
+     <item row="4" column="1">
+      <widget class="QComboBox" name="comboBox_threadMethod">
+       <item>
+        <property name="text">
+         <string>STL</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>OpenMP</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>

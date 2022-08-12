@@ -9,16 +9,20 @@
 #include <math/mathfunctions.h>
 #include <io/io_tiff.h>
 #include <segmentation/thresholds.h>
+#include <math/sums.h>
+#include <strings/miscstring.h>
 
 #include "../include/MorphSpotClean.h"
 #include "../include/ImagingException.h"
 
-namespace ImagingAlgorithms {
+namespace ImagingAlgorithms
+{
 
-MorphSpotClean::MorphSpotClean() :
+MorphSpotClean::MorphSpotClean(kipl::interactors::InteractionBase *interactor) :
     logger("MorphSpotClean"),
     mark(std::numeric_limits<float>::max()),
     m_bUseThreading(true),
+    m_nNumberOfThreads(-1),
     m_eConnectivity(kipl::base::conn8),
     m_eMorphClean(MorphCleanReplace),
     m_eMorphDetect(MorphDetectHoles),
@@ -33,9 +37,12 @@ MorphSpotClean::MorphSpotClean() :
     m_fMaxLevel(7.0f), // This corresponds to 0.1% transmission
     m_fThreshold{0.95f,0.95f},
     m_fSigma{0.025f,0.025f},
-    m_LUT(1<<15,0.1f,0.0075f)
-{
+    m_LUT(1<<15,0.1f,0.0075f),
+    m_nCounter(0),
+    m_interactor(interactor)
 
+{
+    setNumberOfThreads(m_nNumberOfThreads);
 }
 
 
@@ -88,15 +95,16 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, float th, float 
 
 void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<float> &th, std::vector<float> &sigma)
 {
+    m_nCounter = 0;
+//    logger.message(dumpParameters());
     if (m_bUseThreading)
     {
+        logger.message("Multi-threaded processing");
         std::ostringstream msg;
         const size_t N = img.Size(2);
-        const size_t concurentThreadsSupported = std::min(std::thread::hardware_concurrency(),static_cast<unsigned int>(N));
-
+        const size_t concurentThreadsSupported = std::min(m_nNumberOfThreads,static_cast<int>(N));
 
         std::vector<std::thread> threads;
-
 
         size_t M=N/concurentThreadsSupported;
 
@@ -110,13 +118,15 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
         auto pImg = &img;
         for (size_t i = 0; i < concurentThreadsSupported; ++i)
         {   // spawn threads
-
             threads.push_back(std::thread([=] { process(pImg,begin,end, th,sigma,i); }));
 
             --restCnt;
             begin  = end;
             end   += M + (restCnt>0 ? 1 :0) ;
         }
+        msg.str("");
+        msg<<"Started "<<threads.size()<<" threads";
+        logger.message(msg.str());
 
         // call join() on each thread in turn
         for_each(threads.begin(), threads.end(),
@@ -124,24 +134,46 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
     }
     else
     {
+        logger.message("Single thread processing");
         process(&img,0UL,img.Size(2),th,sigma);
     }
 }
 
 void MorphSpotClean::process(kipl::base::TImage<float, 3> *pImg, size_t first, size_t last, std::vector<float> th, std::vector<float> sigma, size_t tid)
 {
-    auto & img = *pImg;
-    kipl::base::TImage<float,2> slice(img.dims());
+    std::ignore = tid;
+    std::ostringstream msg;
 
+    kipl::base::TImage<float,2> slice(pImg->dims());
+    kipl::base::TImage<float,2> orig(pImg->dims());
+    msg.str("");
     for (size_t i=first; i<last; ++i)
     {
-        std::copy_n(img.GetLinePtr(i),slice.Size(),slice.GetDataPtr());
+        std::copy_n(pImg->GetLinePtr(i),slice.Size(),slice.GetDataPtr());
+        orig.Clone(slice);
         process(slice,th,sigma);
-        std::copy_n(slice.GetDataPtr(), slice.Size(),img.GetLinePtr(i));
+
+        std::copy_n(slice.GetDataPtr(), slice.Size(),pImg->GetLinePtr(i));
+        size_t cnt=0UL;
+        float *pRes=pImg->GetLinePtr(i);
+        for (size_t j=0; j<slice.Size(); ++j)
+        {
+            if (orig[j]!=pRes[j])
+                ++cnt;
+        }
+
+        msg<<i<<": "<<cnt<<", ";
+        ++m_nCounter;
+        UpdateStatus(static_cast<float>(m_nCounter.load())/static_cast<float>(pImg->Size(2)),"Morph spot clean");
     }
+    logger.message(msg.str());
 }
 
-void MorphSpotClean::detectionImage(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &noholes, kipl::base::TImage<float,2> &nopeaks, bool removeBias)
+void MorphSpotClean::detectionImage(kipl::base::TImage<float,2> &img,
+                                    kipl::base::TImage<float,2> &padded,
+                                    kipl::base::TImage<float,2> &noholes,
+                                    kipl::base::TImage<float,2> &nopeaks,
+                                    bool removeBias)
 {
     PadEdges(img,padded);
 
@@ -350,7 +382,8 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
 
     for (size_t i=0; i<N; i++) {
         float val=pImg[i];
-        switch (m_eMorphDetect) {
+        switch (m_eMorphDetect)
+        {
         case MorphDetectHoles :
             diffH=abs(val-pHoles[i]);
             if (m_fThreshold[0]<diffH)
@@ -444,14 +477,16 @@ void MorphSpotClean::PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TIma
     float *buffer=new float[m_nEdgeSmoothLength];
     // Median filter horizontal upper edge
     float *pEdge=padded.GetLinePtr(0);
-    for (size_t i=l2; i<N; ++i) {
+    for (size_t i=l2; i<N; ++i)
+    {
         std::copy_n(pEdge+i-l2,m_nEdgeSmoothLength,buffer);
         kipl::math::median(buffer,m_nEdgeSmoothLength,pEdge+i);
     }
 
     // Median filter horizontal bottom edge
     pEdge=padded.GetLinePtr(padded.Size(1)-1);
-    for (size_t i=l2; i<N; ++i) {
+    for (size_t i=l2; i<N; ++i)
+    {
         std::copy_n(pEdge+i-l2,m_nEdgeSmoothLength,buffer);
         kipl::math::median(buffer,m_nEdgeSmoothLength,pEdge+i);
     }
@@ -552,11 +587,64 @@ bool MorphSpotClean::isThreaded()
     return m_bUseThreading;
 }
 
+string MorphSpotClean::dumpParameters()
+{
+    std::ostringstream msg;
+
+    msg<<"m_bUseThreading     = "<<kipl::strings::bool2string(m_bUseThreading)<<"\n";
+    msg<<"m_nNumberOfThreads  = "<<m_nNumberOfThreads<<"\n";
+    msg<<"m_eConnectivity     = "<<m_eConnectivity<<"\n";
+    msg<<"m_eMorphClean       = "<<m_eMorphClean<<"\n";
+    msg<<"m_eMorphDetect      = "<<m_eMorphDetect<<"\n";
+    msg<<"m_seSize            = "<<m_seSize<<"\n";
+    msg<<"m_nEdgeSmoothLength = "<<m_nEdgeSmoothLength<<"\n";
+    msg<<"m_nPadMargin        = "<<m_nPadMargin<<"\n";
+    msg<<"m_nMaxArea          = "<<m_nMaxArea<<"\n";
+    msg<<"m_bRemoveInfNan     = "<<m_bRemoveInfNan<<"\n";
+    msg<<"m_bClampData        = "<<m_bClampData<<"\n";
+    msg<<"m_bThresholdByPercentage = "<<m_bThresholdByPercentage<<"\n";
+    msg<<"m_fMinLevel         = "<<m_fMinLevel<<"\n";
+    msg<<"m_fMaxLevel         = "<<m_fMaxLevel<<"\n";
+
+    msg<<"m_fThreshold        ";
+    for (const auto &x : m_fThreshold)
+        msg<<x<<" ";
+    msg<<"\nm_fSigma           =";
+    for (const auto &x : m_fSigma)
+        msg<<x<<" ";
+
+    msg<<"\n";
+
+    return msg.str();
+}
+
+void MorphSpotClean::setNumberOfThreads(int N)
+{
+    int hwMaxThreads = std::thread::hardware_concurrency();
+
+    if ((hwMaxThreads<N) || (N<1))
+    {
+        m_nNumberOfThreads = hwMaxThreads;
+    }
+    else
+    {
+        m_nNumberOfThreads = N;
+    }
+    std::ostringstream msg;
+    msg<<"Using "<<m_nNumberOfThreads<<" threads";
+    logger.verbose(msg.str());
+}
+
+int MorphSpotClean::numberOfThreads()
+{
+    return m_nNumberOfThreads;
+}
+
 kipl::base::TImage<float,2> MorphSpotClean::DetectHoles(kipl::base::TImage<float,2> img)
 {
     kipl::base::TImage<float,2> noholes;
 
-    noholes=kipl::morphology::FillHole(img,m_eConnectivity);
+    noholes = kipl::morphology::FillHole(img,m_eConnectivity);
 
     return noholes;
 }
@@ -565,7 +653,7 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectPeaks(kipl::base::TImage<float
 {
     kipl::base::TImage<float,2> nopeaks;
 
-    nopeaks=kipl::morphology::FillPeaks(img,m_eConnectivity);
+    nopeaks = kipl::morphology::FillPeaks(img,m_eConnectivity);
 
     return nopeaks;
 }
@@ -575,11 +663,9 @@ kipl::base::TImage<float, 2> MorphSpotClean::DetectBrightSpots(kipl::base::TImag
 {
     kipl::base::TImage<float,2> padded, nopeaks;
 
-
-    padded = -img;
-    nopeaks=kipl::morphology::FillSpot(padded,m_seSize,m_eConnectivity);
-    padded = -nopeaks;
-
+    padded  = -img;
+    nopeaks = kipl::morphology::FillSpot(padded,m_seSize,m_eConnectivity);
+    padded  = -nopeaks;
 
     return padded;
 }
@@ -588,7 +674,7 @@ kipl::base::TImage<float, 2> MorphSpotClean::DetectDarkSpots(kipl::base::TImage<
 {
     kipl::base::TImage<float,2> noholes;
 
-    noholes=kipl::morphology::FillSpot(img,m_seSize,m_eConnectivity);
+    noholes = kipl::morphology::FillSpot(img,m_seSize,m_eConnectivity);
 
     return noholes;
 }
@@ -597,6 +683,8 @@ kipl::base::TImage<float,2> MorphSpotClean::DetectSpots(kipl::base::TImage<float
 {
     throw ImagingException("Detect spots is not implemented",__FILE__,__LINE__);
     kipl::base::TImage<float,2> result;
+    std::ignore = img;
+    std::ignore = pixels;
 //    auto s=detectionImage(img);
 
 //
@@ -660,7 +748,8 @@ void MorphSpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
     kipl::morphology::LabelArea(lbl,N,area);
     vector<pair<size_t,size_t> >::iterator it;
 
-    for (it=area.begin(); it!=area.end(); it++) {
+    for (it=area.begin(); it!=area.end(); it++)
+    {
         if (m_nMaxArea<(it->first))
             removelist.push_back(it->second);
     }
@@ -685,8 +774,10 @@ void MorphSpotClean::replaceInfNaN(kipl::base::TImage<float, 2> &img)
     float maxval=-std::numeric_limits<float>::max();
     vector<size_t> badList;
 
-    for (size_t i=0 ; i<img.Size(); ++i) {
-        if (std::isfinite(pImg[i])) {
+    for (size_t i=0 ; i<img.Size(); ++i)
+    {
+        if (std::isfinite(pImg[i]))
+        {
             if (maxval<pImg[i]) maxval=pImg[i];
         }
         else
@@ -724,7 +815,8 @@ kipl::base::TImage<float,2> MorphSpotClean::CleanByArray(kipl::base::TImage<floa
             // Extract neighborhood values
             int cnt=Neighborhood(pRes,pixel[i].pos,neigborhood);
 
-            if (cnt!=0) {
+            if (cnt!=0)
+            {
                 // Compute replacement value. Here the mean is used, other replacements posible.
                 float mean=0.0f;
 
@@ -735,7 +827,8 @@ kipl::base::TImage<float,2> MorphSpotClean::CleanByArray(kipl::base::TImage<floa
                 pixel[i].value+= pixel[i].weight * (mean - pixel[i].value);
                 corrected.push_back(pixel[i]);
             }
-            else {
+            else
+            {
                 remaining.push_back(pixel[i]);
             }
         }
@@ -747,7 +840,8 @@ kipl::base::TImage<float,2> MorphSpotClean::CleanByArray(kipl::base::TImage<floa
         PixelInfo *correctedpixel=corrected.dataptr();
         size_t correctedN=corrected.size();
 
-        for (size_t i=0; i<correctedN; i++) {
+        for (size_t i=0; i<correctedN; i++)
+        {
             pRes[correctedpixel[i].pos]=correctedpixel[i].value;
         }
 
@@ -757,11 +851,14 @@ kipl::base::TImage<float,2> MorphSpotClean::CleanByArray(kipl::base::TImage<floa
     }
 
     int cnt=0;
-    for (size_t i=0; i<img.Size(); i++) {
+    for (size_t i=0; i<img.Size(); i++)
+    {
         if (pRes[i]==mark)
             cnt++;
     }
-    if (cnt!=0) {
+
+    if (cnt!=0)
+    {
         msg<<"Failed to correct "<<cnt<<" pixels";
         throw ImagingException(msg.str(),__FILE__,__LINE__);
     }
@@ -786,11 +883,13 @@ int MorphSpotClean::Neighborhood(float * pImg, int idx, float * neigborhood)
     int start = first_line < idx       ? 0 : (idx!=0 ? 3: 4);
     int stop  = idx        < last_line ? 8 : 5;
 
-    for (int i=start; i<stop ; i++) {
+    for (int i=start; i<stop ; i++)
+    {
         float val=pImg[idx+ng[i]];
-        if (val!=mark) {
+        if (val!=mark)
+        {
             neigborhood[cnt]=val;
-            cnt++;
+            ++cnt;
         }
     }
 
@@ -806,14 +905,25 @@ int MorphSpotClean::Neighborhood(float * pImg, int idx, float * neigborhood)
 //    return nopeaks;
 //}
 
+bool MorphSpotClean::UpdateStatus(float val, std::string msg)
+{
+    if (m_interactor!=nullptr)
+    {
+        return m_interactor->SetProgress(val,msg);
+    }
+
+    return false;
 }
+
+} // End of namespace
 
 //********************************
 
 std::string enum2string(ImagingAlgorithms::eMorphCleanMethod mc)
 {
 
-    switch (mc) {
+    switch (mc)
+    {
     case ImagingAlgorithms::MorphCleanReplace : return "morphcleanreplace"; break;
     case ImagingAlgorithms::MorphCleanFill : return "morphcleanfill"; break;
     default: throw ImagingException("Failed to convert enum to string.",__FILE__,__LINE__);
@@ -831,9 +941,12 @@ std::ostream & operator<<(std::ostream &s, ImagingAlgorithms::eMorphCleanMethod 
 
 void string2enum(std::string str, ImagingAlgorithms::eMorphCleanMethod &mc)
 {
-    if (str=="morphcleanreplace") mc=ImagingAlgorithms::MorphCleanReplace;
-    else if (str=="morphcleanfill") mc=ImagingAlgorithms::MorphCleanFill;
-    else {
+    if (str=="morphcleanreplace")
+        mc=ImagingAlgorithms::MorphCleanReplace;
+    else if (str=="morphcleanfill")
+        mc=ImagingAlgorithms::MorphCleanFill;
+    else
+    {
         std::ostringstream msg;
         msg<<"String ("<<str<<") could not be converted to eMorphCleanMethod";
         throw ImagingException(msg.str(),__FILE__,__LINE__);
@@ -844,7 +957,8 @@ void string2enum(std::string str, ImagingAlgorithms::eMorphCleanMethod &mc)
 std::string enum2string(ImagingAlgorithms::eMorphDetectionMethod mc)
 {
 
-    switch (mc) {
+    switch (mc)
+    {
     case ImagingAlgorithms::MorphDetectBrightSpots : return "morphdetectbrightspots"; break;
     case ImagingAlgorithms::MorphDetectDarkSpots   : return "morphdetectdarkspots";   break;
     case ImagingAlgorithms::MorphDetectAllSpots    : return "morphdetectallspots";    break;

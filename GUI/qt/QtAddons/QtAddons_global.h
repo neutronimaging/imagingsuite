@@ -1,3 +1,4 @@
+//<LICENSE>
 #ifndef QTADDONS_GLOBAL_H
 #define QTADDONS_GLOBAL_H
 

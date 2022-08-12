@@ -17,3 +17,5 @@ do
 	echo $f
 	rm $f
 done
+
+rm -rf ../builds/build*
