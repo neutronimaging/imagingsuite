@@ -5,7 +5,10 @@
 
 #include "../tprofile.h"
 #include <algorithm>
+#include <functional>
+#include <sstream>
 #include "../KiplException.h"
+#include "../../logging/logger.h"
 
 
 namespace kipl { namespace base {
@@ -33,7 +36,15 @@ std::vector<T> projection2D(const T *pData, const std::vector<size_t> &dims, int
 {
     if (!slice.empty() && slice.size()!=2)
         throw kipl::base::KiplException("The slice vector has the wrong size",__FILE__,__LINE__);
-    std::vector<T> profile;
+
+    if ((axis<0) && (1<axis))
+    {
+        throw kipl::base::DimsException("projection2D only supports axis 0 and 1",__FILE__,__LINE__);
+    }
+
+    std::vector<T> profile(dims[1-axis],static_cast<T>(0));
+    size_t begin = slice.empty() ? 0        : slice[0];
+    size_t end   = slice.empty()  ? dims[axis] : slice[1];
 
     size_t N=0UL;
 
@@ -42,9 +53,7 @@ std::vector<T> projection2D(const T *pData, const std::vector<size_t> &dims, int
     case 0 :
         {
             N=dims[0];
-            profile = std::vector<float>(dims[1],static_cast<T>(0));
-            size_t begin = slice.empty() ? 0       : slice[0];
-            size_t end   = slice.empty() ? dims[0] : slice[1];
+
             for (size_t y=0; y<dims[1] ; ++y)
             {
                 const T* d=pData+y*dims[0];
@@ -80,11 +89,13 @@ std::vector<T> projection2D(const T *pData, const std::vector<size_t> &dims, int
 
     if (bMeanProjection)
     {
-        std::transform(profile.begin(), profile.end(), profile.begin(),
-                       std::bind1st(std::divides<T>(), N));
+        for (auto & item : profile) 
+        {
+            item = item/N;
+        }
     }
 
-
+    return profile;
 
 }
 

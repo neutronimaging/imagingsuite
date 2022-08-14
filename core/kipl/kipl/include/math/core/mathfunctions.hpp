@@ -21,6 +21,12 @@ kipl::base::TImage<T,N> abs(kipl::base::TImage<T,N> img)
 	return result;
 }
 
+/// \brief Computes the absolute difference image of A and B
+/// \param imgA image A
+/// \param imgB image B
+///
+/// \throws DimsException if imgA.Size() != imgB.Size()
+
 template <typename T, size_t N>
 kipl::base::TImage<T,N> absDiff(const kipl::base::TImage<T,N> &imgA,
                                 const kipl::base::TImage<T,N> &imgB)

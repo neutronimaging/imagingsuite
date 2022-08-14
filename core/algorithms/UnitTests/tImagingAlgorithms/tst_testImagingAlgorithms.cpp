@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <cmath>
+#include <filesystem>
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
@@ -24,6 +25,7 @@
 #include <StripeFilter.h>
 #include <ReferenceImageCorrection.h>
 #include <ReplaceUnderexposed.h>
+#include <vostripeclean.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -62,6 +64,9 @@ private Q_SLOTS:
     void ProjSeriesCorr_Enums();
     void ProjSeriesCorr_Detection();
     void ProjSeriesCorr_Correction();
+
+    void VoStripeClean_unresponsive();
+    void dummy();
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
@@ -83,6 +88,7 @@ TestImagingAlgorithms::TestImagingAlgorithms() :
 #else
     kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
 #endif
+    std::cout<<"Current path: "<<std::filesystem::current_path();
 }
 
 void TestImagingAlgorithms::PixelInfo()
@@ -657,6 +663,7 @@ void TestImagingAlgorithms::ProjSeriesCorr_Enums()
 
 void TestImagingAlgorithms::ProjSeriesCorr_Detection()
 {
+ QSKIP("Skipped due to missing data");
  auto data=kipl::io::readCSV(dataPath+"1D/dosedata.txt",',',false);
  auto doses = data["1"];
 
@@ -664,6 +671,24 @@ void TestImagingAlgorithms::ProjSeriesCorr_Detection()
 }
 
 void TestImagingAlgorithms::ProjSeriesCorr_Correction()
+{
+
+}
+
+void TestImagingAlgorithms::VoStripeClean_unresponsive()
+{
+    ImagingAlgorithms::VoStripeClean vsc;
+
+    kipl::base::TImage<float,2> sino,res;
+
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/ringsinograms/rings_0500.tif");
+    res=vsc.removeUnresponsiveAndFluctuatingStripe(sino,0.1,21);
+
+    kipl::io::WriteTIFF(res,"unresponsive.tif",kipl::base::Float32);
+
+}
+
+void TestImagingAlgorithms::dummy()
 {
 
 }

@@ -73,6 +73,7 @@ set(INC_FILES
   include/ReplaceUnderexposed.h
   include/tomocenter.h
   include/normalizeimage.h
+  include/vostripeclean.h
 )
 
 set(SRC_FILES
@@ -91,8 +92,8 @@ set(SRC_FILES
   src/ReplaceUnderexposed.cpp
   src/tomocenter.cpp  
   src/normalizeimage.cpp
+  src/vostripeclean.cpp
 )
-
 
 add_library(${TARGET_NAME} SHARED
   ${SRC_FILES}

@@ -56,6 +56,8 @@ private Q_SLOTS:
     /// Tests vertical and horizontal profiles
     void testProfiles();
 
+    void testProjection2D();
+
     /// Test image casting
     void testImageCaster();
 
@@ -488,6 +490,7 @@ void TkiplbasetestTest::testMarginSetter()
 
 void TkiplbasetestTest::testProfiles()
 {
+
     std::vector<size_t> dims={4,3};
     kipl::base::TImage<float,2> img(dims);
 
@@ -499,6 +502,27 @@ void TkiplbasetestTest::testProfiles()
     //kipl::base::HorizontalProjection2D(const T *pData, const size_t *dims, S *pProfile, bool bMeanProjection=false);
     delete [] vp;
     delete [] hp;
+}
+
+void TkiplbasetestTest::testProjection2D()
+{
+    kipl::base::TImage<float,2> sino({4,3});
+
+    for (size_t i=0; i<sino.Size(); ++i)
+        sino[i]=static_cast<float>(i);
+
+    std::vector<float> p0 = kipl::base::projection2D(sino.GetDataPtr(),sino.dims(),0,false,{});
+    QCOMPARE(p0.size(),sino.Size(1));
+
+    std::vector<float> ref0={6,22,38};
+    for (size_t i=0; i<ref0.size(); ++i)
+        QCOMPARE(p0[i],ref0[i]);
+
+    auto p1=kipl::base::projection2D(sino.GetDataPtr(),sino.dims(),1,false,{});
+    QCOMPARE(p1.size(),sino.Size(0));
+    std::vector<float> ref1={12,15,18,21};
+    for (size_t i=0; i<ref1.size(); ++i)
+        QCOMPARE(p1[i],ref1[i]);
 }
 
 void TkiplbasetestTest::testImageCaster()

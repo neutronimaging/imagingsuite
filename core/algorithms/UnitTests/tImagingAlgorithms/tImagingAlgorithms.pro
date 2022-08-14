@@ -11,7 +11,7 @@ QT       -= gui
 TARGET = tst_ImagingAlgorithms
 CONFIG   += console
 CONFIG   -= app_bundle
-CONFIG   += c++11
+CONFIG   += c++17
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
@@ -29,6 +29,7 @@ unix {
     }
 
     unix:macx {
+        QMAKE_MACOSX_DEPLOYMENT_TARGET = 12.1
         INCLUDEPATH += /opt/local/include
         INCLUDEPATH += $$PWD/../../../../../ExternalDependencies/macos/include
         QMAKE_LIBDIR += /opt/local/lib

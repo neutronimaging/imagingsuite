@@ -44,7 +44,7 @@ public:
     ///  \param snr: ratio used to discriminate between useful information and noise
     ///  \param size: window size of the median filter.
     ///  \returns stripe-removed sinogram.
-    kipl::base::TImage<float,2> removeUnresponsiveAndFluctuatingStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size, bool doTranspose);
+    kipl::base::TImage<float,2> removeUnresponsiveAndFluctuatingStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size);
 
     /// \brief Remove all types of stripe artifacts by combining algorithm 6, 5, and 3.
     ///  Angular direction is along the axis 0.

@@ -62,7 +62,7 @@ void STLVecOperations::test_binaryDilate()
     std::vector<float> x0 = {0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
     std::vector<float> v0 = {0.0f, 1.0f, 1.0f, 1.0f, 0.0f};
 
-    auto r0=binaryDilate(x0,1);
+    auto r0=binaryDilation(x0,1);
 
     QCOMPARE(r0.size(),v0.size());
 
@@ -72,7 +72,7 @@ void STLVecOperations::test_binaryDilate()
     std::vector<int> x1 = {0,0,1,1,0,0,0,1,0,1,0,0};
     std::vector<int> v1 = {0,1,1,1,1,0,1,1,1,1,1,0};
 
-    auto r1=binaryDilate(x1,1);
+    auto r1=binaryDilation(x1,1);
 
     QCOMPARE(r1.size(),v1.size());
 
@@ -82,7 +82,7 @@ void STLVecOperations::test_binaryDilate()
     std::vector<int> x2 = {1,0,0,1,1,0,0,0,1,0,1,0,0,0,1,0};
     std::vector<int> v2 = {1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1};
 
-    auto r2=binaryDilate(x2,1);
+    auto r2=binaryDilation(x2,1);
 
     QCOMPARE(r2.size(),v2.size());
 
@@ -93,12 +93,14 @@ void STLVecOperations::test_binaryDilate()
     std::vector<int> x3 = {0,0,0,1,0,0,0,0,0,0,1,0,0,0};
     std::vector<int> v3 = {0,1,1,1,1,1,0,0,1,1,1,1,1,0};
 
-    auto r3=binaryDilate(x3,2);
+    auto r3=binaryDilation(x3,2);
 
     QCOMPARE(r3.size(),v3.size());
 
     for (size_t i=0; i<x3.size(); ++i)
         QCOMPARE(r3[i],v3[i]);
+}
+
 void STLVecOperations::test_MAD()
 {
     std::vector<float> v={0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 1000.0f};

@@ -238,9 +238,10 @@ std::vector<float> VoStripeClean::detect_stripe(std::vector<float> &listdata, fl
     {
         float upper_thresh = coefs[0] + noiselevel * snr * 0.5;
         //        listmask[listdata > upper_thresh] = 1.0
-        for (size_t i=0; i<listmask.size() ; ++i)
-            if (listdata[i] > upper_thresh)
-                listmask[i] = 1.0;
+
+        for (auto & item : listmask)
+            if (item > upper_thresh)
+                item = 1.0;
     }
 
     //    if (val2 >= snr):
@@ -250,9 +251,9 @@ std::vector<float> VoStripeClean::detect_stripe(std::vector<float> &listdata, fl
     {
         float lower_thresh = numt1 - noiselevel * snr * 0.5;
 
-        for (size_t i=0; i<listmask.size() ; ++i)
-            if (listdata[i] <= lower_thresh)
-                listmask[i] = 1.0;
+        for (auto &item : listmask)
+            if (item <= lower_thresh)
+                item = 1.0;
     }
 
     return listmask;
@@ -279,24 +280,26 @@ void VoStripeClean::interpolationFill(kipl::base::TImage<float, 2> &img, std::ve
         interpolationBlocks.push_back(make_pair(rise,fall));
     }
 
-    if (interpolationBlocks.empty())
+    if ( !interpolationBlocks.empty())
+    {
+        for (size_t y=0; y<img.Size(1); ++y)
+        {
+            float *pLine = img.GetLinePtr(y);
+            for (auto & block : interpolationBlocks)
+            {
+                float k = (pLine[block.second]-pLine[block.first-1])/(block.second - block.first + 1);
+                float m = pLine[block.first-1] - k * (block.first-1);
+                for (ptrdiff_t x = block.first; x< block.second; ++x)
+                {
+                    pLine[x] = k*x +m;
+                }
+            }
+        }
+    }
+    else
     {
         logger.message("interpolationFill didn't find any blocks to fill");
         return ;
-    }
-
-    for (size_t y=0; y<img.Size(1); ++y)
-    {
-        float *pLine = img.GetLinePtr(y);
-        for (auto & block : interpolationBlocks)
-        {
-            float k = (pLine[block.second]-pLine[block.first-1])/(block.second - block.first + 1);
-            float m = pLine[block.first-1] - k * (block.first-1);
-            for (ptrdiff_t x = block.first; x< block.second; ++x)
-            {
-                pLine[x] = k*x +m;
-            }
-        }
     }
 
 }
@@ -331,7 +334,9 @@ kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<
     auto list2 = kipl::base::projection2D(sinosmoothed.GetDataPtr(),sinosmoothed.dims(),0,true,{ndrop,sinosmoothed.Size(0)-ndrop});
 
     //    listfact = list1 / list2
-    auto listfact = list1 / list2;
+    std::vector<float> listfact(list1.begin(),list1.end());
+    for (size_t i = 0; i < listfact.size(); ++i)
+        listfact[i]=listfact[i]/list2[i];
 
     //    listmask = detect_stripe(listfact, snr)
     auto listmask = detect_stripe(listfact, snr);
@@ -359,7 +364,7 @@ kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<
     return transpose(res,doTranspose);
 }
 
-kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size, bool doTranspose)
+kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size)
 {
     kipl::base::TImage<float,2> res;
     res.Clone(sinogram);
@@ -371,44 +376,47 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
 
     auto sinosmoothed = vsmooth(res,kipl::filters::FilterBase::EdgeMirror);
 
-    //    listdiff = np.sum(np.abs(sinogram - sinosmoothed), axis=0)
+//    //    listdiff = np.sum(np.abs(sinogram - sinosmoothed), axis=0)
     auto absdiff  = kipl::math::absDiff(res,sinosmoothed);
+    std::ostringstream msg;
+    msg<<absdiff.Size(0)<<absdiff.Size(1);
+    logger.message(msg.str());
     auto listdiff = kipl::base::projection2D(absdiff.GetDataPtr(),absdiff.dims(),1,false);
 
-    //    nmean = np.mean(listdiff)
-    float nmean = std::accumulate(listdiff.begin(),listdiff.end(),0.0f)/listdiff.size();
+//    //    nmean = np.mean(listdiff)
+//    float nmean = std::accumulate(listdiff.begin(),listdiff.end(),0.0f)/listdiff.size();
 
-    //    listdiffbck = median_filter(listdiff, size)
-    auto listdiffbck = medianFilter(listdiff,size);
+//    //    listdiffbck = median_filter(listdiff, size)
+//    auto listdiffbck = medianFilter(listdiff,size);
 
-    //    listdiffbck[listdiffbck == 0.0] = nmean
-    for (auto & item : listdiffbck)
-        if (item==0.0)
-            item = nmean;
+//    //    listdiffbck[listdiffbck == 0.0] = nmean
+//    for (auto & item : listdiffbck)
+//        if (item==0.0)
+//            item = nmean;
 
-    //    listfact = listdiff / listdiffbck
-    auto listfact = listdiff/listdiffbck;
+//    //    listfact = listdiff / listdiffbck
+//    auto listfact = listdiff/listdiffbck;
 
-    //    listmask = detect_stripe(listfact, snr)
-    auto listmask = detect_stripe(listfact, snr);
-    //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
-    listmask = binaryDilation(listmask, 1);
-    std::fill(listmask.begin(),listmask.begin()+2,0.0f);
-    std::fill(listmask.rbegin(),listmask.rbegin()+2,0.0f);
+//    //    listmask = detect_stripe(listfact, snr)
+//    auto listmask = detect_stripe(listfact, snr);
+//    //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
+//    listmask = binaryDilation(listmask, 1);
+//    std::fill(listmask.begin(),listmask.begin()+2,0.0f);
+//    std::fill(listmask.rbegin(),listmask.rbegin()+2,0.0f);
 
-//    listx = np.where(listmask < 1.0)[0]
-//    listy = np.arange(nrow)
-//    matz = sinogram[:, listx]
-//    finter = interpolate.interp2d(listx, listy, matz, kind='linear')
-//    listxmiss = np.where(listmask > 0.0)[0]
-//    if len(listxmiss) > 0:
-//        matzmiss = finter(listxmiss, listy)
-//        sinogram[:, listxmiss] = matzmiss
-//    # Use algorithm 5 to remove residual stripes
-//    #sinogram = remove_large_stripe(sinogram, snr, size)
-//    return sinogram
+////    listx = np.where(listmask < 1.0)[0]
+////    listy = np.arange(nrow)
+////    matz = sinogram[:, listx]
+////    finter = interpolate.interp2d(listx, listy, matz, kind='linear')
+////    listxmiss = np.where(listmask > 0.0)[0]
+////    if len(listxmiss) > 0:
+////        matzmiss = finter(listxmiss, listy)
+////        sinogram[:, listxmiss] = matzmiss
+////    # Use algorithm 5 to remove residual stripes
+////    #sinogram = remove_large_stripe(sinogram, snr, size)
+////    return sinogram
 
-    interpolationFill(res,listmask);
+//    interpolationFill(res,listmask);
 
     return res;
 }
@@ -417,7 +425,7 @@ kipl::base::TImage<float,2> VoStripeClean::removeAllStripes(kipl::base::TImage<f
 {
     auto res = transpose(sinogram,doTranspose);
 
-    res = removeUnresponsiveAndFluctuatingStripe(sinogram, snr, la_size,false);
+    res = removeUnresponsiveAndFluctuatingStripe(sinogram, snr, la_size);
     res = removeLargeStripe(res, snr, la_size,false);
     res = removeStripeBasedSorting(res, sm_size,false);
 

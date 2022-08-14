@@ -371,7 +371,7 @@ exists($$PWD/../../../../external/mac/lib/*NeXus*) {
     DEPENDPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
 
     #LIBS += -L$$PWD/../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
-    LIBS += -L$$PWD/../../../../../ExternalDependencies/macos/arm64/lib -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    LIBS += -L$$PWD/../../../../../ExternalDependencies/macos/$$QMAKE_HOST.arch/lib -lNeXus.1.0.0 -lNeXusCPP.1.0.0
     SOURCES += ../src/io/io_nexus.cpp
     HEADERS += ../include/io/io_nexus.h
 
