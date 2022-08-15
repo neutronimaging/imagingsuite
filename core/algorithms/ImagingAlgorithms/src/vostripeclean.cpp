@@ -40,6 +40,33 @@ kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedSorting(kipl::base::
 //    Return:     - stripe-removed sinogram.
 //    """
 //    sinogram = np.transpose(sinogram)
+    kipl::base::TImage<float,2> tsinogram = transpose(sinogram,true);
+
+    //    sinosorted = np.sort(sinogram, axis=0)
+
+    for (size_t i=0; i<tsinogram.Size(1); ++i)
+    {
+        auto pLine = tsinogram.GetLinePtr(i);
+        std::multimap<float,size_t> m;
+        for (size_t j=0; j<tsinogram.Size(0); ++j)
+            m.insert(make_pair(pLine[j],j));
+        std::vector<float> v;
+        for (const auto & item: m)
+            v.push_back(item.first);
+
+        auto vm=medianFilter(v,size);
+        size_t k=0;
+        for (const auto & item: m)
+        {
+            pLine[item.second]=vm[k];
+            ++k;
+        }
+    }
+
+    //    sinosmoothed = median_filter(sinosorted, (1, size))
+
+
+
 //    (nrow, ncol) = sinogram.shape
 //    listindex = np.arange(0.0, ncol, 1.0)
 //    matindex = np.tile(listindex,(nrow,1))
@@ -51,9 +78,8 @@ kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedSorting(kipl::base::
 //        [row[row[:, 0].argsort()] for row in matsort])
 //    sino_corrected = matsortback[:, :, 1]
 //    return np.transpose(sino_corrected)
-   auto res = transpose(sinogram,doTranspose);
 
-   return transpose(res,doTranspose);
+   return transpose(tsinogram,true);
 }
 
 kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedFiltering(kipl::base::TImage<float,2> &sinogram, float sigma, size_t size, bool doTranspose)
@@ -317,9 +343,12 @@ kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<
 //    normalizing to remove full stripes, using the sorting technique to
 //    remove partial stripes.
 //    Angular direction is along the axis 0.
+    std::ostringstream msg;
 
     float  badpixelratio = 0.05f;
     size_t ndrop         = static_cast<size_t>(badpixelratio * sinogram.Size(1));
+
+    auto res=sinogram; res.Clone();
 
     kipl::base::TImage<float,2> tsinogram = transpose(sinogram,true);
 
@@ -331,28 +360,69 @@ kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<
         std::sort(tsinogram.GetLinePtr(y),tsinogram.GetLinePtr(y)+tsinogram.Size(0));
 
     //    sinosmoothed = median_filter(sinosorted, (1, size))
-    kipl::filters::TMedianFilter<float,2> medfilt({size,1});
+    //kipl::filters::TMedianFilter<float,2> medfilt({size,3});
+    kipl::filters::TMedianFilter<float,2> medfilt({3,size});
     auto sinosmoothed = medfilt(sinosorted,kipl::filters::FilterBase::EdgeMirror);
 
     //    list1 = np.mean(sinosorted[ndrop:nrow - ndrop], axis=0)
-    auto list1 = kipl::base::projection2D(sinosorted.GetDataPtr(),sinosorted.dims(),0,true,{ndrop,sinosorted.Size(0)-ndrop});
-
+    auto list1 = kipl::base::projection2D(sinosorted.GetDataPtr(),sinosorted.dims(),0,true,{ndrop,sinosorted.Size(0)-2*ndrop});
+    kipl::io::serializeContainer(list1.begin(),list1.end(),"Vo_large_list1.txt");
     //    list2 = np.mean(sinosmoothed[ndrop:nrow - ndrop], axis=0)
-    auto list2 = kipl::base::projection2D(sinosmoothed.GetDataPtr(),sinosmoothed.dims(),0,true,{ndrop,sinosmoothed.Size(0)-ndrop});
-
+    auto list2 = kipl::base::projection2D(sinosmoothed.GetDataPtr(),sinosmoothed.dims(),0,true,{ndrop,sinosmoothed.Size(0)-2*ndrop});
+    kipl::io::serializeContainer(list2.begin(),list2.end(),"Vo_large_list2.txt");
     //    listfact = list1 / list2
-    std::vector<float> listfact(list1.begin(),list1.end());
+    std::vector<float> listfact(list1.size(),0.0f);
     for (size_t i = 0; i < listfact.size(); ++i)
-        listfact[i]=listfact[i]/list2[i];
+        listfact[i]=list1[i]/list2[i];
+
+    kipl::io::serializeContainer(listfact.begin(),listfact.end(),"Vo_large_listfact.txt");
 
     //    listmask = detect_stripe(listfact, snr)
     auto listmask = detect_stripe(listfact, snr);
-
+    kipl::io::serializeContainer(listmask.begin(),listmask.end(),"Vo_large_listmask.txt");
 //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
     listmask = binaryDilation(listmask,1);
+    kipl::io::serializeContainer(listmask.begin(),listmask.end(),"Vo_large_listmask2.txt");
 
 //    matfact = np.tile(listfact,(nrow,1))
 //    sinogram = sinogram / matfact
+     msg.str("");
+     msg<<"res.size: ("<<res.Size(0)<<", "<<res.Size(1)<<"), listmask.size:"<<listmask.size();
+     logger.message(msg.str());
+    for (size_t i=0; i<res.Size(1); ++i )
+    {
+        auto pLine = res.GetLinePtr(i);
+        for (size_t j=0; j<res.Size(0); ++j)
+            pLine[j] = pLine[j]/listfact[j];
+    }
+    kipl::io::WriteTIFF(res,"Vo_large_sinoscaled.tif",kipl::base::Float32);
+
+    tsinogram = transpose(res,true);
+    int cnt=0;
+    for (size_t i=0; i<listmask.size(); ++i)
+    {
+        if (0.0f<listmask[i])
+        {
+            cnt++;
+            auto pLine  = tsinogram.GetLinePtr(i);
+            auto pSLine = sinosmoothed.GetLinePtr(i);
+
+            std::multimap<float,size_t> sorted_vector;
+            for (size_t j=0; j<tsinogram.Size(0); ++j)
+                sorted_vector.insert(std::make_pair(pLine[j],j));
+
+
+            for (const auto & item : sorted_vector)
+            {
+                pLine[item.second]=pSLine[item.second];
+            }
+        }
+    }
+
+    std::cout<<"cnt="<<cnt<<"\n";
+    res = transpose(tsinogram,true);
+
+
 //    sinogram1 = np.transpose(sinogram)
 //    listindex = np.arange(0.0, nrow, 1.0)
 //    matindex = np.tile(listindex,(ncol,1))
@@ -366,13 +436,13 @@ kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<
 //    listxmiss = np.where(listmask > 0.0)[0]
 //    sinogram[:, listxmiss] = sino_corrected[:, listxmiss]
 //    return sinogram
-    auto res = transpose(sinogram,doTranspose);
 
-    return transpose(res,doTranspose);
+    return res;
 }
 
 kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size)
 {
+    // Algorithm 6 in the paper
     kipl::base::TImage<float,2> res;
     res.Clone(sinogram);
 

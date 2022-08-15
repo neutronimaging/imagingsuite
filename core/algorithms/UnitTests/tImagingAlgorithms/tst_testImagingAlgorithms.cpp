@@ -66,6 +66,8 @@ private Q_SLOTS:
     void ProjSeriesCorr_Correction();
 
     void VoStripeClean_unresponsive();
+    void VoStripeClean_large();
+    void VoStripeClean_sorting();
     void dummy();
 private:
     void MorphSpotClean_ListAlgorithm();
@@ -687,6 +689,34 @@ void TestImagingAlgorithms::VoStripeClean_unresponsive()
     kipl::io::WriteTIFF(res,"unresponsive.tif",kipl::base::Float32);
 
 }
+
+void TestImagingAlgorithms::VoStripeClean_large()
+{
+    ImagingAlgorithms::VoStripeClean vsc;
+
+    kipl::base::TImage<float,2> sino,res;
+
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/ringsinograms/rings_0500.tif");
+    res=vsc.removeUnresponsiveAndFluctuatingStripe(sino,0.1,31); // Needs to be called prior to large
+    res=vsc.removeLargeStripe(res,0.1,31,false);
+
+    kipl::io::WriteTIFF(res,"Vo_large.tif",kipl::base::Float32);
+
+}
+
+void TestImagingAlgorithms::VoStripeClean_sorting()
+{
+    ImagingAlgorithms::VoStripeClean vsc;
+
+    kipl::base::TImage<float,2> sino,res;
+    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/ringsinograms/rings_0500.tif");
+    res=vsc.removeUnresponsiveAndFluctuatingStripe(sino,0.1,31); // Needs to be called prior to large
+    res=vsc.removeStripeBasedSorting(res,31,false);
+    res=vsc.removeLargeStripe(res,0.1,81,false);
+    kipl::io::WriteTIFF(res,"Vo_stripesort.tif",kipl::base::Float32);
+}
+
+
 
 void TestImagingAlgorithms::dummy()
 {
