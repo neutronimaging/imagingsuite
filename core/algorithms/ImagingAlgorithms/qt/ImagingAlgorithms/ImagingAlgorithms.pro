@@ -43,6 +43,7 @@ unix {
         LIBS += -L/usr/lib -lxml2 -ltiff
         INCLUDEPATH += /usr/include/libxml2
 
+
     }
     else
     {

@@ -13,6 +13,9 @@
 #include <math/linfit.h>
 #include <stltools/stlvecmath.h>
 #include <stltools/stlmorphology.h>
+#include <stltools/zerocrossings.h>
+#include <io/io_serializecontainers.h>
+#include <io/io_tiff.h>
 
 namespace ImagingAlgorithms
 {
@@ -202,11 +205,14 @@ std::vector<float> VoStripeClean::detect_stripe(std::vector<float> &listdata, fl
 //    ---------
 //    Return:     - 1D binary mask.
 //    """
+    std::ostringstream msg;
+
     size_t numdata = listdata.size();
 
     //    listsorted = np.sort(listdata)[::-1]
-    auto listsorted = listdata;
+    std::vector<float> listsorted(listdata.begin(),listdata.end());
     std::sort(listsorted.begin(),listsorted.end(), greater<float>());
+    kipl::io::serializeContainer(listsorted.begin(),listsorted.end(),"Vo_sorted.txt");
     //    xlist = np.arange(0, numdata, 1.0)
     auto xlist = std::vector<float>(numdata,0.0f);
     std::iota(xlist.begin(),xlist.end(),0.0f);
@@ -216,19 +222,30 @@ std::vector<float> VoStripeClean::detect_stripe(std::vector<float> &listdata, fl
 
     //    (_slope, _intercept) = np.polyfit(
     //        xlist[ndrop:-ndrop-1], listsorted[ndrop:-ndrop - 1], 1)
-    std::vector<float> xx(xlist.begin()+ndrop,xlist.begin()+numdata-ndrop);
-    std::vector<float> ll(listsorted.begin()+ndrop,listsorted.begin()+numdata-ndrop);
+    std::vector<float> xx(xlist.begin()+ndrop,xlist.begin()+numdata-2*ndrop);
+    std::vector<float> ll(listsorted.begin()+ndrop,listsorted.begin()+numdata-2*ndrop);
     auto coefs = kipl::math::polyFit(xx,ll,1);
 
     //    numt1 = _intercept + _slope * xlist[-1]
     //    noiselevel = np.abs(numt1 - _intercept)
     //    val1 = np.abs(listsorted[0] - _intercept) / noiselevel
     //    val2 = np.abs(listsorted[-1] - numt1) / noiselevel
-    float numt1      = coefs[0]+coefs[1] * numdata-1;
+    float numt1      = coefs[0]+coefs[1] * xlist.back();
     float noiselevel = fabs(numt1 - coefs[0]);
-    float val1       = fabs(listsorted[0] - coefs[0]) / noiselevel;
-    float val2       = fabs(listsorted.back() - numt1) / noiselevel;
+    float val1       = fabs(ll[0] - coefs[0]) / noiselevel;
+    float val2       = fabs(ll.back() - numt1) / noiselevel;
+    float lower_thresh = numt1 - noiselevel * snr * 0.5;
+    float upper_thresh = coefs[0] + noiselevel * snr * 0.5;
 
+    msg.str("");
+    msg<<"Variables\n listsorted[0]: "<<listsorted[0]
+      <<"\n coefs: ("<<coefs[0]<<","<<coefs[1]
+      <<")\n numt1: "<<numt1
+      <<"\n noiselevel: "<<noiselevel
+      <<"\n val1: "<<val1<<", val2: "<<val2
+      <<"\n thresholds: ("<<lower_thresh<<", "<<upper_thresh<<")";
+
+    logger.message(msg.str());
     //    listmask = np.zeros_like(listdata)
     std::vector<float> listmask(listdata.size(),0.0f);
     //    if (val1 >= snr):
@@ -236,12 +253,12 @@ std::vector<float> VoStripeClean::detect_stripe(std::vector<float> &listdata, fl
     //        listmask[listdata > upper_thresh] = 1.0
     if (val1 >=snr)
     {
-        float upper_thresh = coefs[0] + noiselevel * snr * 0.5;
+
         //        listmask[listdata > upper_thresh] = 1.0
 
-        for (auto & item : listmask)
-            if (item > upper_thresh)
-                item = 1.0;
+        for (size_t i=0; i<listdata.size(); ++i)
+            if (listdata[i] > upper_thresh)
+                listmask[i] = 1.0;
     }
 
     //    if (val2 >= snr):
@@ -249,11 +266,9 @@ std::vector<float> VoStripeClean::detect_stripe(std::vector<float> &listdata, fl
     //        listmask[listdata <= lower_thresh] = 1.0
     if (val2 >=snr)
     {
-        float lower_thresh = numt1 - noiselevel * snr * 0.5;
-
-        for (auto &item : listmask)
-            if (item <= lower_thresh)
-                item = 1.0;
+        for (size_t i=0; i<listdata.size(); ++i)
+            if (listdata[i] <= lower_thresh)
+                listmask[i] = 1.0;
     }
 
     return listmask;
@@ -266,19 +281,11 @@ void VoStripeClean::interpolationFill(kipl::base::TImage<float, 2> &img, std::ve
         throw kipl::base::DimsException("Mask doesn't match image width in interpolationFill",__FILE__,__LINE__);
     }
 
-    std::vector<pair<ptrdiff_t,ptrdiff_t>> interpolationBlocks;
-    auto it = mask.begin();
-    while (it!=mask.end())
-    {
-        it = std::upper_bound(it,mask.end(),0.5f);
-        if (it==mask.end())
-            break;
+    auto interpolationBlocks = findContinuousBlocks(mask);
 
-        ptrdiff_t rise = it - mask.begin();
-        it = std::lower_bound(it,mask.end(),0.5f);
-        ptrdiff_t fall = it - mask.begin();
-        interpolationBlocks.push_back(make_pair(rise,fall));
-    }
+    std::ostringstream msg;
+    msg<<"Found "<<interpolationBlocks.size()<<" blocks to interpolate.";
+    logger.message(msg.str());
 
     if ( !interpolationBlocks.empty())
     {
@@ -370,53 +377,59 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
     res.Clone(sinogram);
 
     //    sinosmoothed = np.apply_along_axis(uniform_filter1d, 0, sinogram, 10)
-    std::vector<float>  kernel(10,1.0f);
+    std::vector<float>  kernel(10,1.0f/10.0f);
     std::vector<size_t> kDims={1,10};
     kipl::filters::TFilter<float,2> vsmooth(kernel,kDims);
 
     auto sinosmoothed = vsmooth(res,kipl::filters::FilterBase::EdgeMirror);
-
+    kipl::io::WriteTIFF(sinosmoothed,"Vo_ssino.tif",kipl::base::Float32);
 //    //    listdiff = np.sum(np.abs(sinogram - sinosmoothed), axis=0)
     auto absdiff  = kipl::math::absDiff(res,sinosmoothed);
-    std::ostringstream msg;
-    msg<<absdiff.Size(0)<<absdiff.Size(1);
-    logger.message(msg.str());
+    kipl::io::WriteTIFF(absdiff,"Vo_absdiff.tif",kipl::base::Float32);
     auto listdiff = kipl::base::projection2D(absdiff.GetDataPtr(),absdiff.dims(),1,false);
+    kipl::io::serializeContainer(listdiff.begin(),listdiff.end(),"Vo_listdiff.txt");
+    //    nmean = np.mean(listdiff)
+    float nmean = std::accumulate(listdiff.begin(),listdiff.end(),0.0f)/listdiff.size();
 
-//    //    nmean = np.mean(listdiff)
-//    float nmean = std::accumulate(listdiff.begin(),listdiff.end(),0.0f)/listdiff.size();
+    //    listdiffbck = median_filter(listdiff, size)
+    auto listdiffbck = medianFilter(listdiff,size);
 
-//    //    listdiffbck = median_filter(listdiff, size)
-//    auto listdiffbck = medianFilter(listdiff,size);
 
-//    //    listdiffbck[listdiffbck == 0.0] = nmean
-//    for (auto & item : listdiffbck)
-//        if (item==0.0)
-//            item = nmean;
+    //    listdiffbck[listdiffbck == 0.0] = nmean
+    for (auto & item : listdiffbck)
+        if (item==0.0)
+            item = nmean;
+    kipl::io::serializeContainer(listdiffbck.begin(),listdiffbck.end(),"Vo_listdiffbck.txt");
 
-//    //    listfact = listdiff / listdiffbck
-//    auto listfact = listdiff/listdiffbck;
+    //    listfact = listdiff / listdiffbck
+    std::vector<float> listfact(listdiff.begin(),listdiff.end());
 
-//    //    listmask = detect_stripe(listfact, snr)
-//    auto listmask = detect_stripe(listfact, snr);
-//    //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
-//    listmask = binaryDilation(listmask, 1);
-//    std::fill(listmask.begin(),listmask.begin()+2,0.0f);
-//    std::fill(listmask.rbegin(),listmask.rbegin()+2,0.0f);
+    for (size_t i=0; i<listfact.size(); ++i)
+        listfact[i]=listfact[i]/listdiffbck[i];
+    kipl::io::serializeContainer(listfact.begin(),listfact.end(),"Vo_listfact.txt");
 
-////    listx = np.where(listmask < 1.0)[0]
-////    listy = np.arange(nrow)
-////    matz = sinogram[:, listx]
-////    finter = interpolate.interp2d(listx, listy, matz, kind='linear')
-////    listxmiss = np.where(listmask > 0.0)[0]
-////    if len(listxmiss) > 0:
-////        matzmiss = finter(listxmiss, listy)
-////        sinogram[:, listxmiss] = matzmiss
-////    # Use algorithm 5 to remove residual stripes
-////    #sinogram = remove_large_stripe(sinogram, snr, size)
-////    return sinogram
+    //    listmask = detect_stripe(listfact, snr)
+    auto listmask = detect_stripe(listfact, snr);
+    kipl::io::serializeContainer(listmask.begin(),listmask.end(),"Vo_listmask.txt");
 
-//    interpolationFill(res,listmask);
+    //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
+    listmask = binaryDilation(listmask, 1);
+    std::fill(listmask.begin(),listmask.begin()+2,0.0f);
+    std::fill(listmask.rbegin(),listmask.rbegin()+2,0.0f);
+    kipl::io::serializeContainer(listmask.begin(),listmask.end(),"Vo_listmask2.txt");
+    //    listx = np.where(listmask < 1.0)[0]
+    //    listy = np.arange(nrow)
+    //    matz = sinogram[:, listx]
+    //    finter = interpolate.interp2d(listx, listy, matz, kind='linear')
+    //    listxmiss = np.where(listmask > 0.0)[0]
+    //    if len(listxmiss) > 0:
+    //        matzmiss = finter(listxmiss, listy)
+    //        sinogram[:, listxmiss] = matzmiss
+    //    # Use algorithm 5 to remove residual stripes
+    //    #sinogram = remove_large_stripe(sinogram, snr, size)
+    //    return sinogram
+
+    interpolationFill(res,listmask);
 
     return res;
 }
