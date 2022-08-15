@@ -1,9 +1,13 @@
 #include <QtTest>
 #include <QDebug>
 
+#include <algorithm>
+#include <vector>
+
 // add necessary includes here
 #include <stltools/stlvecmath.h>
 #include <stltools/stlmorphology.h>
+#include <stltools/zerocrossings.h>
 
 class STLVecOperations : public QObject
 {
@@ -17,6 +21,7 @@ private slots:
     void test_medianFilter();
     void test_binaryDilate();
     void test_MAD();
+    void test_findContinuousBlocks();
 
 };
 
@@ -109,6 +114,61 @@ void STLVecOperations::test_MAD()
 
     QVERIFY(mad==3.0);
 
+}
+
+void STLVecOperations::test_findContinuousBlocks()
+{
+    std::vector<float> v0={0.0f,1.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f,0.0f};
+
+    auto r0=findContinuousBlocks(v0);
+    std::vector<std::pair<ptrdiff_t,ptrdiff_t>> gt0={{1,4},{6,7},{10,11}};
+
+    QCOMPARE(r0.size(),gt0.size());
+
+    for (size_t i=0; i<gt0.size(); ++i)
+    {
+        QCOMPARE(r0[i].first,gt0[i].first);
+        QCOMPARE(r0[i].second,gt0[i].second);
+    }
+
+    std::vector<float> v1={1.0f,1.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f,1.0f};
+
+    auto r1=findContinuousBlocks(v1);
+    std::vector<std::pair<ptrdiff_t,ptrdiff_t>> gt1={{0,4},{6,7},{10,12}};
+
+    QCOMPARE(r1.size(),gt1.size());
+
+    for (size_t i=0; i<gt1.size(); ++i)
+    {
+        QCOMPARE(r1[i].first,gt1[i].first);
+        QCOMPARE(r1[i].second,gt1[i].second);
+    }
+
+    std::vector<float> v2(12,1);
+
+    auto r2=findContinuousBlocks(v2);
+    std::vector<std::pair<ptrdiff_t,ptrdiff_t>> gt2={{0,12}};
+
+    QCOMPARE(r2.size(),gt2.size());
+
+    for (size_t i=0; i<gt2.size(); ++i)
+    {
+        QCOMPARE(r2[i].first,gt2[i].first);
+        QCOMPARE(r2[i].second,gt2[i].second);
+    }
+
+    std::vector<float> v3(12,0);
+
+    auto r3=findContinuousBlocks(v3);
+    std::vector<std::pair<ptrdiff_t,ptrdiff_t>> gt3={};
+
+    QCOMPARE(r3.size(),gt3.size());
+
+    for (size_t i=0; i<gt3.size(); ++i)
+    {
+        QCOMPARE(r3[i].first,gt3[i].first);
+        QCOMPARE(r3[i].second,gt3[i].second);
+    }
 }
 
 QTEST_APPLESS_MAIN(STLVecOperations)
