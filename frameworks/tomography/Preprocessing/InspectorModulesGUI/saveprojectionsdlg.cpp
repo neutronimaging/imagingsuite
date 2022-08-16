@@ -67,7 +67,7 @@ void SaveProjectionsDlg::UpdateDialog()
     ui->editPath->setText(QString::fromStdString(m_sPath));
     ui->editFileMask->setText(QString::fromStdString(m_sFileMask));
     ui->comboImageType->setCurrentIndex(static_cast<int>(m_eImageType));
-    ui->comboFileType->setCurrentIndex(static_cast<int>(m_eFileType)-2);
+    ui->comboFileType->setCurrentIndex(static_cast<int>(m_eFileType));
 }
 
 void SaveProjectionsDlg::UpdateParameters()
@@ -76,7 +76,7 @@ void SaveProjectionsDlg::UpdateParameters()
     kipl::strings::filenames::CheckPathSlashes(m_sPath,true);
     m_sFileMask  = ui->editFileMask->text().toStdString();
     m_eImageType = static_cast<ReconConfig::cProjections::eImageType>(ui->comboImageType->currentIndex());
-    m_eFileType = static_cast<kipl::io::eFileType>(ui->comboFileType->currentIndex()+2);
+    m_eFileType = static_cast<kipl::io::eFileType>(ui->comboFileType->currentIndex());
 }
 
 void SaveProjectionsDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)

@@ -173,6 +173,21 @@
           <string>32-bit Float TIFF</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>8-bit MultiFrame TIFF</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>16-bit MultiFrame TIFF</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Float MultiFrame TIFF</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
