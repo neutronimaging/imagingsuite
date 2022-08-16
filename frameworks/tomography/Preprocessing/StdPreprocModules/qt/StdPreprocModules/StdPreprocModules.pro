@@ -41,7 +41,8 @@ SOURCES += \
     ../../src/MorphSpotCleanModule.cpp \
     ../../src/GammaSpotCleanModule.cpp \
     ../../src/CameraStripeClean.cpp \
-    ../../src/bblognorm.cpp
+    ../../src/bblognorm.cpp \
+    ../../src/VoStripeCleanModule.cpp
 
 HEADERS += \
     ../../include/WaveletRingClean.h \
@@ -68,7 +69,8 @@ HEADERS += \
     ../../include/GammaSpotCleanModule.h \
     ../../include/StdPreprocModules_global.h \
     ../../include/CameraStripeClean.h \
-    ../../include/bblognorm.h
+    ../../include/bblognorm.h \
+    ../../include/VoStripeCleanModule.h
 
 
 
