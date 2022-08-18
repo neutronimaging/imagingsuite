@@ -150,7 +150,7 @@ std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
 
 }
 
-size_t nexusTypeSize(NeXus::NXnumtype nt)
+size_t KIPLSHARED_EXPORT nexusTypeSize(NeXus::NXnumtype nt)
 {
     switch (nt)
     {

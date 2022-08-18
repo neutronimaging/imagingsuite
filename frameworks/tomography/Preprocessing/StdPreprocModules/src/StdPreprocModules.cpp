@@ -259,5 +259,8 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
     ReplaceUnderexposedModule pscml;
     modulelist->operator []("ReplaceUnderexposed")=pscml.GetParameters();
 
+    VoStripeCleanModule vscm;
+    modulelist->operator[]("VoStripeRemoval")=vscm.GetParameters();
+    
 	return 0;
 }
