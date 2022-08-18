@@ -1,13 +1,14 @@
 #ifndef VOSTRIPECLEAN_H
 #define VOSTRIPECLEAN_H
 
+#include "ImagingAlgorithms_global.h"
 #include <base/timage.h>
 #include <list>
 #include <logging/logger.h>
 
 namespace ImagingAlgorithms
 {
-class VoStripeClean
+class IMAGINGALGORITHMSSHARED_EXPORT VoStripeClean
 {
     kipl::logging::Logger logger;
 public:

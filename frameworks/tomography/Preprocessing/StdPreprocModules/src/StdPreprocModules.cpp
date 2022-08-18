@@ -1,4 +1,5 @@
 //<LICENSE>
+
 #include "stdafx.h"
 #include "../include/StdPreprocModules_global.h"
 #include "../include/NormPlugins.h"
@@ -23,6 +24,7 @@
 #include "../include/CameraStripeClean.h"
 #include "../include/bblognorm.h"
 #include "../include/ReplaceUnderexposedModule.h"
+#include "../include/VoStripeCleanModule.h"
 
 #include <base/KiplException.h>
 #include <ModuleException.h>
@@ -118,6 +120,9 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
         if (sName=="ReplaceUnderexposed")
             return new ReplaceUnderexposedModule;
+
+        if (sName=="VoStripeRemoval")
+            return new VoStripeCleanModule(interactor);
 	}
 
     return nullptr;

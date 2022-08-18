@@ -8,7 +8,7 @@
 
 class STDPREPROCMODULESSHARED_EXPORT VoStripeCleanModule: public PreprocModuleBase {
 public:
-    VoStripeCleanModule();
+    VoStripeCleanModule(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~VoStripeCleanModule();
 	
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);

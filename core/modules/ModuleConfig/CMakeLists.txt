@@ -90,15 +90,10 @@ add_library(${TARGET_NAME} SHARED
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
-target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY)
+# target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY HAVE_NEXUS)
 
-add_definitions(-DHAVE_NEXUS)
-
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../external/mac/lib/
-    /usr/lib/x86_64-linux-gnu
-    )
+# add_definitions(-DHAVE_NEXUS)
 
 if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
@@ -125,6 +120,13 @@ if (WIN32)
 endif()
 
 if (APPLE)
+
+target_link_directories(${TARGET_NAME} PRIVATE
+    /opt/local/lib
+    ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+    ../../../external/mac/lib/
+    )
+
 target_link_libraries(${TARGET_NAME}
     PRIVATE
     kipl
@@ -136,12 +138,17 @@ target_link_libraries(${TARGET_NAME}
     armadillo
     lapack
     blas
-    NeXus.1.0.0
-    NeXusCPP.1.0.0
+    # NeXus.1.0.0
+    # NeXusCPP.1.0.0
   )
 endif()
 
 if (LINUX)
+
+target_link_directories(${TARGET_NAME} PRIVATE
+    /usr/lib/x86_64-linux-gnu
+)
+
 target_link_libraries(${TARGET_NAME}
     PRIVATE
     kipl

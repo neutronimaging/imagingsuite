@@ -92,13 +92,19 @@ rm -f ./MacOS/*.dylib
 cd Frameworks
 rm -f *.1.0.dylib
 rm -f *.1.dylib
+ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
+ln -s libNeXus.1.0.0.dylib libNeXus.1.0.dylib
+
+ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
+ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.0.dylib
 
 if [ -e "/opt/local/lib/libzstd.1.dylib" ]; then
-	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/MacOS`
+	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/Frameworks`
+	# `$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/MacOS`
 fi
 
 if [ -e "/opt/local/lib/libzstd.9.dylib" ]; then
-	`$CPCMD /opt/local/lib/libzstd.9.dylib $DEST/Contents/MacOS`
+	`$CPCMD /opt/local/lib/libzstd.9.dylib $DEST/Contents/Frameworks`
 fi
 
 
@@ -174,7 +180,7 @@ install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
 # # install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib MuhRec
 # # install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib MuhRec
 # # install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib MuhRec
-# # install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib MuhRec
+install_name_tool -change /Users/kaestner/git/ExternalDependencies/sources/build_nexus/src/libNeXus.1.dylib @executable_path/../libNeXus.1.dylib MuhRec
 # # install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib MuhRec
 # # install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib MuhRec
 # # install_name_tool -change libReaderGUI.1.dylib @executable_path/../Frameworks/libReaderGUI.1.dylib MuhRec
@@ -188,8 +194,7 @@ install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
 # 	install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib muhrecCLI
 # 	install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib muhrecCLI
 # fi
-
-# cd ../Frameworks
+cd ../Frameworks
 
 # # kipl
 # install_name_tool -change libtiff.5.dylib @executable_path/../Frameworks/libtiff.5.dylib libkipl.1.0.0.dylib
@@ -202,7 +207,7 @@ install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
 # # ReconFramework
 # install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReconFramework.1.0.0.dylib
 # install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libReconFramework.1.0.0.dylib
-# install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libReconFramework.1.0.0.dylib
+install_name_tool -change /Users/kaestner/git/ExternalDependencies/sources/build_nexus/src/libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libReconFramework.dylib
 # install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libReconFramework.1.0.0.dylib
 # install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libReconFramework.1.0.0.dylib
 # install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib libReconFramework.1.0.0.dylib
@@ -216,8 +221,8 @@ install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
 # install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libReaderConfig.1.0.0.dylib
 # install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libReaderConfig.1.0.0.dylib
 # install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libReaderConfig.1.0.0.dylib
-# install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libReaderConfig.1.0.0.dylib
-# install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libReaderConfig.1.0.0.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libReaderConfig.dylib
+install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libReaderConfig.dylib
 
 # # ReaderConfigGUI
 # install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReaderGUI.1.0.0.dylib
@@ -243,13 +248,14 @@ install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
 # install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libImagingAlgorithms.1.0.0.dylib
 
 # #nexus_related
-# install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libkipl.1.0.0.dylib
+#install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libkipl.1.0.0.dylib
+install_name_tool -change /Users/kaestner/git/ExternalDependencies/sources/build_nexus/src/libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libkipl.dylib
 # install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libkipl.1.0.0.dylib
 # install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libReconFramework.1.0.0.dylib
 # install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libReconFramework.1.0.0.dylib
 # install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib libNexus.1.dylib
 # install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib libNexusCPP.1.dylib
-# install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libNexusCPP.1.dylib
+install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libNexusCPP.1.dylib
 
 # install_name_tool -change /usr/local/Cellar/hdf5/1.8.16_1/lib/libhdf5.10.dylib @executable_path/../Frameworks/libhdf5.10.dylib libhdf5_cpp.11.dylib
 # install_name_tool -change /usr/local/Cellar/hdf5/1.8.16_1/lib/libhdf5.10.dylib @executable_path/../Frameworks/libhdf5.10.dylib libhdf5_hl.10.dylib
@@ -341,4 +347,4 @@ fi
 
 cp -r $DEST /tmp/muhrec
 
-hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec-MacOS_arm64_build-$GITVER-`date +%Y%m%d`.dmg
+hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec-MacOS_$ARCH-build-$GITVER-`date +%Y%m%d`.dmg

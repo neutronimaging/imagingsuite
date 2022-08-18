@@ -87,6 +87,7 @@ set(INC_FILES
     src/projectionfilterdlg.h
     src/stdpreprocmodulesgui.h
     src/ReplaceUnderexposedDlg.h
+    src/vostripecleandlg.h
     src/targetver.h
 )
 
@@ -105,6 +106,7 @@ set(SRC_FILES
     src/datascalerdlg.cpp
     src/stdpreprocmodulesgui.cpp
     src/ReplaceUnderexposedDlg.cpp
+    src/vostripecleandlg.cpp
 )
 
 set(UI_FILES
@@ -120,6 +122,7 @@ set(UI_FILES
     src/projectionfilterdlg.ui
     src/datascalerdlg.ui
     src/ReplaceUnderexposedDlg.ui
+    src/VoStripeCleanDlg.ui
 )
 
 add_library(${TARGET_NAME} SHARED
@@ -154,43 +157,37 @@ add_library(${TARGET_NAME} SHARED
   )
 endif()
 
-  if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-      if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-          target_link_directories(${TARGET_NAME} PRIVATE
-              /opt/local/lib
-              ../../../../../ExternalDependencies/macos/arm64/lib
-              )
-      else()
-          target_link_directories(${TARGET_NAME} PRIVATE
-              /opt/local/lib
-              ../../../../external/mac/lib/
-              )
-      endif()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../../../external/mac/lib/
+        )
   
-      target_link_libraries(${TARGET_NAME} PRIVATE
-          Qt${QT_VERSION_MAJOR}::Core
-          Qt${QT_VERSION_MAJOR}::Widgets
- #         Qt${QT_VERSION_MAJOR}::Charts
- #         Qt${QT_VERSION_MAJOR}::PrintSupport
-          kipl
-          ImagingAlgorithms
-          ModuleConfig
-          ReconFramework
-          QtAddons
-          QtModuleConfigure
-          StdPreprocModules
-          xml2
-          fftw3
-          fftw3f
-          cfitsio
-          tiff
-          armadillo
-          lapack
-          blas
-          NeXus.1.0.0
-          NeXusCPP.1.0.0
-      )
-  endif()
+    target_link_libraries(${TARGET_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Widgets
+#         Qt${QT_VERSION_MAJOR}::Charts
+#         Qt${QT_VERSION_MAJOR}::PrintSupport
+        kipl
+        ImagingAlgorithms
+        ModuleConfig
+        ReconFramework
+        QtAddons
+        QtModuleConfigure
+        StdPreprocModules
+        xml2
+        fftw3
+        fftw3f
+        cfitsio
+        tiff
+        armadillo
+        lapack
+        blas
+        NeXus.1.0.0
+        NeXusCPP.1.0.0
+    )
+endif()
 
   if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(${TARGET_NAME} PRIVATE

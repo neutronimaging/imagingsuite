@@ -24,9 +24,9 @@ include_directories(
     /usr/include/libxml2
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    ../../../external/mac/include/
     ../../../../ExternalDependencies/macos/include
     ../../../../ExternalDependencies/macos/include/nexus
+    ../../../external/mac/include/
     ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )

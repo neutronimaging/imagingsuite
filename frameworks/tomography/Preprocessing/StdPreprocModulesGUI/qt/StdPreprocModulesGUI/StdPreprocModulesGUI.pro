@@ -29,7 +29,8 @@ SOURCES += ../../src/stdpreprocmodulesgui.cpp \
     ../../src/medianmixringcleandlg.cpp \
     ../../src/generalfilterdlg.cpp \
     ../../src/bblognormdlg.cpp \
-    ../../src/ReplaceUnderexposedDlg.cpp
+    ../../src/ReplaceUnderexposedDlg.cpp \
+    ../../src/vostripecleandlg.cpp
 
 HEADERS += ../../src/stdpreprocmodulesgui.h\
     ../../src/StdPreprocModulesGUI_global.h \
@@ -44,7 +45,8 @@ HEADERS += ../../src/stdpreprocmodulesgui.h\
     ../../src/medianmixringcleandlg.h \
     ../../src/generalfilterdlg.h \
     ../../src/bblognormdlg.h \
-    ../../src/ReplaceUnderexposedDlg.h
+    ../../src/ReplaceUnderexposedDlg.h \
+    ../../src/vostripecleandlg.h
 
 
 symbian {
@@ -143,5 +145,6 @@ FORMS += \
     ../../src/generalfilterdlg.ui \
     ../../src/FullLogNormDlg.ui \
     ../../src/bblognormdlg.ui \
-    ../../src/ReplaceUnderexposedDlg.ui
+    ../../src/ReplaceUnderexposedDlg.ui \
+    ../../src/VoStripeCleanDlg.ui
 

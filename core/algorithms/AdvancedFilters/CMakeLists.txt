@@ -59,6 +59,7 @@ add_definitions(-DHAVE_NEXUS)
 
 target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
+    ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
     ../../../external/mac/lib
     )
 

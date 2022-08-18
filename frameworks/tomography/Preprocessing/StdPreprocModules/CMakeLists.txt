@@ -18,6 +18,7 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../../ExternalDependencies/macos/include
+    ../../../../../ExternalDependencies/macos/include/nexus
     ../../../../external/mac/include/
     ../../../../external/mac/include/nexus
     ../../../../external/mac/include/hdf5
@@ -75,6 +76,7 @@ include/GeneralFilter.h
 include/PreprocEnums.h
 include/StdPreprocModules.h
 include/ReplaceUnderexposedModule.h
+include/VoStripeCleanModule.h
 )
 
 set(SRC_FILES 
@@ -101,6 +103,7 @@ set(SRC_FILES
   src/PreprocEnums.cpp
   src/ProjectionFilter.cpp
   src/ReplaceUnderexposedModule.cpp
+  src/VoStripeCleanModule.cpp
 )
 
 add_library(${TARGET_NAME} SHARED
@@ -144,17 +147,10 @@ add_definitions(-DHAVE_NEXUS)
 endif()
 
   if (APPLE)
-      if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-          target_link_directories(${TARGET_NAME} PRIVATE
-              /opt/local/lib
-              ../../../../../ExternalDependencies/macos/arm64/lib
-              )
-      else()
-          target_link_directories(${TARGET_NAME} PRIVATE
-              /opt/local/lib
-              ../../../../external/mac/lib/
-              )
-      endif()
+      target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+      )
   
       target_link_libraries(${TARGET_NAME}
           PRIVATE

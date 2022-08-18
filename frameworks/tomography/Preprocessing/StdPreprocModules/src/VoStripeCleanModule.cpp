@@ -8,8 +8,8 @@
 #include <ModuleException.h>
 #include <vostripeclean.h>
 
-VoStripeCleanModule::VoStripeCleanModule() :
-    PreprocModuleBase("VoStripeClean"),
+VoStripeCleanModule::VoStripeCleanModule(kipl::interactors::InteractionBase *interactor) :
+    PreprocModuleBase("VoStripeClean",interactor),
     useUnresponsiveStripes(true),
     useStripeSorting(false),
     useLargeStripes(true),
@@ -37,6 +37,7 @@ VoStripeCleanModule::~VoStripeCleanModule()
 
 int VoStripeCleanModule::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
+    std::ignore = config;
     useUnresponsiveStripes  = kipl::strings::string2bool(GetStringParameter(parameters,"useUnresponsiveStripes"));
     useStripeSorting        = kipl::strings::string2bool(GetStringParameter(parameters,"useStripeSorting"));
     useLargeStripes         = kipl::strings::string2bool(GetStringParameter(parameters,"useLargeStripes"));
@@ -45,8 +46,7 @@ int VoStripeCleanModule::Configure(ReconConfig config, std::map<std::string, std
     filterSize_large        = GetIntParameter(parameters,"filterSize_large");
     snr_unresponsive        = GetIntParameter(parameters,"snr_unresponsive");
     snr_large               = GetFloatParameter(parameters,"snr_large");
-
-
+    m_bThreading            = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
 
 	return 0;
 }
@@ -103,7 +103,7 @@ int VoStripeCleanModule::processSequential(kipl::base::TImage<float, 3> &img, st
     ImagingAlgorithms::VoStripeClean vsc;
     kipl::base::TImage<float,2> sino;
 
-    for (size_t i=0; i<img.Size(2); ++i)
+    for (size_t i=0; (i<img.Size(2)) && !UpdateStatus(static_cast<float>(i)/static_cast<float>(img.Size(2)),"VoStripeRemoval") ; ++i)
     {
         ExtractSinogram(img,sino,i);
         if (useUnresponsiveStripes)

@@ -14,7 +14,7 @@ include_directories(
     /usr/include/libxml2
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../external/src/linalg
+  #  ../../../../external/src/linalg
     ../../../../core/modules/ModuleConfig/include
     ../../../../../ExternalDependencies/macos/include
     ../../../../../ExternalDependencies/macos/include/nexus
@@ -48,8 +48,6 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     )
 endif()
-
-#link_directories(/opt/local/lib ../../../../external/mac/lib)
 
 set(INC_FILES
     include/ReconHelpers.h
@@ -124,17 +122,12 @@ if (WIN32)
 endif()
 
 if (APPLE)
-    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../../../ExternalDependencies/macos/arm64/lib
-            )
-    else()
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../../external/mac/lib/
-            )
-    endif()
+    target_link_directories(${TARGET_NAME} PRIVATE
+    /opt/local/lib
+    ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+    ../../../../external/mac/lib/
+    )
+
     target_link_libraries(${TARGET_NAME}
         PRIVATE
         kipl

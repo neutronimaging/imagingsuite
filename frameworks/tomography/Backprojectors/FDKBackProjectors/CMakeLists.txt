@@ -141,17 +141,11 @@ endif()
 
 
 if (APPLE)
-    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../../../ExternalDependencies/macos/arm64/lib
-            )
-    else()
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../../external/mac/lib/
-            )
-    endif()
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../../../external/mac/lib/
+        )
 
     target_link_libraries(${TARGET_NAME}
         PRIVATE

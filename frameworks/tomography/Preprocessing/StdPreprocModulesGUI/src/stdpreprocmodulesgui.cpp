@@ -17,6 +17,7 @@
 #include "generalfilterdlg.h"
 #include "bblognormdlg.h"
 #include "ReplaceUnderexposedDlg.h"
+#include "vostripecleandlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -76,6 +77,9 @@ STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, co
 
         if (sName=="ReplaceUnderexposed")
             return new ReplaceUnderexposedDlg;
+
+        if (sName=="VoStripeRemoval")
+            return new VoStripeCleanDlg;
 
 	}	
     return nullptr;
