@@ -50,7 +50,7 @@ void ReaderForm::on_button_browse_clicked()
         std::string pdir=projdir.toStdString();
 
         auto dims = reader.imageSize(pdir,1.0f);
-        qDebug() << "Dimensions in file" << dims.size();
+
         if (dims[2]==1)
         {
             kipl::io::DirAnalyzer da;

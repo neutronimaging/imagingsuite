@@ -54,9 +54,8 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     QFuture<int> proc_thread     = QtConcurrent::run(&ReconDialog::process,this);
     QFuture<int> progress_thread = QtConcurrent::run(&ReconDialog::progress,this);
 
-    qDebug() << "a0";
     int res=exec();
-    qDebug() << "b0";
+
     finish=true;
     if (res==QDialog::Rejected) {
         logger.message("calling abort process");

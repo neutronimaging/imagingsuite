@@ -87,6 +87,10 @@ private:
     /// \param mask A vector with non-zero values for positions to modify
     void interpolationFill(kipl::base::TImage<float,2> &img, std::vector<float> &mask);
 
+    bool saveSteps;
+    void writeImage(kipl::base::TImage<float,2> & img, const std::string &fname);
+    void writeVector(std::vector<float> & v, const string &fname);
+
     kipl::base::TImage<float,2> transpose(kipl::base::TImage<float, 2> &img, bool doIt);
 
 };

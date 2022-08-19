@@ -51,14 +51,13 @@ int PreProcModuleConfigurator::GetImage(std::string sSelectedModule, kipl::inter
 		throw ModuleException(msg.str(),__FILE__,__LINE__);
 	}
 
-	logger(kipl::logging::Logger::LogMessage,"Engine successfully built");
+    logger.message("Engine successfully built");
 
     auto roi = config->ProjectionInfo.roi;
     bool bRunFailure=false;
     try {
         if (interactor==nullptr)
         {
-            qDebug() <<"Get image without dialog";
             m_Image=engine->RunPreproc(roi,sSelectedModule);
         }
         else
@@ -68,7 +67,7 @@ int PreProcModuleConfigurator::GetImage(std::string sSelectedModule, kipl::inter
 
             if (engine!=nullptr) {
                 int res=0;
-                qDebug() <<"Get image with dialog";
+
                 res=dlg.exec(engine,roi,sSelectedModule);
 
                 if (res == QDialog::Accepted)
@@ -107,10 +106,10 @@ int PreProcModuleConfigurator::GetImage(std::string sSelectedModule, kipl::inter
 
     if (bRunFailure==true)
     {
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+        logger.message(msg.str());
         return 0;
     }
-    logger(kipl::logging::Logger::LogMessage,"Reconstruction done");
+    logger.message("Reconstruction done");
 
 
     if (engine!=nullptr)

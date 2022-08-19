@@ -78,7 +78,7 @@ STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, co
         if (sName=="ReplaceUnderexposed")
             return new ReplaceUnderexposedDlg;
 
-        if (sName=="VoStripeRemoval")
+        if (sName=="VoStripeClean")
             return new VoStripeCleanDlg;
 
 	}	

@@ -1339,7 +1339,7 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
 
 			msg.str("");
             msg<<"Setting ROI for module "<< moduleName;
-			logger(kipl::logging::Logger::LogVerbose,msg.str());
+            logger.verbose(msg.str());
 
             module->GetModule()->SetROI(roi);
 		}
@@ -1377,7 +1377,7 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
 		<<"Arc=["<<m_Config.ProjectionInfo.fScanArc[0]<<", "<<m_Config.ProjectionInfo.fScanArc[1]<<"]"<<"\n"
 		<<"Target matrix "<<m_BackProjector->GetModule()->GetVolume();
 
-	logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str());
 	msg.str("");
 
 	timer.Tic();
@@ -1407,7 +1407,7 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
 		throw ReconException(msg.str(),__FILE__,__LINE__);
 	}
 
-	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
+    logger.message("Starting preprocessing");
 
     float progress = CurrentOverallProgress();
     float progressIncrement = 1.0f/(fNumberOfModules*nTotalBlocks);
@@ -1425,6 +1425,7 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
             msg<<"Processing: "<<module->GetModule()->ModuleName();
             progress += progressIncrement;
 			logger(kipl::logging::Logger::LogMessage,msg.str());
+            std::clog<<msg.str()<<", "<<sLastModule<<"\n";
             if (!(m_bCancel=UpdateProgress(progressIncrement, msg.str())))
             {
                 module->GetModule()->Process(projections,parameters);

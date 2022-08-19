@@ -40,7 +40,7 @@ int ModuleConfigProgressDialog::exec(ReconEngine * engine,const std::vector<size
 {
     if (engine==nullptr)
     {
-        logger(logger.LogError,"Called recon dialog with unallocated engine");
+        logger.error("Called recon dialog with unallocated engine");
         return Rejected;
     }
 
@@ -49,16 +49,18 @@ int ModuleConfigProgressDialog::exec(ReconEngine * engine,const std::vector<size
     mLastModule = lastModule;
 
     finish=false;
-    logger(kipl::logging::Logger::LogMessage,"Start");
+    logger.message("Start");
 
     m_Interactor->Reset();
 
-    logger(logger.LogMessage,"Starting with threads");
+    logger.message("Starting with threads");
+
     ui->progressBar->setValue(0);
+
     ui->progressBar->setMaximum(100);
 
-    QFuture<int> proc_thread=QtConcurrent::run(&ModuleConfigProgressDialog::process,this);
-    QFuture<int> progress_thread=QtConcurrent::run(&ModuleConfigProgressDialog::progress,this);
+    QFuture<int> proc_thread     = QtConcurrent::run(&ModuleConfigProgressDialog::process,this);
+    QFuture<int> progress_thread = QtConcurrent::run(&ModuleConfigProgressDialog::progress,this);
 
     // QFuture<int> proc_thread=QtConcurrent::run(this,&ModuleConfigProgressDialog::process);
     // QFuture<int> progress_thread=QtConcurrent::run(this,&ModuleConfigProgressDialog::progress);
@@ -67,16 +69,15 @@ int ModuleConfigProgressDialog::exec(ReconEngine * engine,const std::vector<size
 
     finish=true;
     if (res==QDialog::Rejected) {
-        qDebug() <<"Calling abort process";
-        logger(kipl::logging::Logger::LogVerbose,"Cancel requested by user");
+        logger.verbose("Cancel requested by user");
         Abort();
     }
 
     proc_thread.waitForFinished();
     progress_thread.waitForFinished();
-    logger(kipl::logging::Logger::LogVerbose,"Threads are joined");
-    return res;
+    logger.verbose("Threads are joined");
 
+    return res;
 }
 
 kipl::base::TImage<float, 3> ModuleConfigProgressDialog::getImage()
@@ -86,7 +87,8 @@ kipl::base::TImage<float, 3> ModuleConfigProgressDialog::getImage()
 
 int ModuleConfigProgressDialog::progress()
 {
-    logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
+    logger.message("Progress thread is started");
+
     QThread::msleep(250);
     while (!m_Interactor->Finished() && !m_Interactor->Aborted() ){
         emit updateProgress(m_Interactor->CurrentProgress(),
@@ -110,15 +112,18 @@ void ModuleConfigProgressDialog::changedProgress(float progress, float overallPr
 
 int ModuleConfigProgressDialog::process()
 {
-    logger(kipl::logging::Logger::LogMessage,"Process thread is started");
+    logger.message("Process thread is started");
+
     std::ostringstream msg;
 
     bool failed=false;
     try {
         if (m_Engine!=nullptr)
+        {
             m_Image=m_Engine->RunPreproc(mROI,mLastModule);
+        }
         else {
-            logger(logger.LogError,"Trying to start an unallocated engine.");
+            logger.error("Trying to start an unallocated engine.");
             failed=true;
         }
     }

@@ -4,6 +4,8 @@
 #define VOSTRIPECLEANDLG_H
 
 #include "StdPreprocModulesGUI_global.h"
+
+#include <map>
 #include <QDialog>
 
 #include <ConfiguratorDialogBase.h>
@@ -24,14 +26,20 @@ public:
     explicit VoStripeCleanDlg(QWidget *parent = nullptr);
     ~VoStripeCleanDlg();
 
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img) override;
+
+
+private slots:
+
+
+    void on_pushButton_apply_clicked();
 
 private:
     Ui::VoStripeCleanDlg *ui;
 
-    virtual void ApplyParameters();
-    virtual void UpdateDialog();
-    virtual void UpdateParameters();
+    virtual void ApplyParameters() override;
+    virtual void UpdateDialog() override;
+    virtual void UpdateParameters() override;
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
     ReconConfig *m_Config;

@@ -12,6 +12,7 @@
         <loglevel>message</loglevel>
         <validate>false</validate>
         <maxthreads>-1</maxthreads>
+        <threadmethod>threadingSTL</threadmethod>
     </system>
     <projections>
 	<beamgeometry>parallel</beamgeometry>
@@ -28,7 +29,7 @@
         <imagetype>projections</imagetype>
         <center>50</center>
 	    <sod>100</sod>
-	    <sdd>100</sdd>
+	    <sdd>200</sdd>
 	    <direction>RotationDirCW</direction>
 	    <ppoint>50.0 50.0 </ppoint>
         <translation>false</translation>
@@ -119,7 +120,7 @@
         </preprocessing>
         <backprojector>
             <module>
-                <modulename>MultiProjBP</modulename>
+                <modulename>MultiProjBPparallel</modulename>
                 <sharedobject>StdBackProjectors</sharedobject>
                 <active>true</active>
                 <threading>true</threading>

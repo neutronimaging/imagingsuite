@@ -12,7 +12,7 @@ VoStripeCleanModule::VoStripeCleanModule(kipl::interactors::InteractionBase *int
     PreprocModuleBase("VoStripeClean",interactor),
     useUnresponsiveStripes(true),
     useStripeSorting(false),
-    useLargeStripes(true),
+    useLargeStripes(false),
     filterSize_unresponsive(21),
     filterSize_sorting(31),
     filterSize_large(21),
@@ -38,15 +38,24 @@ VoStripeCleanModule::~VoStripeCleanModule()
 int VoStripeCleanModule::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
     std::ignore = config;
-    useUnresponsiveStripes  = kipl::strings::string2bool(GetStringParameter(parameters,"useUnresponsiveStripes"));
-    useStripeSorting        = kipl::strings::string2bool(GetStringParameter(parameters,"useStripeSorting"));
-    useLargeStripes         = kipl::strings::string2bool(GetStringParameter(parameters,"useLargeStripes"));
-    filterSize_unresponsive = GetIntParameter(parameters,"filterSize_unresponsive");
-    filterSize_sorting      = GetIntParameter(parameters,"filterSize_sorting");
-    filterSize_large        = GetIntParameter(parameters,"filterSize_large");
-    snr_unresponsive        = GetIntParameter(parameters,"snr_unresponsive");
-    snr_large               = GetFloatParameter(parameters,"snr_large");
-    m_bThreading            = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
+    try
+    {
+        useUnresponsiveStripes  = kipl::strings::string2bool(GetStringParameter(parameters,"useUnresponsiveStripes"));
+        useStripeSorting        = kipl::strings::string2bool(GetStringParameter(parameters,"useStripeSorting"));
+        useLargeStripes         = kipl::strings::string2bool(GetStringParameter(parameters,"useLargeStripes"));
+        filterSize_unresponsive = GetIntParameter(parameters,"filterSize_unresponsive");
+        filterSize_sorting      = GetIntParameter(parameters,"filterSize_sorting");
+        filterSize_large        = GetIntParameter(parameters,"filterSize_large");
+        snr_unresponsive        = GetIntParameter(parameters,"snr_unresponsive");
+        snr_large               = GetFloatParameter(parameters,"snr_large");
+        m_bThreading            = kipl::strings::string2bool(GetStringParameter(parameters,"threading"));
+    }
+    catch (ModuleException &e)
+    {
+        std::ostringstream msg;
+        msg<<"Failed to configure the module "<<e.what();
+        logger.warning(msg.str());
+    }
 
 	return 0;
 }
@@ -107,13 +116,13 @@ int VoStripeCleanModule::processSequential(kipl::base::TImage<float, 3> &img, st
     {
         ExtractSinogram(img,sino,i);
         if (useUnresponsiveStripes)
-            sino = vsc.removeUnresponsiveAndFluctuatingStripe(sino,filterSize_unresponsive,snr_unresponsive);
+            sino = vsc.removeUnresponsiveAndFluctuatingStripe(sino,snr_unresponsive,filterSize_unresponsive);
 
         if (useStripeSorting)
             sino = vsc.removeStripeBasedSorting(sino,filterSize_sorting,false);
 
         if (useLargeStripes)
-            sino = vsc.removeLargeStripe(sino,filterSize_large,snr_large,false);
+            sino = vsc.removeLargeStripe(sino,snr_large,filterSize_large,false);
 
         InsertSinogram(sino,img,i);
     }

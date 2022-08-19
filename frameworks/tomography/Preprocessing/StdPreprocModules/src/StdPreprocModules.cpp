@@ -121,7 +121,7 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
         if (sName=="ReplaceUnderexposed")
             return new ReplaceUnderexposedModule;
 
-        if (sName=="VoStripeRemoval")
+        if (sName=="VoStripeClean")
             return new VoStripeCleanModule(interactor);
 	}
 
@@ -260,7 +260,7 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
     modulelist->operator []("ReplaceUnderexposed")=pscml.GetParameters();
 
     VoStripeCleanModule vscm;
-    modulelist->operator[]("VoStripeRemoval")=vscm.GetParameters();
+    modulelist->operator[]("VoStripeClean")=vscm.GetParameters();
     
 	return 0;
 }

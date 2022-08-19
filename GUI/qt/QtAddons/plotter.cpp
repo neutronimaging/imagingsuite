@@ -307,8 +307,6 @@ void Plotter::savePlotData()
 
     QString fname=dlg.getSaveFileName(this,"Save plot to text file");
 
-    qDebug() <<fname;
-
     if (fname.isEmpty())
         return ;
 

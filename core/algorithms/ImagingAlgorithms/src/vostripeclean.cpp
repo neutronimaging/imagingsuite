@@ -22,7 +22,8 @@ namespace ImagingAlgorithms
 
 
 VoStripeClean::VoStripeClean() :
-    logger("VoStripeClean")
+    logger("VoStripeClean"),
+    saveSteps(true)
 {
 
 }
@@ -337,6 +338,18 @@ void VoStripeClean::interpolationFill(kipl::base::TImage<float, 2> &img, std::ve
 
 }
 
+void VoStripeClean::writeImage(kipl::base::TImage<float, 2> &img, const std::string & fname)
+{
+    if (saveSteps)
+        kipl::io::WriteTIFF(img,fname,kipl::base::Float32);
+}
+
+void VoStripeClean::writeVector(std::vector<float> &v, const string &fname)
+{
+    if (saveSteps)
+        kipl::io::serializeContainer(v.begin(),v.end(),fname);
+}
+
 kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<float,2> &sinogram, float snr, size_t size, bool doTranspose)
 {
 //    Algorithm 5 in the paper. Remove large stripes by: locating stripes,
@@ -366,23 +379,26 @@ kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<
 
     //    list1 = np.mean(sinosorted[ndrop:nrow - ndrop], axis=0)
     auto list1 = kipl::base::projection2D(sinosorted.GetDataPtr(),sinosorted.dims(),0,true,{ndrop,sinosorted.Size(0)-2*ndrop});
-    kipl::io::serializeContainer(list1.begin(),list1.end(),"Vo_large_list1.txt");
+    writeVector(list1,"Vo_large_list1.txt");
+
     //    list2 = np.mean(sinosmoothed[ndrop:nrow - ndrop], axis=0)
     auto list2 = kipl::base::projection2D(sinosmoothed.GetDataPtr(),sinosmoothed.dims(),0,true,{ndrop,sinosmoothed.Size(0)-2*ndrop});
-    kipl::io::serializeContainer(list2.begin(),list2.end(),"Vo_large_list2.txt");
+    writeVector(list2,"Vo_large_list2.txt");
+
     //    listfact = list1 / list2
     std::vector<float> listfact(list1.size(),0.0f);
     for (size_t i = 0; i < listfact.size(); ++i)
         listfact[i]=list1[i]/list2[i];
 
-    kipl::io::serializeContainer(listfact.begin(),listfact.end(),"Vo_large_listfact.txt");
+    writeVector(listfact,"Vo_large_listfact.txt");
 
     //    listmask = detect_stripe(listfact, snr)
     auto listmask = detect_stripe(listfact, snr);
-    kipl::io::serializeContainer(listmask.begin(),listmask.end(),"Vo_large_listmask.txt");
+    writeVector(listmask,"Vo_large_listmask.txt");
+
 //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
     listmask = binaryDilation(listmask,1);
-    kipl::io::serializeContainer(listmask.begin(),listmask.end(),"Vo_large_listmask2.txt");
+    writeVector(listmask,"Vo_large_listmask2.txt");
 
 //    matfact = np.tile(listfact,(nrow,1))
 //    sinogram = sinogram / matfact
@@ -395,7 +411,7 @@ kipl::base::TImage<float,2> VoStripeClean::removeLargeStripe(kipl::base::TImage<
         for (size_t j=0; j<res.Size(0); ++j)
             pLine[j] = pLine[j]/listfact[j];
     }
-    kipl::io::WriteTIFF(res,"Vo_large_sinoscaled.tif",kipl::base::Float32);
+    writeImage(res,"Vo_large_sinoscaled.tif");
 
     tsinogram = transpose(res,true);
     int cnt=0;
@@ -452,12 +468,14 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
     kipl::filters::TFilter<float,2> vsmooth(kernel,kDims);
 
     auto sinosmoothed = vsmooth(res,kipl::filters::FilterBase::EdgeMirror);
-    kipl::io::WriteTIFF(sinosmoothed,"Vo_ssino.tif",kipl::base::Float32);
+    writeImage(sinosmoothed,"Vo_ssino.tif");
+
 //    //    listdiff = np.sum(np.abs(sinogram - sinosmoothed), axis=0)
     auto absdiff  = kipl::math::absDiff(res,sinosmoothed);
-    kipl::io::WriteTIFF(absdiff,"Vo_absdiff.tif",kipl::base::Float32);
+    writeImage(absdiff,"Vo_absdiff.tif");
+
     auto listdiff = kipl::base::projection2D(absdiff.GetDataPtr(),absdiff.dims(),1,false);
-    kipl::io::serializeContainer(listdiff.begin(),listdiff.end(),"Vo_listdiff.txt");
+    writeVector(listdiff,"Vo_listdiff.txt");
     //    nmean = np.mean(listdiff)
     float nmean = std::accumulate(listdiff.begin(),listdiff.end(),0.0f)/listdiff.size();
 
@@ -469,24 +487,24 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
     for (auto & item : listdiffbck)
         if (item==0.0)
             item = nmean;
-    kipl::io::serializeContainer(listdiffbck.begin(),listdiffbck.end(),"Vo_listdiffbck.txt");
+    writeVector(listdiffbck,"Vo_listdiffbck.txt");
 
     //    listfact = listdiff / listdiffbck
     std::vector<float> listfact(listdiff.begin(),listdiff.end());
 
     for (size_t i=0; i<listfact.size(); ++i)
         listfact[i]=listfact[i]/listdiffbck[i];
-    kipl::io::serializeContainer(listfact.begin(),listfact.end(),"Vo_listfact.txt");
+    writeVector(listfact,"Vo_listfact.txt");
 
     //    listmask = detect_stripe(listfact, snr)
     auto listmask = detect_stripe(listfact, snr);
-    kipl::io::serializeContainer(listmask.begin(),listmask.end(),"Vo_listmask.txt");
+    writeVector(listmask,"Vo_listmask.txt");
 
     //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
     listmask = binaryDilation(listmask, 1);
     std::fill(listmask.begin(),listmask.begin()+2,0.0f);
     std::fill(listmask.rbegin(),listmask.rbegin()+2,0.0f);
-    kipl::io::serializeContainer(listmask.begin(),listmask.end(),"Vo_listmask2.txt");
+    writeVector(listmask,"Vo_listmask2.txt");
     //    listx = np.where(listmask < 1.0)[0]
     //    listy = np.arange(nrow)
     //    matz = sinogram[:, listx]

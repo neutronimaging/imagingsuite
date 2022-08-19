@@ -146,5 +146,5 @@ FORMS += \
     ../../src/FullLogNormDlg.ui \
     ../../src/bblognormdlg.ui \
     ../../src/ReplaceUnderexposedDlg.ui \
-    ../../src/VoStripeCleanDlg.ui
+    ../../src/vostripecleandlg.ui
 
