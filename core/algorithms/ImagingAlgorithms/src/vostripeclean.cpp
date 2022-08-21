@@ -467,11 +467,11 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
     std::vector<size_t> kDims={1,10};
     kipl::filters::TFilter<float,2> vsmooth(kernel,kDims);
 
-    auto sinosmoothed = vsmooth(res,kipl::filters::FilterBase::EdgeMirror);
+    auto sinosmoothed = vsmooth(res,kipl::filters::FilterBase::EdgeMirror); //OK
     writeImage(sinosmoothed,"Vo_ssino.tif");
 
 //    //    listdiff = np.sum(np.abs(sinogram - sinosmoothed), axis=0)
-    auto absdiff  = kipl::math::absDiff(res,sinosmoothed);
+    auto absdiff  = kipl::math::absDiff(res,sinosmoothed); // OK
     writeImage(absdiff,"Vo_absdiff.tif");
 
     auto listdiff = kipl::base::projection2D(absdiff.GetDataPtr(),absdiff.dims(),1,false);
@@ -501,7 +501,7 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
     writeVector(listmask,"Vo_listmask.txt");
 
     //    listmask = binary_dilation(listmask, iterations=1).astype(listmask.dtype)
-    listmask = binaryDilation(listmask, 1);
+    listmask = binaryDilation(listmask, 1); 
     std::fill(listmask.begin(),listmask.begin()+2,0.0f);
     std::fill(listmask.rbegin(),listmask.rbegin()+2,0.0f);
     writeVector(listmask,"Vo_listmask2.txt");
@@ -513,11 +513,10 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
     //    if len(listxmiss) > 0:
     //        matzmiss = finter(listxmiss, listy)
     //        sinogram[:, listxmiss] = matzmiss
-    //    # Use algorithm 5 to remove residual stripes
-    //    #sinogram = remove_large_stripe(sinogram, snr, size)
-    //    return sinogram
+
 
     interpolationFill(res,listmask);
+    writeImage(res,"Vo_uResult.tif");
 
     return res;
 }

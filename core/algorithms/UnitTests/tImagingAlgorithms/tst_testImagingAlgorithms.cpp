@@ -692,6 +692,7 @@ void TestImagingAlgorithms::VoStripeClean_unresponsive()
 
 void TestImagingAlgorithms::VoStripeClean_large()
 {
+    QSKIP("Temp off");
     ImagingAlgorithms::VoStripeClean vsc;
 
     kipl::base::TImage<float,2> sino,res;
@@ -706,6 +707,7 @@ void TestImagingAlgorithms::VoStripeClean_large()
 
 void TestImagingAlgorithms::VoStripeClean_sorting()
 {
+    QSKIP("Temp off");
     ImagingAlgorithms::VoStripeClean vsc;
 
     kipl::base::TImage<float,2> sino,res;
