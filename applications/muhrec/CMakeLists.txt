@@ -166,8 +166,8 @@ if (APPLE)
 
     target_link_directories(${TARGET_NAME} PRIVATE
         /opt/local/lib
-        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-        ../../../external/mac/lib/
+        ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../external/mac/lib/
         )
 
     target_link_libraries(${TARGET_NAME} PRIVATE
