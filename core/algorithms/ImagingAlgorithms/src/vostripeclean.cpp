@@ -490,7 +490,7 @@ kipl::base::TImage<float,2> VoStripeClean::removeUnresponsiveAndFluctuatingStrip
     writeVector(listdiffbck,"Vo_listdiffbck.txt");
 
     //    listfact = listdiff / listdiffbck
-    std::vector<float> listfact(listdiff.begin(),listdiff.end());
+    std::vector<float> listfact=listdiff;
 
     for (size_t i=0; i<listfact.size(); ++i)
         listfact[i]=listfact[i]/listdiffbck[i];
