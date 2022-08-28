@@ -40,9 +40,11 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     tau(0.99f),
     thresh(0),
     bPBvariante(true),
-    bSameMask(true),
-    bUseManualThresh(false),
-    bExtSingleFile(true),
+//    bSameMask(true),
+//    bUseManualThresh(false),
+//    bExtSingleFile(true),
+    m_maskCreationMethod(ImagingAlgorithms::ReferenceImageCorrection::otsuMask),
+    m_blackBodyExternalMaskName("./externalBBmask.tif"),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
@@ -113,15 +115,16 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
         string2enum(GetStringParameter(parameters,"Y_InterpOrder"), m_yInterpOrder);
         string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
 
-        blackbodyexternalname = GetStringParameter(parameters,"BB_OB_ext_name");
+        blackbodyexternalname       = GetStringParameter(parameters,"BB_OB_ext_name");
         blackbodysampleexternalname = GetStringParameter(parameters,"BB_sample_ext_name");
-        nBBextCount = GetIntParameter(parameters,"BB_ext_samplecounts");
-        nBBextFirstIndex = GetIntParameter(parameters,"BB_ext_firstindex");
-        bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
-        bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
-        bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
-        thresh = GetFloatParameter(parameters,"thresh");
-        min_area = GetIntParameter(parameters, "min_area");
+        nBBextCount                 = GetIntParameter(parameters,"BB_ext_samplecounts");
+        nBBextFirstIndex            = GetIntParameter(parameters,"BB_ext_firstindex");
+//        bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+        bExtSingleFile              = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
+//        bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+        string2enum(GetStringParameter(parameters, "MaskCreationMethod"),  m_maskCreationMethod);
+        thresh                      = GetFloatParameter(parameters,"thresh");
+        min_area                    = GetIntParameter(parameters, "min_area");
 
 //        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
 //        bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB"));
@@ -265,12 +268,14 @@ void BBLogNormDlg::UpdateParameters()
     min_area = ui->spin_minarea->value();
 
 //    bUseManualThresh = ui->checkBox_thresh->isChecked();
-    bUseManualThresh = ui->comboBox_bbMask->currentIndex();
+//    bUseManualThresh = ui->comboBox_bbMask->currentIndex();
     thresh = ui->spinThresh->value();
-    bExtSingleFile = ui->check_singleext->isChecked();
+//    bExtSingleFile = ui->check_singleext->isChecked();
+    m_maskCreationMethod = static_cast<ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod>(ui->comboBox_bbMask->currentIndex());
 }
 
-void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
+void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
+{
 
     parameters["BB_OB_name"] = blackbodyname;
     parameters["BB_counts"] = kipl::strings::value2string(nBBCount);
@@ -300,11 +305,13 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
     parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
-    parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
-    parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
+//    parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
+//    parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
     parameters["min_area"] = kipl::strings::value2string(min_area);
     parameters["thresh"]= kipl::strings::value2string(thresh);
-    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
+//    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
+    parameters["MaskCreationMethod"]   = enum2string(m_maskCreationMethod);
+    parameters["BB_mask_ext_name"]     = m_blackBodyExternalMaskName;
 
 
 }
@@ -730,11 +737,11 @@ void BBLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg1)
 
 }
 
-void BBLogNormDlg::on_checkBox_thresh_clicked(bool checked)
-{
-    bUseManualThresh = checked;
+//void BBLogNormDlg::on_checkBox_thresh_clicked(bool checked)
+//{
+//    bUseManualThresh = checked;
 
-}
+//}
 
 
 void BBLogNormDlg::on_spinThresh_valueChanged(double arg1)
@@ -796,9 +803,9 @@ void BBLogNormDlg::on_comboBox_bbMask_currentIndexChanged(int index)
         ui->label_bbMinArea->show();
         ui->spin_minarea->show();
         ui->label_bbRadius->show();
-        ui->spinRadius()->show();
+        ui->spinRadius->show();
         ui->label_manualThreshold->hide();
-        ui->spinThreshold->hide();
+        ui->spinThresh->hide();
         ui->label_maskfile->hide();
         ui->lineEdit_userMaskName->hide();
         ui->pushButton_browseUserMask->hide();
@@ -807,9 +814,9 @@ void BBLogNormDlg::on_comboBox_bbMask_currentIndexChanged(int index)
         ui->label_bbMinArea->show();
         ui->spin_minarea->show();
         ui->label_bbRadius->show();
-        ui->spinRadius()->show();
+        ui->spinRadius->show();
         ui->label_manualThreshold->show();
-        ui->spinThreshold->show();
+        ui->spinThresh->show();
         ui->label_maskfile->hide();
         ui->lineEdit_userMaskName->hide();
         ui->pushButton_browseUserMask->hide();
@@ -818,9 +825,9 @@ void BBLogNormDlg::on_comboBox_bbMask_currentIndexChanged(int index)
         ui->label_bbMinArea->hide();
         ui->spin_minarea->hide();
         ui->label_bbRadius->hide();
-        ui->spinRadius()->hide();
+        ui->spinRadius->hide();
         ui->label_manualThreshold->hide();
-        ui->spinThreshold->hide();
+        ui->spinThresh->hide();
         ui->label_maskfile->show();
         ui->lineEdit_userMaskName->show();
         ui->pushButton_browseUserMask->show();
@@ -829,9 +836,9 @@ void BBLogNormDlg::on_comboBox_bbMask_currentIndexChanged(int index)
         ui->label_bbMinArea->show();
         ui->spin_minarea->show();
         ui->label_bbRadius->show();
-        ui->spinRadius()->show();
+        ui->spinRadius->show();
         ui->label_manualThreshold->hide();
-        ui->spinThreshold->hide();
+        ui->spinThresh->hide();
         ui->label_maskfile->hide();
         ui->lineEdit_userMaskName->hide();
         ui->pushButton_browseUserMask->hide();
