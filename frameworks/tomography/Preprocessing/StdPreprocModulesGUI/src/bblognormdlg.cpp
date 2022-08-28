@@ -85,12 +85,12 @@ BBLogNormDlg::~BBLogNormDlg()
 }
 
 
-int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img) {
-
+int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img)
+{
     m_Config=dynamic_cast<ReconConfig *>(config);
 
-
-    try{
+    try
+    {
         nBBFirstIndex = GetIntParameter(parameters,"BB_first_index");
         nBBCount = GetIntParameter(parameters,"BB_counts");
         blackbodyname = GetStringParameter(parameters,"BB_OB_name");
@@ -130,7 +130,8 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
 
     }
-    catch(ModuleException &e){
+    catch(ModuleException &e)
+    {
         logger(kipl::logging::Logger::LogWarning,e.what());
         return false;
 
@@ -143,10 +144,12 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
     UpdateDialog();
 
-    try {
+    try
+    {
         ApplyParameters();
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         logger(kipl::logging::Logger::LogError,e.what());
         return false;
     }
@@ -219,7 +222,7 @@ void BBLogNormDlg::UpdateDialog(){
     ui->spin_first_extBB->setValue(nBBextFirstIndex);
     ui->spin_count_ext_BB->setValue(nBBextCount);
     ui->combo_InterpolationMethod->setCurrentText(QString::fromStdString(enum2string(m_InterpMethod)));
-    ui->checkBox_thresh->setChecked(bUseManualThresh);
+//    ui->checkBox_thresh->setChecked(bUseManualThresh);
     ui->spinThresh->setValue(thresh);
     ui->spinFirstAngle->setValue(ffirstAngle);
     ui->spinLastAngle->setValue(flastAngle);
@@ -230,9 +233,8 @@ void BBLogNormDlg::UpdateDialog(){
 
 }
 
-void BBLogNormDlg::UpdateParameters(){
-
-
+void BBLogNormDlg::UpdateParameters()
+{
     nBBFirstIndex = ui->spinFirstOBBB->value();
     nBBCount = ui->spinCountsOBBB->value();
     blackbodyname = ui->edit_OB_BB_mask->text().toStdString();
@@ -262,11 +264,10 @@ void BBLogNormDlg::UpdateParameters(){
 
     min_area = ui->spin_minarea->value();
 
-    bUseManualThresh = ui->checkBox_thresh->isChecked();
+//    bUseManualThresh = ui->checkBox_thresh->isChecked();
+    bUseManualThresh = ui->comboBox_bbMask->currentIndex();
     thresh = ui->spinThresh->value();
     bExtSingleFile = ui->check_singleext->isChecked();
-
-
 }
 
 void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
@@ -786,3 +787,57 @@ void BBLogNormDlg::on_pushButton_ext_sample_back_clicked()
 {
     ui->edit_BB_external->setText(QString::fromStdString(m_Config->ProjectionInfo.sFileMask));
 }
+
+void BBLogNormDlg::on_comboBox_bbMask_currentIndexChanged(int index)
+{
+    switch (index)
+    {
+    case 0:
+        ui->label_bbMinArea->show();
+        ui->spin_minarea->show();
+        ui->label_bbRadius->show();
+        ui->spinRadius()->show();
+        ui->label_manualThreshold->hide();
+        ui->spinThreshold->hide();
+        ui->label_maskfile->hide();
+        ui->lineEdit_userMaskName->hide();
+        ui->pushButton_browseUserMask->hide();
+        break;
+    case 1:
+        ui->label_bbMinArea->show();
+        ui->spin_minarea->show();
+        ui->label_bbRadius->show();
+        ui->spinRadius()->show();
+        ui->label_manualThreshold->show();
+        ui->spinThreshold->show();
+        ui->label_maskfile->hide();
+        ui->lineEdit_userMaskName->hide();
+        ui->pushButton_browseUserMask->hide();
+        break;
+    case 2:
+        ui->label_bbMinArea->hide();
+        ui->spin_minarea->hide();
+        ui->label_bbRadius->hide();
+        ui->spinRadius()->hide();
+        ui->label_manualThreshold->hide();
+        ui->spinThreshold->hide();
+        ui->label_maskfile->show();
+        ui->lineEdit_userMaskName->show();
+        ui->pushButton_browseUserMask->show();
+        break;
+    case 3:
+        ui->label_bbMinArea->show();
+        ui->spin_minarea->show();
+        ui->label_bbRadius->show();
+        ui->spinRadius()->show();
+        ui->label_manualThreshold->hide();
+        ui->spinThreshold->hide();
+        ui->label_maskfile->hide();
+        ui->lineEdit_userMaskName->hide();
+        ui->pushButton_browseUserMask->hide();
+        break;
+    default:
+        throw ModuleException("Unknown spot detection method",__FILE__,__LINE__);
+    }
+}
+

@@ -30,6 +30,9 @@ public:
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
 private slots:
+    void on_comboBox_bbMask_currentIndexChanged(int index);
+
+private slots:
     void on_button_OBBBpath_clicked();
     void on_buttonPreviewOBBB_clicked();
     void on_button_sampleBBpath_clicked();
