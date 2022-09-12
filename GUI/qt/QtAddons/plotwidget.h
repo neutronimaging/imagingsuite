@@ -26,6 +26,7 @@ public:
     ~PlotWidget();
 
     void setCurveData(int id, const QVector<QPointF> &data, QString name = "");
+    void setCurveData(int id, const std::vector<float> &data, QString name = "");
     void setCurveData(int id, const std::vector<float> &x, const std::vector<float> &y, QString name = "");
     void setCurveData(int id, const std::map<float,float> &data, QString name = "");
     void setCurveData(int id, float const * const x, float const * const y, const int N, QString name = "");
