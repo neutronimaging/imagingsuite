@@ -20,6 +20,7 @@
 #include <io/io_tiff.h>
 #include <segmentation/thresholds.h>
 #include <base/thistogram.h>
+#include <base/timage.h>
 #include <base/tprofile.h>
 #include <base/tsubimage.h>
 #include <strings/miscstring.h>
@@ -1706,20 +1707,31 @@ float ReferenceImageCorrection::ComputeInterpolationError(kipl::base::TImage<flo
 
 }
 
-float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask)
+float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat,
+                                                        kipl::base::TImage<float, 2> &dark,
+                                                        kipl::base::TImage<float, 2> &bb,
+                                                        kipl::base::TImage<float,2>  &mask)
 {
+    if (!kipl::base::checkEqualSize(flat,dark))
+        throw kipl::base::DimsException("Size mismatch: flat != dark",__FILE__,__LINE__);
+
+    if (!kipl::base::checkEqualSize(flat,bb))
+        throw kipl::base::DimsException("Size mismatch: flat != bb",__FILE__,__LINE__);
 
     // 1. normalize image
 
     kipl::base::TImage<float, 2> norm(bb.dims());
     kipl::base::TImage<float, 2> normdc(bb.dims());
-    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
-    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
 
-    normdc -=dark;
+    norm.Clone(bb);
+    normdc.Clone(bb);
+//    memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
+//    memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
 
-    norm -=dark;
-    norm /= (flat-=dark);
+    normdc -= dark;
+    norm   -= dark;
+    flat   -= dark;
+    norm   /= flat;
 
     try{
         SegmentBlackBody(norm, mask);
