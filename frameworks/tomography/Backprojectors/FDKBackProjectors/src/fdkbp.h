@@ -2,7 +2,7 @@
 
 #ifndef FDKBP_H
 #define FDKBP_H
-#include "fftw3.h"
+
 #include "fdkbackproj_global.h"
 #include "fdkreconbase.h"
 #include <ParameterHandling.h>
@@ -32,19 +32,6 @@ protected:
     float get_pixel_value_c (kipl::base::TImage<float,2> &cbi, double r, double c);
     void getProjMatrix(float angles, double* nrm, double *proj_matrix);
     void multiplyMatrix (double *mat1, double *mat2, double *result, int rows, int columns, int columns1);
-    void prepareFFT(int width,int height);
-    void cleanupFFT();
-    virtual int InitializeBuffers(int width, int height);
-    virtual int FinalizeBuffers();
-
-    unsigned int padwidth;
-    fftw_complex *in;
-    fftw_complex *in_buffer;
-    fftw_complex *fft;
-    fftw_complex *ifft;
-    fftw_complex *ifft_buffer;
-    fftw_plan fftp;
-    fftw_plan ifftp;
 };
 
 #endif // FDKBP_H

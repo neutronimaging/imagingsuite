@@ -200,16 +200,16 @@ size_t ProjectionFilterBase::ComputeFilterSize(size_t len)
 std::map<std::string, std::string> ProjectionFilterBase::parameters()
 {
 // todo: fix parameter readout
-    std::map<std::string, std::string> parameters;
+    std::map<std::string, std::string> params;
 
-    parameters["filtertype"]     = enum2string(m_FilterType);
-    parameters["cutoff"]         = kipl::strings::value2string(m_fCutOff);
-    parameters["order"]          = kipl::strings::value2string(m_fOrder);
-    parameters["usebias"]        = m_bUseBias ? "true" : "false";
-    parameters["biasweight"]     = kipl::strings::value2string(m_fBiasWeight);
-    parameters["paddingdoubler"] = kipl::strings::value2string(m_nPaddingDoubler);
+    params["filtertype"]     = enum2string(m_FilterType);
+    params["cutoff"]         = kipl::strings::value2string(m_fCutOff);
+    params["order"]          = kipl::strings::value2string(m_fOrder);
+    params["usebias"]        = m_bUseBias ? "true" : "false";
+    params["biasweight"]     = kipl::strings::value2string(m_fBiasWeight);
+    params["paddingdoubler"] = kipl::strings::value2string(m_nPaddingDoubler);
 
-    return parameters;
+    return params;
 
 }
 
