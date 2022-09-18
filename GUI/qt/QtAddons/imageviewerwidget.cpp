@@ -28,7 +28,6 @@ ImageViewerWidget::ImageViewerWidget(QWidget *parent) :
     QWidget(parent),
     logger("ImageViewerWidget"),
     m_ImagePainter(this),   
-    m_rubberBandLine(QRubberBand::Line, this),
     m_rubberBandBox(QRubberBand::Rectangle, this),
     m_RubberBandStatus(RubberBandHide),
     m_MouseMode(ViewerROI),
@@ -291,16 +290,11 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
             {
                 m_RubberBandStatus = RubberBandDrag;
                 m_rubberBandBox.setGeometry(QRect(origin, QSize()));
-                rubberBandRect = m_rubberBandBox.rect();
+                rubberBandRect = m_rubberBandBox.rect().normalized();
                 m_rubberBandBox.show();
                 setCursor(Qt::CrossCursor);
             }
             rubberBandRect = QRect(origin.x(),origin.y(),m_rubberBandBox.rect().width(),m_rubberBandBox.rect().height());
-        }
-        if (m_MouseMode==ViewerProfile)
-        {
-                m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, QSize()));
-                m_rubberBandLine.show();
         }
         if (m_MouseMode==ViewerPan)
         {
@@ -322,7 +316,7 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
 void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 {
     QPoint origin=event->pos();
-    rubberBandRect = m_rubberBandBox.rect();
+    rubberBandRect = m_rubberBandBox.rect().normalized();
     QSignalBlocker blocker(this);
     std::ostringstream msg;
     int x = origin.x();
@@ -333,7 +327,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     if (m_RubberBandStatus == RubberBandDrag)
     {
         m_rubberBandBox.setGeometry(QRect(m_rubberBandOrigin, origin).normalized());
-        rubberBandRect = m_rubberBandBox.rect();
+        rubberBandRect = m_rubberBandBox.rect().normalized();
     }
 //    else if (m_RubberBandStatus == RubberBandMove)
 //    {
@@ -354,9 +348,6 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 //            rubberBandRect = r;
 //        }
 //    }
-
-    if (m_MouseMode==ViewerProfile)
-        m_rubberBandLine.setGeometry(QRect(m_rubberBandOrigin, origin).normalized());
 
     if (m_MouseMode==ViewerPan)
     {
@@ -435,16 +426,12 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
             roiRect.setRect(xpos, ypos, w, h);
 
             roiRect=roiRect.normalized();
-            msg.str();
+            msg.str("");
             msg<<"roiRect="<<roiRect.x()<<", "<<roiRect.y()<<", h="<<roiRect.height()<<", w="<<roiRect.y();
             logger.message(msg.str());
 
             m_RubberBandStatus = RubberBandFreeze;
             m_infoDialog.updateInfo(m_ImagePainter.getImage(), roiRect);
-        }
-        if (m_MouseMode==ViewerProfile)
-        {
-            m_rubberBandLine.hide();
         }
         if (m_MouseMode==ViewerPan)
         {

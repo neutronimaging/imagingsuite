@@ -207,13 +207,13 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     ReaderGUI
     QtModuleConfigure
     QtImaging
-    armadillo
-    lapack
-    blas
+#    armadillo
+#    lapack
+#    blas
     libtiff
     cfitsio
     #hdf5
-    xml2
+#    xml2
     NeXus
     NeXusCPP
 )

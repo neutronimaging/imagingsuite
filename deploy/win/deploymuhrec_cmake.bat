@@ -1,6 +1,6 @@
 set REPOS=%WORKSPACE%
 set DEST=%WORKSPACE%\deployed\muhrec
-set BDEST=c:\
+set BDEST=%WORKSPACE%\build-imagingsuite\bin\Release
 
 if not exist %DEST% mkdir %DEST%
 
@@ -8,21 +8,21 @@ pushd .
 cd %DEST%
 mkdir resources
 
-copy %BDEST%\lib\ImagingAlgorithms.dll .
-copy %BDEST%\lib\ModuleConfig.dll .
-copy %BDEST%\lib\QtAddons.dll .
-copy %BDEST%\lib\QtModuleConfigure.dll .
-copy %BDEST%\lib\kipl.dll .
-copy %BDEST%\lib\ReconFramework.dll .
-copy %BDEST%\lib\StdBackProjectors.dll .
-copy %BDEST%\lib\StdPreprocModules.dll .
-copy %BDEST%\lib\StdPreprocModulesGUI.dll .
-copy %BDEST%\lib\InspectorModulesGUI.dll .
-copy %BDEST%\lib\InspectorModules.dll .
-copy %BDEST%\lib\FDKBackProjectors.dll .
-copy %BDEST%\lib\ReaderConfig.dll .
-copy %BDEST%\lib\ReaderGUI.dll .
-copy %BDEST%\lib\QtImaging.dll .
+copy %BDEST%\ImagingAlgorithms.dll .
+copy %BDEST%\ModuleConfig.dll .
+copy %BDEST%\QtAddons.dll .
+copy %BDEST%\QtModuleConfigure.dll .
+copy %BDEST%\kipl.dll .
+copy %BDEST%\ReconFramework.dll .
+copy %BDEST%\StdBackProjectors.dll .
+copy %BDEST%\StdPreprocModules.dll .
+copy %BDEST%\StdPreprocModulesGUI.dll .
+copy %BDEST%\InspectorModulesGUI.dll .
+copy %BDEST%\InspectorModules.dll .
+copy %BDEST%\FDKBackProjectors.dll .
+copy %BDEST%\ReaderConfig.dll .
+copy %BDEST%\ReaderGUI.dll .
+copy %BDEST%\QtImaging.dll .
 
 copy %REPOS%\imagingsuite\external\lib64\libtiff.dll .
 copy %REPOS%\imagingsuite\external\lib64\libjpeg-62.dll .
@@ -50,9 +50,9 @@ copy %REPOS%\ExternalDependencies\windows\bin\cfitsio.dll .
 copy %REPOS%\ExternalDependencies\windows\bin\libxml2.dll .
 
 
-copy %BDEST%\Applications\MuhRec.exe .
-copy %BDEST%\Applications\ImageViewer.exe .
-copy %BDEST%\lib\MuhRecCLI.exe .
+copy %BDEST%\MuhRec.exe .
+copy %BDEST%\ImageViewer.exe .
+copy %BDEST%\MuhRecCLI.exe .
 rem copy %REPOS%\lib\verticalslicer.exe
 rem copy %REPOS%\lib\multiframesplitter.exe
 
