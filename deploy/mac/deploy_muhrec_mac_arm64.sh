@@ -58,22 +58,27 @@ fi
 # `$CPCMD /opt/local/lib/libarmadillo*.dylib $DEST/Contents/MacOS`
 
 
-`$CPCMD $REPOSPATH/install/lib/libImagingAlgorithms.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libModuleConfig.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libQtAddons.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libQtImaging.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libReaderConfig.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libReaderGUI.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libQtModuleConfigure.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libReconFramework.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libReconAlgorithms.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libStdBackProjectors.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libStdPreprocModules.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libkipl.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libImagingAlgorithms.dylib    $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libModuleConfig.dylib         $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libQtAddons.dylib             $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libQtImaging.dylib            $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libReaderConfig.dylib         $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libReaderGUI.dylib            $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libQtModuleConfigure.dylib    $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libReconFramework.dylib       $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libReconAlgorithms.dylib      $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libStdBackProjectors.dylib    $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libStdPreprocModules.dylib    $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libkipl.dylib                 $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/install/lib/libStdPreprocModulesGUI.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libInspectorModulesGUI.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libInspectorModules.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/install/lib/libFDKBackProjectors.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libInspectorModulesGUI.dylib  $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libInspectorModules.dylib     $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libFDKBackProjectors.dylib    $DEST/Contents/Frameworks`
+	
+`$CPCMD $REPOSPATH/install/lib/muhrectomo.cpython-39-darwin.so      $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/imgalg.cpython-39-darwin.so          $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/advancedfilters.cpython-39-darwin.so $DEST/Contents/Frameworks`
+
 `$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
 `$CPCMD /opt/local/lib/libhdf5.10.dylib    $DEST/Contents/Frameworks`
@@ -189,7 +194,7 @@ install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
 # 	install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib muhrecCLI
 # fi
 
-# cd ../Frameworks
+cd ../Frameworks
 
 # # kipl
 # install_name_tool -change libtiff.5.dylib @executable_path/../Frameworks/libtiff.5.dylib libkipl.1.0.0.dylib
@@ -328,6 +333,73 @@ install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
 # install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 # install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
 # install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
+
+# pymuhrec
+ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
+install_name_tool -add_rpath "../Frameworks" muhrectomo.cpython-39-darwin.so
+install_name_tool -change /Users/kaestner/git/ExternalDependencies/sources/build_nexus/src/libNeXus.1.dylib @rpath/libNeXus.1.dylib muhrectomo.cpython-39-darwin.so
+install_name_tool -change /Users/kaestner/git/ExternalDependencies/sources/build_nexus/bindings/cpp/libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib muhrectomo.cpython-39-darwin.so
+
+install_name_tool -change @executable_path/../Frameworks/libfftw3.3.dylib @rpath/libfftw3.3.dylib libStdBackProjectors.dylib
+install_name_tool -change @executable_path/../Frameworks/libfftw3f.3.dylib @rpath/libfftw3f.3.dylib libStdBackProjectors.dylib
+install_name_tool -change @executable_path/../Frameworks/libcfitsio.dylib @rpath/libcfitsio.dylib libStdBackProjectors.dylib
+install_name_tool -change @executable_path/../Frameworks/libtiff.5.dylib @rpath/libtiff.5.dylib libStdBackProjectors.dylib
+install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @rpath/libarmadillo.10.dylib libStdBackProjectors.dylib
+
+install_name_tool -change @executable_path/../Frameworks/libfftw3.3.dylib @rpath/libfftw3.3.dylib libReconFramework.dylib 
+install_name_tool -change @executable_path/../Frameworks/libfftw3f.3.dylib @rpath/libfftw3f.3.dylib libReconFramework.dylib
+install_name_tool -change @executable_path/../Frameworks/libcfitsio.dylib @rpath/libcfitsio.dylib libReconFramework.dylib 
+install_name_tool -change @executable_path/../Frameworks/libtiff.5.dylib @rpath/libtiff.5.dylib libReconFramework.dylib 
+install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @rpath/libarmadillo.10.dylib libReconFramework.dylib   
+install_name_tool -change @executable_path/../Frameworks/libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReconFramework.dylib
+
+install_name_tool -change @executable_path/../Frameworks/libfftw3.3.dylib @rpath/libfftw3.3.dylib libImagingAlgorithms.dylib 
+install_name_tool -change @executable_path/../Frameworks/libfftw3f.3.dylib @rpath/libfftw3f.3.dylib libImagingAlgorithms.dylib
+install_name_tool -change @executable_path/../Frameworks/libcfitsio.dylib @rpath/libcfitsio.dylib libImagingAlgorithms.dylib 
+install_name_tool -change @executable_path/../Frameworks/libtiff.5.dylib @rpath/libtiff.5.dylib libImagingAlgorithms.dylib 
+install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @rpath/libarmadillo.10.dylib libImagingAlgorithms.dylib   
+install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib @rpath/libxml2.2.dylib libImagingAlgorithms.dylib
+
+install_name_tool -change @executable_path/../Frameworks/libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libkipl.dylib          
+install_name_tool -change @executable_path/../Frameworks/libNeXus.1.dylib @rpath/libNeXus.1.dylib libkipl.dylib 
+install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib @rpath/libxml2.2.dylib libkipl.dylib
+install_name_tool -change @executable_path/../Frameworks/libfftw3.3.dylib @rpath/libfftw3.3.dylib libkipl.dylib
+install_name_tool -change @executable_path/../Frameworks/libfftw3f.3.dylib @rpath/libfftw3f.3.dylib libkipl.dylib
+install_name_tool -change @executable_path/../Frameworks/libcfitsio.dylib @rpath/libcfitsio.dylib libkipl.dylib                    
+install_name_tool -change @executable_path/../Frameworks/libctiff.5.dylib @rpath/libtiff.5.dylib libkipl.dylib
+install_name_tool -change @executable_path/../Frameworks/libtiff.5.dylib @rpath/libtiff.5.dylib libkipl.dylib 
+install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @rpath/libarmadillo.10.dylib libkipl.dylib   
+
+install_name_tool -change @executable_path/../Frameworks/libicui18n.67.dylib @rpath/libicui18n.67.dylib libxml2.2.dylib
+install_name_tool -change @executable_path/../Frameworks/libicuuc.67.dylib @rpath/libicuuc.67.dylib libxml2.2.dylib
+install_name_tool -change @executable_path/../Frameworks/libicudata.67.dylib @rpath/libicudata.67.dylib libxml2.2.dylib
+install_name_tool -change @executable_path/../Frameworks/libicuuc.67.dylib @rpath/libicuuc.67.dylib libicui18n.67.dylib 
+install_name_tool -change @executable_path/../Frameworks/libicudata.67.dylib @rpath/libicudata.67.dylib libicui18n.67.dylib 
+install_name_tool -change @executable_path/../Frameworks/libicudata.67.dylib @rpath/libicudata.67.dylib libicuuc.67.dylib
+
+install_name_tool -change @executable_path/../Frameworks/libzstd.1.dylib @rpath/libzstd.1.dylib libtiff.5.dylib
+install_name_tool -change @executable_path/../Frameworks/libjpeg.8.dylib @rpath/libjpeg.8.dylib libtiff.5.dylib
+install_name_tool -change @executable_path/../Frameworks/libhdf5.200.dylib @rpath/libhdf5.200.dylib libarmadillo.10.dylib
+install_name_tool -change @executable_path/../Frameworks/libhdf5_cpp.200.dylib @rpath/libhdf5_cpp.200.dylib libNeXus.1.0.0.dylib 
+install_name_tool -change @executable_path/../Frameworks/libhdf5.200.dylib @rpath/libhdf5.200.dylib libNeXus.1.0.0.dylib 
+install_name_tool -change @executable_path/../Frameworks/libhdf5.200.dylib @rpath/libhdf5.200.dylib libhdf5_cpp.200.dylib 
+install_name_tool -change @executable_path/../Frameworks/libhdf5_cpp.200.dylib @rpath/libhdf5_cpp.200.dylib libNeXusCPP.1.0.0.dylib
+install_name_tool -change @executable_path/../Frameworks/libhdf5_cpp.200.dylib @rpath/libhdf5_cpp.200.dylib libNeXusCPP.1.dylib    
+install_name_tool -change @executable_path/../Frameworks/libhdf5.200.dylib @rpath/libhdf5.200.dylib libNeXusCPP.1.dylib
+
+install_name_tool -change @executable_path/../Frameworks/libfftw3.3.dylib @rpath/libfftw3.3.dylib libModuleConfig.dylib
+install_name_tool -change @executable_path/../Frameworks/libfftw3f.3.dylib @rpath/libfftw3f.3.dylib libModuleConfig.dylib
+install_name_tool -change @executable_path/../Frameworks/libcfitsio.dylib @rpath/libcfitsio.dylib libModuleConfig.dylib
+install_name_tool -change @executable_path/../Frameworks/libtiff.5.dylib @rpath/libtiff.5.dylib libModuleConfig.dylib
+install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @rpath/libarmadillo.10.dylib libModuleConfig.dylib
+
+install_name_tool -change @executable_path/../Frameworks/libfftw3f.3.dylib @rpath/libfftw3f.3.dylib libFDKBackProjectors.dylib   
+install_name_tool -change @executable_path/../Frameworks/libfftw3.3.dylib @rpath/libfftw3.3.dylib libFDKBackProjectors.dylib 
+install_name_tool -change @executable_path/../Frameworks/libcfitsio.dylib @rpath/libcfitsio.dylib libFDKBackProjectors.dylib     
+install_name_tool -change @executable_path/../Frameworks/libtiff.5.dylib @rpath/libtiff.5.dylib libFDKBackProjectors.dylib       
+install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @rpath/libarmadillo.10.dylib libFDKBackProjectors.dylib
+
+install_name_tool -change @executable_path/../Frameworks/libiconv.2.dylib @rpath/libiconv.2.dylib libxml2.2.dylib
 
 rm -rf /tmp/muhrec
 
