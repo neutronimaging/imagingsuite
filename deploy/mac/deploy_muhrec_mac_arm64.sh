@@ -219,6 +219,8 @@ install_name_tool -change @executable_path/../Frameworks/libtiff.5.dylib @rpath/
 install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @rpath/libarmadillo.10.dylib libReconFramework.dylib   
 install_name_tool -change @executable_path/../Frameworks/libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReconFramework.dylib
 install_name_tool -change /Users/kaestner/git/ExternalDependencies/sources/build_nexus/src/libNeXus.1.dylib @rpath/libNeXus.1.dylib libReconFramework.dylib
+install_name_tool -change @executable_path/../Frameworks/libNeXus.1.dylib @rpath/libNeXus.1.dylib libReconFramework.dylib
+
 install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib @rpath/libxml2.2.dylib libReconFramework.dylib
 
 install_name_tool -change @executable_path/../Frameworks/libfftw3.3.dylib @rpath/libfftw3.3.dylib libImagingAlgorithms.dylib 
@@ -230,7 +232,8 @@ install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib @rpath/
 install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libImagingAlgorithms.dylib
 install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libImagingAlgorithms.dylib
 
-install_name_tool -change @executable_path/../Frameworks/libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libkipl.dylib          
+install_name_tool -change @executable_path/../Frameworks/libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libkipl.dylib  
+install_name_tool -change @executable_path/../Frameworks/libNeXus.1.dylib @rpath/libNeXus.1.dylib libkipl.dylib 
 install_name_tool -change /Users/kaestner/git/ExternalDependencies/sources/build_nexus/src/libNeXus.1.dylib  @rpath/libNeXus.1.dylib libkipl.dylib 
 install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib   @rpath/libxml2.2.dylib libkipl.dylib
 install_name_tool -change @executable_path/../Frameworks/libfftw3.3.dylib  @rpath/libfftw3.3.dylib libkipl.dylib
@@ -265,6 +268,10 @@ install_name_tool -change @executable_path/../Frameworks/libhdf5_cpp.200.dylib @
 install_name_tool -change @executable_path/../Frameworks/libz.1.dylib          @rpath/libz.1.dylib          libNeXusCPP.1.dylib
 install_name_tool -change @executable_path/../Frameworks/libhdf5.200.dylib     @rpath/libhdf5.200.dylib     libNeXusCPP.1.dylib
 install_name_tool -change /Users/kaestner/git/ExternalDependencies/sources/build_nexus/src/libNeXus.1.dylib @rpath/libNeXus.1.dylib libNeXusCPP.1.dylib
+
+install_name_tool -change @executable_path/../Frameworks/libhdf5_cpp.200.dylib @rpath/libhdf5_cpp.200.dylib libNeXus.1.dylib
+install_name_tool -change @executable_path/../Frameworks/libz.1.dylib          @rpath/libz.1.dylib          libNeXus.1.dylib
+install_name_tool -change @executable_path/../Frameworks/libhdf5.200.dylib     @rpath/libhdf5.200.dylib     libNeXus.1.dylib
 
 
 install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libModuleConfig.dylib 
@@ -322,6 +329,8 @@ install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libStdP
 install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib @rpath/libxml2.2.dylib libStdBackProjectors.dylib
 install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib       libStdBackProjectors.dylib
 install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libStdBackProjectors.dylib
+install_name_tool -change @executable_path/../Frameworks/libNeXus.1.dylib @rpath/libNeXus.1.dylib       libStdBackProjectors.dylib
+install_name_tool -change @executable_path/../Frameworks/libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libStdBackProjectors.dylib
 
 install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib @rpath/libxml2.2.dylib     libInspectorModules.dylib
 install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @rpath/libarmadillo.10.dylib libInspectorModules.dylib
