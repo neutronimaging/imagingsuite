@@ -60,6 +60,7 @@ private:
 
     void UpdateConfig();
     void UpdateDialog();
+    kipl::base::TImage<float,2> LoadImage(const std::string & fileMask, size_t idx, const std::string name);
     int LoadImages();
     void ROIChanged(int y0, int y1);
 

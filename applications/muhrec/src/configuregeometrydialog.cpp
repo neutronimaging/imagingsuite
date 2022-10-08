@@ -315,6 +315,66 @@ pair<size_t, size_t> ConfigureGeometryDialog::FindMaxBoundary()
     return b;
 }
 
+kipl::base::TImage<float,2> ConfigureGeometryDialog::LoadImage(const std::string & fileMask, size_t idx, const std::string name)
+{
+   kipl::base::TImage<float,2> img;
+
+//   try {
+//           size_t found = fileMask.find("hdf");
+
+//           if (found==std::string::npos)
+//           {
+//               m_ProjOB=reader.Read("",
+//               fileMask,
+//               idx,
+//               m_Config.ProjectionInfo.eFlip,
+//               m_Config.ProjectionInfo.eRotate,
+//               m_Config.ProjectionInfo.fBinning,
+//               {});
+//           }
+//           else
+//           {
+//               m_ProjOB = reader.ReadNexus(fileMask,
+//                                  idx,
+//                                  m_Config.ProjectionInfo.eFlip,
+//                                  m_Config.ProjectionInfo.eRotate,
+//                                  m_Config.ProjectionInfo.fBinning,
+//                                  {});
+//           }
+//       }
+//   }
+//   catch (ReconException & e)
+//   {
+//       msg<<"Failed to load the"<< name <<" image (ReconException): "<<e.what();
+//       logger(kipl::logging::Logger::LogError,msg.str());
+//       loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+//       loaderror_dlg.exec();
+//   }
+//   catch (kipl::base::KiplException & e)
+//   {
+//       msg<<"Failed to load the "<<name<<" image (kipl): "<<e.what();
+//       logger(kipl::logging::Logger::LogError,msg.str());
+//       loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+//       loaderror_dlg.exec();
+//   }
+//   catch (std::exception & e)
+//   {
+//       msg<<"Failed to load the "<<name<<" image (STL): "<<e.what();
+//       logger(kipl::logging::Logger::LogError,msg.str());
+//       loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+//       loaderror_dlg.exec();
+//   }
+//   catch (...)
+//   {
+//       msg<<"Failed to load the "<<name<<" image (unknown exception): ";
+//       logger(kipl::logging::Logger::LogError,msg.str());
+//       loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+//       loaderror_dlg.exec();
+//   }
+
+   return img;
+}
+
 int ConfigureGeometryDialog::LoadImages()
 {
     kipl::base::TImage<float,2> img;
@@ -333,9 +393,10 @@ int ConfigureGeometryDialog::LoadImages()
     m_Proj0Deg       = kipl::base::TImage<float,2>();
     m_Proj180Deg     = kipl::base::TImage<float,2>();
     m_ProjOB         = kipl::base::TImage<float,2>();
-    m_ProjCumulative = kipl::base::TImage<float,2>();
+    m_ProjDC         = kipl::base::TImage<float,2>();
 
     // Load references
+
     try {
         if (m_Config.ProjectionInfo.nOBCount!=0)
         {
@@ -355,6 +416,65 @@ int ConfigureGeometryDialog::LoadImages()
             {
                 m_ProjOB = reader.ReadNexus(m_Config.ProjectionInfo.sOBFileMask,
                                    m_Config.ProjectionInfo.nOBFirstIndex,
+                                   m_Config.ProjectionInfo.eFlip,
+                                   m_Config.ProjectionInfo.eRotate,
+                                   m_Config.ProjectionInfo.fBinning,
+                                   {});
+            }
+        }
+    }
+    catch (ReconException & e)
+    {
+        msg<<"Failed to load the open beam image (ReconException): "<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+        loaderror_dlg.exec();
+        return -1;
+    }
+    catch (kipl::base::KiplException & e)
+    {
+        msg<<"Failed to load the open beam image (kipl): "<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+        loaderror_dlg.exec();
+        return -1;
+    }
+    catch (std::exception & e)
+    {
+        msg<<"Failed to load the open beam image (STL): "<<e.what();
+        logger(kipl::logging::Logger::LogError,msg.str());
+        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+        loaderror_dlg.exec();
+        return -1;
+    }
+    catch (...)
+    {
+        msg<<"Failed to load the open beam image (unknown exception): ";
+        logger(kipl::logging::Logger::LogError,msg.str());
+        loaderror_dlg.setDetailedText(QString::fromStdString(msg.str()));
+        loaderror_dlg.exec();
+        return -1;
+    }
+
+    try {
+        if (m_Config.ProjectionInfo.nDCCount!=0)
+        {
+            size_t found = m_Config.ProjectionInfo.sDCFileMask.find("hdf");
+
+            if (found==std::string::npos)
+            {
+                m_ProjDC=reader.Read(m_Config.ProjectionInfo.sReferencePath,
+                m_Config.ProjectionInfo.sDCFileMask,
+                m_Config.ProjectionInfo.nDCFirstIndex,
+                m_Config.ProjectionInfo.eFlip,
+                m_Config.ProjectionInfo.eRotate,
+                m_Config.ProjectionInfo.fBinning,
+                {});
+            }
+            else
+            {
+                m_ProjDC = reader.ReadNexus(m_Config.ProjectionInfo.sDCFileMask,
+                                   m_Config.ProjectionInfo.nDCFirstIndex,
                                    m_Config.ProjectionInfo.eFlip,
                                    m_Config.ProjectionInfo.eRotate,
                                    m_Config.ProjectionInfo.fBinning,
@@ -396,6 +516,20 @@ int ConfigureGeometryDialog::LoadImages()
         return -1;
     }
 
+    if ( kipl::base::checkEqualSize(m_ProjDC, m_ProjOB) )
+    {
+        for (size_t i=0; i<m_ProjOB.Size(); ++i)
+        {
+            m_ProjOB[i]-=m_ProjDC[i];
+            if (m_ProjOB[i]<1)
+                m_ProjOB[i]=1;
+        }
+    }
+    else
+    {
+
+    }
+
     size_t found = m_Config.ProjectionInfo.sFileMask.find("hdf");
 
     if (found==std::string::npos)
@@ -431,17 +565,29 @@ int ConfigureGeometryDialog::LoadImages()
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
                     {} );
+
+            if ( !kipl::base::checkEqualSize(m_ProjDC,m_Proj0Deg) )
+            {
+                m_ProjDC.resize(m_Proj0Deg.dims());
+                std::fill_n(m_ProjDC.GetDataPtr(),0.0f,m_ProjDC.Size());
+            }
+
             if (m_Config.ProjectionInfo.nOBCount!=0)
             {
                 if (m_Proj0Deg.Size()==m_ProjOB.Size())
                 {
                     float *pProj=m_Proj0Deg.GetDataPtr();
                     float *pOB=m_ProjOB.GetDataPtr();
+                    float *pDC=m_ProjDC.GetDataPtr();
 
                     for (size_t i=0; i<m_Proj0Deg.Size(); i++)
                     {
-                        pProj[i]=pProj[i]/pOB[i];
-                        pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+                        pProj[i]=(pProj[i]-pDC[i])/(pOB[i]-pDC[i]);
+
+                        if ( std::isfinite(pProj[i]) && 0.0f<pProj[i] )
+                            pProj[i] = -log(pProj[i]);
+                        else
+                            pProj[i] = 0.0f;
                     }
                 }
                 else
@@ -508,11 +654,12 @@ int ConfigureGeometryDialog::LoadImages()
             {
                 if (m_Proj180Deg.Size()==m_ProjOB.Size())
                 {
-                    float *pProj=m_Proj180Deg.GetDataPtr();
-                    float *pOB=m_ProjOB.GetDataPtr();
+                    float *pProj = m_Proj180Deg.GetDataPtr();
+                    float *pOB   = m_ProjOB.GetDataPtr();
+                    float *pDC   = m_ProjDC.GetDataPtr();
                     for (size_t i=0; i<m_Proj180Deg.Size(); i++)
                     {
-                        pProj[i]=pProj[i]/pOB[i];
+                        pProj[i]=(pProj[i]-pDC[i])/(pOB[i]-pDC[i]);
 
                         if ( std::isfinite(pProj[i]) && 0.0f<pProj[i] )
                             pProj[i] = -log(pProj[i]);
@@ -578,7 +725,11 @@ int ConfigureGeometryDialog::LoadImages()
                 for (size_t i=0; i<m_Proj0Deg.Size(); i++)
                 {
                     pProj[i]=pProj[i]/pOB[i];
-                    pProj[i]= pProj[i]<=0.0f ? 0.0f : -log(pProj[i]);
+
+                    if ( std::isfinite(pProj[i]) && (0.0f<pProj[i]) )
+                        pProj[i] = -log(pProj[i]);
+                    else
+                        pProj[i] = 0.0f;
                 }
             }
             else
@@ -611,7 +762,7 @@ int ConfigureGeometryDialog::LoadImages()
                 {
                     pProj[i]=pProj[i]/pOB[i];
 
-                    if ( std::isfinite(pProj[i]) && 0.0f<pProj[i] )
+                    if ( std::isfinite(pProj[i]) && (0.0f<pProj[i]) )
                         pProj[i] = -log(pProj[i]);
                     else
                         pProj[i] = 0.0f;
