@@ -51,6 +51,7 @@ int ConfigureGeometryDialog::exec(ReconConfig &config)
         return QDialog::Rejected;
 
     ui->viewerProjection->set_image(m_Proj0Deg.GetDataPtr(),m_Proj0Deg.dims());
+    ui->viewerProjection->set_levels(kipl::base::quantile99);
     ui->groupBoxSlices->setVisible(false);
     ui->comboROISelection->setCurrentIndex(0);
 
