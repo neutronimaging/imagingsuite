@@ -353,15 +353,15 @@ void ProjectionFilter::filterProjection(kipl::base::TImage<float,2> & img)
 
   //  float *pFilter=mFilter.GetDataPtr();
     complex<float> *pFTLine=ft1Dimg.GetDataPtr();
-    const size_t nLenPad=nFFTsize+16;
-    float *pLine=new float[nLenPad];
+    const size_t nLenPad=nFFTsize;
+    float *pLine=new float[nLenPad+16];
 
     for (size_t line=0; line<(nLines); line++)
     {
         std::fill_n(pLine,nLenPad,0.0f);
         std::fill_n(pFTLine,nLenPad,0.0f);
 
-        size_t insert=Pad(img.GetLinePtr(line),img.Size(0),pLine,nLenPad);
+        size_t insert=pad(img.GetLinePtr(line),img.Size(0),pLine,nLenPad);
 
         fft->operator()(pLine,pFTLine);
 
@@ -374,7 +374,7 @@ void ProjectionFilter::filterProjection(kipl::base::TImage<float,2> & img)
 
         float *pImg=img.GetLinePtr(line);
         const float scale=fPi/(4.0f*cnLoopCnt);
-        for (size_t i=0; i<img.Size(0); i++)
+        for (size_t i=0; i<img.Size(0); ++i)
         {
             pImg[i]=pLine[i+insert]*scale;
         }
@@ -384,18 +384,20 @@ void ProjectionFilter::filterProjection(kipl::base::TImage<float,2> & img)
     delete [] pLine;
 }
 
-size_t ProjectionFilter::Pad(float const * const pSrc,
+size_t ProjectionFilter::pad(float const * const pSrc,
                                    const size_t nSrcLen,
                                    float *pDest,
                                    const size_t nDestLen)
 {
-    memset(pDest,0,nDestLen*sizeof(float));
-    memcpy(pDest+nInsert,pSrc,nSrcLen*sizeof(float));
+    std::fill_n(pDest,nDestLen,0.0f);
+    std::copy_n(pSrc,nSrcLen,pDest+nInsert);
+//    memset(pDest,0,nDestLen*sizeof(float));
+//    memcpy(pDest+nInsert,pSrc,nSrcLen*sizeof(float));
 
-    for (size_t i=0; i<nInsert; i++)
+    for (size_t i=0; i<nInsert; ++i)
     {
-        pDest[i]=pSrc[0]*mPadData[i];
-        pDest[nDestLen-1-i]=pSrc[nSrcLen-1]*mPadData[i];
+        pDest[i]            = pSrc[0]*mPadData[i];
+        pDest[nDestLen-2-i] = pSrc[nSrcLen-1]*mPadData[i];
     }
 
     return nInsert;
@@ -403,11 +405,11 @@ size_t ProjectionFilter::Pad(float const * const pSrc,
 
 void ProjectionFilter::PreparePadding(const size_t nImage, const size_t nFilter)
 {
-    nInsert=(nFilter/2)-(nImage/2);
+    nInsert=(nFilter-nImage)/2;
 
     mPadData.resize({nInsert});
 
-    for (size_t i=0; i<nInsert; i++)
+    for (size_t i=0; i<nInsert; ++i)
     {
         float x=static_cast<float>(i)/ static_cast<float>(nInsert) - 0.5f;
         mPadData[i]=kipl::math::Sigmoid(x,0.0f,0.07f);
