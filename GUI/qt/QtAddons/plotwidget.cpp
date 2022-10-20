@@ -59,6 +59,19 @@ void PlotWidget::setCurveData(int id, const QVector<QPointF> &data, QString name
     setCurveData(id,series);
 }
 
+void PlotWidget::setCurveData(int id, const std::vector<float> &data, QString name)
+{
+    QLineSeries *series=new QLineSeries();
+    int i=0;
+    for (auto &item : data)
+        series->append(i++,item);
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
+}
+
 void PlotWidget::setCurveData(int id, const std::vector<float> &x, const std::vector<float> &y, QString name)
 {
     QLineSeries *series=new QLineSeries();

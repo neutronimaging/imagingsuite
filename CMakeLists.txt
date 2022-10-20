@@ -120,7 +120,7 @@ else()
     $<$<COMPILE_LANGUAGE:CXX>:-Woverloaded-virtual>
     $<$<COMPILE_LANGUAGE:CXX>:-fno-operator-names>
   )
-endif(NOT WIN32)
+endif()
 
 set(PYTHONDIR kipl)
 set(INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
@@ -174,9 +174,9 @@ endif()
 add_subdirectory(applications/imageviewer)
 
 # # Binder modules
-# add_subdirectory(frameworks/tomography/pyMuhRec)
-# add_subdirectory(core/algorithms/pyimgalg)
-# add_subdirectory(core/algorithms/pyadvancedfilters)
+add_subdirectory(frameworks/tomography/pyMuhRec)
+add_subdirectory(core/algorithms/pyimgalg)
+add_subdirectory(core/algorithms/pyadvancedfilters)
 
 if(DYNAMIC_LIB)
   # install(

@@ -117,7 +117,6 @@ protected:
     void showToolTip(QPoint position, QString message);
     void refreshPixmap();
     QRect rubberBandRect;
-    QRubberBand m_rubberBandLine;
     QRubberBand m_rubberBandBox;
     QPoint m_rubberBandOrigin;
     eRubberBandStatus m_RubberBandStatus;

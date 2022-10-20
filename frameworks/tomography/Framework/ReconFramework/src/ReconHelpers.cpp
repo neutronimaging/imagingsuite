@@ -198,7 +198,7 @@ bool BuildFileList(std::string sFileMask, std::string sPath,
     std::ostringstream msg;
     if (nlSkipList!=nullptr)
     {
-        msg.str();
+        msg.str("");
         msg<<nlSkipList->size()<<" projections will be skipped";
         logger(kipl::logging::Logger::LogMessage,msg.str());
     }
