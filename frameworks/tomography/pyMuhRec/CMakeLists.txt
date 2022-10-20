@@ -1,12 +1,11 @@
-# ~~~
-# SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (c) 2021 ImaginSuite contributors (https://github.com/neutronimaging/imagingsuite)
-# ~~~
+cmake_minimum_required(VERSION 3.14)
 
-add_definitions(-DNO_QT)
 set(TARGET_NAME "muhrectomo") 
+project(muhrectomo LANGUAGES CXX)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     /usr/include/libxml2
@@ -29,7 +28,7 @@ include_directories(
 
 #link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
 
-link_directories( /opt/local/lib ../../../external/mac/lib)
+# link_directories( /opt/local/lib ../../../external/mac/lib)
 
 # add_definitions(-DVERSION="1.6.0")
 # create python module
@@ -48,101 +47,115 @@ set(SRC_FILES
   src/pybinder.cpp
 )
 
-set(LINK_TYPE "MODULE")
-
 add_library(${TARGET_NAME}
   ${LINK_TYPE}
   MODULE
   ${SRC_FILES}  
   ${INC_FILES}
   )
+  
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+# set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+set_target_properties(${TARGET_NAME} PROPERTIES BUILD_WITH_INSTALL_RPATH ON)
 
-target_link_libraries(${TARGET_NAME}
-  PUBLIC
-    pybind11::module
+target_compile_definitions(${TARGET_NAME} PRIVATE RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
 
-  PRIVATE
-    kipl
-    ImagingAlgorithms
-    xml2
-    tiff
-    fftw3
-    fftw3f
-    ModuleConfig
-    ReconFramework
-    StdBackProjectors
-    FDKBackProjectors
-  )
+set(LINK_TYPE "MODULE")
+
+
+
+# target_link_libraries(${TARGET_NAME}
+#   PUBLIC
+#     pybind11::module
+
+#   PRIVATE
+#     kipl
+#     ImagingAlgorithms
+#     xml2
+#     tiff
+#     fftw3
+#     fftw3f
+#     ModuleConfig
+#     ReconFramework
+#     StdBackProjectors
+#     FDKBackProjectors
+#   )
 
 if (APPLE)
-target_link_libraries(${TARGET_NAME}
-  PUBLIC
-    pybind11::module
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../../external/mac/lib/
+        )
 
-  PRIVATE
-    kipl
-    ImagingAlgorithms
-    xml2
-    tiff
-    fftw3
-    fftw3f
-    ModuleConfig
-    ReconFramework
-    StdBackProjectors
-    FDKBackProjectors
-    cfitsio
-    NeXus.1.0.0
-    NeXusCPP.1.0.0
-  )
-endif(APPLE)
-
-if (UNIX AND NOT APPLE)
-    find_package(OpenMP)
-    if(OpenMP_CXX_FOUND)
-        target_link_libraries(${TARGET_NAME} PUBLIC
-            OpenMP::OpenMP_CXX
-            pybind11::module
-
-          PRIVATE
-            kipl
-            ImagingAlgorithms
-            xml2
-            tiff
-            fftw3
-            fftw3f
-            ModuleConfig
-            ReconFramework
-            StdBackProjectors
-            FDKBackProjectors
-            cfitsio
-            NeXus
-            NeXusCPP
-            )
-    else()
-        target_link_libraries(${TARGET_NAME}
-          PUBLIC
-            pybind11::module
-
-          PRIVATE
-            kipl
-            ImagingAlgorithms
-            xml2
-            tiff
-            fftw3
-            fftw3f
-            ModuleConfig
-            ReconFramework
-            StdBackProjectors
-            FDKBackProjectors
-            cfitsio
-            NeXus
-            NeXusCPP
-          )
-    endif()
+    target_link_libraries(${TARGET_NAME}
+        PUBLIC
+        pybind11::module
+        
+        PRIVATE
+        kipl
+        ImagingAlgorithms
+        ModuleConfig
+        ReconFramework
+        StdBackProjectors
+        FDKBackProjectors
+        xml2
+        fftw3
+        fftw3f
+        cfitsio
+        tiff
+        NeXus.1.0.0
+        NeXusCPP.1.0.0
+    )
 endif()
 
-set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+
+# if (UNIX AND NOT APPLE)
+#     find_package(OpenMP)
+#     if(OpenMP_CXX_FOUND)
+#         target_link_libraries(${TARGET_NAME} PUBLIC
+#             OpenMP::OpenMP_CXX
+#             pybind11::module
+
+#           PRIVATE
+#             kipl
+#             ImagingAlgorithms
+#             xml2
+#             tiff
+#             fftw3
+#             fftw3f
+#             ModuleConfig
+#             ReconFramework
+#             StdBackProjectors
+#             FDKBackProjectors
+#             cfitsio
+#             NeXus
+#             NeXusCPP
+#             )
+#     else()
+#         target_link_libraries(${TARGET_NAME}
+#           PUBLIC
+#             pybind11::module
+
+#           PRIVATE
+#             kipl
+#             ImagingAlgorithms
+#             xml2
+#             tiff
+#             fftw3
+#             fftw3f
+#             ModuleConfig
+#             ReconFramework
+#             StdBackProjectors
+#             FDKBackProjectors
+#             cfitsio
+#             NeXus
+#             NeXusCPP
+#           )
+#     endif()
+# endif()
+
+
 
 set_target_properties(${TARGET_NAME}
   PROPERTIES

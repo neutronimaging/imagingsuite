@@ -52,6 +52,7 @@ private Q_SLOTS:
 
     void ProjectionFilterParameters();
     void ProjectionFilterProcessing();
+    void ProjectionFilterPadding();
     void StripeFilterParameters();
     void StripeFilterProcessing2D();
 
@@ -538,6 +539,29 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
 
 }
 
+void TestImagingAlgorithms::ProjectionFilterPadding()
+{
+//    kipl::base::TImage<float,2> sino;
+//#ifdef DEBUG
+//    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
+//#else
+//    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
+//#endif
+
+//    ImagingAlgorithms::ProjectionFilter pf(nullptr);
+//    kipl::base::TImage<float,2> tmp=sino;
+//    tmp.Clone();
+
+//    pf.process(tmp);
+
+
+//    pf.pad(sino.GetLinePtr(0), sino.Size(0), float *pDest, const size_t nDestLen);
+
+//    kipl::io::WriteTIFF(sino,"projfilt_result.tif",kipl::base::Float32);
+//    QCOMPARE(pf.currentFFTSize(),2048UL);
+//    QCOMPARE(pf.currentImageSize(),sino.Size(0));
+
+}
 void TestImagingAlgorithms::StripeFilterParameters()
 {
    kipl::base::TImage<float,2> sino;

@@ -625,7 +625,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str();
+        msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -973,7 +973,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str();
+        msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -1416,7 +1416,7 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str();
+        msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }

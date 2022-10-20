@@ -14,6 +14,7 @@
 #include <ReconConfig.h>
 #include <interactors/interactionbase.h>
 #include <logging/logger.h>
+#include <projectionfilter.h>
 
 class FdkReconBase : public BackProjectorModuleBase
 {
@@ -90,20 +91,21 @@ protected:
     size_t MatrixCenterX;
 
     float ProjCenter;
-    float fWeights[1024];
-    float fSin[1024];
-    float fCos[1024];
-    float fStartU[1024];
-    float fLocalStartU[1024];
+//    float fWeights[1024];
+//    float fSin[1024];
+//    float fCos[1024];
+//    float fStartU[1024];
+//    float fLocalStartU[1024];
     float *proj_matrices;
 
     size_t nProjectionBufferSize;
     size_t nSliceBlock;
-    size_t nSubVolume[2];
+//    size_t nSubVolume[2];
     std::vector<size_t> volume_size;
     float spacing[3];
     float fRotation;
 
+    ImagingAlgorithms::ProjectionFilter filter;
 
 };
 

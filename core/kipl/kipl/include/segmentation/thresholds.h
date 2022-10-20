@@ -211,7 +211,7 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img,
 
 	if (mask) {
 		long maskscope;
-		if (kipl::base::CheckEqualSize(img,*mask))
+        if (kipl::base::checkEqualSize(img,*mask))
 			maskscope=img.Size();
 		else {
             auto mdims=mask->dims();
