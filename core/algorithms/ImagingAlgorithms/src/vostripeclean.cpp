@@ -49,8 +49,10 @@ kipl::base::TImage<float,2> VoStripeClean::removeStripeBasedSorting(kipl::base::
     {
         auto pLine = tsinogram.GetLinePtr(i);
         std::multimap<float,size_t> m;
+
         for (size_t j=0; j<tsinogram.Size(0); ++j)
             m.insert(make_pair(pLine[j],j));
+
         std::vector<float> v;
         for (const auto & item: m)
             v.push_back(item.first);
