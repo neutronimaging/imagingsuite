@@ -492,8 +492,13 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float, 2> &img)
             spotlist.push_back(i);
     }
 
-    kipl::morphology::RepairHoles(img,spotlist,kipl::base::conn8);
+    msg.str("");
+    msg<<"Found "<<spotlist.size()<<" spots ("<<static_cast<float>(spotlist.size())/static_cast<float>(padded.Size())<<")";
+    logger.verbose(msg.str());
 
+    kipl::morphology::RepairHoles(padded,spotlist,kipl::base::conn8);
+
+    unpadEdges(padded,img);
 }
 
 void MorphSpotClean::setConnectivity(kipl::base::eConnectivity conn)
