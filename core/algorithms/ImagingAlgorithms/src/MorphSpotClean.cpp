@@ -5,6 +5,7 @@
 #include <morphology/morphextrema.h>
 #include <math/image_statistics.h>
 #include <morphology/label.h>
+#include <morphology/repairhole.h>
 #include <math/median.h>
 #include <math/mathfunctions.h>
 #include <io/io_tiff.h>
@@ -169,6 +170,46 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> *pImg, size_t first, s
     logger.message(msg.str());
 }
 
+std::vector<float> MorphSpotClean::updateThresholds(kipl::base::TImage<float,2> & padded,
+                                                    kipl::base::TImage<float,2> &noholes,
+                                                    kipl::base::TImage<float,2> & nopeaks)
+{
+    auto threshold = m_fThreshold;
+
+    if (m_bThresholdByPercentage)
+    {
+        size_t idx;
+        std::vector<size_t> hist;
+        std::vector<float> axis;
+
+        if (noholes.Size()==padded.Size())
+        {
+            auto diff = kipl::math::abs(noholes-padded);
+            kipl::base::highEntropyHistogram(diff.GetDataPtr(), diff.Size(),
+                                                  1024UL,
+                                                  hist, axis,
+                                                  0.0f, 0.0f,
+                                                  false);
+            kipl::base::FindLimit(hist,threshold[0],idx);
+            threshold[0] = axis[idx];
+        }
+
+        if (nopeaks.Size()==padded.Size())
+        {
+            auto diff = kipl::math::abs(nopeaks-padded);
+            kipl::base::highEntropyHistogram(diff.GetDataPtr(), diff.Size(),
+                                                  1024UL,
+                                                  hist, axis,
+                                                  0.0f, 0.0f,
+                                                  false);
+            kipl::base::FindLimit(hist,threshold[1],idx);
+            threshold[1] = axis[idx];
+        }
+    }
+
+    return threshold;
+}
+
 void MorphSpotClean::detectionImage(kipl::base::TImage<float,2> &img,
                                     kipl::base::TImage<float,2> &padded,
                                     kipl::base::TImage<float,2> &noholes,
@@ -224,38 +265,8 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
 
     std::ostringstream msg;
 
-    std::vector<float> threshold = m_fThreshold;
+    std::vector<float> threshold = updateThresholds(padded,noholes,nopeaks);
     std::vector<float> sigma     = m_fSigma;
-
-    if (m_bThresholdByPercentage)
-    {
-        size_t idx;
-        std::vector<size_t> hist;
-        std::vector<float> axis;
-
-        if (noholes.Size()==padded.Size())
-        {
-            auto diff = kipl::math::abs(noholes-padded);
-            kipl::base::highEntropyHistogram(diff.GetDataPtr(), diff.Size(),
-                                                  1024UL,
-                                                  hist, axis,
-                                                  0.0f, 0.0f,
-                                                  false);
-            kipl::base::FindLimit(hist,threshold[0],idx);
-            threshold[0] = axis[idx];
-        }
-        if (nopeaks.Size()==padded.Size())
-        {
-            auto diff = kipl::math::abs(nopeaks-padded);
-            kipl::base::highEntropyHistogram(diff.GetDataPtr(), diff.Size(),
-                                                  1024UL,
-                                                  hist, axis,
-                                                  0.0f, 0.0f,
-                                                  false);
-            kipl::base::FindLimit(hist,threshold[1],idx);
-            threshold[1] = axis[idx];
-        }
-    }
 
     sigma[0] = sigma[0]*threshold[0];
     sigma[1] = sigma[1]*threshold[1];
@@ -268,10 +279,9 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     float *pHoles = noholes.GetDataPtr();
     float *pPeaks = nopeaks.GetDataPtr();
 
-
     if ((m_fSigma[0]==0.0f) && (m_fSigma[1]==0.0f))
     {
-        for (size_t i=0; i<padded.Size(); i++)
+        for (size_t i=0; i<padded.Size(); ++i)
         {
             float val=pImg[i];
             switch (m_eMorphDetect)
@@ -361,7 +371,7 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
     unpadEdges(padded,img);
 }
 
-void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
+void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
 {
     kipl::base::TImage<float,2> res;
     kipl::base::TImage<float,2> padded,noholes, nopeaks;
@@ -370,10 +380,10 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
     size_t N=padded.Size();
     res=padded; res.Clone();
 
-    float *pImg=padded.GetDataPtr();
-    float *pRes=res.GetDataPtr();
-    float *pHoles=noholes.GetDataPtr();
-    float *pPeaks=nopeaks.GetDataPtr();
+    float *pImg   = padded.GetDataPtr();
+    float *pRes   = res.GetDataPtr();
+    float *pHoles = noholes.GetDataPtr();
+    float *pPeaks = nopeaks.GetDataPtr();
 
     kipl::containers::ArrayBuffer<PixelInfo> spots(img.Size());
 
@@ -420,6 +430,69 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float,2> &img)
     }
 
     img=CleanByArray(res,&spots);
+
+}
+
+void MorphSpotClean::ProcessFill(kipl::base::TImage<float, 2> &img)
+{
+    kipl::base::TImage<float,2> padded, nopeaks, noholes;
+
+    detectionImage(img,padded,noholes,nopeaks,false);
+
+    std::ostringstream msg;
+
+    std::vector<float> threshold = updateThresholds(padded,noholes,nopeaks);
+    std::vector<float> sigma     = m_fSigma;
+
+    sigma[0] = sigma[0]*threshold[0];
+    sigma[1] = sigma[1]*threshold[1];
+
+    msg.str("");
+    msg<<"Thresholds: Dark="<<threshold[0]<<"("<<sigma[0]<<"), Bright="<<threshold[1]<<"("<<sigma[1]<<")";
+    logger.verbose(msg.str());
+
+    float *pImg   = padded.GetDataPtr();
+    float *pHoles = noholes.GetDataPtr();
+    float *pPeaks = nopeaks.GetDataPtr();
+
+    std::list<size_t> spotlist;
+
+    for (size_t i=0; i<padded.Size(); ++i)
+    {
+        float val=pImg[i];
+        bool res;
+        switch (m_eMorphDetect)
+        {
+        case MorphDetectDarkSpots :
+            res = threshold[0]<abs(pHoles[i]-val);
+            break;
+
+        case MorphDetectBrightSpots :
+            res = threshold[1]<abs(pPeaks[i]-val);
+            break;
+
+        case MorphDetectAllSpots :
+            res = (threshold[0]<abs(pHoles[i]-val)) || (threshold[1]<abs(pPeaks[i]-val));
+            break;
+
+        case MorphDetectHoles :
+            res = threshold[0]<abs(val-pHoles[i]);
+            break;
+
+        case MorphDetectPeaks :
+            res = (threshold[1]<abs(pPeaks[i]-val));
+            break;
+
+        case MorphDetectBoth :
+            res =  (threshold[0]<abs(val-pHoles[i])) || (threshold[1]<abs(pPeaks[i]-val));
+            break;
+        }
+
+        if (res)
+            spotlist.push_back(i);
+    }
+
+    kipl::morphology::RepairHoles(img,spotlist,kipl::base::conn8);
 
 }
 
