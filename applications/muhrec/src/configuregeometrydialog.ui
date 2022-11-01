@@ -146,15 +146,32 @@
              <item>
               <widget class="SingleFileForm" name="widget_projection180deg" native="true"/>
              </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_loadImages">
-               <property name="text">
-                <string>Preview</string>
-               </property>
-              </widget>
-             </item>
             </layout>
            </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_loadImages">
+              <property name="text">
+               <string>Preview</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>

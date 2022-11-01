@@ -15,6 +15,7 @@
 #include <ReconHelpers.h>
 #include <base/KiplException.h>
 #include <strings/filenames.h>
+#include <analyzefileext.h>
 #include <filters/medianfilter.h>
 #include <math/mathconstants.h>
 #include <math/linfit.h>
@@ -419,9 +420,9 @@ int ConfigureGeometryDialog::LoadImages()
     try {
         if (m_Config.ProjectionInfo.nOBCount!=0)
         {
-            size_t found = m_Config.ProjectionInfo.sOBFileMask.find("hdf");
+            auto ext = readers::GetFileExtensionType(m_Config.ProjectionInfo.sOBFileMask);
 
-            if (found==std::string::npos)
+            if ( (ext == readers::ExtensionFITS) || (ext == readers::ExtensionTIFF) )
             {
                 m_ProjOB=reader.Read(m_Config.ProjectionInfo.sReferencePath,
                 m_Config.ProjectionInfo.sOBFileMask,
@@ -431,7 +432,7 @@ int ConfigureGeometryDialog::LoadImages()
                 m_Config.ProjectionInfo.fBinning,
                 {});
             }
-            else
+            else if (ext == readers::ExtensionHDF5)
             {
                 m_ProjOB = reader.ReadNexus(m_Config.ProjectionInfo.sOBFileMask,
                                    m_Config.ProjectionInfo.nOBFirstIndex,
@@ -478,9 +479,9 @@ int ConfigureGeometryDialog::LoadImages()
     try {
         if (m_Config.ProjectionInfo.nDCCount!=0)
         {
-            size_t found = m_Config.ProjectionInfo.sDCFileMask.find("hdf");
+            auto ext = readers::GetFileExtensionType(m_Config.ProjectionInfo.sDCFileMask);
 
-            if (found==std::string::npos)
+            if ( (ext == readers::ExtensionFITS) || (ext == readers::ExtensionTIFF) )
             {
                 m_ProjDC=reader.Read(m_Config.ProjectionInfo.sReferencePath,
                 m_Config.ProjectionInfo.sDCFileMask,
@@ -490,7 +491,7 @@ int ConfigureGeometryDialog::LoadImages()
                 m_Config.ProjectionInfo.fBinning,
                 {});
             }
-            else
+            else if ( ext == readers::ExtensionHDF5 )
             {
                 m_ProjDC = reader.ReadNexus(m_Config.ProjectionInfo.sDCFileMask,
                                    m_Config.ProjectionInfo.nDCFirstIndex,
@@ -549,19 +550,21 @@ int ConfigureGeometryDialog::LoadImages()
 
     }
 
+    auto ext = readers::GetFileExtensionType(m_Config.ProjectionInfo.sFileMask);
 
-    size_t found = m_Config.ProjectionInfo.sFileMask.find("hdf");
-
-    if (found==std::string::npos)
+    if ( (ext == readers::ExtensionFITS) || (ext == readers::ExtensionTIFF) )
     {
+        std::string fname0deg   = ui->widget_projection0deg->getFileName();
+        std::string fname180deg = ui->widget_projection180deg->getFileName();
+
 
         std::map<float,ProjectionInfo> projlist;
         BuildFileList(&m_Config,&projlist);
 
-        ProjectionInfo marked;
-
-        try
+        if (ui->radioButton_fromProjections->isChecked())
         {
+            ProjectionInfo marked;
+
             marked=projlist.begin()->second;
             float diff=abs(projlist.begin()->first);
 
@@ -576,8 +579,28 @@ int ConfigureGeometryDialog::LoadImages()
             msg.str("");
             msg<<"Found first projection at "<<marked.angle<<", name: "<<marked.name<<", weight="<<marked.weight;
             logger.message(msg.str());
+            fname0deg = marked.name;
 
-            m_Proj0Deg=reader.Read(marked.name,
+            marked=projlist.begin()->second;
+            diff=abs(180.0f-projlist.begin()->first);
+
+            for (auto & item : projlist)
+            {
+                if (abs(180.0f-item.first)<diff)
+                {
+                    marked = item.second;
+                    diff   = abs(180.0f-item.first);
+                }
+            }
+            msg.str("");
+            msg<<"Found opposite projection at "<<marked.angle<<", name: "<<marked.name<<", weight="<<marked.weight;
+            logger.message(msg.str());
+            fname180deg = marked.name;
+        }
+
+        try
+        {
+            m_Proj0Deg=reader.Read(fname0deg,
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
@@ -612,22 +635,7 @@ int ConfigureGeometryDialog::LoadImages()
         }
 
         try {
-            marked=projlist.begin()->second;
-            float diff=abs(180.0f-projlist.begin()->first);
-
-            for (auto & item : projlist)
-            {
-                if (abs(180.0f-item.first)<diff)
-                {
-                    marked = item.second;
-                    diff   = abs(180.0f-item.first);
-                }
-            }
-            msg.str("");
-            msg<<"Found opposite projection at "<<marked.angle<<", name: "<<marked.name<<", weight="<<marked.weight;
-            logger.message(msg.str());
-
-            m_Proj180Deg=reader.Read(marked.name,
+            m_Proj180Deg=reader.Read(fname180deg,
                     m_Config.ProjectionInfo.eFlip,
                     m_Config.ProjectionInfo.eRotate,
                     m_Config.ProjectionInfo.fBinning,
@@ -661,7 +669,7 @@ int ConfigureGeometryDialog::LoadImages()
             return -1;
         }
     }
-    else
+    else if ( ext == readers::ExtensionHDF5)
     { // read the hfd file
 
         m_Proj0Deg=reader.ReadNexus(m_Config.ProjectionInfo.sFileMask,
@@ -749,6 +757,8 @@ int ConfigureGeometryDialog::LoadImages()
 
     m_Proj180Deg = medfilt(m_Proj180Deg);
 
+    ui->buttonFindCenter->setEnabled(true);
+    ui->buttonFindCenter->setText("Find center");
     return 0;
 }
 
@@ -918,6 +928,8 @@ void ConfigureGeometryDialog::on_radioButton_manualSelection_toggled(bool checke
 
     ui->groupBox_fileSelection->show();
     ui->groupBox_scanType->hide();
+    ui->buttonFindCenter->setEnabled(false);
+    ui->buttonFindCenter->setText("Press preview to update image");
 }
 
 
@@ -926,6 +938,14 @@ void ConfigureGeometryDialog::on_radioButton_fromProjections_toggled(bool checke
     std::ignore = checked;
 
     ui->groupBox_fileSelection->hide();
-    ui->groupBox_scanType->hide();
+    ui->groupBox_scanType->show();
+    ui->buttonFindCenter->setEnabled(false);
+    ui->buttonFindCenter->setText("Press preview to update image");
+}
+
+
+void ConfigureGeometryDialog::on_pushButton_loadImages_clicked()
+{
+    LoadImages();
 }
 

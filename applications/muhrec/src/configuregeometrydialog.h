@@ -47,6 +47,8 @@ private slots:
 
     void on_radioButton_fromProjections_toggled(bool checked);
 
+    void on_pushButton_loadImages_clicked();
+
 private:
     kipl::base::TImage<float,2> ThresholdProjection(const kipl::base::TImage<float,2> img, float level);
     float CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
