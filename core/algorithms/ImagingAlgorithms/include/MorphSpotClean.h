@@ -80,6 +80,7 @@ public:
 
 protected:
     void ProcessReplace(kipl::base::TImage<float,2> &img);
+    void ProcessFillMix(kipl::base::TImage<float,2> &img);
     void ProcessFill(kipl::base::TImage<float,2> &img);
     void process(kipl::base::TImage<float, 3> *pImg,
                  size_t first,
@@ -87,6 +88,10 @@ protected:
                  std::vector<float> th,
                  std::vector<float> sigma,
                  size_t tid=0UL);
+
+    std::vector<float>  updateThresholds(kipl::base::TImage<float,2> &padded,
+                                         kipl::base::TImage<float,2> &noholes,
+                                         kipl::base::TImage<float,2> &nopeaks);
 
     void PadEdges(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &padded);
     void unpadEdges(kipl::base::TImage<float,2> &padded, kipl::base::TImage<float,2> &img);
