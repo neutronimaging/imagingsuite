@@ -26,6 +26,22 @@ include_directories(
     ../../../core/algorithms/ImagingAlgorithms/include
     )
 
+    if (WIN32)
+    include_directories(
+        ../../../core/kipl/kipl/include
+        ../../../core/kipl/kipl/include
+        ../../../core/modules/ModuleConfig/include
+        ../../../external/include/
+        ../../../../ExternalDependencies/windows/include
+        ../../../../ExternalDependencies/windows/include/nexus
+        ../../../../ExternalDependencies/windows/include/cfitsio
+        ../../../../ExternalDependencies/windows/include/libxml2
+        ../Framework/ReconFramework/include
+        ../Backprojectors/StdBackProjectors/include
+        ../Backprojectors/FDKBackProjectors/src
+        ../../../core/algorithms/ImagingAlgorithms/include
+        )
+    endif()
 #link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
 
 # link_directories( /opt/local/lib ../../../external/mac/lib)
@@ -109,6 +125,37 @@ if (APPLE)
     )
 endif()
 
+if (WIN32)
+    target_link_directories(${TARGET_NAME} PRIVATE
+    ../../../../ExternalDependencies/windows/lib
+    ../../../../imagingsuite/external/lib64
+    ../../../../imagingsuite/external/lib64/nexus
+    )
+    
+    target_link_libraries(${TARGET_NAME}
+    PUBLIC
+      pybind11::module
+
+    PRIVATE
+        kipl
+        ImagingAlgorithms
+        ModuleConfig
+        ReconFramework
+        StdBackProjectors
+        FDKBackProjectors
+        libxml2
+        cfitsio
+        libtiff
+        # armadillo
+        liblapack
+        libopenblas
+        libfftw3-3
+        libfftw3f-3
+        # NeXus
+        # NeXusCPP
+        # Iphlpapi
+    )
+endif()
 
 # if (UNIX AND NOT APPLE)
 #     find_package(OpenMP)
