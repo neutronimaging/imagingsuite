@@ -43,6 +43,10 @@ private slots:
 
     void on_buttonFindCenter_clicked();
 
+    void on_radioButton_manualSelection_toggled(bool checked);
+
+    void on_radioButton_fromProjections_toggled(bool checked);
+
 private:
     kipl::base::TImage<float,2> ThresholdProjection(const kipl::base::TImage<float,2> img, float level);
     float CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
@@ -57,6 +61,7 @@ private:
     void CumulateProjection(const kipl::base::TImage<float,2> img, const kipl::base::TImage<float,2> biimg);
     pair<size_t, size_t> FindBoundary(const kipl::base::TImage<float,2> img, float level);
     pair<size_t, size_t> FindMaxBoundary();
+    pair<size_t, size_t> findOppositeProjections();
 
     void UpdateConfig();
     void UpdateDialog();
