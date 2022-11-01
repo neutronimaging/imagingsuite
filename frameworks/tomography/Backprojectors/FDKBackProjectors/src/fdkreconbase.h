@@ -2,6 +2,7 @@
 #ifndef FDKRECONBASE_H
 #define FDKRECONBASE_H
 
+#include "fdkbackproj_global.h"
 #include <BackProjectorModuleBase.h>
 #include <ParameterHandling.h>
 #include <string>
@@ -16,7 +17,7 @@
 #include <logging/logger.h>
 #include <projectionfilter.h>
 
-class FdkReconBase : public BackProjectorModuleBase
+class FDKBACKPROJSHARED_EXPORT FdkReconBase : public BackProjectorModuleBase
 {
 public:
     FdkReconBase(std::string application, std::string name, eMatrixAlignment alignment, kipl::interactors::InteractionBase *interactor=nullptr);
