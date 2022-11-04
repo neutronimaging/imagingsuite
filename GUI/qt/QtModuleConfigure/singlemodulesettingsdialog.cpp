@@ -136,7 +136,7 @@ std::map<std::string, std::map<std::string, std::string> > SingleModuleSettingsD
     std::wstring so(filename.length(),' ');
 
     copy(filename.begin(),filename.end(),so.begin());
-    hinstLib = LoadLibrary(so.c_str());
+    hinstLib = LoadLibraryW(so.c_str());
 #else
     hinstLib = dlopen(filename.c_str(), RTLD_LAZY);
 #endif
