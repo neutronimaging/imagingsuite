@@ -25,7 +25,7 @@ namespace fft
 std::mutex fftMutex;
 
 FFTBaseFloat::FFTBaseFloat(const std::vector<size_t> _dims) :
-	logger("kipl::math::fft::FFTBaseFloat", std::clog),
+    logger("kipl::math::fft::FFTBaseFloat"),
 	have_r2cPlan(false),
 	have_c2cPlan(false),
 	have_c2rPlan(false),

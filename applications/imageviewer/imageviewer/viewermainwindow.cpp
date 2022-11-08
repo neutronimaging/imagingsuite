@@ -38,7 +38,7 @@ ViewerMainWindow::ViewerMainWindow(QWidget *parent) :
     isMultiFrame(false)
 {
     logdlg.setModal(false);
-    kipl::logging::Logger::AddLogTarget(logdlg);
+    kipl::logging::Logger::addLogTarget(logdlg);
 
     ui->setupUi(this);
     QStringList args=QApplication::arguments();

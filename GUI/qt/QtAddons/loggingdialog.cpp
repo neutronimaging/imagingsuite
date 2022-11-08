@@ -18,9 +18,9 @@ LoggingDialog::~LoggingDialog()
     delete ui;
 }
 
-size_t LoggingDialog::Write(std::string str)
+size_t LoggingDialog::write(const std::string &str)
 {
-    return ui->widget_logger->Write(str);
+    return ui->widget_logger->write(str);
 }
 
 QString LoggingDialog::serialize()

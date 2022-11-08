@@ -32,7 +32,11 @@ add_executable(${TARGET_NAME} tst_logging.cpp)
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 
-target_link_libraries(${TARGET_NAME} PRIVATE Qt6::Test)
+target_link_libraries(${TARGET_NAME}
+    PRIVATE
+        Qt6::Test
+        kipl
+    )
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests
         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/applications/${TARGET_NAME}.app/Contents/Frameworks)

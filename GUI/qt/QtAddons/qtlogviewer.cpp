@@ -56,7 +56,7 @@ void QtLogViewer::on_comboLogLevel_currentIndexChanged(int index)
         setLogLevel(static_cast<kipl::logging::Logger::LogLevel>(index));
 }
 
-size_t QtLogViewer::Write(std::string str)
+size_t QtLogViewer::write(std::string str)
 {
     emit newText(QString::fromStdString(str));
 

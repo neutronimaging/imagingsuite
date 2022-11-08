@@ -75,7 +75,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
 
     // Setup logging dialog
     logdlg->setModal(false);
-    kipl::logging::Logger::AddLogTarget(*logdlg);
+    kipl::logging::Logger::addLogTarget(*logdlg);
 
     logger(kipl::logging::Logger::LogMessage,"Enter c'tor");
 

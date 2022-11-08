@@ -9,7 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <list>
+#include <vector>
 #include <mutex>
 
 namespace kipl {
@@ -20,7 +20,8 @@ namespace logging {
 class KIPLSHARED_EXPORT LogWriter {
 public:
     /// \brief Writes a message string using cout
-	virtual size_t Write(std::string str);
+    virtual size_t write(const std::string & str);
+    virtual bool isValid();
 	virtual ~LogWriter() {}
 }; 
 
@@ -30,10 +31,11 @@ class KIPLSHARED_EXPORT LogStreamWriter : public LogWriter
 public:
     /// \brief C'tor that open a file for message streaming.
     /// \param fname File name of the destination file.
-    LogStreamWriter(std::string fname);
+    LogStreamWriter(const std::string &fname);
     /// \brief Writes a message to the stream
     /// \param str The message to write
-    virtual size_t Write(std::string str);
+    size_t write(const std::string & str) override;
+    bool isValid() override;
     virtual ~LogStreamWriter();
 protected:
     std::ofstream fout;
@@ -55,11 +57,11 @@ public:
 	/// \brief C'tor that initializes the logger with a name and a stream for the output
 	/// \param str Name used to indicate the message source
 	/// \param s stream for the output
-	Logger(std::string str, std::ostream &s=std::cout); 
+    Logger(std::string str);//, std::ostream &s=std::cout);
 	
 	/// \brief Set the global log target for all logging objects
 	/// \param lw A log writer object
-	static size_t AddLogTarget(LogWriter & lw);
+    static size_t addLogTarget(LogWriter *lw);
 
 
 	/// \brief Set the global log level
@@ -87,13 +89,10 @@ protected:
 	/// \brief Back-end of the log writer
 	/// \param s The log level of the current log message
 	/// \param message A string containing the message
-    static void WriteMessage(LogLevel s, const std::string &message);
-#ifdef MULTITARGETS
+    static void writeMessage(LogLevel s, const std::string &message);
     /// \brief
-    static std::list<LogWriter *> LogTargets;   //!< Refence to the global log target. Experimental approach to allow several log targets. It is still not stable
-#else
+    static std::vector<LogWriter *> LogTargets;   //!< Refence to the global log target. Experimental approach to allow several log targets. It is still not stable
     static LogWriter * LogTarget;   //!< Refence to the global log target single log target case
-#endif
     static LogLevel CurrentLogLevel; //!< The current global log level
     static std::mutex m_LoggerMutex; ///< A mutex to protect against simultaneous writing from several threads.
 
