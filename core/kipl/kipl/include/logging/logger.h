@@ -19,10 +19,17 @@ namespace logging {
 /// \brief Base class to redirect the log messages to different targets. Instances of this class write to the standard stream.
 class KIPLSHARED_EXPORT LogWriter {
 public:
+    LogWriter(std::string name);
     /// \brief Writes a message string using cout
     virtual size_t write(const std::string & str);
     virtual bool isValid();
+    bool isActive();
+    void active(bool state);
+    std::string loggerName();
 	virtual ~LogWriter() {}
+protected :
+    std::string sName;
+    bool bActive;
 }; 
 
 /// \brief A writer class that streams the messages to a file

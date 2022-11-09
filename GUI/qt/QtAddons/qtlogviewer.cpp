@@ -11,6 +11,7 @@ namespace QtAddons {
 
 QtLogViewer::QtLogViewer(QWidget *parent) :
     QWidget(parent),
+    LogWriter("QtLogViewerWriter"),
     logger("QtLogViewer"),
     ui(new Ui::QtLogViewer),
     m_CurrentLoglevel(kipl::logging::Logger::LogMessage)
@@ -56,7 +57,7 @@ void QtLogViewer::on_comboLogLevel_currentIndexChanged(int index)
         setLogLevel(static_cast<kipl::logging::Logger::LogLevel>(index));
 }
 
-size_t QtLogViewer::write(std::string str)
+size_t QtLogViewer::write(const std::string &str)
 {
     emit newText(QString::fromStdString(str));
 

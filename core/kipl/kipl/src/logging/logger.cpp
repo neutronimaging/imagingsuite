@@ -15,12 +15,19 @@ using namespace std;
 
 Logger::LogLevel Logger::CurrentLogLevel=Logger::LogMessage;
 
-LogWriter ConsoleLogger;
+LogWriter ConsoleLogger("ConsoleLogger");
 
 LogWriter * Logger::LogTarget = &ConsoleLogger;
 std::vector<LogWriter *> Logger::LogTargets = {};
 
 std::mutex Logger::m_LoggerMutex;
+
+LogWriter::LogWriter(std::string name) :
+    sName(name),
+    bActive(true)
+{
+
+}
 
 size_t LogWriter::write(const std::string &str)
 {
@@ -34,7 +41,23 @@ bool LogWriter::isValid()
     return true;
 }
 
-LogStreamWriter::LogStreamWriter(const std::string & fname)
+bool LogWriter::isActive()
+{
+    return bActive;
+}
+
+void LogWriter::active(bool state)
+{
+    bActive = state;
+}
+
+string LogWriter::loggerName()
+{
+    return sName;
+}
+
+LogStreamWriter::LogStreamWriter(const std::string & fname) :
+    LogWriter("LogStreamWriter")
 {
 
     fout.open(fname.c_str(),ios::out);
@@ -45,6 +68,7 @@ LogStreamWriter::LogStreamWriter(const std::string & fname)
 size_t LogStreamWriter::write(const std::string &str)
 {
     fout<<str;
+    fout.flush();
 
     return 0;
 }
@@ -65,9 +89,9 @@ Logger::Logger(std::string str)//, std::ostream & UNUSED(s))
 	sLogOrigin=str;
 }
 
-size_t Logger::addLogTarget(LogWriter & lw)
+size_t Logger::addLogTarget(LogWriter * lw)
 {
-    Logger::LogTargets.push_back(&lw);
+    Logger::LogTargets.push_back(lw);
 
 	return 0;
 }

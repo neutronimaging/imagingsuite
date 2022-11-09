@@ -6,6 +6,7 @@ namespace QtAddons {
 
 LoggingDialog::LoggingDialog(QWidget *parent) :
     QDialog(parent),
+    kipl::logging::LogWriter("QtLoggingDialog"),
     logger("LoggingDialog"),
     ui(new Ui::LoggingDialog)
 {

@@ -59,12 +59,15 @@ void LoggingTests::testLoggingEnums()
 
 void LoggingTests::testLogWriter()
 {
-    kipl::logging::LogWriter lw;
+    kipl::logging::LogWriter lw("lw");
 
     QCOMPARE(lw.isValid(),true);
 
     QCOMPARE(lw.write("test"),0);
-
+    QCOMPARE(lw.loggerName(),std::string("lw"));
+    QCOMPARE(lw.isActive(),true);
+    lw.active(false);
+    QCOMPARE(lw.isActive(),false);
 }
 
 void LoggingTests::testLogStreamWriter()

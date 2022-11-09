@@ -49,6 +49,17 @@ int main(int argc, char *argv[])
     msg.str(""); msg<<"Home dir: "<<homedir;
     logger.message(msg.str());
 
+    std::string logpath = homedir+".imagingtools/muhrec.log";
+    kipl::strings::filenames::CheckPathSlashes(logpath,false);
+
+    std::cout<<logpath<<std::endl;
+    kipl::logging::LogStreamWriter logstream(logpath);
+
+    logger.addLogTarget(&logstream);
+
+    msg<<"MuhRec "<<VERSION<<"\nCompile date: "<<__DATE__<<" at "<<__TIME__;
+    logger.message(msg.str());
+
     std::string application_path=app.applicationDirPath().toStdString();
 
     kipl::strings::filenames::CheckPathSlashes(application_path,true);
