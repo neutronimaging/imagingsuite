@@ -109,7 +109,7 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Charts
-    Qt${QT_VERSION_MAJOR}::PrintSupport
+    Qt6::PrintSupport
     kipl
     )
 

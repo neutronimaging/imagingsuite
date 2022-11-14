@@ -137,7 +137,8 @@ endif()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
-# add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
+#add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
+add_subdirectory(core/kipl/UnitTests/tLogging/)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 # add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
