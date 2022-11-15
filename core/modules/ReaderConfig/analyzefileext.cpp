@@ -82,6 +82,7 @@ void READERCONFIGSHARED_EXPORT string2enum(std::string ext, readers::eExtensionT
     extmap["hdf4"]  = readers::ExtensionHDF4;
     extmap["hd5"]   = readers::ExtensionHDF5;
     extmap["hdf5"]  = readers::ExtensionHDF5;
+    extmap["nx"]    = readers::ExtensionHDF5;
     extmap["hdf"]   = readers::ExtensionHDF;
     extmap["seq"]   = readers::ExtensionSEQ;
 

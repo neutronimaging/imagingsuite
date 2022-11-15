@@ -18,6 +18,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("BBLogNorm", interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
     m_Config(""),
+    blackbodyexternalmaskname("none"),
     nBBextCount(1),
     nBBextFirstIndex(0),
     nOBCount(0),
@@ -377,7 +378,7 @@ bool BBLogNorm::SetROI(const std::vector<size_t> &roi) {
 
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str());
 
     LoadReferenceImages(roi);
     nNormRegion = nOriginalNormRegion; //nNormRegion seems not used
