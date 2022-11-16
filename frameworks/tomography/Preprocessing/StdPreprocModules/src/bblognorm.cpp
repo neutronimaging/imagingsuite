@@ -8,6 +8,7 @@
 #include <math/image_statistics.h>
 #include <math/median.h>
 #include <strings/filenames.h>
+#include <analyzefileext.h>
 
 #include <ParameterHandling.h>
 
@@ -1528,7 +1529,6 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
-    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -1536,8 +1536,9 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        found = fmask.find("hdf");
-         if (found==std::string::npos ) {
+        auto exttype = readers::GetFileExtensionType(fmask);
+         if (exttype != readers::ExtensionHDF5 )
+         {
 
             kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
             img = reader.Read(filename,
@@ -1580,7 +1581,8 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            if (found==std::string::npos ) {
+            if (exttype != readers::ExtensionHDF5 )
+            {
 
                 img=reader.Read(filename,
                         m_Config.ProjectionInfo.eFlip,
@@ -1667,7 +1669,6 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
-    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -1675,9 +1676,9 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        found = fmask.find("hdf");
-
-        if (found==std::string::npos ) {
+        auto exttype = readers::GetFileExtensionType(fmask);
+        if (exttype != readers::ExtensionHDF5 )
+        {
             kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
             img = reader.Read(filename,
                     config.ProjectionInfo.eFlip,
@@ -1716,7 +1717,8 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
         for (int i=1; i<N; ++i) {
 
-            if (found==std::string::npos ) {
+            if (exttype != readers::ExtensionHDF5 )
+            {
                 kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
                 img=reader.Read(filename,
@@ -1732,7 +1734,8 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
                             config.ProjectionInfo.fBinning,
                             doseBBroi) : initialDose;
             }
-            else{
+            else
+            {
                         img=reader.ReadNexus(fmask,i+firstIndex,
                                 m_Config.ProjectionInfo.eFlip,
                                 m_Config.ProjectionInfo.eRotate,
@@ -1765,10 +1768,10 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
 
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-             float *pFlat=refimg.GetDataPtr();
-            for (size_t i=1; i<refimg.Size(1); i++) {
+            float *pFlat=refimg.GetDataPtr();
+            for (size_t i=1; i<refimg.Size(1); i++)
+            {
                 memcpy(refimg.GetLinePtr(i), pFlat, sizeof(float)*refimg.Size(0));
-
             }
         }
     }
@@ -1792,11 +1795,9 @@ float BBLogNorm::DoseBBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
-    size_t found;
 
-    found=fname.find("hdf");
-
-    if (found!=std::string::npos)
+    auto exttype = readers::GetFileExtensionType(fname);
+    if (exttype == readers::ExtensionHDF5)
     {
         tmpdose=bUseNormROIBB ? reader.GetProjectionDoseNexus(fmask,firstIndex,
                     config.ProjectionInfo.eFlip,
