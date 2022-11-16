@@ -33,6 +33,8 @@ std::string READERCONFIGSHARED_EXPORT enum2string(readers::eExtensionTypes et)
 
     switch (et) {
     case readers::ExtensionTXT:   ext="txt"; break;
+    case readers::ExtensionCSV:   ext="csv"; break;
+    case readers::ExtensionLST:   ext="lst"; break;
     case readers::ExtensionDMP:   ext="dmp"; break;
     case readers::ExtensionDAT:   ext="dat"; break;
     case readers::ExtensionXML:   ext="xml"; break;
@@ -66,6 +68,8 @@ void READERCONFIGSHARED_EXPORT string2enum(std::string ext, readers::eExtensionT
     std::map<std::string,readers::eExtensionTypes> extmap;
 
     extmap["txt"]   = readers::ExtensionTXT;
+    extmap["csv"]   = readers::ExtensionCSV;
+    extmap["lst"]   = readers::ExtensionLST;
     extmap["dmp"]   = readers::ExtensionDMP;
     extmap["dat"]   = readers::ExtensionDAT;
     extmap["xml"]   = readers::ExtensionXML;

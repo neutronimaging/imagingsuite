@@ -8,7 +8,7 @@
 
 #include <strings/string2array.h>
 #include <strings/filenames.h>
-#include <analyzefileext.h>>
+#include <analyzefileext.h>
 
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
@@ -29,10 +29,14 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 
 	bool sequence=true;
 
-    std::string fname,ext;
-    ext=config->ProjectionInfo.sFileMask.substr(config->ProjectionInfo.sFileMask.rfind('.'));
+    std::string fname;
+    std::string ext;
 
-    if ((ext==".lst") || (ext==".txt") || (ext==".csv"))
+    auto exttype = readers::GetFileExtensionType(config->ProjectionInfo.sFileMask);
+
+    if ((exttype==readers::ExtensionLST) ||
+        (exttype==readers::ExtensionTXT) ||
+        (exttype==readers::ExtensionCSV))
     {
         logger(logger.LogMessage,"Using list file");
         fname=config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask;
@@ -99,9 +103,9 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 						kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
 						float angle=(i-config->ProjectionInfo.nFirstIndex)*fAngleStep+config->ProjectionInfo.fScanArc[0];
 
-                        auto ext = readers::GetFileExtensionType(config->ProjectionInfo.sFileMask);
+//                        auto exttype = readers::GetFileExtensionType(config->ProjectionInfo.sFileMask);
 
-                        if ( ext == readers::ExtensionHDF5 )
+                        if ( exttype != readers::ExtensionHDF5 )
                         {
                             multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(fname,angle)));
                         }
@@ -165,8 +169,8 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 
                         float angle=static_cast<float>(fmod(static_cast<float>(idx)*fGoldenSection*180.0f,arc)); // TODO Update equation to handle 360 deg scans
 
-                        auto ext = readers::GetFileExtensionType(config->ProjectionInfo.sFileMask);
-                        if (ext == readers::ExtensionHDF5 )
+//                        auto exttype = readers::GetFileExtensionType(config->ProjectionInfo.sFileMask);
+                        if (exttype != readers::ExtensionHDF5 )
                         {
                             multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(fname,angle)));
                         }
