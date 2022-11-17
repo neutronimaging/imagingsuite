@@ -271,7 +271,9 @@ size_t FDKbp_single::reconstruct(kipl::base::TImage<float,2> &proj, float angles
 
     getProjMatrix(angles, nrm, proj_matrix); // panel oriented as z, to be used with project_volume_onto_image_c
 
+    logger.verbose("Starting filter");
     filter.process(proj);
+    logger.verbose("Filtering done");
 
     //        REFERENCE FDK IMPLEMENTATION:
     //        project_volume_onto_image_reference (proj, &proj_matrix[0], &nrm[0]);
@@ -290,7 +292,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
     long int i, j, k;
 
     float* img = cbct_volume.GetDataPtr();
-    float *xip, *yip, *zip;
+
     float sad_sid_2;
     float scale = mConfig.ProjectionInfo.fSDD/mConfig.ProjectionInfo.fSOD; // compensate for resolution that is already included in weights
 
@@ -332,6 +334,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
     {
         float value = mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[1])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD+radius))/mConfig.ProjectionInfo.fResolution[0];
         CBCT_roi[1] = static_cast<size_t>(value);
+
         float value2 = mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[3])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0];
         if (value2>=mConfig.ProjectionInfo.projection_roi[3])
             CBCT_roi[3] = mConfig.ProjectionInfo.projection_roi[3];
@@ -354,9 +357,10 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
             CBCT_roi[3] = static_cast<float>(value2);
     }
 
-    if (CBCT_roi[1]-8>=0 && CBCT_roi[1]!=0)
+//    if ((8<CBCT_roi[1]) && (CBCT_roi[1]!=0))
+    if (8<CBCT_roi[1])
         CBCT_roi[1] -=8;
-    if (CBCT_roi[3]+8<=mConfig.ProjectionInfo.projection_roi[3])
+    if ((CBCT_roi[3]+8)<=mConfig.ProjectionInfo.projection_roi[3])
         CBCT_roi[3] +=8;
 
 
@@ -377,16 +381,17 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
     //        }
 
 #pragma omp parallel for
-    for (i=0; i<cbi.Size(0)*cbi.Size(1); ++i) {
+    for (i=0; i<cbi.Size(0)*cbi.Size(1); ++i)
+    {
         cbi[i] *=sad_sid_2; 	// Speedup trick re: Kachelsreiss
         cbi[i] *=scale;         // User scaling
     }
 
     //        ramp_filter(cbi);
 
-    xip = (float*) malloc (3*volume.Size(0)*sizeof(float));
-    yip = (float*) malloc (3*volume.Size(1)*sizeof(float));
-    zip = (float*) malloc (3*volume.Size(2)*sizeof(float));
+    float *xip = new float[3*volume.Size(0)];
+    float *yip = new float[3*volume.Size(1)];
+    float *zip = new float[3*volume.Size(2)];
 
     //        /* Precompute partial projections here */
     //        for (i = 0; i < vol->dim[0]; i++) {
@@ -412,15 +417,17 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
     // Precompute partial projections here
 #pragma omp parallel for
-    for (i = 0; i < volume.Size(0); ++i) {
+    for (i = 0; i < volume.Size(0); ++i)
+    {
         float x = (float) (origin[0] + i * spacing[0]);
         xip[i*3+0] = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
         xip[i*3+1] = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
-        xip[i*3+2] = x * proj_matrix[8];
+        xip[i*3+2] = x *  proj_matrix[8];
     }
 
 #pragma omp parallel for
-    for (j = 0; j < volume.Size(1); ++j) {
+    for (j = 0; j < volume.Size(1); ++j)
+    {
         float y = (float) (origin[1] + j * spacing[1]);
         yip[j*3+0] = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
         yip[j*3+1] = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
@@ -430,11 +437,13 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
     float cor_tilted;
 
 #pragma omp parallel for
-    for (k = 0; k < volume.Size(2); k++) {
+    for (k = 0; k < volume.Size(2); ++k)
+    {
         float z = (float) (origin[2] + k * spacing[2]);
 
         // not so elegant solution but it seems to work POSSIBLY ANCHE QST DA ADATTARE
-        if (mConfig.ProjectionInfo.bCorrectTilt){
+        if (mConfig.ProjectionInfo.bCorrectTilt)
+        {
             //                    float pos = static_cast<float> (mConfig.ProjectionInfo.roi[3])-static_cast<float>(k)-static_cast<float>(mConfig.ProjectionInfo.fTiltPivotPosition);
             float pos = static_cast<float> (CBCT_roi[3])-static_cast<float>(k)-static_cast<float>(mConfig.ProjectionInfo.fTiltPivotPosition);
             cor_tilted = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*pos+mConfig.ProjectionInfo.fCenter;
@@ -479,12 +488,13 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
     /* Main loop */
 
+    logger.verbose("backproj loop");
 #pragma omp parallel for // not sure about this firstprivate
-    for (k = 0; k < volume.Size(2); k++)
+    for (k = 0; k < volume.Size(2); ++k)
     {
         //            int long p = k * volume.Size(1) * volume.Size(0);
         int long j;
-        for (j = 0; j < volume.Size(1); j++)
+        for (j = 0; j < volume.Size(1); ++j)
         {
             int long i;
             float acc2[3];
@@ -492,11 +502,12 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
             //                v1[0] = v2[0] + v3[0]; v1[1] = v2[1] + v3[1]; v1[2] = v2[2] + v3[2];
             //            }
             //            vec3_add3 (acc2, &zip[3*k], &yip[3*j]);
-            acc2[0] = zip[3*k]+yip[3*j];
-            acc2[1] = zip[3*k+1]+yip[3*j+1];
-            acc2[2] = zip[3*k+2]+yip[3*j+2];
+            acc2[0] = zip[3*k]   + yip[3*j];
+            acc2[1] = zip[3*k+1] + yip[3*j+1];
+            acc2[2] = zip[3*k+2] + yip[3*j+2];
             int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
-            for (i = mask[j].first+1; i <= mask[j].second; i++) {
+            for (i = mask[j].first+1; i <= mask[j].second; ++i)
+            {
                 //                for (i = 0; i < volume.Size(0); i++) {
 
                 float dw;
@@ -520,10 +531,10 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
         }
     }
 
-
-    free (xip);
-    free (yip);
-    free (zip);
+    delete [] xip;
+    delete [] yip;
+    delete [] zip;
+    logger.verbose("end project vol onto image");
 }
 
 

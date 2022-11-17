@@ -237,20 +237,22 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
     float *pImg=img.GetDataPtr();
     float *pProj=nullptr;
 
+    logger.verbose("Starting recon loop over projections");
     InitializeBuffers(img.Size(0),img.Size(1));
-    for (int i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj,"FDK back-projection")); i++)
+    for (int i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj,"FDK back-projection")); ++i)
     {
         pProj=projections.GetLinePtr(0,i);
-        memcpy(pImg,pProj,sizeof(float)*img.Size());
-        std::cout<<i;
+
+        std::copy_n(pProj,img.Size(),pImg);
         img *= weights[i];
 
         //           Process(img,angles[i],weights[i],i,i==(nProj-1)); // to ask for
         this->reconstruct(img, angles[i], nProj);
     }
-    std::cout<<"\n";
 
     FinalizeBuffers();
+    logger.verbose("Recon loop finished");
+
     //         fdkTimer.Toc();
     //         std::cout << "fdkTimer: " << fdkTimer << std::endl;
 
