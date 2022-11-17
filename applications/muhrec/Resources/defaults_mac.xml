@@ -119,7 +119,7 @@
         </preprocessing>
         <backprojector>
             <module>
-                <modulename>MultiProjBP</modulename>
+                <modulename>MultiProjBPparallel</modulename>
                 <sharedobject>StdBackProjectors</sharedobject>
                 <active>true</active>
                 <threading>true</threading>
@@ -132,7 +132,7 @@
                     <filtertype>Hamming</filtertype>
                     <order>1</order>
                     <paddingdoubler>2</paddingdoubler>
-                    <usebias>false</usebias>
+                    <usebias>true</usebias>
                     <usecircularmask>true</usecircularmask>
                 </parameters>
             </module>
