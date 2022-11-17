@@ -113,7 +113,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
     fname = ProjectionList.begin()->second.name;
 
-    msg.str(""); msg<<"Projection file to check size on ";
+    msg.str(""); msg<<"Projection file to check size on "<<fname;
     logger(logger.LogMessage,msg.str());
 
     try {

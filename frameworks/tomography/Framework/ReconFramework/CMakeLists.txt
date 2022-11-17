@@ -16,6 +16,7 @@ include_directories(
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../external/src/linalg
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     ../../../../../ExternalDependencies/macos/include
     ../../../../../ExternalDependencies/macos/include/nexus
     ../../../../external/mac/include/
@@ -31,12 +32,13 @@ include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../external/include/
+    ../../../../core/modules/ReaderConfig
     ../../../../../ExternalDependencies/windows/include
     ../../../../../ExternalDependencies/windows/include/nexus
     ../../../../../ExternalDependencies/windows/include/cfitsio
     ../../../../../ExternalDependencies/windows/include/libxml2
-    )
+    ../../../../external/include/
+)
 endif()
 
 if (UNIX)
@@ -109,6 +111,7 @@ if (WIN32)
         kipl
         ModuleConfig
         ImagingAlgorithms
+        ReaderConfig
         libxml2
         cfitsio
         libtiff
@@ -135,6 +138,7 @@ if (APPLE)
         kipl
         ImagingAlgorithms
         ModuleConfig
+        ReaderConfig
         xml2
         fftw3
         fftw3f

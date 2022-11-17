@@ -26,6 +26,7 @@ include_directories(
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
@@ -46,6 +47,7 @@ include_directories(
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
@@ -142,6 +144,7 @@ add_library(${TARGET_NAME} SHARED
       kipl
       ImagingAlgorithms
       ModuleConfig
+      ReaderConfig
       ReconFramework
       QtAddons
       QtModuleConfigure
@@ -175,6 +178,7 @@ endif()
           kipl
           ImagingAlgorithms
           ModuleConfig
+          ReaderConfig
           ReconFramework
           QtAddons
           QtModuleConfigure

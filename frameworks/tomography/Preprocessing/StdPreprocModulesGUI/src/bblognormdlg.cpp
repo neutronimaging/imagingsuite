@@ -16,6 +16,7 @@
 #include <ImagingException.h>
 
 #include <ProjectionReader.h>
+#include <analyzefileext.h>
 
 #include "bblognormdlg.h"
 #include "ui_bblognormdlg.h"
@@ -35,6 +36,9 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     flastAngle(360.0f),
 //    bUseNormROI(true),
 //    bUseNormROIBB(false),
+    blackbodyexternalname("none"),
+    blackbodysampleexternalname("none"),
+    blackbodyexternalmaskname("none"),
     nBBextCount(1),
     nBBextFirstIndex(0),
     tau(0.99f),
@@ -113,15 +117,16 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
         string2enum(GetStringParameter(parameters,"Y_InterpOrder"), m_yInterpOrder);
         string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
 
-        blackbodyexternalname = GetStringParameter(parameters,"BB_OB_ext_name");
-        blackbodysampleexternalname = GetStringParameter(parameters,"BB_sample_ext_name");
-        nBBextCount = GetIntParameter(parameters,"BB_ext_samplecounts");
-        nBBextFirstIndex = GetIntParameter(parameters,"BB_ext_firstindex");
-        bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
-        bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
-        bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
-        thresh = GetFloatParameter(parameters,"thresh");
-        min_area = GetIntParameter(parameters, "min_area");
+        blackbodyexternalname       = GetStringParameter(parameters, "BB_OB_ext_name");
+        blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
+        blackbodyexternalmaskname   = GetStringParameter(parameters, "BB_mask_ext_name");
+        nBBextCount                 = GetIntParameter(parameters,    "BB_ext_samplecounts");
+        nBBextFirstIndex            = GetIntParameter(parameters,    "BB_ext_firstindex");
+        bSameMask                   = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+        bExtSingleFile              = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
+        bUseManualThresh            = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+        thresh                      = GetFloatParameter(parameters,"thresh");
+        min_area                    = GetIntParameter(parameters, "min_area");
 
 //        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
 //        bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB"));
@@ -295,17 +300,17 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["X_InterpOrder"] = enum2string(m_xInterpOrder);
     parameters["Y_InterpOrder"] = enum2string(m_yInterpOrder);
 
-    parameters["BB_OB_ext_name"] = blackbodyexternalname;
-    parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
+    parameters["BB_OB_ext_name"]      = blackbodyexternalname;
+    parameters["BB_sample_ext_name"]  = blackbodysampleexternalname;
+    parameters["BB_mask_ext_name"]    = blackbodyexternalmaskname ;
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
-    parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
+    parameters["BB_ext_firstindex"]   = kipl::strings::value2string(nBBextFirstIndex);
+
     parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
     parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
     parameters["min_area"] = kipl::strings::value2string(min_area);
     parameters["thresh"]= kipl::strings::value2string(thresh);
     parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
-
-
 }
 
 void BBLogNormDlg::on_button_OBBBpath_clicked()
@@ -367,24 +372,26 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
 
     std::string filename, ext;
     kipl::strings::filenames::MakeFileName(blackbodyname,nBBFirstIndex,filename,ext,'#','0');
-    size_t found=blackbodyname.find("hdf");
+
     ProjectionReader reader;
     if ((QFile::exists(QString::fromStdString(filename)) || QFile::exists(QString::fromStdString(blackbodyname))) && blackbodyname!="./")
-        {
-            if (found==std::string::npos )
+    {
+        auto ext = readers::GetFileExtensionType(blackbodyname);
+            if (ext == readers::ExtensionHDF5 )
             {
+                m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
+                                                m_Config->ProjectionInfo.eFlip,
+                                                m_Config->ProjectionInfo.eRotate,
+                                                m_Config->ProjectionInfo.fBinning,
+                                                {});
+
+            }
+            else {
                 m_Preview_OBBB = reader.Read(filename,
                                              m_Config->ProjectionInfo.eFlip,
                                              m_Config->ProjectionInfo.eRotate,
                                              m_Config->ProjectionInfo.fBinning,
                                              {});
-            }
-            else {
-                 m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
-                                                 m_Config->ProjectionInfo.eFlip,
-                                                 m_Config->ProjectionInfo.eRotate,
-                                                 m_Config->ProjectionInfo.fBinning,
-                                                 {});
             }
             float lo,hi;
 
