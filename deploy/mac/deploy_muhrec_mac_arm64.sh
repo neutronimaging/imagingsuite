@@ -287,7 +287,9 @@ install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @
 install_name_tool -change @executable_path/../Frameworks/libfftw3f.3.dylib @rpath/libfftw3f.3.dylib libFDKBackProjectors.dylib   
 install_name_tool -change @executable_path/../Frameworks/libfftw3.3.dylib @rpath/libfftw3.3.dylib libFDKBackProjectors.dylib 
 install_name_tool -change @executable_path/../Frameworks/libcfitsio.dylib @rpath/libcfitsio.dylib libFDKBackProjectors.dylib     
-install_name_tool -change @executable_path/../Frameworks/libtiff.5.dylib @rpath/libtiff.5.dylib libFDKBackProjectors.dylib       
+install_name_tool -change @executable_path/../Frameworks/libtiff.5.dylib @rpath/libtiff.5.dylib libFDKBackProjectors.dylib 
+install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib       libFDKBackProjectors.dylib
+install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libFDKBackProjectors.dylib      
 install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @rpath/libarmadillo.10.dylib libFDKBackProjectors.dylib
 
 install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib @rpath/libxml2.2.dylib libReaderConfig.dylib
