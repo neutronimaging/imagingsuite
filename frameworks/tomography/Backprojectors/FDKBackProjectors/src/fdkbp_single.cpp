@@ -14,8 +14,6 @@
     #include <emmintrin.h>
 #endif
 
-#include "fftw3.h"
-
 #include <base/timage.h>
 #include <base/tpermuteimage.h>
 #include <math/mathconstants.h>
@@ -77,12 +75,12 @@ void FDKbp_single::multiplyMatrix(float *mat1, float *mat2, float *result, int r
 {
     int i,j,k;
 
-    for (i = 0; i < rows; i++)
+    for (i = 0; i < rows; ++i)
     {
-        for (j = 0; j < columns; j++)
+        for (j = 0; j < columns; ++j)
         {
-            float acc = 0.0; // why not float?
-            for (k = 0; k < columns1; k++)
+            float acc = 0.0f;
+            for (k = 0; k < columns1; ++k)
             {
                 acc += m_idx(mat1,columns1,i,k) * m_idx(mat2,columns,k,j);
             }
@@ -199,8 +197,8 @@ void FDKbp_single::getProjMatrix(float angles, float *nrm, float *proj_matrix)
     //        pmat->extrinsic[7] = vec3_dot (pup, tgt);
     //        pmat->extrinsic[11] = vec3_dot (nrm, tgt) + pmat->sad;
 
-    extrinsic[3] = plt[0]*tgt[0]+plt[1]*tgt[1]+plt[2]*tgt[2]-offCenter;
-    extrinsic[7] = pup[0]*tgt[0]+pup[1]*tgt[1]+pup[2]*tgt[2];
+    extrinsic[3]  = plt[0]*tgt[0]+plt[1]*tgt[1]+plt[2]*tgt[2]-offCenter;
+    extrinsic[7]  = pup[0]*tgt[0]+pup[1]*tgt[1]+pup[2]*tgt[2];
     extrinsic[11] = nrm[0]*tgt[0]+nrm[1]*tgt[1]+nrm[2]*tgt[2]+sad;
 
 
@@ -224,8 +222,8 @@ void FDKbp_single::getProjMatrix(float angles, float *nrm, float *proj_matrix)
     //        m_idx (pmat->intrinsic,cols,0,0) = 1 / ps[0];
     //        m_idx (pmat->intrinsic,cols,1,1) = 1 / ps[1];
     //        m_idx (pmat->intrinsic,cols,2,2) = 1 / sid;
-    intrinsic[0] = 1.0f/mConfig.ProjectionInfo.fResolution[0];
-    intrinsic[5] = 1.0f/mConfig.ProjectionInfo.fResolution[1];
+    intrinsic[0]  = 1.0f/mConfig.ProjectionInfo.fResolution[0];
+    intrinsic[5]  = 1.0f/mConfig.ProjectionInfo.fResolution[1];
     intrinsic[10] = 1.0f/sid;
 
     //        printf ("INTRINSIC\n%g %g %g %g\n%g %g %g %g\n%g %g %g %g\n",
@@ -241,10 +239,10 @@ void FDKbp_single::getProjMatrix(float angles, float *nrm, float *proj_matrix)
     // -------  Build Projection Geometry Matrix = intrinsic * extrinsic
     int i,j,k;
 
-#pragma omp parallel for
-    for (i = 0; i < 3; i++)
+//#pragma omp parallel for
+    for (i = 0; i < 3; ++i)
     {
-        for (j = 0; j < 4; j++)
+        for (j = 0; j < 4; ++j)
         {
             float acc = 0.0; // why not float?
             for (k = 0; k < 4; k++)
@@ -279,7 +277,8 @@ size_t FDKbp_single::reconstruct(kipl::base::TImage<float,2> &proj, float angles
     //        project_volume_onto_image_reference (proj, &proj_matrix[0], &nrm[0]);
 
     //       DEFAULT FDK BACK PROJECTOR:
-    project_volume_onto_image_c (proj, &proj_matrix[0], nProj);
+//    project_volume_onto_image_c (proj, &proj_matrix[0], nProj);
+    project_volume_onto_image_c (proj, proj_matrix, nProj);
     return 0L;
 }
 
@@ -315,7 +314,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
     float radius = static_cast<float>(volume.Size(1))*mConfig.MatrixInfo.fVoxelSize[0]/2;
 
-    size_t CBCT_roi[4];
+    size_t CBCT_roi[] ={0UL,0UL,0UL,0UL};
     CBCT_roi[0] = mConfig.ProjectionInfo.roi[0];
     CBCT_roi[2] = mConfig.ProjectionInfo.roi[2];
 
@@ -330,7 +329,8 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
             CBCT_roi[1] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0]);
     }
 
-    if (mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[1]) && mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[3]))
+    if (   mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[1])
+        && mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[3]))
     {
         float value = mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[1])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD+radius))/mConfig.ProjectionInfo.fResolution[0];
         CBCT_roi[1] = static_cast<size_t>(value);
@@ -380,7 +380,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
     //        cbi->img[i] *= scale;		// User scaling
     //        }
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (i=0; i<cbi.Size(0)*cbi.Size(1); ++i)
     {
         cbi[i] *=sad_sid_2; 	// Speedup trick re: Kachelsreiss
@@ -416,7 +416,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
     //        }
 
     // Precompute partial projections here
-#pragma omp parallel for
+//#pragma omp parallel for
     for (i = 0; i < volume.Size(0); ++i)
     {
         float x = (float) (origin[0] + i * spacing[0]);
@@ -425,7 +425,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
         xip[i*3+2] = x *  proj_matrix[8];
     }
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (j = 0; j < volume.Size(1); ++j)
     {
         float y = (float) (origin[1] + j * spacing[1]);
@@ -436,7 +436,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
     float cor_tilted;
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (k = 0; k < volume.Size(2); ++k)
     {
         float z = (float) (origin[2] + k * spacing[2]);
@@ -445,48 +445,20 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
         if (mConfig.ProjectionInfo.bCorrectTilt)
         {
             //                    float pos = static_cast<float> (mConfig.ProjectionInfo.roi[3])-static_cast<float>(k)-static_cast<float>(mConfig.ProjectionInfo.fTiltPivotPosition);
-            float pos = static_cast<float> (CBCT_roi[3])-static_cast<float>(k)-static_cast<float>(mConfig.ProjectionInfo.fTiltPivotPosition);
-            cor_tilted = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*pos+mConfig.ProjectionInfo.fCenter;
+            float pos      = static_cast<float> (CBCT_roi[3])-static_cast<float>(k)-static_cast<float>(mConfig.ProjectionInfo.fTiltPivotPosition);
+            cor_tilted     = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*pos+mConfig.ProjectionInfo.fCenter;
             proj_matrix[3] = ((cor_tilted-(mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.roi[0]))*mConfig.MatrixInfo.fVoxelSize[0])/mConfig.ProjectionInfo.fResolution[0];
 
         }
 
         zip[k*3+0] = z * (proj_matrix[2] + ic[0] * proj_matrix[10])
-                + ic[0] * proj_matrix[11] + proj_matrix[3];
+                     + ic[0] * proj_matrix[11] + proj_matrix[3];
         zip[k*3+1] = z * (proj_matrix[6] + ic[1] * proj_matrix[10])
-                + ic[1] * proj_matrix[11] + proj_matrix[7];
+                     + ic[1] * proj_matrix[11] + proj_matrix[7];
         zip[k*3+2] = z * proj_matrix[10] + proj_matrix[11];
     }
 
-    //    //		printf("project_volume_onto_image_c:2\n");
-    //        /* Main loop */
-    //    #pragma omp parallel for
-    //        for (k = 0; k < vol->dim[2]; k++) {
-    //        plm_long p = k * vol->dim[1] * vol->dim[0];
-    //        plm_long j;
-    //        for (j = 0; j < vol->dim[1]; j++) {
-    //            plm_long i;
-    //            float acc2[3];
-    //            vec3_add3 (acc2, &zip[3*k], &yip[3*j]);
-    //            for (i = 0; i < vol->dim[0]; i++) {
-    //            float dw;
-    //            float acc3[3];
-    //            vec3_add3 (acc3, acc2, &xip[3*i]);
-    //            dw = 1 / acc3[2];
-    //            acc3[0] = acc3[0] * dw;
-    //            acc3[1] = acc3[1] * dw;
-    //            img[p++] +=
-    //                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
-    //            }
-    //        }
-    //        }
-    //        free (xip);
-    //        free (yip);
-    //        free (zip);
-
-    //        std::cout << volume.Size(0) << " " << volume.Size(1) << " " << volume.Size(2) << std::endl;
-
-    /* Main loop */
+// Main backprojection loop
 
     logger.verbose("backproj loop");
 #pragma omp parallel for // not sure about this firstprivate
