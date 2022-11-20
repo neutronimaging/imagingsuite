@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tSTLVectorOperations")
-project(tSTLVectorOperations LANGUAGES CXX)
+set(TARGET_NAME "tIndex2Coord")
+project(tIndex2Coord LANGUAGES CXX)
 
 enable_testing()
 
@@ -26,9 +26,9 @@ include_directories(
     )
 
 set(SRC_FILES,
-    tst_stlvecoperations.cpp)
+    tst_tindex2coordtest.cpp)
 
-add_executable(${TARGET_NAME} tst_stlvecoperations.cpp)
+add_executable(${TARGET_NAME} tst_tindex2coordtest.cpp)
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 

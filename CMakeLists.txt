@@ -137,8 +137,15 @@ endif()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
-#add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations/)
-add_subdirectory(core/kipl/UnitTests/tLogging/)
+add_subdirectory(core/kipl/UnitTests/tLogging)
+add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
+add_subdirectory(core/kipl/UnitTests/tkiplfilters)
+add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
+# add_subdirectory(core/kipl/UnitTests/tedgefunction)
+add_subdirectory(core/kipl/UnitTests/tFillHole)
+add_subdirectory(core/kipl/UnitTests/tImageOperators)
+add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
+add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 # add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
