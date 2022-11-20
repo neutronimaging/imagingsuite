@@ -45,6 +45,7 @@ include_directories(
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     )
 endif()

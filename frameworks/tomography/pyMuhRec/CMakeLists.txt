@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-
+message("PyMuhRec")
 set(TARGET_NAME "muhrectomo") 
 project(muhrectomo LANGUAGES CXX)
 
@@ -7,6 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+message(${pybind11_sources_SOURCE_DIR})
 include_directories(
     /usr/include/libxml2
     /opt/local/include
@@ -24,24 +25,25 @@ include_directories(
     ../Backprojectors/StdBackProjectors/include
     ../Backprojectors/FDKBackProjectors/src
     ../../../core/algorithms/ImagingAlgorithms/include
+    ${pybind11_sources_SOURCE_DIR}/include
     )
 
-    if (WIN32)
-    include_directories(
-        ../../../core/kipl/kipl/include
-        ../../../core/kipl/kipl/include
-        ../../../core/modules/ModuleConfig/include
-        ../../../external/include/
-        ../../../../ExternalDependencies/windows/include
-        ../../../../ExternalDependencies/windows/include/nexus
-        ../../../../ExternalDependencies/windows/include/cfitsio
-        ../../../../ExternalDependencies/windows/include/libxml2
-        ../Framework/ReconFramework/include
-        ../Backprojectors/StdBackProjectors/include
-        ../Backprojectors/FDKBackProjectors/src
-        ../../../core/algorithms/ImagingAlgorithms/include
-        )
-    endif()
+if (WIN32)
+  include_directories(
+      ../../../core/kipl/kipl/include
+      ../../../core/kipl/kipl/include
+      ../../../core/modules/ModuleConfig/include
+      ../../../external/include/
+      ../../../../ExternalDependencies/windows/include
+      ../../../../ExternalDependencies/windows/include/nexus
+      ../../../../ExternalDependencies/windows/include/cfitsio
+      ../../../../ExternalDependencies/windows/include/libxml2
+      ../Framework/ReconFramework/include
+      ../Backprojectors/StdBackProjectors/include
+      ../Backprojectors/FDKBackProjectors/src
+      ../../../core/algorithms/ImagingAlgorithms/include
+      )
+endif()
 #link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
 
 # link_directories( /opt/local/lib ../../../external/mac/lib)

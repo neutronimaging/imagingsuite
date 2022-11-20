@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-
+message("ReconFramework")
 set(TARGET_NAME "ReconFramework")
 project(kipl LANGUAGES CXX)
 
@@ -48,6 +48,7 @@ include_directories(
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../external/src/linalg
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     )
 endif()
 
