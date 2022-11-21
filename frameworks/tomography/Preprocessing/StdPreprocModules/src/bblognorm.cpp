@@ -600,7 +600,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
     // now load OB image with BBs
 
 
-    float *bb_ob_param = new float[6];
+    std::vector<float> bb_ob_param;
     float *bb_sample_parameters;
 
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,fdarkBBdose,m_Config,fBlackDose); // this is for mask computation and dose correction (small roi)

@@ -74,12 +74,17 @@ public:
 
     void SetMaskCreationMethod(eMaskCreationMethod eMaskMethod, kipl::base::TImage<float,2> &mask);
 
-    void SetInterpParameters(float *ob_parameter,
-                             float *sample_parameter,
+    void SetInterpParameters(const std::vector<float> &ob_parameter,
+                             std::vector<float> &sample_parameter,
                              size_t nBBSampleCount,
                              size_t nProj,
                              eBBOptions ebo); /// set interpolation parameters to be used for BB image computation
-    void SetSplinesParameters(float *ob_parameter, float *sample_parameter, size_t nBBSampleCount, size_t nProj, eBBOptions ebo, int nBBs); /// set interpolation parameters to be used for BB image computation in the case of thin plate splines
+    void SetSplinesParameters(const std::vector<float> &ob_parameter,
+                              std::vector<float> &sample_parameter,
+                              size_t nBBSampleCount,
+                              size_t nProj,
+                              eBBOptions ebo,
+                              int nBBs); /// set interpolation parameters to be used for BB image computation in the case of thin plate splines
     void SetBBInterpRoi(const std::vector<size_t> &roi); ///set roi to be used for computing interpolated values, it is a roi relative to the projection_roi, because the interpolation parameters are computed with respect to the projection_roi
     void SetBBInterpDoseRoi(const std::vector<size_t> &roi); /// set dose roi to be used for computing interpolated values. it is the dose roi relative the projection_roi, because the interpolation parameters are computed with respect to the projection_roi
 
@@ -103,29 +108,29 @@ public:
     kipl::base::TImage<float,2>  Process(kipl::base::TImage<float,2> &img, float dose); ///< 2D process
     void Process(kipl::base::TImage<float,3> &img, float *dose); ///< 3D process
 
-    float* PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter
-    float* PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask, float &error); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter, finally computes interpolation error
-    float* PrepareBlackBodyImagewithSplines(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values); /// segments normalized image to create mask and then call interpolation with splines
-    float* PrepareBlackBodyImagewithSplinesAndMask(kipl::base::TImage<float,2> &dark,
+    std::vector<float> PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter
+    std::vector<float> PrepareBlackBodyImage(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask, float &error); /// segments normalized image (bb-dark)/(flat-dark) to create mask and then call ComputeInterpolationParameter, finally computes interpolation error
+    std::vector<float> PrepareBlackBodyImagewithSplines(kipl::base::TImage<float,2> &flat, kipl::base::TImage<float,2> &dark, kipl::base::TImage<float,2> &bb, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values); /// segments normalized image to create mask and then call interpolation with splines
+    std::vector<float> PrepareBlackBodyImagewithSplinesAndMask(kipl::base::TImage<float,2> &dark,
                                                    kipl::base::TImage<float,2> &bb,
                                                    kipl::base::TImage<float,2>&mask,
                                                    std::map<std::pair<int, int>, float> &values); /// uses a predefined mask and then call the thin plates spline interpolation
-    float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark,
+    std::vector<float> PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark,
                                          kipl::base::TImage<float,2> &bb,
                                          kipl::base::TImage<float,2>&mask); /// uses a predefined mask and then call ComputeInterpolationParameter
-    float* PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark,
+    std::vector<float> PrepareBlackBodyImagewithMask(kipl::base::TImage<float,2> &dark,
                                          kipl::base::TImage<float,2> &bb,
                                          kipl::base::TImage<float,2>&mask,
                                          float &error); /// uses a predefined mask and returns interpolation parameters and interpolation error
 
-    float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask,
+    std::vector<float> ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask,
                                           kipl::base::TImage<float,2>&img); /// compute interpolation parameters from img and mask
-    float* ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask,
+    std::vector<float> ComputeInterpolationParameters(kipl::base::TImage<float,2>&mask,
                                           kipl::base::TImage<float,2>&img,
                                           float &error); /// compute interpolation parameters from img and mask and give as output interpolation error
-    kipl::base::TImage<float,2>  InterpolateBlackBodyImage(float *parameters,
+    kipl::base::TImage<float,2>  InterpolateBlackBodyImage(const std::vector<float> &parameters,
                                                            const std::vector<size_t> &roi); /// compute interpolated image from polynomial parameters
-    kipl::base::TImage<float,2> InterpolateBlackBodyImagewithSplines(float *parameters, std::map<std::pair<int,int>,float> &values, const std::vector<size_t> &roi); /// compute interpolated image from splines parameters
+    kipl::base::TImage<float,2> InterpolateBlackBodyImagewithSplines(const std::vector<float> &parameters, std::map<std::pair<int,int>,float> &values, const std::vector<size_t> &roi); /// compute interpolated image from splines parameters
     float ComputeInterpolationError(kipl::base::TImage<float,2>&interpolated_img, kipl::base::TImage<float,2>&mask, kipl::base::TImage<float, 2> &img); /// compute interpolation error from interpolated image, original image and mask that highlights the pixels to be considered
 
     void SetExternalBBimages(kipl::base::TImage<float, 2> &bb_ext, kipl::base::TImage<float, 3> &bb_sample_ext, float &dose, const std::vector<float> &doselist); /// set the BB externally computed images and corresponding doses
@@ -140,16 +145,16 @@ protected:
     void PrepareReferencesBB(); /// prepare reference images in case of BB
     void PrepareReferencesExtBB(); /// prepare reference images in case of externally created BB
 
-    float *SolveLinearEquation(std::map<std::pair<int, int>, float> &values, float &error);
-    float *SolveThinPlateSplines(std::map<std::pair<int,int>,float> &values);
+    std::vector<float> SolveLinearEquation(std::map<std::pair<int, int>, float> &values, float &error);
+    std::vector<float> SolveThinPlateSplines(std::map<std::pair<int,int>,float> &values);
 
     void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning
     void SegmentBlackBody(kipl::base::TImage<float,2> &normimg, kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning and creates a list with position of BB centroids
     void ComputeBlackBodyCentroids(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values); /// uses the same mask to create centroids values list
 
-    float *InterpolateParameters(float *param, size_t n, size_t step); /// Interpolate parameters assuming the BB sample image are acquired uniformally with some step over the n Projection images
-    float *InterpolateParametersGeneric(float *param); /// Interpolate parameters for generic configuration of number of BB sample images and projection data, it assumes first SetAngle is called
-    float *InterpolateSplineGeneric(float *param, int nBBs); /// Interpolate parameters in the case of thin plates splines
+    std::vector<float> InterpolateParameters(const std::vector<float> &param, size_t n, size_t step); /// Interpolate parameters assuming the BB sample image are acquired uniformally with some step over the n Projection images
+    std::vector<float> InterpolateParametersGeneric(const std::vector<float> &param); /// Interpolate parameters for generic configuration of number of BB sample images and projection data, it assumes first SetAngle is called
+    std::vector<float> InterpolateSplineGeneric(const std::vector<float> &param, int nBBs); /// Interpolate parameters in the case of thin plates splines
     float *ReplicateParameters(float *param, size_t n); /// Replicate interpolation parameter, to be used for the Average method
     float *ReplicateSplineParameters(float *param, size_t n, int nBBs); /// Replicate interpolation parameters, to be used for the Average method and Spline option
 
@@ -195,9 +200,9 @@ protected:
     std::vector<float> fdose_ext_list;  /// dose value list in externally computed sample with BB image in dose roi
     float fdose_ext_slice;              /// dose value of current slice from fdose_ext_list
 
-    float *ob_bb_parameters;            /// interpolation parameters for the OB BB image
-    float *sample_bb_parameters;        /// interpolation parameters for the sample image with BB
-    float *sample_bb_interp_parameters; /// interpolation parameters for the sample image for each projection angle
+    std::vector<float> ob_bb_parameters;            /// interpolation parameters for the OB BB image
+    std::vector<float> sample_bb_parameters;        /// interpolation parameters for the sample image with BB
+    std::vector<float> sample_bb_interp_parameters; /// interpolation parameters for the sample image for each projection angle
 
     ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod m_MaskMethod;
     kipl::base::TImage<float,2> m_MaskImage;
