@@ -546,10 +546,11 @@ void BBLogNormDlg::on_errorButton_clicked()
 
     // has to run only if bb ob image and bb roi are loaded
 
-    QRect rect=ui->ob_bb_Viewer->get_marked_roi();
+    QRect rect;
+    ui->roiwidget_BB->getROI(rect);
 
-
-    if (rect.width()*rect.height()!=0) {
+    if (rect.width()*rect.height()!=0)
+    {
 
 //        ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
 
@@ -562,6 +563,7 @@ void BBLogNormDlg::on_errorButton_clicked()
         kipl::base::TImage<float,2> mymask;
         float error;
 
+        logger.verbose("configuring dlg");
         try {
             module.ConfigureDLG(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
 
@@ -588,6 +590,7 @@ void BBLogNormDlg::on_errorButton_clicked()
             return ;
         }
 
+        logger.verbose("get interpolation error");
         try {
             error = module.GetInterpolationError(mymask);
         }
@@ -595,7 +598,7 @@ void BBLogNormDlg::on_errorButton_clicked()
             QMessageBox errdlg(this);
             errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
-            logger(kipl::logging::Logger::LogWarning,e.what());
+            logger.warning(e.what());
             errdlg.exec();
             return ;
 
@@ -604,7 +607,7 @@ void BBLogNormDlg::on_errorButton_clicked()
             QMessageBox errdlg(this);
             errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
-            logger(kipl::logging::Logger::LogWarning,e.what());
+            logger.warning(e.what());
             errdlg.exec();
             return ;
         }
@@ -616,6 +619,7 @@ void BBLogNormDlg::on_errorButton_clicked()
 
 
         // display interpolation error
+
 
         ui->label_error->setText(QString::number(error));
 

@@ -94,8 +94,8 @@ protected:
     float ffirstAngle; /// first angle for BB sample image, used for BB interpolation option
     float flastAngle; /// last angle for BB sample image, used for BB interpolation option
 
-    float *ob_bb_param;
-    float *sample_bb_param;
+    std::vector<float> ob_bb_param;
+    std::vector<float> sample_bb_param;
 
     int GetnProjwithAngle(float angle); /// compute the index of projection data at a given angle
 
