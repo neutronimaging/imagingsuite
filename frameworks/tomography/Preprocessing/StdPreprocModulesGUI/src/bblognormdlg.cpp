@@ -89,10 +89,11 @@ BBLogNormDlg::~BBLogNormDlg()
 }
 
 
-int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img) {
+int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img)
+{
+    std::ignore = img;
 
     m_Config=dynamic_cast<ReconConfig *>(config);
-
 
     try{
         nBBFirstIndex = GetIntParameter(parameters,"BB_first_index");
@@ -135,7 +136,8 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
 
     }
-    catch(ModuleException &e){
+    catch(ModuleException &e)
+    {
         logger(kipl::logging::Logger::LogWarning,e.what());
         return false;
 
@@ -148,23 +150,28 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
     UpdateDialog();
 
-    try {
+    try
+    {
         ApplyParameters();
     }
-    catch (kipl::base::KiplException &e) {
-        logger(kipl::logging::Logger::LogError,e.what());
+    catch (kipl::base::KiplException &e)
+    {
+        logger.error(e.what());
         return false;
     }
 
 
-    if (enum2string(m_BBOptions)=="noBB" || enum2string(m_BBOptions)=="ExternalBB") {
+    if (enum2string(m_BBOptions)=="noBB" || enum2string(m_BBOptions)=="ExternalBB")
+    {
         ui->tabWidget->setTabEnabled(1, false);
     } // not sure this is the right place
 
-    if (enum2string(m_BBOptions)!="ExternalBB"){
+    if (enum2string(m_BBOptions)!="ExternalBB")
+    {
         ui->group_externalBB->setEnabled(false);
     }
-    else {
+    else
+    {
         ui->group_externalBB->setEnabled(true);
     }
 
@@ -173,13 +180,15 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
     int res=QDialog::exec();
 
 
-    if (res==QDialog::Accepted) {
+    if (res==QDialog::Accepted)
+    {
         logger(kipl::logging::Logger::LogMessage,"Use settings");
         UpdateParameters();
         UpdateParameterList(parameters);
         return true;
     }
-    else {
+    else
+    {
         logger(kipl::logging::Logger::LogMessage,"Discard settings");
     }
 
@@ -188,23 +197,18 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
 }
 
-void BBLogNormDlg::ApplyParameters(){
-
-
+void BBLogNormDlg::ApplyParameters()
+{
     ui->buttonPreviewOBBB->click();
     ui->buttonPreviewsampleBB->click();
 
 
     std::map<std::string, std::string> parameters;
     UpdateParameterList(parameters);
-
-
-
 }
 
-void BBLogNormDlg::UpdateDialog(){
-
-
+void BBLogNormDlg::UpdateDialog()
+{
     ui->spinFirstOBBB->setValue(nBBFirstIndex);
     ui->spinCountsOBBB->setValue(nBBCount);
     ui->edit_OB_BB_mask->setText(QString::fromStdString(blackbodyname));
@@ -230,14 +234,10 @@ void BBLogNormDlg::UpdateDialog(){
     ui->spinLastAngle->setValue(flastAngle);
     ui->spin_minarea->setValue(min_area);
     ui->check_singleext->setChecked(bExtSingleFile);
-
-
-
 }
 
-void BBLogNormDlg::UpdateParameters(){
-
-
+void BBLogNormDlg::UpdateParameters()
+{
     nBBFirstIndex = ui->spinFirstOBBB->value();
     nBBCount = ui->spinCountsOBBB->value();
     blackbodyname = ui->edit_OB_BB_mask->text().toStdString();
@@ -270,11 +270,10 @@ void BBLogNormDlg::UpdateParameters(){
     bUseManualThresh = ui->checkBox_thresh->isChecked();
     thresh = ui->spinThresh->value();
     bExtSingleFile = ui->check_singleext->isChecked();
-
-
 }
 
-void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
+void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
+{
 
     parameters["BB_OB_name"] = blackbodyname;
     parameters["BB_counts"] = kipl::strings::value2string(nBBCount);
@@ -319,13 +318,15 @@ void BBLogNormDlg::on_button_OBBBpath_clicked()
     ui->buttonPreviewOBBB->click();
 }
 
-void BBLogNormDlg::BrowseOBBBPath(){
+void BBLogNormDlg::BrowseOBBBPath()
+{
 
     QString ob_bb_dir=QFileDialog::getOpenFileName(this,
                                       "Select location of the open beam images with BB",
                                                    ui->edit_OB_BB_mask->text());
 
-    if (!ob_bb_dir.isEmpty()) {
+    if (!ob_bb_dir.isEmpty())
+    {
         std::string pdir=ob_bb_dir.toStdString();
 
         #ifdef _MSC_VER
@@ -349,7 +350,8 @@ void BBLogNormDlg::BrowseOBBBPath(){
             ui->spinFirstOBBB->setValue(Nofimgs[0]);
             ui->spinCountsOBBB->setValue(Nofimgs[1]);
         }
-        else {
+        else
+        {
             ui->edit_OB_BB_mask->setText(QString::fromStdString(fi.m_sMask));
             int c=0;
             int f=0;
@@ -376,8 +378,8 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
     ProjectionReader reader;
     if ((QFile::exists(QString::fromStdString(filename)) || QFile::exists(QString::fromStdString(blackbodyname))) && blackbodyname!="./")
     {
-        auto ext = readers::GetFileExtensionType(blackbodyname);
-            if (ext == readers::ExtensionHDF5 )
+        auto exttype = readers::GetFileExtensionType(blackbodyname);
+            if (exttype == readers::ExtensionHDF5 )
             {
                 m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
                                                 m_Config->ProjectionInfo.eFlip,
@@ -386,7 +388,8 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
                                                 {});
 
             }
-            else {
+            else
+            {
                 m_Preview_OBBB = reader.Read(filename,
                                              m_Config->ProjectionInfo.eFlip,
                                              m_Config->ProjectionInfo.eRotate,
@@ -408,8 +411,6 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
 
                 ui->ob_bb_Viewer->set_image(m_Preview_OBBB.GetDataPtr(), m_Preview_OBBB.dims(), lo,hi);
     }
-
-
 }
 
 
@@ -421,8 +422,8 @@ void BBLogNormDlg::on_button_sampleBBpath_clicked()
     ui->buttonPreviewsampleBB->click();
 }
 
-void BBLogNormDlg::BrowseSampleBBPath(){
-
+void BBLogNormDlg::BrowseSampleBBPath()
+{
     QString sample_bb_dir=QFileDialog::getOpenFileName(this,
                                       "Select location of the open beam images with BB",
                                                    ui->edit_sample_BB_mask->text());
@@ -442,7 +443,8 @@ void BBLogNormDlg::BrowseSampleBBPath(){
         kipl::io::DirAnalyzer da;
         kipl::io::FileItem fi=da.GetFileMask(pdir);
 
-        if (fi.m_sExt=="hdf"){
+        if (fi.m_sExt=="hdf")
+        {
             ui->edit_sample_BB_mask->setText(QString::fromStdString(pdir));
             ProjectionReader reader;
             size_t Nofimgs[2];
@@ -453,7 +455,8 @@ void BBLogNormDlg::BrowseSampleBBPath(){
             ui->spinFirstAngle->setValue(Angles[0]);
             ui->spinLastAngle->setValue(Angles[1]);
         }
-        else {
+        else
+        {
             ui->edit_sample_BB_mask->setText(QString::fromStdString(fi.m_sMask));
             int c=0;
             int f=0;
@@ -568,7 +571,8 @@ void BBLogNormDlg::on_errorButton_clicked()
             module.ConfigureDLG(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
 
         }
-        catch(ModuleException &e){
+        catch(ModuleException &e)
+        {
             QMessageBox errdlg(this);
             errdlg.setText("Failed to configure the module dialog, check the parameters");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
@@ -576,7 +580,8 @@ void BBLogNormDlg::on_errorButton_clicked()
             errdlg.exec();
             return ;
         }
-        catch(kipl::base::KiplException &e) {
+        catch(kipl::base::KiplException &e)
+        {
             QMessageBox errdlg(this);
             errdlg.setText("Failed to configure the module dialog, check the parameters");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
@@ -584,17 +589,20 @@ void BBLogNormDlg::on_errorButton_clicked()
             errdlg.exec();
             return ;
         }
-        catch(...){
+        catch(...)
+        {
             QMessageBox errdlg(this);
             errdlg.setText("Failed to configure the module dialog.. generic exception.");
             return ;
         }
 
         logger.verbose("get interpolation error");
-        try {
+        try
+        {
             error = module.GetInterpolationError(mymask);
         }
-        catch(ImagingException &e ){
+        catch(ImagingException &e )
+        {
             QMessageBox errdlg(this);
             errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
@@ -603,7 +611,8 @@ void BBLogNormDlg::on_errorButton_clicked()
             return ;
 
         }
-        catch(kipl::base::KiplException &e) {
+        catch(kipl::base::KiplException &e)
+        {
             QMessageBox errdlg(this);
             errdlg.setText("Failed to compute interpolation error. Hint: try to change the threshold by using the manual threshold option");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
@@ -611,16 +620,14 @@ void BBLogNormDlg::on_errorButton_clicked()
             errdlg.exec();
             return ;
         }
-        catch(...){
+        catch(...)
+        {
             QMessageBox errdlg(this);
             errdlg.setText("Failed to compute interpolation error.. generic exception.");
             return ;
         }
 
-
         // display interpolation error
-
-
         ui->label_error->setText(QString::number(error));
 
         // display computed mask
@@ -644,14 +651,17 @@ void BBLogNormDlg::on_combo_BBoptions_activated(const QString &arg1)
 {
 
 //    std::cout << "arg1: " << arg1.toStdString() << std::endl;
-    if (arg1.toStdString()=="noBB" || arg1.toStdString()=="ExternalBB"){
+    if (arg1.toStdString()=="noBB" || arg1.toStdString()=="ExternalBB")
+    {
         ui->tabWidget->setTabEnabled(1,false);
     }
-    else {
+    else
+    {
         ui->tabWidget->setTabEnabled(1,true);
     }
 
-    if(arg1.toStdString()!="ExternalBB"){
+    if(arg1.toStdString()!="ExternalBB")
+    {
         ui->group_externalBB->setEnabled(false);
     }
     else {
@@ -665,7 +675,8 @@ void BBLogNormDlg::on_button_OB_BB_ext_clicked()
                                       "Select the open beam images with BB",
                                                    ui->edit_OBBB_ext->text());
 
-    if (!ob_bb_ext_dir.isEmpty()) {
+    if (!ob_bb_ext_dir.isEmpty())
+    {
         std::string pdir=ob_bb_ext_dir.toStdString();
 
         ui->edit_OBBB_ext->setText(QString::fromStdString(pdir)); // I want the entire filename
@@ -682,14 +693,16 @@ void BBLogNormDlg::on_button_BBexternal_path_clicked()
     msg<< "bExtSingleFile " <<  bExtSingleFile ;
     logger.message(msg.str());
 
-    if (!sample_bb_ext_dir.isEmpty()) {
+    if (!sample_bb_ext_dir.isEmpty())
+    {
 
         std::string pdir=sample_bb_ext_dir.toStdString();
         if (bExtSingleFile)
         {
             ui->edit_BB_external->setText(QString::fromStdString(pdir));
         }
-        else {
+        else
+        {
 
             #ifdef _MSC_VER
             const char slash='\\';
@@ -711,18 +724,15 @@ void BBLogNormDlg::on_button_BBexternal_path_clicked()
             da.AnalyzeMatchingNames(fi.m_sMask,c,f,l);
             ui->spin_first_extBB->setValue(f);
             ui->spin_count_ext_BB->setValue(c);
-
         }
-
     }
-
-
 }
 
 
 void BBLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg1)
 {
-    if (arg1.toStdString()=="Polynomial") {
+    if (arg1.toStdString()=="Polynomial")
+    {
         ui->combo_IntMeth_X->setEnabled(true);
         ui->combo_IntMeth_Y->setEnabled(true);
         ui->label_23->setEnabled(true);
@@ -730,7 +740,8 @@ void BBLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg1)
 //        ui->errorBrowser->setEnabled(true);
     }
 
-    if (arg1.toStdString()=="ThinPlateSplines"){
+    if (arg1.toStdString()=="ThinPlateSplines")
+    {
         ui->combo_IntMeth_X->setEnabled(false);
         ui->combo_IntMeth_Y->setEnabled(false);
         ui->label_23->setEnabled(false);
@@ -743,7 +754,6 @@ void BBLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg1)
 void BBLogNormDlg::on_checkBox_thresh_clicked(bool checked)
 {
     bUseManualThresh = checked;
-
 }
 
 
@@ -754,7 +764,7 @@ void BBLogNormDlg::on_spinThresh_valueChanged(double arg1)
 
 void BBLogNormDlg::on_checkBox_thresh_stateChanged(int arg1)
 {
-
+    std::ignore = arg1;
 }
 
 void BBLogNormDlg::on_pushButton_filenameOBBB_clicked()
@@ -773,11 +783,12 @@ void BBLogNormDlg::on_check_singleext_clicked(bool checked)
     bExtSingleFile = checked;
     // triggers the re-browsing of the bb ext file
     ui->button_BBexternal_path->click();
-
 }
 
 void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
 {
+    std::ignore = arg1;
+
     if (ui->check_singleext->isChecked())
     {
         bExtSingleFile = true;
