@@ -427,8 +427,9 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     try {
         maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
     }
-    catch (ImagingException &e) {
-        logger(kipl::logging::Logger::LogError,e.what());
+    catch (ImagingException &e)
+    {
+        logger.error(e.what());
         std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("kipl::morphology::FillPeaks failed", __FILE__, __LINE__);
     }
@@ -444,21 +445,21 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 //         kipl::io::WriteTIFF(labelImage, "labelImage.tif");
          std::ostringstream msg;
          msg << "number of objects: " << num_obj;
-         logger(kipl::logging::Logger::LogDebug, msg.str());
+         logger.debug(msg.str());
      }
      catch (ImagingException &e) {
-         logger(kipl::logging::Logger::LogError,e.what());
+         logger.error(e.what());
          std::cerr<<"Error in the SegmentBlackBody function\n";
          throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
      catch(kipl::base::KiplException &e){
-         logger(kipl::logging::Logger::LogError,e.what());
+         logger.error(e.what());
          std::cerr<<"Error in the SegmentBlackBody function\n";
          throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
      catch (std::exception &e)
      {
-         logger(kipl::logging::Logger::LogError,e.what());
+         logger.error(e.what());
          throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
 
@@ -1785,8 +1786,9 @@ std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::T
     try{
         SegmentBlackBody(norm, mask);
     }
-    catch (kipl::base::KiplException &e) {
-        logger(kipl::logging::Logger::LogError,e.what());
+    catch (kipl::base::KiplException &e)
+    {
+        logger.error(e.what());
         std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
@@ -2686,10 +2688,10 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
         }
     }
 
-    msg<<"Correcting "<<negPixelList.size()<<" pixels with negative values using repairHoles.";
-    logger.message(msg.str());
+    msg<<"Found "<<negPixelList.size()<<" pixels with negative values.";
+    logger.verbose(msg.str());
     kipl::morphology::RepairHoles(img,negPixelList,kipl::base::conn8);
-
+    logger.verbose("Negative values repaired with RepairHoles");
 
     return 1;
 }
@@ -2709,35 +2711,32 @@ void ReferenceImageCorrection::ComputeNorm(kipl::base::TImage<float,2> &img, flo
     float *pDark=m_DarkCurrent.GetDataPtr();
 
 
-    if (m_bHaveBlackBody) {
-        if (m_bHaveDarkCurrent) {
+    if (m_bHaveBlackBody)
+    {
+        if (m_bHaveDarkCurrent)
+        {
+            if (m_bHaveOpenBeam)
+            {
+//                #pragma omp parallel for firstprivate(pFlat,pDark)
 
+                float *pImg=img.GetDataPtr();
+                float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
 
-            if (m_bHaveOpenBeam) {
-    //                #pragma omp parallel for firstprivate(pFlat,pDark)
+                if (bPBvariante)
+                {
+                    Pdose = computedose(m_DoseBBsample_image);
+                } // for now I assume I have all images.. other wise makes no much sense
 
-                        float *pImg=img.GetDataPtr();
-                        float *pImgBB = m_BB_sample_Interpolated.GetDataPtr();
+                #pragma omp parallel for firstprivate(pImgBB, pDark, pFlat)
+                for (int i=0; i<N; i++)
+                {
+                    float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);
+                    if (fProjPixel<=0)
+                        pImg[i]=0;
+                    else
+                        pImg[i] = fProjPixel/pFlat[i]/((dose-Pdose)<1 ? 1.0f : (dose-Pdose)); // pFlat is already dose corrected
 
-                        if(bPBvariante){
-                            Pdose = computedose(m_DoseBBsample_image);
-                        } // for now I assume I have all images.. other wise makes no much sense
-
-
-
-
-
-                        #pragma omp parallel for firstprivate(pImgBB, pDark, pFlat)
-                        for (int i=0; i<N; i++) {
-
-
-                            float fProjPixel=(pImg[i]-pDark[i]-pImgBB[i]);
-                            if (fProjPixel<=0)
-                                pImg[i]=0;
-                            else
-                                pImg[i] = fProjPixel/pFlat[i]/((dose-Pdose)<1 ? 1.0f : (dose-Pdose)); // pFlat is already dose corrected
-
-                        }
+                }
 
             }
             else {

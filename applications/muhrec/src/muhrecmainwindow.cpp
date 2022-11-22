@@ -1851,7 +1851,8 @@ void MuhRecMainWindow::on_comboSlicePlane_activated(int index)
 
         on_sliderSlices_sliderMoved(maxslices/2);
 
-        switch (m_eSlicePlane) {
+        switch (m_eSlicePlane)
+        {
             case kipl::base::ImagePlaneXY :
                 m_nSliceSizeX=dims[0]-1;
                 m_nSliceSizeY=dims[1]-1;
@@ -2135,19 +2136,23 @@ void MuhRecMainWindow::on_sliderProjections_sliderMoved(int position)
     bool fail=false;
     std::ostringstream msg;
 
-    try {
+    try
+    {
         PreviewProjection(position);
     }
-    catch (ReconException &e) {
+    catch (ReconException &e)
+    {
         fail=true;
         msg<<e.what();
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         fail=true;
         msg<<e.what();
     }
 
-    if (fail) {
+    if (fail)
+    {
         QMessageBox dlg;
         dlg.setText("Failed to show projection");
         dlg.setDetailedText(QString::fromStdString(msg.str()));
@@ -2474,14 +2479,17 @@ void MuhRecMainWindow::on_sliderSlices_sliderMoved(int position)
     std::ostringstream msg;
     int nSelectedSlice=position;
 
-    if (position<0) {
+    if (position<0)
+    {
         nSelectedSlice=m_Config.MatrixInfo.nDims[2]/2;
         ui->sliderSlices->setValue(nSelectedSlice);
     }
 
     ui->spinBoxSlices->setValue(nSelectedSlice);
 
-    try {
+    m_eSlicePlane = static_cast<kipl::base::eImagePlanes>(1<<ui->comboSlicePlane->currentIndex());
+    try
+    {
         kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(nSelectedSlice,m_eSlicePlane);
         ui->sliceViewer->set_image(slice.GetDataPtr(),slice.dims(),
                                    static_cast<float>(ui->dspinGrayLow->value()),
@@ -2491,7 +2499,8 @@ void MuhRecMainWindow::on_sliderSlices_sliderMoved(int position)
         ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
         // TODO Add line to indicate location of slice (XY-slices)
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         msg.str("");
         msg<<"Failed to display slice \n"<<e.what();
         logger.message(msg.str());
@@ -2800,8 +2809,6 @@ void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
 void MuhRecMainWindow::on_spinBoxSlices_valueChanged(int arg1)
 {
    QSignalBlocker sliderBlock(ui->sliderSlices);
-
-
 
    if (m_pEngine==nullptr)
        return;

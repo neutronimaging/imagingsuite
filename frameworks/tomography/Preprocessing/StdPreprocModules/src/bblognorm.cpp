@@ -519,9 +519,9 @@ void BBLogNorm::LoadExternalBBData(const std::vector<size_t> &roi){
 
 }
 
-void BBLogNorm::PrepareBBData(){
-
-    logger(kipl::logging::Logger::LogMessage,"PrepareBBData begin--");
+void BBLogNorm::PrepareBBData()
+{
+    logger.message("PrepareBBData begin");
 
     if (flatname.empty() && nOBCount!=0)
         throw ReconException("The flat field image mask is empty",__FILE__,__LINE__);
@@ -551,43 +551,46 @@ void BBLogNorm::PrepareBBData(){
 
     size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
 
-        switch (m_InterpMethod) {
-        case (ImagingAlgorithms::ReferenceImageCorrection::Polynomial): {
-            PreparePolynomialInterpolationParameters();
+    switch (m_InterpMethod)
+    {
+    case (ImagingAlgorithms::ReferenceImageCorrection::Polynomial):
+    {
+        PreparePolynomialInterpolationParameters();
 
-            if (nBBCount!=0 && nBBSampleCount!=0) {
-                 m_corrector.SetInterpParameters(ob_bb_param, sample_bb_param,nBBSampleCount, nProj, m_BBOptions);
-            }
-
-            break;
-        }
-        case(ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines):{
-//            std::cout << "ThinPlateSplines" << std::endl;
-             logger(kipl::logging::Logger::LogMessage,"ThinPlateSplines");
-
-            int nBBs = PrepareSplinesInterpolationParameters();
-
-             logger(kipl::logging::Logger::LogMessage,"After PrepareSplinesInterpolationParameters ");
-
-            if (nBBCount!=0 && nBBSampleCount!=0) {
-                m_corrector.SetSplinesParameters(ob_bb_param, sample_bb_param, nBBSampleCount, nProj, m_BBOptions, nBBs); // i also need the coordinates.
-            }
-            break;
-        }
-        default: throw ReconException("Unknown m_InterpMethod in BBLogNorm::PrepareBBData()", __FILE__, __LINE__);
+        if (nBBCount!=0 && nBBSampleCount!=0)
+        {
+             m_corrector.SetInterpParameters(ob_bb_param, sample_bb_param,nBBSampleCount, nProj, m_BBOptions);
         }
 
+        break;
+    }
+    case(ImagingAlgorithms::ReferenceImageCorrection::ThinPlateSplines):
+    {
+        logger(kipl::logging::Logger::LogMessage,"ThinPlateSplines");
 
+        int nBBs = PrepareSplinesInterpolationParameters();
 
+        logger(kipl::logging::Logger::LogMessage,"After PrepareSplinesInterpolationParameters ");
+
+        if (nBBCount!=0 && nBBSampleCount!=0)
+        {
+            m_corrector.SetSplinesParameters(ob_bb_param, sample_bb_param, nBBSampleCount, nProj, m_BBOptions, nBBs); // i also need the coordinates.
+        }
+        break;
+    }
+    default: throw ReconException("Unknown m_InterpMethod in BBLogNorm::PrepareBBData()", __FILE__, __LINE__);
+    }
+
+    logger.message("PrepareBBData end");
 }
 
 void BBLogNorm::PreparePolynomialInterpolationParameters()
 {
-
+    logger.message("PreparePolynomialInterpolationParameters begin");
     kipl::base::TImage<float,2> flat, dark, bb, sample, samplebb;
 
-    std::string flatmask=path+flatname;
-    std::string darkmask=path+darkname;
+    std::string flatmask = path+flatname;
+    std::string darkmask = path+darkname;
 
 
     fdarkBBdose=0.0f;
@@ -606,25 +609,30 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
     kipl::base::TImage<float,2> obmask(bb.dims());
     std::ostringstream msg;
 
-    try {
+    try
+    {
         bb_ob_param = m_corrector.PrepareBlackBodyImage(flat,dark,bb, obmask, ferror);
     }
-    catch (ModuleException &e) {
+    catch (ModuleException &e)
+    {
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
-    catch(ReconException &e){
+    catch(ReconException &e)
+    {
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
-    catch(kipl::base::KiplException &e){
+    catch(kipl::base::KiplException &e)
+    {
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
         logger(kipl::logging::Logger::LogDebug,msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
-    catch (std::exception & e) {
+    catch (std::exception & e)
+    {
         msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
@@ -940,7 +948,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
          default: throw ReconException("trying to switch to unknown BBOption in PrepareBBdata",__FILE__,__LINE__);
 
          }
-
+logger.message("PreparePolynomialInterpolationParameters begin");
 }
 
 int BBLogNorm::PrepareSplinesInterpolationParameters() {
