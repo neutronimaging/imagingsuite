@@ -458,11 +458,14 @@ void BBLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
     SetReferenceImages(mydark,myflat);
 
 
-    if (bUseExternalBB && nBBextCount!=0){
-        try {
+    if (bUseExternalBB && nBBextCount!=0)
+    {
+        try
+        {
              LoadExternalBBData(roi); // they must be ready for SetReferenceImages
 
-        } catch (...) {
+        } catch (...)
+        {
             throw ReconException("Error while loading external BB data", __FILE__, __LINE__);
 
         }
@@ -482,19 +485,17 @@ void BBLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
 
 }
 
-void BBLogNorm::LoadExternalBBData(const std::vector<size_t> &roi){
-
+void BBLogNorm::LoadExternalBBData(const std::vector<size_t> &roi)
+{
 
     if (blackbodyexternalname.empty())
         throw ReconException("The pre-processed open beam with BB image mask is empty", __FILE__, __LINE__);
     if (blackbodysampleexternalname.empty() || nBBextCount==0)
         throw ReconException("The pre-processed sample with BB image mask is empty", __FILE__, __LINE__);
 
-
     kipl::base::TImage<float,2> bb_ext;
 
     float dose;
-
 
     bb_ext = BBExternalLoader(blackbodyexternalname, m_Config, roi, dose);
 //    kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
@@ -507,7 +508,6 @@ void BBLogNorm::LoadExternalBBData(const std::vector<size_t> &roi){
         bb_sample_ext = BBExternalLoader(blackbodysampleexternalname, m_Config, roi, dose_s);
         m_corrector.SetExternalBBimages(bb_ext, bb_sample_ext, dose, dose_s);
 //        kipl::io::WriteTIFF32(bb_ext,"bb_ext.tif");
-
     }
     else
     {
@@ -532,7 +532,6 @@ void BBLogNorm::PrepareBBData()
         throw ReconException("The open beam image with BBs image mask is empty",__FILE__,__LINE__);
     if (blackbodysamplename.empty() && nBBSampleCount!=0)
         throw ReconException("The sample image with BBs image mask is empty", __FILE__,__LINE__);
-
 
 
     std::vector<int> diffroi(BBroi.begin(),BBroi.end());
@@ -663,292 +662,285 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
     // load sample images with BBs and sample images
 
     std::vector<float> temp_parameters;
-    size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
-    size_t step = (nProj)/(nBBSampleCount);
+    size_t nProj = (m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
+    size_t step  = (nProj)/(nBBSampleCount);
 
     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
 
 
     std::vector<float> doselist(nProj);
-    for (size_t i=0; i<nProj; i++) {
+    for (size_t i=0; i<nProj; i++)
+    {
         doselist[i] = DoseBBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+i, 1.0f, fdarkBBdose, m_Config); // D(I*n-Idc) in the doseBBroi
     }
 
     m_corrector.SetDoseList(doselist);
 
 // here Exceptions need to be added to veirfy if the selected module is compatible with the number of loaded images
-         switch (m_BBOptions) {
+         switch (m_BBOptions)
+         {
 
          case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate):
          {
 //                 bb_sample_parameters = new float[6*nBBSampleCount];
-                 sample_bb_param.resize(6*nBBSampleCount);// = new float[6*nBBSampleCount];
-                 temp_parameters.resize(6);
+             sample_bb_param.resize(6*nBBSampleCount);// = new float[6*nBBSampleCount];
+             temp_parameters.resize(6);
 
-                 if (nBBSampleCount!=0)
-                 {
+             if (nBBSampleCount!=0)
+             {
 
-                     logger.message("Loading sample images with BB");
+                 logger.message("Loading sample images with BB");
 
-                     for (size_t i=0; i<nBBSampleCount; i++) {
-                         samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
+                 for (size_t i=0; i<nBBSampleCount; i++) {
+                     samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
 
-                         float dosesample; // used for the correct dose roi computation (doseBBroi)
-                         float current_dose; // current dose for sample with BBs
-                         int index;
+                     float dosesample; // used for the correct dose roi computation (doseBBroi)
+                     float current_dose; // current dose for sample with BBs
+                     int index;
 
-                         index = GetnProjwithAngle((angles[2]+(angles[3]-angles[2])/(nBBSampleCount-1)*i));
+                     index = GetnProjwithAngle((angles[2]+(angles[3]-angles[2])/(nBBSampleCount-1)*i));
 
-                         // in the first case compute the mask again (should not be necessary in well acquired datasets) however this requires that the first image (or at least one) of sample image with BB has the same angle of the sample image without BB
-                         if (i==0) {
-
-                             if (bSameMask)
-                             {
-                                mMaskBB = obmask;
-                                temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb, mMaskBB);
-                             }
-                             else
-                             {
-                                 sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
-                                 kipl::base::TImage<float,2> mask(sample.dims());
-                                 mask = 0.0f;
-                                 temp_parameters = m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask);
-                                 mMaskBB = mask; // or memcpy
-                             }
-
-
-
-                             if (bUseNormROIBB && bUseNormROI){
-             //                     prenormalize interpolation parameters with dose
-
-                                 current_dose = fBlackDoseSample;
-
-                                 if (bPBvariante) {
-
-                                         kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
-                                         float mydose = computedose(mybb);
-                                         current_dose = current_dose + ((1.0/tau-1.0)*mydose);
-                                     }
-
-
-                                 current_dose = current_dose<1 ? 1.0f : current_dose;
-
-
-
-                                 for(size_t j=0; j<6; j++) {
-
-                                           temp_parameters[j]/=(current_dose);
-
-                                 }
-                             }
-
-//                             memcpy(bb_sample_parameters, temp_parameters, sizeof(float)*6);
-                             bb_sample_parameters = temp_parameters;
-
+                     // in the first case compute the mask again (should not be necessary in well acquired datasets) however this requires that the first image (or at least one) of sample image with BB has the same angle of the sample image without BB
+                     if (i==0)
+                     {
+                         if (bSameMask)
+                         {
+                            mMaskBB = obmask;
+                            temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb, mMaskBB);
+                         }
+                         else
+                         {
+                             sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample);
+                             kipl::base::TImage<float,2> mask(sample.dims());
+                             mask = 0.0f;
+                             temp_parameters = m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask);
+                             mMaskBB = mask; // or memcpy
                          }
 
-                         else {
 
-                             temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
+
+                         if (bUseNormROIBB && bUseNormROI)
+                         {
+         //                     prenormalize interpolation parameters with dose
+
                              current_dose = fBlackDoseSample;
 
-                             if (bPBvariante) {
+                             if (bPBvariante)
+                             {
                                      kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
                                      float mydose = computedose(mybb);
                                      current_dose = current_dose + ((1.0/tau-1.0)*mydose);
-                                  }
+                             }
 
                              current_dose = current_dose<1 ? 1.0f : current_dose;
 
-                             for(size_t j=0; j<6; j++) {
-                              temp_parameters[j]/=(current_dose);
+                             for(size_t j=0; j<6; j++)
+                             {
+                                       temp_parameters[j]/=(current_dose);
                              }
-
-
-//                             memcpy(bb_sample_parameters+i*6, temp_parameters, sizeof(float)*6);
-                             std::copy_n(temp_parameters.begin(),6,bb_sample_parameters.begin()+i*6);
-
                          }
-
-
-
-                 }
-                 }
-
-//                 memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*6*nBBSampleCount);
-                 std::copy_n(bb_sample_parameters.begin(),6*nBBSampleCount,sample_bb_param.begin());
-                 break;
-         }
-
-         case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
-
-                     bb_sample_parameters.resize(6); // = new float[6];
-                     sample_bb_param.resize(6);      //      = new float[6];
-                     temp_parameters.resize(6);      //     = new float[6];
-
-                     std::vector<float> mask_parameters(6);
-
-                     kipl::base::TImage<float,2> samplebb_temp;
-                     float dose_temp;
-                     samplebb_temp = BBLoader(blackbodysamplename, nBBSampleFirstIndex,1,1.0f,0.0f, m_Config, dose_temp);
-                     samplebb      = BBLoader(blackbodysamplename, nBBSampleFirstIndex,nBBSampleCount,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
-
-
-                     float dosesample; // used for the correct dose roi computation (doseBBroi)
-                     float current_dose;
-
-                     int index;
-                     index  = GetnProjwithAngle(ffirstAngle);
-                     sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // load the projection with angle closest to the first BB sample data
-
-
-                     if (bSameMask)
-                     {
-                        mMaskBB = obmask;
+//                             memcpy(bb_sample_parameters, temp_parameters, sizeof(float)*6);
+                         bb_sample_parameters = temp_parameters;
                      }
+
                      else
                      {
-                          kipl::base::TImage<float,2> mask(sample.dims());
-                          mask = 0.0f;
-                          mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
-                          mMaskBB = mask; // or memcpy
-                     }
-
-                     temp_parameters= m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb, mMaskBB);
-
-                     if (bUseNormROIBB && bUseNormROI)
-                     {
-                //                     prenormalize interpolation parameters with dose
-
-                        current_dose = fBlackDoseSample;
+                         temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
+                         current_dose = fBlackDoseSample;
 
                          if (bPBvariante)
                          {
                              kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
                              float mydose = computedose(mybb);
-                             current_dose+= ((1.0/tau-1.0)*mydose);
+                             current_dose = current_dose + ((1.0/tau-1.0)*mydose);
                           }
 
                          current_dose = current_dose<1 ? 1.0f : current_dose;
 
                          for(size_t j=0; j<6; j++)
                          {
-                                   temp_parameters[j]/=current_dose;
+                          temp_parameters[j]/=(current_dose);
                          }
+//                             memcpy(bb_sample_parameters+i*6, temp_parameters, sizeof(float)*6);
+                         std::copy_n(temp_parameters.begin(),6,bb_sample_parameters.begin()+i*6);
+
                      }
 
+
+
+             }
+             }
+
+//                 memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*6*nBBSampleCount);
+             std::copy_n(bb_sample_parameters.begin(),6*nBBSampleCount,sample_bb_param.begin());
+             break;
+         }
+
+         case (ImagingAlgorithms::ReferenceImageCorrection::Average):
+         {
+             bb_sample_parameters.resize(6); // = new float[6];
+             sample_bb_param.resize(6);      //      = new float[6];
+             temp_parameters.resize(6);      //     = new float[6];
+
+             std::vector<float> mask_parameters(6);
+
+             kipl::base::TImage<float,2> samplebb_temp;
+             float dose_temp;
+             samplebb_temp = BBLoader(blackbodysamplename, nBBSampleFirstIndex,1,1.0f,0.0f, m_Config, dose_temp);
+             samplebb      = BBLoader(blackbodysamplename, nBBSampleFirstIndex,nBBSampleCount,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
+
+
+             float dosesample; // used for the correct dose roi computation (doseBBroi)
+             float current_dose;
+
+             int index;
+             index  = GetnProjwithAngle(ffirstAngle);
+             sample = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex+index, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // load the projection with angle closest to the first BB sample data
+
+
+             if (bSameMask)
+             {
+                mMaskBB = obmask;
+             }
+             else
+             {
+                  kipl::base::TImage<float,2> mask(sample.dims());
+                  mask = 0.0f;
+                  mask_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb_temp, mask); // this is just to compute the mask
+                  mMaskBB = mask; // or memcpy
+             }
+
+             temp_parameters= m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb, mMaskBB);
+
+             if (bUseNormROIBB && bUseNormROI)
+             {
+        //                     prenormalize interpolation parameters with dose
+
+                current_dose = fBlackDoseSample;
+
+                 if (bPBvariante)
+                 {
+                     kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi);
+                     float mydose = computedose(mybb);
+                     current_dose+= ((1.0/tau-1.0)*mydose);
+                  }
+
+                 current_dose = current_dose<1 ? 1.0f : current_dose;
+
+                 for(size_t j=0; j<6; j++)
+                 {
+                           temp_parameters[j]/=current_dose;
+                 }
+             }
+
 //                     memcpy(sample_bb_param, temp_parameters, sizeof(float)*6);
-                    std::copy_n(temp_parameters.begin(),6,sample_bb_param.begin());
+            std::copy_n(temp_parameters.begin(),6,sample_bb_param.begin());
 //                     delete [] mask_parameters;
 
-                break;
+            break;
          }
 
          case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne):
          {
+            bb_sample_parameters.resize(6*nBBSampleCount);// = new float[6*nBBSampleCount];
+            sample_bb_param.resize(6*nBBSampleCount); //= new float[6*nBBSampleCount];
+            temp_parameters.resize(6);// = new float[6];
 
+            float dosesample;
+            float current_dose;
 
-                bb_sample_parameters.resize(6*nBBSampleCount);// = new float[6*nBBSampleCount];
-                sample_bb_param.resize(6*nBBSampleCount); //= new float[6*nBBSampleCount];
-                temp_parameters.resize(6);// = new float[6];
+            for (size_t i=0; i<nBBSampleCount; i++)
+            {
+                samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
+                sample   = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // continuare da qui.. valuatare se devo caricare sample tutte le volte oppure no e nel caso moltiplicare per la doselist in ReferenceImageCorrection come faccio negli altri due casi
 
-                float dosesample;
-                float current_dose;
-
-                for (size_t i=0; i<nBBSampleCount; i++)
+                // compute the mask again only for the first sample image, than assume BBs do not move during experiment
+                if (i==0)
                 {
-                    samplebb = BBLoader(blackbodysamplename,i+nBBSampleFirstIndex,1,1.0f,fdarkBBdose, m_Config, fBlackDoseSample);
-                    sample   = BBLoader(m_Config.ProjectionInfo.sFileMask, m_Config.ProjectionInfo.nFirstIndex, 1, 1.0f,fdarkBBdose,m_Config, dosesample); // continuare da qui.. valuatare se devo caricare sample tutte le volte oppure no e nel caso moltiplicare per la doselist in ReferenceImageCorrection come faccio negli altri due casi
-
-                    // compute the mask again only for the first sample image, than assume BBs do not move during experiment
-                    if (i==0)
+                    if (bSameMask)
                     {
-                        if (bSameMask)
-                        {
-                           mMaskBB = obmask;
-                           temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
-                        }
-                        else
-                        {
-                             kipl::base::TImage<float,2> mask(sample.dims());
-                             mask = 0.0f;
-                             temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
-                             mMaskBB = mask; // or memcpy
-                        }
-
-                        if (bUseNormROIBB && bUseNormROI)
-                        {
-        //                     prenormalize interpolation parameters with dose
-
-                            current_dose= fBlackDoseSample;
-
-                            if (bPBvariante)
-                            {
-                                kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi); // previously doseBBroi
-                                float mydose = computedose(mybb);
-                                current_dose += ((1.0/tau-1.0)*mydose);
-                             }
-
-
-                            current_dose = current_dose<1 ? 1.0f : current_dose;
-
-                            for(size_t j=0; j<6; j++)
-                            {
-                                      temp_parameters[j]/=current_dose;
-                            }
-                        }
-
-//                        memcpy(bb_sample_parameters, temp_parameters, sizeof(float)*6);
+                       mMaskBB = obmask;
+                       temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark, samplebb, mMaskBB);
                     }
-
                     else
                     {
-                        temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
+                         kipl::base::TImage<float,2> mask(sample.dims());
+                         mask = 0.0f;
+                         temp_parameters= m_corrector.PrepareBlackBodyImage(sample,dark,samplebb, mask); // this is just to compute the mask
+                         mMaskBB = mask; // or memcpy
+                    }
+
+                    if (bUseNormROIBB && bUseNormROI)
+                    {
+                        // prenormalize interpolation parameters with dose
+
                         current_dose= fBlackDoseSample;
 
                         if (bPBvariante)
                         {
                             kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi); // previously doseBBroi
                             float mydose = computedose(mybb);
-                            current_dose+= ((1.0/tau-1.0)*mydose);
-                         }
+                            current_dose += ((1.0/tau-1.0)*mydose);
+                        }
 
                         current_dose = current_dose<1 ? 1.0f : current_dose;
 
                         for(size_t j=0; j<6; j++)
                         {
-                             temp_parameters[j]/=current_dose;
+                                  temp_parameters[j]/=current_dose;
                         }
+                    }
+
+//                        memcpy(bb_sample_parameters, temp_parameters, sizeof(float)*6);
+                }
+                else
+                {
+                    temp_parameters = m_corrector.PrepareBlackBodyImagewithMask(dark,samplebb,mMaskBB);
+                    current_dose= fBlackDoseSample;
+
+                    if (bPBvariante)
+                    {
+                        kipl::base::TImage<float,2> mybb = m_corrector.InterpolateBlackBodyImage(temp_parameters,doseBBroi); // previously doseBBroi
+                        float mydose = computedose(mybb);
+                        current_dose+= ((1.0/tau-1.0)*mydose);
+                     }
+
+                    current_dose = current_dose<1 ? 1.0f : current_dose;
+
+                    for(size_t j=0; j<6; j++)
+                    {
+                         temp_parameters[j]/=current_dose;
+                    }
 
 //                        memcpy(bb_sample_parameters+i*6, temp_parameters, sizeof(float)*6);
 
-                        std::copy_n(temp_parameters.begin(),6,bb_sample_parameters.begin()+i*6);
+                    std::copy_n(temp_parameters.begin(),6,bb_sample_parameters.begin()+i*6);
 
-                    }
-
-
-
+                }
             }
 
 //                memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*6*nBBSampleCount);
 
-                std::copy_n(bb_sample_parameters.begin(),6*nBBSampleCount,sample_bb_param.begin());
-                break;
-             }
+            std::copy_n(bb_sample_parameters.begin(),6*nBBSampleCount,sample_bb_param.begin());
+            break;
+         }
 
-         case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
+         case (ImagingAlgorithms::ReferenceImageCorrection::noBB):
+         {
                throw ReconException("trying to switch to case ImagingAlgorithms::ReferenceImageCorrection::noBB in PrepareBBdata",__FILE__,__LINE__);
                break;
          }
-         case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB) : {
+
+         case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB) :
+         {
              throw ReconException("trying to switch to case ImagingAlgorithms::ReferenceImageCorrection::ExternalBB in PrepareBBdata",__FILE__,__LINE__);
          }
 
          default: throw ReconException("trying to switch to unknown BBOption in PrepareBBdata",__FILE__,__LINE__);
 
-         }
-logger.message("PreparePolynomialInterpolationParameters begin");
+    }
+    logger.message("PreparePolynomialInterpolationParameters end");
 }
 
 int BBLogNorm::PrepareSplinesInterpolationParameters() {

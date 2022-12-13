@@ -1770,8 +1770,6 @@ std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImagewithSplinesAnd
 
 std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float, 2> &flat, kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float,2> &mask, float &error)
 {
-
-
     // 1. normalize image
 
     kipl::base::TImage<float, 2> norm(bb.dims());
@@ -1779,11 +1777,12 @@ std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::T
     memcpy(norm.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
     memcpy(normdc.GetDataPtr(),bb.GetDataPtr(), sizeof(float)*bb.Size());
 
-    normdc -=dark;
-    norm -=dark;
-    norm /= (flat-=dark);
+    normdc -= dark;
+    norm   -= dark;
+    norm   /= (flat-=dark); // TODO: is this a good idea?
 
-    try{
+    try
+    {
         SegmentBlackBody(norm, mask);
     }
     catch (kipl::base::KiplException &e)
@@ -1806,13 +1805,11 @@ std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::T
     auto param = ComputeInterpolationParameters(mask,BB_DC,myerror);
     error = myerror;
 
-
     return param;
-
 }
 
-std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask){
-
+std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask)
+{
     kipl::base::TImage<float,2> BB_DC(bb.dims());
     memcpy(BB_DC.GetDataPtr(), bb.GetDataPtr(), sizeof(float)*bb.Size());
     BB_DC-=dark;
@@ -1821,7 +1818,6 @@ std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl:
     auto param = ComputeInterpolationParameters(mask,BB_DC);
 
     return param;
-
 }
 
 std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl::base::TImage<float, 2> &dark, kipl::base::TImage<float, 2> &bb, kipl::base::TImage<float, 2> &mask, float &error)
@@ -1838,27 +1834,27 @@ std::vector<float> ReferenceImageCorrection::PrepareBlackBodyImagewithMask(kipl:
     return param;
 }
 
-void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB){
+void ReferenceImageCorrection::SetAngles(float *ang, size_t nProj, size_t nBB)
+{
     angles[0] = ang[0];
     angles[1] = ang[1];
     angles[2] = ang[2];
     angles[3] = ang[3];
 
-    m_nProj = nProj; // to set eventually around where it is used
+    m_nProj     = nProj; // to set eventually around where it is used
     m_nBBimages = nBB;
-
-
 }
 
-void ReferenceImageCorrection::SetDoseList(const std::vector<float> & doselist){
-
-    if (m_nProj!=0) {
+void ReferenceImageCorrection::SetDoseList(const std::vector<float> & doselist)
+{
+    if (m_nProj!=0)
+    {
         dosesamplelist = doselist;
     }
-    else {
+    else
+    {
         throw ImagingException("m_nProj was not set before calling ReferenceImageCorrection::SetDoseList",__FILE__,__LINE__);
     }
-
 }
 
 void ReferenceImageCorrection::SetSplinesParameters(const std::vector<float> &ob_parameter,
