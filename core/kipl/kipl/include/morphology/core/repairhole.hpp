@@ -1,3 +1,4 @@
+//LICENSE
 #ifndef REPAIRHOLE_HPP
 #define REPAIRHOLE_HPP
 
@@ -21,10 +22,10 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
     std::list<pair<size_t,T> > processedPixels;
 
     kipl::base::PixelIterator neighborhood(img.dims(), connect);
-    for (auto pixIt=holelist.begin(); pixIt!=holelist.end(); ++pixIt)
+    for (const auto  & pixIt : holelist)
     {
-        img[*pixIt]=markedPixel;
-        edgePixels.push_back(*pixIt);
+        img[pixIt]=markedPixel;
+        edgePixels.push_back(pixIt);
     }
 
     while (!edgePixels.empty())
@@ -43,12 +44,14 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
             {
                 size_t pixel = pixPos + neighborPix;
 
-                if (pixel<img.Size()){
+                if (pixel<img.Size())
+                {
                     T value=img[pixel];
 
-                    if (value!=markedPixel) {
+                    if (value!=markedPixel)
+                    {
                         sum+=img[pixel];
-                        hitcnt++;
+                        ++hitcnt;
                         isEdge=true;
                     }
                 }
@@ -64,8 +67,8 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
             }
         }
 
-        for (auto p=processedPixels.begin(); p!=processedPixels.end(); ++p)
-            img[p->first]=p->second;
+        for (auto & p : processedPixels)
+            img[p.first]=p.second;
 
         processedPixels.clear();
 

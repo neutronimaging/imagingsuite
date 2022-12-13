@@ -36,6 +36,7 @@ unix {
     unix:macx {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
+        INCLUDEPATH += $$PWD/../../../../../ExternalDependencies/macos/include
     }
 }
 

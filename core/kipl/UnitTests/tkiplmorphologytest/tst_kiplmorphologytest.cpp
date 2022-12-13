@@ -1020,7 +1020,7 @@ void kiplMorphologyTest::testRepairHoles()
           img(j,i)=i*dims[0]+j;
         }
     }
-kipl::io::WriteTIFF(img,"holes_original.tiff");
+    kipl::io::WriteTIFF(img,"holes_original.tiff");
     std::list<size_t> plist;
 
     for (size_t i=3; i<7; ++i)
@@ -1032,9 +1032,16 @@ kipl::io::WriteTIFF(img,"holes_original.tiff");
         }
     }
 
-    kipl::io::WriteTIFF(img,"holes_preRepair.tiff");
-    kipl::morphology::RepairHoles(img,plist,kipl::base::conn4);
-    kipl::io::WriteTIFF(img,"holes_repaired.tiff");
+    kipl::base::TImage<float,2> img4=img;
+    img4.Clone();
+    kipl::io::WriteTIFF(img4,"holes_preRepair.tiff");
+    kipl::morphology::RepairHoles(img4,plist,kipl::base::conn4);
+    kipl::io::WriteTIFF(img4,"holes_repaired4.tiff");
+
+    kipl::base::TImage<float,2> img8=img;
+    img8.Clone();
+    kipl::morphology::RepairHoles(img8,plist,kipl::base::conn8);
+    kipl::io::WriteTIFF(img8,"holes_repaired8.tiff");
 }
 
 QTEST_APPLESS_MAIN(kiplMorphologyTest)
