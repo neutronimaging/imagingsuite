@@ -53,6 +53,16 @@ copy %REPOS%\ExternalDependencies\windows\bin\libxml2.dll .
 copy %BDEST%\MuhRec.exe .
 copy %BDEST%\ImageViewer.exe .
 copy %BDEST%\MuhRecCLI.exe .
+copy %BDEST%\tLogging.exe .
+copy %BDEST%\tkiplfilters.exe .
+copy %BDEST%\tSTLVectorOperations.exe .
+copy %BDEST%\tDirAnalysis.exe .
+@REM copy %BDEST%\tedgefunction.exe .
+copy %BDEST%\tFillHole.exe .
+copy %BDEST%\tImageOperators.exe .
+copy %BDEST%\tIndex2Coord.exe .
+copy %BDEST%\tKIPL_IO.exe .
+
 rem copy %REPOS%\lib\verticalslicer.exe
 rem copy %REPOS%\lib\multiframesplitter.exe
 
@@ -64,6 +74,7 @@ rem windeployqt %DEST%\verticalslicer.exe
 rem windeployqt %DEST%\multiframesplitter.exe
 windeployqt %DEST%\muhrec.exe
 windeployqt %DEST%\ImageViewer.exe
+windeployqt %DEST%\tLogging.exe
 rem windeployqt %DEST%\muhrecCLI.exe
 
 copy Qt6PrintSupport.dll %DEST%

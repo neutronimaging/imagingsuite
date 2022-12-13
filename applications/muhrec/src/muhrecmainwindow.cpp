@@ -29,6 +29,7 @@
 #include <ReconHelpers.h>
 #include <ReconException.h>
 #include <ProjectionReader.h>
+#include <analyzefileext.h>
 
 #include <ModuleException.h>
 #include <ParameterHandling.h>
@@ -75,9 +76,9 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
 
     // Setup logging dialog
     logdlg->setModal(false);
-    kipl::logging::Logger::AddLogTarget(*logdlg);
+    kipl::logging::Logger::addLogTarget(dynamic_cast<kipl::logging::LogWriter *>(logdlg));
 
-    logger(kipl::logging::Logger::LogMessage,"Enter c'tor");
+    logger.message("Enter c'tor");
 
     // Prepare paths
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
@@ -96,7 +97,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     msg<<"ApplicationPath = "<<m_sApplicationPath<<std::endl
       <<"HomePath         = "<<m_sHomePath<<std::endl
       <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str());
 
 
     ui->projectionViewer->hold_annotations(true);
@@ -327,14 +328,14 @@ void MuhRecMainWindow::PreviewProjection(int x)
         << ", max="<<ui->sliderProjections->maximum()<<", current="
         << ui->sliderProjections->value();
 
-    logger(logger.LogVerbose,msg.str());
+    logger.verbose(msg.str());
 
     try {
         UpdateConfig();
         std::string fmask=m_sPreviewMask;
 
         std::string name, ext;
-        size_t found;
+
         int position=ui->sliderProjections->value();
 
         std::map<float,ProjectionInfo> fileList;
@@ -350,7 +351,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         if (static_cast<int>(fileList.size())<position) // Workaround for bad BuildFileList implementation
         {
-            logger(logger.LogWarning, "Projection slider out of list range.");
+            logger.warning("Projection slider out of list range.");
             return;
         }
 
@@ -358,22 +359,26 @@ void MuhRecMainWindow::PreviewProjection(int x)
         if (position<=ui->sliderProjections->maximum())
             std::advance(it,position-(position==0 ? 0 :1));
         else {
-            logger(logger.LogError,"Slider out of range");
+            logger.error("Slider out of range");
             return;
         }
 
         name=it->second.name;
 
         logger.verbose(name);
-        if (QFile::exists(QString::fromStdString(name))) {
+        if (QFile::exists(QString::fromStdString(name)))
+        {
 
-            if (QFile::exists(QString::fromStdString(fmask)) || QFile::exists(QString::fromStdString(name))) {
+            if (QFile::exists(QString::fromStdString(fmask)) || QFile::exists(QString::fromStdString(name)))
+            {
 
                 int sliderval=ui->sliderProjections->value();
 
-                found = fmask.find("hdf");
-                try {
-                    if (found!=std::string::npos )
+                auto maskext = readers::GetFileExtensionType(fmask);
+
+                try
+                {
+                    if (maskext == readers::ExtensionHDF5 )
                     {
                         m_PreviewImage=reader.ReadNexus(fmask,static_cast<size_t>(ui->sliderProjections->value()),
                                         static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex()),
@@ -395,7 +400,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
                         QMessageBox mbox(this);
                         msg.str("");
                         msg<<"KiplException: Nexus format not supported\n";
-                        logger(kipl::logging::Logger::LogError,msg.str());
+                        logger.error(msg.str());
                         mbox.setText(QString::fromStdString(msg.str()));
                         mbox.exec();
                     }
@@ -403,24 +408,26 @@ void MuhRecMainWindow::PreviewProjection(int x)
                 catch(ReconException &e){
                     msg<<"ReconException: Reading file failed\n"<<e.what();
 
-                    logger(kipl::logging::Logger::LogError,msg.str());
+                    logger.error(msg.str());
                     throw ReconException(msg.str(),__FILE__,__LINE__);
 
                 }
                 catch(kipl::base::KiplException &e){
                     msg<<"KiplException: Reading file failed\n"<<e.what();
 
-                    logger(kipl::logging::Logger::LogError,msg.str());
+                    logger.error(msg.str());
                     throw ReconException(msg.str(),__FILE__,__LINE__);
                 }
 
                 float lo,hi;
 
-                if (m_PreviewImage.Size()==1) {
+                if (m_PreviewImage.Size()==1)
+                {
                     logger(logger.LogWarning,"Could not read preview");
                     return ;
                 }
-                if (x < 0) {
+                if (x < 0)
+                {
 
                     const size_t NHist=512;
                     size_t hist[NHist];
@@ -434,7 +441,8 @@ void MuhRecMainWindow::PreviewProjection(int x)
                     hi=axis[nHi];
                     ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.dims(),lo,hi);
                 }
-                else {
+                else
+                {
                     ui->projectionViewer->get_levels(&lo,&hi);
                     ui->projectionViewer->set_image(m_PreviewImage.GetDataPtr(),m_PreviewImage.dims(),lo,hi);
                 }
@@ -450,7 +458,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
             else {
                 msg.str("");
                 msg<<"Could not load the image "<<name<<std::endl<<"the file does not exist.";
-                logger(kipl::logging::Logger::LogError,msg.str());
+                logger.error(msg.str());
                 throw ReconException(msg.str(),__FILE__,__LINE__);
             }
         }
@@ -463,7 +471,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
         QMessageBox mbox(this);
         msg.str("");
         msg<<"Could not load the projection for preview: \n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
+        logger.error(msg.str());
         mbox.setText(QString::fromStdString(msg.str()));
         mbox.exec();
 
@@ -472,7 +480,8 @@ void MuhRecMainWindow::PreviewProjection(int x)
         QMessageBox mbox(this);
         msg.str("");
         msg<<"Could not load the projection for preview: \n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
+        logger.error(msg.str());
+
         mbox.setText(QString::fromStdString(msg.str()));
         mbox.exec();
     }
@@ -506,14 +515,14 @@ void MuhRecMainWindow::CenterOfRotationChanged()
     coords.push_back(QPointF(pos,m_PreviewImage.Size(1)));
 
 
-    if (ui->checkCorrectTilt->checkState()==Qt::Checked) {
+    if (ui->checkCorrectTilt->checkState()==Qt::Checked)
+    {
         double pivot=ui->dspinTiltPivot->value();
         double tantilt=tan(ui->dspinTiltAngle->value()*3.1415/180.0);
         coords[0].setX(coords[0].x()-tantilt*pivot);
         coords[1].setX(coords[1].x()+tantilt*(coords[1].y()-pivot));
     }
 
-//    ui->projectionViewer->set_plot(coords,QColor("red"),0);
     ui->projectionViewer->set_plot(coords,Qt::red,0);
 }
 
@@ -530,7 +539,7 @@ void MuhRecMainWindow::StoreGeometrySetting()
         else
             msg<<"Data was not reconstructed, no geometry was stored";
 
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+        logger.message(msg.str());
         m_bCurrentReconStored = true;
     }
 }
@@ -550,7 +559,7 @@ void MuhRecMainWindow::ClearGeometrySettings()
 
         if (res==QMessageBox::Ok)
         {
-            logger(kipl::logging::Logger::LogMessage, "The list with stored configurations was cleared.");
+            logger.message( "The list with stored configurations was cleared.");
             m_StoredReconList.clear();
             m_bCurrentReconStored = false;
         }
@@ -579,8 +588,8 @@ void MuhRecMainWindow::ViewGeometryList()
 void MuhRecMainWindow::MatrixROIChanged(int x)
 {
     // todo Update the matrix roi callback
-    (void) x;
-//    logger(kipl::logging::Logger::LogMessage,"MatrixROI changed");
+    std::ignore = x;
+//    logger.message("MatrixROI changed");
 //    UpdateMatrixROI();
 
 //    if (m_Config.ProjectionInfo.beamgeometry == m_Config.ProjectionInfo.BeamGeometry_Cone){
@@ -623,7 +632,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
     msg.str("");
     msg<<"default name is "<<defaultsname<<" it "<<(dir.exists(QString::fromStdString(defaultsname))==true ? "exists" : "doesn't exist")<<" and should "<< (checkCurrent ? " " : "not ")<<"be used";
-    logger(logger.LogMessage,msg.str());
+    logger.message(msg.str());
     bool bUseDefaults=true;
     if ((checkCurrent==true) && // do we check for previous recons?
             (dir.exists(QString::fromStdString(defaultsname))==true)) { // is there a previous recon?
@@ -649,33 +658,38 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
     kipl::strings::filenames::CheckPathSlashes(defaultsname,false);
     msg.str("");
     msg<<"Looking for defaults at "<<defaultsname;
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str());
 
     msg.str("");
-    try {
+    try
+    {
         m_Config.setAppPath(m_sApplicationPath);
         m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
         msg.str("");
         msg<<m_Config.WriteXML();
         logger(logger.LogMessage,msg.str());
     }
-    catch (ReconException &e) {
+    catch (ReconException &e)
+    {
         msg.str("");
         msg<<"Loading defaults failed :\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
+        logger.error(msg.str());
     }
-    catch (ModuleException &e) {
+    catch (ModuleException &e)
+    {
         msg.str("");
         msg<<"Loading defaults failed :\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
+        logger.error(msg.str());
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         msg.str("");
         msg<<"Loading defaults failed :\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
+        logger.error(msg.str());
     }
 
-    if (bUseDefaults) {
+    if (bUseDefaults)
+    {
         m_Config.ProjectionInfo.sPath              = m_sHomePath;
         m_Config.ProjectionInfo.sReferencePath     = m_sHomePath;
         m_Config.MatrixInfo.sDestinationPath       = m_sHomePath;
@@ -693,7 +707,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
             if (pos!=std::string::npos)
                 module.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
 
-            logger(kipl::logging::Logger::LogMessage,module.m_sSharedObject);
+            logger.message(module.m_sSharedObject);
         }
 
         logger(logger.LogMessage,"Updating path of back projector");
@@ -701,7 +715,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         if (pos!=std::string::npos)
             m_Config.backprojector.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
 
-        logger(kipl::logging::Logger::LogMessage,m_Config.backprojector.m_sSharedObject);
+        logger.message(m_Config.backprojector.m_sSharedObject);
 
         kipl::base::TImage<float,2> img=kipl::generators::Sine2D::SineRings({1000,1000},2.0f);
         ui->projectionViewer->set_image(img.GetDataPtr(),img.dims());
@@ -744,7 +758,7 @@ void MuhRecMainWindow::MenuFileOpen()
         m_Config.LoadConfigFile(fileName.toStdString(),"reconstructor");
         msg.str("");
         msg<<m_Config.WriteXML();
-        logger(logger.LogMessage,msg.str());
+        logger.message(msg.str());
     }
     catch (ReconException & e) {
         msg<<"Failed to load the configuration file :\n"<<
@@ -845,8 +859,9 @@ void MuhRecMainWindow::saveCurrentRecon()
 
     QString path=dir.homePath()+"/.imagingtools";
 
-    logger(kipl::logging::Logger::LogMessage,path.toStdString());
-    if (!dir.exists(path)) {
+    logger.message(path.toStdString());
+    if (!dir.exists(path))
+    {
         dir.mkdir(path);
     }
     std::string sPath=path.toStdString();
@@ -862,25 +877,25 @@ void MuhRecMainWindow::saveCurrentRecon()
         {
             msg.str("");
             msg<<"Failed to open config file: "<<confpath.str()<<" for writing.";
-            logger(kipl::logging::Logger::LogError,msg.str());
+            logger.error(msg.str());
             return ;
         }
         of<<m_Config.WriteXML();
         of.flush();
-        logger(kipl::logging::Logger::LogMessage,"Saved current recon config");
+        logger.message("Saved current recon config");
     }
     catch (kipl::base::KiplException &e)
     {
         msg.str("");
         msg<<"Saving current config failed with exception: "<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
+        logger.error(msg.str());
         return;
     }
     catch (std::exception &e)
     {
         msg.str("");
         msg<<"Saving current config failed with exception: "<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
+        logger.error(msg.str());
         return;
     }
 
@@ -934,7 +949,7 @@ void MuhRecMainWindow::MenuReconstructStart()
 
             if (res!=QDialog::Accepted)
             {
-                logger(logger.LogMessage,"Reconstruction was aborted");
+                logger.message("Reconstruction was aborted");
                 return;
             }
             m_Config.MatrixInfo.sDestinationPath = largesize_dlg.GetPath().toStdString();
@@ -946,7 +961,7 @@ void MuhRecMainWindow::MenuReconstructStart()
             msg.str("");
             msg<<"Reconstructing direct to folder "<<m_Config.MatrixInfo.sDestinationPath
               <<" using the mask "<< m_Config.MatrixInfo.sFileMask;
-            logger(logger.LogMessage,msg.str());
+            logger.message(msg.str());
 
             m_Config.MatrixInfo.bAutomaticSerialize=true;
         }
@@ -955,19 +970,19 @@ void MuhRecMainWindow::MenuReconstructStart()
     }
     catch (ModuleException &e)
     {
-        (void)e;
+        std::ignore = e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
     catch (ReconException &e)
     {
-        (void)e;
+        std::ignore = e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
     catch (kipl::base::KiplException &e)
     {
-        (void)e;
+        std::ignore = e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
@@ -980,19 +995,19 @@ void MuhRecMainWindow::MenuReconstructStart()
     }
     catch (ModuleException &e)
     {
-        (void)e;
+        std::ignore = e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Module Exception).");
         return ;
     }
     catch (ReconException &e)
     {
-        (void)e;
+        std::ignore = e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (Reconstruction Exception).");
         return ;
     }
     catch (kipl::base::KiplException &e)
     {
-        (void)e;
+        std::ignore = e;
         QMessageBox::warning(this,"Reconstruction failed","Reconstruction failed due to bad configuration (kipl Exception).");
         return ;
     }
@@ -1021,13 +1036,13 @@ void MuhRecMainWindow::ExecuteReconstruction()
 
     bool bRerunBackproj=!m_Config.ConfigChanged(m_LastReconConfig,freelist);
     msg.str(""); msg<<"Config has "<<(bRerunBackproj ? "not" : "")<<" changed";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str());
 
     if ( bRerunBackproj==false || m_pEngine==nullptr || m_Config.MatrixInfo.bAutomaticSerialize==true)
     {
         bRerunBackproj=false; // Just in case if other cases outruled re-run
 
-        logger(kipl::logging::Logger::LogMessage,"Preparing for full recon");
+        logger.message("Preparing for full recon");
         msg.str("");
         try
         {
@@ -1083,7 +1098,8 @@ void MuhRecMainWindow::ExecuteReconstruction()
 
         if (bBuildFailure)
         {
-            logger(kipl::logging::Logger::LogError,msg.str());
+            logger.error(msg.str());
+
             QMessageBox error_dlg;
             error_dlg.setText("Failed to build reconstructor due to plugin exception. See log message for more information.");
             error_dlg.setDetailedText(QString::fromStdString(msg.str()));
@@ -1097,24 +1113,27 @@ void MuhRecMainWindow::ExecuteReconstruction()
             return ;
         }
     }
-    else {
-            logger(kipl::logging::Logger::LogMessage,"Preparing for back proj only");
+    else
+    {
+            logger.message("Preparing for back proj only");
+
             if (m_pEngine!=nullptr)
                 m_pEngine->SetConfig(m_Config); // Set new recon parameters for the backprojector
-            else {
+            else
+            {
                 logger(logger.LogError,"No engine allocated");
                 return;
             }
             bRerunBackproj=true;
     }
 
-
     msg.str("");
 
     ReconDialog dlg(&m_Interactor);
     bool bRunFailure=false;
     try {
-        if (m_pEngine!=nullptr) {
+        if (m_pEngine!=nullptr)
+        {
             msg<<"pre run config.roi=["<<m_Config.ProjectionInfo.roi[0]<<","
                         <<m_Config.ProjectionInfo.roi[1]<<","
                         <<m_Config.ProjectionInfo.roi[2]<<","
@@ -1129,7 +1148,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
             res=dlg.exec(m_pEngine,bRerunBackproj);
 
             if (res==QDialog::Accepted) {
-                logger(kipl::logging::Logger::LogVerbose,"Finished with OK");
+                logger.verbose("Finished with OK");
 
                 // Store info about last recon
                 m_LastReconConfig     = m_Config;
@@ -1139,7 +1158,8 @@ void MuhRecMainWindow::ExecuteReconstruction()
                 m_LastMidSlice = m_pEngine->GetSlice(dims[2]/2);
 
                 // Prepare visualization
-                if (m_Config.MatrixInfo.bAutomaticSerialize==false) {
+                if (m_Config.MatrixInfo.bAutomaticSerialize==false)
+                {
                     PreviewProjection(); // Display the projection if it was not done already
                     ui->tabMainControl->setCurrentIndex(3);
 
@@ -1148,7 +1168,8 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     size_t y[nBins];
                     m_pEngine->GetHistogram(x,y,nBins);
                     ui->plotHistogram->setCurveData(0,x,y,nBins,"Volume histogram");
-                    try {
+                    try
+                    {
                         ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(ui->dspinGrayLow->value(),QColor("red"),QtAddons::PlotCursor::Vertical,"Lower limit"));
                         ui->plotHistogram->setCursor(1,new QtAddons::PlotCursor(ui->dspinGrayHigh->value(),QColor("red"),QtAddons::PlotCursor::Vertical,"Upper limit"));
                     }
@@ -1161,7 +1182,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     m_Config.MatrixInfo.nDims = m_pEngine->GetMatrixDims();
                     msg.str("");
                     msg<<"Reconstructed "<<m_Config.MatrixInfo.nDims[2]<<" slices";
-                    logger(kipl::logging::Logger::LogMessage,msg.str());
+                    logger.message(msg.str());
 
                     ui->sliderSlices->setRange(0,static_cast<int>(m_Config.MatrixInfo.nDims[2])-1);
                     ui->spinBoxSlices->setRange(0,static_cast<int>(m_Config.MatrixInfo.nDims[2])-1);
@@ -1175,12 +1196,13 @@ void MuhRecMainWindow::ExecuteReconstruction()
 
                     msg.str("");
                     msg<<"Matrix display interval ["<<m_Config.MatrixInfo.fGrayInterval[0]<<", "<<m_Config.MatrixInfo.fGrayInterval[1]<<"]";
-                    logger(kipl::logging::Logger::LogMessage,msg.str());
+                    logger.message(msg.str());
                     QSignalBlocker blockCombo(ui->comboSlicePlane);
                     ui->comboSlicePlane->setCurrentIndex(0);
                     DisplaySlice();
                 }
-                else {
+                else
+                {
                     std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
                     kipl::strings::filenames::CheckPathSlashes(fname,false);
                     std::ofstream configfile(fname.c_str());
@@ -1231,7 +1253,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
     }
 
     if (bRunFailure) {
-        logger(kipl::logging::Logger::LogError,msg.str());
+        logger.error(msg.str());
 
         QMessageBox error_dlg;
         error_dlg.setText("Failed to run the reconstructor.");
@@ -1279,7 +1301,7 @@ void MuhRecMainWindow::UpdateMemoryUsage(const std::vector<size_t> & roi)
         nBufferMemory/=(1024*1024);
         text.str("");
         m_nRequiredMemory=static_cast<size_t>(nBufferMemory+nMatrixMemory);
-//        m_nRequiredMemory=static_cast<size_t>(nMatrixMemory);
+
         text<<"Memory usage: "<<m_nRequiredMemory
            <<"Mb (matrix: "<<ceil(nMatrixMemory)<<", buffers: "
            <<ceil(nBufferMemory)<<") system max "
@@ -1334,12 +1356,9 @@ void MuhRecMainWindow::UpdateDialog()
     ui->spinProjectionBinning->setValue(m_Config.ProjectionInfo.fBinning);
     ui->comboFlipProjection->setCurrentIndex(m_Config.ProjectionInfo.eFlip);
     ui->comboRotateProjection->setCurrentIndex(m_Config.ProjectionInfo.eRotate);
-//    ui->buttonPreview->click();
-  //  ProjectionIndexChanged(-1);
 
     ui->spinFirstOpenBeam->setValue(static_cast<int>(m_Config.ProjectionInfo.nOBFirstIndex));
     ui->spinOpenBeamCount->setValue(static_cast<int>(m_Config.ProjectionInfo.nOBCount));
-
 
     ui->spinFirstDark->setValue(static_cast<int>(m_Config.ProjectionInfo.nDCFirstIndex));
     ui->spinDarkCount->setValue(static_cast<int>(m_Config.ProjectionInfo.nDCCount));
@@ -1383,12 +1402,15 @@ void MuhRecMainWindow::UpdateDialog()
         }
     }
     else {
-        if (m_Config.ProjectionInfo.fScanArc[0] == 180) {
-            if (m_Config.ProjectionInfo.fScanArc[1] == 360) {
+        if (m_Config.ProjectionInfo.fScanArc[0] == 180)
+        {
+            if (m_Config.ProjectionInfo.fScanArc[1] == 360)
+            {
                 ui->radioButton_halfTurn2->setChecked(true);
                 on_radioButton_halfTurn2_clicked();
             }
-            else {
+            else
+            {
                 ui->radioButton_customTurn->setChecked(true);
                 on_radioButton_customTurn_clicked();
             }
@@ -1825,7 +1847,7 @@ void MuhRecMainWindow::on_comboSlicePlane_activated(int index)
         ui->spinBoxSlices->setValue(maxslices/2);
 
         msg<<"Changed slice plane to "<<m_eSlicePlane<<" max slices="<<maxslices;
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+        logger.message(msg.str());
 
         on_sliderSlices_sliderMoved(maxslices/2);
 
@@ -2472,7 +2494,7 @@ void MuhRecMainWindow::on_sliderSlices_sliderMoved(int position)
     catch (kipl::base::KiplException &e) {
         msg.str("");
         msg<<"Failed to display slice \n"<<e.what();
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+        logger.message(msg.str());
     }
 }
 
@@ -2572,11 +2594,11 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
             msgdlg.setDetailedText(QString::fromStdString(msg.str()));
             msgdlg.exec();
 
-            logger(kipl::logging::Logger::LogError,msg.str());
+            logger.error(msg.str());
         }
     }
     else {
-        logger(kipl::logging::Logger::LogWarning,"There is no matrix to save yet.");
+        logger.warning("There is no matrix to save yet.");
         QMessageBox msgdlg;
 
         msgdlg.setWindowTitle("Error");
@@ -2807,7 +2829,7 @@ void MuhRecMainWindow::on_spinBoxSlices_valueChanged(int arg1)
    catch (kipl::base::KiplException &e) {
        msg.str("");
        msg<<"Failed to display slice \n"<<e.what();
-       logger(kipl::logging::Logger::LogMessage,msg.str());
+       logger.message(msg.str());
    }
 }
 

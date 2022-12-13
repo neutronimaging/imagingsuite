@@ -161,6 +161,7 @@ void FdkReconBase::SetROI(const std::vector<size_t> &roi)
 /// \param bLastProjection termination signal. When true the back-projeciton is finalized.
 size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, float weight, size_t nProj, bool bLastProjection)
 {
+    logger.verbose("FdkReconBase::Process 2D");
     std::ostringstream msg;
     if (volume.Size()==0)
         throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
@@ -217,7 +218,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, floa
 /// \param parameters A list of parameters, the list shall contain at least the parameters angles and weights each containing a space separated list with as many values as projections
 size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<std::string, std::string> parameters)
 {
-    logger(kipl::logging::Logger::LogMessage,"FdkReconBase::Process 1");
+    logger.message("FdkReconBase::Process 3D");
 
     if (volume.Size()==0)
         throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
@@ -228,29 +229,39 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
     // Extract the projection parameters
     std::vector<float> weights;
-    std::vector<float> angles;
-
     GetFloatParameterVector(parameters,"weights", weights, nProj);
+
+    std::vector<float> angles;
     GetFloatParameterVector(parameters,"angles",  angles,  nProj);
+
+    std::ostringstream msg;
+    msg<<"Got "<<weights.size()<<" weights and "<<angles.size()<<" angles, image dims=["<<img.Size(0)<<", "<<img.Size(1)<<"]";
+    logger.verbose(msg.str());
 
     // Process the projections
     float *pImg=img.GetDataPtr();
     float *pProj=nullptr;
 
-    InitializeBuffers(img.Size(0),img.Size(1));
-    for (int i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj,"FDK back-projection")); i++)
+    logger.verbose("Starting recon loop over projections");
+
+    for (int i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj,"FDK back-projection")); ++i)
     {
+        msg.str("");
+        msg<<"Reconstructing projection" << i;
+        logger.verbose(msg.str());
         pProj=projections.GetLinePtr(0,i);
-        memcpy(pImg,pProj,sizeof(float)*img.Size());
-        std::cout<<i;
+
+        std::copy_n(pProj,img.Size(),pImg);
         img *= weights[i];
 
         //           Process(img,angles[i],weights[i],i,i==(nProj-1)); // to ask for
         this->reconstruct(img, angles[i], nProj);
-    }
-    std::cout<<"\n";
 
-    FinalizeBuffers();
+    }
+
+//    FinalizeBuffers();
+    logger.verbose("Recon loop finished");
+
     //         fdkTimer.Toc();
     //         std::cout << "fdkTimer: " << fdkTimer << std::endl;
 

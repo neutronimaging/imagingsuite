@@ -51,7 +51,8 @@ void STLVecOperations::test_medianFilter()
     if (N<30)
     {
         auto it=result.begin();
-        for (auto &x: orig) {
+        for (auto &x: orig) 
+        {
             qDebug()<<x<<(*it);
             ++it;
         }
@@ -173,4 +174,4 @@ void STLVecOperations::test_findContinuousBlocks()
 
 QTEST_APPLESS_MAIN(STLVecOperations)
 
-#include "tst_stlvecoperations.moc"
+#include "include/tst_stlvecoperations.moc"

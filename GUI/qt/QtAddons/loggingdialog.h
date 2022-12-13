@@ -23,7 +23,7 @@ public:
     explicit LoggingDialog(QWidget *parent = 0);
     ~LoggingDialog();
 
-    virtual size_t Write(std::string str);
+    virtual size_t write(const std::string &str);
 
     QString serialize();
     void setLogLevel(kipl::logging::Logger::LogLevel level);

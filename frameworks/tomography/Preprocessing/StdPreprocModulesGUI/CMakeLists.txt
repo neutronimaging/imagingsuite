@@ -26,6 +26,7 @@ include_directories(
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
@@ -46,6 +47,7 @@ include_directories(
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
@@ -63,6 +65,7 @@ include_directories(
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
@@ -145,6 +148,7 @@ add_library(${TARGET_NAME} SHARED
       kipl
       ImagingAlgorithms
       ModuleConfig
+      ReaderConfig
       ReconFramework
       QtAddons
       QtModuleConfigure
@@ -164,30 +168,31 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
         ../../../../external/mac/lib/
         )
   
-    target_link_libraries(${TARGET_NAME} PRIVATE
-        Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Widgets
-#         Qt${QT_VERSION_MAJOR}::Charts
-#         Qt${QT_VERSION_MAJOR}::PrintSupport
-        kipl
-        ImagingAlgorithms
-        ModuleConfig
-        ReconFramework
-        QtAddons
-        QtModuleConfigure
-        StdPreprocModules
-        xml2
-        fftw3
-        fftw3f
-        cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus.1.0.0
-        NeXusCPP.1.0.0
-    )
-endif()
+      target_link_libraries(${TARGET_NAME} PRIVATE
+          Qt${QT_VERSION_MAJOR}::Core
+          Qt${QT_VERSION_MAJOR}::Widgets
+ #         Qt${QT_VERSION_MAJOR}::Charts
+ #         Qt${QT_VERSION_MAJOR}::PrintSupport
+          kipl
+          ImagingAlgorithms
+          ModuleConfig
+          ReaderConfig
+          ReconFramework
+          QtAddons
+          QtModuleConfigure
+          StdPreprocModules
+          xml2
+          fftw3
+          fftw3f
+          cfitsio
+          tiff
+          armadillo
+          lapack
+          blas
+          NeXus.1.0.0
+          NeXusCPP.1.0.0
+      )
+  endif()
 
   if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(${TARGET_NAME} PRIVATE

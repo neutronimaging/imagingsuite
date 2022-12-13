@@ -13,9 +13,9 @@ include_directories(
     /opt/local/include/libxml2
     /usr/include/libxml2
     ../../Framework/ReconFramework/include/
-#    ../../../../external/src/linalg
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../../ExternalDependencies/macos/include
     ../../../../../ExternalDependencies/macos/include/nexus
@@ -29,6 +29,7 @@ if (WIN32)
     include_directories(
         ../../../../core/kipl/kipl/include
         ../../../../core/modules/ModuleConfig/include
+        ../../../../core/modules/ReaderConfig
         ../../../../core/algorithms/ImagingAlgorithms/include
         ../../Framework/ReconFramework/include
         ../../../../../ExternalDependencies/windows/include
@@ -45,6 +46,7 @@ include_directories(
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     )
 endif()
@@ -131,6 +133,7 @@ add_definitions(-DHAVE_NEXUS)
         kipl
         ImagingAlgorithms
         ModuleConfig
+        ReaderConfig
         ReconFramework
         libxml2
         cfitsio
@@ -157,6 +160,7 @@ endif()
           kipl
           ImagingAlgorithms
           ModuleConfig
+          ReaderConfig
           ReconFramework
           xml2
           fftw3

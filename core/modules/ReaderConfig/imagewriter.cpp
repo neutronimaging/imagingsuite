@@ -3,7 +3,7 @@
 #include <strings/filenames.h>
 #include <io/io_tiff.h>
 #include <io/io_fits.h>
-#include <io/analyzefileext.h>
+#include "analyzefileext.h"
 #include "imagewriter.h"
 #include "readerexception.h"
 
@@ -22,7 +22,7 @@ ImageWriter::~ImageWriter()
 void ImageWriter::write(kipl::base::TImage<float,2> &img, std::string fname,kipl::base::eDataType dt)
 {
 
-    kipl::io::eExtensionTypes exttype=kipl::io::GetFileExtensionType(fname);
+    readers::eExtensionTypes exttype=readers::GetFileExtensionType(fname);
     std::ostringstream msg;
     try {
         switch (exttype) {
