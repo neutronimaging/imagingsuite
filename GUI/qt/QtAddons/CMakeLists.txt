@@ -104,13 +104,23 @@ add_library(${TARGET_NAME} SHARED
   ${UI_FILES}
 )
 
+if (APPLE)
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../../external/mac/lib/
+        )
+endif()
 
-target_link_libraries(${TARGET_NAME} PRIVATE
+target_link_libraries(${TARGET_NAME} 
+  PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Charts
     Qt6::PrintSupport
     kipl
+    # fftw3
+    # fftw3f
     )
 
 target_compile_definitions(${TARGET_NAME} PRIVATE QTADDONS_LIBRARY)

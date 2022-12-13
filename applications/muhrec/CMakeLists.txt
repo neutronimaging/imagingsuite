@@ -11,8 +11,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
-#find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Charts Concurrent REQUIRED)
-#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
 
 if (APPLE)
 include_directories(
@@ -145,28 +143,24 @@ set_source_files_properties(${app_icon_macos} PROPERTIES
 
 message(App Qt${QT_VERSION_MAJOR})
 
-#if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${TARGET_NAME}
-        MANUAL_FINALIZATION
-#        MACOSX_BUNDLE
-        ${SRC_FILES}
-        ${INC_FILES}
-        ${UI_FILES}
-        ${app_icon_macos}
-        ${APP_ICON_RESOURCE_WINDOWS}
-    )
-#else()
-#        add_executable(${TARGET_NAME}
-#            ${PROJECT_SOURCES}
-#        )
-#endif()
+
+qt_add_executable(${TARGET_NAME}
+    MANUAL_FINALIZATION
+    ${SRC_FILES}
+    ${INC_FILES}
+    ${UI_FILES}
+    ${app_icon_macos}
+    ${APP_ICON_RESOURCE_WINDOWS}
+)
+
 
 if (APPLE)
-    link_directories(../../../lib /opt/local/lib )
+    # link_directories(../../../lib /opt/local/lib )
 
     target_link_directories(${TARGET_NAME} PRIVATE
         /opt/local/lib
-        ../../../external/mac/lib/
+        ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../external/mac/lib/
         )
 
     target_link_libraries(${TARGET_NAME} PRIVATE
@@ -182,10 +176,10 @@ if (APPLE)
         QtModuleConfigure
         ReconFramework
         QtImaging
-        xml2
-        armadillo
-        lapack
-        blas
+        # xml2
+        # armadillo
+        # lapack
+        # blas
     )
 endif()
 

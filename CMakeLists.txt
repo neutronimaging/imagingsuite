@@ -18,6 +18,7 @@ project(imagingsuite VERSION 4.3 LANGUAGES CXX)
 if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif(NOT DEFINED CMAKE_CXX_STANDARD)
+
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -31,11 +32,20 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-set(CMAKE_MODULE_PATH "lib" )
 # for testing we will need the python interpreter
 find_package(PythonInterp REQUIRED)
+find_package(LibXml2 REQUIRED)
+find_package(Armadillo REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(TIFF REQUIRED)
+find_package(FFTW REQUIRED)
+find_package(LAPACK REQUIRED)
+find_package(BLAS REQUIRED)
+#find_package(NEXUS)
+#find_package(pybind11 REQUIRED)
+#find_package(CFITSIO REQUIRED)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -229,8 +239,6 @@ if(DYNAMIC_LIB)
       ../lib/libhdf5.so.10	
       ../lib/libsz.so.2
 
-  #    /opt/local/lib/libxml2.2.dylib 
-  #    /opt/local/lib/libtiff.5.dylib
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
     execute_process(
@@ -240,25 +248,18 @@ if(DYNAMIC_LIB)
   endif()
   if (APPLE)
     install(FILES 
-#    ../lib/libkipl.1.0.0.dylib
-#    ../lib/libModuleConfig.1.0.0.dylib
-#    ../lib/libReconFramework.1.0.0.dylib
-#    ../lib/libStdBackProjectors.1.0.0.dylib
-#    ../lib/libFDKBackProjectors.1.0.0.dylib
-#    ../lib/libImagingAlgorithms.1.0.0.dylib
-#    ../lib/libReaderConfig.1.0.0.dylib
     external/mac/lib/libNeXus.1.0.0.dylib	
     external/mac/lib//libhdf5_cpp.11.dylib
     external/mac/lib//libNeXusCPP.1.0.0.dylib
     external/mac/lib//libhdf5_hl.10.dylib
     external/mac/lib//libhdf5.10.dylib	
     external/mac/lib//libsz.2.dylib
-    /opt/local/lib/libxml2.2.dylib 
-    /opt/local/lib/libtiff.5.dylib
-    /opt/local/lib/libfftw3.3.dylib
-    /opt/local/lib/libfftw3f.3.dylib
-    /opt/local/lib/libcfitsio.dylib
-    /opt/local/lib/libarmadillo.10.dylib
+    # /opt/local/lib/libxml2.2.dylib 
+    # /opt/local/lib/libtiff.5.dylib
+    # /opt/local/lib/libfftw3.3.dylib
+    # /opt/local/lib/libfftw3f.3.dylib
+    # /opt/local/lib/libcfitsio.dylib
+    # /opt/local/lib/libarmadillo.10.dylib
 
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

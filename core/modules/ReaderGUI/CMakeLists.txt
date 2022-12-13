@@ -102,7 +102,16 @@ add_library(${TARGET_NAME} SHARED
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
-target_link_libraries(${TARGET_NAME} PRIVATE
+if (APPLE)
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../../external/mac/lib/
+        )
+endif()
+
+target_link_libraries(${TARGET_NAME} 
+    PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
 #    Qt${QT_VERSION_MAJOR}::Charts

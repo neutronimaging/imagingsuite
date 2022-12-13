@@ -27,7 +27,7 @@ include_directories(
         )
 endif()
 
-link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
+# link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
 
 # create python module
 add_library(${TARGET_NAME}
@@ -57,23 +57,29 @@ set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 if (APPLE)
+
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../../external/mac/lib/
+        )
+
+
 target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module
-
-  PRIVATE
     kipl
     ImagingAlgorithms
-    xml2
-    tiff
-    armadillo
-    lapack
-    blas
-    fftw3
-    fftw3f
-    cfitsio
-    NeXus.1.0.0
-    NeXusCPP.1.0.0
+    # xml2
+    # tiff
+    # armadillo
+    # lapack
+    # blas
+    # fftw3
+    # fftw3f
+    # cfitsio
+    # NeXus.1.0.0
+    # NeXusCPP.1.0.0
   )
 endif(APPLE)
 

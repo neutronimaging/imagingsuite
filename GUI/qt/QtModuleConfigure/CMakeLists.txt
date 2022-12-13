@@ -93,11 +93,22 @@ add_library(${TARGET_NAME} SHARED
   ${UI_FILES}
 )
 
-target_link_libraries(${TARGET_NAME} PRIVATE
+if (APPLE)
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../../external/mac/lib/
+        )
+endif()
+
+target_link_libraries(${TARGET_NAME} 
+    PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     kipl
     ModuleConfig
+    # fftw3
+    # fftw3f
     )
 
 target_compile_definitions(${TARGET_NAME} PRIVATE QTMODULECONFIGURE_LIBRARY)

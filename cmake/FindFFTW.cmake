@@ -2,29 +2,23 @@
 #
 # Original version of this file:
 #   Copyright (c) 2015, Wenzel Jakob
-#   https://github.com/wjakob/layerlab/blob/master/cmake/FindFFTW.cmake, 
-commit 4d58bfdc28891b4f9373dfe46239dda5a0b561c6
+#   https://github.com/wjakob/layerlab/blob/master/cmake/FindFFTW.cmake, commit 4d58bfdc28891b4f9373dfe46239dda5a0b561c6
 # Modifications:
 #   Copyright (c) 2017, Patrick Bos
 #
 # Usage:
-#   find_package(FFTW [REQUIRED] [QUIET] [COMPONENTS component1 ... 
-componentX] )
+#   find_package(FFTW [REQUIRED] [QUIET] [COMPONENTS component1 ... componentX] )
 #
 # It sets the following variables:
 #   FFTW_FOUND                  ... true if fftw is found on the system
-#   FFTW_[component]_LIB_FOUND  ... true if the component is found on the 
-system (see components below)
+#   FFTW_[component]_LIB_FOUND  ... true if the component is found on the system (see components below)
 #   FFTW_LIBRARIES              ... full paths to all found fftw libraries
-#   FFTW_[component]_LIB        ... full path to one of the components 
-(see below)
+#   FFTW_[component]_LIB        ... full path to one of the components (see below)
 #   FFTW_INCLUDE_DIRS           ... fftw include directory paths
 #
 # The following variables will be checked by the function
-#   FFTW_USE_STATIC_LIBS        ... if true, only static libraries are 
-found, otherwise both static and shared.
-#   FFTW_ROOT                   ... if set, the libraries are exclusively 
-searched
+#   FFTW_USE_STATIC_LIBS        ... if true, only static libraries are found, otherwise both static and shared.
+#   FFTW_ROOT                   ... if set, the libraries are exclusively searched
 #                                   under this path
 #
 # This package supports the following components:

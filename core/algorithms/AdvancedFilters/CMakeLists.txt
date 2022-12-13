@@ -14,8 +14,7 @@ include_directories(
     ../../../core/kipl/kipl/include
     )
 
-# link_directories(../../../../lib /opt/local/lib ../../../../external/mac/lib)
-link_directories(/opt/local/lib ../../../../external/mac/lib)
+# link_directories(/opt/local/lib ../../../../external/mac/lib)
 
 set(INC_FILES
     AnisoDiff.h
@@ -57,23 +56,22 @@ target_compile_definitions(${TARGET_NAME} PRIVATE ADVANCEDFILTERS_LIBRARY)
 
 add_definitions(-DHAVE_NEXUS)
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../external/mac/lib
+if (APPLE)
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+        ../../../external/mac/lib/
     )
 
-
-
-if (APPLE)
     target_link_libraries(${TARGET_NAME}
-        PRIVATE
+        PUBLIC
         kipl
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus.1.0.0
-        NeXusCPP.1.0.0
+        # tiff
+        # armadillo
+        # lapack
+        # blas
+        # NeXus.1.0.0
+        # NeXusCPP.1.0.0
     )
 endif()
 
