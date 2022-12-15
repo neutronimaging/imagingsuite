@@ -378,7 +378,7 @@ endif()
 
 if (APPLE)
     target_link_directories(${TARGET_NAME} PRIVATE
-        /opt/local/lib
+        # /opt/local/lib
         ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
         )
 
@@ -391,8 +391,7 @@ if (APPLE)
                 ${ARMADILLO_LIBRARIES}
                 FFTW::Double
                 FFTW::Float
-
-                cfitsio
+                ${CFITSIO_LIBRARIES}
     			NeXus.1.0.0
     			NeXusCPP.1.0.0
   		)
