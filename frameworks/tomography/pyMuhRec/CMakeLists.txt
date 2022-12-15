@@ -44,9 +44,6 @@ if (WIN32)
       ../../../core/algorithms/ImagingAlgorithms/include
       )
 endif()
-#link_directories(../../../../lib /opt/local/lib ../../../external/mac/lib)
-
-# link_directories( /opt/local/lib ../../../external/mac/lib)
 
 # add_definitions(-DVERSION="1.6.0")
 # create python module
@@ -74,30 +71,24 @@ add_library(${TARGET_NAME}
   
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 # set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
-set_target_properties(${TARGET_NAME} PROPERTIES BUILD_WITH_INSTALL_RPATH ON)
+#set_target_properties(${TARGET_NAME} PROPERTIES BUILD_WITH_INSTALL_RPATH ON)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
 
 set(LINK_TYPE "MODULE")
 
+target_link_libraries(${TARGET_NAME}
+  PUBLIC
+    pybind11::module
 
-
-# target_link_libraries(${TARGET_NAME}
-#   PUBLIC
-#     pybind11::module
-
-#   PRIVATE
-#     kipl
-#     ImagingAlgorithms
-#     xml2
-#     tiff
-#     fftw3
-#     fftw3f
-#     ModuleConfig
-#     ReconFramework
-#     StdBackProjectors
-#     FDKBackProjectors
-#   )
+    kipl
+    ImagingAlgorithms
+    ModuleConfig
+    ReconFramework
+    ReaderConfig
+    StdBackProjectors
+    FDKBackProjectors
+  )
 
 if (APPLE)
     target_link_directories(${TARGET_NAME} PRIVATE

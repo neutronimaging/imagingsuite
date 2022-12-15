@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.14)
-message("ReconFramework")
 set(TARGET_NAME "ReconFramework")
 project(kipl LANGUAGES CXX)
 
@@ -7,6 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(LibXml2 REQUIRED)
 if (APPLE)
 include_directories(
     /opt/local/include
@@ -98,7 +98,7 @@ target_compile_definitions(${TARGET_NAME} PRIVATE RECONFRAMEWORK_LIBRARY HAVE_NE
 
 add_definitions(-DHAVE_NEXUS)
 
-message(${CMAKE_HOST_SYSTEM_PROCESSOR})
+message(${TARGET_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
@@ -153,22 +153,14 @@ if (APPLE)
     )
 endif()
 
-if (LINUX)
+
+if (UNIX AND NOT APPLE)
     target_link_libraries(${TARGET_NAME}
-        PRIVATE
+        PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
-        xml2
-        fftw3
-        fftw3f
-        cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus
-        NeXusCPP
+        ReaderConfig
     )
 endif()
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

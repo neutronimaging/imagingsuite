@@ -31,7 +31,7 @@ enum eExtensionTypes {
     ExtensionSEQ    ///< Images are stored in the Varian ViVa SEQ format
 };
 
-eExtensionTypes READERCONFIGSHARED_EXPORT GetFileExtensionType(std::string fname);
+readers::eExtensionTypes READERCONFIGSHARED_EXPORT GetFileExtensionType(const std::string & fname);
 
 }
 

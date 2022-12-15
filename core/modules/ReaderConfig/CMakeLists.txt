@@ -87,10 +87,6 @@ target_compile_definitions(${TARGET_NAME} PRIVATE READERCONFIG_LIBRARY HAVE_NEXU
 
 add_definitions(-DHAVE_NEXUS)
 
-
-
-
-
 if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
     ../../../../ExternalDependencies/windows/lib
@@ -125,6 +121,7 @@ target_link_directories(${TARGET_NAME} PRIVATE
 
     target_link_libraries(${TARGET_NAME}
     PUBLIC
+
     kipl
     ImagingAlgorithms
     # xml2
@@ -141,21 +138,21 @@ target_link_directories(${TARGET_NAME} PRIVATE
 endif()
 
 if (UNIX)
-target_link_directories(${TARGET_NAME} PRIVATE
-    /usr/lib/x86_64-linux-gnu/
-    )
+# target_link_directories(${TARGET_NAME} PRIVATE
+#     /usr/lib/x86_64-linux-gnu/
+#     )
 target_link_libraries(${TARGET_NAME}
-    PRIVATE
+    PUBLIC
     kipl
     ImagingAlgorithms
-    xml2
-    fftw3
-    fftw3f
-    cfitsio
-    tiff
-    armadillo
-    lapack
-    blas
+    # xml2
+    # fftw3
+    # fftw3f
+    # cfitsio
+    # tiff
+    # armadillo
+    # lapack
+    # blas
     # NeXus
     # NeXusCPP
   )

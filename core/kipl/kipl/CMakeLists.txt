@@ -400,10 +400,10 @@ endif()
 if (UNIX AND NOT APPLE)
     find_package(OpenMP)
     if(OpenMP_CXX_FOUND)
-        target_link_libraries(${TARGET_NAME} PUBLIC
+        target_link_libraries(${TARGET_NAME} 
+        PUBLIC
             OpenMP::OpenMP_CXX
         
-        PRIVATE
             xml2
             fftw3
             fftw3f
@@ -417,7 +417,7 @@ if (UNIX AND NOT APPLE)
         )
     else()
         target_link_libraries(${TARGET_NAME}
-            PRIVATE
+            PUBLIC
                 xml2
                 fftw3
                 fftw3f

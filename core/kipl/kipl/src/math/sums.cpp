@@ -5,7 +5,7 @@
 #include <omp.h>
 #endif
 
-#include "../include/math/sums.h"
+#include "../../include/math/sums.h"
 #include <vector>
 
 namespace kipl { namespace math {
