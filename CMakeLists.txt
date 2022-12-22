@@ -72,27 +72,6 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
 endif()
 
 include(CTest)
-#include(FetchContent)
-
-#FetchContent_Declare(
-#  pybind11_sources
-#  GIT_REPOSITORY https://github.com/pybind/pybind11.git
-#  GIT_TAG        v2.2
-#)
-
-#FetchContent_GetProperties(pybind11_sources)
-
-#if(NOT pybind11_sources_POPULATED)
-#  FetchContent_Populate(pybind11_sources)
-#
-#  add_subdirectory(
-#    ${pybind11_sources_SOURCE_DIR}
-#    ${pybind11_sources_BINARY_DIR}
-#    )
-#    add_definitions(-DHAVEPYBIND11)
-#endif()
-
-##include(pybind11)
 
 execute_process(
   COMMAND git describe --tag
@@ -144,19 +123,27 @@ else()
   set(CMAKE_BUILD_WITH_INSTALL_RPATH YES)
 endif()
 
+# turn on testing
+enable_testing()
+
 # Core libraries
 add_subdirectory(core/kipl/kipl)
-if (WIN32)
-  add_subdirectory(core/kipl/UnitTests/tLogging)
-  add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
-  add_subdirectory(core/kipl/UnitTests/tkiplfilters)
-  add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
-  # add_subdirectory(core/kipl/UnitTests/tedgefunction)
-  add_subdirectory(core/kipl/UnitTests/tFillHole)
-  add_subdirectory(core/kipl/UnitTests/tImageOperators)
-  add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
-  add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
-endif()
+
+## Core library tests
+add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
+add_subdirectory(core/kipl/UnitTests/tLogging)
+add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
+add_subdirectory(core/kipl/UnitTests/tkiplfilters)
+add_subdirectory(core/kipl/UnitTests/tFillHole)
+add_subdirectory(core/kipl/UnitTests/tImageOperators)
+add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
+add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
+add_subdirectory(core/kipl/UnitTests/tedgefunction)
+add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
+add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
+add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
+
+
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 # add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
@@ -283,8 +270,7 @@ endif()
 
 endif(DYNAMIC_LIB)
 
-# turn on testing
-enable_testing()
+
 
 message(${CMAKE_CURRENT_SOURCE_DIR})
 ## define test

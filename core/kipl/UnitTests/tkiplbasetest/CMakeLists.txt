@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tLogging")
+set(TARGET_NAME "tkiplbasetest")
 project(tLogging LANGUAGES CXX)
 
 enable_testing()
@@ -19,12 +19,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/include
-)
+    )
 
 set(SRC_FILES,
-    tst_logging.cpp)
+    tst_kiplbase.cpp)
 
-add_executable(${TARGET_NAME} tst_logging.cpp)
+add_executable(${TARGET_NAME} tst_kiplbase.cpp)
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE

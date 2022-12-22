@@ -33,21 +33,6 @@ include_directories(
     )
 endif()
 
-# if (UNIX)
-# include_directories(
-#     /opt/local/include
-#     /opt/local/include/libxml2
-#     ../../../core/kipl/kipl/include
-#     ../../../external/src/linalg
-#     ../../../core/kipl/kipl/include
-#     ../../../core/modules/ModuleConfig/include
-#     ../../../external/mac/include/
-#     ../../../../ExternalDependencies/macos/include
-#     ../../../../ExternalDependencies/macos/include/nexus
-#     ../../../external/mac/include/nexus
-#     ../../../external/mac/include/hdf5
-#     )
-# endif()
 
 set(INC_FILES
     include/filters/core/savitzkygolayfilter.hpp
@@ -377,8 +362,7 @@ if (WIN32)
 endif()
 
 if (APPLE)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        # /opt/local/lib
+    target_link_directories(${TARGET_NAME} PUBLIC
         ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
         )
 
