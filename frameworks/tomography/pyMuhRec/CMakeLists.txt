@@ -7,7 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-message(${pybind11_sources_SOURCE_DIR})
+#message(${pybind11_sources_SOURCE_DIR})
 include_directories(
     /usr/include/libxml2
     /opt/local/include

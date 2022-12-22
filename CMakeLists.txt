@@ -44,7 +44,7 @@ find_package(FFTW REQUIRED)
 find_package(LAPACK REQUIRED)
 find_package(BLAS REQUIRED)
 #find_package(NEXUS)
-#find_package(pybind11 REQUIRED)
+find_package(pybind11 REQUIRED)
 find_package(CFITSIO REQUIRED)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -72,28 +72,27 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
 endif()
 
 include(CTest)
-include(FetchContent)
+#include(FetchContent)
 
-FetchContent_Declare(
-  pybind11_sources
-  GIT_REPOSITORY https://github.com/pybind/pybind11.git
-  GIT_TAG        v2.2
-)
+#FetchContent_Declare(
+#  pybind11_sources
+#  GIT_REPOSITORY https://github.com/pybind/pybind11.git
+#  GIT_TAG        v2.2
+#)
 
-FetchContent_GetProperties(pybind11_sources)
+#FetchContent_GetProperties(pybind11_sources)
 
-if(NOT pybind11_sources_POPULATED)
-  FetchContent_Populate(pybind11_sources)
+#if(NOT pybind11_sources_POPULATED)
+#  FetchContent_Populate(pybind11_sources)
+#
+#  add_subdirectory(
+#    ${pybind11_sources_SOURCE_DIR}
+#    ${pybind11_sources_BINARY_DIR}
+#    )
+#    add_definitions(-DHAVEPYBIND11)
+#endif()
 
-  add_subdirectory(
-    ${pybind11_sources_SOURCE_DIR}
-    ${pybind11_sources_BINARY_DIR}
-    )
-    #add_definitions(-DHAVEPYBIND11 -DNO_QT)
-    add_definitions(-DHAVEPYBIND11)
-endif()
-
-#include(pybind11)
+##include(pybind11)
 
 execute_process(
   COMMAND git describe --tag
@@ -254,12 +253,6 @@ if(DYNAMIC_LIB)
     external/mac/lib//libhdf5_hl.10.dylib
     external/mac/lib//libhdf5.10.dylib	
     external/mac/lib//libsz.2.dylib
-    # /opt/local/lib/libxml2.2.dylib 
-    # /opt/local/lib/libtiff.5.dylib
-    # /opt/local/lib/libfftw3.3.dylib
-    # /opt/local/lib/libfftw3f.3.dylib
-    # /opt/local/lib/libcfitsio.dylib
-    # /opt/local/lib/libarmadillo.10.dylib
 
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
