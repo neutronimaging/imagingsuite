@@ -14,9 +14,6 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
 
 if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
     ../../core/modules/ReaderConfig
@@ -27,10 +24,8 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../external/mac/include/
     ../../../ExternalDependencies/macos/include
     ../../../ExternalDependencies/macos/include/nexus
-    ../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -157,13 +152,12 @@ qt_add_executable(${TARGET_NAME}
 if (APPLE)
     # link_directories(../../../lib /opt/local/lib )
 
-    target_link_directories(${TARGET_NAME} PRIVATE
-        /opt/local/lib
+    target_link_directories(${TARGET_NAME} PUBLIC
         ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
         ../../external/mac/lib/
         )
 
-    target_link_libraries(${TARGET_NAME} PRIVATE
+    target_link_libraries(${TARGET_NAME} PUBLIC
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Concurrent
@@ -176,10 +170,6 @@ if (APPLE)
         QtModuleConfigure
         ReconFramework
         QtImaging
-        # xml2
-        # armadillo
-        # lapack
-        # blas
     )
 endif()
 
@@ -201,19 +191,10 @@ if (WIN32)
         QtModuleConfigure
         ReconFramework
         QtImaging
-        #libxml2
-        #armadillo
-        #lapack
-        #blas
     )
 endif()
 
 if (UNIX)
-    # target_link_directories(${TARGET_NAME} PRIVATE
-    #     /opt/local/lib
-    #     ../../../external/mac/lib/
-    #     )
-
     target_link_libraries(${TARGET_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
@@ -227,10 +208,6 @@ if (UNIX)
         QtModuleConfigure
         ReconFramework
         QtImaging
-        xml2
-        armadillo
-        lapack
-        blas
     )
 endif()
 set_target_properties(${TARGET_NAME} PROPERTIES

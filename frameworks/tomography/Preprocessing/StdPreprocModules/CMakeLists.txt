@@ -9,18 +9,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../../ExternalDependencies/macos/include
-    ../../../../external/mac/include/
-    ../../../../external/mac/include/nexus
-    ../../../../external/mac/include/hdf5
+    # ../../../../external/mac/include/
+    # ../../../../external/mac/include/nexus
+    # ../../../../external/mac/include/hdf5
     )
 endif()
 
@@ -41,7 +38,6 @@ endif()
 
 if (UNIX)
 include_directories(
-    /usr/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
@@ -50,7 +46,7 @@ include_directories(
     )
 endif()
 
-link_directories(../../../../../lib /opt/local/lib )
+# link_directories(../../../../../lib /opt/local/lib )
 
 set(INC_FILES
 include/AdaptiveFilter.h
@@ -146,36 +142,28 @@ add_definitions(-DHAVE_NEXUS)
       )
 endif()
 
-  if (APPLE)
-      if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-          target_link_directories(${TARGET_NAME} PRIVATE
-              /opt/local/lib
-              ../../../../../ExternalDependencies/macos/arm64/lib
-              )
-      else()
-          target_link_directories(${TARGET_NAME} PRIVATE
-              /opt/local/lib
-              ../../../../external/mac/lib/
-              )
-      endif()
+if (APPLE)
+      target_link_directories(${TARGET_NAME} PUBLIC
+        ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+      )
   
       target_link_libraries(${TARGET_NAME}
-          PRIVATE
+          PUBLIC
           kipl
           ImagingAlgorithms
           ModuleConfig
           ReaderConfig
           ReconFramework
-          xml2
-          fftw3
-          fftw3f
-          cfitsio
-          tiff
-          armadillo
-          lapack
-          blas
-          NeXus.1.0.0
-          NeXusCPP.1.0.0
+          # xml2
+          # fftw3
+          # fftw3f
+          # cfitsio
+          # tiff
+          # armadillo
+          # lapack
+          # blas
+          # NeXus.1.0.0
+          # NeXusCPP.1.0.0
       )
   endif()
 

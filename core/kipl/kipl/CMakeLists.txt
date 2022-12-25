@@ -377,8 +377,7 @@ if (WIN32)
 endif()
 
 if (APPLE)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        # /opt/local/lib
+    target_link_directories(${TARGET_NAME} PUBLIC
         ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
         )
 

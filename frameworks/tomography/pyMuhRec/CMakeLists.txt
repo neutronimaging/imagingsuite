@@ -9,18 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #message(${pybind11_sources_SOURCE_DIR})
 include_directories(
-    /usr/include/libxml2
-    /opt/local/include
-    /opt/local/include/libxml2
     ../../../core/kipl/kipl/include
-    ../../../external/src/linalg
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../../ExternalDependencies/macos/include/
     ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/
-    ../../../external/mac/include/nexus
-    ../../../external/mac/include/hdf5
     ../Framework/ReconFramework/include
     ../Backprojectors/StdBackProjectors/include
     ../Backprojectors/FDKBackProjectors/src
@@ -92,29 +85,19 @@ target_link_libraries(${TARGET_NAME}
 
 if (APPLE)
     target_link_directories(${TARGET_NAME} PRIVATE
-        /opt/local/lib
         ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-        ../../../external/mac/lib/
         )
 
     target_link_libraries(${TARGET_NAME}
         PUBLIC
         pybind11::module
-        
-        PRIVATE
+
         kipl
         ImagingAlgorithms
         ModuleConfig
         ReconFramework
         StdBackProjectors
         FDKBackProjectors
-        xml2
-        fftw3
-        fftw3f
-        cfitsio
-        tiff
-        NeXus.1.0.0
-        NeXusCPP.1.0.0
     )
 endif()
 

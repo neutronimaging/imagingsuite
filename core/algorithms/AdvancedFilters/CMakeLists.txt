@@ -8,13 +8,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../../../core/kipl/kipl/include
     )
-
-# link_directories(/opt/local/lib ../../../../external/mac/lib)
 
 set(INC_FILES
     AnisoDiff.h
@@ -57,8 +52,7 @@ target_compile_definitions(${TARGET_NAME} PRIVATE ADVANCEDFILTERS_LIBRARY)
 add_definitions(-DHAVE_NEXUS)
 
 if (APPLE)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        /opt/local/lib
+    target_link_directories(${TARGET_NAME} PUBLIC
         ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
         ../../../external/mac/lib/
     )

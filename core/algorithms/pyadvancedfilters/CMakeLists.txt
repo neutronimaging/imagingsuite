@@ -7,14 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/kipl/include
-    /opt/local/include
-    ../../../external/src/linalg
     ../../../../ExternalDependencies/macos/include
+    ../../../external/src/linalg
     )
 
 if (WIN32)
     include_directories(
-        ../../../core/kipl/kipl/include
         ../../../core/kipl/kipl/include
         ../../../core/modules/ModuleConfig/include
         ../../../external/include/
@@ -24,10 +22,9 @@ if (WIN32)
         )
 endif()
 
-link_directories(
-    ../../../../lib
-    /opt/local/lib
-    )
+# link_directories(
+#     ../../../../lib
+#     )
 
 # create python module
 add_library(${TARGET_NAME}
@@ -45,34 +42,25 @@ set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (APPLE)
-    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../../ExternalDependencies/macos/arm64/lib
-            )
-    else()
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../external/mac/lib/
-            )
-    endif()
+  target_link_directories(${TARGET_NAME} PUBLIC
+  ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+  )
+
 target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module
-
-  PRIVATE
     kipl
-    fftw3
-    fftw3f
-    xml2
-    tiff
-    armadillo
-    lapack
-    blas
     AdvancedFilters
-    cfitsio
-    NeXus.1.0.0
-    NeXusCPP.1.0.0
+    # fftw3
+    # fftw3f
+    # xml2
+    # tiff
+    # armadillo
+    # lapack
+    # blas
+    # cfitsio
+    # NeXus.1.0.0
+    # NeXusCPP.1.0.0
   )
 endif(APPLE)
 
@@ -92,7 +80,6 @@ if (WIN32)
         libxml2
         cfitsio
         libtiff
-        # armadillo
         liblapack
         libopenblas
         libfftw3-3
