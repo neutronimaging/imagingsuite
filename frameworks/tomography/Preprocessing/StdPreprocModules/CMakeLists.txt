@@ -154,16 +154,6 @@ if (APPLE)
           ModuleConfig
           ReaderConfig
           ReconFramework
-          # xml2
-          # fftw3
-          # fftw3f
-          # cfitsio
-          # tiff
-          # armadillo
-          # lapack
-          # blas
-          # NeXus.1.0.0
-          # NeXusCPP.1.0.0
       )
   endif()
 
