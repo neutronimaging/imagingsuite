@@ -43,7 +43,7 @@ find_package(TIFF REQUIRED)
 find_package(FFTW REQUIRED)
 find_package(LAPACK REQUIRED)
 find_package(BLAS REQUIRED)
-#find_package(NEXUS)
+find_package(Nexus REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(CFITSIO REQUIRED)
 
@@ -234,12 +234,17 @@ if(DYNAMIC_LIB)
   endif()
   if (APPLE)
     install(FILES 
-    external/mac/lib/libNeXus.1.0.0.dylib	
-    external/mac/lib//libhdf5_cpp.11.dylib
-    external/mac/lib//libNeXusCPP.1.0.0.dylib
-    external/mac/lib//libhdf5_hl.10.dylib
-    external/mac/lib//libhdf5.10.dylib	
-    external/mac/lib//libsz.2.dylib
+    # ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXus.1.0.0.dylib
+    # ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXusCPP.1.0.0.dylib
+    # /opt/homebrew/lib/libhdf5.dylib
+    # /opt/homebrew/lib/libhdf5_cpp.dylib 
+    
+    # external/mac/lib/libNeXus.1.0.0.dylib	
+    # external/mac/lib//libhdf5_cpp.11.dylib
+    # external/mac/lib//libNeXusCPP.1.0.0.dylib
+    # external/mac/lib//libhdf5_hl.10.dylib
+    # external/mac/lib//libhdf5.10.dylib	
+    # external/mac/lib//libsz.2.dylib
 
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

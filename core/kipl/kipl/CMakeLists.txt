@@ -12,7 +12,6 @@ if (APPLE)
 include_directories(
      ../../../core/kipl/kipl/include
      ../../../../ExternalDependencies/macos/include
-     ../../../../ExternalDependencies/macos/include/nexus
     )
 endif()
 
@@ -362,9 +361,9 @@ if (WIN32)
 endif()
 
 if (APPLE)
-    target_link_directories(${TARGET_NAME} PUBLIC
-        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-        )
+    # target_link_directories(${TARGET_NAME} PUBLIC
+    #     ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+    #     )
 
     target_link_libraries(${TARGET_NAME}
     		PUBLIC
@@ -376,45 +375,46 @@ if (APPLE)
                 FFTW::Double
                 FFTW::Float
                 ${CFITSIO_LIBRARIES}
-    			NeXus.1.0.0
-    			NeXusCPP.1.0.0
+                ${NEXUS_LIBRARIES}
+    			# NeXus.1.0.0
+    			# NeXusCPP.1.0.0
   		)
 endif()
 
-if (UNIX AND NOT APPLE)
-    find_package(OpenMP)
-    if(OpenMP_CXX_FOUND)
-        target_link_libraries(${TARGET_NAME} 
-        PUBLIC
-            OpenMP::OpenMP_CXX
+# if (UNIX AND NOT APPLE)
+#     find_package(OpenMP)
+#     if(OpenMP_CXX_FOUND)
+#         target_link_libraries(${TARGET_NAME} 
+#         PUBLIC
+#             OpenMP::OpenMP_CXX
         
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
-            NeXus
-            NeXusCPP
-        )
-    else()
-        target_link_libraries(${TARGET_NAME}
-            PUBLIC
-                xml2
-                fftw3
-                fftw3f
-                cfitsio
-                tiff
-                armadillo
-                lapack
-                blas
-                NeXus
-                NeXusCPP
-            )
-    endif()
-endif()
+#             xml2
+#             fftw3
+#             fftw3f
+#             cfitsio
+#             tiff
+#             armadillo
+#             lapack
+#             blas
+#             NeXus
+#             NeXusCPP
+#         )
+#     else()
+#         target_link_libraries(${TARGET_NAME}
+#             PUBLIC
+#                 xml2
+#                 fftw3
+#                 fftw3f
+#                 cfitsio
+#                 tiff
+#                 armadillo
+#                 lapack
+#                 blas
+#                 NeXus
+#                 NeXusCPP
+#             )
+#     endif()
+# endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

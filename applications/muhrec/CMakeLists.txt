@@ -25,7 +25,6 @@ include_directories(
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
     ../../../ExternalDependencies/macos/include
-    ../../../ExternalDependencies/macos/include/nexus
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -150,12 +149,6 @@ qt_add_executable(${TARGET_NAME}
 
 
 if (APPLE)
-    # link_directories(../../../lib /opt/local/lib )
-
-    target_link_directories(${TARGET_NAME} PUBLIC
-        ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-        ../../external/mac/lib/
-        )
 
     target_link_libraries(${TARGET_NAME} PUBLIC
         Qt${QT_VERSION_MAJOR}::Core

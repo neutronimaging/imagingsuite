@@ -20,17 +20,13 @@ message("Using Qt${QT_VERSION_MAJOR}")
 if (APPLE)
 include_directories(
     ../../../../core/kipl/kipl/include
-    ../../Framework/ReconFramework/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
+    ../../Framework/ReconFramework/include/
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
     ../../../../../ExternalDependencies/macos/include
-    ../../../../external/mac/include/
-    ../../../../external/mac/include/nexus
-    ../../../../external/mac/include/hdf5
-
     )
 endif()
 
@@ -57,8 +53,6 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     )
 endif()
-
-link_directories(../../../../../lib /opt/local/lib )
 
 set(INC_FILES
 inspectormodulesgui.h
@@ -118,12 +112,7 @@ if (WIN32)
     )
 endif()
 
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-
-    target_link_directories(${TARGET_NAME} PUBLIC
-        ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    )
-
+if (APPLE)
     target_link_libraries(${TARGET_NAME}
         PUBLIC
         Qt${QT_VERSION_MAJOR}::Core
@@ -137,16 +126,6 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
         QtAddons
         QtModuleConfigure
         InspectorModules
-        # xml2
-        # fftw3
-        # fftw3f
-        # cfitsio
-        # tiff
-        # armadillo
-        # lapack
-        # blas
-        # NeXus.1.0.0
-        # NeXusCPP.1.0.0
     )
 endif()
 

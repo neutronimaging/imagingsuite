@@ -11,13 +11,8 @@ if (APPLE)
 include_directories(
     ../../../../../core/kipl/kipl/include
     ../../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../../external/src/linalg
     ../../../../../core/modules/ModuleConfig/include
     ../../../../../../ExternalDependencies/macos/include
-    ../../../../../../ExternalDependencies/macos/include/nexus
-    # ../../../../../external/mac/include/
-    # ../../../../../external/mac/include/nexus
-    # ../../../../../external/mac/include/hdf5
     )
 endif()
 
@@ -115,24 +110,14 @@ endif()
 
 if (APPLE)
 
-    target_link_directories(${TARGET_NAME} PUBLIC
-    ../../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    )
+    # target_link_directories(${TARGET_NAME} PUBLIC
+    # ../../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+    # )
     target_link_libraries(${TARGET_NAME}
         PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
-        # xml2
-        # fftw3
-        # fftw3f
-        # cfitsio
-        # tiff
-        # armadillo
-        # lapack
-        # blas
-        # NeXus.1.0.0
-        # NeXusCPP.1.0.0
     )
 endif()
 

@@ -11,11 +11,9 @@ if (APPLE)
 include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../external/src/linalg
     ../../../../core/modules/ModuleConfig/include
-    ../../../../../ExternalDependencies/macos/include/
-    ../../../../../ExternalDependencies/macos/include/nexus
     ../../Framework/ReconFramework/include
+    ../../../../../ExternalDependencies/macos/include/
     )
 endif()
 
@@ -131,9 +129,9 @@ endif()
 
 
 if (APPLE)
-    target_link_directories(${TARGET_NAME} PUBLIC
-    ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    )
+    # target_link_directories(${TARGET_NAME} PUBLIC
+    # ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+    # )
 
     target_link_libraries(${TARGET_NAME}
         PUBLIC

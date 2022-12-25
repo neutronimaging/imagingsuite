@@ -11,11 +11,9 @@ if (APPLE)
 include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../external/src/linalg
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/modules/ReaderConfig
     ../../../../../ExternalDependencies/macos/include
-    ../../../../../ExternalDependencies/macos/include/nexus
     )
 endif()
 
@@ -45,8 +43,6 @@ include_directories(
     ../../../../core/modules/ReaderConfig
     )
 endif()
-
-#link_directories(/opt/local/lib ../../../../external/mac/lib)
 
 set(INC_FILES
     include/ReconHelpers.h
@@ -121,28 +117,13 @@ if (WIN32)
         )
 endif()
 
-if (APPLE)
-    target_link_directories(${TARGET_NAME} PUBLIC
-            ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-            ../../../../external/mac/lib/
-            )
-    
+if (APPLE)    
     target_link_libraries(${TARGET_NAME}
         PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
         ReaderConfig
-        # xml2
-        # fftw3
-        # fftw3f
-        # cfitsio
-        # tiff
-        # armadillo
-        # lapack
-        # blas
-        # NeXus.1.0.0
-        # NeXusCPP.1.0.0
     )
 endif()
 

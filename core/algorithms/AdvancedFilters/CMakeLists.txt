@@ -43,7 +43,6 @@ add_library(${TARGET_NAME} SHARED
   ${INC_FILES}
 )
 
-
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
@@ -52,20 +51,9 @@ target_compile_definitions(${TARGET_NAME} PRIVATE ADVANCEDFILTERS_LIBRARY)
 add_definitions(-DHAVE_NEXUS)
 
 if (APPLE)
-    target_link_directories(${TARGET_NAME} PUBLIC
-        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-        ../../../external/mac/lib/
-    )
-
     target_link_libraries(${TARGET_NAME}
         PUBLIC
         kipl
-        # tiff
-        # armadillo
-        # lapack
-        # blas
-        # NeXus.1.0.0
-        # NeXusCPP.1.0.0
     )
 endif()
 
@@ -82,7 +70,6 @@ if (WIN32)
         libxml2
         cfitsio
         libtiff
-        # armadillo
         liblapack
         libopenblas
         libfftw3-3
@@ -97,14 +84,6 @@ if (LINUX)
     target_link_libraries(${TARGET_NAME}
         PRIVATE
         kipl
-        fftw3
-	    fftw3f
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus
-        NeXusCPP
     )
 endif()
 

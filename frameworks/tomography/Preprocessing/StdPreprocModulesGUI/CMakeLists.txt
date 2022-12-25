@@ -10,9 +10,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
-# find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
-
 find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
@@ -29,9 +26,6 @@ include_directories(
     ../../../../GUI/qt/QtModuleConfigure/
     ../StdPreprocModules/include
     ../../../../../ExternalDependencies/macos/include
-    ../../../../external/mac/include/
-    ../../../../external/mac/include/nexus
-    ../../../../external/mac/include/hdf5
     #Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 
@@ -155,11 +149,7 @@ add_library(${TARGET_NAME} SHARED
   )
 endif()
 
-  if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-      target_link_directories(${TARGET_NAME} PUBLIC
-        ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-      )
-  
+  if (APPLE)  
       target_link_libraries(${TARGET_NAME} PUBLIC
           Qt${QT_VERSION_MAJOR}::Core
           Qt${QT_VERSION_MAJOR}::Widgets
@@ -196,8 +186,6 @@ endif()
         armadillo
         lapack
         blas
-#        NeXus.1.0.0
-#        NeXusCPP.1.0.0
     )
   endif()
 

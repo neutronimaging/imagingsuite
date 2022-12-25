@@ -126,34 +126,14 @@ if (APPLE)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
     kipl
-    # xml2
-    # fftw3
-    # fftw3f
-    # cfitsio
-    # tiff
-    # armadillo
-    # lapack
-    # blas
-    NeXus.1.0.0
-    NeXusCPP.1.0.0
   )
 endif()
 
-# if (LINUX)
-# target_link_libraries(${TARGET_NAME}
-#     PRIVATE
-#     kipl
-#     xml2
-#     fftw3
-#     fftw3f
-#     cfitsio
-#     tiff
-#     armadillo
-#     lapack
-#     blas
-#     # NeXus
-#     # NeXusCPP
-#   )
-# endif()
+if (LINUX)
+target_link_libraries(${TARGET_NAME}
+    PUBLIC
+    kipl
+  )
+endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

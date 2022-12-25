@@ -8,7 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(
     ../../kipl/kipl/include
     ../../../../ExternalDependencies/macos/include
-    ../../../external/src/linalg
     )
 
 if (WIN32)
@@ -21,10 +20,6 @@ if (WIN32)
         ../../../../ExternalDependencies/windows/include/cfitsio
         )
 endif()
-
-# link_directories(
-#     ../../../../lib
-#     )
 
 # create python module
 add_library(${TARGET_NAME}
@@ -40,27 +35,13 @@ add_library(${TARGET_NAME}
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 #set_target_properties(${TARGET_NAME} PROPERTIES CMAKE_INSTALL_RPATH "\$ORIGIN")
 
-message(${CMAKE_HOST_SYSTEM_PROCESSOR})
+message("PyAdvancedFilters ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 if (APPLE)
-  target_link_directories(${TARGET_NAME} PUBLIC
-  ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-  )
-
 target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module
     kipl
     AdvancedFilters
-    # fftw3
-    # fftw3f
-    # xml2
-    # tiff
-    # armadillo
-    # lapack
-    # blas
-    # cfitsio
-    # NeXus.1.0.0
-    # NeXusCPP.1.0.0
   )
 endif(APPLE)
 
@@ -139,30 +120,5 @@ set_target_properties(${TARGET_NAME}
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-  if(DYNAMIC_LIB)
-  install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  # install(FILES 
-  #     ../../../../lib/libkipl.1.0.0.dylib 
-  #     ../../../../lib/libModuleConfig.1.0.0.dylib 
-  #     ../../../../lib/libReconFramework.1.0.0.dylib
-  #     ../../../../lib/libStdBackProjectors.1.0.0.dylib
-  #     ../../../../lib/libFDKBackProjectors.1.0.0.dylib
-  #     ../../../../lib/libImagingAlgorithms.1.0.0.dylib
-  #     ../../../../lib/libReaderConfig.1.0.0.dylib
-  #     ../../../../lib/libNeXus.1.0.0.dylib	
-  #     ../../../../lib/libhdf5_cpp.11.dylib
-  #     ../../../../lib/libNeXusCPP.1.0.0.dylib
-	#     ../../../../lib/libhdf5_hl.10.dylib
-  #     ../../../../lib/libhdf5.10.dylib	
-  #     ../../../../lib/libsz.2.dylib
 
-  #     /opt/local/lib/libxml2.2.dylib 
-  #     /opt/local/lib/libtiff.5.dylib
-
-  #     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-
-  #     execute_process(
-  #       COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
-  #       WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
-  #     )
-endif(DYNAMIC_LIB)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

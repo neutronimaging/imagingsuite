@@ -7,13 +7,15 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (APPLE)
 include_directories(
     ../../../../core/kipl/kipl/include
-    ../../Framework/ReconFramework/include/
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../../ExternalDependencies/macos/include
     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    ../../Framework/ReconFramework/include/)
+
+if (APPLE)
+include_directories(
+    ../../../../../ExternalDependencies/macos/include
     )
 endif()
 
@@ -41,8 +43,6 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     )
 endif()
-
-link_directories(../../../../../lib /opt/local/lib )
 
 set(INC_FILES
   CountNANs.h
@@ -104,10 +104,6 @@ PRIVATE
 endif()
 
 if (APPLE)
-    target_link_directories(${TARGET_NAME} PUBLIC
-        ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    )
-
     target_link_libraries(${TARGET_NAME}
         PUBLIC
         kipl

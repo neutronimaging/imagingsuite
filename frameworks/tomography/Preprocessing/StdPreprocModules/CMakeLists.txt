@@ -15,9 +15,7 @@ include_directories(
     ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../../ExternalDependencies/macos/include
-    # ../../../../external/mac/include/
-    # ../../../../external/mac/include/nexus
-    # ../../../../external/mac/include/hdf5
+
     )
 endif()
 
@@ -46,7 +44,6 @@ include_directories(
     )
 endif()
 
-# link_directories(../../../../../lib /opt/local/lib )
 
 set(INC_FILES
 include/AdaptiveFilter.h
@@ -143,9 +140,9 @@ add_definitions(-DHAVE_NEXUS)
 endif()
 
 if (APPLE)
-      target_link_directories(${TARGET_NAME} PUBLIC
-        ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-      )
+      # target_link_directories(${TARGET_NAME} PUBLIC
+      #   ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+      # )
   
       target_link_libraries(${TARGET_NAME}
           PUBLIC
