@@ -33,21 +33,6 @@ include_directories(
     )
 endif()
 
-# if (UNIX)
-# include_directories(
-#     /opt/local/include
-#     /opt/local/include/libxml2
-#     ../../../core/kipl/kipl/include
-#     ../../../external/src/linalg
-#     ../../../core/kipl/kipl/include
-#     ../../../core/modules/ModuleConfig/include
-#     ../../../external/mac/include/
-#     ../../../../ExternalDependencies/macos/include
-#     ../../../../ExternalDependencies/macos/include/nexus
-#     ../../../external/mac/include/nexus
-#     ../../../external/mac/include/hdf5
-#     )
-# endif()
 
 set(INC_FILES
     include/filters/core/savitzkygolayfilter.hpp
