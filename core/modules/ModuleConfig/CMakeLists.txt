@@ -89,10 +89,6 @@ target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY HAVE_NEXU
 
 add_definitions(-DHAVE_NEXUS)
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    # ../../../external/mac/lib/
-    )
-
 # target_link_libraries(${TARGET_NAME}
 #     PUBLIC
 #     kipl

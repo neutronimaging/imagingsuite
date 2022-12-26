@@ -192,6 +192,7 @@ if (UNIX)
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Concurrent
+        
         kipl
         ModuleConfig
         ImagingAlgorithms

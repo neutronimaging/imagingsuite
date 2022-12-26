@@ -24,7 +24,6 @@ include_directories(
     ../../../core/modules/ReaderConfig
     ../../../core/algorithms/ImagingAlgorithms/include
     ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -76,21 +75,17 @@ add_library(${TARGET_NAME} SHARED
 )
 
 if (APPLE)
-# target_link_directories(${TARGET_NAME} PRIVATE
-#     /opt/local/lib
-#     ../../../external/mac/lib/
-#     )
+
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
 #    Qt${QT_VERSION_MAJOR}::Charts
+    PUBLIC
     kipl
     ReaderConfig
     QtAddons
-    # armadillo
-    # lapack
-    # blas
+    ImagingAlgorithms
     )
 endif()
 
@@ -104,9 +99,6 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     ReaderConfig
     QtAddons
     ImagingAlgorithms
- #   armadillo
- #   lapack
- #   blas
     )
 endif()
 
@@ -120,9 +112,6 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     ReaderConfig
     QtAddons
     ImagingAlgorithms
- #   armadillo
- #   lapack
- #   blas
     )
 endif()
 
