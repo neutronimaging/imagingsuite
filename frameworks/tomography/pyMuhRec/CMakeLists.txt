@@ -18,7 +18,7 @@ include_directories(
     ../Backprojectors/StdBackProjectors/include
     ../Backprojectors/FDKBackProjectors/src
     ../../../core/algorithms/ImagingAlgorithms/include
-    ${pybind11_sources_SOURCE_DIR}/include
+    # ${pybind11_sources_SOURCE_DIR}/include
     )
 
 if (WIN32)
@@ -37,9 +37,6 @@ if (WIN32)
       ../../../core/algorithms/ImagingAlgorithms/include
       )
 endif()
-
-# add_definitions(-DVERSION="1.6.0")
-# create python module
 
 set(INC_FILES
   src/reconstructor.h
@@ -186,8 +183,10 @@ set_target_properties(${TARGET_NAME}
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-if(DYNAMIC_LIB)
   install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+#if(DYNAMIC_LIB)
+  
   # install(FILES 
   #     ../../../../lib/libkipl.1.0.0.dylib 
   #     ../../../../lib/libModuleConfig.1.0.0.dylib 
@@ -212,4 +211,4 @@ if(DYNAMIC_LIB)
       #   COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
       #   WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
       # )
-endif(DYNAMIC_LIB)
+#endif(DYNAMIC_LIB)

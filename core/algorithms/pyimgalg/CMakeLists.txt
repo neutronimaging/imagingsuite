@@ -5,17 +5,17 @@
 
 set(TARGET_NAME "imgalg") 
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/kipl/include 
     ../ImagingAlgorithms/include 
-    # /opt/local/include .
-    # ./../../external/pylinalg
     ../../../../ExternalDependencies/macos/include
     )
     
-    if (WIN32)
+if (WIN32)
     include_directories(
         ../../../core/kipl/kipl/include
         ../../../core/kipl/kipl/include
@@ -27,12 +27,11 @@ include_directories(
         )
 endif()
 
+set(INC_FILES
+  pyBinder.h
+)
 
-# create python module
-add_library(${TARGET_NAME}
-  ${LINK_TYPE}
-  MODULE
-
+set(SRC_FILES
   pyStripeFilter.cpp  
 #  pySpotClean.cpp  
   pyNormalizeImage.cpp
@@ -49,11 +48,20 @@ add_library(${TARGET_NAME}
 #  pytomocenter.cpp  
   pyCenterEstimation.cpp
   pyBinder.cpp
-  pyBinder.h
+
+)
+# create python module
+add_library(${TARGET_NAME}
+  ${LINK_TYPE}
+  MODULE
+  ${SRC_FILES}  
+  ${INC_FILES}
   )
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+# set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+
+set(LINK_TYPE "MODULE")
 
 if (APPLE)
 
@@ -82,14 +90,10 @@ if (WIN32)
         libxml2
         cfitsio
         libtiff
-        # armadillo
         liblapack
         libopenblas
         libfftw3-3
         libfftw3f-3
-        # NeXus
-        # NeXusCPP
-        # Iphlpapi
     )
 endif()
 
