@@ -22,43 +22,25 @@ include_directories(
     /opt/local/include/libxml2
     ../../../kipl/kipl/include
     ../../../../../ExternalDependencies/macos/include
-#    ../../../../ExternalDependencies/macos/include/nexus
     ../../ImagingAlgorithms/include
     )
 
 add_executable(${TARGET_NAME} tst_testImagingAlgorithms.cpp)
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
-link_directories(../../../lib /opt/local/lib )
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../../../install/lib/
-   # ../../../../ExternalDependencies/macos/arm64/lib
-    )
+# link_directories(../../../lib /opt/local/lib )
+# target_link_directories(${TARGET_NAME} PRIVATE
+#     /opt/local/lib
+#     ../../../../../install/lib/
+
+#     )
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Test
     kipl
     ImagingAlgorithms
-    tiff
-    armadillo
-    lapack
-    blas
+    # tiff
+    # armadillo
+    # lapack
+    # blas
     )
 
-#target_link_libraries(${TARGET_NAME} PRIVATE
-#    Qt${QT_VERSION_MAJOR}::Core
-#    Qt${QT_VERSION_MAJOR}::Widgets
-#    Qt${QT_VERSION_MAJOR}::Concurrent
-#    kipl
-#    ModuleConfig
-#    ImagingAlgorithms
-#    ReaderConfig
-#    QtAddons
-#    ReaderGUI
-#    QtModuleConfigure
-#    ReconFramework
-#    QtImaging
-#    armadillo
-#    lapack
-#    blas
-#)

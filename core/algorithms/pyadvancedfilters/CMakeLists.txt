@@ -33,7 +33,6 @@ add_library(${TARGET_NAME}
   )
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-#set_target_properties(${TARGET_NAME} PROPERTIES CMAKE_INSTALL_RPATH "\$ORIGIN")
 
 message("PyAdvancedFilters ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 if (APPLE)

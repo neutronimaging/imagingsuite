@@ -1,27 +1,16 @@
-include(FetchContent)
+cmake_minimum_required(VERSION 3.14)
 
-FetchContent_Declare(
-  pybind11_sources
-  GIT_REPOSITORY https://github.com/pybind/pybind11.git
-  GIT_TAG        v2.2
+set(TARGET_NAME "pyimgio")
+project(kipl LANGUAGES CXX)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include_directories(../../kipl/kipl/include 
+                    ../../algorithms/ImagingAlgorithms/include 
+                    ../ReaderConfig
 )
-
-FetchContent_GetProperties(pybind11_sources)
-
-if(NOT pybind11_sources_POPULATED)
-  FetchContent_Populate(pybind11_sources)
-
-  add_subdirectory(
-    ${pybind11_sources_SOURCE_DIR}
-    ${pybind11_sources_BINARY_DIR}
-    )
-    add_definitions(-DHAVEPYBIND11)
-endif()
-
-add_definitions(-DNO_QT)
-
-include_directories(../../kipl/kipl/include ../../algorithms/ImagingAlgorithms/include ../ReaderConfig /opt/local/include /opt/local/include/libxml2 ../../../external/pylinalg)
-link_directories(../../../../lib /opt/local/lib )
 
 # add_definitions(-DVERSION="1.6.0")
 # create python module
@@ -44,9 +33,6 @@ target_link_libraries(imgio
   PRIVATE
     kipl
     ReaderConfig
-    xml2
-    tiff
-    cfitsio
   )
 
 set_target_properties(imgio

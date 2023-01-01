@@ -59,6 +59,3 @@ add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 #         # Iphlpapi
 #     )
 # endif()
-
-# install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests
-#         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/applications/${TARGET_NAME}.app/Contents/Frameworks)

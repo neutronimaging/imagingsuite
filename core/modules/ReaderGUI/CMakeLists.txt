@@ -15,7 +15,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts )
 
-#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts PrintSupport REQUIRED)
 message("Using Qt${QT_VERSION_MAJOR}")
 
 if (APPLE)
@@ -90,14 +89,13 @@ add_library(${TARGET_NAME} SHARED
 )
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 target_link_libraries(${TARGET_NAME} 
-    PRIVATE
+    PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
 #    Qt${QT_VERSION_MAJOR}::Charts
-    PUBLIC
+
     kipl
     ReaderConfig
     QtAddons

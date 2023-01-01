@@ -1,5 +1,0 @@
-<NXroot NXS:source="test_SNS_nexus3_10_5.dat" NXS:mime_type="application/x-SNS-histogram">
- <entry type="NXentry">
- <entry_1D NXS:location=" [3,10,5][3,10,5]#((({pixelY|0,1}OR{pixelID|1,2,3,4,5,6,7})))OR{pixelX|1,3,1}OR{Tbin|1,2}"/>
-</entry>
-</NXroot>
