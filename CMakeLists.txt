@@ -148,11 +148,18 @@ add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
 
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
-# add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
 add_subdirectory(core/algorithms/AdvancedFilters)
+# add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
+# add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
+
 add_subdirectory(core/modules/ModuleConfig)
+add_subdirectory(core/modules/UnitTests/tModuleConfig)
+
 add_subdirectory(core/modules/ReaderConfig)
+add_subdirectory(core/modules/UnitTests/tReaderConfig)
+
 add_subdirectory(GUI/qt/QtAddons)
 add_subdirectory(GUI/qt/QtImaging)
 add_subdirectory(core/modules/ReaderGUI)

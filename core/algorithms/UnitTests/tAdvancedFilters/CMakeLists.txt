@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tImagingAlgorithms")
+set(TARGET_NAME "tAdvancedFilters")
 project(tLogging LANGUAGES CXX)
 
 enable_testing()
@@ -19,20 +19,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../../kipl/kipl/include
-    ../../ImagingAlgorithms/include
+    ../../AdvancedFilters
     ../../../../../ExternalDependencies/macos/include/
 )
 
 set(SRC_FILES,
-tst_testImagingAlgorithms.cpp)
+    tst_tadvancedfilterstest.cpp)
 
-add_executable(${TARGET_NAME} tst_testImagingAlgorithms.cpp)
+add_executable(${TARGET_NAME} tst_tadvancedfilterstest.cpp)
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE
         Qt6::Test
         kipl
-        ImagingAlgorithms
+        AdvancedFilters
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

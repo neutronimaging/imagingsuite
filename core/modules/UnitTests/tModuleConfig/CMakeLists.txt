@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tImagingAlgorithms")
+set(TARGET_NAME "tModuleConfig")
 project(tLogging LANGUAGES CXX)
 
 enable_testing()
@@ -19,20 +19,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../../kipl/kipl/include
-    ../../ImagingAlgorithms/include
+    ../../ModuleConfig/include
+    ../../../../frameworks/tomography/Framework/ReconFramework/include
+    ../../../algorithms/ImagingAlgorithms/include
     ../../../../../ExternalDependencies/macos/include/
 )
 
 set(SRC_FILES,
-tst_testImagingAlgorithms.cpp)
+    tst_configbasetest.cpp)
 
-add_executable(${TARGET_NAME} tst_testImagingAlgorithms.cpp)
+add_executable(${TARGET_NAME} tst_configbasetest.cpp  dummyconfig.cpp)
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE
         Qt6::Test
         kipl
-        ImagingAlgorithms
+        ModuleConfig
+        ReconFramework
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
