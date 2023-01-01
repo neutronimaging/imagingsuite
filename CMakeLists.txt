@@ -155,7 +155,6 @@ add_subdirectory(core/algorithms/AdvancedFilters)
 # add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
 
 add_subdirectory(core/modules/ModuleConfig)
-add_subdirectory(core/modules/UnitTests/tModuleConfig)
 
 add_subdirectory(core/modules/ReaderConfig)
 add_subdirectory(core/modules/UnitTests/tReaderConfig)
@@ -173,6 +172,8 @@ add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
 add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
+
+add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
 
 # Tomography GUI
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)

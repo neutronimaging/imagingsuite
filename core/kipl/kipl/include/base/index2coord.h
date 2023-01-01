@@ -149,6 +149,12 @@ namespace kipl { namespace base {
         /// \param c coordinate struct containing the 2D coordinates
         /// \returns always true
         bool operator () (size_t pos, coords2D &c);
+
+        size_t sx();
+        size_t sxy();
+        double invSX();
+        double invSXY();
+        
 	private:
 		size_t nSX;
 		size_t nSXY;
