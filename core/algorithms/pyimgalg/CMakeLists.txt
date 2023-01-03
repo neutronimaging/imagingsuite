@@ -51,7 +51,14 @@ set(SRC_FILES
 
 )
 # create python module
-add_library(${TARGET_NAME}
+# add_library(${TARGET_NAME}
+#   ${LINK_TYPE}
+#   MODULE
+#   ${SRC_FILES}  
+#   ${INC_FILES}
+#   )
+
+pybind11_add_module(${TARGET_NAME}
   ${LINK_TYPE}
   MODULE
   ${SRC_FILES}  
@@ -102,7 +109,7 @@ if (UNIX AND NOT APPLE)
     if(OpenMP_CXX_FOUND)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
-            pybind11::module
+            # pybind11::module
 
           PRIVATE
               kipl
@@ -121,7 +128,7 @@ if (UNIX AND NOT APPLE)
     else()
         target_link_libraries(${TARGET_NAME}
           PUBLIC
-            pybind11::module
+            # pybind11::module
 
           PRIVATE
               kipl

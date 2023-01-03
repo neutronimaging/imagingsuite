@@ -21,16 +21,31 @@ if (WIN32)
         )
 endif()
 
+
+set(SRC_FILES 
+    advancedfilters.cpp
+    advancedfilterexception.cpp
+    filterenums.cpp
+    pybinder.cpp
+)
+
 # create python module
-add_library(${TARGET_NAME}
+# add_library(${TARGET_NAME}
+#   ${LINK_TYPE}
+#   MODULE
+
+#   advancedfilters.cpp
+#   advancedfilterexception.cpp
+#   filterenums.cpp
+#   pybinder.cpp
+#   )
+
+pybind11_add_module(${TARGET_NAME}
   ${LINK_TYPE}
   MODULE
-
-  advancedfilters.cpp
-  advancedfilterexception.cpp
-  filterenums.cpp
-  pybinder.cpp
-  )
+  ${SRC_FILES}  
+  # ${INC_FILES}
+)
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
@@ -38,7 +53,7 @@ message("PyAdvancedFilters ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 if (APPLE)
 target_link_libraries(${TARGET_NAME}
   PUBLIC
-    pybind11::module
+    # pybind11::module
     kipl
     AdvancedFilters
   )
@@ -53,7 +68,7 @@ if (WIN32)
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC
-      pybind11::module
+      # pybind11::module
 
     PRIVATE
         kipl
@@ -75,7 +90,7 @@ if (UNIX AND NOT APPLE)
     if(OpenMP_CXX_FOUND)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
-            pybind11::module
+            # pybind11::module
 
           PRIVATE
             kipl
@@ -94,7 +109,7 @@ if (UNIX AND NOT APPLE)
     else()
         target_link_libraries(${TARGET_NAME}
           PUBLIC
-            pybind11::module
+            # pybind11::module
 
           PRIVATE
             kipl

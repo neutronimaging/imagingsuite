@@ -127,23 +127,9 @@ if (WIN32)
 endif()
 
 
-if (APPLE)
-    # target_link_directories(${TARGET_NAME} PUBLIC
-    # ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    # )
-
+if (UNIX)
     target_link_libraries(${TARGET_NAME}
         PUBLIC
-        kipl
-        ImagingAlgorithms
-        ModuleConfig
-        ReconFramework
-    )
-endif()
-
-if (LINUX)
-    target_link_libraries(${TARGET_NAME}
-        PRIVATE
         kipl
         ImagingAlgorithms
         ModuleConfig

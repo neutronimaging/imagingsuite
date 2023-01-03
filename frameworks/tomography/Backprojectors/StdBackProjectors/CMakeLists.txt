@@ -119,9 +119,9 @@ if (UNIX AND NOT APPLE)
     if(OpenMP_CXX_FOUND)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
-            pybind11::module
+            # pybind11::module
 
-          PRIVATE
+        #   PRIVATE
             kipl
             ImagingAlgorithms
             ModuleConfig
@@ -140,9 +140,9 @@ if (UNIX AND NOT APPLE)
     else()
         target_link_libraries(${TARGET_NAME}
           PUBLIC
-            pybind11::module
+            # pybind11::module
 
-          PRIVATE
+        #   PRIVATE
             kipl
             ImagingAlgorithms
             ModuleConfig

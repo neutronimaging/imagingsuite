@@ -360,61 +360,62 @@ if (WIN32)
     )
 endif()
 
-if (APPLE)
-    # target_link_directories(${TARGET_NAME} PUBLIC
-    #     ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    #     )
+# if (APPLE)
+#     # target_link_directories(${TARGET_NAME} PUBLIC
+#     #     ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+#     #     )
 
-    target_link_libraries(${TARGET_NAME}
-    		PUBLIC
+#     target_link_libraries(${TARGET_NAME}
+#     		PUBLIC
+#                 LibXml2::LibXml2
+#                 TIFF::TIFF
+#                 LAPACK::LAPACK
+#                 BLAS::BLAS
+#                 ${ARMADILLO_LIBRARIES}
+#                 FFTW::Double
+#                 FFTW::Float
+#                 ${CFITSIO_LIBRARIES}
+#                 ${NEXUS_LIBRARIES}
+#     			# NeXus.1.0.0
+#     			# NeXusCPP.1.0.0
+#   		)
+# endif()
+
+if (UNIX)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} 
+        PUBLIC
+            OpenMP::OpenMP_CXX
+            LibXml2::LibXml2
+            TIFF::TIFF
+            ${LAPACK_LIBRARIES}
+            # LAPACK::LAPACK
+            ${BLAS_LIBRARIES}
+            # BLAS::BLAS
+            ${ARMADILLO_LIBRARIES}
+            FFTW::Double
+            FFTW::Float
+            ${CFITSIO_LIBRARIES}
+            ${NEXUS_LIBRARIES}
+        )
+    else()
+        target_link_libraries(${TARGET_NAME}
+            PUBLIC
                 LibXml2::LibXml2
                 TIFF::TIFF
-                LAPACK::LAPACK
-                BLAS::BLAS
+                ${LAPACK_LIBRARIES}
+                # LAPACK::LAPACK
+                ${BLAS_LIBRARIES}
+                # BLAS::BLAS
                 ${ARMADILLO_LIBRARIES}
                 FFTW::Double
                 FFTW::Float
                 ${CFITSIO_LIBRARIES}
                 ${NEXUS_LIBRARIES}
-    			# NeXus.1.0.0
-    			# NeXusCPP.1.0.0
-  		)
+            )
+    endif()
 endif()
-
-# if (UNIX AND NOT APPLE)
-#     find_package(OpenMP)
-#     if(OpenMP_CXX_FOUND)
-#         target_link_libraries(${TARGET_NAME} 
-#         PUBLIC
-#             OpenMP::OpenMP_CXX
-        
-#             xml2
-#             fftw3
-#             fftw3f
-#             cfitsio
-#             tiff
-#             armadillo
-#             lapack
-#             blas
-#             NeXus
-#             NeXusCPP
-#         )
-#     else()
-#         target_link_libraries(${TARGET_NAME}
-#             PUBLIC
-#                 xml2
-#                 fftw3
-#                 fftw3f
-#                 cfitsio
-#                 tiff
-#                 armadillo
-#                 lapack
-#                 blas
-#                 NeXus
-#                 NeXusCPP
-#             )
-#     endif()
-# endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 

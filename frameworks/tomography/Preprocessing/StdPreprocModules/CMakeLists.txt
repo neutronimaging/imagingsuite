@@ -19,6 +19,16 @@ include_directories(
     )
 endif()
 
+if (UNIX)
+include_directories(
+    ../../Framework/ReconFramework/include/
+    ../../../../core/kipl/kipl/include
+    ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    )
+endif()
+
 if (WIN32)
     include_directories(
         ../../../../core/kipl/kipl/include
@@ -34,42 +44,34 @@ if (WIN32)
         )
 endif()
 
-if (UNIX)
-include_directories(
-    ../../Framework/ReconFramework/include/
-    ../../../../core/kipl/kipl/include
-    ../../../../core/modules/ModuleConfig/include
-    ../../../../core/modules/ReaderConfig
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    )
-endif()
+
 
 
 set(INC_FILES
-include/AdaptiveFilter.h
-include/ISSfilter.h
-include/ProjectionFilter.h
-include/StdPreprocModules_global.h
-include/BasicRingClean.h
-include/MedianMixRingClean.h
-include/SinoSpotClean.h
-include/TranslateProjectionsModule.h
-include/CameraStripeClean.h
-include/MorphSpotCleanModule.h
-include/SpotClean.h
-include/TranslatedProjectionWeighting.h
-include/DataScaler.h
-include/NormPlugins.h
-include/SpotClean2.h
-include/WaveletRingClean.h
-include/GammaSpotCleanModule.h
-include/PolynomialCorrectionModule.h
-include/SpotRingClean.h
-include/bblognorm.h
-include/GeneralFilter.h
-include/PreprocEnums.h
-include/StdPreprocModules.h
-include/ReplaceUnderexposedModule.h
+  include/AdaptiveFilter.h
+  include/ISSfilter.h
+  include/ProjectionFilter.h
+  include/StdPreprocModules_global.h
+  include/BasicRingClean.h
+  include/MedianMixRingClean.h
+  include/SinoSpotClean.h
+  include/TranslateProjectionsModule.h
+  include/CameraStripeClean.h
+  include/MorphSpotCleanModule.h
+  include/SpotClean.h
+  include/TranslatedProjectionWeighting.h
+  include/DataScaler.h
+  include/NormPlugins.h
+  include/SpotClean2.h
+  include/WaveletRingClean.h
+  include/GammaSpotCleanModule.h
+  include/PolynomialCorrectionModule.h
+  include/SpotRingClean.h
+  include/bblognorm.h
+  include/GeneralFilter.h
+  include/PreprocEnums.h
+  include/StdPreprocModules.h
+  include/ReplaceUnderexposedModule.h
 )
 
 set(SRC_FILES 
@@ -109,7 +111,7 @@ target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY HAVE
 
 add_definitions(-DHAVE_NEXUS)
 
-  message(${CMAKE_HOST_SYSTEM_PROCESSOR})
+  message("StdPreprocModules ${CMAKE_HOST_SYSTEM_PROCESSOR}")
   if (WIN32)
   target_link_directories(${TARGET_NAME} PRIVATE
   ../../../../../ExternalDependencies/windows/lib
@@ -138,7 +140,7 @@ add_definitions(-DHAVE_NEXUS)
       )
 endif()
 
-if (APPLE)
+if (UNIX)
       # target_link_directories(${TARGET_NAME} PUBLIC
       #   ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
       # )

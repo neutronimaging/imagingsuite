@@ -7,6 +7,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(LAPACK)
+
 #message(${pybind11_sources_SOURCE_DIR})
 include_directories(
     ../../../core/kipl/kipl/include
@@ -52,8 +54,14 @@ set(SRC_FILES
   src/pybinder.cpp
 )
 
-add_library(${TARGET_NAME}
-  ${LINK_TYPE}
+# add_library(${TARGET_NAME}
+#   ${LINK_TYPE}
+#   MODULE
+#   ${SRC_FILES}  
+#   ${INC_FILES}
+#   )
+
+pybind11_add_module(${TARGET_NAME}
   MODULE
   ${SRC_FILES}  
   ${INC_FILES}
@@ -63,38 +71,58 @@ set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
 
-set(LINK_TYPE "MODULE")
 
-target_link_libraries(${TARGET_NAME}
-  PUBLIC
-    pybind11::module
-
-    kipl
-    ImagingAlgorithms
-    ModuleConfig
-    ReconFramework
-    ReaderConfig
-    StdBackProjectors
-    FDKBackProjectors
-  )
-
-if (APPLE)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-        )
-
+if (UNIX)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
     target_link_libraries(${TARGET_NAME}
-        PUBLIC
-        pybind11::module
+      PUBLIC
+        OpenMP::OpenMP_CXX
+        # pybind11::module
 
         kipl
         ImagingAlgorithms
         ModuleConfig
         ReconFramework
+        ReaderConfig
         StdBackProjectors
         FDKBackProjectors
-    )
+        
+      )
+      else()
+        target_link_libraries(${TARGET_NAME}
+        PUBLIC
+
+          # pybind11::module
+
+          kipl
+          ImagingAlgorithms
+          ModuleConfig
+          ReconFramework
+          ReaderConfig
+          StdBackProjectors
+          FDKBackProjectors
+        )
+      endif()
 endif()
+
+# if (APPLE)
+#     target_link_directories(${TARGET_NAME} PRIVATE
+#         ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+#         )
+
+#     target_link_libraries(${TARGET_NAME}
+#         PUBLIC
+#         pybind11::module
+
+#         kipl
+#         ImagingAlgorithms
+#         ModuleConfig
+#         ReconFramework
+#         StdBackProjectors
+#         FDKBackProjectors
+#     )
+# endif()
 
 if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
