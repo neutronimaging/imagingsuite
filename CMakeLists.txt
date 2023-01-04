@@ -34,6 +34,10 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
+if (WIN32)
+  set(PC_LIBXML_INCLUDEDIR ${PROJECT_SOURCE_DIR}/../ExternalDependencies/windows/include)
+  set(PC_LIBXML_LIBDIR  ${PROJECT_SOURCE_DIR}/../ExternalDependencies/windows/lib)
+endif()
 # for testing we will need the python interpreter
 find_package(PythonInterp REQUIRED)
 find_package(LibXml2 REQUIRED)
