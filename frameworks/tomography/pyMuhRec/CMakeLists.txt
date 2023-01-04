@@ -7,25 +7,20 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(LAPACK)
+
 #message(${pybind11_sources_SOURCE_DIR})
 include_directories(
-    /usr/include/libxml2
-    /opt/local/include
-    /opt/local/include/libxml2
     ../../../core/kipl/kipl/include
-    ../../../external/src/linalg
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../../ExternalDependencies/macos/include/
     ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/
-    ../../../external/mac/include/nexus
-    ../../../external/mac/include/hdf5
     ../Framework/ReconFramework/include
     ../Backprojectors/StdBackProjectors/include
     ../Backprojectors/FDKBackProjectors/src
     ../../../core/algorithms/ImagingAlgorithms/include
-    ${pybind11_sources_SOURCE_DIR}/include
+    # ${pybind11_sources_SOURCE_DIR}/include
     )
 
 if (WIN32)
@@ -45,9 +40,6 @@ if (WIN32)
       )
 endif()
 
-# add_definitions(-DVERSION="1.6.0")
-# create python module
-
 set(INC_FILES
   src/reconstructor.h
 )
@@ -62,61 +54,75 @@ set(SRC_FILES
   src/pybinder.cpp
 )
 
-add_library(${TARGET_NAME}
-  ${LINK_TYPE}
+# add_library(${TARGET_NAME}
+#   ${LINK_TYPE}
+#   MODULE
+#   ${SRC_FILES}  
+#   ${INC_FILES}
+#   )
+
+pybind11_add_module(${TARGET_NAME}
   MODULE
   ${SRC_FILES}  
   ${INC_FILES}
   )
   
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-# set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
-#set_target_properties(${TARGET_NAME} PROPERTIES BUILD_WITH_INSTALL_RPATH ON)
 
 target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
 
-set(LINK_TYPE "MODULE")
 
-target_link_libraries(${TARGET_NAME}
-  PUBLIC
-    pybind11::module
-
-    kipl
-    ImagingAlgorithms
-    ModuleConfig
-    ReconFramework
-    ReaderConfig
-    StdBackProjectors
-    FDKBackProjectors
-  )
-
-if (APPLE)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        /opt/local/lib
-        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-        ../../../external/mac/lib/
-        )
-
+if (UNIX)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
     target_link_libraries(${TARGET_NAME}
-        PUBLIC
-        pybind11::module
-        
-        PRIVATE
+      PUBLIC
+        OpenMP::OpenMP_CXX
+        # pybind11::module
+
         kipl
         ImagingAlgorithms
         ModuleConfig
         ReconFramework
+        ReaderConfig
         StdBackProjectors
         FDKBackProjectors
-        xml2
-        fftw3
-        fftw3f
-        cfitsio
-        tiff
-        NeXus.1.0.0
-        NeXusCPP.1.0.0
-    )
+        
+      )
+      else()
+        target_link_libraries(${TARGET_NAME}
+        PUBLIC
+
+          # pybind11::module
+
+          kipl
+          ImagingAlgorithms
+          ModuleConfig
+          ReconFramework
+          ReaderConfig
+          StdBackProjectors
+          FDKBackProjectors
+        )
+      endif()
 endif()
+
+# if (APPLE)
+#     target_link_directories(${TARGET_NAME} PRIVATE
+#         ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+#         )
+
+#     target_link_libraries(${TARGET_NAME}
+#         PUBLIC
+#         pybind11::module
+
+#         kipl
+#         ImagingAlgorithms
+#         ModuleConfig
+#         ReconFramework
+#         StdBackProjectors
+#         FDKBackProjectors
+#     )
+# endif()
 
 if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
@@ -203,8 +209,10 @@ set_target_properties(${TARGET_NAME}
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-if(DYNAMIC_LIB)
-  install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+#if(DYNAMIC_LIB)
+  
   # install(FILES 
   #     ../../../../lib/libkipl.1.0.0.dylib 
   #     ../../../../lib/libModuleConfig.1.0.0.dylib 
@@ -229,4 +237,4 @@ if(DYNAMIC_LIB)
       #   COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
       #   WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
       # )
-endif(DYNAMIC_LIB)
+#endif(DYNAMIC_LIB)

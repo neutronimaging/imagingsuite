@@ -15,24 +15,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts )
 
-#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts PrintSupport REQUIRED)
 message("Using Qt${QT_VERSION_MAJOR}")
 
 if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../QtAddons
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../core/modules/ReaderConfig
     ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../GUI/qt/QtAddons
-    ../../../external/mac/include/
     ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -49,20 +41,17 @@ include_directories(
     ../../../../ExternalDependencies/windows/include/nexus
     ../../../../ExternalDependencies/windows/include/libxml2
     ../../../../ExternalDependencies/windows/include/cfitsio
- #   ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
 
 if (UNIX)
 include_directories(
-    /usr/include/libxml2
-    ../QtAddons
+    ../../../GUI/qt/QtAddons
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../core/modules/ReaderConfig
     ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../GUI/qt/QtAddons
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -100,21 +89,13 @@ add_library(${TARGET_NAME} SHARED
 )
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
-
-if (APPLE)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        /opt/local/lib
-        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-        ../../../external/mac/lib/
-        )
-endif()
 
 target_link_libraries(${TARGET_NAME} 
     PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
 #    Qt${QT_VERSION_MAJOR}::Charts
+
     kipl
     ReaderConfig
     QtAddons

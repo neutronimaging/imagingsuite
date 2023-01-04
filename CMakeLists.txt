@@ -47,11 +47,13 @@ find_package(TIFF REQUIRED)
 find_package(FFTW REQUIRED)
 find_package(LAPACK REQUIRED)
 find_package(BLAS REQUIRED)
-#find_package(NEXUS)
+find_package(Nexus REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(CFITSIO REQUIRED)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
@@ -76,27 +78,6 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
 endif()
 
 include(CTest)
-#include(FetchContent)
-
-#FetchContent_Declare(
-#  pybind11_sources
-#  GIT_REPOSITORY https://github.com/pybind/pybind11.git
-#  GIT_TAG        v2.2
-#)
-
-#FetchContent_GetProperties(pybind11_sources)
-
-#if(NOT pybind11_sources_POPULATED)
-#  FetchContent_Populate(pybind11_sources)
-#
-#  add_subdirectory(
-#    ${pybind11_sources_SOURCE_DIR}
-#    ${pybind11_sources_BINARY_DIR}
-#    )
-#    add_definitions(-DHAVEPYBIND11)
-#endif()
-
-##include(pybind11)
 
 execute_process(
   COMMAND git describe --tag
@@ -140,34 +121,48 @@ set(INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 
 set(EXPORT_NAME ${PROJECT_NAME}-targets)
 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 if(NOT APPLE)
   set(CMAKE_INSTALL_RPATH $ORIGIN)
 else()
   set(CMAKE_INSTALL_RPATH @loader_path)
- # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH YES)
 endif()
+
+# turn on testing
+enable_testing()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
-if (WIN32)
-  add_subdirectory(core/kipl/UnitTests/tLogging)
-  add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
-  add_subdirectory(core/kipl/UnitTests/tkiplfilters)
-  add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
-  # add_subdirectory(core/kipl/UnitTests/tedgefunction)
-  add_subdirectory(core/kipl/UnitTests/tFillHole)
-  add_subdirectory(core/kipl/UnitTests/tImageOperators)
-  add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
-  add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
-endif()
+
+## Core library tests
+add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
+add_subdirectory(core/kipl/UnitTests/tLogging)
+add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
+add_subdirectory(core/kipl/UnitTests/tkiplfilters)
+add_subdirectory(core/kipl/UnitTests/tFillHole)
+add_subdirectory(core/kipl/UnitTests/tImageOperators)
+add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
+add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
+add_subdirectory(core/kipl/UnitTests/tedgefunction)
+add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
+add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
+add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
+
+
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
-# add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
 add_subdirectory(core/algorithms/AdvancedFilters)
+# add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
+# add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
+
 add_subdirectory(core/modules/ModuleConfig)
+
 add_subdirectory(core/modules/ReaderConfig)
+add_subdirectory(core/modules/UnitTests/tReaderConfig)
+
 add_subdirectory(GUI/qt/QtAddons)
 add_subdirectory(GUI/qt/QtImaging)
 add_subdirectory(core/modules/ReaderGUI)
@@ -181,6 +176,8 @@ add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
 add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
+
+add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
 
 # Tomography GUI
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
@@ -251,12 +248,17 @@ if(DYNAMIC_LIB)
   endif()
   if (APPLE)
     install(FILES 
-    external/mac/lib/libNeXus.1.0.0.dylib	
-    external/mac/lib//libhdf5_cpp.11.dylib
-    external/mac/lib//libNeXusCPP.1.0.0.dylib
-    external/mac/lib//libhdf5_hl.10.dylib
-    external/mac/lib//libhdf5.10.dylib	
-    external/mac/lib//libsz.2.dylib
+    # ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXus.1.0.0.dylib
+    # ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXusCPP.1.0.0.dylib
+    # /opt/homebrew/lib/libhdf5.dylib
+    # /opt/homebrew/lib/libhdf5_cpp.dylib 
+    
+    # external/mac/lib/libNeXus.1.0.0.dylib	
+    # external/mac/lib//libhdf5_cpp.11.dylib
+    # external/mac/lib//libNeXusCPP.1.0.0.dylib
+    # external/mac/lib//libhdf5_hl.10.dylib
+    # external/mac/lib//libhdf5.10.dylib	
+    # external/mac/lib//libsz.2.dylib
 
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
@@ -287,8 +289,7 @@ endif()
 
 endif(DYNAMIC_LIB)
 
-# turn on testing
-enable_testing()
+
 
 message(${CMAKE_CURRENT_SOURCE_DIR})
 ## define test

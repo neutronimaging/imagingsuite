@@ -10,9 +10,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
-# find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
-
 find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
@@ -20,9 +17,6 @@ message("Using Qt${QT_VERSION_MAJOR}")
 
 if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
@@ -32,9 +26,6 @@ include_directories(
     ../../../../GUI/qt/QtModuleConfigure/
     ../StdPreprocModules/include
     ../../../../../ExternalDependencies/macos/include
-    ../../../../external/mac/include/
-    ../../../../external/mac/include/nexus
-    ../../../../external/mac/include/hdf5
     #Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 
@@ -158,20 +149,8 @@ add_library(${TARGET_NAME} SHARED
   )
 endif()
 
-  if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-      if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-          target_link_directories(${TARGET_NAME} PRIVATE
-              /opt/local/lib
-              ../../../../../ExternalDependencies/macos/arm64/lib
-              )
-      else()
-          target_link_directories(${TARGET_NAME} PRIVATE
-              /opt/local/lib
-              ../../../../external/mac/lib/
-              )
-      endif()
-  
-      target_link_libraries(${TARGET_NAME} PRIVATE
+  if (APPLE)  
+      target_link_libraries(${TARGET_NAME} PUBLIC
           Qt${QT_VERSION_MAJOR}::Core
           Qt${QT_VERSION_MAJOR}::Widgets
  #         Qt${QT_VERSION_MAJOR}::Charts
@@ -184,16 +163,6 @@ endif()
           QtAddons
           QtModuleConfigure
           StdPreprocModules
-          xml2
-          fftw3
-          fftw3f
-          cfitsio
-          tiff
-          armadillo
-          lapack
-          blas
-          NeXus.1.0.0
-          NeXusCPP.1.0.0
       )
   endif()
 
@@ -217,8 +186,6 @@ endif()
         armadillo
         lapack
         blas
-#        NeXus.1.0.0
-#        NeXusCPP.1.0.0
     )
   endif()
 

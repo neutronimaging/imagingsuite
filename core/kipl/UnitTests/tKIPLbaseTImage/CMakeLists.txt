@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tIndex2Coord")
-project(tIndex2Coord LANGUAGES CXX)
+set(TARGET_NAME "tKIPLbaseTImage")
+project(tKIPLbaseTImage LANGUAGES CXX)
 
 enable_testing()
 
@@ -19,12 +19,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/include
-    )
+    ../../../../../ExternalDependencies/macos/include
+)
 
 set(SRC_FILES,
-    tst_tindex2coordtest.cpp)
+    tst_tkiplbasetimagetest.cpp)
 
-add_executable(${TARGET_NAME} tst_tindex2coordtest.cpp)
+add_executable(${TARGET_NAME} tst_tkiplbasetimagetest.cpp)
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE
@@ -33,3 +34,6 @@ target_link_libraries(${TARGET_NAME}
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
+
+# install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests
+#         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/applications/${TARGET_NAME}.app/Contents/Frameworks)
