@@ -17,18 +17,12 @@ endif()
 
 if (WIN32)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    ../../../core/kipl/kipl/include
-    ../../../external/src/linalg
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    ../../../external/include/
     ../../../../ExternalDependencies/windows/include
     ../../../../ExternalDependencies/windows/include/nexus
     ../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../external/mac/include/nexus
-    ../../../external/mac/include/hdf5
+    ../../../external/include/
     )
 endif()
 
