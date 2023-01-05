@@ -48,8 +48,6 @@ find_package(pybind11 REQUIRED)
 find_package(CFITSIO REQUIRED)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
@@ -61,17 +59,17 @@ if("${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" VERSION_LESS "3.5")
 endif()
 
 # Get version from git-describe
-execute_process(
-  COMMAND git describe --tag
-  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-  RESULT_VARIABLE HAVE_GIT_VERSION_INFO
-  OUTPUT_VARIABLE GIT_VERSION_INFO
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
-  message(STATUS "Got version from Git: ${GIT_VERSION_INFO}")
-  add_definitions(-DVERSION="${GIT_VERSION_INFO}")
-endif()
+# execute_process(
+#   COMMAND git describe --tag
+#   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+#   RESULT_VARIABLE HAVE_GIT_VERSION_INFO
+#   OUTPUT_VARIABLE GIT_VERSION_INFO
+#   OUTPUT_STRIP_TRAILING_WHITESPACE
+# )
+# if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
+#   message(STATUS "Got version from Git: ${GIT_VERSION_INFO}")
+#   add_definitions(-DVERSION="${GIT_VERSION_INFO}")
+# endif()
 
 include(CTest)
 
@@ -120,7 +118,7 @@ set(EXPORT_NAME ${PROJECT_NAME}-targets)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if(NOT APPLE)
-  set(CMAKE_INSTALL_RPATH $ORIGIN)
+  set(CMAKE_INSTALL_RPATH $ORIGIN/../lib)
 else()
   set(CMAKE_INSTALL_RPATH @loader_path)
 endif()
@@ -153,6 +151,8 @@ add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 add_subdirectory(core/algorithms/AdvancedFilters)
 # add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
 # add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
+
+add_subdirectory(core/algorithms/ImagingQAAlgorithms)
 
 add_subdirectory(core/modules/ModuleConfig)
 
@@ -284,8 +284,6 @@ if(DYNAMIC_LIB)
 endif()
 
 endif(DYNAMIC_LIB)
-
-
 
 message(${CMAKE_CURRENT_SOURCE_DIR})
 ## define test

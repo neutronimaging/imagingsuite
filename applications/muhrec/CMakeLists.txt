@@ -135,7 +135,7 @@ set_source_files_properties(${app_icon_macos} PROPERTIES
 
 # qt_add_executable(${TARGET_NAME} MACOSX_BUNDLE  ${app_icon_macos})
 
-message(App Qt${QT_VERSION_MAJOR})
+message(MuhRec Qt${QT_VERSION_MAJOR})
 
 
 qt_add_executable(${TARGET_NAME}
@@ -204,6 +204,7 @@ if (UNIX)
         QtImaging
     )
 endif()
+
 set_target_properties(${TARGET_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER ch.psi.muhrec
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

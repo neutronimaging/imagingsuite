@@ -42,62 +42,23 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGQAALGORITHMS_LIBRARY HAVE_NEXUS)
 
 add_definitions(-DHAVE_NEXUS)
 
     
-if (APPLE)
-target_link_libraries(${TARGET_NAME}
-    PRIVATE
-    kipl
-    # xml2
-    # fftw3
-    # fftw3f
-    # cfitsio
-    # tiff
-    # armadillo
-    # lapack
-    # blas
-    # NeXus.1.0.0
-    # NeXusCPP.1.0.0
-  )
-endif()
-
-if (UNIX AND NOT APPLE)
+if (UNIX)
     find_package(OpenMP)
     if(OpenMP_CXX_FOUND)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
-
-          PRIVATE
             kipl
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
-            NeXus
-            NeXusCPP
         )
     else()
     target_link_libraries(${TARGET_NAME} 
-          PRIVATE
+          PUBLIC
             kipl
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
-            NeXus
-            NeXusCPP
-        )
+            )
     endif()
 endif()
 

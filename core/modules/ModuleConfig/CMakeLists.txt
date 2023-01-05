@@ -10,13 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (APPLE)
 include_directories(
     ../../../core/kipl/kipl/include
-    ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    # ../../../external/mac/include/
     ../../../../ExternalDependencies/macos/include
     ../../../../ExternalDependencies/macos/include/nexus
-    # ../../../external/mac/include/nexus
-    # ../../../external/mac/include/hdf5
     )
 endif()
 
@@ -37,11 +33,9 @@ endif()
 
 if (UNIX)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
-    ../../../core/kipl/kipl/include
-    ../../../external/src/linalg
+    # /opt/local/include
+    # /opt/local/include/libxml2
+    # /usr/include/libxml2
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     )
@@ -116,18 +110,13 @@ add_definitions(-DHAVE_NEXUS)
 #     )
 # endif()
 
-if (APPLE)
+if (UNIX)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
     kipl
+    LibXml2::LibXml2
   )
 endif()
 
-if (LINUX)
-target_link_libraries(${TARGET_NAME}
-    PUBLIC
-    kipl
-  )
-endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
