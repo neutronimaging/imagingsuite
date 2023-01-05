@@ -1,10 +1,6 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-#if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-#message(FATAL_ERROR “In-source_build_detected!_Create_a_build_folder_and_call_CMake_there”)
-#endif()
-
 execute_process(
   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
@@ -32,20 +28,38 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-# for testing we will need the python interpreter
-find_package(PythonInterp REQUIRED)
-find_package(LibXml2 REQUIRED)
-find_package(Armadillo REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(TIFF REQUIRED)
-find_package(FFTW REQUIRED)
-find_package(LAPACK REQUIRED)
-find_package(BLAS REQUIRED)
-find_package(Nexus REQUIRED)
-find_package(pybind11 REQUIRED)
-find_package(CFITSIO REQUIRED)
+
+if (WIN32)
+  find_package(PythonInterp REQUIRED)
+  find_package(LibXml2 REQUIRED)
+  find_package(armadillo REQUIRED)
+  find_package(ZLIB REQUIRED)
+  find_package(TIFF REQUIRED)
+  find_package(FFTW3 REQUIRED)
+  find_package(OpenBLAS REQUIRED)
+  find_package(pybind11 REQUIRED)
+  # find_package(cfitsio REQUIRED)
+  # find_package(Nexus REQUIRED)
+
+  set(PC_LIBXML_INCLUDEDIR ${PROJECT_SOURCE_DIR}/../ExternalDependencies/windows/include)
+  set(PC_LIBXML_LIBDIR  ${PROJECT_SOURCE_DIR}/../ExternalDependencies/windows/lib)
+else()
+  set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+  
+  # for testing we will need the python interpreter
+  find_package(PythonInterp REQUIRED)
+  find_package(LibXml2 REQUIRED)
+  find_package(Armadillo REQUIRED)
+  find_package(ZLIB REQUIRED)
+  find_package(TIFF REQUIRED)
+  find_package(FFTW REQUIRED)
+  find_package(LAPACK REQUIRED)
+  find_package(BLAS REQUIRED)
+  find_package(pybind11 REQUIRED)
+  find_package(CFITSIO REQUIRED)
+  find_package(Nexus REQUIRED)
+endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
