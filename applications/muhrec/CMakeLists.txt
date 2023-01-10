@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 set(TARGET_NAME "MuhRec")
-project(${TARGET_NAME} VERSION 4.3 LANGUAGES CXX)
+project(${TARGET_NAME} VERSION 4.4 LANGUAGES CXX)
+# dirty fix
+add_definitions(-DVERSION="4.4")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -52,7 +54,6 @@ endif()
 
 if (UNIX)
 include_directories(
-    /usr/include/libxml2
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
     ../../core/modules/ReaderConfig
