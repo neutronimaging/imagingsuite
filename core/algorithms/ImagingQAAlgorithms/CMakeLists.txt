@@ -46,20 +46,17 @@ target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGQAALGORITHMS_LIBRARY HA
 
 add_definitions(-DHAVE_NEXUS)
 
-    
-if (UNIX)
-    find_package(OpenMP)
-    if(OpenMP_CXX_FOUND)
-        target_link_libraries(${TARGET_NAME} PUBLIC
-            OpenMP::OpenMP_CXX
-            kipl
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(${TARGET_NAME} PUBLIC
+        OpenMP::OpenMP_CXX
+        kipl
+    )
+else()
+target_link_libraries(${TARGET_NAME} 
+      PUBLIC
+        kipl
         )
-    else()
-    target_link_libraries(${TARGET_NAME} 
-          PUBLIC
-            kipl
-            )
-    endif()
 endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

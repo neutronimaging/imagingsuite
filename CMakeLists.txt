@@ -31,6 +31,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 
 if (WIN32)
+  set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../build) # needs to be fixed 
   find_package(PythonInterp REQUIRED)
   find_package(LibXml2 REQUIRED)
   find_package(armadillo REQUIRED)
@@ -39,11 +40,9 @@ if (WIN32)
   find_package(FFTW3 REQUIRED)
   find_package(OpenBLAS REQUIRED)
   find_package(pybind11 REQUIRED)
-  # find_package(cfitsio REQUIRED)
+  find_package(cfitsio REQUIRED)
   # find_package(Nexus REQUIRED)
 
-  set(PC_LIBXML_INCLUDEDIR ${PROJECT_SOURCE_DIR}/../ExternalDependencies/windows/include)
-  set(PC_LIBXML_LIBDIR  ${PROJECT_SOURCE_DIR}/../ExternalDependencies/windows/lib)
 else()
   set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
   
@@ -61,7 +60,7 @@ else()
   find_package(Nexus REQUIRED)
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/applications)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
@@ -279,25 +278,32 @@ if(DYNAMIC_LIB)
   endif()
   
 
-  if (WIN32)
-  install(FILES 
-  external/windows/lib64/nexus/libNeXus.dll	
-  external/windows/lib64/hdf5/libhdf5_cpp.dll
-  external/windows/lib64/nexus/libNeXusCPP.dll
-  external/windows/lib64/hdf5/libhdf5_hl.dll
-  external/windows/lib64/hdf5/libhdf5.dll
-  external/windows/lib64/libsz.2.dylib
-  external/windows/lib64/libtiff.dll
-  external/windows/lib64/libfftw3.3.dylib
-  external/windows/lib64/libfftw3f.3.dylib
-  ../ExternalDependencies/windows/lib/libxml2.dll 
-  ../ExternalDependencies/windows/lib/libopenblas.dll
-  ../ExternalDependencies/windows/lib/cfitsio.dll
+
+
+endif(DYNAMIC_LIB)
+
+if (WIN32)
+install(FILES 
+  external/lib64/nexus/NeXus.dll	
+  external/lib64/nexus/NeXusCPP.dll
+  external/lib64/hdf5/hdf5_hl.dll
+  external/lib64/hdf5/hdf5.dll
+  external/lib64/hdf5/hdf5_cpp.dll
+  external/lib64/hdf5/zlib.dll
+  external/lib64/hdf5/szip.dll
+  #external/lib64/libsz.2.dylib
+  external/lib64/libtiff.dll
+  external/lib64/libjpeg-62.dll
+  external/lib64/zlib1.dll
+  external/lib64/libfftw3-3.dll
+  external/lib64/libfftw3f-3.dll
+
+  ../ExternalDependencies/windows/bin/libxml2.dll 
+  # ../ExternalDependencies/windows/lib/libopenblas.dll
+  ../ExternalDependencies/windows/bin/cfitsio.dll
 
   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
-
-endif(DYNAMIC_LIB)
 
 message(${CMAKE_CURRENT_SOURCE_DIR})
 ## define test

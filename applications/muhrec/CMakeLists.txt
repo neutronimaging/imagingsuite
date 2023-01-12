@@ -43,11 +43,9 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../../ExternalDependencies/windows/include
-    ../../../ExternalDependencies/windows/include/libxml2
-    ../../../ExternalDependencies/windows/include/nexus
+    # ../../../ExternalDependencies/windows/include
+    # ../../../ExternalDependencies/windows/include/nexus
     ../../external/include/
-    ../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -168,9 +166,9 @@ if (APPLE)
 endif()
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        ../../../../ExternalDependencies/windows/lib
-        )
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    #     ../../../../ExternalDependencies/windows/lib
+    #     )
 
     target_link_libraries(${TARGET_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
