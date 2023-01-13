@@ -100,7 +100,7 @@ fi
 
 cp $REPOSPATH/imagingsuite/applications/muhrec/Resources/* ./Resources
 
-sed -i.bak s+com.yourcompany+ch.psi+g $DEST/Contents/Info.plist
+# sed -i.bak s+com.yourcompany+ch.psi+g $DEST/Contents/Info.plist
 echo "copy plugins"
 pwd
 if [ ! -d "./PlugIns" ]; then
@@ -333,6 +333,7 @@ fi
 if [ ! -e "tmp/muhrec/Applications" ]; then
 	ln -s /Applications /tmp/muhrec
 fi
+
 
 cp -r $DEST /tmp/muhrec
 

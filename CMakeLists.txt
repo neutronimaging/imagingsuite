@@ -1,14 +1,14 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-execute_process(
-  COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
-  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-  OUTPUT_VARIABLE IMGSUITE_VERSION
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+# execute_process(
+#   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
+#   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+#   OUTPUT_VARIABLE IMGSUITE_VERSION
+#   OUTPUT_STRIP_TRAILING_WHITESPACE
+# )
 
-project(imagingsuite VERSION 4.3 LANGUAGES CXX)
+# project(imagingsuite VERSION 4.3 LANGUAGES CXX)
 
 # require C++17
 if(NOT DEFINED CMAKE_CXX_STANDARD)
@@ -44,8 +44,7 @@ if (WIN32)
   # find_package(Nexus REQUIRED)
 
 else()
-  set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-  
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
   # for testing we will need the python interpreter
   find_package(PythonInterp REQUIRED)
   find_package(LibXml2 REQUIRED)
@@ -72,17 +71,17 @@ if("${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" VERSION_LESS "3.5")
 endif()
 
 # Get version from git-describe
-# execute_process(
-#   COMMAND git describe --tag
-#   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-#   RESULT_VARIABLE HAVE_GIT_VERSION_INFO
-#   OUTPUT_VARIABLE GIT_VERSION_INFO
-#   OUTPUT_STRIP_TRAILING_WHITESPACE
-# )
-# if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
-#   message(STATUS "Got version from Git: ${GIT_VERSION_INFO}")
-#   add_definitions(-DVERSION="${GIT_VERSION_INFO}")
-# endif()
+execute_process(
+  COMMAND git describe --tag
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  RESULT_VARIABLE HAVE_GIT_VERSION_INFO
+  OUTPUT_VARIABLE GIT_VERSION_INFO
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
+  message(STATUS "Got version from Git: ${GIT_VERSION_INFO}")
+  add_definitions(-DVERSION="${GIT_VERSION_INFO}")
+endif()
 
 include(CTest)
 
@@ -155,8 +154,6 @@ add_subdirectory(core/kipl/UnitTests/tedgefunction)
 add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
 add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
 add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
-
-
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
@@ -291,7 +288,6 @@ install(FILES
   external/lib64/hdf5/hdf5_cpp.dll
   external/lib64/hdf5/zlib.dll
   external/lib64/hdf5/szip.dll
-  #external/lib64/libsz.2.dylib
   external/lib64/libtiff.dll
   external/lib64/libjpeg-62.dll
   external/lib64/zlib1.dll
@@ -299,7 +295,6 @@ install(FILES
   external/lib64/libfftw3f-3.dll
 
   ../ExternalDependencies/windows/bin/libxml2.dll 
-  # ../ExternalDependencies/windows/lib/libopenblas.dll
   ../ExternalDependencies/windows/bin/cfitsio.dll
 
   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

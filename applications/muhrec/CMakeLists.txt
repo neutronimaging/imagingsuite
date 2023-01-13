@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 set(TARGET_NAME "MuhRec")
 project(${TARGET_NAME} VERSION 4.4 LANGUAGES CXX)
-# dirty fix
-add_definitions(-DVERSION="4.4")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -166,9 +164,6 @@ if (APPLE)
 endif()
 
 if (WIN32)
-    # target_link_directories(${TARGET_NAME} PRIVATE
-    #     ../../../../ExternalDependencies/windows/lib
-    #     )
 
     target_link_libraries(${TARGET_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
@@ -205,6 +200,7 @@ if (UNIX)
 endif()
 
 set_target_properties(${TARGET_NAME} PROPERTIES
+    MACOSX_BUNDLE_NAME MuhRec
     MACOSX_BUNDLE_GUI_IDENTIFIER ch.psi.muhrec
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
