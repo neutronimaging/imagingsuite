@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 #   OUTPUT_STRIP_TRAILING_WHITESPACE
 # )
 
-# project(imagingsuite VERSION 4.3 LANGUAGES CXX)
+project(imagingsuite VERSION 4.3 LANGUAGES CXX)
 
 # require C++17
 if(NOT DEFINED CMAKE_CXX_STANDARD)

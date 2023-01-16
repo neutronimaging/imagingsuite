@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(LAPACK)
 
-#message(${pybind11_sources_SOURCE_DIR})
 include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/kipl/kipl/include
@@ -54,13 +53,6 @@ set(SRC_FILES
   src/pybinder.cpp
 )
 
-# add_library(${TARGET_NAME}
-#   ${LINK_TYPE}
-#   MODULE
-#   ${SRC_FILES}  
-#   ${INC_FILES}
-#   )
-
 pybind11_add_module(${TARGET_NAME}
   MODULE
   ${SRC_FILES}  
@@ -68,27 +60,26 @@ pybind11_add_module(${TARGET_NAME}
   )
   
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-
 target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
 
 
 if (UNIX)
     find_package(OpenMP)
     if(OpenMP_CXX_FOUND)
-    target_link_libraries(${TARGET_NAME}
-      PUBLIC
-        OpenMP::OpenMP_CXX
-        # pybind11::module
+      target_link_libraries(${TARGET_NAME}
+        PUBLIC
+          OpenMP::OpenMP_CXX
+          # pybind11::module
 
-        kipl
-        ImagingAlgorithms
-        ModuleConfig
-        ReconFramework
-        ReaderConfig
-        StdBackProjectors
-        FDKBackProjectors
-        
-      )
+          kipl
+          ImagingAlgorithms
+          ModuleConfig
+          ReconFramework
+          ReaderConfig
+          StdBackProjectors
+          FDKBackProjectors
+          
+        )
       else()
         target_link_libraries(${TARGET_NAME}
         PUBLIC

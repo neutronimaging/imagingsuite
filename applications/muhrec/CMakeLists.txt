@@ -10,7 +10,7 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
 if (APPLE)
 include_directories(
@@ -41,8 +41,6 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    # ../../../ExternalDependencies/windows/include
-    # ../../../ExternalDependencies/windows/include/nexus
     ../../external/include/
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
@@ -144,31 +142,12 @@ qt_add_executable(${TARGET_NAME}
     ${APP_ICON_RESOURCE_WINDOWS}
 )
 
-
-if (APPLE)
-
-    target_link_libraries(${TARGET_NAME} PUBLIC
-        Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::Concurrent
-        kipl
-        ModuleConfig
-        ImagingAlgorithms
-        ReaderConfig
-        QtAddons
-        ReaderGUI
-        QtModuleConfigure
-        ReconFramework
-        QtImaging
-    )
-endif()
-
 if (WIN32)
 
     target_link_libraries(${TARGET_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::Concurrent
+        # Qt${QT_VERSION_MAJOR}::Concurrent
         kipl
         ModuleConfig
         ImagingAlgorithms
@@ -181,11 +160,31 @@ if (WIN32)
     )
 endif()
 
+# if (APPLE)
+
+#     target_link_libraries(${TARGET_NAME} PUBLIC
+#         Qt${QT_VERSION_MAJOR}::Core
+#         Qt${QT_VERSION_MAJOR}::Widgets
+#         Qt${QT_VERSION_MAJOR}::Concurrent
+#         kipl
+#         ModuleConfig
+#         ImagingAlgorithms
+#         ReaderConfig
+#         QtAddons
+#         ReaderGUI
+#         QtModuleConfigure
+#         ReconFramework
+#         QtImaging
+#     )
+# endif()
+
+
+
 if (UNIX)
     target_link_libraries(${TARGET_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::Concurrent
+        # Qt${QT_VERSION_MAJOR}::Concurrent
         
         kipl
         ModuleConfig

@@ -18,31 +18,32 @@ class ReconDialog : public QDialog
 public:
     explicit ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget *parent = nullptr);
     ~ReconDialog();
-    int progress();
-    int process();
+    void progress();
+    void process();
     virtual int exec(ReconEngine *engine, bool bRerunBackProj);
 
 private:
     Ui::ReconDialog *ui;
 
-    virtual int exec() { return QDialog::exec(); }
+    int exec() override { return QDialog::exec(); }
+
 protected:
     void Abort();
     bool Finished();
 
     float fraction;
-    bool finish;
+    bool  finish;
     ReconEngine * m_Engine;
     kipl::interactors::InteractionBase * m_Interactor;
     bool m_bRerunBackproj;
 private slots:
     void on_buttonCancel_clicked();
-    void on_processFailure(QString msg);
-    void changedProgress(float progress, float overallProgress, QString msg);
+    void on_processFailure(const QString &msg);
+    void changedProgress(float progress, float overallProgress, const QString &msg);
 
 signals:
-    void updateProgress(float progress, float overallProgress, QString msg);
-    void processFailure(QString msg);
+    void updateProgress(float progress, float overallProgress, const QString &msg);
+    void processFailure(const QString &msg);
 };
 
 #endif // RECONDIALOG_H
