@@ -41,6 +41,7 @@ protected:
 
 private slots:
     void on_processFailure(QString msg);
+    void on_processDone();
     void changedProgress(float progress, float overallProgress, QString msg);
 
     void on_buttonBox_rejected();
@@ -48,6 +49,7 @@ private slots:
 signals:
     void updateProgress(float progress, float overallProgress, QString msg);
     void processFailure(QString msg);
+    void processDone();
 };
 
 #endif // MODULECONFIGPROGRESSDIALOG_H

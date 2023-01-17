@@ -92,8 +92,6 @@ if [ -e "$REPOSPATH/Applications/muhrecCLI" ]; then
 	`$CPCMD $REPOSPATH/Applications/muhrecCLI $DEST/Contents/MacOS`
 fi
 
-
-
 rm -f ./MacOS/*.dylib
 cd Frameworks
 rm -f *.1.0.dylib

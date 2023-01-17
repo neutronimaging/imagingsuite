@@ -39,11 +39,13 @@ protected:
 private slots:
     void on_buttonCancel_clicked();
     void on_processFailure(const QString &msg);
+    void on_processDone();
     void changedProgress(float progress, float overallProgress, const QString &msg);
 
 signals:
     void updateProgress(float progress, float overallProgress, const QString &msg);
     void processFailure(const QString &msg);
+    void processDone();
 };
 
 #endif // RECONDIALOG_H
