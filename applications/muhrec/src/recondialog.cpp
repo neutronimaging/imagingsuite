@@ -26,6 +26,7 @@ ReconDialog::ReconDialog(kipl::interactors::InteractionBase *interactor, QWidget
     ui->setupUi(this);
     connect(this,&ReconDialog::updateProgress,this,&ReconDialog::changedProgress);
     connect(this,&ReconDialog::processFailure,this,&ReconDialog::on_processFailure);
+    connect(this,&ReconDialog::processDone,this,&ReconDialog::on_processDone);
 }
 
 ReconDialog::~ReconDialog()
@@ -154,7 +155,7 @@ void ReconDialog::process()
 
     finish=true;
     m_Interactor->Done();
-    QDialog::accept();
+    emit processDone();
 
     logger.message("Process signaled accept");
 }
@@ -187,6 +188,11 @@ void ReconDialog::on_processFailure(const QString & msg)
     dlg.setDetailedText(msg);
     dlg.exec();
     Abort();
+}
+
+void ReconDialog::on_processDone()
+{
+    accept();
 }
 
 void ReconDialog::on_buttonCancel_clicked()
