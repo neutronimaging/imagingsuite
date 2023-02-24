@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(TARGET_NAME "tModuleConfig")
-project(tLogging LANGUAGES CXX)
+project(tModuleConfig LANGUAGES CXX)
 
 enable_testing()
 

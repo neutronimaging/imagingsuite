@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(TARGET_NAME "tReconConfig")
-project(tLogging LANGUAGES CXX)
+project(tReconConfig LANGUAGES CXX)
 
 enable_testing()
 
@@ -19,7 +19,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../Framework/ReconFramework/include/
+     ../../../../core/modules/ModuleConfig/include
     ../../../../core/kipl/kipl/include/
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    ../../../../../ExternalDependencies/macos/include
 )
 
 set(SRC_FILES
@@ -31,6 +34,8 @@ target_link_libraries(${TARGET_NAME}
     PUBLIC
         Qt6::Test
         kipl
+        ModuleConfig
+        ImagingAlgorithms
         ReconFramework
     )
 
