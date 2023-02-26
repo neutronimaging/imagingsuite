@@ -171,7 +171,7 @@ add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
 add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
-
+add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
 # Tomography GUI
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
@@ -181,8 +181,9 @@ add_subdirectory(applications/muhrec)
 if (WIN32)
    add_subdirectory(applications/CLI/muhrecCLI)
 #   add_subdirectory(applications/verticalslicer)
-#   add_subdirectory(applications/multiframesplitter)
+#   add_subdirectory(applications/CLI/multiframesplitter)
 endif()
+add_subdirectory(applications/CLI/verticalslicer)
 
 add_subdirectory(applications/imageviewer)
 
