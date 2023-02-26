@@ -34,15 +34,19 @@ find_package(LibXml2 REQUIRED)
 find_package(armadillo REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(TIFF REQUIRED)
-find_package(FFTW3 REQUIRED)
-find_package(OpenBLAS REQUIRED)
-# find_package(lapack REQUIRED)
+
 find_package(pybind11 REQUIRED)
 find_package(cfitsio REQUIRED)
+if (WIN32)
+  find_package(FFTW3 REQUIRED)
+  find_package(OpenBLAS REQUIRED)
+  # find_package(lapack REQUIRED)
+endif()
 
 if (UNIX)
   # for testing we will need the python interpreter
-  
+  find_package(FFTW REQUIRED)
+  find_package(BLAS REQUIRED)
   find_package(Nexus REQUIRED)
 endif()
 
