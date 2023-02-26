@@ -116,7 +116,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
 	if (nMaxSlices<=start)
 		kipl::base::KiplException("Start index can't be greater than number of slices.",__FILE__, __LINE__);
 	
-	if (nMaxSlices<stop)
+    if (nMaxSlices<=stop)
 		kipl::base::KiplException("Stop index can't be greater than number of slices.",__FILE__, __LINE__);
 	
 	std::string filename, ext, varname;
@@ -155,7 +155,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
     {
 
         kipl::base::TImage<float,2> ftmp;
-        for (size_t i=start; i<stop; i++)
+        for (size_t i=start; i<=stop; i++)
         {
             kipl::strings::filenames::MakeFileName(fname,static_cast<int>(i+count_start),filename,ext,'#','0');
             tmp=kipl::base::ExtractSlice(img,i,imageplane,roi);
@@ -174,7 +174,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
                     ftmp[j]=tmp[j];
                 WriteTIFF(ftmp,filename,kipl::base::Float32);
                 break;
-            case TIFF8bitsMultiFrame : break;
+            case TIFF8bitsMultiFrame  : break;
             case TIFF16bitsMultiFrame : break;
             case TIFFfloatMultiFrame  : break;
             case NeXusfloat           : break; // it is handled somewhere else
