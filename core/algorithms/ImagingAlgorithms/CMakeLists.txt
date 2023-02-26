@@ -106,18 +106,18 @@ if (WIN32)
     )
     
     target_link_libraries(${TARGET_NAME}
-    PRIVATE
+    PUBLIC
         kipl
-        libxml2
-        cfitsio
-        libtiff
-        liblapack
-        libopenblas
-        libfftw3-3
-        libfftw3f-3
-        NeXus
-        NeXusCPP
-        Iphlpapi
+        # libxml2
+        # cfitsio
+        # libtiff
+        # liblapack
+        # libblas
+        # libfftw3-3
+        # libfftw3f-3
+        # NeXus
+        # NeXusCPP
+        # Iphlpapi
     )
 endif()
 
@@ -127,33 +127,33 @@ if (UNIX AND NOT APPLE)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
 
-          PRIVATE
+          PUBLIC
             kipl
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
-            NeXus
-            NeXusCPP
+            # xml2
+            # fftw3
+            # fftw3f
+            # cfitsio
+            # tiff
+            # armadillo
+            # lapack
+            # blas
+            # NeXus
+            # NeXusCPP
         )
     else()
     target_link_libraries(${TARGET_NAME} 
-          PRIVATE
+          PUBLIC
             kipl
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
-            NeXus
-            NeXusCPP
+            # xml2
+            # fftw3
+            # fftw3f
+            # cfitsio
+            # tiff
+            # armadillo
+            # lapack
+            # blas
+            # NeXus
+            # NeXusCPP
         )
     endif()
 endif()

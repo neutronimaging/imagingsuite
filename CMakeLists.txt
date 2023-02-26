@@ -28,7 +28,6 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 find_package(PythonInterp REQUIRED)
 find_package(LibXml2 REQUIRED)
@@ -37,11 +36,13 @@ find_package(ZLIB REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(FFTW3 REQUIRED)
 find_package(OpenBLAS REQUIRED)
+# find_package(lapack REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(cfitsio REQUIRED)
 
 if (UNIX)
   # for testing we will need the python interpreter
+  
   find_package(Nexus REQUIRED)
 endif()
 
@@ -279,6 +280,15 @@ install(FILES
   external/lib64/zlib1.dll
   external/lib64/libfftw3-3.dll
   external/lib64/libfftw3f-3.dll
+  external/lib64/libblas.dll
+  external/lib64/liblapack.dll
+  external/lib64/liblapacke.dll
+  external/lib64/libquadmath-0.dll
+  external/lib64/libgfortran_64-3.dll
+  external/lib64/libwinpthread-1.dll
+  external/lib64/libgcc_s_seh-1.dll
+  external/lib64/libgcc_s_seh_64-1.dll
+  ../ExternalDependencies/windows/bin/libopenblas.dll
 
   ../ExternalDependencies/windows/bin/libxml2.dll 
   ../ExternalDependencies/windows/bin/cfitsio.dll

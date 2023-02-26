@@ -85,7 +85,7 @@ if (WIN32)
     )
     
     target_link_libraries(${TARGET_NAME}
-    PRIVATE
+    PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig

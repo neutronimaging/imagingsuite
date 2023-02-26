@@ -97,21 +97,21 @@ if (WIN32)
     )
     
     target_link_libraries(${TARGET_NAME}
-    PRIVATE
+    PUBLIC
         kipl
         ModuleConfig
         ImagingAlgorithms
         ReaderConfig
-        libxml2
-        cfitsio
-        libtiff
-        liblapack
-        libopenblas
-        libfftw3-3
-        libfftw3f-3
-        NeXus
-        NeXusCPP
-        Iphlpapi
+        # libxml2
+        # cfitsio
+        # libtiff
+        # liblapack
+        # libopenblas
+        # libfftw3-3
+        # libfftw3f-3
+        # NeXus
+        # NeXusCPP
+        # Iphlpapi
 
         )
 endif()

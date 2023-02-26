@@ -70,18 +70,17 @@ if (WIN32)
     PUBLIC
       # pybind11::module
 
-    PRIVATE
-        kipl
-        libxml2
-        cfitsio
-        libtiff
-        liblapack
-        libopenblas
-        libfftw3-3
-        libfftw3f-3
-        NeXus
-        NeXusCPP
-        Iphlpapi
+      kipl
+      # libxml2
+      # cfitsio
+      # libtiff
+      # liblapack
+      # libopenblas
+      # libfftw3-3
+      # libfftw3f-3
+      # NeXus
+      # NeXusCPP
+      # Iphlpapi
     )
 endif()
 
@@ -92,38 +91,38 @@ if (UNIX AND NOT APPLE)
             OpenMP::OpenMP_CXX
             # pybind11::module
 
-          PRIVATE
+          PUBLIC
             kipl
-            fftw3
-            fftw3f
-            xml2
-            tiff
-            armadillo
-            lapack
-            blas
-            AdvancedFilters
-            cfitsio
-            NeXus
-            NeXusCPP
+            # fftw3
+            # fftw3f
+            # xml2
+            # tiff
+            # armadillo
+            # lapack
+            # blas
+            # AdvancedFilters
+            # cfitsio
+            # NeXus
+            # NeXusCPP
             )
     else()
         target_link_libraries(${TARGET_NAME}
           PUBLIC
             # pybind11::module
 
-          PRIVATE
+          PUBLIC
             kipl
-            fftw3
-            fftw3f
-            xml2
-            tiff
-            armadillo
-            lapack
-            blas
-            AdvancedFilters
-            cfitsio
-            NeXus
-            NeXusCPP
+            # fftw3
+            # fftw3f
+            # xml2
+            # tiff
+            # armadillo
+            # lapack
+            # blas
+            # AdvancedFilters
+            # cfitsio
+            # NeXus
+            # NeXusCPP
           )
     endif()
 endif()

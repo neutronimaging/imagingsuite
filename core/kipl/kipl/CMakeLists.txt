@@ -332,7 +332,7 @@ message(kipl - ${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
     target_link_directories(${TARGET_NAME} PUBLIC
-    # ../../../../ExternalDependencies/windows/lib
+    ../../../../ExternalDependencies/windows/lib
     ../../../../imagingsuite/external/lib64
     ../../../../imagingsuite/external/lib64/nexus
     )
@@ -346,7 +346,7 @@ if (WIN32)
         TIFF::TIFF
         # ${LAPACK_LIBRARIES}
         # LAPACK::LAPACK
-        # ${BLAS_LIBRARIES}
+        ${BLAS_LIBRARIES}
         # BLAS::BLAS
         #${ARMADILLO_LIBRARIES}
         armadillo::armadillo
@@ -361,9 +361,8 @@ if (WIN32)
         # libxml2
         # cfitsio
         # libtiff
-        # # armadillo
-        # liblapack
-        # libopenblas
+        liblapack
+        libblas
         libfftw3-3
         libfftw3f-3
         NeXus
@@ -382,9 +381,7 @@ if (UNIX)
             LibXml2::LibXml2
             TIFF::TIFF
             ${LAPACK_LIBRARIES}
-            # LAPACK::LAPACK
             ${BLAS_LIBRARIES}
-            # BLAS::BLAS
             ${ARMADILLO_LIBRARIES}
             FFTW::Double
             FFTW::Float
@@ -397,7 +394,6 @@ if (UNIX)
                 LibXml2::LibXml2
                 TIFF::TIFF
                 ${LAPACK_LIBRARIES}
-                # LAPACK::LAPACK
                 ${BLAS_LIBRARIES}
                 # BLAS::BLAS
                 ${ARMADILLO_LIBRARIES}

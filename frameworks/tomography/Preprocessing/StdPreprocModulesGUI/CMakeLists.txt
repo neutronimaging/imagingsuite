@@ -129,7 +129,8 @@ add_library(${TARGET_NAME} SHARED
         ../../../../../imagingsuite/external/lib64
     )
 
-  target_link_libraries(${TARGET_NAME} PRIVATE
+  target_link_libraries(${TARGET_NAME} 
+  PUBLIC
       Qt${QT_VERSION_MAJOR}::Core
       Qt${QT_VERSION_MAJOR}::Widgets
       Qt${QT_VERSION_MAJOR}::Charts
@@ -141,11 +142,11 @@ add_library(${TARGET_NAME} SHARED
       QtAddons
       QtModuleConfigure
       StdPreprocModules
-      libxml2
-      libfftw3-3
-      libfftw3f-3
-      cfitsio
-      libtiff
+    #   libxml2
+    #   libfftw3-3
+    #   libfftw3f-3
+    #   cfitsio
+    #   libtiff
   )
 endif()
 

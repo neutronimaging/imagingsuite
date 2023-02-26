@@ -8,7 +8,11 @@ libtiff/4.3.0
 fftw/3.3.9
 openblas/0.3.15
 
+[options]
+armadillo:use_lapack=intel_mkl
 
 [generators]
+MSBuildDeps
+MSBuildToolchain
 cmake_find_package
 virtualenv

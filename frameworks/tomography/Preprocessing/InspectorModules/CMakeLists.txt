@@ -83,21 +83,21 @@ target_link_directories(${TARGET_NAME} PRIVATE
 )
 
 target_link_libraries(${TARGET_NAME}
-PRIVATE
+PUBLIC
       kipl
       ImagingAlgorithms
       ModuleConfig
       ReconFramework
-      libxml2
-      cfitsio
-      libtiff
-      liblapack
-      libopenblas
-      libfftw3-3
-      libfftw3f-3
-      NeXus
-      NeXusCPP
-      Iphlpapi
+      # libxml2
+      # cfitsio
+      # libtiff
+      # liblapack
+      # libopenblas
+      # libfftw3-3
+      # libfftw3f-3
+      # NeXus
+      # NeXusCPP
+      # Iphlpapi
 
     )
 endif()

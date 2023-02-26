@@ -103,11 +103,11 @@ if (WIN32)
         QtAddons
         QtModuleConfigure
         InspectorModules
-        libxml2
-        cfitsio
-        libtiff
-        NeXus
-        NeXusCPP
+        # libxml2
+        # cfitsio
+        # libtiff
+        # NeXus
+        # NeXusCPP
     )
 endif()
 

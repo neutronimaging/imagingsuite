@@ -126,16 +126,16 @@ add_definitions(-DHAVE_NEXUS)
         ModuleConfig
         ReaderConfig
         ReconFramework
-        libxml2
-        cfitsio
-        libtiff
-        liblapack
-        libopenblas
-        libfftw3-3
-        libfftw3f-3
-        NeXus
-        NeXusCPP
-        Iphlpapi
+        # libxml2
+        # cfitsio
+        # libtiff
+        # liblapack
+        # libopenblas
+        # libfftw3-3
+        # libfftw3f-3
+        # NeXus
+        # NeXusCPP
+        # Iphlpapi
 
       )
 endif()
