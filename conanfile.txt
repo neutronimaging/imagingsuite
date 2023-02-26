@@ -6,10 +6,9 @@ libxml2/2.10.3
 zlib/1.2.13
 libtiff/4.3.0
 fftw/3.3.9
-openblas/0.3.15
 
 [options]
-armadillo:use_lapack=intel_mkl
+
 
 [generators]
 MSBuildDeps
