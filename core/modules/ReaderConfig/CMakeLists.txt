@@ -145,17 +145,17 @@ target_link_directories(${TARGET_NAME} PRIVATE
     /usr/lib/x86_64-linux-gnu/
     )
 target_link_libraries(${TARGET_NAME}
-    PRIVATE
+    PUBLIC
     kipl
     ImagingAlgorithms
     xml2
-    fftw3
-    fftw3f
-    cfitsio
-    tiff
-    armadillo
-    lapack
-    blas
+    # fftw3
+    # fftw3f
+    # cfitsio
+    # tiff
+    # armadillo
+    # lapack
+    # blas
     # NeXus
     # NeXusCPP
   )

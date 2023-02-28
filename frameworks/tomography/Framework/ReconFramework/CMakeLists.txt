@@ -135,7 +135,7 @@ if (APPLE)
             )
     
     target_link_libraries(${TARGET_NAME}
-        PRIVATE
+        PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
@@ -155,10 +155,11 @@ endif()
 
 if (LINUX)
     target_link_libraries(${TARGET_NAME}
-        PRIVATE
+        PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
+        ReaderConfig
         xml2
         fftw3
         fftw3f

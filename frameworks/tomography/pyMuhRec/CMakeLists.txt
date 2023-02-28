@@ -72,9 +72,11 @@ add_library(${TARGET_NAME}
   ${INC_FILES}
   )
   
-set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 # set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
-set_target_properties(${TARGET_NAME} PROPERTIES BUILD_WITH_INSTALL_RPATH ON)
+#set_target_properties(${TARGET_NAME} PROPERTIES BUILD_WITH_INSTALL_RPATH ON)
+
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 target_compile_definitions(${TARGET_NAME} PRIVATE RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
 
@@ -138,71 +140,70 @@ if (WIN32)
     PUBLIC
       pybind11::module
 
-    PRIVATE
-        kipl
-        ImagingAlgorithms
-        ModuleConfig
-        ReconFramework
-        StdBackProjectors
-        FDKBackProjectors
-        libxml2
-        cfitsio
-        libtiff
-        # armadillo
-        liblapack
-        libopenblas
-        libfftw3-3
-        libfftw3f-3
-        # NeXus
-        # NeXusCPP
-        # Iphlpapi
+      kipl
+      ImagingAlgorithms
+      ModuleConfig
+      ReconFramework
+      StdBackProjectors
+      FDKBackProjectors
+      # libxml2
+      # cfitsio
+      # libtiff
+      # armadillo
+      # liblapack
+      # libopenblas
+      # libfftw3-3
+      # libfftw3f-3
+      # NeXus
+      # NeXusCPP
+      # Iphlpapi
     )
 endif()
 
-# if (UNIX AND NOT APPLE)
-#     find_package(OpenMP)
-#     if(OpenMP_CXX_FOUND)
-#         target_link_libraries(${TARGET_NAME} PUBLIC
-#             OpenMP::OpenMP_CXX
-#             pybind11::module
+if (UNIX AND NOT APPLE)
+    find_package(OpenMP)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} PUBLIC
+            OpenMP::OpenMP_CXX
+            pybind11::module
 
-#           PRIVATE
-#             kipl
-#             ImagingAlgorithms
-#             xml2
-#             tiff
-#             fftw3
-#             fftw3f
-#             ModuleConfig
-#             ReconFramework
-#             StdBackProjectors
-#             FDKBackProjectors
-#             cfitsio
-#             NeXus
-#             NeXusCPP
-#             )
-#     else()
-#         target_link_libraries(${TARGET_NAME}
-#           PUBLIC
-#             pybind11::module
+            kipl
+            ImagingAlgorithms
+            ReaderConfig
+            ModuleConfig
+            ReconFramework
+            StdBackProjectors
+            FDKBackProjectors
+            # xml2
+            # tiff
+            # fftw3
+            # fftw3f
+            # cfitsio
+            # NeXus
+            # NeXusCPP
+            )
+    else()
+        target_link_libraries(${TARGET_NAME}
+          PUBLIC
+            pybind11::module
 
-#           PRIVATE
-#             kipl
-#             ImagingAlgorithms
-#             xml2
-#             tiff
-#             fftw3
-#             fftw3f
-#             ModuleConfig
-#             ReconFramework
-#             StdBackProjectors
-#             FDKBackProjectors
-#             cfitsio
-#             NeXus
-#             NeXusCPP
-#           )
-#     endif()
-# endif()
+            kipl
+            ImagingAlgorithms
+            ReaderConfig
+            ModuleConfig
+            ReconFramework
+            StdBackProjectors
+            FDKBackProjectors
+            # xml2
+            # tiff
+            # fftw3
+            # fftw3f
+            # cfitsio
+            # NeXus
+            # NeXusCPP
+          )
+    endif()
+endif()
 
 
 
@@ -213,7 +214,7 @@ set_target_properties(${TARGET_NAME}
   )
 
 if(DYNAMIC_LIB)
-  install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+  
   # install(FILES 
   #     ../../../../lib/libkipl.1.0.0.dylib 
   #     ../../../../lib/libModuleConfig.1.0.0.dylib 
@@ -239,3 +240,5 @@ if(DYNAMIC_LIB)
       #   WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
       # )
 endif(DYNAMIC_LIB)
+
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

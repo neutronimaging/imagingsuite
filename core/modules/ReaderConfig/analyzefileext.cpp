@@ -13,7 +13,7 @@ namespace readers {
 
 
 
-eExtensionTypes GetFileExtensionType(std::string fname)
+eExtensionTypes GetFileExtensionType(const std::string &fname)
 {
     std::string ext=kipl::strings::filenames::GetFileExtension(fname);
 
