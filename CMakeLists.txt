@@ -31,15 +31,17 @@ endif(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 find_package(PythonInterp REQUIRED)
 find_package(LibXml2 REQUIRED)
-find_package(armadillo REQUIRED)
+
 find_package(ZLIB REQUIRED)
 find_package(TIFF REQUIRED)
 
 find_package(pybind11 REQUIRED)
-find_package(cfitsio REQUIRED)
+
 if (WIN32)
   find_package(FFTW3 REQUIRED)
   find_package(OpenBLAS REQUIRED)
+  find_package(cfitsio REQUIRED)
+  find_package(armadillo REQUIRED)
   # find_package(lapack REQUIRED)
 endif()
 
@@ -48,6 +50,8 @@ if (UNIX)
   find_package(FFTW REQUIRED)
   find_package(BLAS REQUIRED)
   find_package(Nexus REQUIRED)
+  find_package(CFITSIO REQUIRED)
+  find_package(Armadillo REQUIRED)
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/applications)
