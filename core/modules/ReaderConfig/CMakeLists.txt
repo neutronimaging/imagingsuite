@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-
+message("ReaderConfig")
 set(TARGET_NAME "ReaderConfig")
 project(kipl LANGUAGES CXX)
 
@@ -87,10 +87,6 @@ target_compile_definitions(${TARGET_NAME} PRIVATE READERCONFIG_LIBRARY HAVE_NEXU
 
 add_definitions(-DHAVE_NEXUS)
 
-
-
-
-
 if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
     ../../../../ExternalDependencies/windows/lib
@@ -124,31 +120,10 @@ target_link_directories(${TARGET_NAME} PRIVATE
     )
 
     target_link_libraries(${TARGET_NAME}
-    PRIVATE
-    kipl
-    ImagingAlgorithms
-    xml2
-    fftw3
-    fftw3f
-    cfitsio
-    tiff
-    armadillo
-    lapack
-    blas
-    NeXus.1.0.0
-    NeXusCPP.1.0.0
-  )
-endif()
-
-if (UNIX)
-target_link_directories(${TARGET_NAME} PRIVATE
-    /usr/lib/x86_64-linux-gnu/
-    )
-target_link_libraries(${TARGET_NAME}
     PUBLIC
     kipl
     ImagingAlgorithms
-    xml2
+    # xml2
     # fftw3
     # fftw3f
     # cfitsio
@@ -156,9 +131,30 @@ target_link_libraries(${TARGET_NAME}
     # armadillo
     # lapack
     # blas
-    # NeXus
-    # NeXusCPP
+    # NeXus.1.0.0
+    # NeXusCPP.1.0.0
   )
+endif()
+
+if (UNIX)
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /usr/lib/x86_64-linux-gnu/
+    )
+    target_link_libraries(${TARGET_NAME}
+        PUBLIC
+        kipl
+        ImagingAlgorithms
+        xml2
+        # fftw3
+        # fftw3f
+        # cfitsio
+        # tiff
+        # armadillo
+        # lapack
+        # blas
+        # NeXus
+        # NeXusCPP
+    )
 endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

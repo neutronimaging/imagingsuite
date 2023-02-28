@@ -60,19 +60,19 @@ target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module
 
-  PRIVATE
     kipl
-    fftw3
-    fftw3f
-    xml2
-    tiff
-    armadillo
-    lapack
-    blas
     AdvancedFilters
-    cfitsio
-    NeXus.1.0.0
-    NeXusCPP.1.0.0
+
+    # fftw3
+    # fftw3f
+    # xml2
+    # tiff
+    # armadillo
+    # lapack
+    # blas
+    # cfitsio
+    # NeXus.1.0.0
+    # NeXusCPP.1.0.0
   )
 endif(APPLE)
 
@@ -87,19 +87,20 @@ if (WIN32)
     PUBLIC
       pybind11::module
 
-    PRIVATE
-        kipl
-        libxml2
-        cfitsio
-        libtiff
-        # armadillo
-        liblapack
-        libopenblas
-        libfftw3-3
-        libfftw3f-3
-        NeXus
-        NeXusCPP
-        Iphlpapi
+    
+      kipl
+      AdvancedFilters
+        # libxml2
+        # cfitsio
+        # libtiff
+        # # armadillo
+        # liblapack
+        # libopenblas
+        # libfftw3-3
+        # libfftw3f-3
+        # NeXus
+        # NeXusCPP
+        # Iphlpapi
     )
 endif()
 
@@ -110,38 +111,40 @@ if (UNIX AND NOT APPLE)
             OpenMP::OpenMP_CXX
             pybind11::module
 
-          PRIVATE
             kipl
-            fftw3
-            fftw3f
-            xml2
-            tiff
-            armadillo
-            lapack
-            blas
             AdvancedFilters
-            cfitsio
-            NeXus
-            NeXusCPP
+
+            # fftw3
+            # fftw3f
+            # xml2
+            # tiff
+            # armadillo
+            # lapack
+            # blas
+            # AdvancedFilters
+            # cfitsio
+            # NeXus
+            # NeXusCPP
             )
     else()
         target_link_libraries(${TARGET_NAME}
           PUBLIC
             pybind11::module
 
-          PRIVATE
             kipl
-            fftw3
-            fftw3f
-            xml2
-            tiff
-            armadillo
-            lapack
-            blas
             AdvancedFilters
-            cfitsio
-            NeXus
-            NeXusCPP
+
+            # fftw3
+            # fftw3f
+            # xml2
+            # tiff
+            # armadillo
+            # lapack
+            # blas
+
+            # cfitsio
+            # NeXus
+            # NeXusCPP
           )
     endif()
 endif()
@@ -153,7 +156,7 @@ set_target_properties(${TARGET_NAME}
   )
 
   if(DYNAMIC_LIB)
-  install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+  
   # install(FILES 
   #     ../../../../lib/libkipl.1.0.0.dylib 
   #     ../../../../lib/libModuleConfig.1.0.0.dylib 
@@ -179,3 +182,5 @@ set_target_properties(${TARGET_NAME}
   #       WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
   #     )
 endif(DYNAMIC_LIB)
+
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

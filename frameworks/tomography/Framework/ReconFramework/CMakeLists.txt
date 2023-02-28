@@ -52,8 +52,6 @@ include_directories(
     )
 endif()
 
-#link_directories(/opt/local/lib ../../../../external/mac/lib)
-
 set(INC_FILES
     include/ReconHelpers.h
     include/ReconFramework.h
@@ -153,23 +151,23 @@ if (APPLE)
     )
 endif()
 
-if (LINUX)
+if (UNIX)
     target_link_libraries(${TARGET_NAME}
         PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
         ReaderConfig
-        xml2
-        fftw3
-        fftw3f
-        cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus
-        NeXusCPP
+        # xml2
+        # fftw3
+        # fftw3f
+        # cfitsio
+        # tiff
+        # armadillo
+        # lapack
+        # blas
+        # NeXus
+        # NeXusCPP
     )
 endif()
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

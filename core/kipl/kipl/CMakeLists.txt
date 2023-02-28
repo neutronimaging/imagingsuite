@@ -215,7 +215,7 @@ set(INC_FILES
     include/wavelets/core/wavelets.hpp
     include/visualization/GNUPlot.h
     include/utilities/SystemInformation.h
-    include/utilities/nodelocker.h
+    # include/utilities/nodelocker.h
     include/strings/string2array.h
     include/strings/parenc.h
     include/strings/miscstring.h
@@ -306,7 +306,7 @@ set(SRC_FILES
     src/wavelets/wavelets.cpp
     src/visualization/GNUPlot.cpp
     src/utilities/SystemInformation.cpp
-    src/utilities/nodelocker.cpp
+    # src/utilities/nodelocker.cpp
     src/strings/string2array.cpp
     src/strings/parenc.cpp
     src/strings/miscstring.cpp
@@ -369,7 +369,7 @@ if (WIN32)
     )
     
     target_link_libraries(${TARGET_NAME}
-    PRIVATE
+    publich
         libxml2
         cfitsio
         libtiff
@@ -380,7 +380,7 @@ if (WIN32)
         libfftw3f-3
         NeXus
         NeXusCPP
-        Iphlpapi
+        # Iphlpapi
     )
 endif()
 
@@ -412,7 +412,6 @@ if (UNIX AND NOT APPLE)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
         
-        PRIVATE
             xml2
             fftw3
             fftw3f
@@ -426,7 +425,7 @@ if (UNIX AND NOT APPLE)
         )
     else()
         target_link_libraries(${TARGET_NAME}
-            PRIVATE
+            
                 xml2
                 fftw3
                 fftw3f
