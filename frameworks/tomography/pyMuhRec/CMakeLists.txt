@@ -59,21 +59,11 @@ pybind11_add_module(${TARGET_NAME}
   ${INC_FILES}
   )
   
-<<<<<<< HEAD
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
-=======
-# set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
-#set_target_properties(${TARGET_NAME} PROPERTIES BUILD_WITH_INSTALL_RPATH ON)
-
-set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
-target_compile_definitions(${TARGET_NAME} PRIVATE RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
-
 set(LINK_TYPE "MODULE")
->>>>>>> master
-
 
 if (UNIX)
     find_package(OpenMP)
@@ -158,50 +148,50 @@ if (WIN32)
     )
 endif()
 
-if (UNIX AND NOT APPLE)
-    find_package(OpenMP)
-    if(OpenMP_CXX_FOUND)
-        target_link_libraries(${TARGET_NAME} PUBLIC
-            OpenMP::OpenMP_CXX
-            pybind11::module
+# if (UNIX AND NOT APPLE)
+#     find_package(OpenMP)
+#     if(OpenMP_CXX_FOUND)
+#         target_link_libraries(${TARGET_NAME} PUBLIC
+#             OpenMP::OpenMP_CXX
+#             pybind11::module
 
-            kipl
-            ImagingAlgorithms
-            ReaderConfig
-            ModuleConfig
-            ReconFramework
-            StdBackProjectors
-            FDKBackProjectors
-            # xml2
-            # tiff
-            # fftw3
-            # fftw3f
-            # cfitsio
-            # NeXus
-            # NeXusCPP
-            )
-    else()
-        target_link_libraries(${TARGET_NAME}
-          PUBLIC
-            pybind11::module
+#             kipl
+#             ImagingAlgorithms
+#             ReaderConfig
+#             ModuleConfig
+#             ReconFramework
+#             StdBackProjectors
+#             FDKBackProjectors
+#             # xml2
+#             # tiff
+#             # fftw3
+#             # fftw3f
+#             # cfitsio
+#             # NeXus
+#             # NeXusCPP
+#             )
+#     else()
+#         target_link_libraries(${TARGET_NAME}
+#           PUBLIC
+#             pybind11::module
 
-            kipl
-            ImagingAlgorithms
-            ReaderConfig
-            ModuleConfig
-            ReconFramework
-            StdBackProjectors
-            FDKBackProjectors
-            # xml2
-            # tiff
-            # fftw3
-            # fftw3f
-            # cfitsio
-            # NeXus
-            # NeXusCPP
-          )
-    endif()
-endif()
+#             kipl
+#             ImagingAlgorithms
+#             ReaderConfig
+#             ModuleConfig
+#             ReconFramework
+#             StdBackProjectors
+#             FDKBackProjectors
+#             # xml2
+#             # tiff
+#             # fftw3
+#             # fftw3f
+#             # cfitsio
+#             # NeXus
+#             # NeXusCPP
+#           )
+#     endif()
+# endif()
 
 
 
