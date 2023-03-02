@@ -27,9 +27,9 @@ TBBLogNorm::~TBBLogNorm()
 
 void TBBLogNorm::test_parameters()
 {
-
+    QSKIP("Placeholder for future development of the BB plugin.");
 }
 
 QTEST_APPLESS_MAIN(TBBLogNorm)
 
-#include "tst_tbblognorm.moc"
+#include "tst_BBLogNorm.moc"
