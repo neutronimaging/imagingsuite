@@ -70,17 +70,20 @@ if (WIN32)
     PUBLIC
       # pybind11::module
 
+    
       kipl
-      # libxml2
-      # cfitsio
-      # libtiff
-      # liblapack
-      # libopenblas
-      # libfftw3-3
-      # libfftw3f-3
-      # NeXus
-      # NeXusCPP
-      # Iphlpapi
+      AdvancedFilters
+        # libxml2
+        # cfitsio
+        # libtiff
+        # # armadillo
+        # liblapack
+        # libopenblas
+        # libfftw3-3
+        # libfftw3f-3
+        # NeXus
+        # NeXusCPP
+        # Iphlpapi
     )
 endif()
 
@@ -91,8 +94,9 @@ if (UNIX AND NOT APPLE)
             OpenMP::OpenMP_CXX
             # pybind11::module
 
-          PUBLIC
             kipl
+            AdvancedFilters
+
             # fftw3
             # fftw3f
             # xml2
@@ -110,8 +114,9 @@ if (UNIX AND NOT APPLE)
           PUBLIC
             # pybind11::module
 
-          PUBLIC
             kipl
+            AdvancedFilters
+
             # fftw3
             # fftw3f
             # xml2
@@ -119,7 +124,6 @@ if (UNIX AND NOT APPLE)
             # armadillo
             # lapack
             # blas
-            # AdvancedFilters
             # cfitsio
             # NeXus
             # NeXusCPP
@@ -132,6 +136,5 @@ set_target_properties(${TARGET_NAME}
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
-
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

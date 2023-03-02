@@ -186,7 +186,7 @@ set(INC_FILES
     include/wavelets/core/wavelets.hpp
     include/visualization/GNUPlot.h
     include/utilities/SystemInformation.h
-    include/utilities/nodelocker.h
+    # include/utilities/nodelocker.h
     include/strings/string2array.h
     include/strings/parenc.h
     include/strings/miscstring.h
@@ -277,7 +277,7 @@ set(SRC_FILES
     src/wavelets/wavelets.cpp
     src/visualization/GNUPlot.cpp
     src/utilities/SystemInformation.cpp
-    src/utilities/nodelocker.cpp
+    # src/utilities/nodelocker.cpp
     src/strings/string2array.cpp
     src/strings/parenc.cpp
     src/strings/miscstring.cpp
@@ -367,7 +367,7 @@ if (WIN32)
         libfftw3f-3
         NeXus
         NeXusCPP
-        Iphlpapi
+        # Iphlpapi
     )
 endif()
 

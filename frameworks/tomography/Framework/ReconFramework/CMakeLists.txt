@@ -116,18 +116,7 @@ if (WIN32)
         )
 endif()
 
-if (APPLE)    
-    target_link_libraries(${TARGET_NAME}
-        PUBLIC
-        kipl
-        ImagingAlgorithms
-        ModuleConfig
-        ReaderConfig
-    )
-endif()
-
-
-if (UNIX AND NOT APPLE)
+if (UNIX)
     target_link_libraries(${TARGET_NAME}
         PUBLIC
         kipl
