@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tReconConfig")
-project(tReconConfig LANGUAGES CXX)
+set(TARGET_NAME "tFramework")
+project(${TARGET_NAME} LANGUAGES CXX)
 
 enable_testing()
 
@@ -26,7 +26,7 @@ include_directories(
 )
 
 set(SRC_FILES
-    tst_ReconConfig.cpp)
+    tst_frameworktest.cpp)
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 

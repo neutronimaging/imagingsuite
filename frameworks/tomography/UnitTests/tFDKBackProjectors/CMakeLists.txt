@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tReconConfig")
-project(tReconConfig LANGUAGES CXX)
+set(TARGET_NAME "tFDKBackProjectors")
+project(${TARGET_NAME} LANGUAGES CXX)
 
 enable_testing()
 
@@ -19,6 +19,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../Framework/ReconFramework/include/
+    ../../Backprojectors/FDKBackProjectors/src/
      ../../../../core/modules/ModuleConfig/include
     ../../../../core/kipl/kipl/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
@@ -26,7 +27,7 @@ include_directories(
 )
 
 set(SRC_FILES
-    tst_ReconConfig.cpp)
+    tst_FDKBackprojectors.cpp)
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 
@@ -37,6 +38,7 @@ target_link_libraries(${TARGET_NAME}
         ModuleConfig
         ImagingAlgorithms
         ReconFramework
+        FDKBackProjectors
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

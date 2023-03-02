@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tIterativeBackProj")
+set(TARGET_NAME "tReconAlgorithms")
 project(${TARGET_NAME} LANGUAGES CXX)
 
 enable_testing()
@@ -19,15 +19,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../Framework/ReconFramework/include/
-    ../../Backprojectors/Itera
-     ../../../../core/modules/ModuleConfig/include
+    ../../Framework/ReconAlgorithms/ReconAlgorithms/
+    ../../../../core/modules/ModuleConfig/include
     ../../../../core/kipl/kipl/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../../ExternalDependencies/macos/include
 )
 
 set(SRC_FILES
-    tst_IterativeBackProj.cpp)
+    tst_algorithmtester.cpp)
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 
@@ -38,6 +38,7 @@ target_link_libraries(${TARGET_NAME}
         ModuleConfig
         ImagingAlgorithms
         ReconFramework
+        ReconAlgorithms
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

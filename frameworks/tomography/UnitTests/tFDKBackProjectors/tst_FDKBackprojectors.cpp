@@ -55,4 +55,4 @@ void TFDKBackProjectors::test_ftkbp_single_Initialize()
 
 QTEST_APPLESS_MAIN(TFDKBackProjectors)
 
-#include "tst_tfdkbackprojectors.moc"
+#include "tst_FDKBackprojectors.moc"

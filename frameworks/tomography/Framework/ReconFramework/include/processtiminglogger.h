@@ -1,6 +1,10 @@
+//<LICENSE>
+
 #ifndef PROCESSTIMINGLOGGER_H
 #define PROCESSTIMINGLOGGER_H
 
+
+#include "ReconFramework_global.h"
 #include <fstream>
 #include <string>
 
@@ -10,7 +14,7 @@
 #include "ModuleItem.h"
 #include "BackProjectorModuleBase.h"
 
-class ProcessTimingLogger
+class RECONFRAMEWORKSHARED_EXPORT ProcessTimingLogger
 {
     kipl::logging::Logger logger;
 public:
