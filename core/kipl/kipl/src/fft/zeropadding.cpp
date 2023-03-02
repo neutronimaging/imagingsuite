@@ -1,6 +1,6 @@
 //<LICENCE>
 
-#include "../include/kipl_global.h"
+#include "../../include/kipl_global.h"
 
 #include <cstdlib>
 #include <cmath>

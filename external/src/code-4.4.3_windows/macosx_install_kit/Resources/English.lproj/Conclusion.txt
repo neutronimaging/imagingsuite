@@ -1,9 +1,0 @@
-A note on pre-10.5 Macintosh
-
-You may need to add /Library/Python/2.5/site-packages to your python path.
-If you are using the python.org distribution of python-2.5 this is already 
-done for you.  Otherwise, add the following file to your site-packages
-directory:
-
---Library_Python.pth--
-/Library/Python/2.5/site-packages

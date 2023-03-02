@@ -1,7 +1,7 @@
 //<LICENCE>
 
 #include "../../include/kipl_global.h"
-#include "../include/interactors/interactionbase.h"
+#include "../../include/interactors/interactionbase.h"
 
 namespace kipl { namespace interactors {
 InteractionBase::InteractionBase(std::string name) : 

@@ -143,6 +143,9 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
     for (it=args.begin()+3 ; it!=args.end(); it++) {
         try {
             EvalArg(*it,group,var,value);
+            msg.str("");
+            msg<<"group: "<<group<<", var: "<<var<<", value: "<<value;
+            logger.message(msg.str());
         }
         catch (ModuleException &e) {
             msg<<"Failed to parse argument "<<e.what();
@@ -181,8 +184,14 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="tiltangle")      ProjectionInfo.fTiltAngle         = std::stof(value);
             if (var=="tiltpivot")      ProjectionInfo.fTiltPivotPosition = std::stof(value);
             if (var=="correcttilt")    ProjectionInfo.bCorrectTilt=kipl::strings::string2bool(value);
-            if (var=="filemask")       ProjectionInfo.sFileMask          = value;
-            if (var=="path") {
+            if (var=="filemask") 
+            {     
+                ProjectionInfo.sFileMask = value;
+                kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sFileMask,false); 
+                
+            }
+            if (var=="path") 
+            {
                 ProjectionInfo.sPath=value;
                 kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sPath,true);
             }

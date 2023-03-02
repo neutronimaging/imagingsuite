@@ -7,14 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/kipl/include
-    /opt/local/include
-    ../../../external/src/linalg
     ../../../../ExternalDependencies/macos/include
     )
 
 if (WIN32)
     include_directories(
-        ../../../core/kipl/kipl/include
         ../../../core/kipl/kipl/include
         ../../../core/modules/ModuleConfig/include
         ../../../external/include/
@@ -24,55 +21,41 @@ if (WIN32)
         )
 endif()
 
-link_directories(
-    ../../../../lib
-    /opt/local/lib
-    )
+
+set(SRC_FILES 
+    advancedfilters.cpp
+    advancedfilterexception.cpp
+    filterenums.cpp
+    pybinder.cpp
+)
 
 # create python module
-add_library(${TARGET_NAME}
+# add_library(${TARGET_NAME}
+#   ${LINK_TYPE}
+#   MODULE
+
+#   advancedfilters.cpp
+#   advancedfilterexception.cpp
+#   filterenums.cpp
+#   pybinder.cpp
+#   )
+
+pybind11_add_module(${TARGET_NAME}
   ${LINK_TYPE}
   MODULE
-
-  advancedfilters.cpp
-  advancedfilterexception.cpp
-  filterenums.cpp
-  pybinder.cpp
-  )
+  ${SRC_FILES}  
+  # ${INC_FILES}
+)
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-#set_target_properties(${TARGET_NAME} PROPERTIES CMAKE_INSTALL_RPATH "\$ORIGIN")
 
-message(${CMAKE_HOST_SYSTEM_PROCESSOR})
+message("PyAdvancedFilters ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 if (APPLE)
-    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../../ExternalDependencies/macos/arm64/lib
-            )
-    else()
-        target_link_directories(${TARGET_NAME} PRIVATE
-            /opt/local/lib
-            ../../../external/mac/lib/
-            )
-    endif()
 target_link_libraries(${TARGET_NAME}
   PUBLIC
-    pybind11::module
-
+    # pybind11::module
     kipl
     AdvancedFilters
-
-    # fftw3
-    # fftw3f
-    # xml2
-    # tiff
-    # armadillo
-    # lapack
-    # blas
-    # cfitsio
-    # NeXus.1.0.0
-    # NeXusCPP.1.0.0
   )
 endif(APPLE)
 
@@ -85,7 +68,7 @@ if (WIN32)
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC
-      pybind11::module
+      # pybind11::module
 
     
       kipl
@@ -109,7 +92,7 @@ if (UNIX AND NOT APPLE)
     if(OpenMP_CXX_FOUND)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
-            pybind11::module
+            # pybind11::module
 
             kipl
             AdvancedFilters
@@ -129,7 +112,7 @@ if (UNIX AND NOT APPLE)
     else()
         target_link_libraries(${TARGET_NAME}
           PUBLIC
-            pybind11::module
+            # pybind11::module
 
             kipl
             AdvancedFilters
@@ -141,7 +124,6 @@ if (UNIX AND NOT APPLE)
             # armadillo
             # lapack
             # blas
-
             # cfitsio
             # NeXus
             # NeXusCPP
@@ -154,33 +136,5 @@ set_target_properties(${TARGET_NAME}
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
-
-  if(DYNAMIC_LIB)
-  
-  # install(FILES 
-  #     ../../../../lib/libkipl.1.0.0.dylib 
-  #     ../../../../lib/libModuleConfig.1.0.0.dylib 
-  #     ../../../../lib/libReconFramework.1.0.0.dylib
-  #     ../../../../lib/libStdBackProjectors.1.0.0.dylib
-  #     ../../../../lib/libFDKBackProjectors.1.0.0.dylib
-  #     ../../../../lib/libImagingAlgorithms.1.0.0.dylib
-  #     ../../../../lib/libReaderConfig.1.0.0.dylib
-  #     ../../../../lib/libNeXus.1.0.0.dylib	
-  #     ../../../../lib/libhdf5_cpp.11.dylib
-  #     ../../../../lib/libNeXusCPP.1.0.0.dylib
-	#     ../../../../lib/libhdf5_hl.10.dylib
-  #     ../../../../lib/libhdf5.10.dylib	
-  #     ../../../../lib/libsz.2.dylib
-
-  #     /opt/local/lib/libxml2.2.dylib 
-  #     /opt/local/lib/libtiff.5.dylib
-
-  #     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-
-  #     execute_process(
-  #       COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
-  #       WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
-  #     )
-endif(DYNAMIC_LIB)
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

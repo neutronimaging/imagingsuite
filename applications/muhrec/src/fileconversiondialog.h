@@ -4,8 +4,6 @@
 #define FILECONVERSIONDIALOG_H
 
 #include <QDialog>
-#include <QFuture>
-
 #include <logging/logger.h>
 
 namespace Ui {

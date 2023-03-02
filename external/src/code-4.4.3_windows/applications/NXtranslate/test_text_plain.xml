@@ -1,6 +1,0 @@
-<NXroot>
-  <entry1 type="NXentry" NXS:source="test_simple.xml" NXS:mime_type="text/plain">
-    <text1 NXS:location="1"/>
-    <text2 NXS:location="0"/>
-  </entry1>
-</NXroot>
