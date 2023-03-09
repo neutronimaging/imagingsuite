@@ -183,6 +183,7 @@ add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
 add_subdirectory(frameworks/tomography/UnitTests/tBBLogNorm)
 add_subdirectory(frameworks/tomography/UnitTests/tFDKBackProjectors)
 add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
+add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
 # add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
 add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
 

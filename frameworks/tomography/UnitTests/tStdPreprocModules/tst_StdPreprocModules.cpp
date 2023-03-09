@@ -38,7 +38,7 @@ void TStdPreprocModulesTest::testGetModuleList()
     GetModuleList("muhrec", reinterpret_cast<void *>(&modulelist));
     qDebug() << modulelist.size();
 
-    QCOMPARE(modulelist.size(),20UL);
+    QCOMPARE(modulelist.size(),21UL);
 }
 
 void TStdPreprocModulesTest::testFullLogNorm()
@@ -157,4 +157,4 @@ void TStdPreprocModulesTest::testMorpSpotClean_Process()
 
 QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
 
-#include "tst_tstdpreprocmodulestest.moc"
+#include "tst_StdPreprocModules.moc"
