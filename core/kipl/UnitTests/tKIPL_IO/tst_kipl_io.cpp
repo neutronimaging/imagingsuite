@@ -1,4 +1,5 @@
 #include <sstream>
+#include <string>
 
 #include <QString>
 #include <QtTest>
@@ -22,10 +23,16 @@ private Q_SLOTS:
     void testDataTypesWriteTIFF();
     void testReadNexus();
 
+private:
+    std::string data_path;
+
 };
 
 tKIPL_IOTest::tKIPL_IOTest()
 {
+    data_path = QT_TESTCASE_BUILDDIR;
+    data_path = data_path + "/../../../../../TestData/";
+    kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
 
 void tKIPL_IOTest::testBasicReadWriteTIFF()
@@ -66,7 +73,7 @@ void tKIPL_IOTest::testBasicReadWriteTIFF()
 
 void tKIPL_IOTest::testReadRoiTIFF()
 {
-    std::string fname="../TestData/2D/tiff/normalized_edge.tif"; // Image size 122x300
+    std::string fname=data_path+"2D/tiff/normalized_edge.tif"; // Image size 122x300
     kipl::strings::filenames::CheckPathSlashes(fname,false);
 
     kipl::base::TImage<float,2> img;
@@ -150,4 +157,4 @@ void tKIPL_IOTest::testReadNexus()
 
 QTEST_APPLESS_MAIN(tKIPL_IOTest)
 
-#include "tst_tkipl_iotest.moc"
+#include "tst_kipl_io.moc"

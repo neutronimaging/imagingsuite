@@ -60,4 +60,4 @@ void TStdBackProjectors::test_NNMultiProjBP_Initialize()
 
 QTEST_APPLESS_MAIN(TStdBackProjectors)
 
-#include "tst_tstdbackprojectors.moc"
+#include "tst_StdBackProjectors.moc"

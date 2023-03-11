@@ -11,10 +11,12 @@
 #include <io/io_serializecontainers.h>
 #include <math/statistics.h>
 #include <filters/filter.h>
+#include <strings/filenames.h>
 
 #include <contrastsampleanalysis.h>
 #include <resolutionestimators.h>
 #include <profileextractor.h>
+
 
 class TImagingQAAlgorithmsTest : public QObject
 {
@@ -30,11 +32,18 @@ private Q_SLOTS:
     void testResEstAdmin();
     void testResEstAlg();
     void testProfileExtractor();
+
+private:
+    std::string data_path;
 };
 
 TImagingQAAlgorithmsTest::TImagingQAAlgorithmsTest()
 {
+    data_path = QT_TESTCASE_BUILDDIR;
+    data_path = data_path + "/../../../../../TestData/";
+    kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
+
 
 kipl::base::TImage<float,2> TImagingQAAlgorithmsTest::makeEdgeImage(size_t N, float sigma, float angle)
 {
@@ -202,7 +211,9 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
     QVERIFY(fabs(p.coefficients()[1]/coefs[1]-1)<0.01);
 
     kipl::base::TImage<float,2> img2;
-    kipl::io::ReadTIFF(img2,"../TestData/2D/tiff/raw_edge.tif");
+    std::string fname= data_path+"2D/tiff/raw_edge.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img2,fname);
 
     p.saveImages = false;
     profile=p.getProfile(img2);
@@ -214,4 +225,4 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
 
 QTEST_APPLESS_MAIN(TImagingQAAlgorithmsTest)
 
-#include "tst_timagingqaalgorithmstest.moc"
+#include "tst_ImagingQAAlgorithms.moc"

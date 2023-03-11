@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tkiplbasetest")
+set(TARGET_NAME "tkiplbase")
 project(tLogging LANGUAGES CXX)
 
 enable_testing()
@@ -22,10 +22,10 @@ include_directories(
     ../../../../../ExternalDependencies/macos/include
     )
 
-set(SRC_FILES,
+set(SRC_FILES
     tst_kiplbase.cpp)
 
-add_executable(${TARGET_NAME} tst_kiplbase.cpp)
+add_executable(${TARGET_NAME} ${SRC_FILES})
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE

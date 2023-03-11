@@ -158,6 +158,8 @@ add_subdirectory(core/algorithms/AdvancedFilters)
 # add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
 
 add_subdirectory(core/algorithms/ImagingQAAlgorithms)
+add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
+
 
 add_subdirectory(core/modules/ModuleConfig)
 
@@ -186,6 +188,7 @@ add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
 add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
 # add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
 add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
+add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
 
 # Tomography GUI
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
