@@ -1,14 +1,15 @@
 //<LICENSE>
 
+#include <thread>
+#include <tuple>
+
 #include <math/mathconstants.h>
+#include <strings/miscstring.h>
+#include <ParameterHandling.h>
+#include <ModuleException.h>
 
 #include "../include/BackProjectorModuleBase.h"
 #include "../include/ReconException.h"
-#include <ParameterHandling.h>
-#include <strings/miscstring.h>
-#include <ModuleException.h>
-#include <thread>
-#include <tuple>
 
 BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::string name, eMatrixAlignment align, kipl::interactors::InteractionBase *interactor) :
     logger(name),

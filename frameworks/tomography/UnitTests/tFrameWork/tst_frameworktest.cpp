@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <QString>
 #include <QTextStream>
 #include <QtTest>

@@ -6,9 +6,10 @@
 #include <map>
 #include <string>
 
+#include <strings/filenames.h>
+
 #include "../include/processtiminglogger.h"
 #include "../include/ReconException.h"
-#include <strings/filenames.h>
 
 ProcessTimingLogger::ProcessTimingLogger(const std::string &path) :
     logger("ProcessTimingLogger"),
