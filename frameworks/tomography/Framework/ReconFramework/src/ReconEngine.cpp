@@ -1,6 +1,6 @@
 //<LICENSE>
 
-#define  _TCHAR_DEFINED
+#include "stdafx.h"
 #pragma message("start")
 #include "../include/ReconFramework_global.h"
 #include <iostream>
