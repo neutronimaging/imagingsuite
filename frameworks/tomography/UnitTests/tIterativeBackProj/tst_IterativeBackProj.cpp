@@ -49,4 +49,4 @@ void TIterativeBackProj::test_SIRTbp_Initialize()
 
 QTEST_APPLESS_MAIN(TIterativeBackProj)
 
-#include "tst_titerativebackproj.moc"
+#include "tst_IterativeBackProj.moc"

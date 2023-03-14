@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tLogging")
-project(tLogging LANGUAGES CXX)
+set(TARGET_NAME "tImagingQAAlgorithms")
+project(${TARGET_NAME} LANGUAGES CXX)
 
 enable_testing()
 
@@ -18,18 +18,33 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
-    ../../kipl/include
+    ../../../kipl/kipl/include
+    ../../ImagingQAAlgorithms
+
 )
 
-set(SRC_FILES,
-    tst_logging.cpp)
+if (APPLE)
+    include_directories(
+        ../../../../../ExternalDependencies/macos/include/
+    )
+endif()
 
-add_executable(${TARGET_NAME} tst_logging.cpp)
+if (WIN32)
+    include_directories(
+        ../../../../external/include/
+    )
+endif()
+
+set(SRC_FILES
+    tst_ImagingQAAlgorithms.cpp)
+
+add_executable(${TARGET_NAME} ${SRC_FILES})
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE
         Qt6::Test
         kipl
+        ImagingQAAlgorithms
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

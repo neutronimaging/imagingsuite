@@ -7,20 +7,20 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include_directories(
+../../../core/kipl/kipl/include
+../../../core/modules/ModuleConfig/include
+../../../core/algorithms/ImagingAlgorithms/include
+)
+
 if (APPLE)
 include_directories(
-    ../../../core/kipl/kipl/include
-    ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../core/modules/ModuleConfig/include
     ../../../../ExternalDependencies/macos/include
     )
 endif()
 
 if (WIN32)
 include_directories(
-    ../../../core/kipl/kipl/include
-    ../../../core/modules/ModuleConfig/include
-    ../../../core/algorithms/ImagingAlgorithms/include
     ../../../../ExternalDependencies/windows/include
     ../../../../ExternalDependencies/windows/include/nexus
     ../../../../ExternalDependencies/windows/include/cfitsio
@@ -32,11 +32,7 @@ endif()
 if (UNIX)
 include_directories(
     /usr/include/libxml2
-    ../../../core/kipl/kipl/include
-    ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../external/src/linalg
-    ../../../core/kipl/kipl/include
-    ../../../core/modules/ModuleConfig/include
+    # ../../../external/src/linalg
     )
 endif()
 
@@ -83,16 +79,7 @@ if (WIN32)
     PUBLIC
         kipl
         ImagingAlgorithms
-        # libxml2
-        # cfitsio
-        # libtiff
-        # liblapack
-        # libopenblas
-        # libfftw3-3
-        # libfftw3f-3
-        # NeXus
-        # NeXusCPP
-        # Iphlpapi
+
 
         )
 endif()
@@ -100,7 +87,6 @@ endif()
 if (APPLE)
     target_link_libraries(${TARGET_NAME}
     PUBLIC
-
     kipl
     ImagingAlgorithms
   )

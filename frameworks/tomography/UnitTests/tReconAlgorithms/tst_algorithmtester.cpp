@@ -93,4 +93,4 @@ void AlgorithmTesterTest::testLinearFwd()
 }
 QTEST_APPLESS_MAIN(AlgorithmTesterTest)
 
-#include "tst_algorithmtestertest.moc"
+#include "tst_algorithmtester.moc"

@@ -1,4 +1,5 @@
 //<LICENSE>
+#include "stdafx.h"
 #include "singlemodulesettingsdialog.h"
 #include "ui_singlemodulesettingsdialog.h"
 
@@ -14,6 +15,7 @@
 
 #ifdef _MSC_VER // Shared object specific for msvc
 typedef int (__cdecl *MODULELIST)(const char *,void *);
+#include <libloaderapi.h>
 #else // Shared object specific for gcc
 #include <dlfcn.h>
 typedef int (*MODULELIST)(const char *,void *);
