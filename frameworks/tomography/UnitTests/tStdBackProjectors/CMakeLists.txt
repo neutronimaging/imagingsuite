@@ -25,7 +25,7 @@ include_directories(
     ../../../../core/algorithms/ImagingAlgorithms/include
 )
 
-if (MACOS)
+if (APPLE)
 include_directories(
     ../../../../../ExternalDependencies/macos/include
 )
