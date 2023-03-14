@@ -120,6 +120,7 @@ int ModuleConfigProgressDialog::process()
         if (m_Engine!=nullptr)
         {
             m_Image=m_Engine->RunPreproc(mROI,mLastModule);
+        }
         else 
         {
             logger(logger.LogError,"Trying to start an unallocated engine.");
