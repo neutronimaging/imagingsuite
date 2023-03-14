@@ -23,8 +23,25 @@ include_directories(
      ../../../../core/modules/ModuleConfig/include
     ../../../../core/kipl/kipl/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
+)
+
+if (MACOS)
+include_directories(
     ../../../../../ExternalDependencies/macos/include
 )
+endif()
+
+if (WIN32)
+include_directories(
+    ../../../../../ExternalDependencies/windows/include
+    ../../../../../ExternalDependencies/windows/include/nexus
+    ../../../../../ExternalDependencies/windows/include/cfitsio
+    ../../../../../ExternalDependencies/windows/include/libxml2
+    ../../../../external/include/
+    )
+endif()
+
+
 
 set(SRC_FILES
     tst_StdBackProjectors.cpp)

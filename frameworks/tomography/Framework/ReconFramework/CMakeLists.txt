@@ -6,25 +6,23 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(LibXml2 REQUIRED)
-if (APPLE)
+# find_package(LibXml2 REQUIRED)
+
 include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/modules/ReaderConfig
+)
+
+if (APPLE)
+include_directories(
     ../../../../../ExternalDependencies/macos/include
     )
 endif()
 
 if (WIN32)
 include_directories(
-    ../../../../core/kipl/kipl/include
-    ../../../../external/src/linalg
-    ../../../../core/kipl/kipl/include
-    ../../../../core/modules/ModuleConfig/include
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../core/modules/ReaderConfig
     ../../../../../ExternalDependencies/windows/include
     ../../../../../ExternalDependencies/windows/include/nexus
     ../../../../../ExternalDependencies/windows/include/cfitsio
@@ -33,16 +31,16 @@ include_directories(
 )
 endif()
 
-if (UNIX)
-include_directories(
-    /usr/include/libxml2
-    ../../../../core/kipl/kipl/include
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../external/src/linalg
-    ../../../../core/modules/ModuleConfig/include
-    ../../../../core/modules/ReaderConfig
-    )
-endif()
+# if (UNIX)
+# include_directories(
+#     /usr/include/libxml2
+#     ../../../../core/kipl/kipl/include
+#     ../../../../core/algorithms/ImagingAlgorithms/include
+#     ../../../../external/src/linalg
+#     ../../../../core/modules/ModuleConfig/include
+#     ../../../../core/modules/ReaderConfig
+#     )
+# endif()
 
 set(INC_FILES
     include/ReconHelpers.h
@@ -57,7 +55,6 @@ set(INC_FILES
     include/ReconFramework_global.h
     include/BackProjectorModuleBase.h
     include/processtiminglogger.h
-    src/stdafx.h
 )
 
 set(SRC_FILES
@@ -65,13 +62,13 @@ set(SRC_FILES
     src/ReconFramework.cpp
     src/ReconFactory.cpp
     src/ReconException.cpp
-    src/ReconEngine.cpp
     src/ReconConfig.cpp
     src/ProjectionReader.cpp
     src/PreprocModuleBase.cpp
     src/ModuleItem.cpp
     src/BackProjectorModuleBase.cpp
     src/processtiminglogger.cpp
+    src/ReconEngine.cpp
 )
 
 
@@ -80,49 +77,29 @@ add_library(${TARGET_NAME} SHARED
   ${INC_FILES}
 )
 
-
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
 
 add_definitions(-DHAVE_NEXUS)
+
 
 message(${TARGET_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
+    target_link_directories(${TARGET_NAME} PUBLIC
     ../../../../../ExternalDependencies/windows/lib
     ../../../../../imagingsuite/external/lib64
     ../../../../../imagingsuite/external/lib64/nexus
     )
-    
-    target_link_libraries(${TARGET_NAME}
+endif()   
+
+target_link_libraries(${TARGET_NAME}
     PUBLIC
         kipl
-        ModuleConfig
-        ImagingAlgorithms
-        ReaderConfig
-        # libxml2
-        # cfitsio
-        # libtiff
-        # liblapack
-        # libopenblas
-        # libfftw3-3
-        # libfftw3f-3
-        # NeXus
-        # NeXusCPP
-        # Iphlpapi
-
-        )
-endif()
-
-if (UNIX)
-    target_link_libraries(${TARGET_NAME}
-        PUBLIC
-        kipl
         ImagingAlgorithms
         ModuleConfig
         ReaderConfig
-    )
-endif()
+)
+
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

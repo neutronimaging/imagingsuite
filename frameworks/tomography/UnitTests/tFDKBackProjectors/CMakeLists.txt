@@ -20,11 +20,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(
     ../../Framework/ReconFramework/include/
     ../../Backprojectors/FDKBackProjectors/src/
-     ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ModuleConfig/include
     ../../../../core/kipl/kipl/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../../ExternalDependencies/macos/include
 )
+if (APPLE)
+    include_directories(
+        ../../../../../ExternalDependencies/macos/include
+    )
+endif()
+
+if (WIN32)
+include_directories(
+    ../../../../../ExternalDependencies/windows/include
+    ../../../../../ExternalDependencies/windows/include/nexus
+    ../../../../../ExternalDependencies/windows/include/cfitsio
+    ../../../../../ExternalDependencies/windows/include/libxml2
+    ../../../../external/include/
+    )
+endif()
 
 set(SRC_FILES
     tst_FDKBackprojectors.cpp)
