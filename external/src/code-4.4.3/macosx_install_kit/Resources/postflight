@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# Add /Library/Python/2.5/site-packages to the python site-packages path
-# This is necessary for pre-10.5 OS X where python is installed differently
-SITEPKGS=/Library/Frameworks/Python.framework/Versions/2.5/lib/python2.5/site-packages
-if test -d $SITEPKGS; then
-    echo /Library/Python/2.5/site-packages > $SITEPKGS/Library_Python.pth
-fi

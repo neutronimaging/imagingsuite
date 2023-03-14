@@ -1,16 +1,12 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-#if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-#message(FATAL_ERROR “In-source_build_detected!_Create_a_build_folder_and_call_CMake_there”)
-#endif()
-
-execute_process(
-  COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
-  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-  OUTPUT_VARIABLE IMGSUITE_VERSION
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+# execute_process(
+#   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
+#   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+#   OUTPUT_VARIABLE IMGSUITE_VERSION
+#   OUTPUT_STRIP_TRAILING_WHITESPACE
+# )
 
 project(imagingsuite VERSION 4.3 LANGUAGES CXX)
 
@@ -18,6 +14,7 @@ project(imagingsuite VERSION 4.3 LANGUAGES CXX)
 if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif(NOT DEFINED CMAKE_CXX_STANDARD)
+
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -31,13 +28,33 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
-
-set(CMAKE_MODULE_PATH "lib" )
-# for testing we will need the python interpreter
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 find_package(PythonInterp REQUIRED)
+find_package(LibXml2 REQUIRED)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+find_package(ZLIB REQUIRED)
+find_package(TIFF REQUIRED)
+
+find_package(pybind11 REQUIRED)
+
+if (WIN32)
+  find_package(FFTW3 REQUIRED)
+  find_package(OpenBLAS REQUIRED)
+  find_package(cfitsio REQUIRED)
+  find_package(armadillo REQUIRED)
+  # find_package(lapack REQUIRED)
+endif()
+
+if (UNIX)
+  # for testing we will need the python interpreter
+  find_package(FFTW REQUIRED)
+  find_package(BLAS REQUIRED)
+  find_package(Nexus REQUIRED)
+  find_package(CFITSIO REQUIRED)
+  find_package(Armadillo REQUIRED)
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/applications)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
@@ -62,28 +79,6 @@ if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
 endif()
 
 include(CTest)
-include(FetchContent)
-
-FetchContent_Declare(
-  pybind11_sources
-  GIT_REPOSITORY https://github.com/pybind/pybind11.git
-  GIT_TAG        v2.2
-)
-
-FetchContent_GetProperties(pybind11_sources)
-
-if(NOT pybind11_sources_POPULATED)
-  FetchContent_Populate(pybind11_sources)
-
-  add_subdirectory(
-    ${pybind11_sources_SOURCE_DIR}
-    ${pybind11_sources_BINARY_DIR}
-    )
-    #add_definitions(-DHAVEPYBIND11 -DNO_QT)
-    add_definitions(-DHAVEPYBIND11)
-endif()
-
-#include(pybind11)
 
 execute_process(
   COMMAND git describe --tag
@@ -127,34 +122,50 @@ set(INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 
 set(EXPORT_NAME ${PROJECT_NAME}-targets)
 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 if(NOT APPLE)
-  set(CMAKE_INSTALL_RPATH $ORIGIN)
+  set(CMAKE_INSTALL_RPATH $ORIGIN/../lib)
 else()
   set(CMAKE_INSTALL_RPATH @loader_path)
- # SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH YES)
 endif()
+
+# turn on testing
+enable_testing()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
-if (WIN32)
-  add_subdirectory(core/kipl/UnitTests/tLogging)
-  add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
-  add_subdirectory(core/kipl/UnitTests/tkiplfilters)
-  add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
-  # add_subdirectory(core/kipl/UnitTests/tedgefunction)
-  add_subdirectory(core/kipl/UnitTests/tFillHole)
-  add_subdirectory(core/kipl/UnitTests/tImageOperators)
-  add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
-  add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
-endif()
+
+## Core library tests
+add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
+add_subdirectory(core/kipl/UnitTests/tLogging)
+add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
+add_subdirectory(core/kipl/UnitTests/tkiplfilters)
+add_subdirectory(core/kipl/UnitTests/tFillHole)
+add_subdirectory(core/kipl/UnitTests/tImageOperators)
+add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
+add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
+add_subdirectory(core/kipl/UnitTests/tedgefunction)
+add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
+add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
+add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
-# add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
 add_subdirectory(core/algorithms/AdvancedFilters)
+# add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
+# add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
+
+add_subdirectory(core/algorithms/ImagingQAAlgorithms)
+add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
+
+
 add_subdirectory(core/modules/ModuleConfig)
+
 add_subdirectory(core/modules/ReaderConfig)
+add_subdirectory(core/modules/UnitTests/tReaderConfig)
+
 add_subdirectory(GUI/qt/QtAddons)
 add_subdirectory(GUI/qt/QtImaging)
 add_subdirectory(core/modules/ReaderGUI)
@@ -169,6 +180,16 @@ add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
+add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
+add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
+add_subdirectory(frameworks/tomography/UnitTests/tBBLogNorm)
+add_subdirectory(frameworks/tomography/UnitTests/tFDKBackProjectors)
+add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
+add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
+# add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
+add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
+add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
+
 # Tomography GUI
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
@@ -178,8 +199,9 @@ add_subdirectory(applications/muhrec)
 if (WIN32)
    add_subdirectory(applications/CLI/muhrecCLI)
 #   add_subdirectory(applications/verticalslicer)
-#   add_subdirectory(applications/multiframesplitter)
+#   add_subdirectory(applications/CLI/multiframesplitter)
 endif()
+add_subdirectory(applications/CLI/verticalslicer)
 
 add_subdirectory(applications/imageviewer)
 
@@ -229,8 +251,6 @@ if(DYNAMIC_LIB)
       ../lib/libhdf5.so.10	
       ../lib/libsz.so.2
 
-  #    /opt/local/lib/libxml2.2.dylib 
-  #    /opt/local/lib/libtiff.5.dylib
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
     execute_process(
@@ -240,27 +260,17 @@ if(DYNAMIC_LIB)
   endif()
   if (APPLE)
     install(FILES 
-#    ../lib/libkipl.1.0.0.dylib
-#    ../lib/libModuleConfig.1.0.0.dylib
-#    ../lib/libReconFramework.1.0.0.dylib
-#    ../lib/libStdBackProjectors.1.0.0.dylib
-#    ../lib/libFDKBackProjectors.1.0.0.dylib
-#    ../lib/libImagingAlgorithms.1.0.0.dylib
-#    ../lib/libReaderConfig.1.0.0.dylib
+    # ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXus.1.0.0.dylib
+    # ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXusCPP.1.0.0.dylib
+    # /opt/homebrew/lib/libhdf5.dylib
+    # /opt/homebrew/lib/libhdf5_cpp.dylib 
+    
     # external/mac/lib/libNeXus.1.0.0.dylib	
     # external/mac/lib//libhdf5_cpp.11.dylib
     # external/mac/lib//libNeXusCPP.1.0.0.dylib
     # external/mac/lib//libhdf5_hl.10.dylib
     # external/mac/lib//libhdf5.10.dylib	
     # external/mac/lib//libsz.2.dylib
-    ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXus.1.0.0.dylib
-    ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXusCPP.1.0.0.dylib
-    /opt/local/lib/libxml2.2.dylib 
-    /opt/local/lib/libtiff.5.dylib
-    /opt/local/lib/libfftw3.3.dylib
-    /opt/local/lib/libfftw3f.3.dylib
-    /opt/local/lib/libcfitsio.dylib
-    /opt/local/lib/libarmadillo.10.dylib
 
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
@@ -271,28 +281,39 @@ if(DYNAMIC_LIB)
   endif()
   
 
-  if (WIN32)
-  install(FILES 
-  external/windows/lib64/nexus/libNeXus.dll	
-  external/windows/lib64/hdf5/libhdf5_cpp.dll
-  external/windows/lib64/nexus/libNeXusCPP.dll
-  external/windows/lib64/hdf5/libhdf5_hl.dll
-  external/windows/lib64/hdf5/libhdf5.dll
-  external/windows/lib64/libsz.2.dylib
-  external/windows/lib64/libtiff.dll
-  external/windows/lib64/libfftw3.3.dylib
-  external/windows/lib64/libfftw3f.3.dylib
-  ../ExternalDependencies/windows/lib/libxml2.dll 
-  ../ExternalDependencies/windows/lib/libopenblas.dll
-  ../ExternalDependencies/windows/lib/cfitsio.dll
 
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-endif()
 
 endif(DYNAMIC_LIB)
 
-# turn on testing
-enable_testing()
+if (WIN32)
+install(FILES 
+  external/lib64/nexus/NeXus.dll	
+  external/lib64/nexus/NeXusCPP.dll
+  external/lib64/hdf5/hdf5_hl.dll
+  external/lib64/hdf5/hdf5.dll
+  external/lib64/hdf5/hdf5_cpp.dll
+  external/lib64/hdf5/zlib.dll
+  external/lib64/hdf5/szip.dll
+  external/lib64/libtiff.dll
+  external/lib64/libjpeg-62.dll
+  external/lib64/zlib1.dll
+  external/lib64/libfftw3-3.dll
+  external/lib64/libfftw3f-3.dll
+  external/lib64/libblas.dll
+  external/lib64/liblapack.dll
+  external/lib64/liblapacke.dll
+  external/lib64/libquadmath-0.dll
+  external/lib64/libgfortran_64-3.dll
+  external/lib64/libwinpthread-1.dll
+  external/lib64/libgcc_s_seh-1.dll
+  external/lib64/libgcc_s_seh_64-1.dll
+  ../ExternalDependencies/windows/bin/libopenblas.dll
+
+  ../ExternalDependencies/windows/bin/libxml2.dll 
+  ../ExternalDependencies/windows/bin/cfitsio.dll
+
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+endif()
 
 message(${CMAKE_CURRENT_SOURCE_DIR})
 ## define test

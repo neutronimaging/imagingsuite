@@ -1,20 +1,22 @@
 //<LICENSE>
 
-//#include "stdafx.h"
 #include "../include/ReconFramework_global.h"
-#include "../include/ReconConfig.h"
-#include "../include/ReconException.h"
-#include <ModuleException.h>
+
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
 #include <thread>
 
-#include <averageimage.h>
-
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <strings/filenames.h>
+
+#include <ModuleException.h>
+#include <averageimage.h>
+
+#include "../include/ReconConfig.h"
+#include "../include/ReconException.h"
+
 
 ReconConfig::ReconConfig(const std::string &appPath) :
     ConfigBase("ReconConfig",appPath),
@@ -143,6 +145,9 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
     for (it=args.begin()+3 ; it!=args.end(); it++) {
         try {
             EvalArg(*it,group,var,value);
+            msg.str("");
+            msg<<"group: "<<group<<", var: "<<var<<", value: "<<value;
+            logger.message(msg.str());
         }
         catch (ModuleException &e) {
             msg<<"Failed to parse argument "<<e.what();
@@ -181,8 +186,14 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="tiltangle")      ProjectionInfo.fTiltAngle         = std::stof(value);
             if (var=="tiltpivot")      ProjectionInfo.fTiltPivotPosition = std::stof(value);
             if (var=="correcttilt")    ProjectionInfo.bCorrectTilt=kipl::strings::string2bool(value);
-            if (var=="filemask")       ProjectionInfo.sFileMask          = value;
-            if (var=="path") {
+            if (var=="filemask") 
+            {     
+                ProjectionInfo.sFileMask = value;
+                kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sFileMask,false); 
+                
+            }
+            if (var=="path") 
+            {
                 ProjectionInfo.sPath=value;
                 kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sPath,true);
             }
@@ -526,50 +537,50 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 
 
 //----------------------
-ReconConfig::cUserInformation::cUserInformation() :
-	sOperator("Anders Kaestner"),
-	sInstrument("ICON"),
-	sProjectNumber("P11001"),
-	sSample("Unknown item"),
-	sComment("No comment")
-{
-}
+// ReconConfig::cUserInformation::cUserInformation() :
+// 	sOperator("Anders Kaestner"),
+// 	sInstrument("ICON"),
+// 	sProjectNumber("P11001"),
+// 	sSample("Unknown item"),
+// 	sComment("No comment")
+// {
+// }
 
-ReconConfig::cUserInformation::cUserInformation(const cUserInformation &info) :
-	sOperator(info.sOperator),
-	sInstrument(info.sInstrument),
-	sProjectNumber(info.sProjectNumber),
-	sSample(info.sSample),
-    sComment(info.sComment)
-{
-}
+// ReconConfig::cUserInformation::cUserInformation(const cUserInformation &info) :
+// 	sOperator(info.sOperator),
+// 	sInstrument(info.sInstrument),
+// 	sProjectNumber(info.sProjectNumber),
+// 	sSample(info.sSample),
+//     sComment(info.sComment)
+// {
+// }
 
-ReconConfig::cUserInformation & ReconConfig::cUserInformation::operator = (const cUserInformation &info)
-{
-	sOperator      = info.sOperator;
-	sInstrument    = info.sInstrument;
-	sProjectNumber = info.sProjectNumber;
-	sSample        = info.sSample;
-	sComment       = info.sComment;
+// ReconConfig::cUserInformation & ReconConfig::cUserInformation::operator = (const cUserInformation &info)
+// {
+// 	sOperator      = info.sOperator;
+// 	sInstrument    = info.sInstrument;
+// 	sProjectNumber = info.sProjectNumber;
+// 	sSample        = info.sSample;
+// 	sComment       = info.sComment;
 
-	return * this;
-}
+// 	return * this;
+// }
 
-std::string ReconConfig::cUserInformation::WriteXML(int indent)
-{
-	using namespace std;
-	ostringstream str;
+// std::string ReconConfig::cUserInformation::WriteXML(int indent)
+// {
+// 	using namespace std;
+// 	ostringstream str;
 
-    str<<std::setw(indent)  <<" "<<"<userinformation>"<<std::endl;
-        str<<std::setw(indent+4)  <<" "<<"<operator>"<<sOperator<<"</operator>\n";
-        str<<std::setw(indent+4)  <<" "<<"<instrument>"<<sInstrument<<"</instrument>\n";
-        str<<std::setw(indent+4)  <<" "<<"<projectnumber>"<<sProjectNumber<<"</projectnumber>\n";
-        str<<std::setw(indent+4)  <<" "<<"<sample>"<<sSample<<"</sample>\n";
-        str<<std::setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
-    str<<std::setw(indent)  <<" "<<"</userinformation>"<<std::endl;
+//     str<<std::setw(indent)  <<" "<<"<userinformation>"<<std::endl;
+//         str<<std::setw(indent+4)  <<" "<<"<operator>"<<sOperator<<"</operator>\n";
+//         str<<std::setw(indent+4)  <<" "<<"<instrument>"<<sInstrument<<"</instrument>\n";
+//         str<<std::setw(indent+4)  <<" "<<"<projectnumber>"<<sProjectNumber<<"</projectnumber>\n";
+//         str<<std::setw(indent+4)  <<" "<<"<sample>"<<sSample<<"</sample>\n";
+//         str<<std::setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
+//     str<<std::setw(indent)  <<" "<<"</userinformation>"<<std::endl;
 
-	return str.str();
-}
+// 	return str.str();
+// }
 
 
 //----------------

@@ -1129,7 +1129,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
 
     msg.str("");
 
-    ReconDialog dlg(&m_Interactor);
+    ReconDialog dlg(&m_Interactor,this);
     bool bRunFailure=false;
     try {
         if (m_pEngine!=nullptr)
@@ -1147,14 +1147,15 @@ void MuhRecMainWindow::ExecuteReconstruction()
 
             res=dlg.exec(m_pEngine,bRerunBackproj);
 
-            if (res==QDialog::Accepted) {
-                logger.verbose("Finished with OK");
+            if (res==QDialog::Accepted) 
+            {
+                logger.verbose("Reconstruction finished successfully");
 
                 // Store info about last recon
                 m_LastReconConfig     = m_Config;
                 m_bCurrentReconStored = false;
 
-                auto dims = m_pEngine->GetMatrixDims();
+                auto dims      = m_pEngine->GetMatrixDims();
                 m_LastMidSlice = m_pEngine->GetSlice(dims[2]/2);
 
                 // Prepare visualization
@@ -1164,8 +1165,8 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     ui->tabMainControl->setCurrentIndex(3);
 
                     const int nBins=256;
-                    float x[nBins];
-                    size_t y[nBins];
+                    float     x[nBins];
+                    size_t    y[nBins];
                     m_pEngine->GetHistogram(x,y,nBins);
                     ui->plotHistogram->setCurveData(0,x,y,nBins,"Volume histogram");
                     try
@@ -1184,15 +1185,16 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     msg<<"Reconstructed "<<m_Config.MatrixInfo.nDims[2]<<" slices";
                     logger.message(msg.str());
 
-                    ui->sliderSlices->setRange(0,static_cast<int>(m_Config.MatrixInfo.nDims[2])-1);
+                    ui->sliderSlices ->setRange(0,static_cast<int>(m_Config.MatrixInfo.nDims[2])-1);
                     ui->spinBoxSlices->setRange(0,static_cast<int>(m_Config.MatrixInfo.nDims[2])-1);
 
-                    ui->sliderSlices->setValue(static_cast<int>(m_Config.MatrixInfo.nDims[2]/2));
+                    ui->sliderSlices ->setValue(static_cast<int>(m_Config.MatrixInfo.nDims[2]/2));
                     ui->spinBoxSlices->setValue(static_cast<int>(m_Config.MatrixInfo.nDims[2]/2));
 
-                    m_nSliceSizeX=m_Config.MatrixInfo.nDims[0];
-                    m_nSliceSizeY=m_Config.MatrixInfo.nDims[1];
-                    m_eSlicePlane=kipl::base::ImagePlaneXY;
+                    m_nSliceSizeX = m_Config.MatrixInfo.nDims[0];
+                    m_nSliceSizeY = m_Config.MatrixInfo.nDims[1];
+                    m_eSlicePlane = kipl::base::ImagePlaneXY;
+
 
                     msg.str("");
                     msg<<"Matrix display interval ["<<m_Config.MatrixInfo.fGrayInterval[0]<<", "<<m_Config.MatrixInfo.fGrayInterval[1]<<"]";
@@ -1226,22 +1228,26 @@ void MuhRecMainWindow::ExecuteReconstruction()
             }
         }
     }
-    catch (ModuleException &e) {
+    catch (ModuleException &e) 
+    {
         msg<<"Reconstruction failed with a module exception: \n"
             <<e.what();
         bRunFailure=true;
     }
-    catch (ReconException &e) {
+    catch (ReconException &e) 
+    {
         msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e) 
+    {
         msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;
     }
-    catch (std::exception &e) {
+    catch (std::exception &e) 
+    {
         msg<<"Reconstruction failed: "<<std::endl
             <<e.what();
         bRunFailure=true;

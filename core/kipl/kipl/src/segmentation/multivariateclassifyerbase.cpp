@@ -2,7 +2,7 @@
 #include <armadillo>
 #include "../../include/segmentation/multivariateclassifyerbase.h"
 
-#include "../include/base/KiplException.h"
+#include "../../include/base/KiplException.h"
 namespace kipl {
 
 namespace segmentation {

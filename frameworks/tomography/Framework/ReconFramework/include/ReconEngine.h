@@ -5,16 +5,17 @@
 #include "ReconFramework_global.h"
 
 #include <list>
+#include <string>
+
+#include <interactors/interactionbase.h>
+#include <logging/logger.h>
+#include <base/kiplenums.h>
+
 #include "PreprocModuleBase.h"
 #include "BackProjectorModuleBase.h"
 #include "ProjectionReader.h"
 #include "ReconHelpers.h"
 #include "ModuleItem.h"
-
-#include <interactors/interactionbase.h>
-#include <logging/logger.h>
-#include <base/kiplenums.h>
-#include <string>
 
 class RECONFRAMEWORKSHARED_EXPORT ProjectionBlock
 {

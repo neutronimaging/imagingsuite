@@ -1,7 +1,0 @@
-Please see the documentation for more information.
-
-The quick installation for unix is
-  make
-  make test
-  make install
-which will place the executable in the directory /usr/local/bin

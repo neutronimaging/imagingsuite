@@ -92,8 +92,6 @@ if [ -e "$REPOSPATH/Applications/muhrecCLI" ]; then
 	`$CPCMD $REPOSPATH/Applications/muhrecCLI $DEST/Contents/MacOS`
 fi
 
-
-
 rm -f ./MacOS/*.dylib
 cd Frameworks
 rm -f *.1.0.dylib
@@ -123,7 +121,7 @@ fi
 
 cp $REPOSPATH/imagingsuite/applications/muhrec/Resources/* ./Resources
 
-sed -i.bak s+com.yourcompany+ch.psi+g $DEST/Contents/Info.plist
+#sed -i.bak s+com.yourcompany+ch.psi+g $DEST/Contents/Info.plist
 echo "copy plugins"
 pwd
 if [ ! -d "./PlugIns" ]; then
@@ -374,7 +372,7 @@ install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib        
 
 install_name_tool -change @executable_path/../Frameworks/libiconv.2.dylib @rpath/libiconv.2.dylib libxml2.2.dylib
 
-
+codesign --force --deep --sign - $DEST # needed to fix signature issue on M1
 
 rm -rf /tmp/muhrec
 

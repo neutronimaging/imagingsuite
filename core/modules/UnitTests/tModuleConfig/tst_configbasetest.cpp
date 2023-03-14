@@ -102,6 +102,7 @@ void ConfigBaseTest::testAssignment()
 
 void ConfigBaseTest::testConfigChanged()
 {
+        //DummyConfig a(""),b("");
         ReconConfig a(""),b("");
         std::list<std::string> freelist;
         qDebug()<<"start";
@@ -124,6 +125,7 @@ void ConfigBaseTest::testConfigChanged()
         QVERIFY2(a.ConfigChanged(b,freelist) == true , "Two parameters in the free list, three changed");
 
         ReconConfig c(""),d("");
+        // DummyConfig c(""),d("");
         QVERIFY2(c.ConfigChanged(d,freelist) == false , "Two parameters in the free list, same config");
 }
 
@@ -136,6 +138,7 @@ void ConfigBaseTest::testEvalArg()
 
     arg="userinformation:sample=mouse";
     ReconConfig config("");
+    // DummyConfig config("");
 
     config.EvalArg(arg, group, var, value);
 
@@ -171,7 +174,10 @@ void ConfigBaseTest::testGetCommandLinePars()
     args.push_back("userinformation:sample=mouse");
     args.push_back("projections:center=100.45");
 
+
     ReconConfig config("");
+
+    // DummyConfig config("");
 
     config.GetCommandLinePars(args);
 }
@@ -179,7 +185,7 @@ void ConfigBaseTest::testGetCommandLinePars()
 void ConfigBaseTest::testLibNameManagerMac()
 {
     std::string appPath    = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/";
-    std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/Frameworks/libStdBackProjectors.1.0.0.dylib";
+    std::string modulePath = "/Users/kaestner/git/deployed/MuhRec.app/Contents/Frameworks/libStdBackProjectors.dylib";
     std::string modulePath2 = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.dylib";
 
     ModuleLibNameManger mlnm(appPath);

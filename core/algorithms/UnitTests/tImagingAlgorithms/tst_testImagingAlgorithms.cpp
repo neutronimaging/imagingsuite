@@ -82,16 +82,15 @@ private:
 
 };
 
-TestImagingAlgorithms::TestImagingAlgorithms() :
-//    dataPath("../../../../../TestData/")
-    dataPath("../TestData/")
+TestImagingAlgorithms::TestImagingAlgorithms() 
 {
-#ifndef DEBUG
-    kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
-#else
-    kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
-#endif
-    std::cout<<"Current path: "<<std::filesystem::current_path();
+    dataPath = QT_TESTCASE_BUILDDIR;
+    dataPath = dataPath + "/../../../../../TestData/";
+    kipl::strings::filenames::CheckPathSlashes(dataPath,true);
+
+    std::string fname = dataPath+"2D/tiff/spots/balls.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(holes,fname);
 }
 
 void TestImagingAlgorithms::PixelInfo()
@@ -238,8 +237,10 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
 
     kipl::base::TImage<float,2> img,res;
 
-    kipl::io::ReadTIFF(img,"../qni/trunk/data/spots.tif");
-
+    std::string fname = dataPath+"2D/tiff/spots/balls.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
+    
     try {
         res.Clone(img);
     } catch (kipl::base::KiplException &e) {
@@ -250,8 +251,6 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
     cleaner.setConnectivity(kipl::base::conn4);
 
     cleaner.process(res,0.04,0.01);
-
-
 }
 
 
@@ -614,15 +613,15 @@ void TestImagingAlgorithms::StripeFilterParameters()
 void TestImagingAlgorithms::StripeFilterProcessing2D()
 {
     kipl::base::TImage<float,2> sino;
-#ifdef DEBUG
-    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
-#else
-    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
-#endif
+
+    std::string fname = dataPath+"2D/tiff/woodsino_0200.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+
+    kipl::io::ReadTIFF(sino,fname);
+
     ImagingAlgorithms::StripeFilter sf(sino.dims(),"daub17",4,0.21f);
 
     sf.process(sino);
-
 }
 
 void TestImagingAlgorithms::RefImgCorrection_Initialization()

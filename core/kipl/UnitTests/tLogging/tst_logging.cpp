@@ -3,6 +3,7 @@
 
 // add necessary includes here
 #include <logging/logger.h>
+#include <base/KiplException.h>
 
 class LoggingTests : public QObject
 {
@@ -72,9 +73,9 @@ void LoggingTests::testLogWriter()
 
 void LoggingTests::testLogStreamWriter()
 {
-    kipl::logging::LogStreamWriter badlw("sdfsdfsdfsfsg/dsfs.log");
+    QVERIFY_EXCEPTION_THROWN(kipl::logging::LogStreamWriter badlw("sdfsdfsdfsfsg/dsfs.log"),kipl::base::KiplException);
 
-    QCOMPARE(badlw.isValid(),false);
+   // QCOMPARE(badlw.isValid(),false);
 
     kipl::logging::LogStreamWriter lw("tester.log");
     QCOMPARE(lw.isValid(),true);

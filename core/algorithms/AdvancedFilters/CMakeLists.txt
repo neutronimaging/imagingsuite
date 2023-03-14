@@ -8,14 +8,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../../../core/kipl/kipl/include
     )
-
-# link_directories(../../../../lib /opt/local/lib ../../../../external/mac/lib)
-link_directories(/opt/local/lib ../../../../external/mac/lib)
 
 set(INC_FILES
     AnisoDiff.h
@@ -49,33 +43,14 @@ add_library(${TARGET_NAME} SHARED
   ${INC_FILES}
 )
 
-
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 target_compile_definitions(${TARGET_NAME} PRIVATE ADVANCEDFILTERS_LIBRARY)
 
 add_definitions(-DHAVE_NEXUS)
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    ../../../external/mac/lib
-    )
-
-
-
 if (APPLE)
-    target_link_libraries(${TARGET_NAME}
-        PRIVATE
-        kipl
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus.1.0.0
-        NeXusCPP.1.0.0
-    )
+
 endif()
 
 if (WIN32)
@@ -84,37 +59,12 @@ if (WIN32)
     ../../../../imagingsuite/external/lib64
     ../../../../imagingsuite/external/lib64/nexus
     )
-    
-    target_link_libraries(${TARGET_NAME}
-    PRIVATE
-        kipl
-        libxml2
-        cfitsio
-        libtiff
-        # armadillo
-        liblapack
-        libopenblas
-        libfftw3-3
-        libfftw3f-3
-        NeXus
-        NeXusCPP
-        Iphlpapi
-    )
 endif()
 
-if (LINUX)
-    target_link_libraries(${TARGET_NAME}
-        PRIVATE
-        kipl
-        fftw3
-	    fftw3f
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus
-        NeXusCPP
-    )
-endif()
+
+target_link_libraries(${TARGET_NAME}
+PUBLIC
+kipl
+)
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

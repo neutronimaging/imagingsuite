@@ -21,12 +21,12 @@
 #include <io/io_tiff.h>
 #include <io/io_serializecontainers.h>
 
-class TkiplbasetestTest : public QObject
+class Tkiplbase : public QObject
 {
     Q_OBJECT
 
 public:
-    TkiplbasetestTest();
+    Tkiplbase();
 
 private Q_SLOTS:
     void initTestCase();
@@ -65,21 +65,26 @@ private Q_SLOTS:
     /// Test OS specifying enums
     void testOSenums();
 
+private:
+    std::string data_path;
 };
 
-TkiplbasetestTest::TkiplbasetestTest()
+Tkiplbase::Tkiplbase()
+{
+    data_path = QT_TESTCASE_BUILDDIR;
+    data_path = data_path + "/../../../../../TestData/";
+    kipl::strings::filenames::CheckPathSlashes(data_path,true);
+}
+
+void Tkiplbase::initTestCase()
 {
 }
 
-void TkiplbasetestTest::initTestCase()
+void Tkiplbase::cleanupTestCase()
 {
 }
 
-void TkiplbasetestTest::cleanupTestCase()
-{
-}
-
-void TkiplbasetestTest::testImageInfoCtor()
+void Tkiplbase::testImageInfoCtor()
 {
     kipl::base::ImageInfo infoA;
 
@@ -133,7 +138,7 @@ void TkiplbasetestTest::testImageInfoCtor()
 
 
 
-void TkiplbasetestTest::testImageInfoResolutions()
+void Tkiplbase::testImageInfoResolutions()
 {
     kipl::base::ImageInfo infoA;
 
@@ -150,11 +155,12 @@ void TkiplbasetestTest::testImageInfoResolutions()
 
 }
 
-void TkiplbasetestTest::testHighEntropyHistogram()
+void Tkiplbase::testHighEntropyHistogram()
 {
     kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/spots/balls.tif");
+    std::string fname = data_path + "2D/tiff/spots/balls.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
     std::vector<float> axis;
     std::vector<size_t> hist;
     kipl::base::Histogram(img.GetDataPtr(),img.Size(),1024UL,hist,axis,0.0f,0.0f,false);
@@ -167,7 +173,7 @@ void TkiplbasetestTest::testHighEntropyHistogram()
 
 }
 
-void TkiplbasetestTest::testBivariateHistogramInitialize()
+void Tkiplbase::testBivariateHistogramInitialize()
 {
     kipl::base::BivariateHistogram bihi;
 
@@ -200,7 +206,7 @@ void TkiplbasetestTest::testBivariateHistogramInitialize()
     QCOMPARE(dims2[1],size_t(20));
 }
 
-void TkiplbasetestTest::testBivariateHistogram()
+void Tkiplbase::testBivariateHistogram()
 {
         kipl::base::BivariateHistogram bihi;
         bihi.Initialize(0.0f,10.0f,10,0.0f,20.0f,20);
@@ -233,7 +239,7 @@ void TkiplbasetestTest::testBivariateHistogram()
 
 }
 
-void TkiplbasetestTest::testSubImage()
+void Tkiplbase::testSubImage()
 {
     std::ostringstream msg;
 
@@ -279,7 +285,7 @@ void TkiplbasetestTest::testSubImage()
     // Test get pos and sizes
 }
 
-void TkiplbasetestTest::testRotateImage()
+void Tkiplbase::testRotateImage()
 {
     std::ostringstream msg;
 
@@ -398,7 +404,7 @@ void TkiplbasetestTest::testRotateImage()
     }
 }
 
-void TkiplbasetestTest::testMarginSetter()
+void Tkiplbase::testMarginSetter()
 {
     // 1D
     std::vector<size_t> dims1={10};
@@ -488,7 +494,7 @@ void TkiplbasetestTest::testMarginSetter()
     }
 }
 
-void TkiplbasetestTest::testProfiles()
+void Tkiplbase::testProfiles()
 {
 
     std::vector<size_t> dims={4,3};
@@ -504,7 +510,7 @@ void TkiplbasetestTest::testProfiles()
     delete [] hp;
 }
 
-void TkiplbasetestTest::testProjection2D()
+void Tkiplbase::testProjection2D()
 {
     kipl::base::TImage<float,2> sino({4,3});
 
@@ -525,7 +531,7 @@ void TkiplbasetestTest::testProjection2D()
         QCOMPARE(p1[i],ref1[i]);
 }
 
-void TkiplbasetestTest::testImageCaster()
+void Tkiplbase::testImageCaster()
 {
     std::vector<size_t> dims={50,60,1};
 
@@ -563,7 +569,7 @@ void TkiplbasetestTest::testImageCaster()
 
 }
 
-void TkiplbasetestTest::testTranspose()
+void Tkiplbase::testTranspose()
 {
     kipl::base::Transpose<float> tr;
 
@@ -653,7 +659,7 @@ void TkiplbasetestTest::testTranspose()
 }
 
 
-void TkiplbasetestTest::testOSenums()
+void Tkiplbase::testOSenums()
 {
     QCOMPARE(enum2string(kipl::base::OSLinux),std::string("OSLinux"));
     QCOMPARE(enum2string(kipl::base::OSWindows),std::string("OSWindows"));
@@ -673,6 +679,6 @@ void TkiplbasetestTest::testOSenums()
     QVERIFY_EXCEPTION_THROWN(string2enum("OSMacos",oe),kipl::base::KiplException);
 }
 
-QTEST_APPLESS_MAIN(TkiplbasetestTest)
+QTEST_APPLESS_MAIN(Tkiplbase)
 
 #include "tst_kiplbase.moc"
