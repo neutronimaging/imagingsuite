@@ -295,7 +295,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_
 	// Open the TIFF image
     if ((image = TIFFOpen(fname.c_str(), "r")) == nullptr)
     {
-		msg.str();
+        msg.str("");
 		msg<<"ReadTIFF: Could not open image "<<fname;
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}
@@ -518,10 +518,10 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	std::stringstream msg;
 	TIFF *image;
     uint16_t photo, spp, fillorder,bps, sformat;
-	tsize_t stripSize;
-	unsigned long imageOffset;
+    tsize_t stripSize;
+    unsigned long imageOffset;
 
-	int stripMax;
+    int stripMax;
 	unsigned char *buffer, tempbyte;
 	unsigned long bufferSize, count;
 

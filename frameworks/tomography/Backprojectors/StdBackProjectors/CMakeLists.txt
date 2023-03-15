@@ -4,25 +4,43 @@ set(TARGET_NAME "StdBackProjectors")
 project(StdBackProjectors VERSION 1.0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
+    ../../../../core/kipl/kipl/include
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    ../../../../core/modules/ModuleConfig/include
+    ../../../../../ExternalDependencies/macos/include
+    ../../Framework/ReconFramework/include
+    )
+endif()
+
+
+if (WIN32)
+include_directories(
+    ../../../../core/kipl/kipl/include
+    ../../../../core/modules/ModuleConfig/include
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    ../../Framework/ReconFramework/include
+    ../../../../../ExternalDependencies/windows/include
+    ../../../../../ExternalDependencies/windows/include/nexus
+    ../../../../../ExternalDependencies/windows/include/cfitsio
+    ../../../../../ExternalDependencies/windows/include/libxml2
+    ../../../../external/include/
+    )
+endif()
+
+if (UNIX)
+include_directories(
     /usr/include/libxml2
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../external/src/linalg
     ../../../../core/modules/ModuleConfig/include
-    ../../../../external/mac/include/
-    ../../../../external/mac/include/nexus
-    ../../../../external/mac/include/hdf5
     ../../Framework/ReconFramework/include
     )
-
-# link_directories(../../../../lib /opt/local/lib ../../../../external/mac/lib)
-link_directories(/opt/local/lib ../../../../external/mac/lib)
+endif()
 
 set(INC_FILES
     include/StdBackProjectors.h
@@ -57,28 +75,42 @@ target_compile_definitions(${TARGET_NAME} PRIVATE STDBACKPROJECTORS_LIBRARY HAVE
 
 add_definitions(-DHAVE_NEXUS)
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../../external/mac/lib
-    )
+message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 
-if (APPLE)
+if (WIN32)
+    target_link_directories(${TARGET_NAME} PRIVATE
+    ../../../../../ExternalDependencies/windows/lib
+    ../../../../../imagingsuite/external/lib64
+    ../../../../../imagingsuite/external/lib64/nexus
+    )
+    
     target_link_libraries(${TARGET_NAME}
-        PRIVATE
+    PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
         ReconFramework
-        xml2
-        fftw3
-        fftw3f
+        libxml2
         cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus.1.0.0
-        NeXusCPP.1.0.0
+        libtiff
+        liblapack
+        libopenblas
+        libfftw3-3
+        libfftw3f-3
+        NeXus
+        NeXusCPP
+        Iphlpapi
+
+        )
+endif()
+
+if (APPLE)
+    target_link_libraries(${TARGET_NAME}
+        PUBLIC
+        kipl
+        ImagingAlgorithms
+        ModuleConfig
+        ReconFramework
     )
 endif()
 
@@ -87,9 +119,9 @@ if (UNIX AND NOT APPLE)
     if(OpenMP_CXX_FOUND)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
-            pybind11::module
+            # pybind11::module
 
-          PRIVATE
+        #   PRIVATE
             kipl
             ImagingAlgorithms
             ModuleConfig
@@ -108,9 +140,9 @@ if (UNIX AND NOT APPLE)
     else()
         target_link_libraries(${TARGET_NAME}
           PUBLIC
-            pybind11::module
+            # pybind11::module
 
-          PRIVATE
+        #   PRIVATE
             kipl
             ImagingAlgorithms
             ModuleConfig

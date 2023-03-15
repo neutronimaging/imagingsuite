@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libNeXusCPP.a  CMakeFiles/NeXus_CPP_Static_Library.dir/NeXusFile.cpp.o CMakeFiles/NeXus_CPP_Static_Library.dir/NeXusException.cpp.o CMakeFiles/NeXus_CPP_Static_Library.dir/NeXusStream.cpp.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libNeXusCPP.a

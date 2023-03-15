@@ -8,7 +8,8 @@
 #include <base/tsubimage.h>
 #include <io/io_tiff.h>
 #include <io/io_fits.h>
-#include <io/analyzefileext.h>
+#include <analyzefileext.h>
+
 
 #ifdef HAVE_NEXUS
     #include <io/io_nexus.h>
@@ -21,7 +22,6 @@
 #include "../include/ReconException.h"
 #include "../include/ProjectionReader.h"
 #include "../include/ReconHelpers.h"
-
 
 ProjectionReader::ProjectionReader(kipl::interactors::InteractionBase *interactor) :
 	logger("ProjectionReader"),
@@ -40,12 +40,13 @@ std::vector<size_t> ProjectionReader::GetImageSize(std::string path,
                                                    size_t number,
                                                    float binning)
 {
-
 	std::string filename;
 	std::string ext;
 	kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
-    size_t found = filemask.find("hdf");
-    if (found!=std::string::npos)
+
+    auto maskext = readers::GetFileExtensionType(filemask);
+
+    if (maskext == readers::ExtensionHDF5)
     {
         try
         {
@@ -82,40 +83,22 @@ std::vector<size_t> ProjectionReader::GetImageSizeNexus(string filename, float b
 
 std::vector<size_t> ProjectionReader::GetImageSize(std::string filename, float binning)
 {
-	std::map<std::string, size_t> extensions;
-	extensions[".mat"]=0;
-	extensions[".fits"]=1;
-	extensions[".fit"]=1;
-	extensions[".fts"]=1;
-	extensions[".tif"]=2;
-	extensions[".tiff"]=2;
-	extensions[".TIF"]=2;
-	extensions[".png"]=3;
-//    extensions[".hdf"]=4; // to be implemented
-//    extensions[".hd5"]=4;
-
-	size_t extpos=filename.find_last_of(".");
 	std::stringstream msg;
 
     std::vector<size_t> dims;
     try
     {
-        if (extpos!=filename.npos)
-        {
-			std::string ext=filename.substr(extpos);
-            switch (extensions[ext])
-            {
-            case 1  : dims=kipl::io::GetFITSDims(filename); break;
-            case 2  : dims=kipl::io::GetTIFFDims(filename);  break;
-			//case 3  : return GetImageSizePNG(filename.c_str(),dims);  break;
+        auto ext = readers::GetFileExtensionType(filename);
 
-			default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
-			}
-		}
-        else
+        switch (ext)
         {
-			throw ReconException("Unknown file type",__FILE__, __LINE__);
-		}
+        case readers::ExtensionFITS  : dims=kipl::io::GetFITSDims(filename);  break;
+        case readers::ExtensionTIFF  : dims=kipl::io::GetTIFFDims(filename);  break;
+        case readers::ExtensionHDF5  : dims=kipl::io::GetNexusDims(filename); break;
+        //case 3  : return GetImageSizePNG(filename.c_str(),dims);  break;
+
+        default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
+        }
 	}
     catch (kipl::base::KiplException &e)
     {
@@ -259,13 +242,13 @@ Read(std::string filename,
 
     try
     {
-        kipl::io::eExtensionTypes ext=kipl::io::GetFileExtensionType(filename);
+        readers::eExtensionTypes ext=readers::GetFileExtensionType(filename);
         switch (ext)
         {
-        case kipl::io::ExtensionFITS : img=ReadFITS(filename,pCrop);  break;
-        case kipl::io::ExtensionTIFF : img=ReadTIFF(filename,pCrop);  break;
-        case kipl::io::ExtensionPNG  : img=ReadPNG(filename,pCrop);   break;
-        case kipl::io::ExtensionHDF  : img=ReadHDF(filename);         break; // does not enter in here..
+        case readers::ExtensionFITS : img=ReadFITS(filename,pCrop);  break;
+        case readers::ExtensionTIFF : img=ReadTIFF(filename,pCrop);  break;
+        case readers::ExtensionPNG  : img=ReadPNG(filename,pCrop);   break;
+        case readers::ExtensionHDF  : img=ReadHDF(filename);         break; // does not enter in here..
         default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
         }
     }
@@ -327,7 +310,8 @@ Read(std::string filename,
 }
 
 
-kipl::base::TImage<float,3> ProjectionReader::ReadNexusTomo(string filename){
+kipl::base::TImage<float,3> ProjectionReader::ReadNexusTomo(string filename)
+{
 
     kipl::base::TImage<int16_t,3> tmp;
 
@@ -339,10 +323,11 @@ kipl::base::TImage<float,3> ProjectionReader::ReadNexusTomo(string filename){
 
     kipl::base::TImage<float,3> img(tmp.dims());
 
-    float* pImg = img.GetDataPtr();
+    float* pImg   = img.GetDataPtr();
     int16_t *ptmp = tmp.GetDataPtr();
 
-    for (size_t i=0; i<tmp.Size(); ++i) {
+    for (size_t i=0; i<tmp.Size(); ++i)
+    {
         pImg[i] = static_cast<float>(ptmp[i]);
     }
 
@@ -902,8 +887,9 @@ float ProjectionReader::GetProjectionDose(const std::string &path,
 	kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
     float dose;
 
-    size_t found = filemask.find("hdf");
-    if (found==std::string::npos )
+    auto maskext = readers::GetFileExtensionType(filemask);
+
+    if (maskext == readers::ExtensionHDF5)
     {
         dose = GetProjectionDose(filename,flip,rotate,binning,nDoseROI);
     }
@@ -946,7 +932,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
 	std::ostringstream weight;
 	std::map<float, ProjectionInfo>::iterator it,it2;
 
-    kipl::io::eExtensionTypes fileext=kipl::io::GetFileExtensionType(ProjectionList.begin()->second.name);
+    auto fileext=readers::GetFileExtensionType(ProjectionList.begin()->second.name);
 
 	float fResolutionWeight=1.0f/(0<config.ProjectionInfo.fResolution[0] ? config.ProjectionInfo.fResolution[0]*0.1f : 1.0f);
 	size_t i=0;
@@ -956,7 +942,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
     {
 		logger(kipl::logging::Logger::LogMessage,"Using projections");
 
-        if (fileext!=kipl::io::ExtensionHDF)
+        if (fileext!=readers::ExtensionHDF5)
         {
             for (it=ProjectionList.begin();
                  (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections");
@@ -1034,7 +1020,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
 
-            if (fileext != kipl::io::ExtensionHDF )
+            if (fileext != readers::ExtensionHDF5 )
             {
                 dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
                         config.ProjectionInfo.eRotate,
@@ -1075,7 +1061,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
 
 		}
 
-        if (fileext != kipl::io::ExtensionHDF)
+        if (fileext != readers::ExtensionHDF5)
         {
             dose   << GetProjectionDose(it->second.name,config.ProjectionInfo.eFlip,
                     config.ProjectionInfo.eRotate,
@@ -1112,7 +1098,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
 			angle  << (it->second.angle)+config.MatrixInfo.fRotation  << " ";
 			weight << (it->second.weight)*fResolutionWeight << " ";
 
-            if (fileext != kipl::io::ExtensionHDF)
+            if (fileext != readers::ExtensionHDF5)
             {
                 proj = Read(it->second.name,config.ProjectionInfo.eFlip,
                         config.ProjectionInfo.eRotate,
@@ -1145,9 +1131,9 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
         throw ReconException("Unknown image type in ProjectionReader", __FILE__, __LINE__);
 	}
 
-	parameters["weights"]=weight.str();
-	parameters["dose"]=dose.str();
-	parameters["angles"]=angle.str();
+    parameters["weights"] = weight.str();
+    parameters["dose"]    = dose.str();
+    parameters["angles"]  = angle.str();
 
 	return img;
 }

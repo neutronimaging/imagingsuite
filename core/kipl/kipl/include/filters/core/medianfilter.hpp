@@ -17,14 +17,15 @@
 namespace kipl { namespace filters {
 
 template <class T, size_t nDims>
-TMedianFilter<T,nDims>::TMedianFilter(const std::vector<size_t> & dims) : kipl::filters::TFilterBase<T,nDims>(dims)
+TMedianFilter<T,nDims>::TMedianFilter(const std::vector<size_t> & dims) :
+    kipl::filters::TFilterBase<T,nDims>(dims)
 {
 //	if (nDims!=2)
 //		throw kipl::base::KiplException("Median filter is only supported for 2D", __FILE__, __LINE__);
 	bilevel=false; 
 	quick_median=true;
-	
-	for (size_t i=0; i<nDims; i++)
+
+    for (size_t i=0; i<nDims; i++)
         nHalfKernel[i]=dims[i]>>1;
 }
 

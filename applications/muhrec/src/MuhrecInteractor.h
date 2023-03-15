@@ -2,19 +2,19 @@
 
 #ifndef MUHRECINTERACTOR_H_
 #define MUHRECINTERACTOR_H_
-#include <QMutex>
 #include <interactors/interactionbase.h>
 
 
-class MuhrecInteractor: public kipl::interactors::InteractionBase {
+class MuhrecInteractor: public kipl::interactors::InteractionBase 
+{
 public:
 	MuhrecInteractor();
 	virtual ~MuhrecInteractor();
-	virtual void Reset();
-	virtual void Abort();
-	virtual bool Aborted();
-	virtual void Done();
-	virtual bool Finished();
+	void Reset()    override;
+	void Abort()    override;
+	bool Aborted()  override;
+	void Done()     override;
+	bool Finished() override;
 
 	/// Updates the status of the reconstruction, to be called by the engine and back-projector
 	///

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <filesystem>
 
 #include <QtWidgets/QApplication>
 #include <QDesktopServices>
@@ -32,21 +33,36 @@ void TestConfig();
 
 int main(int argc, char *argv[])
 {
+    std::string homedir = QDir::homePath().toStdString();
+    kipl::strings::filenames::CheckPathSlashes(homedir,true);
+
     kipl::logging::Logger logger("MuhRec");
     kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
     logger.message("Starting MuhRec");
 
+    std::string logpath = homedir+".imagingtools";
+    if (!std::filesystem::exists(logpath))
+    {
+      std::filesystem::create_directories(logpath);
+    }
+
+    logpath = logpath+ "/muhrec.log";
+    kipl::strings::filenames::CheckPathSlashes(logpath,false);
+    kipl::logging::LogStreamWriter logstream(logpath);
+    logger.addLogTarget(&logstream);
+
     std::ostringstream msg;
+
+    msg<<"Home dir: "<<homedir;
+    logger.message(msg.str());
 
     QApplication app(argc, argv);
     app.setApplicationVersion(VERSION);
 
-    std::string homedir = QDir::homePath().toStdString();
-
-    kipl::strings::filenames::CheckPathSlashes(homedir,true);
     ReconConfig::setHomePath(homedir);
 
-    msg.str(""); msg<<"Home dir: "<<homedir;
+    msg.str("");
+    msg<<"MuhRec "<<VERSION<<"\nCompile date: "<<__DATE__<<" at "<<__TIME__;
     logger.message(msg.str());
 
     std::string application_path=app.applicationDirPath().toStdString();

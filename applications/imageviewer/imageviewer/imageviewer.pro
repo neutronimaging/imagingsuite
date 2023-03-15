@@ -89,6 +89,9 @@ DEPENDPATH += $$PWD/../../../core/kipl/kipl/src
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
 DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons
 
+INCLUDEPATH += $$PWD/../../../GUI/qt/QtImaging
+DEPENDPATH += $$PWD/../../../GUI/qt/QtImaging
+
 unix:!mac {
     message("-lNeXus exists")
     DEFINES += HAVE_NEXUS

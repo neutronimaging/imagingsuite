@@ -3,8 +3,13 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
-#include <xmmintrin.h>
-#include <emmintrin.h>
+#ifdef __aarch64__
+    #include <sse2neon.h>
+#else
+   	#include <xmmintrin.h>
+	#include <emmintrin.h>
+#endif
+
 
 #include "../../include/math/median.h"
 #include "../../include/base/core/quad.h"

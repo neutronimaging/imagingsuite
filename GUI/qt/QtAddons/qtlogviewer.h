@@ -22,7 +22,7 @@ public:
     explicit QtLogViewer(QWidget *parent = 0);
     ~QtLogViewer();
 
-    virtual size_t Write(std::string str);
+    virtual size_t write(const std::string & str) override;
 
     QString serialize();
     void setLogLevel(kipl::logging::Logger::LogLevel level);

@@ -17,3 +17,17 @@ do
 	echo $f
 	rm $f
 done
+
+for d in `find . -type d | grep macOS-Debug`;
+do
+        echo $d
+	rm -rf $d
+done
+
+for d in `find . -type d | grep macOS-Release`;
+do
+        echo $d
+	rm -rf $d
+done
+
+rm -rf ../builds/build*

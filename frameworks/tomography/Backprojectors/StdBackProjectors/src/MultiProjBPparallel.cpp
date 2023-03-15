@@ -10,12 +10,19 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <emmintrin.h>
+
 #include <cmath>
 #include <functional>
 #include <thread>
 #ifdef _OPENMP
 #include <omp.h>
+#endif
+
+#ifdef __aarch64__
+    #include <sse2neon.h>
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
 #endif
 
 MultiProjectionBPparallel::MultiProjectionBPparallel(kipl::interactors::InteractionBase *interactor) :

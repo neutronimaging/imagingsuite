@@ -13,6 +13,7 @@
 #include <ReconException.h>
 #include <ProjectionReader.h>
 #include <ReconConfig.h>
+#include <analyzefileext.h>
 
 #include <ParameterHandling.h>
 
@@ -131,7 +132,6 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
-    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -142,24 +142,9 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 
         float *fDoses=new float[N];
 
-        found = fmask.find("hdf");
-        if (found==std::string::npos )
-        {
+        auto exttype = readers::GetFileExtensionType(fmask);
 
-            kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
-            img     = reader.Read(filename,
-                        config.ProjectionInfo.eFlip,
-                        config.ProjectionInfo.eRotate,
-                        config.ProjectionInfo.fBinning,
-                        roi);
-
-            tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
-                        config.ProjectionInfo.eFlip,
-                        config.ProjectionInfo.eRotate,
-                        config.ProjectionInfo.fBinning,
-                        nOriginalNormRegion) : initialDose;
-        }
-        else
+        if (exttype == readers::ExtensionHDF5 )
         {
             img     = reader.ReadNexus(fmask, firstIndex,
                         config.ProjectionInfo.eFlip,
@@ -168,6 +153,21 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                         roi);
 
             tmpdose = bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : initialDose;
+        }
+        else
+        {
+            kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+            img     = reader.Read(filename,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        roi);
+
+            tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
                         config.ProjectionInfo.eFlip,
                         config.ProjectionInfo.eRotate,
                         config.ProjectionInfo.fBinning,
@@ -186,7 +186,7 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            if (found==std::string::npos )
+            if (exttype != readers::ExtensionHDF5 )
             {
                 img=reader.Read(filename,
                         m_Config.ProjectionInfo.eFlip,
@@ -440,12 +440,15 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::st
 int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
 	int nDose=img.Size(2);
-	float *doselist=new float[nDose];
+    std::vector<float> doselist;
 
 	std::stringstream msg;
 	
 	if (bUseNormROI==true) {
 		GetFloatParameterVector(coeff,"dose",doselist,nDose);
+        msg.str("");
+        msg<<"Dose vector length "<<doselist.size();
+        logger.message(msg.str());
 		for (int i=0; i<nDose; i++) {
 			doselist[i] = doselist[i]-fDarkDose;
 			doselist[i] = log(doselist[i]<1 ? 1.0f : doselist[i]);
@@ -575,8 +578,6 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 			}
 		}
 	}
-
-	delete [] doselist;
 
     return 0;
 }

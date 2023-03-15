@@ -82,11 +82,13 @@ public:
     virtual ~ProjectionFilter(void);
 
     const std::vector<float> & filterWeights() { return mFilter; }
+
+    size_t pad(float const * const pSrc, const size_t nSrcLen, float *pDest, const size_t nDestLen);
+
 private:
     virtual void buildFilter(const size_t N);
     virtual void PreparePadding(const size_t nImage, const size_t nFilter);
     virtual void filterProjection(kipl::base::TImage<float,2> & img);
-    size_t Pad(float const * const pSrc, const size_t nSrcLen, float *pDest, const size_t nDestLen);
 
     std::vector<float> mFilter;
     kipl::base::TImage<float,1> mPadData;

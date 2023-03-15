@@ -146,7 +146,7 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         }
         #pragma omp critical
         {
-            for (i=0; i<hist.size(); i++)
+            for (i=0; i<static_cast<int>(hist.size()); i++)
                 hist[i]+=temp_hist[i];
         }
     }
@@ -258,9 +258,9 @@ int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float per
 		ptrdiff_t lowdiff  = cumulated[N-1];
 		ptrdiff_t highdiff = cumulated[N-1];
 
-		ptrdiff_t diff=cumulated[N-1];
+        //ptrdiff_t diff=cumulated[N-1];
 		for (size_t i=0; i<N; i++){
-			diff=static_cast<ptrdiff_t>(std::abs(static_cast<double>(cumulated[i]-lowlevel)));
+            ptrdiff_t diff=static_cast<ptrdiff_t>(std::abs(static_cast<double>(cumulated[i]-lowlevel)));
 			if (diff<lowdiff) {
 				lowdiff=diff;
 				*lo=i;
@@ -454,7 +454,7 @@ inline int BivariateHistogram::ComputePos(float x, std::pair<float, float> &scal
         case 0: return static_cast<int>((x-scaling.second)*scaling.first); break;
         case 1: return 0;
         case 2: return nBins-1;
-        sdefault: logger(logger.LogWarning, "Strange selector value in ComputePos"); break;
+        default: logger(logger.LogWarning, "Strange selector value in ComputePos"); break;
     }
 
     return 0;
@@ -473,14 +473,17 @@ std::pair<float,float> BivariateHistogram::GetLimits(int n)
 
 std::map<float, map<float,size_t> > BivariateHistogram::CompressedHistogram(kipl::base::eImageAxes mainaxis, size_t threshold)
 {
+    std::ignore = threshold;
+
     std::map<float, std::map<float,size_t> > hist;
 
     size_t *pLine;
     switch (mainaxis) {
     case kipl::base::ImageAxisX:
-        for (size_t i=0; i<m_bins.Size(1); i++) {
+        for (size_t i=0; i<m_bins.Size(1); i++)
+        {
             pLine=m_bins.GetLinePtr(i);
-            // todo: fix the code
+// todo: fix the code
 //            std::map<float,size_t> listline;
 //            for (size_t j=0; j<m_Bins.Size(0); j++)
 //            {
@@ -508,7 +511,7 @@ void BivariateHistogram::Write(string fname)
 #ifndef NO_TIFF
     kipl::base::TImage<float,2> img(m_bins.dims());
 
-    float cnt=static_cast<float>(kipl::math::sum(m_bins.GetDataPtr(),m_bins.Size()));
+   // float cnt=static_cast<float>(kipl::math::sum(m_bins.GetDataPtr(),m_bins.Size()));
 
     for (size_t i=0; i<m_bins.Size(); i++) {
         img[i]=static_cast<float>(m_bins[i]);

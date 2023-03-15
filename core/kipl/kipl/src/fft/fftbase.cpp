@@ -13,7 +13,7 @@
 namespace kipl { namespace math { namespace fft {
 
 FFTBase::FFTBase(const std::vector<size_t> &_dims) :
-	logger("kipl::math::fft::FFTBase", std::clog),
+    logger("kipl::math::fft::FFTBase"),
 	have_r2cPlan(false),
 	have_c2cPlan(false),
 	have_c2rPlan(false),

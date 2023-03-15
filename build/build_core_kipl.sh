@@ -18,9 +18,9 @@ mkdir -p $DEST/build-kipl
 cd $DEST/build-kipl
 
 $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/core/kipl/kipl/qt/kipl.pro
-make -f Makefile.release clean
-make -f Makefile.release mocables all
-make -f Makefile.release
+make -f Makefile clean
+make -f Makefile mocables all
+make -f Makefile 
 
 echo "Build tests"
 
@@ -33,9 +33,10 @@ do
 		cd $DEST/build-$f
 
         $QTBINPATH/qmake -makefile -r $SPECSTR -o Makefile ../../imagingsuite/core/kipl/UnitTests/$f/$f.pro
-        make -f Makefile.release clean
-        make -f Makefile.release mocables all
-        make -f Makefile.release
+        make -f Makefile clean
+        make -f Makefile mocables all
+        make -f Makefile 
+
 	fi
 
 done

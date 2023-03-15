@@ -1,27 +1,46 @@
 cmake_minimum_required(VERSION 3.14)
-
 set(TARGET_NAME "ReconFramework")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# find_package(LibXml2 REQUIRED)
+
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../external/src/linalg
     ../../../../core/modules/ModuleConfig/include
-    ../../../../external/mac/include/
-    ../../../../external/mac/include/nexus
-    ../../../../external/mac/include/hdf5
-    )
+    ../../../../core/modules/ReaderConfig
+)
 
-# link_directories(../../../../lib /opt/local/lib ../../../../external/mac/lib)
-link_directories(/opt/local/lib ../../../../external/mac/lib)
+if (APPLE)
+include_directories(
+    ../../../../../ExternalDependencies/macos/include
+    )
+endif()
+
+if (WIN32)
+include_directories(
+    ../../../../../ExternalDependencies/windows/include
+    ../../../../../ExternalDependencies/windows/include/nexus
+    ../../../../../ExternalDependencies/windows/include/cfitsio
+    ../../../../../ExternalDependencies/windows/include/libxml2
+    ../../../../external/include/
+)
+endif()
+
+# if (UNIX)
+# include_directories(
+#     /usr/include/libxml2
+#     ../../../../core/kipl/kipl/include
+#     ../../../../core/algorithms/ImagingAlgorithms/include
+#     ../../../../external/src/linalg
+#     ../../../../core/modules/ModuleConfig/include
+#     ../../../../core/modules/ReaderConfig
+#     )
+# endif()
 
 set(INC_FILES
     include/ReconHelpers.h
@@ -36,7 +55,6 @@ set(INC_FILES
     include/ReconFramework_global.h
     include/BackProjectorModuleBase.h
     include/processtiminglogger.h
-    src/stdafx.h
 )
 
 set(SRC_FILES
@@ -44,13 +62,13 @@ set(SRC_FILES
     src/ReconFramework.cpp
     src/ReconFactory.cpp
     src/ReconException.cpp
-    src/ReconEngine.cpp
     src/ReconConfig.cpp
     src/ProjectionReader.cpp
     src/PreprocModuleBase.cpp
     src/ModuleItem.cpp
     src/BackProjectorModuleBase.cpp
     src/processtiminglogger.cpp
+    src/ReconEngine.cpp
 )
 
 
@@ -59,54 +77,29 @@ add_library(${TARGET_NAME} SHARED
   ${INC_FILES}
 )
 
-
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
-target_compile_definitions(${TARGET_NAME} PRIVATE RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
 
 add_definitions(-DHAVE_NEXUS)
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../../external/mac/lib
-    )
 
-if (APPLE)
-    target_link_libraries(${TARGET_NAME}
-        PRIVATE
+message(${TARGET_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR})
+
+if (WIN32)
+    target_link_directories(${TARGET_NAME} PUBLIC
+    ../../../../../ExternalDependencies/windows/lib
+    ../../../../../imagingsuite/external/lib64
+    ../../../../../imagingsuite/external/lib64/nexus
+    )
+endif()   
+
+target_link_libraries(${TARGET_NAME}
+    PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
-        xml2
-        fftw3
-        fftw3f
-        cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus.1.0.0
-        NeXusCPP.1.0.0
-    )
-endif()
+        ReaderConfig
+)
 
-if (LINUX)
-    target_link_libraries(${TARGET_NAME}
-        PRIVATE
-        kipl
-        ImagingAlgorithms
-        ModuleConfig
-        xml2
-        fftw3
-        fftw3f
-        cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
-        NeXus
-        NeXusCPP
-    )
-endif()
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

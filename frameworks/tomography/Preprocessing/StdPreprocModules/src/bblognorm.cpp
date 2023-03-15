@@ -8,6 +8,7 @@
 #include <math/image_statistics.h>
 #include <math/median.h>
 #include <strings/filenames.h>
+#include <analyzefileext.h>
 
 #include <ParameterHandling.h>
 
@@ -18,6 +19,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("BBLogNorm", interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
     m_Config(""),
+    blackbodyexternalmaskname("none"),
     nBBextCount(1),
     nBBextFirstIndex(0),
     nOBCount(0),
@@ -60,7 +62,8 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
     m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
     m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
-    m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial)
+    m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial),
+    m_maskCreationMethod(ImagingAlgorithms::ReferenceImageCorrection::otsuMask)
 {
     blackbodyname = "./";
     blackbodysamplename = "./";
@@ -100,9 +103,11 @@ BBLogNorm::~BBLogNorm()
 
 }
 
-bool BBLogNorm::updateStatus(float val, string msg){
+bool BBLogNorm::updateStatus(float val, string msg)
+{
 
-    if (m_Interactor!=nullptr) {
+    if (m_Interactor!=nullptr)
+    {
         return m_Interactor->SetProgress(val,msg);
     }
     return false;
@@ -114,10 +119,10 @@ bool BBLogNorm::updateStatus(float val, string msg){
 int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
 
-    m_Config    = config;
-    path        = config.ProjectionInfo.sReferencePath;
-    flatname    = config.ProjectionInfo.sOBFileMask;
-    darkname    = config.ProjectionInfo.sDCFileMask;
+    m_Config      = config;
+    path          = config.ProjectionInfo.sReferencePath;
+    flatname      = config.ProjectionInfo.sOBFileMask;
+    darkname      = config.ProjectionInfo.sDCFileMask;
 
     nOBCount      = config.ProjectionInfo.nOBCount;
     nOBFirstIndex = config.ProjectionInfo.nOBFirstIndex;
@@ -127,38 +132,40 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
 
 
     m_nWindow = GetIntParameter(parameters,"window");
-    string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
-    string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
-    string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
-    string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
-    string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
-    string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
+    string2enum(GetStringParameter(parameters, "avgmethod"),           m_ReferenceAverageMethod);
+    string2enum(GetStringParameter(parameters, "refmethod"),           m_ReferenceMethod);
+    string2enum(GetStringParameter(parameters, "BBOption"),            m_BBOptions);
+    string2enum(GetStringParameter(parameters, "X_InterpOrder"),       m_xInterpOrder);
+    string2enum(GetStringParameter(parameters, "Y_InterpOrder"),       m_yInterpOrder);
+    string2enum(GetStringParameter(parameters, "InterpolationMethod"), m_InterpMethod);
+    string2enum(GetStringParameter(parameters, "MaskCreationMethod"),  m_maskCreationMethod);
     bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
 
 
-    blackbodyname = GetStringParameter(parameters,"BB_OB_name");
-    nBBCount = GetIntParameter(parameters,"BB_counts");
-    nBBFirstIndex = GetIntParameter(parameters, "BB_first_index");
-    blackbodysamplename = GetStringParameter(parameters,"BB_samplename");
-    nBBSampleFirstIndex = GetIntParameter(parameters, "BB_sample_firstindex");
-    nBBSampleCount = GetIntParameter(parameters,"BB_samplecounts");
+    blackbodyname       = GetStringParameter(parameters, "BB_OB_name");
+    nBBCount            = GetIntParameter(parameters,    "BB_counts");
+    nBBFirstIndex       = GetIntParameter(parameters,    "BB_first_index");
+    blackbodysamplename = GetStringParameter(parameters, "BB_samplename");
+    nBBSampleFirstIndex = GetIntParameter(parameters,    "BB_sample_firstindex");
+    nBBSampleCount      = GetIntParameter(parameters,    "BB_samplecounts");
 
-    blackbodyexternalname = GetStringParameter(parameters, "BB_OB_ext_name");
+    blackbodyexternalname       = GetStringParameter(parameters, "BB_OB_ext_name");
     blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
-    nBBextCount = GetIntParameter(parameters, "BB_ext_samplecounts");
-    nBBextFirstIndex = GetIntParameter(parameters, "BB_ext_firstindex");
+    blackbodyexternalmaskname   = GetStringParameter(parameters, "BB_mask_ext_name");
+    nBBextCount                 = GetIntParameter(parameters,    "BB_ext_samplecounts");
+    nBBextFirstIndex            = GetIntParameter(parameters,    "BB_ext_firstindex");
 
-    tau = GetFloatParameter(parameters, "tau");
-    radius = GetIntParameter(parameters, "radius");
-    min_area = GetIntParameter(parameters, "min_area");
+    tau              = GetFloatParameter(parameters, "tau");
+    radius           = GetIntParameter(parameters,   "radius");
+    min_area         = GetIntParameter(parameters,   "min_area");
     GetUIntParameterVector(parameters, "BBroi", BBroi, 4);
     GetUIntParameterVector(parameters, "doseBBroi", doseBBroi, 4);
-    ffirstAngle = GetFloatParameter(parameters, "firstAngle");
-    flastAngle = GetFloatParameter(parameters, "lastAngle");
-    bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+    ffirstAngle      = GetFloatParameter(parameters, "firstAngle");
+    flastAngle       = GetFloatParameter(parameters, "lastAngle");
+    bSameMask        = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
-    bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
-    thresh = GetFloatParameter(parameters,"thresh");
+    bExtSingleFile   = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
+    thresh           = GetFloatParameter(parameters,"thresh");
 
     m_corrector.SaveBG(false, blackbodyname, blackbodyname, blackbodyname); // fake names
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
@@ -170,8 +177,10 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
     size_t roi_bb_y = BBroi[3]-BBroi[1];
 
     // do i need this here?
-    if (roi_bb_x>0 && roi_bb_y>0) {}
-    else {
+    if (roi_bb_x>0 && roi_bb_y>0)
+    {}
+    else
+    {
         BBroi = m_Config.ProjectionInfo.projection_roi;  // use the same as projections in case.. if i don't I got an Exception
     }
 
@@ -252,41 +261,40 @@ int BBLogNorm::ConfigureDLG(ReconConfig config, std::map<std::string, std::strin
 
 
     m_nWindow = GetIntParameter(parameters,"window");
-    string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
-    string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
-    string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
-    string2enum(GetStringParameter(parameters, "X_InterpOrder"), m_xInterpOrder);
-    string2enum(GetStringParameter(parameters, "Y_InterpOrder"), m_yInterpOrder);
+    string2enum(GetStringParameter(parameters,"avgmethod"),           m_ReferenceAverageMethod);
+    string2enum(GetStringParameter(parameters,"refmethod"),           m_ReferenceMethod);
+    string2enum(GetStringParameter(parameters,"BBOption"),            m_BBOptions);
+    string2enum(GetStringParameter(parameters, "X_InterpOrder"),      m_xInterpOrder);
+    string2enum(GetStringParameter(parameters, "Y_InterpOrder"),      m_yInterpOrder);
     string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
     bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
 
 
-    blackbodyname = GetStringParameter(parameters,"BB_OB_name");
-    nBBCount = GetIntParameter(parameters,"BB_counts");
-    nBBFirstIndex = GetIntParameter(parameters, "BB_first_index");
-    blackbodysamplename = GetStringParameter(parameters,"BB_samplename");
-    nBBSampleFirstIndex = GetIntParameter(parameters, "BB_sample_firstindex");
-    nBBSampleCount = GetIntParameter(parameters,"BB_samplecounts");
+    blackbodyname       = GetStringParameter(parameters, "BB_OB_name");
+    nBBCount            = GetIntParameter(parameters,    "BB_counts");
+    nBBFirstIndex       = GetIntParameter(parameters,    "BB_first_index");
+    blackbodysamplename = GetStringParameter(parameters, "BB_samplename");
+    nBBSampleFirstIndex = GetIntParameter(parameters,    "BB_sample_firstindex");
+    nBBSampleCount      = GetIntParameter(parameters,    "BB_samplecounts");
 
-    blackbodyexternalname = GetStringParameter(parameters, "BB_OB_ext_name");
+    blackbodyexternalname       = GetStringParameter(parameters, "BB_OB_ext_name");
     blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
-    nBBextCount = GetIntParameter(parameters, "BB_ext_samplecounts");
-    nBBextFirstIndex = GetIntParameter(parameters, "BB_ext_firstindex");
+    nBBextCount                 = GetIntParameter(parameters,    "BB_ext_samplecounts");
+    nBBextFirstIndex            = GetIntParameter(parameters,    "BB_ext_firstindex");
 
-    tau = GetFloatParameter(parameters, "tau");
-    radius = GetIntParameter(parameters, "radius");
-    min_area = GetIntParameter(parameters, "min_area");
+    tau              = GetFloatParameter(parameters, "tau");
+    radius           = GetIntParameter(parameters,   "radius");
+    min_area         = GetIntParameter(parameters,   "min_area");
     GetUIntParameterVector(parameters, "BBroi", BBroi, 4);
     GetUIntParameterVector(parameters, "doseBBroi", doseBBroi, 4);
-    ffirstAngle = GetFloatParameter(parameters, "firstAngle");
-    flastAngle = GetFloatParameter(parameters, "lastAngle");
-    bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+    ffirstAngle      = GetFloatParameter(parameters, "firstAngle");
+    flastAngle       = GetFloatParameter(parameters, "lastAngle");
+    bSameMask        = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
     bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
-    thresh = GetFloatParameter(parameters,"thresh");
-    bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
+    thresh           = GetFloatParameter(parameters, "thresh");
+    bExtSingleFile   = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
 
     m_corrector.SetManualThreshold(bUseManualThresh,thresh);
-
 
     nOriginalNormRegion = config.ProjectionInfo.dose_roi;
 
@@ -300,58 +308,69 @@ int BBLogNorm::ConfigureDLG(ReconConfig config, std::map<std::string, std::strin
     }
 
     //check on dose BB roi size
-    if ((doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0){
-        bUseNormROIBB=false;
+    if ( (doseBBroi[2]-doseBBroi[0])<=0 || (doseBBroi[3]-doseBBroi[1])<=0 )
+    {
+        bUseNormROIBB = false;
     }
-    else {
+    else  {
         bUseNormROIBB = true;
     }
 
-    if ((m_Config.ProjectionInfo.dose_roi[2]-m_Config.ProjectionInfo.dose_roi[0])<=0 || (m_Config.ProjectionInfo.dose_roi[3]-m_Config.ProjectionInfo.dose_roi[1])<=0 ){
+    if (    (m_Config.ProjectionInfo.dose_roi[2]-m_Config.ProjectionInfo.dose_roi[0])<=0
+         || (m_Config.ProjectionInfo.dose_roi[3]-m_Config.ProjectionInfo.dose_roi[1])<=0 )
+    {
         bUseNormROI=false;
         throw ReconException("No roi is selected for dose correction. This is necessary for accurate BB referencing",__FILE__, __LINE__);
     }
-    else{
+    else
+    {
         bUseNormROI=true;
     }
 
-    if (enum2string(m_ReferenceMethod)=="LogNorm"){
+    if (enum2string(m_ReferenceMethod)=="LogNorm")
+    {
         m_corrector.SetComputeMinusLog(true);
     }
-    else {
+    else
+    {
         m_corrector.SetComputeMinusLog(false);
     }
 
-    switch (m_BBOptions){
-    case (ImagingAlgorithms::ReferenceImageCorrection::noBB): {
-        bUseBB = false;
+    switch (m_BBOptions)
+    {
+    case (ImagingAlgorithms::ReferenceImageCorrection::noBB):
+    {
+        bUseBB         = false;
         bUseExternalBB = false;
         break;
     }
-    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate): {
-        bUseBB = true;
+    case (ImagingAlgorithms::ReferenceImageCorrection::Interpolate):
+    {
+        bUseBB         = true;
         bUseExternalBB = false;
         break;
     }
-    case (ImagingAlgorithms::ReferenceImageCorrection::Average): {
-        bUseBB = true;
+    case (ImagingAlgorithms::ReferenceImageCorrection::Average):
+    {
+        bUseBB         = true;
         bUseExternalBB = false;
         break;
     }
-    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne): {
-        bUseBB = true;
+    case (ImagingAlgorithms::ReferenceImageCorrection::OneToOne):
+    {
+        bUseBB         = true;
         bUseExternalBB = false;
         break;
     }
-    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB): {
-        bUseBB = false; // to evaluate
+    case (ImagingAlgorithms::ReferenceImageCorrection::ExternalBB):
+    {
+        bUseBB         = false; // to evaluate
         bUseExternalBB = true;
         break;
     }
     default: throw ReconException("Unknown BBOption method in BBLogNorm::Configure",__FILE__,__LINE__);
 
     }
-
 
     return 1;
 }
@@ -360,7 +379,7 @@ bool BBLogNorm::SetROI(const std::vector<size_t> &roi) {
 
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str());
 
     LoadReferenceImages(roi);
     nNormRegion = nOriginalNormRegion; //nNormRegion seems not used
@@ -368,38 +387,41 @@ bool BBLogNorm::SetROI(const std::vector<size_t> &roi) {
 }
 
 
-std::map<std::string, std::string> BBLogNorm::GetParameters() {
+std::map<std::string, std::string> BBLogNorm::GetParameters()
+{
     std::map<std::string, std::string> parameters;
 
-    parameters["window"] = kipl::strings::value2string(m_nWindow);
-    parameters["avgmethod"] = enum2string(m_ReferenceAverageMethod);
-    parameters["refmethod"] = enum2string(m_ReferenceMethod);
-    parameters["BB_OB_name"] = blackbodyname;
-    parameters["BB_counts"] = kipl::strings::value2string(nBBCount);
-    parameters["BB_first_index"] = kipl::strings::value2string(nBBFirstIndex);
-    parameters["BB_samplename"] = blackbodysamplename;
-    parameters["BB_samplecounts"] = kipl::strings::value2string(nBBSampleCount);
+    parameters["window"]               = kipl::strings::value2string(m_nWindow);
+    parameters["avgmethod"]            = enum2string(m_ReferenceAverageMethod);
+    parameters["refmethod"]            = enum2string(m_ReferenceMethod);
+    parameters["BB_OB_name"]           = blackbodyname;
+    parameters["BB_counts"]            = kipl::strings::value2string(nBBCount);
+    parameters["BB_first_index"]       = kipl::strings::value2string(nBBFirstIndex);
+    parameters["BB_samplename"]        = blackbodysamplename;
+    parameters["BB_samplecounts"]      = kipl::strings::value2string(nBBSampleCount);
     parameters["BB_sample_firstindex"] = kipl::strings::value2string(nBBSampleFirstIndex);
-    parameters["tau"] = kipl::strings::value2string(tau);
-    parameters["radius"] = kipl::strings::value2string(radius);
-    parameters["BBroi"] = kipl::strings::value2string(BBroi[0])+" "+kipl::strings::value2string(BBroi[1])+" "+kipl::strings::value2string(BBroi[2])+" "+kipl::strings::value2string(BBroi[3]);
-    parameters["doseBBroi"] = kipl::strings::value2string(doseBBroi[0])+" "+kipl::strings::value2string(doseBBroi[1])+" "+kipl::strings::value2string(doseBBroi[2])+" "+kipl::strings::value2string(doseBBroi[3]);
-    parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
-    parameters["BBOption"] = enum2string(m_BBOptions);
-    parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
-    parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
-    parameters["X_InterpOrder"] = enum2string(m_xInterpOrder);
-    parameters["Y_InterpOrder"] = enum2string(m_yInterpOrder);
-    parameters["InterpolationMethod"] = enum2string(m_InterpMethod);
-    parameters["BB_OB_ext_name"] = blackbodyexternalname;
-    parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
-    parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
-    parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
-    parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
-    parameters["min_area"] = kipl::strings::value2string(min_area);
-    parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
-    parameters["thresh"]= kipl::strings::value2string(thresh);
-    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
+    parameters["tau"]                  = kipl::strings::value2string(tau);
+    parameters["radius"]               = kipl::strings::value2string(radius);
+    parameters["BBroi"]                = kipl::strings::value2string(BBroi[0])+" "+kipl::strings::value2string(BBroi[1])+" "+kipl::strings::value2string(BBroi[2])+" "+kipl::strings::value2string(BBroi[3]);
+    parameters["doseBBroi"]            = kipl::strings::value2string(doseBBroi[0])+" "+kipl::strings::value2string(doseBBroi[1])+" "+kipl::strings::value2string(doseBBroi[2])+" "+kipl::strings::value2string(doseBBroi[3]);
+    parameters["PBvariante"]           = kipl::strings::bool2string(bPBvariante);
+    parameters["BBOption"]             = enum2string(m_BBOptions);
+    parameters["firstAngle"]           = kipl::strings::value2string(ffirstAngle);
+    parameters["lastAngle"]            = kipl::strings::value2string(flastAngle);
+    parameters["X_InterpOrder"]        = enum2string(m_xInterpOrder);
+    parameters["Y_InterpOrder"]        = enum2string(m_yInterpOrder);
+    parameters["InterpolationMethod"]  = enum2string(m_InterpMethod);
+    parameters["BB_OB_ext_name"]       = blackbodyexternalname;
+    parameters["BB_sample_ext_name"]   = blackbodysampleexternalname;
+    parameters["BB_mask_ext_name"]     = blackbodyexternalmaskname;
+    parameters["MaskCreationMethod"]   = enum2string(m_maskCreationMethod);
+    parameters["BB_ext_samplecounts"]  = kipl::strings::value2string(nBBextCount);
+    parameters["BB_ext_firstindex"]    = kipl::strings::value2string(nBBextFirstIndex);
+    parameters["SameMask"]             = kipl::strings::bool2string(bSameMask);
+    parameters["min_area"]             = kipl::strings::value2string(min_area);
+    parameters["ManualThreshold"]      = kipl::strings::bool2string(bUseManualThresh);
+    parameters["thresh"]               = kipl::strings::value2string(thresh);
+    parameters["singleBBext"]          = kipl::strings::bool2string(bExtSingleFile);
 
     return parameters;
 }
@@ -605,7 +627,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str();
+        msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -953,7 +975,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str();
+        msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -1396,7 +1418,7 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str();
+        msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -1507,7 +1529,6 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
-    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -1515,8 +1536,9 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        found = fmask.find("hdf");
-         if (found==std::string::npos ) {
+        auto exttype = readers::GetFileExtensionType(fmask);
+         if (exttype != readers::ExtensionHDF5 )
+         {
 
             kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
             img = reader.Read(filename,
@@ -1559,7 +1581,8 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            if (found==std::string::npos ) {
+            if (exttype != readers::ExtensionHDF5 )
+            {
 
                 img=reader.Read(filename,
                         m_Config.ProjectionInfo.eFlip,
@@ -1646,7 +1669,6 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
-    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -1654,9 +1676,9 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        found = fmask.find("hdf");
-
-        if (found==std::string::npos ) {
+        auto exttype = readers::GetFileExtensionType(fmask);
+        if (exttype != readers::ExtensionHDF5 )
+        {
             kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
             img = reader.Read(filename,
                     config.ProjectionInfo.eFlip,
@@ -1695,7 +1717,8 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
         for (int i=1; i<N; ++i) {
 
-            if (found==std::string::npos ) {
+            if (exttype != readers::ExtensionHDF5 )
+            {
                 kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
                 img=reader.Read(filename,
@@ -1711,7 +1734,8 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
                             config.ProjectionInfo.fBinning,
                             doseBBroi) : initialDose;
             }
-            else{
+            else
+            {
                         img=reader.ReadNexus(fmask,i+firstIndex,
                                 m_Config.ProjectionInfo.eFlip,
                                 m_Config.ProjectionInfo.eRotate,
@@ -1744,10 +1768,10 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
 
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-             float *pFlat=refimg.GetDataPtr();
-            for (size_t i=1; i<refimg.Size(1); i++) {
+            float *pFlat=refimg.GetDataPtr();
+            for (size_t i=1; i<refimg.Size(1); i++)
+            {
                 memcpy(refimg.GetLinePtr(i), pFlat, sizeof(float)*refimg.Size(0));
-
             }
         }
     }
@@ -1771,11 +1795,9 @@ float BBLogNorm::DoseBBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
-    size_t found;
 
-    found=fname.find("hdf");
-
-    if (found!=std::string::npos)
+    auto exttype = readers::GetFileExtensionType(fname);
+    if (exttype == readers::ExtensionHDF5)
     {
         tmpdose=bUseNormROIBB ? reader.GetProjectionDoseNexus(fmask,firstIndex,
                     config.ProjectionInfo.eFlip,

@@ -4,13 +4,13 @@
 #define PREPROCMODULEBASE_H
 #include "ReconFramework_global.h"
 
+#include <map>
+#include <string>
+
 #include <logging/logger.h>
 #include <base/timage.h>
 #include <profile/Timer.h>
-#include <string>
 #include <strings/miscstring.h>
-#include <map>
-
 #include <ProcessModuleBase.h>
 #include <interactors/interactionbase.h>
 

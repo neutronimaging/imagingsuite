@@ -4,9 +4,15 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <emmintrin.h>
 #include <cmath>
 #include <math.h>
+
+#ifdef __aarch64__
+    #include <sse2neon.h>
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
 
 #include "fftw3.h"
 
@@ -64,19 +70,6 @@ FDKbp::~FDKbp()
 
 int FDKbp::Initialize()
 {
-    return 0;
-}
-
-int FDKbp::InitializeBuffers(int width, int height)
-{
-    prepareFFT(width,height);
-    return 0;
-}
-
-int FDKbp::FinalizeBuffers()
-{
-    cleanupFFT();
-
     return 0;
 }
 
@@ -287,51 +280,24 @@ void FDKbp::getProjMatrix(float angles, double *nrm, double *proj_matrix){
 /// Main reconstruction loop - Loop over images, and backproject each image into the volume.
 size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_t nProj)
 {
-
     // missing things todo:
     // 1. use circular mask
     // 2. check parallel cycles
 
-
-//        float scale;
-//        double filter_time = 0.0;
-//        double backproject_time = 0.0;
-//        double io_time = 0.0;
-        double nrm[3] = {0.0, 0.0, 0.0};
-        double proj_matrix[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Projection matrix */
+    double nrm[3] = {0.0, 0.0, 0.0};
+    double proj_matrix[12] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; /* Projection matrix */
 
 
-        getProjMatrix(angles, nrm, proj_matrix); // panel oriented as z, to be used with project_volume_onto_image_c
+    getProjMatrix(angles, nrm, proj_matrix); // panel oriented as z, to be used with project_volume_onto_image_c
 
-//            /* Apply ramp filter */
-//            if (parms->filter == FDK_FILTER_TYPE_RAMP) {
-//                timer->start ();
+    filter.process(proj);
+    //        ramp_filter_tuned(proj);
 
-      //  prepareFFT(proj.Size(0),proj.Size(1)); // Prepare and cleanup should be called outside this loop why this is commented?
-        ramp_filter_tuned(proj);
-      //  cleanupFFT();
-//                filter_time += timer->report ();
-//            }
+    //        REFERENCE FDK IMPLEMENTATION:
+    //        project_volume_onto_image_reference (proj, &proj_matrix[0], &nrm[0]);
 
-
-
-//        REFERENCE FDK IMPLEMENTATION:
-//        project_volume_onto_image_reference (proj, &proj_matrix[0], &nrm[0]);
-
-//       DEFAULT FDK BACK PROJECTOR:                
-        project_volume_onto_image_c (proj, &proj_matrix[0], nProj);
-
-
-//        printf ("I/O time (total) = %g\n", io_time);
-//        printf ("I/O time (per image) = %g\n", io_time / num_imgs);
-//        printf ("Filter time = %g\n", filter_time);
-//        printf ("Filter time (per image) = %g\n", filter_time / num_imgs);
-//        printf ("Backprojection time = %g\n", backproject_time);
-//        printf ("Backprojection time (per image) = %g\n",
-//        backproject_time / num_imgs);
-
-//        delete timer;
-
+    //       DEFAULT FDK BACK PROJECTOR:
+    project_volume_onto_image_c (proj, &proj_matrix[0], nProj);
 
     return 0L;
 }
@@ -538,11 +504,11 @@ void FDKbp::project_volume_onto_image_reference (
     const size_t SizeZ  = volume.Size(0)>>2;
     __m128 column[2048]; // not used for now..
 
-//    Proj_matrix *pmat = cbi->pmat; /* projection matrix 3D -> 2D in homogenous coordinates */
+//    Proj_matrix *pmat = cbi->pmat; // projection matrix 3D -> 2D in homogenous coordinates
 
     p = 0;
     vp[3] = 1.0;
-    /* Loop k (slices), j (rows), i (cols) */
+    // Loop k (slices), j (rows), i (cols)
 
 
     double ic[2] = {mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.roi[0], mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]}; // piercing point
@@ -669,325 +635,3 @@ float FDKbp::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, double r, doub
      return cbi[rr*cbi.Size(0) + cc];
 
  }
-
-
-
-
-void FDKbp::ramp_filter(kipl::base::TImage<float, 2> &img)
-{
-    logger(logger.LogDebug,"Started ramp_filter");
-    unsigned int i, r, c;
-    unsigned int N, Npad;
-
-    unsigned int width = img.Size(0);
-    unsigned int height = img.Size(1);
-    unsigned int padwidth = 2*pow(2, ceil(log(width)/log(2)));
-    unsigned int pad_factor = padwidth-width;
-    unsigned int padheight = height;
-
-
-    std::vector<size_t> pad_dims = {padwidth, height};
-    kipl::base::TImage< float,2 > padImg(pad_dims);
-    padImg = 0.0; // fill with zeros
-
-    // do zero padding
-    for (size_t i=0; i<height; ++i)
-    {
-        memcpy(padImg.GetLinePtr(i,0)+pad_factor/2, img.GetLinePtr(i,0), sizeof(float)*width);
-    }
-
-    fftw_complex *in;
-    fftw_complex *fft;
-    fftw_complex *ifft;
-    fftw_plan     fftp;
-    fftw_plan     ifftp;
-    double *ramp;
-    ramp = (double*) malloc (padwidth * sizeof(double));
-
-
-    if (!ramp)
-    {
-        printf ("Error allocating memory for ramp\n"); // to substitute with an exception
-    }
-
-    N = width * height;
-    Npad = padwidth*padheight;
-
-    in   = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
-    fft  = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
-    ifft = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
-
-
-    if (!in || !fft || !ifft)
-    {
-        printf("Error allocating memory for fft\n");
-    }
-
-    float *data    = img.GetDataPtr();
-    float *paddata = padImg.GetDataPtr();
-
-
-    for (r = 0; r < MARGIN; ++r)
-        memcpy (paddata + r * padwidth, paddata + MARGIN * padwidth,
-        padwidth * sizeof(float));
-
-    for (r = height - MARGIN; r < height; ++r)
-        memcpy (paddata + r * padwidth, paddata + (padheight - MARGIN - 1) * padwidth,
-        padwidth * sizeof(float));
-
-    for (r = 0; r < padheight; ++r)
-    {
-        for (c = 0; c < MARGIN; ++c)
-        {
-            paddata[r * padwidth + c] = paddata[r * padwidth + MARGIN];
-        }
-        for (c = padwidth - MARGIN; c < padwidth; ++c)
-        {
-            paddata[r * padwidth + c] = paddata[r * padwidth + padwidth - MARGIN - 1];
-        }
-    }
-
-
-    /* Fill in ramp filter in frequency space */
-    for (i = 0; i < Npad; ++i) {
-        in[i][0] = (double)(paddata[i]);
-        in[i][1] = 0.0;
-    }
-
-
-
-
-
-    /* Add padding */
-    for (i = 0; i < padwidth / 2; ++i)
-        ramp[i] = i;
-
-
-    for (i = padwidth / 2; i < (unsigned int) padwidth; ++i)
-        ramp[i] = padwidth - i;
-
-    /* Roll off ramp filter */
-    for (i = 0; i < padwidth; ++i)
-    {
-//        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
-        ramp[i] *= (0.54+0.46*(cos (i * DEGTORAD * 360 / padwidth) + 1));
-        ramp[i] /= padwidth*0.5;
-    }
-
-    for (r = 0; r < padheight; ++r)
-    {
-        fftp = fftw_plan_dft_1d (padwidth, in + r * padwidth, fft + r * padwidth,
-            FFTW_FORWARD, FFTW_ESTIMATE);
-        if (!fftp)
-        {
-            printf ("Error creating fft plan\n");
-        }
-
-        ifftp = fftw_plan_dft_1d (padwidth, fft + r * padwidth, ifft + r * padwidth,
-            FFTW_BACKWARD, FFTW_ESTIMATE);
-
-        if (!ifftp)
-        {
-            printf ("Error creating ifft plan\n");
-        }
-
-        fftw_execute (fftp);
-
-        // Apply ramp
-        for (c = 0; c < padwidth; ++c)
-        {
-            fft[r * padwidth + c][0] *= ramp[c];
-            fft[r * padwidth + c][1] *= ramp[c];
-        }
-
-        // Add apodization
-
-        fftw_execute (ifftp);
-
-        fftw_destroy_plan (fftp);
-        fftw_destroy_plan (ifftp);
-    }
-
-
-    for (i = 0; i < Npad; ++i)
-        ifft[i][0] /= padwidth;
-
-    for (i = 0; i < Npad; ++i)
-        paddata[i] = (float)(ifft[i][0]);
-
-    // fo back to original dimension
-
-    for (i=0; i<height; ++i)
-    {
-        memcpy(img.GetLinePtr(i,0), padImg.GetLinePtr(i,0)+pad_factor/2, sizeof(float)*width);
-    }
-
-    fftw_free (in);
-    fftw_free (fft);
-    fftw_free (ifft);
-    free (ramp);
-}
-
-void FDKbp::ramp_filter_tuned(kipl::base::TImage<float, 2> &img)
-{
-    std::ostringstream msg;
-    logger(logger.LogDebug,"Started tuned ramp_filter");
-    unsigned int i, r, c;
-    unsigned int N, Npad;
-
-    unsigned int width      = img.Size(0);
-    unsigned int height     = img.Size(1);
-    unsigned int pad_factor = padwidth-width;
-    unsigned int padheight  = height;
-    // Comment AK: Using only the intended line will speed up things
-    unsigned int firstLine  = 0;      //mConfig.ProjectionInfo.roi[1];
-    unsigned int lastLine   = height; //mConfig.ProjectionInfo.roi[3];
-//    unsigned int firstLine  = mConfig.ProjectionInfo.roi[1];
-//    unsigned int lastLine   = mConfig.ProjectionInfo.roi[3];
-
-    msg.str("");
-    msg<<"Pad width="<<padwidth;
-    logger(logger.LogDebug,msg.str());
-
-    std::vector<size_t> pad_dims = {padwidth, height};
-    kipl::base::TImage< float,2 > padImg(pad_dims);
-    padImg = 0.0f; // fill with zeros
-
-    // do zero padding
-    for (size_t i=firstLine; i<lastLine; ++i)
-    {
-        memcpy(padImg.GetLinePtr(i)+pad_factor/2, img.GetLinePtr(i), sizeof(float)*width);
-    }
-
-
-    double *ramp=nullptr;
-
-    ramp = (double*) malloc (padwidth * sizeof(double));
-
-    if (!ramp) {
-        throw ReconException("Error allocating memory for ramp",__FILE__,__LINE__);
-    }
-
-    N = width * height;
-    Npad = padwidth*padheight;
-
-    if (!in || !fft || !ifft) {
-        throw ReconException("Error allocating memory for fft buffers",__FILE__,__LINE__);
-    }
-
-    float *data = img.GetDataPtr();
-    float *paddata = padImg.GetDataPtr();
-
-    for (r = 0; r < MARGIN; ++r)
-        memcpy (paddata + r * padwidth, paddata + MARGIN * padwidth,
-        padwidth * sizeof(float));
-
-    for (r = height - MARGIN; r < height; ++r)
-        memcpy (paddata + r * padwidth, paddata + (padheight - MARGIN - 1) * padwidth,
-        padwidth * sizeof(float));
-
-    for (r = 0; r < padheight; ++r) {
-        for (c = 0; c < MARGIN; ++c){
-            paddata[r * padwidth + c] = paddata[r * padwidth + MARGIN];
-        }
-        for (c = padwidth - MARGIN; c < padwidth; ++c){
-            paddata[r * padwidth + c] = paddata[r * padwidth + padwidth - MARGIN - 1];
-        }
-    }
-
-
-    // Fill in ramp filter in frequency space
-    for (i = 0; i < Npad; ++i) {
-        in[i][0] = (double)(paddata[i]);
-        in[i][1] = 0.0;
-    }
-
-
-    // Add padding
-    for (i = 0; i < padwidth / 2; ++i)
-        ramp[i] = i;
-
-
-    for (i = padwidth / 2; i < (unsigned int) padwidth; ++i)
-        ramp[i] = padwidth - i;
-
-    // Roll off ramp filter
-    for (i = 0; i < padwidth; ++i)
-    {
-//        ramp[i] *= (cos (i * DEGTORAD * 360 / padwidth) + 1) / 2;
-        ramp[i] *= (0.54+0.46*(cos (i * DEGTORAD * 360 / padwidth) + 1));
-        ramp[i] /= padwidth*0.5;
-    }
-
-
-
-    for (r = firstLine; r < lastLine; ++r)
-    {
-        // Copy padded projection line to 'in' buffer
-        memcpy(in_buffer,in+r*padwidth,sizeof(fftw_complex)*padwidth);
-        fftw_execute (fftp);
-
-        // Apply ramp
-        for (c = 0; c < padwidth; ++c) {
-            fft[c][0] *= ramp[c];
-            fft[c][1] *= ramp[c];
-        }
-
-        // Add apodization. Comment AK: This already done as roll-off ramp.
-
-        fftw_execute (ifftp);
-        memcpy(ifft+r*padwidth,ifft_buffer,sizeof(fftw_complex)*padwidth);
-    }
-
-    data[i] = (float)(ifft[i][0]);
-
-    for (i = 0; i < Npad; ++i)
-        ifft[i][0] /= padwidth;
-
-    for (i = 0; i < Npad; ++i)
-        paddata[i] = (float)(ifft[i][0]);
-
-    // fo back to original dimension
-
-    for (i=firstLine; i<lastLine; ++i){
-        memcpy(img.GetLinePtr(i,0), padImg.GetLinePtr(i,0)+pad_factor/2, sizeof(float)*width);
-    }
-
-    free (ramp);
-}
-
-void FDKbp::prepareFFT(int width, int height)
-{
-    padwidth = 2*pow(2, ceil(log(width)/log(2)));
-    int Npad=padwidth*height;
-
-    in          = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
-    in_buffer   = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * padwidth);
-    fft         = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * padwidth);
-    ifft        = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * Npad);
-    ifft_buffer = (fftw_complex*) fftw_malloc (sizeof(fftw_complex) * padwidth);
-
-    fftp = fftw_plan_dft_1d (padwidth, in_buffer, fft, FFTW_FORWARD, FFTW_ESTIMATE);
-    if (!fftp)
-    {
-        throw ReconException("Error creating fft plan",__FILE__,__LINE__);
-    }
-
-    ifftp = fftw_plan_dft_1d (padwidth, fft, ifft_buffer, FFTW_BACKWARD, FFTW_ESTIMATE);
-    if (!ifftp)
-    {
-        throw ReconException("Error creating ifft plan",__FILE__,__LINE__);
-    }
-}
-
-void FDKbp::cleanupFFT()
-{
-    fftw_destroy_plan (fftp);
-    fftw_destroy_plan (ifftp);
-
-    fftw_free (in);
-    fftw_free (fft);
-    fftw_free (ifft);
-    fftw_free (in_buffer);
-    fftw_free (ifft_buffer);
-}

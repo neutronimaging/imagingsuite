@@ -190,13 +190,13 @@ void ImagePainter::setImage(float const * const data, const std::vector<size_t> 
 
 void ImagePainter::setPlot(QVector<QPointF> data, QColor color, int idx)
 {
-    m_PlotList[idx]=qMakePair<QVector<QPointF>, QColor>(data,color);
+    m_PlotList[idx]=std::make_pair(data,color);
     m_pParent->update();
 }
 
 void ImagePainter::setRectangle(QRect rect, QColor color, int idx)
 {
-    m_BoxList[idx]=qMakePair<QRect,QColor>(rect,color);
+    m_BoxList[idx]=std::make_pair(rect,color);
     m_pParent->update();
 }
 
@@ -207,7 +207,7 @@ void ImagePainter::holdAnnotations(bool hold)
 
 int ImagePainter::clearPlot(int idx)
 {
-    QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
+    //QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
 
     if (!m_PlotList.empty())
     {
@@ -217,7 +217,7 @@ int ImagePainter::clearPlot(int idx)
         }
         else
         {
-            it=m_PlotList.find(idx);
+            auto it=m_PlotList.find(idx);
             if (it!=m_PlotList.end())
             {
                 m_PlotList.erase (it);
@@ -231,8 +231,6 @@ int ImagePainter::clearPlot(int idx)
 
 int ImagePainter::clearRectangle(int idx)
 {
-    QMap<int,QPair<QRect, QColor> >::iterator it;
-
     if (!m_BoxList.empty())
     {
         if (idx<0)
@@ -241,7 +239,7 @@ int ImagePainter::clearRectangle(int idx)
         }
         else
         {
-            it=m_BoxList.find(idx);
+            auto it=m_BoxList.find(idx);
 
             if (it!=m_BoxList.end())
             {

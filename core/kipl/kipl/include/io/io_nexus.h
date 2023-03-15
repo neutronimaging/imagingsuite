@@ -1,6 +1,14 @@
 #ifndef IO_NEXUS_H
 #define IO_NEXUS_H
 
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cstring>
+#include <sstream>
+#include <vector>
+#include <map>
+
 #include "../kipl_global.h"
 #include "../base/imagecast.h"
 #include "../base/timage.h"
@@ -10,24 +18,17 @@
 #include "../strings/filenames.h"
 #include "../base/kiplenums.h"
 #include "../math/sums.h"
-
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
-#include <cstring>
-#include <sstream>
-#include <vector>
-#include <map>
+#include "../logging/logger.h"
 
 #include <nexus/napi.h>
 #include <nexus/NeXusFile.hpp>
 #include <nexus/NeXusException.hpp>
 
-#ifdef _MSC_VER
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
+// #ifdef _MSC_VER
+// #include <io.h>
+// #else
+// #include <unistd.h>
+// #endif
 
 
 using std::cout;
@@ -43,6 +44,8 @@ using namespace std;
 
 namespace kipl { namespace io {
 
+size_t KIPLSHARED_EXPORT nexusTypeSize(NeXus::NXnumtype nt);
+
 /// \brief Read the image data content from Nexus file and stores it in the data type specified by the image
 ///	\param src the image to be stored
 ///	\param fname file name of the destination file (including extension .hdf)
@@ -50,6 +53,7 @@ namespace kipl { namespace io {
 template <class ImgType, size_t NDim>
 int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, size_t number, const std::vector<size_t> & nCrop)
 {
+    kipl::logging::Logger logger("ReadNexus (full)");
     std::stringstream msg;
 
     NeXus::File file(fname);
@@ -60,27 +64,26 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
     attr_infos = file.getAttrInfos(); // check how many or assuming that there is only one?
     map<string, string> entries = file.getEntries();
 
+    msg.str("");
+    msg<<"# file entries = "<< entries.size(); logger.verbose(msg.str());
 
-    for (map<string,string>::const_iterator it = entries.begin();it != entries.end(); ++it) {
-        if(it->second=="NXdata") {
-            file.openGroup(it->first, it->second);
+    for (const auto & entry : entries)
+    {
+        logger.verbose(entry.second);
+        if ((entry.second=="NXdata") || (entry.second=="Nxdata"))
+        {
+            file.openGroup(entry.first, entry.second);
             attr_infos = file.getAttrInfos();
-
             map<string, string> entries_data = file.getEntries();
 
-            for (map<string,string>::const_iterator it_data = entries_data.begin();
-                 it_data != entries_data.end(); it_data++) {
-                file.openData(it_data->first);
+            for (const auto & data_entry: entries_data)
+            {
+                file.openData(data_entry.first);
                 attr_infos = file.getAttrInfos();
-                for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin(); it_att != attr_infos.end(); it_att++)
+                for (const auto & attribute : attr_infos)
                 {
-//                  cout << "   " << it_att->name << " = ";
-//                  if (it_att->type == NeXus::CHAR) {
-//                    cout << file.getStrAttr(*it_att);
-//                  }
-//                  cout << endl;
 
-                  if (it_att->name=="signal")
+                  if (attribute.name=="signal")
                   {
                       size_t img_size[3];
 
@@ -96,49 +99,39 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
                           img_size[1] = nCrop[3]-nCrop[1];
                           img_size[2] = file.getInfo().dims[0];
                       }
+                      int8_t *slab=new int8_t[img_size[0]*img_size[1]*nexusTypeSize(file.getInfo().type)];
 
-                      int16_t *slab=new int16_t[img_size[0]*img_size[1]]; // assuming images are all int_16.. but possibly this can be read from nexus info..
-
-                      vector<int> slab_start;
-                      slab_start.push_back(number);
-                      if (nCrop.empty())
+                      vector<int> slab_start{static_cast<int>(number),0,0};
+                      if ( !nCrop.empty() )
                       {
-                          slab_start.push_back(0);
-                          slab_start.push_back(0);
+                          slab_start[1] = nCrop[1];
+                          slab_start[2] = nCrop[0];
                       }
-                      else
+
+                      vector<int> slab_size{1,static_cast<int>(img_size[1]),static_cast<int>(img_size[0])};
+
+                      try
                       {
-                          slab_start.push_back(nCrop[1]);
-                          slab_start.push_back(nCrop[0]);
-
-                      }
-                      vector<int> slab_size;
-                      slab_size.push_back(1);
-                      slab_size.push_back(img_size[1]);
-                      slab_size.push_back(img_size[0]);
-
-
-                      try{
                         file.getSlab(slab, slab_start, slab_size);
                       }
-                      catch (const std::bad_alloc & E) {
+                      catch (const std::bad_alloc & E)
+                      {
                               msg.str("");
                               msg<<"ReadNexus file.getSlab caused an STL exception: "<<E.what();
                               throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
-                      catch (NeXus::Exception &e){
+                      catch (NeXus::Exception &e)
+                      {
                           msg.str("");
                           msg<<"ReadNexus file.getSlab caused an NeXus exception: "<<e.what();
                           throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
-                      catch (...){
+                      catch (...)
+                      {
                           msg.str("");
                           msg<<"ReadNexus file.getSlab caused an unknown exception: ";
                           throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
-
-
-
 
                       std::vector<size_t> size2D = { img_size[0],
                                                      img_size[1],
@@ -146,11 +139,21 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, 
                       img.resize(size2D);
                       ImgType *pslice = img.GetDataPtr();
 
-                      // casting to ImgType
-//                      std::copy_n(pslice,img.Size(),slab);
-                      for (size_t i=0; i<img.Size();++i)
+                      switch (file.getInfo().type)
                       {
-                          pslice[i] = static_cast<ImgType>(slab[i]);
+                          case NeXus::FLOAT32 : copy_n(reinterpret_cast<float*>(slab),    img.Size(),pslice); break;
+                          case NeXus::FLOAT64 : copy_n(reinterpret_cast<double*>(slab),   img.Size(),pslice); break;
+                          case NeXus::INT8    : copy_n(reinterpret_cast<int8_t*>(slab),   img.Size(),pslice); break;
+                          case NeXus::UINT8   : copy_n(reinterpret_cast<uint8_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::INT16   : copy_n(reinterpret_cast<int16_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::UINT16  : copy_n(reinterpret_cast<uint16_t*>(slab), img.Size(),pslice); break;
+                          case NeXus::INT32   : copy_n(reinterpret_cast<int32_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::UINT32  : copy_n(reinterpret_cast<uint32_t*>(slab), img.Size(),pslice); break;
+                          case NeXus::INT64   : copy_n(reinterpret_cast<int64_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::UINT64  : copy_n(reinterpret_cast<uint64_t*>(slab), img.Size(),pslice); break;
+                          case NeXus::CHAR    : copy_n(reinterpret_cast<char*>(slab),     img.Size(),pslice); break;
+                          default:
+                              throw kipl::base::KiplException("Unknown NeXus type in nexusTypeSize()",__FILE__,__LINE__);
                       }
 
                   }
@@ -297,6 +300,8 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const std::string &fna
 template <class ImgType, size_t NDim>
 int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const std::string &fname)
 {
+
+
     std::stringstream msg;
     NeXus::File file(fname.c_str());
 
@@ -618,7 +623,8 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> img, const char *fname, Im
 /// \param p_size pixel size of the reconstructed datas
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img) {
+int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
     std::ignore = img;
 
     float *mysize = &p_size;
@@ -671,7 +677,8 @@ int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::b
 /// \param p_size pixel size of the reconstructed datas
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img) {
+int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
     std::ignore = img;
 
     float *mysize = &p_size;
@@ -684,13 +691,13 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
 
     NXhandle file_id;
 
-/* Open output file and output global attributes */
+// Open output file and output global attributes
     NXopen (fname, NXACC_CREATE5, &file_id);
       NXputattr (file_id, "user_name", "Jane Doe", 10, NX_CHAR);
-/* Open top-level NXentry group */
+// Open top-level NXentry group
       NXmakegroup (file_id, "entry", "NXentry");
       NXopengroup (file_id, "entry", "NXentry");
-/* Open NXdata group within NXentry group */
+// Open NXdata group within NXentry group
         NXmakegroup (file_id, "Data1", "NXdata");
         NXopengroup (file_id, "Data1", "NXdata");
 
@@ -701,7 +708,7 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
             NXputattr (file_id, "signal", &i, 1, NX_INT32);
           NXclosedata (file_id);
 
-/*      Pixel spacing */
+//     Pixel spacing
        NXmakedata (file_id, "x_pixel_size", NX_FLOAT32, 1, &i);
        NXopendata (file_id, "x_pixel_size");
           NXputdata(file_id, mysize);
@@ -709,7 +716,7 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
       NXclosedata(file_id);
 
 
-/* Close NXentry and NXdata groups and close file */
+// Close NXentry and NXdata groups and close file
         NXclosegroup (file_id);
       NXclosegroup (file_id);
     NXclose (&file_id); // this should close the file

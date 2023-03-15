@@ -5,16 +5,17 @@
 #include "ReconFramework_global.h"
 
 #include <list>
+#include <string>
+
+#include <interactors/interactionbase.h>
+#include <logging/logger.h>
+#include <base/kiplenums.h>
+
 #include "PreprocModuleBase.h"
 #include "BackProjectorModuleBase.h"
 #include "ProjectionReader.h"
 #include "ReconHelpers.h"
 #include "ModuleItem.h"
-
-#include <interactors/interactionbase.h>
-#include <logging/logger.h>
-#include <base/kiplenums.h>
-#include <string>
 
 class RECONFRAMEWORKSHARED_EXPORT ProjectionBlock
 {
@@ -102,6 +103,7 @@ protected:
     int ProcessExistingProjections3D(const std::vector<size_t> &roi);
     int BackProject3D(kipl::base::TImage<float,3> & projections, const std::vector<size_t> &roi, std::map<std::string, std::string> parameters);
 	bool UpdateProgress(float val, std::string msg);
+    float CurrentOverallProgress();
     size_t validateImage(float *data, size_t N, const string &description);
 	void Done();
     void resetTimers();
