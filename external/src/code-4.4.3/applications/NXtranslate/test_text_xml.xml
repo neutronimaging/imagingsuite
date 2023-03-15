@@ -1,7 +1,0 @@
-<NXroot>
-  <entry1 type="NXentry" NXS:source="test_simple.xml" NXS:mime_type="text/xml">
-    <text1 NXS:location="/NXroot/entry1/note/author"/>
-    <text2 NXS:location="INT8[11]:/NXroot/entry1/parabola_1D/x"/>
-    <text3 NXS:location="/NXroot/entry1/parabola_1D/x#units"/>
-  </entry1>
-</NXroot>

@@ -3,7 +3,7 @@
 // ReconFramework.cpp : Defines the exported functions for the DLL application.
 //
 
-#include "stdafx.h"
+
 #include "../include/ReconFramework.h"
 #include "../include/ReconFactory.h"
 

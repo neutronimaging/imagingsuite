@@ -17,6 +17,19 @@ public:
     virtual std::string SanityMessage(bool mess) {return "";}
 
     virtual void ParseProcessChain(xmlTextReaderPtr reader) {}
+
+    class cProjectionInfo {
+        public:
+            cProjectionInfo();
+
+            float fCenter;
+        
+            bool bCorrectTilt;
+        
+            std::vector<int> dose_roi;
+    };
+
+    cProjectionInfo ProjectionInfo;
 };
 
 #endif // DUMMYCONFIG_H

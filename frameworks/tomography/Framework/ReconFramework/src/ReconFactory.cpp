@@ -1,14 +1,14 @@
 //<LICENSE>
-#include "stdafx.h"
+
+#include <iostream>
+#include <memory>
+
+#include <ModuleException.h>
+
 #include "../include/ReconFactory.h"
 #include "../include/PreprocModuleBase.h"
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
-#include "ModuleException.h"
-#include "stdafx.h"
-#include <iostream>
-#include <memory>
-
 
 ReconFactory::ReconFactory(void)
     : logger("ReconFactory")

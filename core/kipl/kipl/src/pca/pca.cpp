@@ -5,9 +5,9 @@
 
 #include <armadillo>
 
-#include "../include/pca/pca.h"
-#include "../include/math/covariance.h"
-#include "../include/math/image_statistics.h"
+#include "../../include/pca/pca.h"
+#include "../../include/math/covariance.h"
+#include "../../include/math/image_statistics.h"
 
 namespace kipl {
 namespace pca {

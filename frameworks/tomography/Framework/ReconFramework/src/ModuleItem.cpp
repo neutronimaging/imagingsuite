@@ -1,12 +1,12 @@
 //<LICENSE>
-#include "stdafx.h"
+
 #include <sstream>
 #include <string>
-#include <strings/miscstring.h>
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
 
+#include <strings/miscstring.h>
 #include "../include/ModuleItem.h"
 #include "../include/ReconException.h"
 

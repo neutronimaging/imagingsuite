@@ -104,12 +104,20 @@ add_library(${TARGET_NAME} SHARED
   ${UI_FILES}
 )
 
+if (WIN32)
+  target_link_directories(${TARGET_NAME} PRIVATE
+    # ../../../../ExternalDependencies/windows/lib
+    ../../../../imagingsuite/external/lib64
+    # ../../../../imagingsuite/external/lib64/nexus
+  )
+endif()
 
-target_link_libraries(${TARGET_NAME} PRIVATE
+target_link_libraries(${TARGET_NAME} 
+  PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Charts
-    Qt6::PrintSupport
+    Qt${QT_VERSION_MAJOR}::PrintSupport
     kipl
     )
 

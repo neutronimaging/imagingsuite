@@ -19,15 +19,9 @@ message("Using Qt${QT_VERSION_MAJOR}")
 
 if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    ../../../external/mac/include/
     ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -93,9 +87,11 @@ add_library(${TARGET_NAME} SHARED
   ${UI_FILES}
 )
 
-target_link_libraries(${TARGET_NAME} PRIVATE
+target_link_libraries(${TARGET_NAME} 
+    PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
+    PUBLIC
     kipl
     ModuleConfig
     )

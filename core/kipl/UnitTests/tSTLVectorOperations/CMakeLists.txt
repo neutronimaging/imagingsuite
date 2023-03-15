@@ -18,11 +18,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
     ../../kipl/include
-#    ../../../../ExternalDependencies/macos/include
-#    ../../../../ExternalDependencies/macos/include/nexus
     )
 
 set(SRC_FILES,
@@ -30,13 +26,10 @@ set(SRC_FILES,
 
 add_executable(${TARGET_NAME} tst_stlvecoperations.cpp)
 
-add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
-
 target_link_libraries(${TARGET_NAME}
     PRIVATE
         Qt6::Test
         kipl
     )
 
-install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/applications/${TARGET_NAME}.app/Contents/Frameworks)
+add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

@@ -1,8 +1,9 @@
 //<LICENSE>
 
-#include "../include/ReconException.h"
 #include <string>
 #include <sstream>
+
+#include "../include/ReconException.h"
 
 ReconException::ReconException(void) :
     kipl::base::KiplException("Undeclared Exception","ReconException")
