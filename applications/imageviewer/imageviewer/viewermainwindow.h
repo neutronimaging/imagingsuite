@@ -5,7 +5,7 @@
 #include <QMainWindow>
 
 #include <base/timage.h>
-#include <io/analyzefileext.h>
+#include <analyzefileext.h>
 #include <logging/logger.h>
 #include <loggingdialog.h>
 
@@ -45,7 +45,7 @@ private:
 
     std::string m_fname;
     kipl::base::TImage<float,2> currentImage;
-    kipl::io::eExtensionTypes m_ext;
+    readers::eExtensionTypes m_ext;
     bool isMultiFrame;
 };
 

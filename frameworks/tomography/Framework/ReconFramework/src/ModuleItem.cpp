@@ -1,12 +1,12 @@
 //<LICENSE>
-#include "stdafx.h"
+
 #include <sstream>
 #include <string>
-#include <strings/miscstring.h>
 #ifndef _MSC_VER
 #include <dlfcn.h>
 #endif
 
+#include <strings/miscstring.h>
 #include "../include/ModuleItem.h"
 #include "../include/ReconException.h"
 
@@ -83,11 +83,8 @@ void BackProjItem::LoadModuleObject(kipl::interactors::InteractionBase* interact
     std::ostringstream msg;
 
 #ifdef _MSC_VER
-    std::wstring so(m_sSharedObject.length(), ' ');
-    char *str = new char[m_sSharedObject.length()+4];
-    copy(m_sSharedObject.begin(), m_sSharedObject.end(), str);
-    hinstLib = LoadLibrary(str);
-    delete [] str;
+    std::wstring so(m_sSharedObject.begin(), m_sSharedObject.end());
+    hinstLib = LoadLibraryW(so.c_str());
 #else
     hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif

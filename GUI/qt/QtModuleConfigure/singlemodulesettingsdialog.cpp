@@ -1,4 +1,5 @@
 //<LICENSE>
+#include "stdafx.h"
 #include "singlemodulesettingsdialog.h"
 #include "ui_singlemodulesettingsdialog.h"
 
@@ -14,6 +15,7 @@
 
 #ifdef _MSC_VER // Shared object specific for msvc
 typedef int (__cdecl *MODULELIST)(const char *,void *);
+#include <libloaderapi.h>
 #else // Shared object specific for gcc
 #include <dlfcn.h>
 typedef int (*MODULELIST)(const char *,void *);
@@ -111,7 +113,7 @@ int SingleModuleSettingsDialog::UpdateModuleCombobox(QString fname, bool bSetFir
     ui->comboBox_Modules->clear();
     msg.str("");
     msg<<"The library has "<<m_ModuleList.size()<<" modules";
-    logger(kipl::logging::Logger::LogVerbose,msg.str());
+    logger.verbose(msg.str());
     for (auto &module : m_ModuleList)
     {
         ui->comboBox_Modules->addItem(QString::fromStdString(module.first));
@@ -136,7 +138,7 @@ std::map<std::string, std::map<std::string, std::string> > SingleModuleSettingsD
     std::wstring so(filename.length(),' ');
 
     copy(filename.begin(),filename.end(),so.begin());
-    hinstLib = LoadLibrary(so.c_str());
+    hinstLib = LoadLibraryW(so.c_str());
 #else
     hinstLib = dlopen(filename.c_str(), RTLD_LAZY);
 #endif
@@ -251,7 +253,7 @@ void SingleModuleSettingsDialog::on_comboBox_Modules_currentTextChanged(const QS
 
 void SingleModuleSettingsDialog::on_pushButton_Browse_clicked()
 {
-    logger(kipl::logging::Logger::LogMessage,"browse");
+    logger.message("Browse");
 
     QString fileName;
     #ifdef Q_OS_WIN
@@ -261,7 +263,7 @@ void SingleModuleSettingsDialog::on_pushButton_Browse_clicked()
         QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks/";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
     #endif
-    logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
+    logger.message(appPath.toStdString());
 
     if ( fileName.isNull() )
     {
@@ -279,7 +281,7 @@ void SingleModuleSettingsDialog::on_pushButton_Browse_clicked()
 
     if (fileName.toStdString() == m_ModuleConfig.m_sSharedObject )
     {
-        logger(kipl::logging::Logger::LogMessage,"The same library file was selected.");
+        logger.message("The same library file was selected.");
         return;
     }
 
@@ -307,18 +309,18 @@ void SingleModuleSettingsDialog::on_buttonBox_clicked(QAbstractButton *button)
            QString s_Value=button->text();
            msg<<"Got NoButton: "<<actionRole<<", text:"<<button->text().toStdString();
 
-           logger(kipl::logging::Logger::LogMessage,msg.str());
+           logger.message(msg.str());
 
            if (s_Value.toLower()=="add")
            {
-               logger(kipl::logging::Logger::LogMessage,"Add parameter");
+               logger.message("Add parameter");
            }
 
            if (s_Value.toLower()=="delete")
            {
                logger(kipl::logging::Logger::LogMessage,"Delete parameter");
            }
-
+           break;
         }
 }
 

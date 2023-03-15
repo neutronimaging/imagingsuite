@@ -434,12 +434,13 @@ std::ostream & operator<<(std::ostream &s, const TImage<T,N> &img)
 	
 	return s;
 }
+
 template<typename T1, typename T2, size_t N>
-bool CheckEqualSize(TImage<T1,N> &img1, TImage<T2,N> &img2)
+bool checkEqualSize(const TImage<T1,N> &img1, const TImage<T2,N> &img2)
 {
 	bool res=img1.Size(0)==img2.Size(0);
 
-	for (size_t i=1; i<N; i++)
+    for (size_t i=1; i<N; ++i)
 		res = res && (img1.Size(i)==img2.Size(i));
 
 	return res;

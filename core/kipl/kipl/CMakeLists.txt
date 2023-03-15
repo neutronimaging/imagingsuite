@@ -7,54 +7,25 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
 if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    ../../../core/kipl/kipl/include
-    ../../../external/src/linalg
-    ../../../core/kipl/kipl/include
-    ../../../core/modules/ModuleConfig/include
-    ../../../external/mac/include/
-    ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/nexus
-    ../../../external/mac/include/hdf5
+     ../../../core/kipl/kipl/include
+     ../../../../ExternalDependencies/macos/include
     )
 endif()
 
 if (WIN32)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
     ../../../core/kipl/kipl/include
-    ../../../external/src/linalg
-    ../../../core/kipl/kipl/include
-    ../../../core/modules/ModuleConfig/include
+    # ../../../core/modules/ModuleConfig/include
+    # ../../../../ExternalDependencies/windows/include
+    # ../../../../ExternalDependencies/windows/include/nexus
+    # ../../../../ExternalDependencies/windows/include/cfitsio
     ../../../external/include/
-    ../../../../ExternalDependencies/windows/include
-    ../../../../ExternalDependencies/windows/include/nexus
-    ../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../external/mac/include/nexus
-    ../../../external/mac/include/hdf5
     )
 endif()
 
-if (UNIX)
-include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    ../../../core/kipl/kipl/include
-    ../../../external/src/linalg
-    ../../../core/kipl/kipl/include
-    ../../../core/modules/ModuleConfig/include
-    ../../../external/mac/include/
-    ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/nexus
-    ../../../external/mac/include/hdf5
-    )
-endif()
 
 set(INC_FILES
     include/filters/core/savitzkygolayfilter.hpp
@@ -215,7 +186,7 @@ set(INC_FILES
     include/wavelets/core/wavelets.hpp
     include/visualization/GNUPlot.h
     include/utilities/SystemInformation.h
-    include/utilities/nodelocker.h
+    # include/utilities/nodelocker.h
     include/strings/string2array.h
     include/strings/parenc.h
     include/strings/miscstring.h
@@ -306,7 +277,7 @@ set(SRC_FILES
     src/wavelets/wavelets.cpp
     src/visualization/GNUPlot.cpp
     src/utilities/SystemInformation.cpp
-    src/utilities/nodelocker.cpp
+    # src/utilities/nodelocker.cpp
     src/strings/string2array.cpp
     src/strings/parenc.cpp
     src/strings/miscstring.cpp
@@ -352,91 +323,84 @@ add_library(${TARGET_NAME} SHARED
 )
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
-#set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_compile_definitions(${TARGET_NAME} PRIVATE KIPL_LIBRARY HAVE_NEXUS NOMINMAX)
 
 add_definitions(-DHAVE_NEXUS)
 
-message(${CMAKE_HOST_SYSTEM_PROCESSOR})
+message(kipl - ${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
+    target_link_directories(${TARGET_NAME} PUBLIC
     ../../../../ExternalDependencies/windows/lib
     ../../../../imagingsuite/external/lib64
     ../../../../imagingsuite/external/lib64/nexus
     )
-    
+
+    find_package(OpenMP)
+
     target_link_libraries(${TARGET_NAME}
-    PRIVATE
-        libxml2
-        cfitsio
-        libtiff
-        # armadillo
+    PUBLIC
+        OpenMP::OpenMP_CXX
+        LibXml2::LibXml2
+        TIFF::TIFF
+        # ${LAPACK_LIBRARIES}
+        # LAPACK::LAPACK
+        ${BLAS_LIBRARIES}
+        # BLAS::BLAS
+        #${ARMADILLO_LIBRARIES}
+        armadillo::armadillo
+        # FFTW3::Double
+        # FFTW3::Float
+        # FFTW3::fftw3
+        # FFTW3::fftw3_float
+        # ${CFITSIO_LIBRARIES}
+        cfitsio::cfitsio
+        # ${NEXUS_LIBRARIES}
+
+        # libxml2
+        # cfitsio
+        # libtiff
         liblapack
-        libopenblas
+        libblas
         libfftw3-3
         libfftw3f-3
         NeXus
         NeXusCPP
-        Iphlpapi
+        # Iphlpapi
     )
 endif()
 
-if (APPLE)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        /opt/local/lib
-        ../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-        ../../../external/mac/lib/
-        )
 
-    target_link_libraries(${TARGET_NAME}
-    		PRIVATE
-    			xml2
-                fftw3
-    			fftw3f
-    			cfitsio
-    			tiff
-    			armadillo
-    			lapack
-    			blas
-    			NeXus.1.0.0
-    			NeXusCPP.1.0.0
-  		)
-endif()
-
-if (UNIX AND NOT APPLE)
+if (UNIX)
     find_package(OpenMP)
     if(OpenMP_CXX_FOUND)
-        target_link_libraries(${TARGET_NAME} PUBLIC
+        target_link_libraries(${TARGET_NAME} 
+        PUBLIC
             OpenMP::OpenMP_CXX
-        
-        PRIVATE
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
-            NeXus
-            NeXusCPP
+            LibXml2::LibXml2
+            TIFF::TIFF
+            ${LAPACK_LIBRARIES}
+            ${BLAS_LIBRARIES}
+            ${ARMADILLO_LIBRARIES}
+            FFTW::Double
+            FFTW::Float
+            ${CFITSIO_LIBRARIES}
+            ${NEXUS_LIBRARIES}
         )
     else()
         target_link_libraries(${TARGET_NAME}
-            PRIVATE
-                xml2
-                fftw3
-                fftw3f
-                cfitsio
-                tiff
-                armadillo
-                lapack
-                blas
-                NeXus
-                NeXusCPP
+            PUBLIC
+                LibXml2::LibXml2
+                TIFF::TIFF
+                ${LAPACK_LIBRARIES}
+                ${BLAS_LIBRARIES}
+                # BLAS::BLAS
+                ${ARMADILLO_LIBRARIES}
+                FFTW::Double
+                FFTW::Float
+                ${CFITSIO_LIBRARIES}
+                ${NEXUS_LIBRARIES}
             )
     endif()
 endif()

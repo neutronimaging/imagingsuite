@@ -11,8 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Charts REQUIRED)
-#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
+find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 
 include_directories(
     /opt/local/include
@@ -64,15 +63,9 @@ else()
     endif()
 endif()
 
-link_directories(../../../lib /opt/local/lib  /usr/lib/x86_64-linux-gnu )
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../external/mac/lib/
 
-    )
-
-target_link_libraries(${TARGET_NAME} PRIVATE
+target_link_libraries(${TARGET_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     xml2

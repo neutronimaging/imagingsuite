@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(TARGET_NAME "tImagingAlgorithms")
-project(tImagingAlgorithms LANGUAGES CXX)
+project(tLogging LANGUAGES CXX)
 
 enable_testing()
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Test REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Test REQUIRED)
+find_package(QT NAMES Qt6 COMPONENTS Test REQUIRED)
+find_package(Qt6 COMPONENTS Test REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -18,47 +18,32 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
     ../../../kipl/kipl/include
-    ../../../../../ExternalDependencies/macos/include
-#    ../../../../ExternalDependencies/macos/include/nexus
     ../../ImagingAlgorithms/include
+)
+
+if (APPLE)
+    include_directories(
+        ../../../../../ExternalDependencies/macos/include/
     )
+endif()
+
+if (WIN32)
+    include_directories(
+        ../../../../external/include/
+    )
+endif()
+
+set(SRC_FILES,
+tst_testImagingAlgorithms.cpp)
 
 add_executable(${TARGET_NAME} tst_testImagingAlgorithms.cpp)
+
+target_link_libraries(${TARGET_NAME}
+    PRIVATE
+        Qt6::Test
+        kipl
+        ImagingAlgorithms
+    )
+
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
-link_directories(../../../lib /opt/local/lib )
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../../../install/lib/
-   # ../../../../ExternalDependencies/macos/arm64/lib
-    )
-
-target_link_libraries(${TARGET_NAME} PRIVATE
-    Qt${QT_VERSION_MAJOR}::Test
-    kipl
-    ImagingAlgorithms
-    tiff
-    armadillo
-    lapack
-    blas
-    )
-
-#target_link_libraries(${TARGET_NAME} PRIVATE
-#    Qt${QT_VERSION_MAJOR}::Core
-#    Qt${QT_VERSION_MAJOR}::Widgets
-#    Qt${QT_VERSION_MAJOR}::Concurrent
-#    kipl
-#    ModuleConfig
-#    ImagingAlgorithms
-#    ReaderConfig
-#    QtAddons
-#    ReaderGUI
-#    QtModuleConfigure
-#    ReconFramework
-#    QtImaging
-#    armadillo
-#    lapack
-#    blas
-#)

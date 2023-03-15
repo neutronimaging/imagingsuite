@@ -119,10 +119,9 @@ void ModuleConfigurator::loadDialog(std::string application, std::string sharedo
 	m_sSharedObject=sharedobjectname;
 	m_sModuleName=objectname;
 #ifdef _MSC_VER
-	std::wstring so(m_sSharedObject.length(),' ');
+    std::wstring so(m_sSharedObject.begin(),m_sSharedObject.end());
 
-	copy(m_sSharedObject.begin(),m_sSharedObject.end(),so.begin());
-	hinstLib = LoadLibrary(so.c_str());
+    hinstLib = LoadLibraryW(so.c_str());
 #else
 	hinstLib = dlopen(m_sSharedObject.c_str(), RTLD_LAZY);
 #endif

@@ -2,6 +2,7 @@
 
 #ifndef IMAGE_STATISTICS_HPP
 #define IMAGE_STATISTICS_HPP
+#include <limits>
 #include <cmath>
 #ifdef __aarch64__
     #include <sse2neon.h>
@@ -176,7 +177,7 @@ struct NaNAwareLess
   bool operator () (T a, T b) const
   {
 
-    if (std::isfinite(a) && std::isfinite(b))
+    if (isfinite(a) && isfinite(b))
     {
       return (a < b);// Assume *any* non-NaN value is greater than NaN.
     }

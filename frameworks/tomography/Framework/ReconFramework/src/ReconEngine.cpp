@@ -1,29 +1,35 @@
 //<LICENSE>
+
 #include "stdafx.h"
+#pragma message("start")
+#include "../include/ReconFramework_global.h"
 #include <iostream>
 #include <fstream>
 #include <string.h>
 #include <vector>
 #include <algorithm>
-
+#pragma message("std done")
 #include <logging/logger.h>
 #include <base/timage.h>
 #include <strings/miscstring.h>
 #include <base/textractor.h>
 #include <algorithms/datavalidator.h>
-#include <io/io_nexus.h>
 #include <io/io_stack.h>
+#ifdef HAVE_NEXUS
+    #include <io/io_nexus.h>
+#endif
+#pragma message("kipl done")
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
 #include <publication.h>
 
-#include "../include/ReconEngine.h"
+#pragma message("further suite h done")
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
 #include "../include/processtiminglogger.h"
-
-
+#include "../include/ReconEngine.h"
+#pragma message("done")
 
 ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
 	logger(name),
@@ -113,7 +119,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
     fname = ProjectionList.begin()->second.name;
 
-    msg.str(""); msg<<"Projection file to check size on ";
+    msg.str(""); msg<<"Projection file to check size on "<<fname;
     logger(logger.LogMessage,msg.str());
 
     try {
@@ -687,7 +693,7 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices,m_Config.ProjectionInfo.roi[1],
+                        0,nSlices-1,m_Config.ProjectionInfo.roi[1],
                         m_Config.MatrixInfo.FileType,
                         plane,m_Config.MatrixInfo.roi,
                         m_Config.ProjectionInfo.roi[1]!=m_FirstSlice);
@@ -697,7 +703,7 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
                     kipl::io::WriteImageStack(img,
                                                   str.str(),
                                                   m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                                                  0,nSlices, CBroi[1], m_Config.MatrixInfo.FileType,plane,m_Config.MatrixInfo.roi);
+                                                  0,nSlices-1, CBroi[1], m_Config.MatrixInfo.FileType,plane,m_Config.MatrixInfo.roi);
                 }
             }
             else
@@ -708,7 +714,7 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices,m_Config.ProjectionInfo.roi[1],
+                        0,nSlices-1,m_Config.ProjectionInfo.roi[1],
                         m_Config.MatrixInfo.FileType,plane,
                         {},
                         m_Config.ProjectionInfo.roi[1]!=m_FirstSlice);
@@ -718,7 +724,7 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices, CBroi[1], m_Config.MatrixInfo.FileType,plane);
+                        0,nSlices-1, CBroi[1], m_Config.MatrixInfo.FileType,plane);
                 }
             }
         }
@@ -866,8 +872,6 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
         res = m_Config.MatrixInfo.fVoxelSize[0];
     }
 
-//    m_Volume.info.SetMetricX(m_Config.ProjectionInfo.fResolution[0]);
-//	m_Volume.info.SetMetricY(m_Config.ProjectionInfo.fResolution[1]);
     m_Volume.info.SetMetricX(res);
     m_Volume.info.SetMetricY(res);
 
@@ -976,6 +980,11 @@ int ReconEngine::Run3D(bool bRerunBackproj)
     }
 
     return res;
+}
+
+void ReconEngine::ConfigSanityCheck(ReconConfig &config)
+{
+
 }
 
 int ReconEngine::Run3DFull()

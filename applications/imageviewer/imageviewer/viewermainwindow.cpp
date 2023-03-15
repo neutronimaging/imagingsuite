@@ -15,7 +15,7 @@
 #include <QMessageBox>
 
 #include <base/timage.h>
-#include <io/analyzefileext.h>
+#include <analyzefileext.h>
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
 #include <io/io_vivaseq.h>
@@ -38,7 +38,7 @@ ViewerMainWindow::ViewerMainWindow(QWidget *parent) :
     isMultiFrame(false)
 {
     logdlg.setModal(false);
-    kipl::logging::Logger::AddLogTarget(logdlg);
+    kipl::logging::Logger::addLogTarget(&logdlg);
 
     ui->setupUi(this);
     QStringList args=QApplication::arguments();
@@ -86,21 +86,21 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
     if (QFile::exists(QString::fromStdString(fname)))
     {
         isMultiFrame = false;
-        m_ext = kipl::io::GetFileExtensionType(fname);
+        m_ext = readers::GetFileExtensionType(fname);
         switch (m_ext)
         {
-            case kipl::io::ExtensionTXT  : logger.message("Image format not supported"); break;
-            case kipl::io::ExtensionDMP  : logger.message("Image format not supported"); break;
-            case kipl::io::ExtensionDAT  : logger.message("Image format not supported"); break;
-            case kipl::io::ExtensionXML  : logger.message("Image format not supported"); break;
-            case kipl::io::ExtensionRAW  : logger.message("Image format not supported"); break;
-            case kipl::io::ExtensionJPG  : logger.message("Image format not supported"); break;
-            case kipl::io::ExtensionFITS : kipl::io::ReadFITS(img,fname); break;
-            case kipl::io::ExtensionTIFF : kipl::io::ReadTIFF(img,fname); break;
-            case kipl::io::ExtensionPNG  : logger.message("Image format not supported"); break;
-            case kipl::io::ExtensionHDF  :
-            case kipl::io::ExtensionHDF4 :
-            case kipl::io::ExtensionHDF5 :
+            case readers::ExtensionTXT  : logger.message("Image format not supported"); break;
+            case readers::ExtensionDMP  : logger.message("Image format not supported"); break;
+            case readers::ExtensionDAT  : logger.message("Image format not supported"); break;
+            case readers::ExtensionXML  : logger.message("Image format not supported"); break;
+            case readers::ExtensionRAW  : logger.message("Image format not supported"); break;
+            case readers::ExtensionJPG  : logger.message("Image format not supported"); break;
+            case readers::ExtensionFITS : kipl::io::ReadFITS(img,fname); break;
+            case readers::ExtensionTIFF : kipl::io::ReadTIFF(img,fname); break;
+            case readers::ExtensionPNG  : logger.message("Image format not supported"); break;
+            case readers::ExtensionHDF  :
+            case readers::ExtensionHDF4 :
+            case readers::ExtensionHDF5 :
             {
                 auto dims=kipl::io::GetNexusDims(fname);
 
@@ -123,7 +123,7 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
                 break;
             }
 
-            case kipl::io::ExtensionSEQ  :
+            case readers::ExtensionSEQ  :
             {
                 kipl::io::ViVaSEQHeader header;
                 kipl::io::GetViVaSEQHeader(fname,&header);
@@ -214,7 +214,8 @@ void ViewerMainWindow::on_actionSave_as_triggered()
 
     kipl::strings::filenames::StripFileName(m_fname,path,fname,exts);
 
-    if (m_ext == kipl::io::ExtensionSEQ) {
+    if (m_ext == readers::ExtensionSEQ)
+    {
         SaveAsDialog dlg;
         kipl::io::ViVaSEQHeader header;
         kipl::io::GetViVaSEQHeader(m_fname,&header);
@@ -224,7 +225,8 @@ void ViewerMainWindow::on_actionSave_as_triggered()
 
         int res=dlg.exec();
 
-        if (res==QDialog::Accepted) {
+        if (res==QDialog::Accepted)
+        {
             std::string fmask,ext;
             int first;
             int last;
@@ -245,7 +247,8 @@ void ViewerMainWindow::on_actionSave_as_triggered()
             }
         }
     }
-    else {
+    else
+    {
         std::string destname=QFileDialog::getSaveFileName(this,"Save image as",QString::fromStdString(path)).toStdString();
 
         kipl::io::WriteTIFF(currentImage,destname);

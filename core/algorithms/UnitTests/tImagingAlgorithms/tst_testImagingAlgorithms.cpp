@@ -52,6 +52,7 @@ private Q_SLOTS:
 
     void ProjectionFilterParameters();
     void ProjectionFilterProcessing();
+    void ProjectionFilterPadding();
     void StripeFilterParameters();
     void StripeFilterProcessing2D();
 
@@ -74,15 +75,15 @@ private:
 
 };
 
-TestImagingAlgorithms::TestImagingAlgorithms() :
-//    dataPath("../../../../../TestData/")
-    dataPath("../TestData/")
+TestImagingAlgorithms::TestImagingAlgorithms() 
 {
-#ifndef DEBUG
-    kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
-#else
-    kipl::io::ReadTIFF(holes,dataPath+"2D/tiff/spots/balls.tif");
-#endif
+    dataPath = QT_TESTCASE_BUILDDIR;
+    dataPath = dataPath + "/../../../../../TestData/";
+    kipl::strings::filenames::CheckPathSlashes(dataPath,true);
+
+    std::string fname = dataPath+"2D/tiff/spots/balls.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(holes,fname);
 }
 
 void TestImagingAlgorithms::PixelInfo()
@@ -229,8 +230,10 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
 
     kipl::base::TImage<float,2> img,res;
 
-    kipl::io::ReadTIFF(img,"../qni/trunk/data/spots.tif");
-
+    std::string fname = dataPath+"2D/tiff/spots/balls.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
+    
     try {
         res.Clone(img);
     } catch (kipl::base::KiplException &e) {
@@ -241,8 +244,6 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
     cleaner.setConnectivity(kipl::base::conn4);
 
     cleaner.process(res,0.04,0.01);
-
-
 }
 
 
@@ -538,6 +539,29 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
 
 }
 
+void TestImagingAlgorithms::ProjectionFilterPadding()
+{
+//    kipl::base::TImage<float,2> sino;
+//#ifdef DEBUG
+//    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
+//#else
+//    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
+//#endif
+
+//    ImagingAlgorithms::ProjectionFilter pf(nullptr);
+//    kipl::base::TImage<float,2> tmp=sino;
+//    tmp.Clone();
+
+//    pf.process(tmp);
+
+
+//    pf.pad(sino.GetLinePtr(0), sino.Size(0), float *pDest, const size_t nDestLen);
+
+//    kipl::io::WriteTIFF(sino,"projfilt_result.tif",kipl::base::Float32);
+//    QCOMPARE(pf.currentFFTSize(),2048UL);
+//    QCOMPARE(pf.currentImageSize(),sino.Size(0));
+
+}
 void TestImagingAlgorithms::StripeFilterParameters()
 {
    kipl::base::TImage<float,2> sino;
@@ -582,15 +606,15 @@ void TestImagingAlgorithms::StripeFilterParameters()
 void TestImagingAlgorithms::StripeFilterProcessing2D()
 {
     kipl::base::TImage<float,2> sino;
-#ifdef DEBUG
-    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
-#else
-    kipl::io::ReadTIFF(sino,dataPath+"2D/tiff/woodsino_0200.tif");
-#endif
+
+    std::string fname = dataPath+"2D/tiff/woodsino_0200.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+
+    kipl::io::ReadTIFF(sino,fname);
+
     ImagingAlgorithms::StripeFilter sf(sino.dims(),"daub17",4,0.21f);
 
     sf.process(sino);
-
 }
 
 void TestImagingAlgorithms::RefImgCorrection_Initialization()

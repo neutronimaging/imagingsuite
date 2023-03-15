@@ -1,7 +1,0 @@
-#!/bin/sh
-#
-# $1 is abs_srcdir
-#
-test -e data || mkdir data
-cp $1/data/dmc* data
-chmod 0644 data/*

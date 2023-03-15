@@ -10,8 +10,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
-
 find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts )
 
@@ -20,18 +18,12 @@ message("Using Qt${QT_VERSION_MAJOR}")
 
 if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../QtAddons
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
     ../../../core/modules/ReaderConfig
     ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../external/mac/include/
     ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -83,21 +75,17 @@ add_library(${TARGET_NAME} SHARED
 )
 
 if (APPLE)
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../external/mac/lib/
-    )
+
 
 target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
 #    Qt${QT_VERSION_MAJOR}::Charts
+    PUBLIC
     kipl
     ReaderConfig
     QtAddons
-    armadillo
-    lapack
-    blas
+    ImagingAlgorithms
     )
 endif()
 
@@ -111,9 +99,6 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     ReaderConfig
     QtAddons
     ImagingAlgorithms
- #   armadillo
- #   lapack
- #   blas
     )
 endif()
 
@@ -127,9 +112,6 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     ReaderConfig
     QtAddons
     ImagingAlgorithms
- #   armadillo
- #   lapack
- #   blas
     )
 endif()
 

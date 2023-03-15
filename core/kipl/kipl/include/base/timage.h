@@ -205,8 +205,8 @@ std::ostream & operator<<(std::ostream &s, const TImage<T,N> &img);
 /// \param img1 the first image
 /// \param img2 the second image
 /// \returns true if the images have the same dimensions
-template<typename T, size_t N>
-bool CheckEqualSize(TImage<T,N> &img1, TImage<T,N> &img2);
+template<typename T1, typename T2, size_t N>
+bool checkEqualSize(const TImage<T1,N> &img1, const TImage<T2,N> &img2);
 
 template<typename T>
 std::string renderImgAsString(kipl::base::TImage<T,2> &img, size_t N=20);

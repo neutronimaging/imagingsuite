@@ -24,8 +24,9 @@ mkdir <path>/install
 The cmake file to build the backprojector bindings located located in the folder ````imagingsuite/framework/tomography````.
 
 Steps to build:
-
-
+```bash
+cmake ../imagingsuite -DCMAKE_INSTALL_PREFIX=../install -DDYNAMIC_LIB=ON -DCMAKE_PREFIX_PATH=<path to Qt version>/macos
+```
 ##### Build the module
 ```bash
 cd build

@@ -311,10 +311,9 @@ std::map<std::string, std::map<std::string, std::string> > SingleModuleSettingsD
     std::ostringstream msg;
     HINSTANCE hinstLib;
 #ifdef _MSC_VER
-    std::wstring so(filename.length(),' ');
+    std::wstring so(filename.begin(),filename.end());
 
-    copy(filename.begin(),filename.end(),so.begin());
-    hinstLib = LoadLibrary(so.c_str());
+    hinstLib = LoadLibraryW(so.c_str());
 #else
     hinstLib = dlopen(filename.c_str(), RTLD_LAZY);
 #endif

@@ -61,7 +61,7 @@ namespace kipl { namespace filters {
 		kipl::base::TImage<T,nDims> &result, 
 		const FilterBase::EdgeProcessingStyle edgeStyle);
 		
-		int nHalfKernel[nDims];
+        int nHalfKernel[nDims];
 	};
 
     /// \brief Implements a weighted median filter.

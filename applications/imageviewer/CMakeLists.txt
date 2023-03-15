@@ -16,9 +16,6 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
 
 if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
     ../../core/modules/ReaderConfig
@@ -29,10 +26,9 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../external/mac/include/
     ../../../ExternalDependencies/macos/include
     ../../../ExternalDependencies/macos/include/nexus
-    # ../../external/mac/include/hdf5
+    ../../external/mac/include/
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -60,7 +56,6 @@ endif()
 
 if (UNIX)
 include_directories(
-    /usr/include/libxml2
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
     ../../core/modules/ReaderConfig
@@ -130,7 +125,7 @@ target_link_directories(${TARGET_NAME} PRIVATE
     ../../external/mac/lib/
     )
 
-target_link_libraries(${TARGET_NAME} PRIVATE
+target_link_libraries(${TARGET_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Concurrent
@@ -140,18 +135,18 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     ReaderConfig
     QtAddons
     ReaderGUI
-    NeXus
-    NeXusCPP
+    # NeXus
+    # NeXusCPP
     QtModuleConfigure
     ReconFramework
     QtImaging
-    xml2
-    armadillo
-    lapack
-    blas
-    tiff
-    cfitsio
-    hdf5
+    # xml2
+    # armadillo
+    # lapack
+    # blas
+    # tiff
+    # cfitsio
+    # hdf5
 )
 endif()
 
@@ -207,13 +202,13 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     ReaderGUI
     QtModuleConfigure
     QtImaging
-    armadillo
-    lapack
-    blas
+#    armadillo
+#    lapack
+#    blas
     libtiff
     cfitsio
     #hdf5
-    xml2
+#    xml2
     NeXus
     NeXusCPP
 )

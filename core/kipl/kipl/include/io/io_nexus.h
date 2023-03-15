@@ -1,6 +1,14 @@
 #ifndef IO_NEXUS_H
 #define IO_NEXUS_H
 
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cstring>
+#include <sstream>
+#include <vector>
+#include <map>
+
 #include "../kipl_global.h"
 #include "../base/imagecast.h"
 #include "../base/timage.h"
@@ -12,23 +20,15 @@
 #include "../math/sums.h"
 #include "../logging/logger.h"
 
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
-#include <cstring>
-#include <sstream>
-#include <vector>
-#include <map>
-
 #include <nexus/napi.h>
 #include <nexus/NeXusFile.hpp>
 #include <nexus/NeXusException.hpp>
 
-#ifdef _MSC_VER
-#include <io.h>
-#else
-#include <unistd.h>
-#endif
+// #ifdef _MSC_VER
+// #include <io.h>
+// #else
+// #include <unistd.h>
+// #endif
 
 
 using std::cout;

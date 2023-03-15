@@ -51,6 +51,7 @@ TReaderConfigTest::TReaderConfigTest() :
 
     writer.write(gradimg,"testread.tif");
     writer.write(gradimg,"testread.fits");
+    
 }
 
 std::vector<float> TReaderConfigTest::goldenAngles(int n, int start, float arc)
@@ -84,7 +85,7 @@ void TReaderConfigTest::testAnalyzeFileExt()
     string2enum("jpeg", et); QCOMPARE(et,readers::ExtensionJPG);
     string2enum("tif", et);  QCOMPARE(et,readers::ExtensionTIFF);
     string2enum("tiff", et); QCOMPARE(et,readers::ExtensionTIFF);
-    string2enum("hdf", et);  QCOMPARE(et,readers::ExtensionHDF);
+    string2enum("hdf", et);  QCOMPARE(et,readers::ExtensionHDF5);
     string2enum("hdf4", et); QCOMPARE(et,readers::ExtensionHDF4);
     string2enum("hd4", et);  QCOMPARE(et,readers::ExtensionHDF4);
     string2enum("hdf5", et); QCOMPARE(et,readers::ExtensionHDF5);
