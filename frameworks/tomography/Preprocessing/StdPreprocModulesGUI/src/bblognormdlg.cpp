@@ -44,9 +44,11 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     tau(0.99f),
     thresh(0),
     bPBvariante(true),
-    bSameMask(true),
-    bUseManualThresh(false),
-    bExtSingleFile(true),
+//    bSameMask(true),
+//    bUseManualThresh(false),
+//    bExtSingleFile(true),
+    m_maskCreationMethod(ImagingAlgorithms::ReferenceImageCorrection::otsuMask),
+    m_blackBodyExternalMaskName("./externalBBmask.tif"),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
@@ -91,11 +93,10 @@ BBLogNormDlg::~BBLogNormDlg()
 
 int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img)
 {
-    std::ignore = img;
-
     m_Config=dynamic_cast<ReconConfig *>(config);
 
-    try{
+    try
+    {
         nBBFirstIndex = GetIntParameter(parameters,"BB_first_index");
         nBBCount = GetIntParameter(parameters,"BB_counts");
         blackbodyname = GetStringParameter(parameters,"BB_OB_name");
@@ -123,9 +124,10 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
         blackbodyexternalmaskname   = GetStringParameter(parameters, "BB_mask_ext_name");
         nBBextCount                 = GetIntParameter(parameters,    "BB_ext_samplecounts");
         nBBextFirstIndex            = GetIntParameter(parameters,    "BB_ext_firstindex");
-        bSameMask                   = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+        // bSameMask                   = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
         bExtSingleFile              = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
-        bUseManualThresh            = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+        // bUseManualThresh            = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+        string2enum(GetStringParameter(parameters, "MaskCreationMethod"),  m_maskCreationMethod);
         thresh                      = GetFloatParameter(parameters,"thresh");
         min_area                    = GetIntParameter(parameters, "min_area");
 
@@ -156,7 +158,7 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
     }
     catch (kipl::base::KiplException &e)
     {
-        logger.error(e.what());
+        logger(kipl::logging::Logger::LogError,e.what());
         return false;
     }
 
@@ -228,7 +230,7 @@ void BBLogNormDlg::UpdateDialog()
     ui->spin_first_extBB->setValue(nBBextFirstIndex);
     ui->spin_count_ext_BB->setValue(nBBextCount);
     ui->combo_InterpolationMethod->setCurrentText(QString::fromStdString(enum2string(m_InterpMethod)));
-    ui->checkBox_thresh->setChecked(bUseManualThresh);
+//    ui->checkBox_thresh->setChecked(bUseManualThresh);
     ui->spinThresh->setValue(thresh);
     ui->spinFirstAngle->setValue(ffirstAngle);
     ui->spinLastAngle->setValue(flastAngle);
@@ -267,7 +269,8 @@ void BBLogNormDlg::UpdateParameters()
 
     min_area = ui->spin_minarea->value();
 
-    bUseManualThresh = ui->checkBox_thresh->isChecked();
+//    bUseManualThresh = ui->checkBox_thresh->isChecked();
+//    bUseManualThresh = ui->comboBox_bbMask->currentIndex();
     thresh = ui->spinThresh->value();
     bExtSingleFile = ui->check_singleext->isChecked();
 }
@@ -304,12 +307,15 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
     parameters["BB_mask_ext_name"]    = blackbodyexternalmaskname ;
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
     parameters["BB_ext_firstindex"]   = kipl::strings::value2string(nBBextFirstIndex);
+//    parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
+//    parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
+    parameters["min_area"]            = kipl::strings::value2string(min_area);
+    parameters["thresh"]              = kipl::strings::value2string(thresh);
+//    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
+    parameters["MaskCreationMethod"]  = enum2string(m_maskCreationMethod);
+    parameters["BB_mask_ext_name"]    = m_blackBodyExternalMaskName;
 
-    parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
-    parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
-    parameters["min_area"] = kipl::strings::value2string(min_area);
-    parameters["thresh"]= kipl::strings::value2string(thresh);
-    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
+    parameters["BB_ext_firstindex"]   = kipl::strings::value2string(nBBextFirstIndex);
 }
 
 void BBLogNormDlg::on_button_OBBBpath_clicked()
@@ -756,7 +762,6 @@ void BBLogNormDlg::on_checkBox_thresh_clicked(bool checked)
     bUseManualThresh = checked;
 }
 
-
 void BBLogNormDlg::on_spinThresh_valueChanged(double arg1)
 {
     thresh = arg1;
@@ -807,4 +812,57 @@ void BBLogNormDlg::on_pushButton_ext_OB_back_clicked()
 void BBLogNormDlg::on_pushButton_ext_sample_back_clicked()
 {
     ui->edit_BB_external->setText(QString::fromStdString(m_Config->ProjectionInfo.sFileMask));
+}
+
+void BBLogNormDlg::on_comboBox_bbMask_currentIndexChanged(int index)
+{
+    switch (index)
+    {
+    case 0:
+        ui->label_bbMinArea->show();
+        ui->spin_minarea->show();
+        ui->label_bbRadius->show();
+        ui->spinRadius->show();
+        ui->label_manualThreshold->hide();
+        ui->spinThresh->hide();
+        ui->label_maskfile->hide();
+        ui->lineEdit_userMaskName->hide();
+        ui->pushButton_browseUserMask->hide();
+        break;
+    case 1:
+        ui->label_bbMinArea->show();
+        ui->spin_minarea->show();
+        ui->label_bbRadius->show();
+        ui->spinRadius->show();
+        ui->label_manualThreshold->show();
+        ui->spinThresh->show();
+        ui->label_maskfile->hide();
+        ui->lineEdit_userMaskName->hide();
+        ui->pushButton_browseUserMask->hide();
+        break;
+    case 2:
+        ui->label_bbMinArea->hide();
+        ui->spin_minarea->hide();
+        ui->label_bbRadius->hide();
+        ui->spinRadius->hide();
+        ui->label_manualThreshold->hide();
+        ui->spinThresh->hide();
+        ui->label_maskfile->show();
+        ui->lineEdit_userMaskName->show();
+        ui->pushButton_browseUserMask->show();
+        break;
+    case 3:
+        ui->label_bbMinArea->show();
+        ui->spin_minarea->show();
+        ui->label_bbRadius->show();
+        ui->spinRadius->show();
+        ui->label_manualThreshold->hide();
+        ui->spinThresh->hide();
+        ui->label_maskfile->hide();
+        ui->lineEdit_userMaskName->hide();
+        ui->pushButton_browseUserMask->hide();
+        break;
+    default:
+        throw ModuleException("Unknown spot detection method",__FILE__,__LINE__);
+    }
 }

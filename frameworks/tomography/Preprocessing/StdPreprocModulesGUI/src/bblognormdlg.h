@@ -30,6 +30,9 @@ public:
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
 private slots:
+    void on_comboBox_bbMask_currentIndexChanged(int index);
+
+private slots:
     void on_button_OBBBpath_clicked();
     void on_buttonPreviewOBBB_clicked();
     void on_button_sampleBBpath_clicked();
@@ -39,7 +42,7 @@ private slots:
     void on_button_OB_BB_ext_clicked();
     void on_button_BBexternal_path_clicked();
     void on_combo_InterpolationMethod_activated(const QString &arg1);
-    void on_checkBox_thresh_clicked(bool checked);
+//    void on_checkBox_thresh_clicked(bool checked);
     void on_spinThresh_valueChanged(double arg1);
     void on_checkBox_thresh_stateChanged(int arg1);
     void on_pushButton_filenameOBBB_clicked();
@@ -89,32 +92,30 @@ private:
     size_t nBBextCount; /// number of preprocessed BB images;
     size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images
 
-    float tau; /// mean pattern transmission, default 0.97
-    float thresh; /// manual threshold
-    bool bPBvariante; /// boolean value on the use of PB formula (default now)
-    bool bUseNormROI; /// boolean value on the use of the norm roi
-    bool bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
-    bool bSameMask; /// boolean value on the use of the same mask for all images with BBs
-    bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
+    float tau;           /// mean pattern transmission, default 0.97
+    float thresh;        /// manual threshold
+    bool  bPBvariante;   /// boolean value on the use of PB formula (default now)
+    bool  bUseNormROI;   /// boolean value on the use of the norm roi
+    bool  bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
+//    bool bSameMask; /// boolean value on the use of the same mask for all images with BBs
+//    bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
     bool bExtSingleFile; /// boolean value on the use of single external file for sample background
+    ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod m_maskCreationMethod;
+    std::string m_blackBodyExternalMaskName;
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
-    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
+    ImagingAlgorithms::AverageImage::eAverageMethod               m_ReferenceAverageMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
-    ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions;
-    ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX m_xInterpOrder;
-    ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY m_yInterpOrder;
-    ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod m_InterpMethod;
+    ImagingAlgorithms::ReferenceImageCorrection::eBBOptions       m_BBOptions;
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX    m_xInterpOrder;
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY    m_yInterpOrder;
+    ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod    m_InterpMethod;
     int m_nWindow;
 
     BBLogNorm module;
 
-
-
     kipl::base::TImage <float,2> m_Preview_OBBB;
     kipl::base::TImage <float,2> m_Preview_sampleBB;
-
-
 
 };
 

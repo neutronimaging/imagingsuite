@@ -16,6 +16,7 @@ CameraStripeClean::~CameraStripeClean()
 
 int CameraStripeClean::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
+    std::ignore = config;
     m_fThreshold = GetFloatParameter(parameters,"threshold");
     return 0;
 }
@@ -31,11 +32,13 @@ std::map<std::string, std::string> CameraStripeClean::GetParameters()
 
 bool CameraStripeClean::SetROI(const std::vector<size_t> &roi)
 {
+    std::ignore = roi;
     return false;
 }
 
 int CameraStripeClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
 {
+    std::ignore = coeff;
     kipl::base::TImage<float,2> orig=img;
     orig.Clone();
 
@@ -60,8 +63,10 @@ int CameraStripeClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<s
     // First line
     center = img.GetLinePtr(0);
     prev   = orig.GetLinePtr(1);
-    for (size_t j=0; j<img.Size(0); j++) {
-        if (m_fThreshold<center[j]) {
+    for (size_t j=0; j<img.Size(0); j++)
+    {
+        if (m_fThreshold<center[j])
+        {
             center[j]=prev[j];
         }
     }
@@ -70,8 +75,10 @@ int CameraStripeClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<s
     center = img.GetLinePtr(img.Size(1)-1);
     prev   = orig.GetLinePtr(img.Size(1)-2);
 
-    for (int j=0; j<img.Size(0); j++) {
-        if (m_fThreshold<center[j]) {
+    for (size_t j=0; j<img.Size(0); ++j)
+    {
+        if (m_fThreshold<center[j])
+        {
             center[j]=prev[j];
         }
     }

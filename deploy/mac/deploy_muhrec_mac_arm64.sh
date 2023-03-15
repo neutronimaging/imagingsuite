@@ -96,13 +96,19 @@ rm -f ./MacOS/*.dylib
 cd Frameworks
 rm -f *.1.0.dylib
 rm -f *.1.dylib
+ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
+ln -s libNeXus.1.0.0.dylib libNeXus.1.0.dylib
+
+ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
+ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.0.dylib
 
 if [ -e "/opt/local/lib/libzstd.1.dylib" ]; then
-	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/MacOS`
+	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/Frameworks`
+	# `$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/MacOS`
 fi
 
 if [ -e "/opt/local/lib/libzstd.9.dylib" ]; then
-	`$CPCMD /opt/local/lib/libzstd.9.dylib $DEST/Contents/MacOS`
+	`$CPCMD /opt/local/lib/libzstd.9.dylib $DEST/Contents/Frameworks`
 fi
 
 
@@ -181,7 +187,7 @@ install_name_tool -change @executable_path/../Frameworks/libarmadillo.10.dylib @
 # # install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib MuhRec
 # # install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib MuhRec
 # # install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib MuhRec
-# # install_name_tool -change libNeXus.1.dylib @executable_path/../Frameworks/libNeXus.1.dylib MuhRec
+install_name_tool -change /Users/kaestner/git/ExternalDependencies/sources/build_nexus/src/libNeXus.1.dylib @executable_path/../libNeXus.1.dylib MuhRec
 # # install_name_tool -change libNeXusCPP.1.dylib @executable_path/../Frameworks/libNeXusCPP.1.dylib MuhRec
 # # install_name_tool -change libReaderConfig.1.dylib @executable_path/../Frameworks/libReaderConfig.1.dylib MuhRec
 # # install_name_tool -change libReaderGUI.1.dylib @executable_path/../Frameworks/libReaderGUI.1.dylib MuhRec

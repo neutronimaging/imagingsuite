@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1053</width>
-    <height>982</height>
+    <width>1291</width>
+    <height>1094</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -814,9 +814,33 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
-             <widget class="QLabel" name="label_16">
+             <widget class="QComboBox" name="comboBox_bbMask">
+              <item>
+               <property name="text">
+                <string>Otsu mask segmentation</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Manual Threshold</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>User defined mask</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Reference free mask segmentation</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_bbRadius">
               <property name="text">
-               <string>radius</string>
+               <string>Radius</string>
               </property>
              </widget>
             </item>
@@ -828,9 +852,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_18">
+             <widget class="QLabel" name="label_bbMinArea">
               <property name="text">
-               <string>min area</string>
+               <string>Min area</string>
               </property>
              </widget>
             </item>
@@ -845,19 +869,26 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_30">
+             <widget class="QLabel" name="label_maskfile">
               <property name="text">
-               <string/>
+               <string>Mask file</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="checkBox_thresh">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select manual threshold for BB segmentation. Threshold should be a normalized values between 0.0 and 1.0. Values below the theshold are considerd as BB. If unchecked, Otsu thresholding is applied&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
+             <widget class="QLineEdit" name="lineEdit_userMaskName"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_browseUserMask">
               <property name="text">
-               <string>Manual Threshold</string>
+               <string>Browse</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_manualThreshold">
+              <property name="text">
+               <string>Threshold</string>
               </property>
              </widget>
             </item>
@@ -894,7 +925,7 @@
             <item>
              <widget class="QLabel" name="label_error">
               <property name="text">
-               <string>not available</string>
+               <string>not computed</string>
               </property>
              </widget>
             </item>
