@@ -757,10 +757,10 @@ void BBLogNormDlg::on_combo_InterpolationMethod_activated(const QString &arg1)
 
 }
 
-void BBLogNormDlg::on_checkBox_thresh_clicked(bool checked)
-{
-    bUseManualThresh = checked;
-}
+// void BBLogNormDlg::on_checkBox_thresh_clicked(bool checked)
+// {
+//     bUseManualThresh = checked;
+// }
 
 void BBLogNormDlg::on_spinThresh_valueChanged(double arg1)
 {
