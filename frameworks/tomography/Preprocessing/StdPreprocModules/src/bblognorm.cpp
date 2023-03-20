@@ -2,6 +2,7 @@
 #include <strings/miscstring.h>
 
 #include <ReconException.h>
+#include <ImagingException.h>
 #include <ModuleException.h>
 #include <ProjectionReader.h>
 #include <ReconConfig.h>
@@ -163,12 +164,11 @@ int BBLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> 
     ffirstAngle      = GetFloatParameter(parameters, "firstAngle");
     flastAngle       = GetFloatParameter(parameters, "lastAngle");
     bSameMask        = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
-    bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
     bExtSingleFile   = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
     thresh           = GetFloatParameter(parameters,"thresh");
 
     m_corrector.SaveBG(false, blackbodyname, blackbodyname, blackbodyname); // fake names
-    m_corrector.SetManualThreshold(bUseManualThresh,thresh);
+    m_corrector.SetManualThreshold(thresh);
 
 
     nOriginalNormRegion = config.ProjectionInfo.dose_roi;
@@ -290,11 +290,10 @@ int BBLogNorm::ConfigureDLG(ReconConfig config, std::map<std::string, std::strin
     ffirstAngle      = GetFloatParameter(parameters, "firstAngle");
     flastAngle       = GetFloatParameter(parameters, "lastAngle");
     bSameMask        = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
-    bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
     thresh           = GetFloatParameter(parameters, "thresh");
     bExtSingleFile   = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
 
-    m_corrector.SetManualThreshold(bUseManualThresh,thresh);
+    m_corrector.SetManualThreshold(thresh);
 
     nOriginalNormRegion = config.ProjectionInfo.dose_roi;
 
@@ -419,7 +418,7 @@ std::map<std::string, std::string> BBLogNorm::GetParameters()
     parameters["BB_ext_firstindex"]    = kipl::strings::value2string(nBBextFirstIndex);
     parameters["SameMask"]             = kipl::strings::bool2string(bSameMask);
     parameters["min_area"]             = kipl::strings::value2string(min_area);
-    parameters["ManualThreshold"]      = kipl::strings::bool2string(bUseManualThresh);
+    // parameters["ManualThreshold"]      = kipl::strings::bool2string(bUseManualThresh);
     parameters["thresh"]               = kipl::strings::value2string(thresh);
     parameters["singleBBext"]          = kipl::strings::bool2string(bExtSingleFile);
 
@@ -1412,19 +1411,19 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     catch (ModuleException &e)
     {
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
-        logger(kipl::logging::Logger::LogDebug,msg.str());
+        logger.debug(msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch(ReconException &e)
     {
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
-        logger(kipl::logging::Logger::LogDebug,msg.str());
+        logger.debug(msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch(kipl::base::KiplException &e)
     {
         msg.str(""); msg<<"Failed to compute bb_ob_parameters. Try to change thresholding method or value. " << e.what();
-        logger(kipl::logging::Logger::LogDebug,msg.str());
+        logger.debug(msg.str());
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e)
@@ -1439,22 +1438,27 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     return error;
 }
 
-kipl::base::TImage<float,2> BBLogNorm::GetMaskImage(){
+kipl::base::TImage<float,2> BBLogNorm::GetMaskImage()
+{
     return mMaskBB;
 }
 
-float BBLogNorm::computedose(kipl::base::TImage<float,2>&img){
+float BBLogNorm::computedose(kipl::base::TImage<float,2>&img)
+{
 
     float *pImg=img.GetDataPtr();
     float *means=new float[img.Size(1)];
     memset(means,0,img.Size(1)*sizeof(float));
 
-    for (size_t y=0; y<img.Size(1); y++) {
+    for (size_t y=0; y<img.Size(1); y++)
+    {
         pImg=img.GetLinePtr(y);
 
-        for (size_t x=0; x<img.Size(0); x++) {
+        for (size_t x=0; x<img.Size(0); x++)
+        {
             means[y]+=pImg[x];
         }
+
         means[y]=means[y]/static_cast<float>(img.Size(0));
     }
 
@@ -1468,7 +1472,7 @@ float BBLogNorm::computedose(kipl::base::TImage<float,2>&img){
 
 int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
 {
-
+    throw ImagingException("BB correction of 2D images is not implemented", __FILE__,__LINE__);
     return 0;
 }
 

@@ -9,13 +9,6 @@
 
 #include <armadillo>
 
-//#include <tnt_array1d.h>
-//#include <tnt_array2d.h>
-//#include <jama_lu.h>
-//#include <jama_qr.h>
-//#include <jama_svd.h>
-//#include <tnt_cmat.h>
-
 #include <math/median.h>
 #include <io/io_tiff.h>
 #include <segmentation/thresholds.h>
@@ -43,7 +36,6 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     m_bHaveBlackBody(false),
     m_bHaveExternalBlackBody(false),
     m_bComputeLogarithm(true),
-    bUseManualThresh(false),
     bSaveBG(false),
     m_fOpenBeamDose(1.0f),
     m_bHaveDoseROI(false),
@@ -281,8 +273,8 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
     std::vector<size_t> slice_dims = {img.Size(0), img.Size(1)};
     kipl::base::TImage<float, 2> slice(slice_dims);
 
-    for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"BBLogNorm: Referencing iteration")==false)); i++) {
-
+    for (size_t i=0; (i<img.Size(2) && (updateStatus(float(i)/img.Size(2),"BBLogNorm: Referencing iteration")==false)); i++)
+    {
         if (m_bHaveBlackBody)
         {
             switch (m_InterpMethod)
@@ -379,7 +371,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     //2.b compute otsu threshold
 
     float ot;
-    if (bUseManualThresh)
+    if (m_MaskMethod == manuallyThresholdedMask)
     {
           ot = thresh;
     }
@@ -399,7 +391,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     //2.c threshold image
 
     kipl::base::TImage<float,2> maskOtsu(norm.dims());
-    kipl::base::TImage<int,2> labelImage(norm.dims());
+    kipl::base::TImage<int,2>   labelImage(norm.dims());
 
  // now it works:
 //    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
@@ -946,7 +938,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     //2.b compute otsu threshold
     float ot;
 
-    if (bUseManualThresh)
+    if (m_MaskMethod == manuallyThresholdedMask)
         {
               ot = thresh;
         }

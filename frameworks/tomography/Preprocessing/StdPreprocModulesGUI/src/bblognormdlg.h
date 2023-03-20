@@ -53,6 +53,7 @@ private slots:
     void on_pushButton_ext_OB_back_clicked();
 
     void on_pushButton_ext_sample_back_clicked();
+    void on_pushButton_browseUserMask_clicked();
 
 private:
     virtual void ApplyParameters();
@@ -97,11 +98,11 @@ private:
     bool  bPBvariante;   /// boolean value on the use of PB formula (default now)
     bool  bUseNormROI;   /// boolean value on the use of the norm roi
     bool  bUseNormROIBB; /// boolean value on the use of the norm roi on BBs
-//    bool bSameMask; /// boolean value on the use of the same mask for all images with BBs
+    bool  bSameMask;     /// boolean value on the use of the same mask for all images with BBs
 //    bool bUseManualThresh; /// boolean value on the use of a manual threshold instead of Otsu
     bool bExtSingleFile; /// boolean value on the use of single external file for sample background
     ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod m_maskCreationMethod;
-    std::string m_blackBodyExternalMaskName;
+
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
     ImagingAlgorithms::AverageImage::eAverageMethod               m_ReferenceAverageMethod;

@@ -35,11 +35,15 @@ public:
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
+    std::map<std::string, std::string> parameters();
+
 protected:
     virtual int exec() { return QDialog::exec(); }
     virtual void UpdateDialog() = 0;
     virtual void UpdateParameters() = 0;
     virtual void ApplyParameters() = 0;
+    virtual void UpdateParameterList(std::map<std::string, std::string> &parameters);
+
 
 	kipl::base::TImage<float,2> GetProjection(kipl::base::TImage<float,3> img, size_t n);
 	kipl::base::TImage<float,2> GetSinogram(kipl::base::TImage<float,3> img, size_t n);

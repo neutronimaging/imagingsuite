@@ -8,6 +8,8 @@
 #include <io/io_tiff.h>
 #include <segmentation/thresholds.h>
 #include <segmentation/gradientguidedthreshold.h>
+#include <strings/filenames.h>
+#include <io/io_csv.h>
 
 class kiplSegmentationTest : public QObject
 {
@@ -23,10 +25,17 @@ private Q_SLOTS:
     void testMultiThreshold();
     void testGradientGuidedThreshold();
     void testCmpType();
+    void testRosin();
+
+private: 
+    std::string dataPath;
 };
 
 kiplSegmentationTest::kiplSegmentationTest()
 {
+    dataPath = QT_TESTCASE_BUILDDIR;
+    dataPath = dataPath + "/../../../../../TestData/";
+    kipl::strings::filenames::CheckPathSlashes(dataPath,true);
 }
 
 //void kiplSegmentationTest::testCase1_data()
@@ -86,11 +95,10 @@ void kiplSegmentationTest::testMultiThreshold()
     kipl::base::TImage<float,2> img;
     kipl::base::TImage<float,2> res;
 
-#ifdef QT_DEBUG
-    kipl::io::ReadTIFF(img,"../../TestData/2D/tiff/multi_class_reference.tif");
-#else
-    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/multi_class_reference.tif");
-#endif
+    std::string fname = dataPath + "2D/tiff/multi_class_reference.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
+
     std::vector<float> th={80.0f,150.0f};
 
     kipl::segmentation::MultiThreshold(img, res, th);
@@ -122,11 +130,10 @@ void kiplSegmentationTest::testGradientGuidedThreshold()
     kipl::base::TImage<float,2> img(dims);
     kipl::base::TImage<float,2> res(dims);
 
-#ifdef QT_DEBUG
-    kipl::io::ReadTIFF(img,"../../TestData/2D/tiff/multi_class_smooth.tif");
-#else
-    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/multi_class_smooth.tif");
-#endif
+
+    std::string fname = dataPath + "2D/tiff/multi_class_smooth.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
 
     kipl::segmentation::gradientGuidedThreshold<float,float,2> gs;
     float th[2]={80.0f,150.0f};
@@ -180,6 +187,20 @@ void kiplSegmentationTest::testCmpType()
 
 }
 
+void kiplSegmentationTest::testRosin()
+{
+    const size_t N=100;
+    std::vector<size_t> hist;
+    std::string fname = dataPath + "1D/histograms/hist_right_tail_03.txt" ;
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    auto data = kipl::io::readCSV(fname,',',false);
+
+    std::copy(data["a"].begin(),data["a"].end(),std::back_inserter(hist));
+
+    auto th=kipl::segmentation::Threshold_Rosin(hist,kipl::segmentation::tail_right,0);
+    QCOMPARE(th,-1);
+}
+
 QTEST_APPLESS_MAIN(kiplSegmentationTest)
 
-#include "tst_kiplsegmentationtest.moc"
+#include "tst_kiplsegmentation.moc"

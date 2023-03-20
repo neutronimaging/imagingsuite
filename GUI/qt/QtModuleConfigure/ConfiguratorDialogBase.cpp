@@ -56,3 +56,18 @@ kipl::base::TImage<float,2> ConfiguratorDialogBase::GetSinogram(kipl::base::TIma
 
 	return sino;
 }
+
+std::map<std::string, std::string> ConfiguratorDialogBase::parameters()
+{
+    std::map<std::string, std::string> pars;
+
+    UpdateParameters();
+    UpdateParameterList(pars);
+
+    return pars;
+}
+
+void ConfiguratorDialogBase::UpdateParameterList(std::map<std::string, std::string> &parameters)
+{
+
+}

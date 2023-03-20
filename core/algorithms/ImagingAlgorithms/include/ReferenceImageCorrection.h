@@ -100,7 +100,7 @@ public:
     void SetSplineObValues(std::map<std::pair<int, int>, float> &values) {spline_ob_values = values;} /// set map to be used for spline interpolation of ob images
     void SetSplineSampleValues(std::map<std::pair<int, int>, float> &values){spline_sample_values = values; } /// set map to used for spline interpolation of sample images
     void SetInterpolationMethod(eInterpMethod eint_meth) {m_InterpMethod = eint_meth;} /// set method for background interpolation, polynomial or splines
-    void SetManualThreshold(bool bThresh, float value) {{bUseManualThresh=bThresh; thresh=value;}}
+    void SetManualThreshold( float value) { thresh=value; }
 
     void SetAngles(float *ang, size_t nProj, size_t nBB); ///< set angles and number of proj and images with BB, to be used for more general interpolation
     void SetDoseList(const std::vector<float> &doselist); /// set dose list for sample images in the BB dose roi, it has to be called after SetAngles for the right definition of m_nProj
@@ -168,7 +168,6 @@ protected:
 	bool m_bHaveBlackBody;
     bool m_bHaveExternalBlackBody;
 	bool m_bComputeLogarithm;
-    bool bUseManualThresh;
     bool bSaveBG;
 
     std::string pathBG; /// path for saving BGs

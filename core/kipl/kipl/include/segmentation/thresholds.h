@@ -511,7 +511,7 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img,
 	///	\param hist The histogram vector
 	///	\param tail Selects the tail
 	///	\param median_filter_len Length of the median filter
-    int KIPLSHARED_EXPORT Threshold_Rosin(size_t const * const hist, const TailType tail=tail_left, const size_t median_filter_len=0);
+    int KIPLSHARED_EXPORT Threshold_Rosin(const std::vector<size_t> & hist, const TailType tail=tail_left, const size_t median_filter_len=0);
 }}
 
 std::string KIPLSHARED_EXPORT enum2string(kipl::segmentation::CmpType cmp);

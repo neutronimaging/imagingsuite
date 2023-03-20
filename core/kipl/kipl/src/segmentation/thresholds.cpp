@@ -7,8 +7,10 @@
 
 #include "../../include/segmentation/thresholds.h"
 #include "../../include/morphology/morphology.h"
+#include "../../include/stltools/stlvecmath.h"
 #include "../../include/math/sums.h"
 #include "../../include/strings/miscstring.h"
+#include "../../include/io/io_serializecontainers.h"
 
 using namespace std;
 
@@ -120,75 +122,99 @@ int Threshold_Otsu(size_t const * const hist, const size_t N)
 	return t;
 }
 
-int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t median_filter_len) 
+int Threshold_Rosin(const std::vector<size_t> & hist, const TailType tail, const size_t median_filter_len) 
 {
+	kipl::logging::Logger logger("Threshold_Rosin");
+	std::ostringstream msg;
 //	if ((tail!=tail_left) && (tail!=tail_right))
 //		tail=tail_left;
-	vector<long> h;
-//	if (median_filter_len)
-//		MedianFilter(hist,h,median_filter_len);
-//	else
-//		h=hist;
+	vector<size_t> h;
+	if (median_filter_len)
+		h=medianFilter(hist,median_filter_len);
+	else
+		h=hist;
 
+	msg.str(""); msg<<"hist.size: "<<hist.size()<<", h.size():"<<h.size();
+	logger.message(msg.str());
 //	int max_pos=0, min_pos=0;
-	vector<long>::iterator maxIt, first,last,thIt, it;
-	int max,min;
-	maxIt=max_element(h.begin(),h.end());
-	int d=distance(h.begin(),maxIt);
+	vector<size_t>::iterator maxIt, first,last,thIt, it;
 	
-	if (tail==tail_left) {
+	maxIt=max_element(h.begin()+1,h.end()-1);
+
+	float max = static_cast<float>(*maxIt);
+	float min = 0.0f;
+	ptrdiff_t d=distance(h.begin(),maxIt);
+	
+	if (tail==tail_left) 
+	{
+		logger.message("Left tail");
 		last=maxIt;
 		
 		first=h.begin();
-		if (maxIt==first) {
-            std::cerr<<"Rosin: Histogram has max at the first bin, no left tail?"<<std::endl;
-			return 0;
+		if (maxIt==first) 
+		{
+			std::string msg = "Rosin: Histogram has max at the first bin, no left tail?";
+			logger.error(msg);
+			throw kipl::base::KiplException(msg,__FILE__,__LINE__);
 		}
-		while ((!*first) && (first!=last))
-			first++;
+		while ((*first != 0UL) && (first!=last))
+			++first;
 			
 		if (first==last)
-			first--;
-		min=*first;
+			--first;
+		min=static_cast<float>(*first);
 		d=distance(first,last);
 	}
-	else {
+	else 
+	{
+		logger.message("Right tail");
 		first=maxIt;
-		last=h.end(); last--;
-		if (maxIt==last) {
-            std::cerr<<"Rosin: Histogram has max at the last bin, no right tail?"<<std::endl;
-            return static_cast<int>(h.size()-1);
-		}
+		last=h.end(); 
+		--last;
 		
-		while ((!*last) && (last!=first)) 
-			last--;
-			
-		if (last==first)
-			last++;
-		min=*last;
+		while ((*last == 0UL) && (last!=first)) 
+			--last;	
+				
 		d=distance(first,last);
+
+		if (d<=1) 
+		{
+			std::string msg = "Rosin: Histogram has max at the last bin, no right tail?";
+			logger.error(msg);
+			throw kipl::base::KiplException(msg,__FILE__,__LINE__);
+		}
 	}
-
-	max=*maxIt;
 	
-	int i=0;
+	float i=0;
 
-	double k=(*last-*first)/double(last-first);
-	double ik=-1/k;
-	double mf=tail==tail_left ? min : max;
-	double mg,ifg;
+	float k = (static_cast<float>(*last)-static_cast<float>(*first))/static_cast<float>(last-first);
+	float m = k*distance(h.begin(),first) + *first;
+	msg.str("");
+	msg<<"Line k: "<<k<<", m: "<<m<<", last: "<<*last<<", first: "<<*first<<", d: "<<d;
+	logger.message(msg.str());
+	// k = (h[-1]-h[idxmax])/(len(h)-1-idxmax)
+    // m = idxmax*k + h[idxmax]
+    // d = np.abs(k*x-h+m)/np.sqrt(k**2+1)
+    
+    // idx = np.argmax(d)+1
+	
+	float C=0, C_max=0;
+	std::vector<float> cvec;
 
-	double C=0, C_max=0;
-		
-	for (i=0,it=first; it!=last; it++,i++) {
-		mg=*it-ik*i;
-		ifg=k*(mg-mf)/(k*k+1);
-		C=(k*ifg+mf-*it)*(k*ifg+mf-*it)+(i-ifg)*(i-ifg);
-		if (C>C_max) { 
+	msg.str(""); msg<<"first: "<<distance(h.begin(),first)<<", last: "<<distance(h.begin(),last);
+	logger.message(msg.str());
+	thIt = first;
+	for (i=0,it=first; it!=last; ++it,++i) 
+	{
+		C=abs(k*i-static_cast<float>(*it)+m)/sqrt(k*k+1);
+		cvec.push_back(C);
+		if (C>C_max) 
+		{ 
 			C_max=C; 
 			thIt=it; 
 		}
 	}
+	kipl::io::serializeContainer(cvec.begin(),cvec.end(),"cvec.txt");
 
 	return thIt-h.begin();
 }

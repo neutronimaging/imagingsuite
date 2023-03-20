@@ -38,17 +38,16 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
 //    bUseNormROIBB(false),
     blackbodyexternalname("none"),
     blackbodysampleexternalname("none"),
-    blackbodyexternalmaskname("none"),
     nBBextCount(1),
     nBBextFirstIndex(0),
     tau(0.99f),
     thresh(0),
     bPBvariante(true),
-//    bSameMask(true),
+    bSameMask(true),
 //    bUseManualThresh(false),
 //    bExtSingleFile(true),
     m_maskCreationMethod(ImagingAlgorithms::ReferenceImageCorrection::otsuMask),
-    m_blackBodyExternalMaskName("./externalBBmask.tif"),
+    blackbodyexternalmaskname("./externalBBmask.tif"),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
@@ -78,11 +77,8 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
 
     catch (ModuleException & e)
     {
-        logger(kipl::logging::Logger::LogWarning,e.what());
+        logger.warning(e.what());
     }
-
-
-
 }
 
 BBLogNormDlg::~BBLogNormDlg()
@@ -97,24 +93,24 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
     try
     {
-        nBBFirstIndex = GetIntParameter(parameters,"BB_first_index");
-        nBBCount = GetIntParameter(parameters,"BB_counts");
-        blackbodyname = GetStringParameter(parameters,"BB_OB_name");
+        nBBFirstIndex       = GetIntParameter(parameters,"BB_first_index");
+        nBBCount            = GetIntParameter(parameters,"BB_counts");
+        blackbodyname       = GetStringParameter(parameters,"BB_OB_name");
         nBBSampleFirstIndex = GetIntParameter(parameters,"BB_sample_firstindex");
-        nBBSampleCount = GetIntParameter(parameters,"BB_samplecounts");
+        nBBSampleCount      = GetIntParameter(parameters,"BB_samplecounts");
         blackbodysamplename = GetStringParameter(parameters, "BB_samplename");
         GetUIntParameterVector(parameters,"BBroi",BBroi,4);
         GetUIntParameterVector(parameters,"doseBBroi",doseBBroi,4);
-        radius = GetIntParameter(parameters,"radius");
+        radius              = GetIntParameter(parameters,"radius");
 //        bUseNormROIBB = kipl::strings::string2bool(GetStringParameter(parameters,"useBBnormregion"));
-        tau = GetFloatParameter(parameters, "tau");
+        tau         = GetFloatParameter(parameters, "tau");
         bPBvariante = kipl::strings::string2bool(GetStringParameter(parameters,"PBvariante"));
         string2enum(GetStringParameter(parameters,"avgmethod"),m_ReferenceAverageMethod);
         string2enum(GetStringParameter(parameters,"refmethod"), m_ReferenceMethod);
         string2enum(GetStringParameter(parameters,"BBOption"), m_BBOptions);
-        m_nWindow = GetIntParameter(parameters,"window");
+        m_nWindow   = GetIntParameter(parameters,"window");
         ffirstAngle = GetFloatParameter(parameters,"firstAngle");
-        flastAngle = GetFloatParameter(parameters,"lastAngle");
+        flastAngle  = GetFloatParameter(parameters,"lastAngle");
         string2enum(GetStringParameter(parameters,"X_InterpOrder"), m_xInterpOrder);
         string2enum(GetStringParameter(parameters,"Y_InterpOrder"), m_yInterpOrder);
         string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
@@ -124,7 +120,7 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
         blackbodyexternalmaskname   = GetStringParameter(parameters, "BB_mask_ext_name");
         nBBextCount                 = GetIntParameter(parameters,    "BB_ext_samplecounts");
         nBBextFirstIndex            = GetIntParameter(parameters,    "BB_ext_firstindex");
-        // bSameMask                   = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+        bSameMask                   = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
         bExtSingleFile              = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
         // bUseManualThresh            = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
         string2enum(GetStringParameter(parameters, "MaskCreationMethod"),  m_maskCreationMethod);
@@ -184,14 +180,14 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
 
     if (res==QDialog::Accepted)
     {
-        logger(kipl::logging::Logger::LogMessage,"Use settings");
+        logger.message("Use settings");
         UpdateParameters();
         UpdateParameterList(parameters);
         return true;
     }
     else
     {
-        logger(kipl::logging::Logger::LogMessage,"Discard settings");
+        logger.message("Discard settings");
     }
 
     return res;
@@ -211,31 +207,34 @@ void BBLogNormDlg::ApplyParameters()
 
 void BBLogNormDlg::UpdateDialog()
 {
-    ui->spinFirstOBBB->setValue(nBBFirstIndex);
-    ui->spinCountsOBBB->setValue(nBBCount);
-    ui->edit_OB_BB_mask->setText(QString::fromStdString(blackbodyname));
-    ui->roiwidget_BB->setROI(BBroi);
-    ui->spinFirstsampleBB->setValue(nBBSampleFirstIndex);
-    ui->spinCountsampleBB->setValue(nBBSampleCount);
+    ui->spinFirstOBBB      ->setValue(nBBFirstIndex);
+    ui->spinCountsOBBB     ->setValue(nBBCount);
+    ui->edit_OB_BB_mask    ->setText(QString::fromStdString(blackbodyname));
+    ui->roiwidget_BB       ->setROI(BBroi);
+    ui->spinFirstsampleBB  ->setValue(nBBSampleFirstIndex);
+    ui->spinCountsampleBB  ->setValue(nBBSampleCount);
     ui->edit_sample_BB_mask->setText(QString::fromStdString(blackbodysamplename));
-    ui->roiwidget_dose->setROI(doseBBroi);
-    ui->spinRadius->setValue(static_cast<int>(radius));
+    ui->roiwidget_dose     ->setROI(doseBBroi);
+    ui->spinRadius         ->setValue(static_cast<int>(radius));
     ui->combo_averagingMethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceAverageMethod)));
     ui->combo_referencingmethod->setCurrentText(QString::fromStdString(enum2string(m_ReferenceMethod)));
-    ui->combo_BBoptions->setCurrentText(QString::fromStdString(enum2string(m_BBOptions)));
-    ui->combo_IntMeth_X->setCurrentText(QString::fromStdString(enum2string(m_xInterpOrder)));
-    ui->combo_IntMeth_Y->setCurrentText(QString::fromStdString(enum2string(m_yInterpOrder)));
-    ui->edit_OBBB_ext->setText(QString::fromStdString(blackbodyexternalname));
-    ui->edit_BB_external->setText(QString::fromStdString(blackbodysampleexternalname));
-    ui->spin_first_extBB->setValue(nBBextFirstIndex);
-    ui->spin_count_ext_BB->setValue(nBBextCount);
+    ui->combo_BBoptions    ->setCurrentText(QString::fromStdString(enum2string(m_BBOptions)));
+    ui->combo_IntMeth_X    ->setCurrentText(QString::fromStdString(enum2string(m_xInterpOrder)));
+    ui->combo_IntMeth_Y    ->setCurrentText(QString::fromStdString(enum2string(m_yInterpOrder)));
+    ui->edit_OBBB_ext      ->setText(QString::fromStdString(blackbodyexternalname));
+    ui->edit_BB_external   ->setText(QString::fromStdString(blackbodysampleexternalname));
+    ui->spin_first_extBB   ->setValue(nBBextFirstIndex);
+    ui->spin_count_ext_BB  ->setValue(nBBextCount);
     ui->combo_InterpolationMethod->setCurrentText(QString::fromStdString(enum2string(m_InterpMethod)));
-//    ui->checkBox_thresh->setChecked(bUseManualThresh);
+
     ui->spinThresh->setValue(thresh);
     ui->spinFirstAngle->setValue(ffirstAngle);
     ui->spinLastAngle->setValue(flastAngle);
     ui->spin_minarea->setValue(min_area);
     ui->check_singleext->setChecked(bExtSingleFile);
+
+    ui->comboBox_bbMask->setCurrentIndex(m_maskCreationMethod);
+    on_comboBox_bbMask_currentIndexChanged(m_maskCreationMethod);
 }
 
 void BBLogNormDlg::UpdateParameters()
@@ -269,53 +268,52 @@ void BBLogNormDlg::UpdateParameters()
 
     min_area = ui->spin_minarea->value();
 
-//    bUseManualThresh = ui->checkBox_thresh->isChecked();
-//    bUseManualThresh = ui->comboBox_bbMask->currentIndex();
-    thresh = ui->spinThresh->value();
-    bExtSingleFile = ui->check_singleext->isChecked();
+    thresh                    = ui->spinThresh->value();
+    bExtSingleFile            = ui->check_singleext->isChecked();
+    m_maskCreationMethod      = static_cast<ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod>(ui->comboBox_bbMask->currentIndex());
+    blackbodyexternalmaskname = ui->lineEdit_userMaskName->text().toStdString();
 }
 
 void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters)
 {
 
-    parameters["BB_OB_name"] = blackbodyname;
-    parameters["BB_counts"] = kipl::strings::value2string(nBBCount);
-    parameters["BB_first_index"] = kipl::strings::value2string(nBBFirstIndex);
-    parameters["BBroi"] = kipl::strings::value2string(BBroi[0])+" "+kipl::strings::value2string(BBroi[1])+" "+kipl::strings::value2string(BBroi[2])+" "+kipl::strings::value2string(BBroi[3]);
+    parameters["BB_OB_name"]          = blackbodyname;
+    parameters["BB_counts"]           = kipl::strings::value2string(nBBCount);
+    parameters["BB_first_index"]      = kipl::strings::value2string(nBBFirstIndex);
+    parameters["BBroi"]               = kipl::strings::value2string(BBroi[0])+" "+kipl::strings::value2string(BBroi[1])+" "+kipl::strings::value2string(BBroi[2])+" "+kipl::strings::value2string(BBroi[3]);
 
-    parameters["BB_samplename"] = blackbodysamplename;
-    parameters["BB_samplecounts"] = kipl::strings::value2string(nBBSampleCount);
+    parameters["BB_samplename"]       = blackbodysamplename;
+    parameters["BB_samplecounts"]     = kipl::strings::value2string(nBBSampleCount);
     parameters["BB_sample_firstindex"] = kipl::strings::value2string(nBBSampleFirstIndex);
-    parameters["doseBBroi"] = kipl::strings::value2string(doseBBroi[0])+" "+kipl::strings::value2string(doseBBroi[1])+" "+kipl::strings::value2string(doseBBroi[2])+" "+kipl::strings::value2string(doseBBroi[3]);
+    parameters["doseBBroi"]           = kipl::strings::value2string(doseBBroi[0])+" "+kipl::strings::value2string(doseBBroi[1])+" "+kipl::strings::value2string(doseBBroi[2])+" "+kipl::strings::value2string(doseBBroi[3]);
+    parameters["radius"]              = kipl::strings::value2string(radius);
 
-    parameters["radius"] = kipl::strings::value2string(radius);
-
-    parameters["avgmethod"] = enum2string(m_ReferenceAverageMethod);
-    parameters["refmethod"] = enum2string(m_ReferenceMethod);
-    parameters["BBOption"] = enum2string(m_BBOptions);
+    parameters["avgmethod"]           = enum2string(m_ReferenceAverageMethod);
+    parameters["refmethod"]           = enum2string(m_ReferenceMethod);
+    parameters["BBOption"]            = enum2string(m_BBOptions);
     parameters["InterpolationMethod"] = enum2string(m_InterpMethod);
-    parameters["tau"] = kipl::strings::value2string(tau);
-    parameters["PBvariante"] = kipl::strings::bool2string(bPBvariante);
-    parameters["window"] = kipl::strings::value2string(m_nWindow);
-    parameters["firstAngle"] = kipl::strings::value2string(ffirstAngle);
-    parameters["lastAngle"] = kipl::strings::value2string(flastAngle);
-    parameters["X_InterpOrder"] = enum2string(m_xInterpOrder);
-    parameters["Y_InterpOrder"] = enum2string(m_yInterpOrder);
+    parameters["tau"]                 = kipl::strings::value2string(tau);
+    parameters["PBvariante"]          = kipl::strings::bool2string(bPBvariante);
+    parameters["window"]              = kipl::strings::value2string(m_nWindow);
+    parameters["firstAngle"]          = kipl::strings::value2string(ffirstAngle);
+    parameters["lastAngle"]           = kipl::strings::value2string(flastAngle);
+    parameters["X_InterpOrder"]       = enum2string(m_xInterpOrder);
+    parameters["Y_InterpOrder"]       = enum2string(m_yInterpOrder);
 
     parameters["BB_OB_ext_name"]      = blackbodyexternalname;
     parameters["BB_sample_ext_name"]  = blackbodysampleexternalname;
     parameters["BB_mask_ext_name"]    = blackbodyexternalmaskname ;
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
     parameters["BB_ext_firstindex"]   = kipl::strings::value2string(nBBextFirstIndex);
-//    parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
-//    parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
+
     parameters["min_area"]            = kipl::strings::value2string(min_area);
     parameters["thresh"]              = kipl::strings::value2string(thresh);
-//    parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
     parameters["MaskCreationMethod"]  = enum2string(m_maskCreationMethod);
-    parameters["BB_mask_ext_name"]    = m_blackBodyExternalMaskName;
-
+    parameters["BB_mask_ext_name"]    = blackbodyexternalmaskname;
     parameters["BB_ext_firstindex"]   = kipl::strings::value2string(nBBextFirstIndex);
+    parameters["singleBBext"]         = kipl::strings::bool2string(bExtSingleFile);
+    parameters["SameMask"]            = kipl::strings::bool2string(bSameMask);
+
 }
 
 void BBLogNormDlg::on_button_OBBBpath_clicked()
@@ -566,23 +564,21 @@ void BBLogNormDlg::on_errorButton_clicked()
         std::map<std::string, std::string> parameters;
         UpdateParameters();
         UpdateParameterList(parameters);
-//        std::cout << "trying to compute error" << std::endl;
-//        std::cout << "tau: " << GetFloatParameter(parameters, "tau") << std::endl;
 
         kipl::base::TImage<float,2> mymask;
         float error;
 
-        logger.verbose("configuring dlg");
+        logger.verbose("Configuring dialog");
+
         try {
             module.ConfigureDLG(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
-
         }
         catch(ModuleException &e)
         {
             QMessageBox errdlg(this);
             errdlg.setText("Failed to configure the module dialog, check the parameters");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
-            logger(kipl::logging::Logger::LogWarning,e.what());
+            logger.warning(e.what());
             errdlg.exec();
             return ;
         }
@@ -591,7 +587,7 @@ void BBLogNormDlg::on_errorButton_clicked()
             QMessageBox errdlg(this);
             errdlg.setText("Failed to configure the module dialog, check the parameters");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
-            logger(kipl::logging::Logger::LogWarning,e.what());
+            logger.warning(e.what());
             errdlg.exec();
             return ;
         }
@@ -602,7 +598,7 @@ void BBLogNormDlg::on_errorButton_clicked()
             return ;
         }
 
-        logger.verbose("get interpolation error");
+        logger.verbose("Compute interpolation error");
         try
         {
             error = module.GetInterpolationError(mymask);
@@ -852,13 +848,13 @@ void BBLogNormDlg::on_comboBox_bbMask_currentIndexChanged(int index)
         ui->pushButton_browseUserMask->show();
         break;
     case 3:
-        ui->label_bbMinArea->show();
-        ui->spin_minarea->show();
-        ui->label_bbRadius->show();
-        ui->spinRadius->show();
+        ui->label_bbMinArea      ->show();
+        ui->spin_minarea         ->show();
+        ui->label_bbRadius       ->show();
+        ui->spinRadius           ->show();
         ui->label_manualThreshold->hide();
-        ui->spinThresh->hide();
-        ui->label_maskfile->hide();
+        ui->spinThresh           ->hide();
+        ui->label_maskfile       ->hide();
         ui->lineEdit_userMaskName->hide();
         ui->pushButton_browseUserMask->hide();
         break;
@@ -866,3 +862,13 @@ void BBLogNormDlg::on_comboBox_bbMask_currentIndexChanged(int index)
         throw ModuleException("Unknown spot detection method",__FILE__,__LINE__);
     }
 }
+
+void BBLogNormDlg::on_pushButton_browseUserMask_clicked()
+{
+    QString fname = QFileDialog::getOpenFileName(this,
+                                                 "Select a file with a user defined mask",
+                                                 ui->lineEdit_userMaskName->text());
+
+    ui->lineEdit_userMaskName->setText(fname);
+}
+

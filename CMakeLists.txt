@@ -149,6 +149,7 @@ add_subdirectory(core/kipl/UnitTests/tedgefunction)
 add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
 add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
 add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
+add_subdirectory(core/kipl/UnitTests/tSegmentationTest)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
@@ -193,6 +194,7 @@ add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
 # Tomography GUI
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModulesGUI)
 
 # applications
 add_subdirectory(applications/muhrec)
