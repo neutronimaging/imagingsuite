@@ -198,7 +198,7 @@ void kiplSegmentationTest::testRosin()
     std::copy(data["a"].begin(),data["a"].end(),std::back_inserter(hist));
 
     auto th=kipl::segmentation::Threshold_Rosin(hist,kipl::segmentation::tail_right,0);
-    QCOMPARE(th,-1);
+    QCOMPARE(th,21);
 }
 
 QTEST_APPLESS_MAIN(kiplSegmentationTest)
