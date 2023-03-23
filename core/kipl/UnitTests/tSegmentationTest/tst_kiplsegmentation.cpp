@@ -38,15 +38,9 @@ kiplSegmentationTest::kiplSegmentationTest()
     kipl::strings::filenames::CheckPathSlashes(dataPath,true);
 }
 
-//void kiplSegmentationTest::testCase1_data()
-//{
-//    QTest::addColumn<kipl::base::TImage<float,2> >("data");
-//    QTest::newRow("0") << QString();
-//}
-
 void kiplSegmentationTest::testThreshold()
 {
-    std::vector<size_t> dims = {100,100};
+    std::vector<size_t> dims = {20,20};
     kipl::base::TImage<float,2> img(dims);
     kipl::base::TImage<float,2> res(dims);
 
@@ -56,28 +50,30 @@ void kiplSegmentationTest::testThreshold()
     for (size_t i=0; i<img.Size(); ++i)
         img[i]=static_cast<float>(i);
 
-    kipl::segmentation::Threshold(img.GetDataPtr(),res.GetDataPtr(),img.Size(),5000.0f,kipl::segmentation::cmp_greater);
-    std::stringstream msg;
-
-    for (size_t i=0; i<img.Size(); ++i) {
-        msg.str("");
-        msg<<"Greater check failed at "<<i;
-        if (i<5000)
-            QVERIFY2(res[i]==0,msg.str().c_str());
-        else
-            QVERIFY2(res[i]==1,msg.str().c_str());
+    for (float t=0; t<img.Size(); ++t)
+    {
+        kipl::segmentation::Threshold(img.GetDataPtr(),res.GetDataPtr(),img.Size(),t,kipl::segmentation::cmp_greater);
+    
+        for (size_t i=0; i<img.Size(); ++i) 
+        {
+            if (t<i)
+                QCOMPARE(res[i],1.0f);
+            else
+                QCOMPARE(res[i],0.0f);
+        }
     }
 
-
-    kipl::segmentation::Threshold(img.GetDataPtr(),res.GetDataPtr(),img.Size(),5000.0f,kipl::segmentation::cmp_less);
-
-    for (size_t i=0; i<img.Size(); ++i) {
-        msg.str("");
-        msg<<"Less check failed at "<<i;
-        if (i<5000)
-            QVERIFY2(res[i]==1,msg.str().c_str());
-        else
-            QVERIFY2(res[i]==0,msg.str().c_str());
+    for (float t=0; t<img.Size(); ++t)
+    {
+        kipl::segmentation::Threshold(img.GetDataPtr(),res.GetDataPtr(),img.Size(),t,kipl::segmentation::cmp_less);
+    
+        for (size_t i=0; i<img.Size(); ++i) 
+        {
+            if (i<=t)
+                QCOMPARE(res[i],1.0f);
+            else
+                QCOMPARE(res[i],0.0f);
+        }
     }
 
     // todo Implement mask tests

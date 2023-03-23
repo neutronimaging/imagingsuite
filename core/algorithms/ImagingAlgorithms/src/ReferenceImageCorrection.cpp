@@ -353,6 +353,15 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
 void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask)
 {
+    // 1. Enhance/flatten: subtract median filtered image from ImagingException
+    // 2. Get histogram
+    // 3. Find threshold  
+    // 4. Apply threshold 
+    // 5. Morph open and close 
+    // 6. Label image 
+    // 7. Get region properties
+    // 8. Filter on size, position, and intensity 
+    // 9. 
 
     // 2. otsu threshold
     // 2.a compute histogram

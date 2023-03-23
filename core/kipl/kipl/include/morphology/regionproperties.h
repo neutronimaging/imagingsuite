@@ -40,6 +40,7 @@ class RegionProperties
         std::map<T0, float>   fSpherity;
         std::map<T0, float>   fIntensity;
         std::map<T0, std::vector<float> > fCOG;
+        // Todo: add stddev, min, max for each label
 
 };
 

@@ -108,13 +108,18 @@ namespace kipl { namespace segmentation {
 	{
 		T1 cmptrue,cmpfalse;
 		if (cmp==cmp_greater) 
-			cmptrue=1;
+		{
+			cmptrue  = 1;
+			cmpfalse = 0;
+		}
 		else
-			cmptrue=0;
+		{
+			cmptrue  = 0;
+			cmpfalse = 1;
+		}
 
-		cmpfalse=!cmptrue;
-
-        if (mask != nullptr) {
+		if (mask != nullptr) 
+		{
 			Nmask = Nmask==0 ? N : Nmask;
 			for (size_t i=0, j=0; i<N; i++, j++) {
 				if (j==Nmask) j=0;
@@ -125,9 +130,10 @@ namespace kipl { namespace segmentation {
 			}
 
 		}
-		else {
+		else 
+		{
 			for (size_t i=0; i<N; i++)
-				result[i]=(data[i]>=th) ? cmptrue: cmpfalse;;
+				result[i]=(th<data[i]) ? cmptrue: cmpfalse;;
 		}
 
 		return 0;
