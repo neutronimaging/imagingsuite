@@ -822,6 +822,11 @@
               </item>
               <item>
                <property name="text">
+                <string>Rosin mask segmentation</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>Manual Threshold</string>
                </property>
               </item>

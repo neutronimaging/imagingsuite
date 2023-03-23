@@ -351,7 +351,336 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
 
 }
 
-void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask){
+void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask)
+{
+
+    // 2. otsu threshold
+    // 2.a compute histogram
+
+
+    kipl::base::TImage<float,2> norm(img.dims());
+//    memcpy(norm.GetDataPtr(), img.GetDataPtr(), sizeof(float)*img.Size()); // copy to norm.. evalute if necessary
+    norm = img;
+
+    std::vector<pair<float, size_t>> histo;
+    float min = *std::min_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size());
+    float max = *std::max_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size());
+    kipl::base::THistogram<float> myhist(256, min, max);
+    histo =  myhist(norm);
+
+
+    //2.b compute otsu threshold
+
+    float ot;
+    if (m_MaskMethod == manuallyThresholdedMask)
+    {
+          ot = thresh;
+    }
+    else
+    {
+        size_t * vec_hist = new size_t[256];
+        for(int i=0; i<256; i++)
+        {
+            vec_hist[i] = histo.at(i).second;
+        }
+        int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+        ot = static_cast<float>(histo.at(value).first);
+   }
+
+
+
+    //2.c threshold image
+
+    kipl::base::TImage<float,2> maskOtsu(norm.dims());
+    kipl::base::TImage<int,2>   labelImage(norm.dims());
+
+ // now it works:
+//    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
+
+    float *pImg = norm.GetDataPtr();
+    float *res = maskOtsu.GetDataPtr();
+    const int N=static_cast<int>(norm.Size());
+    for (int i=0; i<N; ++i){
+        if (pImg[i]>=ot)
+        {
+            res[i] = 1.0f;
+        }
+        else
+        {
+            res[i] = 0.0f;
+        }
+    }
+
+
+  // here: fillPeaks, as at this point the BBs are black in the binary mask
+
+//    kipl::io::WriteTIFF(maskOtsu,"mask_Otsu.tif",kipl::base::Float32);
+    kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
+
+    try {
+        maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+    }
+    catch (ImagingException &e)
+    {
+        logger.error(e.what());
+        std::cerr<<"Error in the SegmentBlackBody function\n";
+        throw ImagingException("kipl::morphology::FillPeaks failed", __FILE__, __LINE__);
+    }
+
+//    kipl::io::WriteTIFF(maskOtsuFilled, "maskOtsuFilled_before.tif",kipl::base::Float32);
+
+     float bg = 1.0f;
+     size_t num_obj;
+
+     vector< pair< size_t, size_t > > area;
+     try {
+         num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
+//         kipl::io::WriteTIFF(labelImage, "labelImage.tif");
+         std::ostringstream msg;
+         msg << "number of objects: " << num_obj;
+         logger.debug(msg.str());
+     }
+     catch (ImagingException &e) {
+         logger.error(e.what());
+         std::cerr<<"Error in the SegmentBlackBody function\n";
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch(kipl::base::KiplException &e){
+         logger.error(e.what());
+         std::cerr<<"Error in the SegmentBlackBody function\n";
+         throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch (std::exception &e)
+     {
+         logger.error(e.what());
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+
+
+
+     kipl::morphology::LabelArea(labelImage, num_obj, area);
+
+
+     if (num_obj<=2)
+         throw ImagingException("SegmentBlackBodyNorm failed \n Number of detected objects too little \n Please try to change the threshold or select a bigger ROI containing at least 2 BBs", __FILE__, __LINE__);
+
+//     kipl::io::WriteTIFF(labelImage,"labelImage.tif");
+
+
+
+     // remove objetcs with size lower the minum size:
+     for (size_t i=0; i<area.size(); ++i)
+     {
+         if (area.at(i).first<=min_area){
+             int *pLbl=labelImage.GetDataPtr();
+             float *pOtsu = maskOtsuFilled.GetDataPtr();
+             for (size_t p=0; p<=maskOtsuFilled.Size(); ++p)
+             {
+                 if(pLbl[p]==i)
+                     pOtsu[p]=1.0f;
+             }
+
+         }
+     }
+
+//          kipl::io::WriteTIFF(maskOtsuFilled, "maskOtsuFilled.tif",kipl::base::Float32);
+
+
+     if (num_obj==2 || area.at(1).first>=3*area.at(2).first) // this in principle assumes that there can not be only one BB
+//     if (area.at(1).first>=3*area.at(2).first)
+     {
+         throw ImagingException("SegmentBlackBodyNorm failed \n Please try to change the threshold ", __FILE__, __LINE__);
+     }
+     else
+         {
+
+
+        // 3. Compute mask within Otsu
+        // 3.a sum of rows and columns and location of rois
+
+
+
+        float *vert_profile = new float[maskOtsuFilled.Size(1)];
+        float *hor_profile = new float[maskOtsuFilled.Size(0)];
+
+
+        kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), vert_profile, true); // sum of rows
+        kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), hor_profile, true); // sum of columns
+
+
+        //3.b create binary Signal
+        float *bin_VP = new float[maskOtsuFilled.Size(1)];
+        float *bin_HP = new float[maskOtsuFilled.Size(0)];
+
+        for (size_t i=0; i<maskOtsuFilled.Size(1); i++) {
+            float max = *std::max_element(vert_profile, vert_profile+maskOtsuFilled.Size(1));
+            if(vert_profile[i]<max) {
+                bin_VP[i] = 1;
+            }
+            else {
+                bin_VP[i] = 0;
+            }
+
+        }
+
+
+        for (size_t i=0; i<maskOtsuFilled.Size(0); i++) {
+            float max = *std::max_element(hor_profile, hor_profile+maskOtsuFilled.Size(0));
+            if(hor_profile[i]<max) {
+                bin_HP[i] = 1;
+            }
+            else {
+                bin_HP[i] = 0;
+            }
+        }
+
+
+        // 3.c compute edges - diff signal
+
+        float *pos_left = new float[100];
+        float *pos_right = new float[100];
+        int index_left = 0;
+        int index_right = 0;
+
+
+         for (int i=0; i<maskOtsuFilled.Size(1)-1; i++) {
+             float diff = bin_VP[i+1]-bin_VP[i];
+             if (diff>=1) {
+                 pos_left[index_left] = i;
+                 index_left++;
+             }
+             if (diff<=-1) {
+                 pos_right[index_right]=i+1; // to have all BB within the rois
+                 index_right++;
+             }
+         }
+
+
+
+         // the same on the horizontal profile:
+         float *pos_left_2 = new float[100];
+         float *pos_right_2 = new float[100];
+         int index_left_2 = 0;
+         int index_right_2 = 0;
+
+
+          for (int i=0; i<maskOtsuFilled.Size(0)-1; i++) {
+              float diff = bin_HP[i+1]-bin_HP[i];
+              if (diff>=1) {
+                  pos_left_2[index_left_2] = i;
+                  index_left_2++;
+              }
+              if (diff<=-1) {
+                  pos_right_2[index_right_2]=i+1;
+                  index_right_2++;
+              }
+          }
+
+
+
+          // from these define ROIs containing BBs --> i can probably delete them later on
+          std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
+          std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
+
+          int pos = 0;
+          for (int i=0; i<(index_left); i++) {
+
+              for (int j=0; j<(index_left_2); j++) {
+
+                    right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
+                    right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
+                    left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
+                    left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
+
+                    pos++;
+              }
+
+          }
+
+
+
+          for (size_t bb_index=0; bb_index<pos; bb_index++){
+
+              std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
+                                              size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+
+              kipl::base::TImage<float,2> roi(roi_dim);
+              kipl::base::TImage<float,2> roi_im(roi_dim);
+
+
+              for (int i=0; i<roi_dim[1]; i++) {
+                    memcpy(roi.GetLinePtr(i),maskOtsuFilled.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
+                    memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
+              }
+
+              float x_com= 0.0f;
+              float y_com= 0.0f;
+              int size = 0;
+
+//              // old implementation with geometrical mean:
+//              for (size_t x=0; x<roi.Size(0); x++) {
+//                  for (size_t y=0; y<roi.Size(1); y++) {
+//                      if(roi(x,y)==0) {
+//                          x_com +=x;
+//                          y_com +=y;
+//                          size++;
+//                      }
+
+//                  }
+//              }
+//              x_com /=size;
+//              y_com /=size;
+
+              float sum_roi = 0.0f;
+
+              // weighted center of mass:
+              for (size_t y=0; y<roi.Size(1); y++) {
+                for (size_t x=0; x<roi.Size(0); x++) {
+
+                      if(roi(x,y)==0) {
+                          x_com += (roi_im(x,y)*float(x));
+                          y_com += (roi_im(x,y)*float(y));
+                          sum_roi += roi_im(x,y);
+                          size++;
+                      }
+
+                  }
+              }
+
+
+              // draw the circle with user-defined radius
+
+              // check on BB dimensions: this is now done at the beginning to avoid crash
+              if (size>=min_area) {
+
+
+                  x_com /=sum_roi;
+                  y_com /=sum_roi;
+
+                      for (size_t y=0; y<roi.Size(1); y++) {
+                            for (size_t x=0; x<roi.Size(0); x++) {
+
+                              if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
+    //                              roi(x,y)=1; // this one actually I don't need
+                                  mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
+                              }
+                          }
+                      }
+
+                      roi(int(x_com+0.5), int(y_com+0.5))=2;
+              }
+
+          }
+
+
+
+//          kipl::io::WriteTIFF(mask,"mask.tif",kipl::base::Float32);
+    }
+
+}
+
+void ReferenceImageCorrection::SegmentBlackBody_old(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask)
+{
 
     // 2. otsu threshold
     // 2.a compute histogram
@@ -916,6 +1245,297 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
 }
 
 void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &normimg, kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values)
+{
+    // 2. otsu threshold
+    // 2.a compute histogram
+    kipl::base::TImage<float,2> norm;
+    norm.Clone(normimg);
+
+    std::vector<pair<float, size_t>> histo;
+    float min = *std::min_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size());
+    float max = *std::max_element(norm.GetLinePtr(0), norm.GetLinePtr(0)+norm.Size());
+    kipl::base::THistogram<float> myhist(256, min, max);
+    histo =  myhist(norm);
+
+    size_t * vec_hist = new size_t[256];
+    for(int i=0; i<256; i++)
+    {
+        vec_hist[i] = histo.at(i).second;
+    }
+
+
+    //2.b compute otsu threshold
+    float ot;
+
+    if (m_MaskMethod == manuallyThresholdedMask)
+        {
+              ot = thresh;
+        }
+    else
+        {
+            int value = kipl::segmentation::Threshold_Otsu(vec_hist, 256);
+            ot = static_cast<float>(histo.at(value).first);
+            }
+
+    //2.c threshold image
+
+    kipl::base::TImage<float,2> maskOtsu(mask.dims());
+    kipl::base::TImage<int,2> labelImage(mask.dims());
+
+ // now it works:
+//    kipl::segmentation::Threshold(norm.GetDataPtr(), maskOtsu.GetDataPtr(), norm.Size(), ot);
+
+    float *pImg = norm.GetDataPtr();
+    float *res  = maskOtsu.GetDataPtr();
+    const int N = static_cast<int>(norm.Size());
+    for (size_t i=0; i<norm.Size(); ++i)
+    {
+        if (pImg[i]>=ot)
+        {
+            res[i] = 1.0f;
+        }
+        else
+        {
+            res[i] = 0.0f;
+        }
+    }
+
+    kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
+    maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+
+    float bg = 1.0f;
+    int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::base::conn4, bg);
+
+    vector< pair< size_t, size_t > > area;
+    kipl::morphology::LabelArea(labelImage, num_obj, area);
+
+    // remove objetcs with size lower the minum size:
+    for (size_t i=0; i<area.size(); ++i)
+    {
+        if (area.at(i).first<=min_area){
+            int *pLbl=labelImage.GetDataPtr();
+            float *pOtsu = maskOtsuFilled.GetDataPtr();
+            for (size_t p=0; p<=maskOtsuFilled.Size(); ++p)
+            {
+                if(pLbl[p]==i)
+                    pOtsu[p]=1.0f;
+            }
+
+        }
+    }
+
+
+         if (num_obj==2 || area.at(1).first>=3*area.at(2).first) // this in principle assumes that there can not be only one BB
+//    if (area.at(1).first>=3*area.at(2).first)
+    {
+        throw ImagingException("SegmentBlackBodyNorm failed \n Please try to change the threshold ", __FILE__, __LINE__);
+    }
+    else
+        {
+
+
+            // 3. Compute mask within Otsu
+            // 3.a sum of rows and columns and location of rois
+
+            float *vert_profile = new float[maskOtsuFilled.Size(1)];
+            float *hor_profile = new float[maskOtsuFilled.Size(0)];
+
+
+            kipl::base::VerticalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), vert_profile, true); // sum of rows
+            kipl::base::HorizontalProjection2D(maskOtsuFilled.GetDataPtr(), maskOtsuFilled.dims(), hor_profile, true); // sum of columns
+
+
+            //3.b create binary Signal
+            float *bin_VP = new float[maskOtsuFilled.Size(1)];
+            float *bin_HP = new float[maskOtsuFilled.Size(0)];
+
+            for (size_t i=0; i<maskOtsuFilled.Size(1); i++) {
+                float max = *std::max_element(vert_profile, vert_profile+maskOtsuFilled.Size(1));
+                if(vert_profile[i]<max) {
+                    bin_VP[i] = 1;
+                }
+                else {
+                    bin_VP[i] = 0;
+                }
+
+            }
+
+
+            for (size_t i=0; i<maskOtsuFilled.Size(0); i++) {
+                float max = *std::max_element(hor_profile, hor_profile+maskOtsuFilled.Size(0));
+                if(hor_profile[i]<max) {
+                    bin_HP[i] = 1;
+                }
+                else {
+                    bin_HP[i] = 0;
+                }
+            }
+
+
+            // 3.c compute edges - diff signal
+
+            float *pos_left = new float[100];
+            float *pos_right = new float[100];
+            int index_left = 0;
+            int index_right = 0;
+
+
+             for (int i=0; i<maskOtsuFilled.Size(1)-1; i++) {
+                 float diff = bin_VP[i+1]-bin_VP[i];
+                 if (diff>=1) {
+                     pos_left[index_left] = i;
+                     index_left++;
+                 }
+                 if (diff<=-1) {
+                     pos_right[index_right]=i+1; // to have all BB within the rois
+                     index_right++;
+                 }
+             }
+
+
+             // the same on the horizontal profile:
+             float *pos_left_2 = new float[100];
+             float *pos_right_2 = new float[100];
+             int index_left_2 = 0;
+             int index_right_2 = 0;
+
+
+              for (int i=0; i<maskOtsuFilled.Size(0)-1; i++) {
+                  float diff = bin_HP[i+1]-bin_HP[i];
+                  if (diff>=1) {
+                      pos_left_2[index_left_2] = i;
+                      index_left_2++;
+                  }
+                  if (diff<=-1) {
+                      pos_right_2[index_right_2]=i+1;
+                      index_right_2++;
+                  }
+              }
+
+
+              // from these define ROIs containing BBs --> i can probably delete them later on
+              std::vector<pair <int,int>> right_edges((index_left)*(index_left_2));
+              std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
+
+              int pos = 0;
+              for (int i=0; i<(index_left); i++) {
+
+                  for (int j=0; j<(index_left_2); j++) {
+
+                        right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
+                        right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
+                        left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
+                        left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
+                        pos++;
+                  }
+
+              }
+
+
+
+              for (size_t bb_index=0; bb_index<pos; bb_index++){
+
+                  std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
+                                                  size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
+                  kipl::base::TImage<float,2> roi(roi_dim);
+                  kipl::base::TImage<float,2> roi_im(roi_dim);
+
+
+                  for (int i=0; i<roi_dim[1]; i++) {
+                        memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
+                        memcpy(roi_im.GetLinePtr(i),norm.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);// I am not sure this one is correct.
+                  }
+
+                  float x_com= 0.0f;
+                  float y_com= 0.0f;
+                  int size = 0;
+
+//                  // old implementation with geometrical mean:
+//                  for (size_t y=0; y<roi.Size(1); y++) {
+//                    for (size_t x=0; x<roi.Size(0); x++) {
+//                          if(roi(x,y)==0) {
+//                              x_com +=x;
+//                              y_com +=y;
+//                              size++;
+//                          }
+
+//                      }
+//                  }
+//                  x_com /= static_cast<float>(size);
+//                  y_com /= static_cast<float>(size);
+
+                  float sum_roi = 0.0f;
+
+                  // weighted center of mass:
+                  for (size_t x=0; x<roi.Size(0); x++) {
+                      for (size_t y=0; y<roi.Size(1); y++) {
+                          if(roi(x,y)==0) {
+                              x_com += (roi_im(x,y)*float(x));
+                              y_com += (roi_im(x,y)*float(y));
+                              sum_roi += roi_im(x,y);
+                              size++;
+                          }
+
+                      }
+                  }
+
+
+
+                  // draw the circle with user-defined radius
+
+                  // check on BB dimensions:
+                  if (size>=min_area) {
+
+
+                      x_com /=sum_roi;
+                      y_com /=sum_roi;
+
+                      std::pair<int,int> temp;
+                      temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
+
+                      float value = 0.0f;
+                      std::vector<float> grayvalues;
+                      float mean_value =0.0f;
+
+                         for (size_t y=0; y<roi.Size(1); y++) {
+                              for (size_t x=0; x<roi.Size(0); x++) {
+
+                                   if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) {
+            //                              roi(x,y)=1; // this one actually I don't need
+                                          mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
+                                          value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
+//                                          if (value!=0)
+//                                          {
+                                            grayvalues.push_back(value);
+                                            mean_value =+value;
+//                                           }
+
+
+                                  }
+                              }
+                          }
+
+                          roi(int(x_com+0.5), int(y_com+0.5))=2;
+
+                          mean_value /= static_cast<float>(grayvalues.size());
+
+
+                          const auto median_it1 = grayvalues.begin() + grayvalues.size() / 2 - 1;
+                          const auto median_it2 = grayvalues.begin() + grayvalues.size() / 2;
+                          std::nth_element(grayvalues.begin(), median_it1 , grayvalues.end()); // e1
+                          std::nth_element(grayvalues.begin(), median_it2 , grayvalues.end()); // e2
+                          float median = (grayvalues.size() % 2 == 0) ? (*median_it1 + *median_it2) / 2 : *median_it2; // here I compute the median
+                          float average = std::accumulate( grayvalues.begin(), grayvalues.end(), 0.0)/ grayvalues.size();
+                          values.insert(std::make_pair(temp,median));
+//                          values.insert(std::make_pair(temp,average));
+                 }
+
+              }
+
+      }
+}
+
+void ReferenceImageCorrection::SegmentBlackBody_old(kipl::base::TImage<float,2> &normimg, kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values)
 {
     // 2. otsu threshold
     // 2.a compute histogram
@@ -3077,7 +3697,8 @@ void string2enum(const std::string &str, ImagingAlgorithms::ReferenceImageCorrec
 {
     std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
 
-    strmap["otsumask"]            = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
+    strmap["otsumask"]                = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
+    strmap["rosinmask"]               = ImagingAlgorithms::ReferenceImageCorrection::rosinMask;
     strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
     strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
     strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
@@ -3099,7 +3720,8 @@ std::string enum2string(const ImagingAlgorithms::ReferenceImageCorrection::eMask
 
     switch (emask)
     {
-        case ImagingAlgorithms::ReferenceImageCorrection::otsuMask            : return "otsumask";
+        case ImagingAlgorithms::ReferenceImageCorrection::otsuMask                : return "otsumask";
+        case ImagingAlgorithms::ReferenceImageCorrection::rosinMask               : return "rosinmask";
         case ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask : return "manuallythresholdedmask";
         case ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask         : return "userdefinedmask";
         case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask       : return "referencefreemask";
