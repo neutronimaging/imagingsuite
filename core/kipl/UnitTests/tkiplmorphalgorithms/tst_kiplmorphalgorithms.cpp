@@ -3,6 +3,7 @@
 
 // add necessary includes here
 #include <sstream>
+#include <iostream>
 
 #include <base/timage.h>
 #include <base/KiplException.h>
@@ -11,8 +12,9 @@
 #include <morphology/label.h>
 #include <morphology/morphdist.h>
 #include <morphology/morphextrema.h>
-
+#include <morphology/regionproperties.h>
 #include <io/io_tiff.h>
+#include <strings/filenames.h>
 
 class kiplmorphalgorithms : public QObject
 {
@@ -28,6 +30,7 @@ private slots:
     void test_LabelImageRealData();
     void test_RemoveConnectedRegion();
     void test_LabelledItemsInfo();
+    void test_RegionProperties();
     void test_pixdist();
     void test_FillSpots();
 
@@ -37,12 +40,15 @@ private:
 
 private:
     kipl::base::TImage<float,2> img;
+    std::string dataPath;
 
 };
 
 kiplmorphalgorithms::kiplmorphalgorithms()
 {
-
+    dataPath = QT_TESTCASE_BUILDDIR;
+    dataPath = dataPath + "/../../../../../TestData/";
+    kipl::strings::filenames::CheckPathSlashes(dataPath,true);
 }
 
 kiplmorphalgorithms::~kiplmorphalgorithms()
@@ -52,11 +58,9 @@ kiplmorphalgorithms::~kiplmorphalgorithms()
 
 void kiplmorphalgorithms::loadData()
 {
-#ifdef _NDEBUG
-    kipl::io::ReadTIFF(img,"../../TestData/2D/tiff/bilevel_ws.tif");
-#else
-    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/bilevel_ws.tif");
-#endif
+    std::string fname = dataPath+"2D/tiff/bilevel_ws.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
 }
 
 void kiplmorphalgorithms::test_LabelImage()
@@ -93,13 +97,9 @@ void kiplmorphalgorithms::test_LabelImage()
 
 void kiplmorphalgorithms::test_LabelImageRealData()
 {
-
-#ifdef _NDEBUG
-    std::string fname="../../TestData/2D/tiff/maskOtsuFilled.tif";
-#else
-    std::string fname="../TestData/2D/tiff/maskOtsuFilled.tif";
-#endif
+    std::string fname=dataPath+"2D/tiff/maskOtsuFilled.tif";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
+
     kipl::base::TImage<int,2> a;
     kipl::base::TImage<int,2> result;
 
@@ -112,6 +112,77 @@ void kiplmorphalgorithms::test_LabelImageRealData()
     lblCnt=kipl::morphology::LabelImage(a,result,kipl::base::conn8);
     qDebug() << lblCnt;
     kipl::io::WriteTIFF(result,"lblrealresult_8connect.tif");
+}
+
+void kiplmorphalgorithms::test_RegionProperties()
+{
+    std::vector<int> data = {  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,0,
+                               0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,4,4,4,0,0,0,
+                               0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,3,3,3,3,3,0,0,0,0,4,4,4,0,0,0,
+                               0,0,1,1,1,1,1,0,2,0,0,0,0,0,3,3,3,3,3,3,3,0,0,0,0,4,4,4,0,0,
+                               0,0,1,1,1,1,1,0,2,2,0,0,0,0,3,3,3,3,3,3,3,0,0,0,0,0,4,4,4,0,
+                               0,0,1,1,1,1,1,0,2,2,2,0,0,0,3,3,3,3,3,3,3,0,0,0,0,0,0,4,4,4,
+                               0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,3,3,3,3,3,0,0,0,0,0,0,0,4,4,4,
+                               0,0,0,0,0,0,0,0,2,2,2,2,2,0,0,0,3,3,3,0,0,0,0,0,0,0,0,0,4,0,
+                               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,
+                               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0
+                 };
+
+    kipl::base::TImage<int,2> lbl({30,10});
+    std::copy(data.begin(),data.end(),lbl.GetDataPtr());
+    kipl::morphology::RegionProperties<int,int> rp(lbl,lbl);
+
+    QCOMPARE(rp.count(), 5UL);
+    auto labels = rp.labels();
+
+    QCOMPARE(labels.size(),5UL);
+
+    int i=0;
+    for (const auto &item : labels) 
+    {
+        QCOMPARE(item, i);
+        ++i;
+    }
+
+    auto areas = rp.area();
+    QCOMPARE(areas.size(),5UL);
+    QCOMPARE(areas[0],199UL);
+    QCOMPARE(areas[1],25UL);
+    QCOMPARE(areas[2],15UL);
+    QCOMPARE(areas[3],37UL);
+    QCOMPARE(areas[4],24UL);
+
+    auto perimeter = rp.perimeter();
+    QCOMPARE(perimeter.size(),5UL);
+    QCOMPARE(perimeter[0],73UL);
+    QCOMPARE(perimeter[1],16UL);
+    QCOMPARE(perimeter[2],12UL);
+    QCOMPARE(perimeter[3],16UL);
+    QCOMPARE(perimeter[4],19UL);
+
+    auto cog = rp.cog();
+
+    QCOMPARE(cog.size(),5UL);
+    QCOMPARE(cog[1][0],4.0f);
+    QCOMPARE(cog[1][1],3.0f);
+
+    QCOMPARE(cog[2][0],9.33333f);
+    QCOMPARE(cog[2][1],5.66667f);
+
+    QCOMPARE(cog[3][0],17.0f);
+    QCOMPARE(cog[3][1],4.0f);
+
+    QCOMPARE(cog[4][0],26.75f);
+    QCOMPARE(cog[4][1],3.625f);
+
+    auto spherity = rp.spherity();
+
+    QCOMPARE(spherity.size(),5UL);
+
+    QCOMPARE(spherity[1],static_cast<float>(areas[1])/static_cast<float>(perimeter[1]));
+    QCOMPARE(spherity[2],static_cast<float>(areas[2])/static_cast<float>(perimeter[2]));
+    QCOMPARE(spherity[3],static_cast<float>(areas[3])/static_cast<float>(perimeter[3]));
+    QCOMPARE(spherity[4],static_cast<float>(areas[4])/static_cast<float>(perimeter[4]));
 }
 
 void kiplmorphalgorithms::test_RemoveConnectedRegion()
@@ -181,7 +252,9 @@ void kiplmorphalgorithms::test_FillSpots()
 {
     kipl::base::TImage<float,2> img;
     kipl::base::TImage<float,2> res;
-    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/spots/balls.tif");
+    std::string fname=dataPath+"2D/tiff/spots/balls.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
     img = -img;
     QBENCHMARK {
         res = -kipl::morphology::FillSpot(img,5,kipl::base::conn8);
