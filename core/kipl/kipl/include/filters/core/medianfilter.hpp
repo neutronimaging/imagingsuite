@@ -23,7 +23,7 @@ template <class T, size_t nDims>
 TMedianFilter<T,nDims>::TMedianFilter(const std::vector<size_t> & dims) :
     kipl::filters::TFilterBase<T,nDims>(dims),
     logger("TMedianFilter"),
-    medianAlgorithm(MedianAlg_HeapSortMedian)
+    medianAlgorithm(MedianAlg_HeapSortMedianSTL)
 {
     if (nDims!=2)
         throw kipl::base::KiplException("Median filter is only supported for 2D", __FILE__, __LINE__);
