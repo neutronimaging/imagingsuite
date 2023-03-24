@@ -22,7 +22,7 @@ namespace kipl { namespace filters {
 		/// \param edgeStyle Processing style for the image edges
 		///
 		/// \note Edge processing solved by assigning outside locations to edge value
-		virtual kipl::base::TImage<T,nDims> operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle edgeStyle=FilterBase::EdgeZero);
+        virtual kipl::base::TImage<T,nDims> operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle edgeStyle=FilterBase::EdgeZero);
 
 		/// \brief Creates a median filter 
 		/// \param Dims Array constaining the dimensions of the filter

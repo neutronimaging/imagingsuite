@@ -140,6 +140,8 @@ public:
     void SaveBG(bool value, string path, string obname, string filemask);
     void SetInteractor(kipl::interactors::InteractionBase *interactor);
 
+    void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning
+    void SegmentBlackBody(kipl::base::TImage<float,2> &normimg, kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning and creates a list with position of BB centroids
 
 protected:
     void PrepareReferences(); /// old version with references image preparation, without BB
@@ -148,9 +150,6 @@ protected:
 
     std::vector<float> SolveLinearEquation(std::map<std::pair<int, int>, float> &values, float &error);
     std::vector<float> SolveThinPlateSplines(std::map<std::pair<int,int>,float> &values);
-
-    void SegmentBlackBody(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning
-    void SegmentBlackBody(kipl::base::TImage<float,2> &normimg, kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning and creates a list with position of BB centroids
 
     void SegmentBlackBody_old(kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning
     void SegmentBlackBody_old(kipl::base::TImage<float,2> &normimg, kipl::base::TImage<float,2> &img, kipl::base::TImage<float,2> &mask, std::map<std::pair<int, int>, float> &values); /// apply Otsu segmentation to img and create mask, it also performs some image cleaning and creates a list with position of BB centroids
