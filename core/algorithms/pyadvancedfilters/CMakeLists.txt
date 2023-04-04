@@ -1,9 +1,14 @@
-set(TARGET_NAME "advancedfilters")
+# ~~~
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2021 ImaginSuite contributors (https://github.com/neutronimaging/imagingsuite)
+# ~~~
+set(TARGET_NAME "advfilters")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(OpenMP)
 
 include_directories(
     ../../kipl/kipl/include
@@ -29,31 +34,21 @@ set(SRC_FILES
     pybinder.cpp
 )
 
-# create python module
-# add_library(${TARGET_NAME}
-#   ${LINK_TYPE}
-#   MODULE
-
-#   advancedfilters.cpp
-#   advancedfilterexception.cpp
-#   filterenums.cpp
-#   pybinder.cpp
-#   )
-
 pybind11_add_module(${TARGET_NAME}
   ${LINK_TYPE}
   MODULE
   ${SRC_FILES}  
-  # ${INC_FILES}
 )
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
+set(LINK_TYPE "MODULE")
 
 message("PyAdvancedFilters ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 if (APPLE)
 target_link_libraries(${TARGET_NAME}
   PUBLIC
-    # pybind11::module
+    pybind11::module
     kipl
     AdvancedFilters
   )
@@ -68,27 +63,16 @@ if (WIN32)
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC
-      # pybind11::module
+      pybind11::module
+      OpenMP::OpenMP_CXX
 
-    
       kipl
       AdvancedFilters
-        # libxml2
-        # cfitsio
-        # libtiff
-        # # armadillo
-        # liblapack
-        # libopenblas
-        # libfftw3-3
-        # libfftw3f-3
-        # NeXus
-        # NeXusCPP
-        # Iphlpapi
     )
 endif()
 
 if (UNIX AND NOT APPLE)
-    find_package(OpenMP)
+    
     if(OpenMP_CXX_FOUND)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
