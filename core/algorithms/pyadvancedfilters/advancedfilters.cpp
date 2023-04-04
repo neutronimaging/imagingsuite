@@ -1,6 +1,5 @@
 #include "../AdvancedFilters/advancedfilters.h"
 
-#ifdef HAVEPYBIND11
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -88,4 +87,4 @@ void bindDiffusionFilters(py::module &m)
 
     nld3Class.def(py::init());
 }
-#endif
+

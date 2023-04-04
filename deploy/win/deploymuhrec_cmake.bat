@@ -9,6 +9,8 @@ cd %DEST%
 mkdir resources
 
 copy %BDEST%\lib\*.dll .
+copy %BDEST%\lib\*.cp* .
+
 @REM copy %BDEST%\lib\ImagingAlgorithms.dll .
 @REM copy %BDEST%\lib\ModuleConfig.dll .
 @REM copy %BDEST%\lib\QtAddons.dll .

@@ -1,6 +1,5 @@
 //<LICENSE>
 
-#ifdef HAVEPYBIND11
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -14,7 +13,7 @@ void bindDiffusionFilters(py::module &m);
 void bindFilterEnums(py::module &m);
 void bindAdvancedFiltersException(py::module &m);
 
-PYBIND11_MODULE(advancedfilters,m)
+PYBIND11_MODULE(advfilters,m)
 {
     bindISSfilter(m);
     bindDiffusionFilters(m);
@@ -22,5 +21,3 @@ PYBIND11_MODULE(advancedfilters,m)
 
     py::register_exception<AdvancedFiltersException>(m, "AdvancedFiltersException");
 }
-
-#endif
