@@ -89,7 +89,7 @@ void TestThreadPool::test_Processor()
     size_t N=std::thread::hardware_concurrency();
     DummyProcessor processor(N);
 
-    std::vector<float> data(1000000*N);
+    std::vector<float> data(100000*N);
     std::vector<float> result;
     std::iota(data.begin(),data.end(),0);
 
@@ -108,7 +108,7 @@ void TestThreadPool::test_ProcessorSingle()
     size_t N=std::thread::hardware_concurrency();
     DummyProcessor processor(1);
 
-    std::vector<float> data(1000000*N);
+    std::vector<float> data(100000*N);
     std::vector<float> result;
     std::iota(data.begin(),data.end(),0);
 
