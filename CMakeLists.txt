@@ -149,6 +149,7 @@ add_subdirectory(core/kipl/UnitTests/tedgefunction)
 add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
 add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
 add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
+add_subdirectory(core/kipl/UnitTests/tThreadPool)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)

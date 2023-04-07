@@ -197,6 +197,7 @@ set(INC_FILES
     include/stltools/geodesicstl.h
     include/logging/logger.h
     include/utilities/TimeDate.h
+    include/utilities/threadpool.h
     include/math/covariance.h
     include/math/edgefunction.h
     include/pca/pca.h
@@ -278,6 +279,7 @@ set(SRC_FILES
     src/visualization/GNUPlot.cpp
     src/utilities/SystemInformation.cpp
     # src/utilities/nodelocker.cpp
+    src/utilities/threadpool.cpp
     src/strings/string2array.cpp
     src/strings/parenc.cpp
     src/strings/miscstring.cpp
