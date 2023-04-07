@@ -5,8 +5,11 @@
 #include <vector>
 #include <string>
 #include <thread>
+#include <cmath>
 
 #include <utilities/threadpool.h>
+
+#include "dummyprocessor.h"
 
 class TestThreadPool : public QObject
 {
@@ -19,6 +22,8 @@ public:
 private slots:
     void test_Constructor();
     void test_FillTaskList();
+    void test_Processor();
+    void test_ProcessorSingle();
 
 
 private:
@@ -79,8 +84,43 @@ void TestThreadPool::test_FillTaskList()
     QCOMPARE(pool.tasks_submitted(),N);
 }
 
+void TestThreadPool::test_Processor()
+{
+    size_t N=std::thread::hardware_concurrency();
+    DummyProcessor processor(N);
 
+    std::vector<float> data(1000000*N);
+    std::vector<float> result;
+    std::iota(data.begin(),data.end(),0);
 
+    QBENCHMARK{
+        result = processor.process(data);
+    }
+
+    QCOMPARE(data.size(),result.size());
+
+    for (size_t i=0; i<data.size(); ++i)
+        QCOMPARE(result[i],sqrt(data[i]));
+}
+
+void TestThreadPool::test_ProcessorSingle()
+{
+    size_t N=std::thread::hardware_concurrency();
+    DummyProcessor processor(1);
+
+    std::vector<float> data(1000000*N);
+    std::vector<float> result;
+    std::iota(data.begin(),data.end(),0);
+
+    QBENCHMARK{
+        result = processor.process(data);
+    }
+    
+    QCOMPARE(data.size(),result.size());
+
+    for (size_t i=0; i<data.size(); ++i)
+        QCOMPARE(result[i],sqrt(data[i]));
+}
 
 QTEST_APPLESS_MAIN(TestThreadPool)
 

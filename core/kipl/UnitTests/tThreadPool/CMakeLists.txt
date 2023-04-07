@@ -23,9 +23,13 @@ include_directories(
     )
 
 set(SRC_FILES
-    tst_ThreadPool.cpp)
+    tst_ThreadPool.cpp
+    dummyprocessor.cpp)
 
-add_executable(${TARGET_NAME} ${SRC_FILES})
+set(INC_FILES
+    dummyprocessor.h)
+
+add_executable(${TARGET_NAME} ${SRC_FILES} ${INC_FILES})
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC
