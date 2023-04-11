@@ -38,6 +38,9 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
                kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY,
                bool append=false)
 {
+    if (src.Size() == 0UL)
+        throw kipl::base::KiplException("WriteTIFF can't write empty images");
+
     if ( (dt == kipl::base::UInt4) || (dt == kipl::base::UInt12))
         throw kipl::base::KiplException("WriteTIFF doesn't support 4- and 12-bit formats");
 
@@ -222,6 +225,8 @@ void WriteTIFF(kipl::base::TImage<ImgType,N> src,
                kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY,
                bool append=false)
 {
+    if (src.Size() == 0UL)
+        throw kipl::base::KiplException("WriteTIFF can't write empty images");
     std::stringstream msg;
     try
     {
