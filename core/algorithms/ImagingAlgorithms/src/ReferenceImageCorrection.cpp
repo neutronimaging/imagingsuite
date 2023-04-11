@@ -20,6 +20,7 @@
 #include <morphology/label.h>
 #include <morphology/repairhole.h>
 #include <morphology/morphextrema.h>
+#include <morphology/regionproperties.h>
 
 
 #include "../include/ReferenceImageCorrection.h"
@@ -367,24 +368,77 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     // 2. otsu threshold
     // 2.a compute histogram
 
+    if ((img.Size(0)!=mask.Size(0)) && (img.Size(1)!=mask.Size(1)))
+        mask.resize(img.dims());
+
     kipl::filters::TMedianFilter<float,2> medh({71,1});
     kipl::filters::TMedianFilter<float,2> medv({1,71});
 
-    auto fltv = medv(img,kipl::filters::FilterBase::EdgeZero);
+    auto fltv = medv(img, kipl::filters::FilterBase::EdgeZero);
     auto flat = medh(fltv,kipl::filters::FilterBase::EdgeZero);
 
     for (int i= 0; i< img.Size(); ++i)
     {
-        flat[i]=flat[i]-img[i];
-        if (flat[i]<0) flat[i]=0.0f;
+        flat[i]-=img[i];
+        // if (flat[i]<0) flat[i]=0.0f;
     }
 
     std::vector<size_t> hist;
     std::vector<float>  axis;
-    kipl::base::Histogram(flat.GetDataPtr(), flat.Size(), 200, hist, axis, 0.0f,0.0f, true);
+    int ndims = 256;
+    kipl::base::Histogram(flat.GetDataPtr(), flat.Size(), ndims, hist, axis, 0.0f,0.0f, true);
 
+    // 3. Find threshold  
+    // 4. Apply threshold 
+    int idx = 0;
+    switch (m_MaskMethod)
+    {
+        case ImagingAlgorithms::ReferenceImageCorrection::otsuMask :  
+            idx = kipl::segmentation::Threshold_Otsu(hist);
+            kipl::segmentation::Threshold( img.GetDataPtr(), 
+                                mask.GetDataPtr(), 
+                                img.Size(), 
+                                axis[idx],
+                                kipl::segmentation::cmp_less);
+            break;
+        case ImagingAlgorithms::ReferenceImageCorrection::rosinMask :
+            idx = kipl::segmentation::Threshold_Rosin(hist);
+            kipl::segmentation::Threshold( img.GetDataPtr(), 
+                                           mask.GetDataPtr(), 
+                                           img.Size(), 
+                                           axis[idx],
+                                           kipl::segmentation::cmp_less);
 
+            break;
+        case ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask :
+            kipl::segmentation::Threshold(img.GetDataPtr(), mask.GetDataPtr(), img.Size(), thresh);
 
+            break;
+
+        case ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask :
+        case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask :
+        default :
+            throw ImagingException("Inappropriate mask choice in SegmentBlackBody, you shouldn't reach this point.",__FILE__,__LINE__);
+    }
+
+    // 5. Morph open and close 
+    std::vector<float> kernel(25,1.0f);
+    kipl::morphology::TDilate<float,2> D(kernel,{5,5});
+    kipl::morphology::TErode<float,2> E(kernel,{5,5});
+
+    mask = E(mask,kipl::filters::FilterBase::EdgeMirror);
+    mask = D(mask,kipl::filters::FilterBase::EdgeMirror);
+
+    mask = D(mask,kipl::filters::FilterBase::EdgeMirror);
+    mask = E(mask,kipl::filters::FilterBase::EdgeMirror);
+
+    // 6. Label image 
+    kipl::base::TImage<int,2> lbl;
+    kipl::morphology::LabelImage(mask,lbl);
+    // 7. Get region properties
+    
+    kipl::morphology::RegionProperties rp(lbl,img);
+    
 
  }
 

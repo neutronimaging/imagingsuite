@@ -512,6 +512,9 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img,
 	/// \param hist Vector containing the histogram of the image to be thresholded
 	/// \bug Sometimes the second attempt fails...
     int KIPLSHARED_EXPORT Threshold_Otsu(size_t const * const hist, const size_t N);
+	int KIPLSHARED_EXPORT Threshold_Otsu(std::vector<size_t> & hist);
+
+
 
 	/// \brief computes the threshold for a unimodal histogram
 	///	\param hist The histogram vector

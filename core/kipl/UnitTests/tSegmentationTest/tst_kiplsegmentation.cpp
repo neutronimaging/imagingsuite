@@ -26,6 +26,7 @@ private Q_SLOTS:
     void testGradientGuidedThreshold();
     void testCmpType();
     void testRosin();
+    void testOtsu();
 
 private: 
     std::string dataPath;
@@ -196,6 +197,28 @@ void kiplSegmentationTest::testRosin()
     auto th=kipl::segmentation::Threshold_Rosin(hist,kipl::segmentation::tail_right,0);
     QCOMPARE(th,21);
 }
+
+void kiplSegmentationTest::testOtsu()
+{
+    size_t N = 256;
+    std::vector<size_t> hvec(N,0UL);
+    size_t * harr = new size_t[N];
+    float s = 64*64;
+
+    for (size_t i=0; i<N; ++i)
+    {
+        float a = (static_cast<float>(i)-96.0f);
+        float b = (static_cast<float>(i)-160.0f);
+
+        hvec[i]=harr[i]=100*exp(-a*a/s)+100*exp(-b*b/s);
+    }
+
+    int tha = kipl::segmentation::Threshold_Otsu(harr,N);
+    int thv = kipl::segmentation::Threshold_Otsu(hvec);
+
+    QCOMPARE(tha,thv);
+}
+
 
 QTEST_APPLESS_MAIN(kiplSegmentationTest)
 

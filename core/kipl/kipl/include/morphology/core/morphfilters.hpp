@@ -90,6 +90,7 @@ void TDilate<T,nDims>::InnerLoop(T const * const src, T *dest, T value, size_t N
 {
 	DilateInnerLoop(src,dest,value,N);
 }
+
 }}
 
 #endif

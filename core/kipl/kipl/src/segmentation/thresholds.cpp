@@ -122,6 +122,17 @@ int Threshold_Otsu(size_t const * const hist, const size_t N)
 	return t;
 }
 
+int Threshold_Otsu(std::vector<size_t> & hist)
+{
+	size_t * h=new size_t[hist.size()];
+	std::copy_n(hist.begin(),hist.size(),h);
+
+	int th = Threshold_Otsu(h,hist.size());
+
+	delete [] h;
+	return th;
+}
+
 int Threshold_Rosin(const std::vector<size_t> & hist, const TailType tail, const size_t median_filter_len) 
 {
 	kipl::logging::Logger logger("Threshold_Rosin");
