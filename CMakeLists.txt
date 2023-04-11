@@ -152,6 +152,7 @@ add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
 add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
 add_subdirectory(core/kipl/UnitTests/tSegmentationTest)
 add_subdirectory(core/kipl/UnitTests/tkiplmorphalgorithms)
+add_subdirectory(core/kipl/UnitTests/tThreadPool)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tFramework")
-project(${TARGET_NAME} LANGUAGES CXX)
+set(TARGET_NAME "tThreadPool")
+project(tLogging LANGUAGES CXX)
 
 enable_testing()
 
@@ -18,26 +18,23 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
-    ../../Framework/ReconFramework/include/
-     ../../../../core/modules/ModuleConfig/include
-    ../../../../core/kipl/kipl/include/
-    ../../../../core/algorithms/ImagingAlgorithms/include
+    ../../kipl/include
     ../../../../../ExternalDependencies/macos/include
-)
+    )
 
 set(SRC_FILES
-    tst_frameworktest.cpp
-    stdafx.cpp)
+    tst_ThreadPool.cpp
+    dummyprocessor.cpp)
 
-add_executable(${TARGET_NAME} ${SRC_FILES})
+set(INC_FILES
+    dummyprocessor.h)
+
+add_executable(${TARGET_NAME} ${SRC_FILES} ${INC_FILES})
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC
         Qt6::Test
         kipl
-        ModuleConfig
-        ImagingAlgorithms
-        ReconFramework
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

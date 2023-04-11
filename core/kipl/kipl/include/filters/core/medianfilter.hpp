@@ -7,6 +7,7 @@
 #include <numeric>
 #include <thread>
 #include <vector>
+#include <functional>
 
 #ifdef _OPENMP
 #include <omp.h>
