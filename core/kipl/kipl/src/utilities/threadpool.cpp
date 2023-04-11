@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <thread>
+#include <chrono>
 #include <mutex>
 #include <condition_variable>
 #include <queue>
@@ -37,8 +38,8 @@ ThreadPool::ThreadPool(unsigned int numThreads) :
                         if (this->stop && this->tasks.empty())
                             return;
 
-                        // if (this->tasks.empty())
-                        //     std::this_thread::yield();
+                        if (this->tasks.empty()) // To avoid dry spinning 
+                            std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
                         task = std::move(this->tasks.front());
                         this->tasks.pop();
@@ -61,7 +62,7 @@ void ThreadPool::barrier()
     for (;;) 
     {
         if (processed_tasks != submitted_tasks)
-            std::this_thread::yield();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         else
             return ;
     }
