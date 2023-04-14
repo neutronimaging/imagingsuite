@@ -433,7 +433,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     mask = E(mask,kipl::filters::FilterBase::EdgeMirror);
 
     // 6. Label image 
-    kipl::base::TImage<int,2> lbl;
+    kipl::base::TImage<int,2> lbl(mask.dims());
     kipl::morphology::LabelImage(mask,lbl);
     // 7. Get region properties
     
