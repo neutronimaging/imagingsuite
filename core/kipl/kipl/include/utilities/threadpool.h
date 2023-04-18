@@ -8,11 +8,12 @@
 #include <sstream>
 #include <thread>
 #include <mutex>
+#include <atomic>
 #include <condition_variable>
 #include <queue>
 #include <functional>
 
-#include <logging/logger.h>
+#include "../logging/logger.h"
 
 namespace kipl {
 namespace utilities {

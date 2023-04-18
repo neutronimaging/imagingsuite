@@ -433,13 +433,41 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     mask = E(mask,kipl::filters::FilterBase::EdgeMirror);
 
     // 6. Label image 
-    kipl::base::TImage<int,2> lbl;
-    kipl::morphology::LabelImage(mask,lbl);
+    kipl::base::TImage<int,2> lbl(mask.dims());
+    
+    size_t num_obj = 0UL;
+
+    try {
+         num_obj = kipl::morphology::LabelImage(mask,lbl);
+
+         std::ostringstream msg;
+         msg << "number of objects: " << num_obj;
+         logger.debug(msg.str());
+     }
+     catch (ImagingException &e) {
+         logger.error(e.what());
+         std::cerr<<"Error in the SegmentBlackBody function\n";
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch(kipl::base::KiplException &e){
+         logger.error(e.what());
+         std::cerr<<"Error in the SegmentBlackBody function\n";
+         throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch (std::exception &e)
+     {
+         logger.error(e.what());
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+
+    if (num_obj<=2)
+         throw ImagingException("SegmentBlackBodyNorm failed \n Number of detected objects too little \n Please try to change the threshold or select a bigger ROI containing at least 2 BBs", __FILE__, __LINE__);
     // 7. Get region properties
     
     kipl::morphology::RegionProperties rp(lbl,img);
-    
 
+    auto area     = rp.area();
+    auto spherity = rp.spherity();
  }
 
 void ReferenceImageCorrection::SegmentBlackBody_old(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask)
