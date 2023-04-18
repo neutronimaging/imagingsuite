@@ -523,10 +523,10 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	std::stringstream msg;
 	TIFF *image;
     uint16_t photo, spp, fillorder,bps, sformat;
-    tsize_t stripSize;
-    unsigned long imageOffset;
+    // tsize_t stripSize;
+    // unsigned long imageOffset;
 
-    int stripMax;
+    // int stripMax;
 	unsigned char *buffer, tempbyte;
 	unsigned long bufferSize, count;
 
@@ -570,9 +570,9 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	}
 
 	// Read in the possibly multiple strips
-    stripSize   = TIFFStripSize (image);
-    stripMax    = TIFFNumberOfStrips (image);
-	imageOffset = 0;
+    // stripSize   = TIFFStripSize (image);
+    // stripMax    = TIFFNumberOfStrips (image);
+	// imageOffset = 0;
 
 	int dimx,dimy;
 	// We need to set some values for basic tags before we can add any data
