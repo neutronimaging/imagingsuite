@@ -76,7 +76,7 @@ public:
     void SetMaskCreationMethod(eMaskCreationMethod eMaskMethod, kipl::base::TImage<float,2> &mask);
 
     void SetInterpParameters(const std::vector<float> &ob_parameter,
-                             const std::vector<float> &sample_parameter,
+                             std::vector<float> &sample_parameter,
                              size_t nBBSampleCount,
                              size_t nProj,
                              eBBOptions ebo); /// set interpolation parameters to be used for BB image computation

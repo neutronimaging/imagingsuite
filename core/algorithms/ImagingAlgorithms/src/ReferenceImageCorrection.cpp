@@ -54,9 +54,9 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     m_nBlackBodyROI(4,0UL),
     m_diffBBroi(4,0),
     m_nDoseBBRoi(4,0UL),
+    angles(4,0UL),
     m_nBBimages(0),
     m_nProj(0),
-    angles(4,0UL),
     radius(0),
     tau(1.0f),
     min_area(0),
@@ -2351,7 +2351,7 @@ void ReferenceImageCorrection::SetSplinesParameters(const std::vector<float> &ob
 
 
 void ReferenceImageCorrection::SetInterpParameters(const std::vector<float> &ob_parameter,
-                                                   const std::vector<float> &sample_parameter,
+                                                   std::vector<float> &sample_parameter,
                                                    size_t nBBSampleCount,
                                                    size_t nProj,
                                                    eBBOptions ebo)
