@@ -158,6 +158,9 @@ add_subdirectory(core/algorithms/AdvancedFilters)
 # add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
 # add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
 
+add_subdirectory(core/algorithms/Segmentation)
+add_subdirectory(core/algorithms/UnitTests/tSegmentation) 
+
 add_subdirectory(core/algorithms/ImagingQAAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
 
