@@ -1,7 +1,8 @@
-//<LICENSE
+//<LICENSE>
 
-#ifndef DATASCALERDLG_H
-#define DATASCALERDLG_H
+#ifndef DETECTORLAGDLG_H
+#define DETECTORLAGDLG_H
+
 #include "StdPreprocModulesGUI_global.h"
 #include <QDialog>
 
@@ -9,18 +10,18 @@
 #include <ConfigBase.h>
 #include <ReconConfig.h>
 
-
 namespace Ui {
-class DataScalerDlg;
+class DetectorLagDialog;
 }
 
-class DataScalerDlg : public ConfiguratorDialogBase
+class DetectorLagDialog : public ConfiguratorDialogBase
 {
     Q_OBJECT
 
 public:
-    explicit DataScalerDlg(QWidget *parent = nullptr);
-    ~DataScalerDlg();
+    explicit DetectorLagDialog(QWidget *parent = nullptr);
+    ~DetectorLagDialog();
+
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & UNUSED_img);
 
 private:
@@ -29,11 +30,11 @@ private:
     virtual void UpdateParameters();
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
-    Ui::DataScalerDlg *ui;
+    Ui::DetectorLagDialog *ui;
 
-    float m_fSlope;
+
+    float m_fSlope; // Example Parameters
     float m_fOffset;
-
 };
 
-#endif // DATASCALERDLG_H
+#endif // DETECTORLAGDLG_H

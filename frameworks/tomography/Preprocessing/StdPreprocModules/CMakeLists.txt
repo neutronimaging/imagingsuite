@@ -72,6 +72,7 @@ set(INC_FILES
   include/PreprocEnums.h
   include/StdPreprocModules.h
   include/ReplaceUnderexposedModule.h
+  include/DetectorLagModule.h
 )
 
 set(SRC_FILES 
@@ -98,6 +99,7 @@ set(SRC_FILES
   src/PreprocEnums.cpp
   src/ProjectionFilter.cpp
   src/ReplaceUnderexposedModule.cpp
+  src/DetectorLagModule.cpp
 )
 
 add_library(${TARGET_NAME} SHARED

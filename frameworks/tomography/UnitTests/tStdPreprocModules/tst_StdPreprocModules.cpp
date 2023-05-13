@@ -25,6 +25,8 @@ private Q_SLOTS:
     void testFullLogNorm();
     void testMorpSpotClean_Initialize();
     void testMorpSpotClean_Process();
+    void testDetectorLag_Initialize();
+    void testDetectorLag_Process();
 };
 
 TStdPreprocModulesTest::TStdPreprocModulesTest()
@@ -153,6 +155,16 @@ void TStdPreprocModulesTest::testMorpSpotClean_Process()
 
  //   msm.Process(img3,config.modules[1].parameters);
 
+}
+
+void testDetectorLag_Initialize()
+{
+    QSKIP("Test is not implemented");
+}
+
+void testDetectorLag_Process()
+{
+    QSKIP("Test is not implemented");
 }
 
 QTEST_APPLESS_MAIN(TStdPreprocModulesTest)

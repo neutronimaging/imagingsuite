@@ -82,7 +82,9 @@ set(INC_FILES
     src/stdpreprocmodulesgui.h
     src/ReplaceUnderexposedDlg.h
     src/targetver.h
+    src/detectorlagdlg.h
 )
+
 
 
 set(SRC_FILES 
@@ -99,6 +101,7 @@ set(SRC_FILES
     src/datascalerdlg.cpp
     src/stdpreprocmodulesgui.cpp
     src/ReplaceUnderexposedDlg.cpp
+    src/detectorlagdlg.cpp
 )
 
 set(UI_FILES
@@ -114,6 +117,7 @@ set(UI_FILES
     src/projectionfilterdlg.ui
     src/datascalerdlg.ui
     src/ReplaceUnderexposedDlg.ui
+    src/detectorlagdlg.ui
 )
 
 add_library(${TARGET_NAME} SHARED

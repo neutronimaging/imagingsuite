@@ -24,6 +24,7 @@
 #include <StripeFilter.h>
 #include <ReferenceImageCorrection.h>
 #include <ReplaceUnderexposed.h>
+#include <detectorlag.h>
 
 class TestImagingAlgorithms : public QObject
 {
@@ -63,6 +64,9 @@ private Q_SLOTS:
     void ProjSeriesCorr_Enums();
     void ProjSeriesCorr_Detection();
     void ProjSeriesCorr_Correction();
+
+    void DetectorLag_CTor();
+    void DetectorLag_processing();
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
@@ -690,6 +694,16 @@ void TestImagingAlgorithms::ProjSeriesCorr_Detection()
 void TestImagingAlgorithms::ProjSeriesCorr_Correction()
 {
 
+}
+
+void TestImagingAlgorithms::DetectorLag_CTor()
+{
+    QSKIP("Test is not implemented");
+}
+
+void TestImagingAlgorithms::DetectorLag_processing()
+{
+    QSKIP("Test is not implemented");
 }
 
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)
