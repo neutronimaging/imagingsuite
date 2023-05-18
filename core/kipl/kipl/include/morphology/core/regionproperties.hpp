@@ -30,19 +30,14 @@ void RegionProperties<T0,T1>::scanImage(kipl::base::TImage<T0,2> & lbl, kipl::ba
         for (size_t x=1UL; x<=lbl.Size(0); ++x,++idx) 
         {
             auto currentLabel = pLbl[idx];
-            nArea[currentLabel]++;
+            regions[currentLabel].area++;
+            
             if (pImg!=nullptr)
-                fIntensity[currentLabel]+=pImg[idx];
-            if (nArea[currentLabel]==1) // Initialize cog item
-            {
-                fCOG[currentLabel]={static_cast<float>(x),static_cast<float>(y)};
-            }
-            else 
-            {
-                fCOG[currentLabel][0]+=static_cast<float>(x);
-                fCOG[currentLabel][1]+=static_cast<float>(y);
-            }
-
+                regions[currentLabel].intensity+=pImg[idx];
+            
+            regions[currentLabel].cog[0]+=static_cast<float>(x);
+            regions[currentLabel].cog[1]+=static_cast<float>(y);
+            
             ng.setPosition(idx);
             auto neighborhood = ng.neighborhood();
             bool isEdge=false;
@@ -56,7 +51,7 @@ void RegionProperties<T0,T1>::scanImage(kipl::base::TImage<T0,2> & lbl, kipl::ba
             }
             
             if (isEdge)
-                nPerimeter[currentLabel]++;
+                regions[currentLabel].perimeter++;
 
         }
     }
@@ -66,23 +61,23 @@ void RegionProperties<T0,T1>::scanImage(kipl::base::TImage<T0,2> & lbl, kipl::ba
 template <typename T0, typename T1>
 void RegionProperties<T0,T1>::finalizeProperties()
 {
-    for (const auto &item : nArea) 
+    for (auto &item : regions) 
     {
         auto lbl  = item.first;
-        auto area = item.second; 
-        fIntensity[lbl]/=area;
-        fCOG[lbl][0]/=area;
-        fCOG[lbl][1]/=area;
-        fCOG[lbl][0]-=1.0f;
-        fCOG[lbl][1]-=1.0f;
-        fSpherity[lbl]=static_cast<float>(area)/static_cast<float>(nPerimeter[lbl]);
+        auto area = item.second.area; 
+        item.second.intensity/=area;
+        item.second.cog[0]/=area;
+        item.second.cog[1]/=area;
+        item.second.cog[0]-=1.0f;
+        item.second.cog[1]-=1.0f;
+        item.second.spherity=static_cast<float>(area)/static_cast<float>(item.second.perimeter);
     }
 }
 
 template <typename T0, typename T1>
 size_t RegionProperties<T0,T1>::count() const
 {
-    return nArea.size();
+    return regions.size();
 }
 
 template <typename T0, typename T1>
@@ -90,7 +85,7 @@ std::vector<T0> RegionProperties<T0,T1>::labels() const
 {
     std::vector<T0> lbls;
 
-    for (const auto & item : nArea)
+    for (const auto & item : regions)
         lbls.push_back(item.first);
 
     return lbls;
@@ -99,30 +94,55 @@ std::vector<T0> RegionProperties<T0,T1>::labels() const
 template <typename T0, typename T1>
 std::map<T0, size_t> RegionProperties<T0,T1>::area() const 
 {
+    std::map<T0, size_t> nArea;
+
+    for (const auto item : regions)
+        nArea[item.first]=item.second.area;
+
     return nArea;
 }
 
 template <typename T0, typename T1>
 std::map<T0, size_t> RegionProperties<T0,T1>::perimeter() const 
 {
+    std::map<T0, size_t> nPerimeter;
+
+    for (const auto item : regions)
+        nPerimeter[item.first]=item.second.perimeter;   
+
     return nPerimeter;
 }
 
 template <typename T0, typename T1>
 std::map<T0, float>  RegionProperties<T0,T1>::spherity() const
 {
+    std::map<T0, float> fSpherity;
+
+    for (const auto item : regions)
+        fSpherity[item.first]=item.second.spherity;
+
     return fSpherity;
 }
 
 template <typename T0, typename T1>
 std::map<T0, float>  RegionProperties<T0,T1>::intensity() const 
 {
+    std::map<T0, float> fIntensity;
+
+    for (const auto item : regions)
+        fIntensity[item.first]=item.second.intensity;
+
     return fIntensity;
 }
 
 template <typename T0, typename T1>
 std::map<T0, std::vector<float> >  RegionProperties<T0,T1>::cog() const
 {
+    std::map<T0, std::vector<float> > fCOG;
+
+    for (const auto item : regions)
+        fCOG[item.first]=item.second.cog;
+    
     return fCOG;
 }
  
