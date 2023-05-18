@@ -17,6 +17,52 @@ RegionProperties<T0,T1>::RegionProperties(kipl::base::TImage<T0,2> & lbl, kipl::
 }
 
 template <typename T0, typename T1>
+void RegionProperties<T0,T1>::filter(eRegProps property, const std::vector<float> &arg)
+{
+    for (auto region = regions.begin() ; region!=regions.end() ; ) 
+    {
+        bool erase = false;
+        switch (property) 
+        {
+            case regprop_label : 
+            break;
+            
+            case regprop_area :
+                erase = ((region->second.area < arg[0]) || (arg[1] < region->second.area));
+                break;
+            
+            case regprop_perimeter:
+                erase = ((region->second.perimeter < arg[0]) || (arg[1] < region->second.perimeter));
+                break;
+
+            case regprop_spherity:
+                erase = ((region->second.spherity < arg[0]) || (arg[1] < region->second.spherity));
+                break;
+
+            case regprop_cogx:
+                erase = ((region->second.cog[0] < arg[0]) || (arg[1] < region->second.cog[0]));
+                break;
+
+            case regprop_cogy:
+                erase = ((region->second.cog[1] < arg[0]) || (arg[1] < region->second.cog[1]));
+                break;
+
+            case regprop_cogz:
+            break ;
+
+            case regprop_intensity :
+                erase = ((region->second.intensity < arg[0]) || (arg[1] < region->second.intensity));
+                break;
+        }
+
+        if (erase)
+            regions.erase(region++);
+        else
+            ++region;
+    }
+}
+
+template <typename T0, typename T1>
 void RegionProperties<T0,T1>::scanImage(kipl::base::TImage<T0,2> & lbl, kipl::base::TImage<T1,2> & img)
 {
     auto pLbl = lbl.GetDataPtr();

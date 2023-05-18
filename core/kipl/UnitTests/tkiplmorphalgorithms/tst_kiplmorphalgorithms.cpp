@@ -31,6 +31,7 @@ private slots:
     void test_RemoveConnectedRegion();
     void test_LabelledItemsInfo();
     void test_RegionProperties();
+    void test_RegPropFilter();
     void test_pixdist();
     void test_FillSpots();
 
@@ -185,6 +186,33 @@ void kiplmorphalgorithms::test_RegionProperties()
     QCOMPARE(spherity[4],static_cast<float>(areas[4])/static_cast<float>(perimeter[4]));
 }
 
+void kiplmorphalgorithms::test_RegPropFilter()
+{
+    kipl::base::TImage<float,2> dots;
+    kipl::base::TImage<float,2> lbl;
+    std::string fname = dataPath+"2D/tiff/dots.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(dots,fname);
+
+    fname = dataPath+"2D/tiff/lbldots.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(lbl,fname);
+
+    std::vector<float> areas={ 9.f,   69.f,  305.f,  697.f, 1005.f};
+    for (const auto & area : areas) 
+    {
+        kipl::morphology::RegionProperties<float,float> rp(lbl,dots);
+        rp.filter(kipl::morphology::regprop_area,{area-5,area+5});
+        QCOMPARE(rp.count(),5);
+    }
+
+    kipl::morphology::RegionProperties<float,float> rp(lbl,dots);
+    rp.filter(kipl::morphology::regprop_cogx,{41,164});
+    rp.filter(kipl::morphology::regprop_cogy,{41,164});
+    QCOMPARE(rp.count(),10); // 9 + background
+
+}
+
 void kiplmorphalgorithms::test_RemoveConnectedRegion()
 {
     loadData();
@@ -208,6 +236,7 @@ void kiplmorphalgorithms::test_RemoveConnectedRegion()
 
     kipl::io::WriteTIFF(result,"removelbl.tif");
 }
+
 
 void kiplmorphalgorithms::test_LabelledItemsInfo()
 {

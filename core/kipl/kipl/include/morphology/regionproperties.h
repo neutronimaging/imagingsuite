@@ -14,6 +14,7 @@ enum eRegProps {
     regprop_label,
     regprop_area,
     regprop_perimeter,
+    regprop_spherity,
     regprop_cogx,
     regprop_cogy,
     regprop_cogz,
@@ -51,6 +52,8 @@ class RegionProperties
         std::map<T0, float>  spherity()   const; 
         std::map<T0, float>  intensity()  const;
         std::map<T0, std::vector<float> > cog() const;
+
+        void filter(eRegProps property, const std::vector<float> &arg);
 
     private:
         void scanImage(kipl::base::TImage<T0,2> & lbl, kipl::base::TImage<T1,2> & img=kipl::base::TImage<T1,2>({0,0}));
