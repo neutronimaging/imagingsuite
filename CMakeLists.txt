@@ -156,7 +156,8 @@ add_subdirectory(core/kipl/UnitTests/tThreadPool)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
-add_subdirectory(core/algorithms/UnitTests/tScatterCorrection)
+add_subdirectory(core/algorithms/SactteringCorrection)
+add_subdirectory(core/algorithms/UnitTests/tScatteringCorrection)
 
 add_subdirectory(core/algorithms/AdvancedFilters)
 # add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff

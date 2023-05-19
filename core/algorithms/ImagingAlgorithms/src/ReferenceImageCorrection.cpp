@@ -416,7 +416,9 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
             break;
 
         case ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask :
+            break;
         case ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask :
+            break;
         default :
             throw ImagingException("Inappropriate mask choice in SegmentBlackBody, you shouldn't reach this point.",__FILE__,__LINE__);
     }
@@ -446,12 +448,10 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
      }
      catch (ImagingException &e) {
          logger.error(e.what());
-         std::cerr<<"Error in the SegmentBlackBody function\n";
          throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
      catch(kipl::base::KiplException &e){
          logger.error(e.what());
-         std::cerr<<"Error in the SegmentBlackBody function\n";
          throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
      catch (std::exception &e)
@@ -461,13 +461,37 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
      }
 
     if (num_obj<=2)
-         throw ImagingException("SegmentBlackBodyNorm failed \n Number of detected objects too little \n Please try to change the threshold or select a bigger ROI containing at least 2 BBs", __FILE__, __LINE__);
+         throw ImagingException("SegmentBlackBodyNorm failed, Number of detected objects too little. Please try to change the threshold or select a bigger ROI containing at least 2 BBs", __FILE__, __LINE__);
     // 7. Get region properties
     
     kipl::morphology::RegionProperties rp(lbl,img);
 
-    auto area     = rp.area();
-    auto spherity = rp.spherity();
+    rp.filter(kipl::morphology::regprop_area,{static_cast<float>(min_area),static_cast<float>(lbl.Size())});           // upper limit is the image size
+    rp.filter(kipl::morphology::regprop_cogx,{static_cast<float>(m_diffBBroi[0]),static_cast<float>(m_diffBBroi[2])});
+    rp.filter(kipl::morphology::regprop_cogy,{static_cast<float>(m_diffBBroi[1]),static_cast<float>(m_diffBBroi[3])});
+
+    auto cogs = rp.cog();
+
+    for (const auto & cog : cogs)
+    {
+        auto x0 = cog.second[0];
+        auto y0 = cog.second[1];
+
+        for (float y=-radius; y<=radius; y++)
+        {
+            for (float x=-radius; x<=radius; x++)
+            {
+                float R = sqrt( x*x + y*y );
+                if ( R<=radius )
+                {
+//                    mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1;
+                    mask(static_cast<int>(x+x0+0.5),static_cast<int>(y+y0+0.5))=1.0f;
+                }
+            }
+        }
+
+//        roi(int(x_com+0.5), int(y_com+0.5))=2; // What's the purpose?
+    }
  }
 
 void ReferenceImageCorrection::SegmentBlackBody_old(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask)
@@ -798,7 +822,9 @@ void ReferenceImageCorrection::SegmentBlackBody_old(kipl::base::TImage<float, 2>
 
 }
 
-void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<float, 2> &img, kipl::base::TImage<float, 2> &mask, std::map<std::pair<int, int>, float> &values)
+void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<float, 2> &img,
+                                                         kipl::base::TImage<float, 2> &mask,
+                                                         std::map<std::pair<int, int>, float> &values)
 {
     // 3. Compute mask within Otsu
     // 3.a sum of rows and columns and location of rois
@@ -875,13 +901,16 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
      int index_right_2 = 0;
 
 
-      for (int i=0; i<mask.Size(0)-1; i++) {
+      for (int i=0; i<mask.Size(0)-1; i++)
+      {
           float diff = bin_HP[i+1]-bin_HP[i];
-          if (diff>=1) {
+          if (diff>=1)
+          {
               pos_left_2[index_left_2] = i;
               index_left_2++;
           }
-          if (diff<=-1) {
+          if (diff<=-1)
+          {
               pos_right_2[index_right_2]=i+1;
               index_right_2++;
           }
@@ -893,30 +922,24 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
       std::vector<pair <int,int>> left_edges((index_left)*(index_left_2));
 
       int pos = 0;
-      for (int i=0; i<(index_left); i++) {
+      for (int i=0; i<(index_left); i++)
+      {
 
-          for (int j=0; j<(index_left_2); j++) {
-
-                right_edges.at(pos).first = pos_right[i]; // right position on vertical profiles = sum of rows = y axis = y1
-                right_edges.at(pos).second = pos_right_2[j]; // right position on horizontal profiles = sum of columns = x axis = x1
-                left_edges.at(pos).first = pos_left[i]; // left position on vertical profiles = y0
-                left_edges.at(pos).second = pos_left_2[j]; // left position on horizontal profiles = x0
+          for (int j=0; j<(index_left_2); j++)
+          {
+                right_edges.at(pos).first  = pos_right[i];     // right position on vertical profiles = sum of rows = y axis = y1
+                right_edges.at(pos).second = pos_right_2[j];   // right position on horizontal profiles = sum of columns = x axis = x1
+                left_edges.at(pos).first   = pos_left[i];      // left position on vertical profiles = y0
+                left_edges.at(pos).second  = pos_left_2[j];    // left position on horizontal profiles = x0
                 pos++;
           }
 
       }
 
 
-//      ostringstream msg;
-//      msg.str(""); msg<<"pos= "<<pos;
-//      logger(kipl::logging::Logger::LogMessage,msg.str());
-
-//      std::map<std::pair<int, int>, float>::const_iterator it_values = values.begin();
 
       for (size_t bb_index=0; bb_index<pos; bb_index++){
 
-//          msg.str(""); msg<<"bb_index= "<<bb_index;
-//          logger(kipl::logging::Logger::LogMessage,msg.str());
 
           std::vector<size_t> roi_dim = { size_t(right_edges.at(bb_index).second-left_edges.at(bb_index).second),
                                           size_t(right_edges.at(bb_index).first-left_edges.at(bb_index).first)}; // Dx and Dy
@@ -924,7 +947,8 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
           kipl::base::TImage<float,2> roi_im(roi_dim);
 
 
-          for (int i=0; i<roi_dim[1]; i++) {
+          for (int i=0; i<roi_dim[1]; i++)
+          {
                 memcpy(roi.GetLinePtr(i),maskOtsu.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]); // one could use tsubimage
                 memcpy(roi_im.GetLinePtr(i),img.GetLinePtr(left_edges.at(bb_index).first+i)+left_edges.at(bb_index).second, sizeof(float)*roi_dim[0]);
           }
@@ -932,20 +956,6 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
           float x_com = 0.0f;
           float y_com = 0.0f;
           int size = 0;
-
-//          // old implementation with geometrical mean:
-//          for (size_t y=0; y<roi.Size(1); y++) {
-//            for (size_t x=0; x<roi.Size(0); x++) {
-//                  if(roi(x,y)==0) {
-//                      x_com +=x;
-//                      y_com +=y;
-//                      size++;
-//                  }
-
-//              }
-//          }
-//          x_com /=static_cast<float>(size);
-//          y_com /=static_cast<float>(size);
 
           float sum_roi = 0.0f;
 
@@ -965,41 +975,34 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
           // draw the circle with user-defined radius
 
           // check on BB dimensions:
-//          if (size>=min_area) { //this is now wrong
 
           if (size!=0) { // check on BB existance
 
 
-              x_com /=sum_roi;
-              y_com /=sum_roi;
+            x_com /=sum_roi;
+            y_com /=sum_roi;
 
-              std::pair<int,int> temp;
-              temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
+            std::pair<int,int> temp;
+            temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
 
-              float value = 0.0f;
-              std::vector<float> grayvalues;
-              float mean_value =0.0f;
+            float value = 0.0f;
+            std::vector<float> grayvalues;
+            float mean_value =0.0f;
 
-                  for (size_t y=0; y<roi.Size(1); y++) {
-                        for (size_t x=0; x<roi.Size(0); x++) {
-
-
-
-                          if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) { // and also this one is useless
-//                              roi(x,y)=1; // this one actually I don't need
-//                              mask(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first) = 1; // this is now useless
-                              value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
-//                              if (value!=0)
-//                              {
-                                grayvalues.push_back(value);
-                                mean_value += value;
-//                              }
-//
-                          }
+            for (size_t y=0; y<roi.Size(1); y++)
+            {
+                for (size_t x=0; x<roi.Size(0); x++)
+                {
+                    if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0)
+                    { // and also this one is useless
+                        value = img(x+left_edges.at(bb_index).second, y+left_edges.at(bb_index).first); // have to compute the median value from it
+                        grayvalues.push_back(value);
+                        mean_value += value;
+                    }
 
 
-                      }
-                  }
+                }
+            }
 
                   mean_value /= static_cast<float>(grayvalues.size());
 

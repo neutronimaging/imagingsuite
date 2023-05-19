@@ -192,11 +192,11 @@ protected:
 
 	float m_fOpenBeamDose;
     float m_fDarkDose;
-	bool m_bHaveDoseROI;
-    bool m_bHaveBBDoseROI;
-	bool m_bHaveBlackBodyROI;
-    bool bPBvariante;
-    bool bExtSingleFile;                /// boolean value on the use of a single file for sample background correction
+	bool  m_bHaveDoseROI;
+    bool  m_bHaveBBDoseROI;
+	bool  m_bHaveBlackBodyROI;
+    bool  bPBvariante;
+    bool  bExtSingleFile;                /// boolean value on the use of a single file for sample background correction
 
     float fdoseOB_ext;                  /// dose value in externally computed background for open beam image
     float fdoseS_ext;                   /// dose value in externally computed background for single sample image

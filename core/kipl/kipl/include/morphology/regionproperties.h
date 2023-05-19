@@ -8,7 +8,7 @@
 
 #include "../base/timage.h"
 
-namespace kipl {namespace morphology {
+namespace kipl { namespace morphology {
 
 enum eRegProps {
     regprop_label,
@@ -18,6 +18,9 @@ enum eRegProps {
     regprop_cogx,
     regprop_cogy,
     regprop_cogz,
+    regprop_wcogx,
+    regprop_wcogy,
+    regprop_wcogz,
     regprop_intensity
 };
 
@@ -29,7 +32,8 @@ struct PropertyItem
         perimeter(0UL),
         spherity(0.0f),
         intensity(0.0f),
-        cog({0.0f,0.0f})
+        cog({0.0f,0.0f}),
+        wcog({0.0f,0.0f})
     {}
 
     size_t count;
@@ -38,6 +42,7 @@ struct PropertyItem
     float spherity;
     float intensity;
     std::vector<float> cog;
+    std::vector<float> wcog;
 };
 
 template <typename T0, typename T1>
@@ -52,6 +57,7 @@ class RegionProperties
         std::map<T0, float>  spherity()   const; 
         std::map<T0, float>  intensity()  const;
         std::map<T0, std::vector<float> > cog() const;
+        std::map<T0, std::vector<float> > wcog() const;
 
         void filter(eRegProps property, const std::vector<float> &arg);
 

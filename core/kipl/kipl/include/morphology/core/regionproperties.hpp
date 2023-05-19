@@ -50,6 +50,17 @@ void RegionProperties<T0,T1>::filter(eRegProps property, const std::vector<float
             case regprop_cogz:
             break ;
 
+            case regprop_wcogx:
+                erase = ((region->second.wcog[0] < arg[0]) || (arg[1] < region->second.wcog[0]));
+                break;
+
+            case regprop_wcogy:
+                erase = ((region->second.wcog[1] < arg[0]) || (arg[1] < region->second.wcog[1]));
+                break;
+
+            case regprop_wcogz:
+            break ;
+
             case regprop_intensity :
                 erase = ((region->second.intensity < arg[0]) || (arg[1] < region->second.intensity));
                 break;
@@ -78,8 +89,12 @@ void RegionProperties<T0,T1>::scanImage(kipl::base::TImage<T0,2> & lbl, kipl::ba
             auto currentLabel = pLbl[idx];
             regions[currentLabel].area++;
             
-            if (pImg!=nullptr)
+            if (pImg!=nullptr) 
+            {
                 regions[currentLabel].intensity+=pImg[idx];
+                regions[currentLabel].wcog[0]+=static_cast<float>(x)*pImg[idx];
+                regions[currentLabel].wcog[1]+=static_cast<float>(y)*pImg[idx];
+            }
             
             regions[currentLabel].cog[0]+=static_cast<float>(x);
             regions[currentLabel].cog[1]+=static_cast<float>(y);
@@ -111,11 +126,25 @@ void RegionProperties<T0,T1>::finalizeProperties()
     {
         auto lbl  = item.first;
         auto area = item.second.area; 
+        if (item.second.intensity!=0.0f)
+        {
+            item.second.wcog[0]/=item.second.intensity;
+            item.second.wcog[1]/=item.second.intensity;
+        }
+        else 
+        {
+            item.second.wcog[0]/=area;
+            item.second.wcog[1]/=area;
+        }
+        item.second.wcog[0]-=1.0f;
+        item.second.wcog[1]-=1.0f;
+        
         item.second.intensity/=area;
         item.second.cog[0]/=area;
         item.second.cog[1]/=area;
         item.second.cog[0]-=1.0f;
         item.second.cog[1]-=1.0f;
+
         item.second.spherity=static_cast<float>(area)/static_cast<float>(item.second.perimeter);
     }
 }
@@ -192,5 +221,15 @@ std::map<T0, std::vector<float> >  RegionProperties<T0,T1>::cog() const
     return fCOG;
 }
  
+template <typename T0, typename T1>
+std::map<T0, std::vector<float> >  RegionProperties<T0,T1>::wcog() const
+{
+    std::map<T0, std::vector<float> > fCOG;
+
+    for (const auto item : regions)
+        fCOG[item.first]=item.second.wcog;
+    
+    return fCOG;
+}
 
 }}

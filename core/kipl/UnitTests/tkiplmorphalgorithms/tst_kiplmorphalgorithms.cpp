@@ -184,6 +184,21 @@ void kiplmorphalgorithms::test_RegionProperties()
     QCOMPARE(spherity[2],static_cast<float>(areas[2])/static_cast<float>(perimeter[2]));
     QCOMPARE(spherity[3],static_cast<float>(areas[3])/static_cast<float>(perimeter[3]));
     QCOMPARE(spherity[4],static_cast<float>(areas[4])/static_cast<float>(perimeter[4]));
+
+    auto wcog = rp.wcog();
+
+    QCOMPARE(wcog.size(),5UL);
+    QCOMPARE(wcog[1][0],cog[1][0]);
+    QCOMPARE(wcog[1][1],cog[1][1]);
+
+    QCOMPARE(wcog[2][0],cog[2][0]);
+    QCOMPARE(wcog[2][1],cog[2][1]);
+
+    QCOMPARE(wcog[3][0],cog[3][0]);
+    QCOMPARE(wcog[3][1],cog[3][1]);
+
+    QCOMPARE(wcog[4][0],cog[4][0]);
+    QCOMPARE(wcog[4][1],cog[4][1]);
 }
 
 void kiplmorphalgorithms::test_RegPropFilter()
