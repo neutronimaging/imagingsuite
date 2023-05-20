@@ -22,7 +22,10 @@ void ErodeInnerLoop(T const * const src, T * dest, T value, size_t N)
 template<typename T>
 void DilateInnerLoop(T const * const src, T * dest, T value, size_t N)
 {
-	for (size_t j=0; j<N; j++) {
+	std::ignore = value;
+	
+	for (size_t j=0; j<N; ++j) 
+	{
 		dest[j]=max(dest[j],src[j]);
 	} 
 
@@ -46,11 +49,10 @@ TErode<T,nDims>::TErode(const std::vector<T> & kernel,
 }
 
 template <typename T, size_t nDims>
-void TErode<T,nDims>::InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest)
+void TErode<T,nDims>::InitResultArray(const kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest)
 {
-    (void)src;
-    dest=std::numeric_limits<T>::max();
-	//memcpy(pRes,img+nCenter,len*sizeof(float));	
+    dest.resize(src.dims());
+    dest=std::numeric_limits<T>::max();	
 }
 
 template <typename T, size_t nDims>
@@ -74,10 +76,10 @@ TDilate<T,nDims>::TDilate(const std::vector<T> &kernel,
 }
 
 template <typename T, size_t nDims>
-void TDilate<T,nDims>::InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest)
+void TDilate<T,nDims>::InitResultArray(const kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest)
 {
+	dest.resize(src.dims());
 	dest=-std::numeric_limits<T>::max();
-	
 }
 
 template <typename T, size_t nDims>

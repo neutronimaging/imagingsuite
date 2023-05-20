@@ -131,7 +131,13 @@ void kiplmorphalgorithms::test_RegionProperties()
 
     kipl::base::TImage<int,2> lbl({30,10});
     std::copy(data.begin(),data.end(),lbl.GetDataPtr());
+    kipl::morphology::RegionProperties<int,int> rp0;
+    QCOMPARE(rp0.count(),0UL);
+
     kipl::morphology::RegionProperties<int,int> rp(lbl,lbl);
+
+    
+
 
     QCOMPARE(rp.count(), 5UL);
     auto labels = rp.labels();

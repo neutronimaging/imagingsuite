@@ -32,7 +32,7 @@ namespace kipl { namespace filters {
 		/// \param edgeStyle Processing style for the image edges
 		///
 		/// \note Edge processing solved by assigning outside locations to edge value
-        virtual kipl::base::TImage<T,nDims> operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle edgeStyle=FilterBase::EdgeZero);
+        virtual kipl::base::TImage<T,nDims> operator() (const kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle edgeStyle=FilterBase::EdgeZero);
 
 		/// \brief Creates a median filter 
 		/// \param Dims Array constaining the dimensions of the filter
@@ -47,33 +47,35 @@ namespace kipl { namespace filters {
 		
 	protected: 
 		void PrintMatrix(T *data,int nx, int ny);
-		void HeapSortMedianFilter(kipl::base::TImage<T,nDims> &src, 
-						kipl::base::TImage<T,nDims> &result, 
-						const FilterBase::EdgeProcessingStyle edgeStyle);
+		void HeapSortMedianFilter(const kipl::base::TImage<T,nDims>    &src, 
+										kipl::base::TImage<T,nDims>    &result, 
+								  const FilterBase::EdgeProcessingStyle edgeStyle);
 
-        void HeapSortMedianFilterSTL(kipl::base::TImage<T,nDims> &src,
-                        kipl::base::TImage<T,nDims> &result,
-                        const FilterBase::EdgeProcessingStyle edgeStyle);
+        void HeapSortMedianFilterSTL(const kipl::base::TImage<T,nDims>    &src,
+										   kipl::base::TImage<T,nDims>    &result,
+									 const FilterBase::EdgeProcessingStyle edgeStyle);
 
-        void HeapSortInnerLoop(kipl::base::TImage<T,nDims> *src,
-                        kipl::base::TImage<T,nDims>        *result,
-                        size_t begin,
-                        size_t end,
-                        const FilterBase::EdgeProcessingStyle edgeStyle);
+        void HeapSortInnerLoop(const kipl::base::TImage<T,nDims> *src,
+									 kipl::base::TImage<T,nDims> *result,
+									 size_t begin,
+									 size_t end,
+							   const FilterBase::EdgeProcessingStyle edgeStyle);
 
-        void STLSortMedianFilter(kipl::base::TImage<T,nDims> &src,
+        void STLSortMedianFilter(const kipl::base::TImage<T,nDims> &src,
 								kipl::base::TImage<T,nDims> &result, 
 								const FilterBase::EdgeProcessingStyle edgeStyle);
-		void QuickMedianFilter(kipl::base::TImage<T,nDims> &src, 
+
+		void QuickMedianFilter(const kipl::base::TImage<T,nDims> &src, 
 				kipl::base::TImage<T,nDims> &result, 
 				const FilterBase::EdgeProcessingStyle edgeStyle);
-		void BilevelMedianFilter(kipl::base::TImage<T,nDims> &src, 
+				
+		void BilevelMedianFilter(const kipl::base::TImage<T,nDims> &src, 
 				kipl::base::TImage<T,nDims> &result, 
 				const FilterBase::EdgeProcessingStyle edgeStyle);
 		
-		int ExtractNeighborhood(kipl::base::TImage<T,nDims> &src, size_t const * const pos, T * data, const FilterBase::EdgeProcessingStyle edgeStyle=FilterBase::EdgeZero);
+		int ExtractNeighborhood(const kipl::base::TImage<T,nDims> &src, size_t const * const pos, T * data, const FilterBase::EdgeProcessingStyle edgeStyle=FilterBase::EdgeZero);
 		
-        virtual void InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest) {}
+        virtual void InitResultArray(const kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest) {}
         virtual void InnerLoop(T const * const src, T *dest, T value, size_t N) {} // Dummy
 	
 		void RunningWindowLineInit(T const * const src, T *dest,size_t const * const dims);

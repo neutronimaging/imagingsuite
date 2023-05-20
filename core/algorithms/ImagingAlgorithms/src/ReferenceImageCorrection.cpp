@@ -464,7 +464,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
          throw ImagingException("SegmentBlackBodyNorm failed, Number of detected objects too little. Please try to change the threshold or select a bigger ROI containing at least 2 BBs", __FILE__, __LINE__);
     // 7. Get region properties
     
-    kipl::morphology::RegionProperties rp(lbl,img);
+    kipl::morphology::RegionProperties<int,float> rp(lbl,img);
 
     rp.filter(kipl::morphology::regprop_area,{static_cast<float>(min_area),static_cast<float>(lbl.Size())});           // upper limit is the image size
     rp.filter(kipl::morphology::regprop_cogx,{static_cast<float>(m_diffBBroi[0]),static_cast<float>(m_diffBBroi[2])});

@@ -14,7 +14,7 @@ public:
 	virtual ~TErode(void);
 protected:
 	virtual void InnerLoop(T const * const src, T *dest, T value, size_t N);
-	virtual void InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest);
+	virtual void InitResultArray(const kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest);
 };
 
 template <typename T, size_t nDims>
@@ -25,7 +25,7 @@ public:
 	virtual ~TDilate(void);
 protected:
 	virtual void InnerLoop(T const * const src, T *dest, T value, size_t N);
-	virtual void InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest);
+	virtual void InitResultArray(const kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest);
 };
 
 }}

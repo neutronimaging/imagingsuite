@@ -10,7 +10,7 @@
 namespace kipl {namespace morphology {
 
 template <typename T0, typename T1>
-RegionProperties<T0,T1>::RegionProperties(kipl::base::TImage<T0,2> & lbl, kipl::base::TImage<T1,2> & img)
+RegionProperties<T0,T1>::RegionProperties(const kipl::base::TImage<T0,2> & lbl, const kipl::base::TImage<T1,2> & img)
 {
     scanImage(lbl,img);
     finalizeProperties();
@@ -74,7 +74,7 @@ void RegionProperties<T0,T1>::filter(eRegProps property, const std::vector<float
 }
 
 template <typename T0, typename T1>
-void RegionProperties<T0,T1>::scanImage(kipl::base::TImage<T0,2> & lbl, kipl::base::TImage<T1,2> & img)
+void RegionProperties<T0,T1>::scanImage(const kipl::base::TImage<T0,2> & lbl, const kipl::base::TImage<T1,2> & img)
 {
     auto pLbl = lbl.GetDataPtr();
     auto pImg = img.Size() == 1 ? nullptr : img.GetDataPtr();

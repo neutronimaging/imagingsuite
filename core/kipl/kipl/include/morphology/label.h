@@ -26,11 +26,11 @@ namespace kipl {namespace morphology {
 	/// \note If the input image is a grayscale image will the regions be determined as 
 	/// neighbours having the same graylevel.
 	template <class ImgType, size_t NDim>
-        size_t LabelImage(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<int,NDim> & lbl,kipl::base::eConnectivity conn=kipl::base::conn4, ImgType bg=(ImgType)0)
+        size_t LabelImage(const kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<int,NDim> & lbl,kipl::base::eConnectivity conn=kipl::base::conn4, ImgType bg=(ImgType)0)
 	{
         list<ptrdiff_t> stack;
 		
-		ImgType *pImg=img.GetDataPtr();
+		auto *pImg=img.GetDataPtr();
         lbl.resize(img.dims());
 		lbl=0;
 		

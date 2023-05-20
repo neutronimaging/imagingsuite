@@ -49,7 +49,8 @@ template <typename T0, typename T1>
 class RegionProperties
 {
     public:
-        RegionProperties(kipl::base::TImage<T0,2> & lbl, kipl::base::TImage<T1,2> & img);
+        RegionProperties() {}
+        RegionProperties(const kipl::base::TImage<T0,2> & lbl, const kipl::base::TImage<T1,2> & img);
         size_t               count()      const;
         std::vector<T0>      labels()     const;
         std::map<T0, size_t> area()       const;
@@ -62,7 +63,7 @@ class RegionProperties
         void filter(eRegProps property, const std::vector<float> &arg);
 
     private:
-        void scanImage(kipl::base::TImage<T0,2> & lbl, kipl::base::TImage<T1,2> & img=kipl::base::TImage<T1,2>({0,0}));
+        void scanImage(const kipl::base::TImage<T0,2> & lbl, const kipl::base::TImage<T1,2> & img=kipl::base::TImage<T1,2>({0,0}));
         void finalizeProperties();
         std::map<T0, PropertyItem>  regions;
         

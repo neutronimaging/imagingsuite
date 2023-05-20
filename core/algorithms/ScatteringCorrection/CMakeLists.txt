@@ -7,18 +7,20 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (APPLE)
 include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
+    ../../../core/algorithms/ImagingAlgorithms/include
+)
+
+if (APPLE)
+include_directories(
     ../../../../ExternalDependencies/macos/include
     )
 endif()
 
 if (WIN32)
     include_directories(
-        ../../../core/kipl/kipl/include
-        ../../../core/modules/ModuleConfig/include
         ../../../external/include/
         ../../../../ExternalDependencies/windows/include
         ../../../../ExternalDependencies/windows/include/nexus
@@ -73,6 +75,7 @@ if (APPLE)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
     kipl
+    ImagingAlgorithms
   )
 endif()
 
@@ -86,6 +89,7 @@ if (WIN32)
     target_link_libraries(${TARGET_NAME}
     PUBLIC
         kipl
+        ImagingAlgorithms
     )
 endif()
 
@@ -97,11 +101,13 @@ if (UNIX AND NOT APPLE)
 
           PUBLIC
             kipl
+            ImagingAlgorithms
         )
     else()
     target_link_libraries(${TARGET_NAME} 
           PUBLIC
             kipl
+            ImagingAlgorithms
 
         )
     endif()

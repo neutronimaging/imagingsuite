@@ -60,7 +60,8 @@ public:
     /// \param kDims Array contatining the kernel size per axis. There shall be nDims entries in the array.
     TFilterBase(const std::vector<T> & kernel, const std::vector<size_t> & kDims);
 	~TFilterBase();
-    virtual kipl::base::TImage<T,nDims> operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle edgeStyle);
+    virtual kipl::base::TImage<T,nDims> operator() (const kipl::base::TImage<T,nDims> &src, 
+                                                    const FilterBase::EdgeProcessingStyle edgeStyle);
 protected:
     /// \brief Filter core method that process most of the image
     /// \param img Pointer to the image to filter
@@ -112,7 +113,7 @@ protected:
           const std::vector<size_t> & imgDims,
 		  const FilterBase::EdgeProcessingStyle epStyle);
 
-	virtual void InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest) = 0;
+	virtual void InitResultArray(const kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest) = 0;
     /// \brief The inner loop of the filter operation that performs that actual calculations between filter weights and pixels
 	virtual void InnerLoop(T const * const src, T *dest, T value, size_t N) = 0;
     std::vector<T> pKernel; ///< Contains the filter weights

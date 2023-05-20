@@ -98,7 +98,7 @@ namespace kipl { namespace segmentation {
 	/// \param mask ROI mask, must have the same size as img or an xy slice of img
 	/// \param Nmask number mask elements 0=default -> Nmask = N
     template <typename T0, typename T1>
-	int Threshold(T0 * data,
+	int Threshold(const T0 * data,
 			T1 *result,
 			size_t N,
             T0 th,
