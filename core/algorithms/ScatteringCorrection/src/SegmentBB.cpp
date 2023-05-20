@@ -9,12 +9,13 @@
 #include <morphology/label.h>
 #include <segmentation/thresholds.h>
 #include <base/thistogram.h>
+#include <io/io_tiff.h>
 
 SegmentBB::SegmentBB() :
     logger("SegmentBB"),
     m_fRadius(5.0f),
     m_areaLimits({10,1000}),
-    m_segmentationMethod(method_rosin),
+    m_segmentationMethod(method_otsu),
     m_fThreshold(0.0f)
 {
 
@@ -79,6 +80,7 @@ void SegmentBB::exec( const kipl::base::TImage<float,2> & bb,
     // 4. Apply threshold 
     // 5. Morph open and close 
     segment(bb, mask);
+    // kipl::io::WriteTIFF(mask,"segmented_mask.tif");
 
     // 6. Label image 
     // 7. Get region properties
@@ -87,11 +89,14 @@ void SegmentBB::exec( const kipl::base::TImage<float,2> & bb,
 
     // 9. Create dot mask
     prepareMask(bb.dims());
+    // kipl::io::WriteTIFF(m_mask,"prepared_mask.tif");
+
 }
 
 void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
                               kipl::base::TImage<float,2> & mask)
 {
+    std::ostringstream msg;
     if ((m_segmentationMethod == method_usermask) && 
         (bb.Size(0)==mask.Size(0)) && 
         (bb.Size(0)==mask.Size(1)))
@@ -110,11 +115,7 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
     auto flat = medh(fltv,kipl::filters::FilterBase::EdgeZero);
 
     flat-=bb; 
-
-    // for (int i= 0; i< bb.Size(); ++i)
-    // {
-    //     flat[i]-=bb[i];
-    // }
+    // kipl::io::WriteTIFF(flat,"flat_img.tif");
 
     std::vector<size_t> hist;
     std::vector<float>  axis;
@@ -133,6 +134,8 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
 
         case SegmentBB::method_otsu :  
             idx = kipl::segmentation::Threshold_Otsu(hist);
+            msg.str(""); msg<<"Otsu threshold at idx:"<<idx<<", level:"<<axis[idx];
+            logger.message(msg.str());
             kipl::segmentation::Threshold( bb.GetDataPtr(), 
                                 mask.GetDataPtr(), 
                                 bb.Size(), 

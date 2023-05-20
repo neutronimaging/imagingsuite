@@ -15,7 +15,7 @@
 #include <io/io_csv.h>
 
 #include <ImagingException.h>
-#include <ReferenceImageCorrection.h>
+#include <SegmentBB.h>
 
 
 class TestScatterCorrection : public QObject
@@ -26,10 +26,11 @@ public:
     TestScatterCorrection();
     
 private Q_SLOTS:
-    void RefImgCorrection_Initialization();
+    void SegmentBB_initialization();
 
-    void RefImgCorrection_enums();
-    void testSegmentation();
+    void SegmentBB_enums();
+
+    void SegmentBB_segmentation();
 
 private:
     std::string dataPath;
@@ -49,43 +50,30 @@ TestScatterCorrection::TestScatterCorrection()
 }
 
 
-void TestScatterCorrection::RefImgCorrection_Initialization()
+void TestScatterCorrection::SegmentBB_initialization()
 {
-    ImagingAlgorithms::ReferenceImageCorrection bb;
+    QSKIP("Not implemented");
 }
 
-void TestScatterCorrection::RefImgCorrection_enums()
+void TestScatterCorrection::SegmentBB_enums()
 {
-    std::map<std::string, ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod> strmap;
-    strmap["otsumask"]                = ImagingAlgorithms::ReferenceImageCorrection::otsuMask;
-    strmap["rosinmask"]                = ImagingAlgorithms::ReferenceImageCorrection::rosinMask;
-    strmap["manuallythresholdedmask"] = ImagingAlgorithms::ReferenceImageCorrection::manuallyThresholdedMask;
-    strmap["userdefinedmask"]         = ImagingAlgorithms::ReferenceImageCorrection::userDefinedMask;
-    strmap["referencefreemask"]       = ImagingAlgorithms::ReferenceImageCorrection::referenceFreeMask;
-
-    ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod em;
-    for (auto & item : strmap)
-    {
-        QCOMPARE(item.first,enum2string(item.second));
-        string2enum(item.first,em);
-        QCOMPARE(item.second,em);
-    }
-    em=static_cast<ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod>(9999);
-    QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
-    QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+    QSKIP("Not implemented");
 }
 
-void TestScatterCorrection::testSegmentation()
+void TestScatterCorrection::SegmentBB_segmentation()
 {
-    ImagingAlgorithms::ReferenceImageCorrection bb;
+    SegmentBB bb_seg;
     kipl::base::TImage<float,2> img;
-    kipl::base::TImage<float,2> res; 
+    
     std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
+    //std::string fname = dataPath+"2D/fits/BB/bbsample_00001.fits";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
 
     kipl::io::ReadFITS(img,fname);
 
-    bb.SegmentBlackBody(img,res);
+    kipl::base::TImage<float,2> res(img.dims()); 
+    bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
+
     kipl::io::WriteTIFF(res,"res.tif",kipl::base::Float32);
 }
 

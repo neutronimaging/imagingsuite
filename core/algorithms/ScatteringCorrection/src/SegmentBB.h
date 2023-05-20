@@ -14,7 +14,7 @@
 #include <morphology/label.h>
 #include <segmentation/thresholds.h>
 
-SCATTERINGCORRECTIONSHARED_EXPORT class SegmentBB
+class SCATTERINGCORRECTIONSHARED_EXPORT SegmentBB
 {
 private:
     kipl::logging::Logger logger;
@@ -63,9 +63,9 @@ private:
     kipl::morphology::RegionProperties<int,float> m_regProps;
 };
 
-std::string enum2string(SegmentBB::eSegmentationMethod sm);
-void string2enum(const std::string & str, SegmentBB::eSegmentationMethod &sm);
-const std::ostream & operator<<(std::ostream &s, SegmentBB::eSegmentationMethod sm);
+std::string SCATTERINGCORRECTIONSHARED_EXPORT enum2string(SegmentBB::eSegmentationMethod sm);
+void SCATTERINGCORRECTIONSHARED_EXPORT string2enum(const std::string & str, SegmentBB::eSegmentationMethod &sm);
+const std::ostream &  SCATTERINGCORRECTIONSHARED_EXPORT operator<<(std::ostream &s, SegmentBB::eSegmentationMethod sm);
 
 
 #endif // SEGMENTBB_H_
