@@ -27,10 +27,13 @@ public:
     
 private Q_SLOTS:
     void SegmentBB_initialization();
-
     void SegmentBB_enums();
-
     void SegmentBB_segmentation();
+
+    void ScatterEstimation_initialization();
+    void ScatterEstimation_enums();
+    void ScatterEstimation_fit();
+    void ScatterEstimation_predict();
 
 private:
     std::string dataPath;
@@ -75,6 +78,26 @@ void TestScatterCorrection::SegmentBB_segmentation()
     bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
 
     kipl::io::WriteTIFF(res,"res.tif",kipl::base::Float32);
+}
+
+void TestScatterCorrection::ScatterEstimation_initialization()
+{
+    
+}
+
+void TestScatterCorrection::ScatterEstimation_enums()
+{
+
+}
+
+void TestScatterCorrection::ScatterEstimation_fit()
+{
+
+}
+
+void TestScatterCorrection::ScatterEstimation_predict()
+{
+
 }
 
 QTEST_APPLESS_MAIN(TestScatterCorrection)

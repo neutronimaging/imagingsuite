@@ -13,6 +13,7 @@ public:
     ~STLVecOperations();
 
 private slots:
+    void test_median();
     void test_medianFilter();
     void test_MAD();
 
@@ -26,6 +27,18 @@ STLVecOperations::STLVecOperations()
 STLVecOperations::~STLVecOperations()
 {
 
+}
+
+
+void STLVecOperations::test_median()
+{
+    std::vector<float> evenv={0,9,1,8,2,7,3,6,5,4};
+    std::vector<float> oddv={9,1,8,2,7,3,6,5,4};
+
+    double m = median(evenv);
+    QCOMPARE(m,4.5);
+    m = median(oddv);
+    QCOMPARE(m,5);
 }
 
 void STLVecOperations::test_medianFilter()
@@ -55,6 +68,7 @@ void STLVecOperations::test_medianFilter()
 
 
 }
+
 
 void STLVecOperations::test_MAD()
 {
