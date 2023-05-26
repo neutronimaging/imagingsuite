@@ -6,30 +6,54 @@
 #include <stltools/stlvecmath.h>
 
 ScatterEstimator::ScatterEstimator() :
-    logger("ScatterEstimator")
+    logger("ScatterEstimator"),
+    m_imgDims({0,0}),
+    m_nPolyOrderX(2),
+    m_nPolyOrderY(2),
+    m_fDotRadius(5),
+    m_AvgMethod(avg_median),
+    m_FitMethod(fitmethod_polynomial)
 {
 
 }
 
 ScatterEstimator::ScatterEstimator(const std::map<std::string,std::string> &params) :
-    logger("ScatterEstimator")
+    logger("ScatterEstimator"),
+    m_imgDims({0,0}),
+    m_nPolyOrderX(2),
+    m_nPolyOrderY(2),
+    m_fDotRadius(5),
+    m_AvgMethod(avg_median),
+    m_FitMethod(fitmethod_polynomial)
 {
-
+    setParameters(params);
 }
 
 void ScatterEstimator::setParameters(const std::map<std::string,std::string> &params)
 {
-
+    m_nPolyOrderX = std::stoi(params.at("polyorderx"));
+    m_nPolyOrderX = std::stoi(params.at("polyordery"));
+    m_fDotRadius  = std::stof(params.at("dotradius"));
+    string2enum(params.at("avgmethod"),m_AvgMethod);
+    string2enum(params.at("fitmethod"),m_FitMethod);
 }
 
 std::map<std::string,std::string> ScatterEstimator::parameters()
 {
+    std::map<std::string,std::string> params = {
+        {"polyorderx", to_string(m_nPolyOrderX)},
+        {"polyordery", to_string(m_nPolyOrderY)},
+        {"dotradius",  to_string(m_fDotRadius)},
+        {"avgmethod",  enum2string(m_AvgMethod)},
+        {"fitmethod",  enum2string(m_FitMethod)}
+    };
 
+    return params;
 }
 
 void ScatterEstimator::setAverageMethod(eAverageMethod method)
 {
-
+    m_AvgMethod = method;
 }
 
 void ScatterEstimator::fit(const std::vector<float> &x, const std::vector<float> &y, 

@@ -63,6 +63,7 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ScatterEstimator
         int m_nPolyOrderY;
         float m_fDotRadius;
         eAverageMethod m_AvgMethod;
+        eFitMethod m_FitMethod;
 
         float m_fFitError;
         arma::vec m_fittedParameters;

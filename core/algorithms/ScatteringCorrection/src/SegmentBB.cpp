@@ -255,7 +255,7 @@ const kipl::base::TImage<float,2> & SegmentBB::mask()
     return m_mask;
 }
 
-std::vector<pair<float,float> > SegmentBB::dotCoordinates()
+std::tuple<std::vector<float>,std::vector<float> > SegmentBB::dotCoordinates()
 {
 
 }

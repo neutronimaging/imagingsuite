@@ -16,6 +16,7 @@
 
 #include <ImagingException.h>
 #include <SegmentBB.h>
+#include <ScatterEstimation.h>
 
 
 class TestScatterCorrection : public QObject
@@ -30,7 +31,7 @@ private Q_SLOTS:
     void SegmentBB_enums();
     void SegmentBB_segmentation();
 
-    void ScatterEstimation_initialization();
+    // void ScatterEstimation_initialization();
     void ScatterEstimation_enums();
     void ScatterEstimation_fit();
     void ScatterEstimation_predict();
@@ -41,8 +42,6 @@ private:
     std::map<size_t,float> points;
     size_t pos1;
     size_t pos2;
-
-
 };
 
 TestScatterCorrection::TestScatterCorrection() 
@@ -80,18 +79,60 @@ void TestScatterCorrection::SegmentBB_segmentation()
     kipl::io::WriteTIFF(res,"res.tif",kipl::base::Float32);
 }
 
-void TestScatterCorrection::ScatterEstimation_initialization()
-{
-    
-}
+// void TestScatterCorrection::ScatterEstimation_initialization()
+// {
+
+// }
 
 void TestScatterCorrection::ScatterEstimation_enums()
 {
+    ScatterEstimator::eAverageMethod mA;
+    string2enum("avgmean",mA);
+    QCOMPARE(mA, ScatterEstimator::avg_mean);
+    string2enum("avgmedian",mA);
+    QCOMPARE(mA, ScatterEstimator::avg_median);
+    string2enum("avgmin",mA);
+    QCOMPARE(mA, ScatterEstimator::avg_min);
+    string2enum("avgmax",mA);
+    QCOMPARE(mA, ScatterEstimator::avg_max);
 
+    QCOMPARE(enum2string(ScatterEstimator::avg_mean),"avgmean");
+    QCOMPARE(enum2string(ScatterEstimator::avg_median),"avgmedian");
+    QCOMPARE(enum2string(ScatterEstimator::avg_min),"avgmin");
+    QCOMPARE(enum2string(ScatterEstimator::avg_max),"avgmax");
+
+    ScatterEstimator::eFitMethod mF;
+    
+    string2enum("fitpolynimal",mF);
+    QCOMPARE(mF,ScatterEstimator::fitmethod_polynomial);
+    string2enum("fitspline",mF);
+    QCOMPARE(mF,ScatterEstimator::fitmethod_thinplatesplines);
+
+    QCOMPARE(enum2string(ScatterEstimator::fitmethod_polynomial),"fitpolynimal");
+    QCOMPARE(enum2string(ScatterEstimator::fitmethod_thinplatesplines),"fitspline");
 }
 
 void TestScatterCorrection::ScatterEstimation_fit()
 {
+    std::ostringstream msg;
+    SegmentBB bb_seg;
+    kipl::base::TImage<float,2> img;
+    
+    std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
+    //std::string fname = dataPath+"2D/fits/BB/bbsample_00001.fits";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+
+    kipl::io::ReadFITS(img,fname);
+
+    kipl::base::TImage<float,2> res(img.dims()); 
+    bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
+
+    ScatterEstimator se;
+
+    auto [x,y] = bb_seg.dotCoordinates();
+    se.fit(x,y,img,5,2,2);
+
+    qDebug()<<"Fit error ="<<se.fitError();
 
 }
 

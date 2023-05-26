@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <tuple>
 
 #include <base/timage.h>
 #include <logging/logger.h>
@@ -40,7 +41,7 @@ public:
               const std::vector<size_t> & ROI={});
 
     const kipl::base::TImage<float,2> & mask();
-    std::vector<pair<float,float> > dotCoordinates();
+    std::tuple<std::vector<float>,std::vector<float> > dotCoordinates();
     std::pair<std::vector<size_t>, std::vector<float> >  histogram();
 
 private:
