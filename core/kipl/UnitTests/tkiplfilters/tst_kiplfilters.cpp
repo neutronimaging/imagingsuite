@@ -8,6 +8,7 @@
 #include <base/timage.h>
 #include <base/kiplenums.h>
 #include <io/io_tiff.h>
+#include <io/io_fits.h>
 #include <strings/filenames.h>
 
 #include <filters/medianfilter.h>
@@ -120,13 +121,18 @@ void KiplFilters::test_MedianFilter()
 
 void KiplFilters::benchmark_MedianFilterSingle()
 {
+    // QSKIP("Takes too long");
     kipl::base::TImage<float,2> img;
 
     std::string fname = dataPath+"2D/tiff/scroll_1024.tif";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::io::ReadTIFF(img,fname);
+    // std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
+    // kipl::strings::filenames::CheckPathSlashes(fname,false);
 
-    kipl::filters::TMedianFilter<float,2> med({51,1});
+    kipl::io::ReadFITS(img,fname);
+
+    kipl::filters::TMedianFilter<float,2> med({71,1});
 
     med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedian;
     QBENCHMARK
@@ -142,8 +148,11 @@ void KiplFilters::benchmark_MedianFilterParallel()
     std::string fname = dataPath+"2D/tiff/scroll_1024.tif";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::io::ReadTIFF(img,fname);
+    // std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
+    // kipl::strings::filenames::CheckPathSlashes(fname,false);
 
-    kipl::filters::TMedianFilter<float,2> med({51,1});
+    kipl::io::ReadFITS(img,fname);
+    kipl::filters::TMedianFilter<float,2> med({71,1});
 
     med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedianSTL;
     QBENCHMARK

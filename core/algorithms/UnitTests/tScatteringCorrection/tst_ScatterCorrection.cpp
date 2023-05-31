@@ -77,8 +77,36 @@ void TestScatterCorrection::SegmentBB_segmentation()
     bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
 
     kipl::io::WriteTIFF(res,"res.tif",kipl::base::Float32);
+
 }
 
+void TestScatterCorrection::ScatterEstimation_fit()
+{
+    std::ostringstream msg;
+    SegmentBB bb_seg;
+    kipl::base::TImage<float,2> img;
+    
+    std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
+    //std::string fname = dataPath+"2D/fits/BB/bbsample_00001.fits";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+
+    kipl::io::ReadFITS(img,fname);
+
+    kipl::base::TImage<float,2> res(img.dims()); 
+    // bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
+
+    // auto [x,y] = bb_seg.dotCoordinates();
+    // ScatterEstimator se;  
+    // se.fit(x,y,img,5,2,2);
+
+    // qDebug()<<"Fit error ="<<se.fitError();
+
+}
+
+void TestScatterCorrection::ScatterEstimation_predict()
+{
+
+}
 // void TestScatterCorrection::ScatterEstimation_initialization()
 // {
 
@@ -112,34 +140,7 @@ void TestScatterCorrection::ScatterEstimation_enums()
     QCOMPARE(enum2string(ScatterEstimator::fitmethod_thinplatesplines),"fitspline");
 }
 
-void TestScatterCorrection::ScatterEstimation_fit()
-{
-    std::ostringstream msg;
-    SegmentBB bb_seg;
-    kipl::base::TImage<float,2> img;
-    
-    std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
-    //std::string fname = dataPath+"2D/fits/BB/bbsample_00001.fits";
-    kipl::strings::filenames::CheckPathSlashes(fname,false);
 
-    kipl::io::ReadFITS(img,fname);
-
-    kipl::base::TImage<float,2> res(img.dims()); 
-    bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
-
-    ScatterEstimator se;
-
-    auto [x,y] = bb_seg.dotCoordinates();
-    se.fit(x,y,img,5,2,2);
-
-    qDebug()<<"Fit error ="<<se.fitError();
-
-}
-
-void TestScatterCorrection::ScatterEstimation_predict()
-{
-
-}
 
 QTEST_APPLESS_MAIN(TestScatterCorrection)
 

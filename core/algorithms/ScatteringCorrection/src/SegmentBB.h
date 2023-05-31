@@ -41,8 +41,8 @@ public:
               const std::vector<size_t> & ROI={});
 
     const kipl::base::TImage<float,2> & mask();
-    std::tuple<std::vector<float>,std::vector<float> > dotCoordinates();
-    std::pair<std::vector<size_t>, std::vector<float> >  histogram();
+    std::tuple<std::vector<float>,std::vector<float> >    dotCoordinates();
+    std::tuple<std::vector<size_t>, std::vector<float> >  histogram();
 
 private:
     void segment(const kipl::base::TImage<float,2> &bb,
