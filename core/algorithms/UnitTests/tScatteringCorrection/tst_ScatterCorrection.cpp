@@ -96,6 +96,9 @@ void TestScatterCorrection::ScatterEstimation_fit()
     bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
 
     auto [x,y] = bb_seg.dotCoordinates();
+
+    qDebug()<< x.size();
+    qDebug()<< y.size();
     ScatterEstimator se;  
     se.fit(x,y,img,5,2,2);
 

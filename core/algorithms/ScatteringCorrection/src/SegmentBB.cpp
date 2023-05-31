@@ -107,7 +107,7 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
     }
 
     // 2.a compute histogram
-    const size_t medianLength = 51;
+    const size_t medianLength = 71;
     kipl::filters::TMedianFilter<float,2> medh({medianLength,1});
     kipl::filters::TMedianFilter<float,2> medv({1,medianLength});
 
@@ -115,12 +115,13 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
     auto flat = medh(fltv,kipl::filters::FilterBase::EdgeZero);
 
     flat-=bb; 
-    //kipl::io::WriteTIFF(flat,"flat_img.tif");
+    kipl::io::WriteTIFF(flat,"flat_img.tif",kipl::base::Float32);
 
     std::vector<size_t> hist;
     std::vector<float>  axis;
     int ndims = 256;
     kipl::base::Histogram(flat.GetDataPtr(), flat.Size(), ndims, hist, axis, 0.0f,0.0f, true);
+
 
     // 3. Find threshold  
     // 4. Apply threshold 
@@ -189,43 +190,43 @@ void SegmentBB::identifyBBs(const kipl::base::TImage<float,2> &bb,
     kipl::base::TImage<int,2> lbl(mask.dims());
 
     
-    // size_t num_obj = 0UL;
+    size_t num_obj = 0UL;
 
-    // try {
-    //      num_obj = kipl::morphology::LabelImage(mask,lbl);
+    try {
+         num_obj = kipl::morphology::LabelImage(mask,lbl);
 
-    //      std::ostringstream msg;
-    //      msg << "Labeling found " << num_obj << "objects in the mask.";
-    //      logger.debug(msg.str());
-    //  }
-    //  catch (ImagingException &e) {
-    //      logger.error(e.what());
-    //      throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
-    //  }
-    //  catch(kipl::base::KiplException &e){
-    //      logger.error(e.what());
-    //      throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
-    //  }
-    //  catch (std::exception &e)
-    //  {
-    //      logger.error(e.what());
-    //      throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
-    //  }
+         std::ostringstream msg;
+         msg << "Labeling found " << num_obj << "objects in the mask.";
+         logger.debug(msg.str());
+     }
+     catch (ImagingException &e) {
+         logger.error(e.what());
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch(kipl::base::KiplException &e){
+         logger.error(e.what());
+         throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
+     catch (std::exception &e)
+     {
+         logger.error(e.what());
+         throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
+     }
 
-    // if (num_obj<=2)
-    //      throw ImagingException("SegmentBlackBodyNorm failed, Number of detected objects too little. Please try to change the threshold", __FILE__, __LINE__);
-    // // 7. Get region properties
+    if (num_obj<=2)
+         throw ImagingException("SegmentBlackBodyNorm failed, Number of detected objects too little. Please try to change the threshold", __FILE__, __LINE__);
+    // 7. Get region properties
     
-    // kipl::morphology::RegionProperties<int,float> rp(lbl,bb);
+    kipl::morphology::RegionProperties<int,float> rp(lbl,bb);
 
-    // rp.filter(kipl::morphology::regprop_area,{static_cast<float>(m_areaLimits[0]),static_cast<float>(m_areaLimits[1])});           // upper limit is the image size
-    // if (ROI.size() == 4) 
-    // {
-    //     rp.filter(kipl::morphology::regprop_cogx,{static_cast<float>(ROI[0]),static_cast<float>(ROI[2])});
-    //     rp.filter(kipl::morphology::regprop_cogy,{static_cast<float>(ROI[1]),static_cast<float>(ROI[3])});
-    // }
+    rp.filter(kipl::morphology::regprop_area,{static_cast<float>(m_areaLimits[0]),static_cast<float>(m_areaLimits[1])});           // upper limit is the image size
+    if (ROI.size() == 4) 
+    {
+        rp.filter(kipl::morphology::regprop_cogx,{static_cast<float>(ROI[0]),static_cast<float>(ROI[2])});
+        rp.filter(kipl::morphology::regprop_cogy,{static_cast<float>(ROI[1]),static_cast<float>(ROI[3])});
+    }
     
-    // m_regProps = rp;
+    m_regProps = rp;
 }
 
 void SegmentBB::prepareMask(const std::vector<size_t> & dims)
@@ -260,9 +261,11 @@ const kipl::base::TImage<float,2> & SegmentBB::mask()
 
 std::tuple<std::vector<float>,std::vector<float> > SegmentBB::dotCoordinates()
 {
+
     auto cogs = m_regProps.cog();
     std::vector<float> x(cogs.size());
     std::vector<float> y(cogs.size());
+
 
     auto it = cogs.begin();
     size_t i=0;
