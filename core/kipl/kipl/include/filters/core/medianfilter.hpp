@@ -25,6 +25,7 @@ TMedianFilter<T,nDims>::TMedianFilter(const std::vector<size_t> & dims) :
     kipl::filters::TFilterBase<T,nDims>(dims),
     logger("TMedianFilter"),
     medianAlgorithm(MedianAlg_HeapSortMedianSTL)
+	// medianAlgorithm(MedianAlg_HeapSortMedian)
 {
     if (nDims!=2)
         throw kipl::base::KiplException("Median filter is only supported for 2D", __FILE__, __LINE__);
@@ -203,8 +204,8 @@ void TMedianFilter<T,nDims>::HeapSortMedianFilterSTL(const kipl::base::TImage<T,
                 kipl::base::TImage<T,nDims> &result,
                 const FilterBase::EdgeProcessingStyle edgeStyle)
 {
-    const int startY = 0 ;
-    const int endY   = 1 < nDims ? src.Size(1) : 1 ;
+    const int startY = nHalfKernel[1] ;
+    const int endY   = 1 < nDims ? src.Size(1)-nHalfKernel[1] : 1 ;
 
     std::ostringstream msg;
     const size_t concurentThreadsSupported = std::thread::hardware_concurrency();

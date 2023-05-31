@@ -93,13 +93,13 @@ void TestScatterCorrection::ScatterEstimation_fit()
     kipl::io::ReadFITS(img,fname);
 
     kipl::base::TImage<float,2> res(img.dims()); 
-    // bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
+    bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
 
-    // auto [x,y] = bb_seg.dotCoordinates();
-    // ScatterEstimator se;  
-    // se.fit(x,y,img,5,2,2);
+    auto [x,y] = bb_seg.dotCoordinates();
+    ScatterEstimator se;  
+    se.fit(x,y,img,5,2,2);
 
-    // qDebug()<<"Fit error ="<<se.fitError();
+    qDebug()<<"Fit error ="<<se.fitError();
 
 }
 

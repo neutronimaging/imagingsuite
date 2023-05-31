@@ -130,7 +130,7 @@ void KiplFilters::benchmark_MedianFilterSingle()
     // std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
     // kipl::strings::filenames::CheckPathSlashes(fname,false);
 
-    kipl::io::ReadFITS(img,fname);
+    // kipl::io::ReadFITS(img,fname);
 
     kipl::filters::TMedianFilter<float,2> med({71,1});
 
@@ -151,7 +151,7 @@ void KiplFilters::benchmark_MedianFilterParallel()
     // std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
     // kipl::strings::filenames::CheckPathSlashes(fname,false);
 
-    kipl::io::ReadFITS(img,fname);
+    // kipl::io::ReadFITS(img,fname);
     kipl::filters::TMedianFilter<float,2> med({71,1});
 
     med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedianSTL;

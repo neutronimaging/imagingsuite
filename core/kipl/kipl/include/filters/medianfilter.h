@@ -18,6 +18,7 @@ namespace kipl { namespace filters {
         MedianAlg_QuickMedian,
         MedianAlg_HeapSortMedian,
         MedianAlg_HeapSortMedianSTL,
+		MedianAlg_HeapSortMedianPool,
         MedianAlg_STLSortMedian
     };
 
@@ -54,6 +55,10 @@ namespace kipl { namespace filters {
         void HeapSortMedianFilterSTL(const kipl::base::TImage<T,nDims>    &src,
 										   kipl::base::TImage<T,nDims>    &result,
 									 const FilterBase::EdgeProcessingStyle edgeStyle);
+									 
+		void HeapSortMedianFilterPool( const kipl::base::TImage<T,nDims> &src,
+                							kipl::base::TImage<T,nDims> &result,
+                						const FilterBase::EdgeProcessingStyle edgeStyle);
 
         void HeapSortInnerLoop(const kipl::base::TImage<T,nDims> *src,
 									 kipl::base::TImage<T,nDims> *result,

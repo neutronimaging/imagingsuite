@@ -85,10 +85,10 @@ void SegmentBB::exec( const kipl::base::TImage<float,2> & bb,
     // 6. Label image 
     // 7. Get region properties
     // 8. Filter on size, position, and intensity 
-    // identifyBBs(bb, mask, ROI);
+    identifyBBs(bb, mask, ROI);
 
     // 9. Create dot mask
-    // prepareMask(bb.dims());
+    prepareMask(bb.dims());
     // kipl::io::WriteTIFF(m_mask,"prepared_mask.tif");
 
 }
@@ -107,15 +107,15 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
     }
 
     // 2.a compute histogram
-    
-    kipl::filters::TMedianFilter<float,2> medh({71,1});
-    kipl::filters::TMedianFilter<float,2> medv({1,71});
+    const size_t medianLength = 51;
+    kipl::filters::TMedianFilter<float,2> medh({medianLength,1});
+    kipl::filters::TMedianFilter<float,2> medv({1,medianLength});
 
     auto fltv = medv(bb, kipl::filters::FilterBase::EdgeZero);
     auto flat = medh(fltv,kipl::filters::FilterBase::EdgeZero);
 
     flat-=bb; 
-    // kipl::io::WriteTIFF(flat,"flat_img.tif");
+    //kipl::io::WriteTIFF(flat,"flat_img.tif");
 
     std::vector<size_t> hist;
     std::vector<float>  axis;
