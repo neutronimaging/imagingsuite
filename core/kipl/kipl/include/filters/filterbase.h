@@ -68,7 +68,7 @@ protected:
     /// \param imgDims image dimensions
     /// \param res pointer to the filtered image
     /// \param resDims dimensions of the filtered image
-	int ProcessCore(T const * const img,
+	virtual int ProcessCore(T const * const img,
           const std::vector<size_t> & imgDims,
 		  T *res, 
           const std::vector<size_t> & resDims);
@@ -78,7 +78,7 @@ protected:
     /// \param res pointer to the filtered image
     /// \param imgDims image dimensions
     /// \param epStyle Select how to process the edges
-	int ProcessEdge(T const * const img, 
+	virtual int ProcessEdge(T const * const img, 
 		  T * res, 
           const std::vector<size_t> & imgDims,
 		  const FilterBase::EdgeProcessingStyle epStyle);
@@ -98,7 +98,7 @@ protected:
     /// \param res pointer to the filtered image
     /// \param imgDims image dimensions
     /// \param epStyle Select how to process the edges
-    int ProcessEdge2D(T const * const img,
+    virtual int ProcessEdge2D(T const * const img,
 		  T * res, 
           const std::vector<size_t> & imgDims,
 		  const FilterBase::EdgeProcessingStyle epStyle);

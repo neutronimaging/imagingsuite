@@ -132,13 +132,15 @@ void KiplFilters::benchmark_MedianFilterSingle()
 
     // kipl::io::ReadFITS(img,fname);
 
-    kipl::filters::TMedianFilter<float,2> med({71,1});
+    kipl::filters::TMedianFilter<float,2> med({11,11});
+    kipl::base::TImage<float,2> res_single;
 
     med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedian;
     QBENCHMARK
     {
-        auto res_single   = med(img,kipl::filters::FilterBase::EdgeZero);
+        res_single   = med(img,kipl::filters::FilterBase::EdgeZero);
     }
+    kipl::io::WriteTIFF(res_single,"smedian.tiff",kipl::base::Float32);
 }
 
 void KiplFilters::benchmark_MedianFilterParallel()
@@ -148,17 +150,17 @@ void KiplFilters::benchmark_MedianFilterParallel()
     std::string fname = dataPath+"2D/tiff/scroll_1024.tif";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::io::ReadTIFF(img,fname);
-    // std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
-    // kipl::strings::filenames::CheckPathSlashes(fname,false);
 
-    // kipl::io::ReadFITS(img,fname);
-    kipl::filters::TMedianFilter<float,2> med({71,1});
+    kipl::filters::TMedianFilter<float,2> med({11,11});
+    kipl::base::TImage<float,2> res_parallel;
 
     med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedianSTL;
     QBENCHMARK
     {
-        auto res_parallel = med(img,kipl::filters::FilterBase::EdgeZero);
+       res_parallel = med(img,kipl::filters::FilterBase::EdgeZero);
     }
+
+    kipl::io::WriteTIFF(res_parallel,"pmedian.tiff",kipl::base::Float32);
 }
 
 QTEST_APPLESS_MAIN(KiplFilters)

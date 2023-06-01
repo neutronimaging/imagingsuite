@@ -53,108 +53,99 @@ kipl::base::TImage<T,nDims> TMedianFilter<T,nDims>::operator() (const kipl::base
 }
 
 template <class T, size_t nDims>
-int TMedianFilter<T,nDims>::ExtractNeighborhood(const kipl::base::TImage<T,nDims> &src, size_t const * const pos, T * data, const FilterBase::EdgeProcessingStyle edgeStyle)
+void TMedianFilter<T,nDims>::InitResultArray(const kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest) 
 {
-	using namespace std;
-    int edgeinfo=static_cast<int> ((pos[0]<nHalfKernel[0]) + (((src.Size(0)-nHalfKernel[0]-1)<pos[0]) * 2) +
-            ((pos[1]<nHalfKernel[1]) * 4)  + (((src.Size(1)-nHalfKernel[1]-1)<pos[1]) * 8)) ;
+	std::ignore = src;
+	std::ignore = dest;
+}
 
+template <class T, size_t nDims>
+void TMedianFilter<T,nDims>::InnerLoop(T const * const src, T *dest, T value, size_t N) 
+{
+	// Dummy
+	std::ignore = src;
+	std::ignore = dest;
+	std::ignore = value;
+	std::ignore = N;
+} 
 
-    int startZ = 2 < nDims ? -nHalfKernel[2] : 0 ;
-    int endZ   = 2 < nDims ? this->nKernelDims[2]-nHalfKernel[2] : 1 ;
-	int startY = 1 < nDims ? -nHalfKernel[1] : 1 ;
-	int endY   = 1 < nDims ? this->nKernelDims[1]-nHalfKernel[1] : 1 ;
-	int startX = -nHalfKernel[0];
-	int endX   = this->nKernelDims[0]-nHalfKernel[0];
+template <class T, size_t nDims>
+int TMedianFilter<T,nDims>::ExtractNeighborhood(const kipl::base::TImage<T,nDims>   & src, 
+												const std::vector<size_t> 			& pos, 
+												      T 							* data, 
+												const FilterBase::EdgeProcessingStyle edgeStyle)
+{
+	int sx   = src.Size(0);
+	int sy   = src.Size(1);
+	int posx = pos[0];
+	int posy = pos[1];
+	int k0   = this->nHalfKernel[0];
+	int k1   = this->nHalfKernel[1];
 
-	auto pImg=src.GetLinePtr(pos[1])+pos[0];
+	int edgeinfo =    (posx<k0) 
+					+ ((sx-posx)<k0) * 2
+					+ (posy<k1)      * 4
+					+ ((sy-posy)<k1) * 8;
 
-	memset(data,0,this->nKernelDims[0]*this->nKernelDims[1]*sizeof(T));
-    const size_t paceZ  = 2 < nDims ? src.Size(1)*src.Size(0) : 0;
+    int startY = -k1 ;
+	int endY   = this->nKernelDims[1]-k1 ;
+	int startX = -k0;
+	int endX   = this->nKernelDims[0]-k0;
 
-	switch (edgeinfo) {
-	case 0: break;
-	case 1: // left
-		startX=-pos[0];
-		break;
-	case 2: // right
-		endX=this->nKernelDims[0]-nHalfKernel[0]-(src.Size(0)-pos[0]);
-		break;
-	case 3: // invalid
-		throw kipl::base::KiplException("Invalid edge code (3) in median filter",__FILE__,__LINE__);
-		break;
-	case 4: // top
-		startY=-pos[1];
-		break;
-	case 5: // top + left
-		startX=-pos[0];
-		startY=-pos[1];
-		break;
-	case 6: // top + right
-		endX=this->nKernelDims[0]-nHalfKernel[0]-(src.Size(0)-pos[0]);
-		startY=-pos[1];
-		break;
-	case 7: // invalid
-		throw kipl::base::KiplException("Invalid edge code (7) in median filter",__FILE__,__LINE__);
-		break;
-	case 8: // bottom
-		endY=this->nKernelDims[1]-nHalfKernel[1]-(src.Size(1)-pos[1]);
-		break;
-	case 9: // bottom + left
-		startX=-pos[0];
-		endY=this->nKernelDims[1]-nHalfKernel[1]-(src.Size(1)-pos[1]);
-		break;
-	case 10: // bottom + right
-		endY=this->nKernelDims[1]-nHalfKernel[1]-(src.Size(1)-pos[1]);
-		endX=this->nKernelDims[0]-nHalfKernel[0]-(src.Size(0)-pos[0]-1);;
-		break;
+	std::fill_n(data,this->nKernelDims[0]*this->nKernelDims[1],static_cast<T>(0));
+
+	switch (edgeinfo) 
+	{
+		case 0: break;
+		case 1: // left
+			startX=-posx;
+			break;
+		case 2: // right
+			endX=(sx-posx);
+			break;
+		case 3: // invalid
+			throw kipl::base::KiplException("Invalid edge code (3) in median filter",__FILE__,__LINE__);
+			break;
+		case 4: // top
+			startY=-posy;
+			break;
+		case 5: // top + left
+			startX = -posx;
+			startY = -posy;
+			break;
+		case 6: // top + right
+			endX   =  sx-posx;
+			startY = -posy;
+			break;
+		case 7: // invalid
+			throw kipl::base::KiplException("Invalid edge code (7) in median filter",__FILE__,__LINE__);
+			break;
+		case 8: // bottom
+			endY   = (sy-posy);
+			break;
+		case 9: // bottom + left
+			startX = -posx;
+			endY   = (sy-posy);
+			break;
+		case 10: // bottom + right
+			endX   = (sx-posx);
+			endY   = (sy-posy);
+			break;
 	}
 
-	for (int y = startY; y<endY; y++) {
+
+	auto pImg=src.GetLinePtr(pos[1])+pos[0];
+	int dpos = 0;
+	for (int y = startY; y<endY; ++y) 
+	{
 		auto *d=pImg+y*src.Size(0);
-		for (int x = startX; x<endX; x++) {
-			int dpos=(y+nHalfKernel[1])*this->nKernelDims[0]+(x+nHalfKernel[0]);
+		for (int x = startX; x<endX; ++x, ++dpos) 
+		{
 			data[dpos]=d[x];
 		}
 	}
 
-	if (edgeinfo & 1) { // Left edge
-		for (int y=-nHalfKernel[1]; y<(static_cast<int>(this->nKernelDims[1])-nHalfKernel[1]); y++) {
-			for (int x=startX-1, xx=startX; -nHalfKernel[0]<=x; x--,xx++) {
-				int dpos=(y+nHalfKernel[1])*this->nKernelDims[0];
-				data[dpos+(x+nHalfKernel[0])]=data[dpos+(xx+nHalfKernel[0])];
-			}
-		}
-	}
-
-	if (edgeinfo & 2) { // Right edge
-		for (int y=-nHalfKernel[1]; y<(static_cast<int>(this->nKernelDims[1])-nHalfKernel[1]); y++) {
-			for (int x=endX-1, xx=endX; xx<(static_cast<int>(this->nKernelDims[0])-nHalfKernel[0]); x--,xx++) {
-				int dpos=(y+nHalfKernel[1])*this->nKernelDims[0];
-				data[dpos+(xx+nHalfKernel[0])]=data[dpos+(x+nHalfKernel[0])];
-			}
-		}
-	}
-
-	if (edgeinfo & 4) { // Top edge
-		for (int y=startY-1, yy=startY; -nHalfKernel[1]<=y; y--,yy++) {
-			for (int x=0; x<(static_cast<int>(this->nKernelDims[0])); x++) {
-				data[(y+nHalfKernel[1])*this->nKernelDims[0]+x]=
-						data[(yy+nHalfKernel[1])*this->nKernelDims[0]+x];
-			}
-		}
-	}
-
-	if (edgeinfo & 8) { // Bottom edge
-		for (int y=endY-1, yy=endY; yy<(static_cast<int>(this->nKernelDims[1])-nHalfKernel[1]); y--,yy++) {
-			for (int x=0; x<(static_cast<int>(this->nKernelDims[0])); x++) {
-				data[(yy+nHalfKernel[1])*this->nKernelDims[0]+x]=data[(y+nHalfKernel[1])*this->nKernelDims[0]+x];
-			}
-
-		}
-	}
-
-	return edgeinfo;
+	return dpos;
 }
 
 template <class T, size_t nDims>
@@ -183,16 +174,18 @@ void TMedianFilter<T,nDims>::HeapSortMedianFilter(const kipl::base::TImage<T,nDi
 
 	#pragma omp parallel
 	{
+		int N=0;
 		T *kern=new T[this->nKernel];
-		size_t pos[2]={0,0};
+		std::vector<size_t> pos={0,0};
 		#pragma omp for
 		for (int y=startY; y<endY; y++) {
 			pos[1]=y;
 			T * pLine=result.GetLinePtr(y);
 			for (int x=startX; x<endX; x++) {
 				pos[0]=x;
-				ExtractNeighborhood(src,pos,kern,edgeStyle);
-				kipl::math::median(kern,this->nKernel, pLine+x);
+				N=ExtractNeighborhood(src,pos,kern,edgeStyle);
+				kipl::math::median(kern,N, pLine+x);
+				// pLine[x]=N;
 			}
 		}
 		delete [] kern;
@@ -204,8 +197,8 @@ void TMedianFilter<T,nDims>::HeapSortMedianFilterSTL(const kipl::base::TImage<T,
                 kipl::base::TImage<T,nDims> &result,
                 const FilterBase::EdgeProcessingStyle edgeStyle)
 {
-    const int startY = nHalfKernel[1] ;
-    const int endY   = 1 < nDims ? src.Size(1)-nHalfKernel[1] : 1 ;
+	const int startY = 0 ;
+    const int endY   = 1 < nDims ? src.Size(1) : 1 ;
 
     std::ostringstream msg;
     const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
@@ -215,10 +208,6 @@ void TMedianFilter<T,nDims>::HeapSortMedianFilterSTL(const kipl::base::TImage<T,
     const size_t nLines = endY-startY;
 
     size_t M=nLines/concurentThreadsSupported;
-
-//    msg.str("");
-//    msg<<nLines<<" lines on "<<concurentThreadsSupported<<" threads, "<<M<<" lines per thread";
-//    logger(logger.LogMessage,msg.str());
 
     size_t begin = 0;
     size_t end   = 0;
@@ -264,17 +253,19 @@ void TMedianFilter<T,nDims>::HeapSortInnerLoop(const kipl::base::TImage<T,nDims>
     const int endX   = src->Size(0);
 
     T *kern=new T[this->nKernel];
-    size_t pos[2]={0,0};
+    std::vector<size_t> pos={0,0};
+	int N=0;
 
     for (size_t y=begin; y<end; ++y)
     {
         pos[1]=y;
         T * pLine=result->GetLinePtr(y);
-        for (int x=startX; x<endX; x++)
+        for (int x=startX; x<endX; ++x)
         {
             pos[0]=x;
-            ExtractNeighborhood(*src,pos,kern,edgeStyle);
-            kipl::math::median(kern,this->nKernel, pLine+x);
+            N=ExtractNeighborhood(*src,pos,kern,edgeStyle);
+            kipl::math::median(kern,N, pLine+x);
+			// pLine[x]=N;
         }
     }
 
@@ -291,7 +282,7 @@ void TMedianFilter<T,nDims>::STLSortMedianFilter(const kipl::base::TImage<T,nDim
 	const int startX = nHalfKernel[0] ;
 	const int endX   = src.Size(0) - (this->nKernelDims[0]-nHalfKernel[0]) ;
 	
-	size_t pos[2]={0,0};
+	std::vector<size_t> pos={0,0};
 	for (int y=startY; y<endY; y++) {
 		pos[1]=y-nHalfKernel[1];
 		T * pLine=result.GetLinePtr(y);
@@ -333,7 +324,7 @@ void TMedianFilter<T,nDims>::QuickMedianFilter(const kipl::base::TImage<T,nDims>
 	const int startX = 0 ;
 	const int endX   = src.Size(0);
 
-	size_t pos[3]={0,0,0};
+	std::vector<size_t> pos={0,0,0};
 	int sum=0;
 
 	for (int y=startY; y<endY; y++) {
@@ -373,6 +364,9 @@ void TMedianFilter<T,nDims>::BilevelMedianFilter(const kipl::base::TImage<T,nDim
 		kipl::base::TImage<T,nDims> &result, 
 		const FilterBase::EdgeProcessingStyle edgeStyle)
 {
+	std::ignore = src; 
+	std::ignore = result;
+	std::ignore = edgeStyle;
 	// Convolution with uniform NxM kernel 
 	// Compare number of elements with mid kernel
 }
@@ -380,13 +374,16 @@ void TMedianFilter<T,nDims>::BilevelMedianFilter(const kipl::base::TImage<T,nDim
 template <class T, size_t nDims>
 void TMedianFilter<T,nDims>::RunningWindowLineInit(T const * const src, T *dest,size_t const * const dims)
 {
-
+	std::ignore = src; 
+	std::ignore = dest;
+	std::ignore = dims;
 }
 
 template <class T, size_t nDims>
 void TMedianFilter<T,nDims>::RunningWindowLine(T const * const src, T *dest, size_t)
 {
-
+	std::ignore = src; 
+	std::ignore = dest;
 }
 
 
@@ -395,6 +392,9 @@ void TMedianFilter<T,nDims>::RunningWindowMedianFilter(kipl::base::TImage<T,nDim
 		kipl::base::TImage<T,nDims> &result, 
 		const FilterBase::EdgeProcessingStyle edgeStyle)
 {
+	std::ignore = src; 
+	std::ignore = result;
+	std::ignore = edgeStyle;
 	/*
 	const size_t Nx=nKernelDims[0];
 	const size_t Ny=nKernelDims[1];
@@ -452,7 +452,7 @@ kipl::base::TImage<T,N> TWeightedMedianFilter<T,N>::operator() (kipl::base::TIma
 	{
 		T *kern  = new T[this->nKernel];
 		T *kern2 = new T[this->m_nBufferLength];
-		size_t pos[2]={0,0};
+		std::vector<size_t> pos={0,0};
 		#pragma omp for
 		for (int y=startY; y<endY; y++) {
 			pos[1]=y-this->nHalfKernel[1];
