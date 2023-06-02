@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "../include/DetectorLagModule"
+#include "../include/DetectorLagModule.h"
 #include <ParameterHandling.h>
 #include <ModuleException.h>
 
