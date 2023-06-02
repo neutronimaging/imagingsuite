@@ -24,6 +24,7 @@ SOURCES += ../../src/stdpreprocmodulesgui.cpp \
     ../../src/morphspotcleandlg.cpp \
     ../../src/polynomialcorrectiondlg.cpp \
     ../../src/datascalerdlg.cpp \
+    ../../src/detectorlagdlg.cpp \
     ../../src/adaptivefilterdlg.cpp \
     ../../src/SpotClean2Dlg.cpp \
     ../../src/medianmixringcleandlg.cpp \
@@ -39,6 +40,7 @@ HEADERS += ../../src/stdpreprocmodulesgui.h\
     ../../src/morphspotcleandlg.h \
     ../../src/polynomialcorrectiondlg.h \
     ../../src/datascalerdlg.h \
+    ../../src/detectorlagdlg.h \
     ../../src/adaptivefilterdlg.h \
     ../../src/SpotClean2Dlg.h \
     ../../src/medianmixringcleandlg.h \
@@ -134,6 +136,7 @@ LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0
 FORMS += \
     ../../src/polynomialcorrectiondlg.ui \
     ../../src/datascalerdlg.ui \
+    ../../src/detectorlagdlg.ui \
     ../../src/adaptivefilterdlg.ui \
     ../../src/morphspotcleandlg.ui \
     ../../src/SpotClean2Dlg.ui \
