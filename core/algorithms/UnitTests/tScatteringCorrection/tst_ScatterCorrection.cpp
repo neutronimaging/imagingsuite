@@ -93,9 +93,24 @@ void TestScatterCorrection::ScatterEstimation_fit()
 
     kipl::base::TImage<float,2> res(img.dims()); 
     bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
-
     auto [x,y] = bb_seg.dotCoordinates();
+    // std::vector<float> x = { 1806.53, 1435.3, 1062.5, 319.944, 690.995, 
+    //                         1808.76, 1064.09, 1436.43, 693.334, 320.784, 
+    //                         1809.98, 1437.45, 1065.97, 694.489, 323.123, 
+    //                         1811.39, 1439.51, 1068.17, 697.332, 324.943, 
+    //                         1813.83, 1441.11, 1069.36, 697.963, 326.948};
 
+    // std::vector<float> y = {  375.315, 376.944, 378.841,  382.358,  381.608, 
+    //                           746.751, 750.226, 749.655,  753.382,  753.976, 
+    //                          1119.2,  1120.93, 1122.04,  1124.88,  1126.2, 
+    //                          1490.89, 1492.34, 1493.66,  1496.03,  1497.88, 
+    //                          1861.81, 1864.27, 1864.37,  1868.39,  1868.78};
+
+    // std::vector<float> dots = { 770.259, 708.012, 716.765, 773.111, 745.185, 
+    //                             732.518, 893.346, 713.543, 766.802, 1003.36, 
+    //                             838.556, 756.444, 831.259, 868.086, 839.148, 
+    //                             849.062, 847.518, 1048.54, 901.247, 898.222, 
+    //                             1001.42, 1050.63, 928.346, 1106.68, 1054.35};
     msg.str("");
     qDebug()<< x.size();
     qDebug()<< y.size();
@@ -107,7 +122,21 @@ void TestScatterCorrection::ScatterEstimation_fit()
 
 void TestScatterCorrection::ScatterEstimation_predict()
 {
+    std::vector<float> pars={2.29534e-05f, -0.122711f, 8.18729e-05f, -0.022848f, 1.54186e-05f, 845.537f};
 
+    std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+
+    kipl::base::TImage<float,2> img;
+    kipl::io::ReadFITS(img,fname);
+
+    ScatterEstimator se; 
+
+    se.setFitParameters(pars);
+
+    // auto scatter = se.scatterImage();
+
+    // kipl::io::WriteTIFF(scatter,"scatter.tif", kipl::base::Float32);
 }
 // void TestScatterCorrection::ScatterEstimation_initialization()
 // {

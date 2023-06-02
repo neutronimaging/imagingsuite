@@ -45,11 +45,14 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ScatterEstimator
                  int polyOrderX,
                  int polyOrderY
                  );
-        kipl::base::TImage<float,2> scatterImage(const std::vector<size_t> &ROI={});
-        float scatterDose(const std::vector<size_t> &ROI);
-        std::vector<float> fitParameters();
-        std::vector<int> polyOrders();
         float fitError();
+        
+        kipl::base::TImage<float,2> scatterImage(const std::vector<size_t> &ROI={});
+        float              scatterDose(const std::vector<size_t> &ROI);
+        void               setFitParameters(const std::vector<float> &pars, const std::vector<size_t> &dims = {2048UL,2048UL});
+        std::vector<float> fitParameters();
+        std::vector<int>   polyOrders();
+        
     private:
         std::vector<float> dotPixels(const kipl::base::TImage<float,2> &img, float x, float y, float radius);
         float              dotValue(const kipl::base::TImage<float,2> &img, float x, float y, float radius);

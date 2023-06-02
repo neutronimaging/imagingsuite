@@ -89,22 +89,41 @@ void ScatterEstimator::fit(const std::vector<float> &x, const std::vector<float>
     std::vector<float> dotVals(x.size());
     arma::vec b(x.size());
 
-    for (size_t i=0; i<x.size(); ++i) 
-    {
-        b(i) = dotVals[i] = dotValue(bb,x[i],y[i],dotRadius);
-        msg.str("");
-        msg<<"("<<x[i]<<", "<<y[i]<<") = "<<dotVals[i];
-        logger.message(msg.str());
-    }
+    // for (size_t i=0; i<x.size(); ++i) 
+    // {
+    //     b(i) = dotVals[i] = dotValue(bb,x[i],y[i],dotRadius);
+    //     msg.str("");
+    //     msg<<"("<<x[i]<<", "<<y[i]<<") = "<<dotVals[i];
+    //     logger.message(msg.str());
+    // }
+    
 
-    msg<<"dots = [";
-    for (size_t i=0; i<dotVals.size(); ++i)
-    {
-        msg<<dotVals[i]<<", ";
-    }
-    msg<<"]";
+    // msg.str("");
+    // msg<<"x= \{";
+    // for (size_t i=0; i<x.size(); ++i) 
+    // {
+    //     msg<<x[i]<<(i+1 == x.size() ? "\}":", ");
+        
+    // }
+    // logger.message(msg.str());
 
-    logger.message(msg.str());
+    // msg.str("");
+    // msg<<"y= \{";
+    // for (size_t i=0; i<y.size(); ++i) 
+    // {
+    //     msg<<y[i]<<(i+1 == y.size() ? "\}":", ");
+        
+    // }
+    // logger.message(msg.str());
+
+    // msg<<"dots = [";
+    // for (size_t i=0; i<dotVals.size(); ++i)
+    // {
+    //     msg<<dotVals[i]<<", ";
+    // }
+    // msg<<"]";
+
+    // logger.message(msg.str());
 
     auto A = buildA(x,y);
 
@@ -176,17 +195,33 @@ arma::mat ScatterEstimator::buildA(const std::vector<float> &x, const std::vecto
 
 kipl::base::TImage<float,2> ScatterEstimator::scatterImage(const std::vector<size_t> &ROI)
 {
-    if (ROI.size() != 4)
-        throw ImagingException("The ROI vector must have length 4.",__FILE__,__LINE__);
+    std::vector<size_t> dims = m_imgDims;
+    std::vector roi(4,0UL);
 
-    kipl::base::TImage<float,2> img({ROI[2]-ROI[0],ROI[3]-ROI[1]});
+    switch (ROI.size())
+    {
+        case 0UL : 
+            roi = {0,}        
+    }
+    if ((ROI.size() != 0) && (ROI.size() != 4)) 
+    {
+        throw ImagingException("The ROI vector must empty or have length 4.",__FILE__,__LINE__);
+    }
+
+
+
+    if (ROI.size()==4)
+        dims = {ROI[2]-ROI[0],ROI[3]-ROI[1]};
+
+    kipl::base::TImage<float,2> img(dims);
 
     size_t i = 0UL;
 
     for (size_t y=ROI[1]; y<ROI[3]; ++y)
-        for (size_t x=ROI[1]; x<ROI[3]; ++x, ++i)
+        for (size_t x=ROI[0]; x<ROI[2]; ++x, ++i)
             img[i]=polyVal(x,y);  
 
+    return img;
 }
 
 float ScatterEstimator::scatterDose(const std::vector<size_t> &ROI)
@@ -194,6 +229,24 @@ float ScatterEstimator::scatterDose(const std::vector<size_t> &ROI)
     auto doseImg = scatterImage(ROI);
 
     float m = std::accumulate(doseImg.GetDataPtr(),doseImg.GetDataPtr()+doseImg.Size(),0.0f)/doseImg.Size();
+}
+
+void ScatterEstimator::setFitParameters(const std::vector<float> &pars, const std::vector<size_t> &dims)
+{
+    if (pars.size()!=6)
+        throw ImagingException("The fit parameter vector must have 6 elements",__FILE__,__LINE__);
+        
+    a=pars[0];
+    b=pars[1];
+    c=pars[2];
+    d=pars[3];
+    e=pars[4];
+    f=pars[5];
+
+    m_nPolyOrderX = 2;
+    m_nPolyOrderY = 2;
+    
+    m_imgDims = dims;
 }
 
 std::vector<float> ScatterEstimator::fitParameters()

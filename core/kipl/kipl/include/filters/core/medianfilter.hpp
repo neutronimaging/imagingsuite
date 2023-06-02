@@ -337,26 +337,6 @@ void TMedianFilter<T,nDims>::QuickMedianFilter(const kipl::base::TImage<T,nDims>
 		}
 	}
 
-
-//	#pragma omp parallel
-//	{
-//		T *kern=new T[this->nKernel];
-//		size_t pos[2]={0,0};
-//		#pragma omp for
-//		for (int y=startY; y<endY; y++) {
-//			pos[1]=y-nHalfKernel[1];
-//			//pos[0]=startX-nHalfKernel[0];
-//			T * pLine=result.GetLinePtr(y);
-//			for (int x=startX; x<endX; x++) {
-//				pos[0]=x-nHalfKernel[0];
-//				//pos[0]++;
-//				ExtractNeighborhood(src,pos,kern,edgeStyle);
-//				kipl::math::median_quick_select(kern,this->nKernel, pLine+x);
-//			}
-//		}
-//		delete [] kern;
-//	}
-
 }
 
 template <class T, size_t nDims>
