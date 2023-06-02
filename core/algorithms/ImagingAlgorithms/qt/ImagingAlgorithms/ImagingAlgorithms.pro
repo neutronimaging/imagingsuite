@@ -73,7 +73,8 @@ SOURCES += \
     ../../src/ReferenceImageCorrection.cpp \
     ../../src/projectionfilter.cpp \
     ../../src/ReplaceUnderexposed.cpp \
-    ../../src/tomocenter.cpp
+    ../../src/tomocenter.cpp \
+    ../../src/detectorlag.cpp
 
 HEADERS += \
     ../../include/StripeFilter.h \
@@ -91,7 +92,8 @@ HEADERS += \
     ../../include/ReferenceImageCorrection.h \
     ../../include/projectionfilter.h \
     ../../include/ReplaceUnderexposed.h \
-    ../../include/tomocenter.h
+    ../../include/tomocenter.h \
+    ../../include/detectorlag.h
 
 
 unix:!symbian {
