@@ -7,7 +7,7 @@
 #include <ModuleException.h>
 
 DetectorLagModule::DetectorLagModule() :
-DetectorLagModuleBase("DetectorLagCorrection"),
+PreprocModuleBase("DetectorLagCorrection"),
 	fOffset(0.0f),
 	fSlope(1.0f)
 {
