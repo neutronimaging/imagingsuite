@@ -27,12 +27,18 @@ namespace ImagingAlgorithms
 
         // Use overloaded operator
         // Formula for correction: ACTUAL_IMAGE = PROCESS_IMAGE - PREVIOUS_IMAGE * CORRECTION_FACTOR
-        auto actImage = img - medianFilter(m_prevImage) * m_prevImageWeigth;
+        auto actImage = img - medianFilter(m_prevImage) * m_correctionFactor;
 
         m_prevImage = img;
         m_prevImage.Clone();
 
         return actImage;
+    }
+
+    void DetectorLag::setup(float correctionFactor, int medianKernelSize)
+    {
+        m_correctionFactor = correctionFactor;
+        m_nMedianSize = medianKernelSize;
     }
 
     DetectorLag::~DetectorLag()
