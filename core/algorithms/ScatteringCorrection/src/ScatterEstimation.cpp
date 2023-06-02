@@ -11,7 +11,7 @@ ScatterEstimator::ScatterEstimator() :
     m_nPolyOrderX(2),
     m_nPolyOrderY(2),
     m_fDotRadius(5),
-    m_AvgMethod(avg_median),
+    m_AvgMethod(avg_mean),
     m_FitMethod(fitmethod_polynomial)
 {
 
@@ -23,7 +23,7 @@ ScatterEstimator::ScatterEstimator(const std::map<std::string,std::string> &para
     m_nPolyOrderX(2),
     m_nPolyOrderY(2),
     m_fDotRadius(5),
-    m_AvgMethod(avg_median),
+    m_AvgMethod(avg_mean),
     m_FitMethod(fitmethod_polynomial)
 {
     setParameters(params);
@@ -63,6 +63,7 @@ void ScatterEstimator::fit(const std::vector<float> &x, const std::vector<float>
             int polyOrderY
             )
 {
+
     if ((x.size() != y.size()) || x.empty())
         ImagingException("Size mismatch in the fitting coordinate data",__FILE__,__LINE__);
 
@@ -81,6 +82,9 @@ void ScatterEstimator::fit(const std::vector<float> &x, const std::vector<float>
     
     m_nPolyOrderY = polyOrderY;
 
+
+    std::ostringstream msg;
+
     // Get dot intensity 
     std::vector<float> dotVals(x.size());
     arma::vec b(x.size());
@@ -88,11 +92,30 @@ void ScatterEstimator::fit(const std::vector<float> &x, const std::vector<float>
     for (size_t i=0; i<x.size(); ++i) 
     {
         b(i) = dotVals[i] = dotValue(bb,x[i],y[i],dotRadius);
+        msg.str("");
+        msg<<"("<<x[i]<<", "<<y[i]<<") = "<<dotVals[i];
+        logger.message(msg.str());
     }
+
+    msg<<"dots = [";
+    for (size_t i=0; i<dotVals.size(); ++i)
+    {
+        msg<<dotVals[i]<<", ";
+    }
+    msg<<"]";
+
+    logger.message(msg.str());
 
     auto A = buildA(x,y);
 
     m_fittedParameters = arma::solve(A, b);
+
+    msg.str("");
+    msg<<"Parameters=[ ";
+    for (const auto & par : m_fittedParameters)
+        msg<<par<<" ";
+
+    logger.message(msg.str());
 
     auto fit = A * m_fittedParameters;
 
@@ -106,6 +129,9 @@ arma::mat ScatterEstimator::buildA(const std::vector<float> &x, const std::vecto
 {
     size_t nCol = m_nPolyOrderX + m_nPolyOrderY + 1 + (m_nPolyOrderX*m_nPolyOrderY != 0 ? 1 : 0);
 
+    std::ostringstream msg;
+    msg<<"pox="<<m_nPolyOrderX<<", poy="<<m_nPolyOrderY<<", nCol="<<nCol;
+    logger.message(msg.str());
     arma::mat A( x.size(), nCol );
 
     for (size_t i=0; i<x.size() ; ++i) 
@@ -120,6 +146,7 @@ arma::mat ScatterEstimator::buildA(const std::vector<float> &x, const std::vecto
             case 2:
                 A(i,col++) = x[i]*x[i];
                 A(i,col++) = x[i];
+                break;
             default:
                 throw ImagingException("Poly order X out of bound",__FILE__,__LINE__);
         }
@@ -133,6 +160,7 @@ arma::mat ScatterEstimator::buildA(const std::vector<float> &x, const std::vecto
             case 2:
                 A(i,col++) = y[i]*y[i];
                 A(i,col++) = y[i];
+                break;
             default:
                 throw ImagingException("Poly order X out of bound",__FILE__,__LINE__);
         }
@@ -197,8 +225,10 @@ std::vector<float> ScatterEstimator::dotPixels(const kipl::base::TImage<float,2>
         {
             float R=sqrt(x*x+y2);
             if (R<=radius)
+            {
                 v.push_back(img(static_cast<size_t>(x0+x+0.5),static_cast<size_t>(y0+y+0.5)));
-        }
+            }
+        } 
     }
 
     return v;
@@ -210,6 +240,10 @@ float ScatterEstimator::dotValue(const  kipl::base::TImage<float,2> &img,
 {
     auto v=dotPixels(img,x,y,radius);
 
+    std::ostringstream msg;
+
+    // msg<<"#pixels="<<v.size();
+    // logger.message(msg.str());
     float m=0.0f;
     switch (m_AvgMethod)
     {
@@ -229,7 +263,7 @@ float ScatterEstimator::fitError(arma::vec x, arma::vec y)
 {
     auto diff = x-y;
 
-    return arma::norm(diff,2);
+    return arma::norm(diff,2)/x.size();
 }
 
 float ScatterEstimator::polyVal(float x, float y)

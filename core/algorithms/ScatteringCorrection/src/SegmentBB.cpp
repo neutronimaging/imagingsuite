@@ -265,16 +265,22 @@ std::tuple<std::vector<float>,std::vector<float> > SegmentBB::dotCoordinates()
     auto cogs = m_regProps.cog();
     std::vector<float> x(cogs.size());
     std::vector<float> y(cogs.size());
-
-
-    auto it = cogs.begin();
+   
     size_t i=0;
 
-    for (; it!=cogs.end(); ++i,++it) 
+    for ( auto it = cogs.begin(); it!=cogs.end(); ++i,++it) 
     {
         x[i]=it->second[0];
         y[i]=it->second[1];
     }
+
+    // std::ostringstream msg;
+    // for (size_t i=0; i<x.size(); ++i)
+    // {
+    //     msg<<"("<<x[i]<<", "<<y[i]<<")";
+    // }
+
+    // logger.message(msg.str());
     return {x,y};
 }
 

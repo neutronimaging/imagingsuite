@@ -87,7 +87,6 @@ void TestScatterCorrection::ScatterEstimation_fit()
     kipl::base::TImage<float,2> img;
     
     std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
-    //std::string fname = dataPath+"2D/fits/BB/bbsample_00001.fits";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
 
     kipl::io::ReadFITS(img,fname);
@@ -97,13 +96,13 @@ void TestScatterCorrection::ScatterEstimation_fit()
 
     auto [x,y] = bb_seg.dotCoordinates();
 
+    msg.str("");
     qDebug()<< x.size();
     qDebug()<< y.size();
     ScatterEstimator se;  
     se.fit(x,y,img,5,2,2);
 
     qDebug()<<"Fit error ="<<se.fitError();
-
 }
 
 void TestScatterCorrection::ScatterEstimation_predict()
