@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DataScalerDlg</class>
- <widget class="QDialog" name="DataScalerDlg">
+ <class>DetectorLagDlg</class>
+ <widget class="QDialog" name="DetectorLagDlg">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Configure data scaler</string>
+   <string>Configure detector lag correction</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -42,21 +42,21 @@
     <item row="0" column="0">
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>Slope</string>
+       <string>Correction Factor</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>Offset</string>
+       <string>Median Size</string>
       </property>
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QDoubleSpinBox" name="spinSlope">
+     <widget class="QDoubleSpinBox" name="spinMedianSize">
       <property name="toolTip">
-       <string>Set the k of the y=kx+m</string>
+       <string>Kernel size of the Median filter to be applied to the previous image</string>
       </property>
       <property name="decimals">
        <number>4</number>
@@ -70,15 +70,15 @@
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QDoubleSpinBox" name="spinOffset">
+     <widget class="QDoubleSpinBox" name="spinCorrectionFactor">
       <property name="toolTip">
-       <string>Set the m of the y=kx+m</string>
+       <string>Weigth of the previous image to be subtracted</string>
       </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-100000.000000000000000</double>
+       <double>0.000000000000000</double>
       </property>
       <property name="maximum">
        <double>100000.000000000000000</double>
@@ -93,7 +93,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>DataScalerDlg</receiver>
+   <receiver>DetectorLagDlg</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -109,7 +109,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>DataScalerDlg</receiver>
+   <receiver>DetectorLagDlg</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
