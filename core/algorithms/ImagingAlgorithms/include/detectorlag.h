@@ -5,6 +5,9 @@
 
 #include <logging/logger.h>
 #include <base/timage.h>
+
+namespace ImagingAlgorithms
+{
 class DetectorLag
 {
     kipl::logging::Logger logger;
@@ -16,5 +19,6 @@ class DetectorLag
         ~DetectorLag();
     private:
 };
+}
 
 #endif
