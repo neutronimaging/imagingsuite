@@ -74,6 +74,7 @@ set(INC_FILES
     src/adaptivefilterdlg.h
     src/bblognormdlg.h
     src/datascalerdlg.h
+    src/detectorlagdlg.h
     src/generalfilterdlg.h
     src/medianmixringcleandlg.h
     src/morphspotcleandlg.h
@@ -99,6 +100,7 @@ set(SRC_FILES
     src/bblognormdlg.cpp
     src/projectionfilterdlg.cpp
     src/datascalerdlg.cpp
+    src/detectorlagdlg.cpp
     src/stdpreprocmodulesgui.cpp
     src/ReplaceUnderexposedDlg.cpp
     src/detectorlagdlg.cpp
@@ -116,6 +118,7 @@ set(UI_FILES
     src/bblognormdlg.ui
     src/projectionfilterdlg.ui
     src/datascalerdlg.ui
+    src/detectorlagdlg.ui
     src/ReplaceUnderexposedDlg.ui
     src/detectorlagdlg.ui
 )
