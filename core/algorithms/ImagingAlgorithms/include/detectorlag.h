@@ -1,7 +1,7 @@
 //<LICENSE>
 
 #ifndef DETECTORLAG_H
-#ifndef DETECTORLAG_H
+#define DETECTORLAG_H
 
 #include <logging/logger.h>
 #include <base/timage.h>
