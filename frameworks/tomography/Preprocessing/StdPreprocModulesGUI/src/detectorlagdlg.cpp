@@ -1,23 +1,28 @@
+//<LICENSE>
+
 #include "detectorlagdlg.h"
 #include "ui_detectorlagdlg.h"
+#include <strings/miscstring.h>
+#include <strings/string2array.h>
+#include <ParameterHandling.h>
 
-DetectorLagDialog::DetectorLagDialog(QWidget *parent) :
-    ConfiguratorDialogBase("DataScaler",true,false,false,parent),
-    ui(new Ui::DetectorLagDialog)
+DetectorLagDlg::DetectorLagDlg(QWidget *parent) :
+    ConfiguratorDialogBase("DetectorLag",true,false,false,parent),
+    ui(new Ui::DetectorLagDlg)
 {
     ui->setupUi(this);
 }
 
-DetectorLagDialog::~DetectorLagDialog()
+DetectorLagDlg::~DetectorLagDlg()
 {
     delete ui;
 }
 
 
-int DetectorLagDialog::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> & UNUSED(img))
+int DetectorLagDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> & UNUSED(img))
 {
-    m_fOffset = GetFloatParameter(parameters,"offset");
-    m_fSlope  = GetFloatParameter(parameters,"slope");
+    m_correctionFactor = GetFloatParameter(parameters,"correctionFactor");
+    m_medianKernelSize  = GetIntParameter(parameters,"medianKernelSize");
 
     UpdateDialog();
 
@@ -37,25 +42,25 @@ int DetectorLagDialog::exec(ConfigBase * config, std::map<std::string, std::stri
     return false;
 }
 
-void DetectorLagDialog::ApplyParameters()
+void DetectorLagDlg::ApplyParameters()
 {}
 
-void DetectorLagDialog::UpdateDialog()
+void DetectorLagDlg::UpdateDialog()
 {
-    ui->spinOffset->setValue(m_fOffset);
-    ui->spinSlope->setValue(m_fSlope);
+    ui->spinCorrectionFactor->setValue(m_correctionFactor);
+    ui->spinMedianKernelSize->setValue(m_medianKernelSize);
 }
 
-void DetectorLagDialog::UpdateParameters()
+void DetectorLagDlg::UpdateParameters()
 {
-    m_fOffset = ui->spinOffset->value();
-    m_fSlope     = ui->spinSlope->value();
+    m_correctionFactor = ui->spinCorrectionFactor->value();
+    m_medianKernelSize = ui->spinMedianKernelSize->value();
 }
 
-void DetectorLagDialog::UpdateParameterList(std::map<std::string, std::string> &parameters)
+void DetectorLagDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)
 {
     parameters.clear();
 
-    parameters["offset"]=m_fOffset;
-    parameters["slope"]=m_fSlope;
+    parameters["correctionFactor"] = m_correctionFactor;
+    parameters["medianKernelSize"] = m_medianKernelSize;
 }

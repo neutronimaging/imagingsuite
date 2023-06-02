@@ -2,7 +2,6 @@
 
 #ifndef DETECTORLAGDLG_H
 #define DETECTORLAGDLG_H
-
 #include "StdPreprocModulesGUI_global.h"
 #include <QDialog>
 
@@ -10,17 +9,18 @@
 #include <ConfigBase.h>
 #include <ReconConfig.h>
 
+
 namespace Ui {
-class DetectorLagDialog;
+class DetectorLagDlg;
 }
 
-class DetectorLagDialog : public ConfiguratorDialogBase
+class DetectorLagDlg : public ConfiguratorDialogBase
 {
     Q_OBJECT
 
 public:
-    explicit DetectorLagDialog(QWidget *parent = nullptr);
-    ~DetectorLagDialog();
+    explicit DetectorLagDlg(QWidget *parent = nullptr);
+    ~DetectorLagDlg();
 
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & UNUSED_img);
 
@@ -30,11 +30,10 @@ private:
     virtual void UpdateParameters();
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
-    Ui::DetectorLagDialog *ui;
+    Ui::DetectorLagDlg *ui;
 
-
-    float m_fSlope; // Example Parameters
-    float m_fOffset;
+    float m_correctionFactor;
+    int m_medianKernelSize;
 };
 
 #endif // DETECTORLAGDLG_H
