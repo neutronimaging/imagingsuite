@@ -17,6 +17,7 @@
 #include "generalfilterdlg.h"
 #include "bblognormdlg.h"
 #include "ReplaceUnderexposedDlg.h"
+#include "detectorlagdlg.h"
 
 class ConfiguratorDialogBase;
 
@@ -76,6 +77,9 @@ STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, co
 
         if (sName=="ReplaceUnderexposed")
             return new ReplaceUnderexposedDlg;
+
+        if (sName=="DetectorLag")
+            return new DetectorLagDlg;
 
 	}	
     return nullptr;
