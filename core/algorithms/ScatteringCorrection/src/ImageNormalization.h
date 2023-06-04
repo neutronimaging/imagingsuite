@@ -16,6 +16,14 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ImageNormalization
     kipl::logging::Logger logger;
 
     public:
+        enum eNormalizationMethod 
+        {
+            basicNormalization,
+            scatterNormalization,
+            interpolateScatterNormalization,
+            one2oneScatterNormalization
+        };
+
         ImageNormalization();
 
         void setDarkCurrent(const kipl::base::TImage<float,2> &img);
@@ -31,9 +39,15 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ImageNormalization
 
         void useLogarithm(bool useLog);
 
-        kipl::base::TImage<float,2> process(const kipl::base::TImage<float,2> &img, float dose, float tau=0.0f);
-        kipl::base::TImage<float,3> process(const kipl::base::TImage<float,3> &img, const std::vector<float> &dose, float tau=0.0f);
+        kipl::base::TImage<float,2> process(const kipl::base::TImage<float,2> &img, 
+                                                  float                        dose, 
+                                                  eNormalizationMethod         normMethod=basicNormalization,
+                                                  float                        tau=0.0f);
 
+        kipl::base::TImage<float,3> process(const kipl::base::TImage<float,3> &img, 
+                                            const std::vector<float>          &dose, 
+                                            eNormalizationMethod               normMethod=basicNormalization,
+                                            float                              tau=0.0f);
 
     private: 
         bool useLog;
@@ -41,6 +55,9 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ImageNormalization
         kipl::base::TImage<float,2> ob;
         kipl::base::TImage<float,2> bbob;
         kipl::base::TImage<float,2> bbs;
+        float obDose;
+        float bbobDose;
+        float bbsDose;
 
         void checkImageDims(kipl::base::TImage<float,2> &imgA, kipl::base::TImage<float,2> &imgB);
         void applyLogarithm(kipl::base::TImage<float,2> &img);
