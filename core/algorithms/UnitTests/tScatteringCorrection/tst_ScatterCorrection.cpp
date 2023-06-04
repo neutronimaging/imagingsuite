@@ -35,6 +35,7 @@ private Q_SLOTS:
     void ScatterEstimation_enums();
     void ScatterEstimation_fit();
     void ScatterEstimation_predict();
+    void ScatterEstimation_dose();
 
 private:
     std::string dataPath;
@@ -127,17 +128,49 @@ void TestScatterCorrection::ScatterEstimation_predict()
     std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
 
-    kipl::base::TImage<float,2> img;
+    kipl::base::TImage<float,2> img, scatter;
     kipl::io::ReadFITS(img,fname);
 
     ScatterEstimator se; 
 
     se.setFitParameters(pars);
 
-    // auto scatter = se.scatterImage();
+    QBENCHMARK 
+    {
+        scatter = se.scatterImage();
+    }
 
-    // kipl::io::WriteTIFF(scatter,"scatter.tif", kipl::base::Float32);
+    kipl::io::WriteTIFF(scatter,"scatter.tif", kipl::base::Float32);
 }
+
+void TestScatterCorrection::ScatterEstimation_dose()
+{
+    std::vector<float> pars={2.29534e-05f, -0.122711f, 8.18729e-05f, -0.022848f, 1.54186e-05f, 845.537f};
+
+    kipl::base::TImage<float,2> img, scatter;
+
+    ScatterEstimator se; 
+
+    se.setFitParameters(pars);
+
+    std::vector<size_t> ROI={10,10,100,200};
+
+    scatter = se.scatterImage(ROI);
+
+    QCOMPARE(scatter.Size(0),90);
+    QCOMPARE(scatter.Size(1),190);
+
+    float sum=0.0f;
+    for (size_t i=0UL; i<scatter.Size(); ++i)
+        sum+=scatter[i];
+
+    sum/=scatter.Size();
+
+    float dose = se.scatterDose(ROI);
+    QCOMPARE(dose,sum);
+
+}
+
 // void TestScatterCorrection::ScatterEstimation_initialization()
 // {
 

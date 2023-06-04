@@ -195,30 +195,31 @@ arma::mat ScatterEstimator::buildA(const std::vector<float> &x, const std::vecto
 
 kipl::base::TImage<float,2> ScatterEstimator::scatterImage(const std::vector<size_t> &ROI)
 {
-    std::vector<size_t> dims = m_imgDims;
-    std::vector roi(4,0UL);
-
-    switch (ROI.size())
-    {
-        case 0UL : 
-            roi = {0,}        
-    }
     if ((ROI.size() != 0) && (ROI.size() != 4)) 
     {
         throw ImagingException("The ROI vector must empty or have length 4.",__FILE__,__LINE__);
     }
 
+    std::vector roi(4,0UL);
+
+    switch (ROI.size())
+    {
+        case 0UL : 
+            roi = {0,0,m_imgDims[0],m_imgDims[1]};
+        case 4UL :
+            roi = ROI;
+    }
 
 
-    if (ROI.size()==4)
-        dims = {ROI[2]-ROI[0],ROI[3]-ROI[1]};
+
+    std::vector<size_t> dims = {roi[2]-roi[0], roi[3]-roi[1]};
 
     kipl::base::TImage<float,2> img(dims);
 
     size_t i = 0UL;
 
-    for (size_t y=ROI[1]; y<ROI[3]; ++y)
-        for (size_t x=ROI[0]; x<ROI[2]; ++x, ++i)
+    for (size_t y=roi[1]; y<roi[3]; ++y)
+        for (size_t x=roi[0]; x<roi[2]; ++x, ++i)
             img[i]=polyVal(x,y);  
 
     return img;
@@ -229,6 +230,8 @@ float ScatterEstimator::scatterDose(const std::vector<size_t> &ROI)
     auto doseImg = scatterImage(ROI);
 
     float m = std::accumulate(doseImg.GetDataPtr(),doseImg.GetDataPtr()+doseImg.Size(),0.0f)/doseImg.Size();
+
+    return m;
 }
 
 void ScatterEstimator::setFitParameters(const std::vector<float> &pars, const std::vector<size_t> &dims)
