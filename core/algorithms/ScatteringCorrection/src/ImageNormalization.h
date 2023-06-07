@@ -39,12 +39,12 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ImageNormalization
 
         void useLogarithm(bool useLog);
 
-        kipl::base::TImage<float,2> process(const kipl::base::TImage<float,2> &img, 
+        kipl::base::TImage<float,2> process(kipl::base::TImage<float,2> &img, 
                                                   float                        dose, 
                                                   eNormalizationMethod         normMethod=basicNormalization,
                                                   float                        tau=0.0f);
 
-        void process(   const kipl::base::TImage<float,3> &img, 
+        void process(   kipl::base::TImage<float,3> &img, 
                         const std::vector<float>          &dose, 
                         eNormalizationMethod               normMethod=basicNormalization,
                         float                              tau=0.0f);
@@ -62,8 +62,8 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ImageNormalization
         void checkImageDims(kipl::base::TImage<float,2> &imgA, kipl::base::TImage<float,2> &imgB);
         void applyLogarithm(kipl::base::TImage<float,2> &img);
 
-        void processBasicNormalization(const kipl::base::TImage<float,2> &img, float dose);
-        void processScatterNormalization(const kipl::base::TImage<float,2> &img, float dose, float tau);
+        void processBasicNormalization(kipl::base::TImage<float,2> &img, float dose);
+        void processScatterNormalization(kipl::base::TImage<float,2> &img, float dose, float tau);
 
 
 };
