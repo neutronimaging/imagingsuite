@@ -26,7 +26,7 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ImageNormalization
 
         ImageNormalization();
 
-        void setDarkCurrent(const kipl::base::TImage<float,2> &img);
+        void setDarkCurrent(const kipl::base::TImage<float,2> &img, float dose=0.0);
         // void setDarkCurrent(const kipl::base::TImage<float,3> &img);
 
         void setOpenBeam(const kipl::base::TImage<float,2> &img, float dose, bool subtractDC=true);

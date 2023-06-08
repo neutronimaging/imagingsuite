@@ -10,7 +10,7 @@ ImageNormalization::ImageNormalization() :
 
 }
 
-void ImageNormalization::setDarkCurrent(const kipl::base::TImage<float,2> &img)
+void ImageNormalization::setDarkCurrent(const kipl::base::TImage<float,2> &img, float dose)
 {
     dc.Clone(img);
 }
@@ -82,6 +82,14 @@ kipl::base::TImage<float,2> ImageNormalization::process(kipl::base::TImage<float
 void ImageNormalization::process(kipl::base::TImage<float,3> &img, const std::vector<float> &dose, eNormalizationMethod normMethod, float tau)
 {
 
+    kipl::base::TImage<float,2> slice(img.dims());
+    for (size_t i=0; i<img.Size(2); ++i)
+    {
+        std::copy_n(img.GetLinePtr(0,i),slice.Size(), slice.GetDataPtr());
+        slice = process(slice,dose[i],normMethod,tau);
+        std::copy_n(slice.GetDataPtr(),slice.Size(),img.GetLinePtr(0,i));
+    }
+
 
 }
 
@@ -107,10 +115,18 @@ void ImageNormalization::processBasicNormalization(kipl::base::TImage<float,2> &
 
 void ImageNormalization::processScatterNormalization(kipl::base::TImage<float,2> &img, float dose, float tau)
 {
-    float doseFactor = 1.0f;
+    float correctedSampleDose = (dose - (1.0f-1.0f/tau)*bbsDose)*tau;
+
+    float correctedOBDose     = (obDose - (1.0f-1.0f/tau)*bbobDose)*tau;
+
+    float doseFactor          = correctedOBDose / correctedSampleDose ;
+
+    float doseFactorSample    = dose / correctedSampleDose ;
+
+    float doseFactorOB        = obDose / correctedOBDose ; 
 
     for (size_t i=0UL; i<img.Size(); ++i) 
     {
-        img[i]=doseFactor*img[i]/ob[i];
+        img[i]=doseFactor*(img[i]-bbs[i]*doseFactorSample)/(ob[i]-bbob[i]*doseFactorOB);
     }
 }

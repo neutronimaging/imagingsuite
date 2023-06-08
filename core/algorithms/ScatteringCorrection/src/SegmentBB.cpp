@@ -199,11 +199,13 @@ void SegmentBB::identifyBBs(const kipl::base::TImage<float,2> &bb,
          msg << "Labeling found " << num_obj << "objects in the mask.";
          logger.debug(msg.str());
      }
-     catch (ImagingException &e) {
+     catch (ImagingException &e) 
+     {
          logger.error(e.what());
          throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
-     catch(kipl::base::KiplException &e){
+     catch(kipl::base::KiplException &e)
+     {
          logger.error(e.what());
          throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
