@@ -37,12 +37,21 @@ private Q_SLOTS:
     void ScatterEstimation_predict();
     void ScatterEstimation_dose();
 
+    void Normalize_basic();
+
 private:
     std::string dataPath;
     kipl::base::TImage<float,2> holes;
     std::map<size_t,float> points;
     size_t pos1;
     size_t pos2;
+
+    kipl::base::TImage<float,2> sample;
+    kipl::base::TImage<float,2> ob;
+    kipl::base::TImage<float,2> dc;
+    kipl::base::TImage<float,2> bbob;
+    kipl::base::TImage<float,2> bbs;
+
 };
 
 TestScatterCorrection::TestScatterCorrection() 
@@ -50,6 +59,27 @@ TestScatterCorrection::TestScatterCorrection()
     dataPath = QT_TESTCASE_BUILDDIR;
     dataPath = dataPath + "/../../../../../TestData/";
     kipl::strings::filenames::CheckPathSlashes(dataPath,true);
+
+    std::string fname = dataPath+"2D/fits/BB/sample_0001.fits";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadFITS(sample,fname);
+
+    fname = dataPath+"2D/fits/BB/ob_00001.fits";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadFITS(ob,fname);
+
+    fname = dataPath+"2D/fits/BB/dc_00001.fits";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadFITS(bbob,fname);
+
+    fname = dataPath+"2D/fits/BB/bbob_00001.fits";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadFITS(bbob,fname);
+
+    fname = dataPath+"2D/fits/BB/bbsample_00001.fits";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadFITS(bbs,fname);
+
 }
 
 
@@ -67,18 +97,11 @@ void TestScatterCorrection::SegmentBB_segmentation()
 {
     SegmentBB bb_seg;
     kipl::base::TImage<float,2> img;
-    
-    std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
-    //std::string fname = dataPath+"2D/fits/BB/bbsample_00001.fits";
-    kipl::strings::filenames::CheckPathSlashes(fname,false);
-
-    kipl::io::ReadFITS(img,fname);
 
     kipl::base::TImage<float,2> res(img.dims()); 
-    bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
+    bb_seg.exec(bbob,res,{200UL,300UL,1900UL,1900UL});
 
     kipl::io::WriteTIFF(res,"res.tif",kipl::base::Float32);
-
 }
 
 void TestScatterCorrection::ScatterEstimation_fit()
@@ -86,14 +109,9 @@ void TestScatterCorrection::ScatterEstimation_fit()
     std::ostringstream msg;
     SegmentBB bb_seg;
     kipl::base::TImage<float,2> img;
-    
-    std::string fname = dataPath+"2D/fits/BB/bbob_00001.fits";
-    kipl::strings::filenames::CheckPathSlashes(fname,false);
-
-    kipl::io::ReadFITS(img,fname);
 
     kipl::base::TImage<float,2> res(img.dims()); 
-    bb_seg.exec(img,res,{200UL,300UL,1900UL,1900UL});
+    bb_seg.exec(bbob,res,{200UL,300UL,1900UL,1900UL});
     auto [x,y] = bb_seg.dotCoordinates();
     // std::vector<float> x = { 1806.53, 1435.3, 1062.5, 319.944, 690.995, 
     //                         1808.76, 1064.09, 1436.43, 693.334, 320.784, 
@@ -204,7 +222,10 @@ void TestScatterCorrection::ScatterEstimation_enums()
     QCOMPARE(enum2string(ScatterEstimator::fitmethod_thinplatesplines),"fitspline");
 }
 
+void TestScatterCorrection::Normalize_basic()
+{
 
+}
 
 QTEST_APPLESS_MAIN(TestScatterCorrection)
 

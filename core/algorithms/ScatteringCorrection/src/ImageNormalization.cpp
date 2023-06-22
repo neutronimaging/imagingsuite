@@ -81,6 +81,8 @@ kipl::base::TImage<float,2> ImageNormalization::process(kipl::base::TImage<float
 
 void ImageNormalization::process(kipl::base::TImage<float,3> &img, const std::vector<float> &dose, eNormalizationMethod normMethod, float tau)
 {
+    if (dose.size() != img.Size(2))
+        throw ImagingException("#images and #doses don't match",__FILE__,__LINE__);
 
     kipl::base::TImage<float,2> slice(img.dims());
     for (size_t i=0; i<img.Size(2); ++i)
