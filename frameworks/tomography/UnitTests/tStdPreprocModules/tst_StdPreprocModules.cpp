@@ -157,12 +157,12 @@ void TStdPreprocModulesTest::testMorpSpotClean_Process()
 
 }
 
-void testDetectorLag_Initialize()
+void TStdPreprocModulesTest::testDetectorLag_Initialize()
 {
     QSKIP("Test is not implemented");
 }
 
-void testDetectorLag_Process()
+void TStdPreprocModulesTest::testDetectorLag_Process()
 {
     QSKIP("Test is not implemented");
 }

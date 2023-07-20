@@ -23,6 +23,8 @@
 #include "../include/CameraStripeClean.h"
 #include "../include/bblognorm.h"
 #include "../include/ReplaceUnderexposedModule.h"
+#include "../include/DetectorLagModule.h"
+
 
 #include <base/KiplException.h>
 #include <ModuleException.h>
@@ -118,6 +120,9 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
         if (sName=="ReplaceUnderexposed")
             return new ReplaceUnderexposedModule;
+
+        if (sName=="DetectorLag")
+            return new DetectorLagModule;
 	}
 
     return nullptr;
@@ -253,6 +258,9 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
 
     ReplaceUnderexposedModule pscml;
     modulelist->operator []("ReplaceUnderexposed")=pscml.GetParameters();
+
+    DetectorLagModule dlm;
+    modulelist->operator []("DetectorLag")=dlm.GetParameters();
 
 	return 0;
 }
