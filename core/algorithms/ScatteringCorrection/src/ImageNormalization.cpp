@@ -29,7 +29,7 @@ void ImageNormalization::setOpenBeam(const kipl::base::TImage<float,2> &img, flo
 
 // void setOpenBeam(const kipl::base::TImage<float,3> &img, const std::vector<float> &dose);
 
-void ImageNormalization::setBBOpenBeam(const kipl::base::TImage<float,2> &img, float dose)
+void ImageNormalization::setBBOpenBeam(const kipl::base::TImage<float,2> &img, float dose, bool subtractDC)
 {
     bbob.Clone(img);
 

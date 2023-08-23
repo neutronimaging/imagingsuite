@@ -17,7 +17,7 @@
 #include <ImagingException.h>
 #include <SegmentBB.h>
 #include <ScatterEstimation.h>
-
+#include <ScatteringCorrection.h>
 
 class TestScatterCorrection : public QObject
 {
@@ -38,6 +38,8 @@ private Q_SLOTS:
     void ScatterEstimation_dose();
 
     void Normalize_basic();
+
+    void ScatterCorrection_SetRefs();
 
 private:
     std::string dataPath;
@@ -224,7 +226,50 @@ void TestScatterCorrection::ScatterEstimation_enums()
 
 void TestScatterCorrection::Normalize_basic()
 {
+}
 
+void TestScatterCorrection::ScatterCorrection_SetRefs()
+{
+    kipl::base::TImage<float,3> tob({100,100,10});
+    kipl::base::TImage<float,3> tdc({100,100,5});
+    kipl::base::TImage<float,3> tbbob({100,100,6});
+    kipl::base::TImage<float,3> tbbob2({100,10,6});
+    kipl::base::TImage<float,3> tbbs({100,100,11});
+
+    ScatteringCorrection sc;
+
+    // Happy path
+    sc.setReferences({  {"ob",  tob},
+                        {"dc",  tdc},
+                        {"bbob",tbbob},
+                        {"bbs", tbbs}},
+                     {  {"ob",  {1,2,3,4,5,6,7,8,9,10}},
+                        {"dc",  {1,2,3,4,5}},
+                        {"bbob",{1,2,3,4,5,6}},
+                        {"bbs", {1,2,3,4,5,6,7,8,9,10,11}}});
+
+    // Naming mismatch between images and doses
+    QVERIFY_EXCEPTION_THROWN(
+                            sc.setReferences({  {"ob",tob},
+                                                {"ddc",tdc}},
+                                             {  {"ob",{1,2,3,4,5,6,7,8,9,10}},
+                                                {"dc",{1,2,3,4,5}}});,
+                            ImagingException);
+
+    // Number of projections not same as doses
+    QVERIFY_EXCEPTION_THROWN(
+                            sc.setReferences({  {"ob",tob},
+                                                {"dc",tdc}},
+                                             {  {"ob",{1,2,3,4,5,6,7,8,9,10}},
+                                                {"dc",{2,3,4,5}}});,
+                             ImagingException);
+    // Image size size mismatch
+    QVERIFY_EXCEPTION_THROWN(
+                            sc.setReferences({  {"ob",tob},
+                                                {"bbob",tbbob2}},
+                                             {  {"ob",{1,2,3,4,5,6,7,8,9,10}},
+                                                {"bbob",{1,2,3,4,5,6}}});,
+                             ImagingException);
 }
 
 QTEST_APPLESS_MAIN(TestScatterCorrection)

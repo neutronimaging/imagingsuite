@@ -32,10 +32,7 @@ if (UNIX)
 include_directories(
     /opt/local/include
     /opt/local/include/libxml2
-    ../../../core/kipl/kipl/include
     ../../../external/src/linalg
-    ../../../core/kipl/kipl/include
-    ../../../core/modules/ModuleConfig/include
     ../../../external/mac/include/
     ../../../../ExternalDependencies/macos/include
     ../../../../ExternalDependencies/macos/include/nexus
@@ -48,6 +45,7 @@ set(INC_FILES
   src/ScatterEstimation.h
   src/ReferenceLoader.h	
   src/SegmentBB.h
+  src/ScatteringCorrection.h
   src/ScatteringCorrection_global.h
 )
 
@@ -56,6 +54,7 @@ set(SRC_FILES
   src/ScatterEstimation.cpp
   src/ReferenceLoader.cpp
   src/SegmentBB.cpp
+  src/ScatteringCorrection.cpp
 )
 
 

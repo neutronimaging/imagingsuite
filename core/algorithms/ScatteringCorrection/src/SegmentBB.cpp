@@ -94,7 +94,7 @@ void SegmentBB::exec( const kipl::base::TImage<float,2> & bb,
 }
 
 void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
-                              kipl::base::TImage<float,2> & mask)
+                              kipl::base::TImage<float,2> &mask)
 {
     std::ostringstream msg;
     if ((m_segmentationMethod == method_usermask) && 
