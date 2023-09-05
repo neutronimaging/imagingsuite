@@ -9,12 +9,12 @@ touch __init__.py
 mkdir -p imgalg
 cd imgalg
 touch __init__.py
-cp $WORKSPACE/install/lib/imgalg.cpython-39-darwin.so .
-cp $WORKSPACE/install/lib/libImagingAlgorithms.dylib .
-cp $WORKSPACE/install/lib/advfilters.cpython-39-darwin.so .
+cp $WORKSPACE/install/lib/imgalg.cpython-*-darwin.so .
+cp $WORKSPACE/install/lib/muhrectomo.cpython-*-darwin.so .
+cp $WORKSPACE/install/lib/advfilters.cpython-*-darwin.so .
 cp $WORKSPACE/install/lib/libAdvancedFilters.dylib .
+cp $WORKSPACE/install/lib/libImagingAlgorithms.dylib .
 cp $WORKSPACE/install/lib/libkipl.dylib .
-cp $WORKSPACE/install/lib/muhrectomo.cpython-39-darwin.so .
 cp $WORKSPACE/install/lib/libStdBackProjectors.dylib .
 cp $WORKSPACE/install/lib/libFDKBackProjectors.dylib .
 cp $WORKSPACE/install/lib/libReconFramework.dylib .
