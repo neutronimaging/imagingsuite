@@ -248,7 +248,7 @@ void bindReconstructor(py::module &m)
             .value("bpMultiProjParallel",    bpMultiProjParallel)
             .value("bpNearestNeighbor",      bpNearestNeighbor)
             .value("bpFDKSingle",            bpFDKSingle)
-            .value("bpbpFDKDouble",          bpFDKDouble)
+            .value("bpFDKDouble",            bpFDKDouble)
             .export_values();
 
     py::enum_<ReconConfig::cProjections::eBeamGeometry>(m,"eBeamGeometry")
