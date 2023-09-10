@@ -156,6 +156,7 @@ void bindMorphSpotClean(py::module &m)
                          std::vector<float> &th,
                          std::vector<float> &sigma)
             {
+         py::print("process, py::array_t<float> &x, std::vector<float> &th, std::vector<float> &sigma");
          py::buffer_info buf1 = x.request();
 
         if (buf1.ndim == 2)
@@ -201,6 +202,7 @@ void bindMorphSpotClean(py::module &m)
                  double th,
                  double sigma)
     {
+        py::print("process(py::array_t<double> &x, double th, double sigma");
         py::buffer_info buf1 = x.request();
 
         if (buf1.ndim == 2)
@@ -248,6 +250,7 @@ void bindMorphSpotClean(py::module &m)
                  std::vector<float> &th,
                  std::vector<float> &sigma)
     {
+        py::print("Process(py::array_t<double> &x, std::vector<float> &th, std::vector<float> &sigma)");
         py::buffer_info buf1 = x.request();
 
         std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
