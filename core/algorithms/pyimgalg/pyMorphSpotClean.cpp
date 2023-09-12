@@ -47,6 +47,10 @@ void bindMorphSpotClean(py::module &m)
     mscClass.def("numberOfThreads",  &ImagingAlgorithms::MorphSpotClean::numberOfThreads,
                 "Tells how many threads are currently used for the processing");
 
+    mscClass.def("setThresholdByFraction", &ImagingAlgorithms::MorphSpotClean::setThresholdByFraction,
+                 "Select if threshold is absolute (false) or by quantile (true, default)",
+                 py::arg("method"));
+
     mscClass.def("setCleanMethod",
                  &ImagingAlgorithms::MorphSpotClean::setCleanMethod,
                  "Returns the current list of coefficients",
@@ -136,6 +140,7 @@ void bindMorphSpotClean(py::module &m)
                  float th,
                  float sigma)
             {
+                py::print("Process 2D: py::array_t<float> &x, float th, float sigma");
                 py::buffer_info buf1 = x.request();
 
                 std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[1]),
@@ -156,10 +161,11 @@ void bindMorphSpotClean(py::module &m)
                          std::vector<float> &th,
                          std::vector<float> &sigma)
             {
-         py::buffer_info buf1 = x.request();
+        py::buffer_info buf1 = x.request();
 
         if (buf1.ndim == 2)
         {
+            py::print("Process 2D: py::array_t<float> &x, std::vector<float> &th, std::vector<float> &sigma");
             std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
                                             static_cast<size_t>(buf1.shape[0])};
             float *data=static_cast<float*>(buf1.ptr);
@@ -173,6 +179,7 @@ void bindMorphSpotClean(py::module &m)
         }
         else if (buf1.ndim==3)
         {
+            py::print("Process 3D: py::array_t<float> &x, std::vector<float> &th, std::vector<float> &sigma");
             std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[2]),
                                             static_cast<size_t>(buf1.shape[1]),
                                             static_cast<size_t>(buf1.shape[0])};
@@ -201,10 +208,12 @@ void bindMorphSpotClean(py::module &m)
                  double th,
                  double sigma)
     {
+        
         py::buffer_info buf1 = x.request();
 
         if (buf1.ndim == 2)
         {
+            py::print("Process 2D: py::array_t<double> &x, double th, double sigma");
             std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
                                             static_cast<size_t>(buf1.shape[0])};
             double *data=static_cast<double*>(buf1.ptr);
@@ -218,6 +227,8 @@ void bindMorphSpotClean(py::module &m)
         }
         else if (buf1.ndim==3)
         {
+            py::print("Process 3D: py::array_t<double> &x, double th, double sigma");
+
             std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[2]),
                                             static_cast<size_t>(buf1.shape[1]),
                                             static_cast<size_t>(buf1.shape[0])};
@@ -248,6 +259,8 @@ void bindMorphSpotClean(py::module &m)
                  std::vector<float> &th,
                  std::vector<float> &sigma)
     {
+        py::print("Process 2D: py::array_t<double> &x, std::vector<float> &th, std::vector<float> & sigma");
+        
         py::buffer_info buf1 = x.request();
 
         std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
