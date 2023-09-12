@@ -32,7 +32,11 @@ void bindStripeFilter(py::module &m)
 
     sfClass.def("configure",
                 &ImagingAlgorithms::StripeFilter::configure,
-                "Configures the stripe filter. Note: the dims are given in x,y instead of r,c."
+                "Configures the stripe filter. Note: the dims are given in x,y instead of r,c.",
+                py::arg("dims"),
+                py::arg("wname"),
+                py::arg("scale"),
+                py::arg("wcut")
                 );
 
     sfClass.def("process",
