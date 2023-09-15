@@ -31,6 +31,7 @@ endif()
 
 set(INC_FILES
   pyBinder.h
+  utilities.h
 )
 
 set(SRC_FILES
@@ -50,6 +51,7 @@ set(SRC_FILES
 #  pytomocenter.cpp  
   pyCenterEstimation.cpp
   pyBinder.cpp
+  utilities.cpp
 
 )
 
