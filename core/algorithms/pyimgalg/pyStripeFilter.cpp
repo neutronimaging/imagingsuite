@@ -70,14 +70,15 @@ void bindStripeFilter(py::module &m)
                                                 static_cast<size_t>(buf1.shape[0])};
 
                     std::vector<size_t> sinodims={ dims[0],dims[2]};
-                    sf.checkDims(dims);
+                    sf.checkDims(sinodims);
                     
                     kipl::base::TImage<float,3> img(static_cast<float *>(buf1.ptr),dims);
                     kipl::base::TImage<float,2> sino(sinodims);
 
-                    for (size_t y=0 ; y<img.Size(2); ++y) 
+                    for (size_t y=0 ; y<img.Size(1); ++y) 
                     {
                         ExtractSinogram(img, sino, y);
+                        sf.checkDims(sino.dims());
                         sf.process(sino,op);
                         InsertSinogram(sino,img,y);
                     }
