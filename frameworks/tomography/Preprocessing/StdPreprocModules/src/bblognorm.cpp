@@ -18,6 +18,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("BBLogNorm", interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
     m_Config(""),
+    blackbodyexternalmaskname("none"),
     nBBextCount(1),
     nBBextFirstIndex(0),
     nOBCount(0),
@@ -67,7 +68,6 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     blackbodysamplename = "./";
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
-    blackbodyexternalmaskname = "./";
 
     publications.push_back(Publication({"C. Carminati","P. Boillat","F. Schmid",
                                         "P. Vontobel","J. Hovind","M. Morgano",
@@ -378,7 +378,7 @@ bool BBLogNorm::SetROI(const std::vector<size_t> &roi) {
 
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str());
 
     LoadReferenceImages(roi);
     nNormRegion = nOriginalNormRegion; //nNormRegion seems not used
@@ -626,7 +626,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str();
+        msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -974,7 +974,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str();
+        msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -1417,7 +1417,7 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str();
+        msg.str("");
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
