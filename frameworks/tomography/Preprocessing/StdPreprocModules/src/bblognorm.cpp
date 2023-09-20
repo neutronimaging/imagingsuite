@@ -67,6 +67,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     blackbodysamplename = "./";
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
+    blackbodyexternalmaskname = "./";
 
     publications.push_back(Publication({"C. Carminati","P. Boillat","F. Schmid",
                                         "P. Vontobel","J. Hovind","M. Morgano",
