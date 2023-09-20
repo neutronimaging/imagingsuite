@@ -84,7 +84,6 @@ private:
 
     std::string blackbodyexternalname;
     std::string blackbodysampleexternalname;
-    std::string blackbodyexternalmaskname;
 
     size_t nBBextCount; /// number of preprocessed BB images;
     size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images

@@ -8,7 +8,6 @@
 #include <math/image_statistics.h>
 #include <math/median.h>
 #include <strings/filenames.h>
-#include <analyzefileext.h>
 
 #include <ParameterHandling.h>
 
@@ -19,7 +18,6 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("BBLogNorm", interactor),
     // to check which one do i need: to be removed: m_nWindow and bUseWeightedMean
     m_Config(""),
-    blackbodyexternalmaskname("none"),
     nBBextCount(1),
     nBBextFirstIndex(0),
     nOBCount(0),
@@ -379,7 +377,7 @@ bool BBLogNorm::SetROI(const std::vector<size_t> &roi) {
 
     std::stringstream msg;
     msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
-    logger.message(msg.str());
+    logger(kipl::logging::Logger::LogMessage,msg.str());
 
     LoadReferenceImages(roi);
     nNormRegion = nOriginalNormRegion; //nNormRegion seems not used
@@ -627,7 +625,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str("");
+        msg.str();
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -975,7 +973,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str("");
+        msg.str();
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -1418,7 +1416,7 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
         throw ReconException("Failed to compute bb_ob_parameters. Try to change thresholding method or value. ", __FILE__,__LINE__);
     }
     catch (std::exception & e) {
-        msg.str("");
+        msg.str();
         msg<<"Failed to compute bb_ob_parameters with STL exception. Try to change thresholding method or value. "<<std::endl<<e.what();
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
@@ -1529,6 +1527,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -1536,9 +1535,8 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        auto exttype = readers::GetFileExtensionType(fmask);
-         if (exttype != readers::ExtensionHDF5 )
-         {
+        found = fmask.find("hdf");
+         if (found==std::string::npos ) {
 
             kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
             img = reader.Read(filename,
@@ -1581,8 +1579,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            if (exttype != readers::ExtensionHDF5 )
-            {
+            if (found==std::string::npos ) {
 
                 img=reader.Read(filename,
                         m_Config.ProjectionInfo.eFlip,
@@ -1669,6 +1666,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -1676,9 +1674,9 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        auto exttype = readers::GetFileExtensionType(fmask);
-        if (exttype != readers::ExtensionHDF5 )
-        {
+        found = fmask.find("hdf");
+
+        if (found==std::string::npos ) {
             kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
             img = reader.Read(filename,
                     config.ProjectionInfo.eFlip,
@@ -1717,8 +1715,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
         for (int i=1; i<N; ++i) {
 
-            if (exttype != readers::ExtensionHDF5 )
-            {
+            if (found==std::string::npos ) {
                 kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
                 img=reader.Read(filename,
@@ -1734,8 +1731,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
                             config.ProjectionInfo.fBinning,
                             doseBBroi) : initialDose;
             }
-            else
-            {
+            else{
                         img=reader.ReadNexus(fmask,i+firstIndex,
                                 m_Config.ProjectionInfo.eFlip,
                                 m_Config.ProjectionInfo.eRotate,
@@ -1768,10 +1764,10 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
 
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-            float *pFlat=refimg.GetDataPtr();
-            for (size_t i=1; i<refimg.Size(1); i++)
-            {
+             float *pFlat=refimg.GetDataPtr();
+            for (size_t i=1; i<refimg.Size(1); i++) {
                 memcpy(refimg.GetLinePtr(i), pFlat, sizeof(float)*refimg.Size(0));
+
             }
         }
     }
@@ -1795,9 +1791,11 @@ float BBLogNorm::DoseBBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
-    auto exttype = readers::GetFileExtensionType(fname);
-    if (exttype == readers::ExtensionHDF5)
+    found=fname.find("hdf");
+
+    if (found!=std::string::npos)
     {
         tmpdose=bUseNormROIBB ? reader.GetProjectionDoseNexus(fmask,firstIndex,
                     config.ProjectionInfo.eFlip,
