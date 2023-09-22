@@ -1,5 +1,6 @@
 [requires]
 cfitsio/4.1.0
+openblas/0.3.20
 armadillo/10.7.3
 pybind11/2.10.1
 libxml2/2.10.3

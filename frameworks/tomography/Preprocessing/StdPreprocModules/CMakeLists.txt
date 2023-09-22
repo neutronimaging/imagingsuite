@@ -129,6 +129,7 @@ add_definitions(-DHAVE_NEXUS -DARMA_DONT_USE_WRAPPER -DARMA_USE_BLAS -DARMA_USE_
         # libxml2
         # cfitsio
         # libtiff
+        armadillo::armadillo
         liblapack
         libopenblas
         # libfftw3-3

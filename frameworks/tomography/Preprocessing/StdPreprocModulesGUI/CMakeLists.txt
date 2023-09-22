@@ -123,7 +123,7 @@ add_library(${TARGET_NAME} SHARED
   )
 
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
-  if (WIN32)
+if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
         ../../../../../ExternalDependencies/windows/lib
         ../../../../../imagingsuite/external/lib64
@@ -142,6 +142,10 @@ add_library(${TARGET_NAME} SHARED
       QtAddons
       QtModuleConfigure
       StdPreprocModules
+      armadillo::armadillo
+      libblas
+      liblapack
+
     #   libxml2
     #   libfftw3-3
     #   libfftw3f-3

@@ -99,7 +99,7 @@ target_link_libraries(${TARGET_NAME}
 endif()
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
+    target_link_directories(${TARGET_NAME} public
     ../../../../ExternalDependencies/windows/lib
     ../../../../imagingsuite/external/lib64
     ../../../../imagingsuite/external/lib64/nexus
@@ -111,6 +111,7 @@ if (WIN32)
         # libxml2
         # cfitsio
         # libtiff
+        armadillo::armadillo
         liblapack
         libblas
         # libfftw3-3

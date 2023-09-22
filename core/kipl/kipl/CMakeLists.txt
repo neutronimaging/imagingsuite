@@ -348,7 +348,7 @@ if (WIN32)
         TIFF::TIFF
         # ${LAPACK_LIBRARIES}
         # LAPACK::LAPACK
-        ${BLAS_LIBRARIES}
+        #${BLAS_LIBRARIES}
         # BLAS::BLAS
         #${ARMADILLO_LIBRARIES}
         armadillo::armadillo
