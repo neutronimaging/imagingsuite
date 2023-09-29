@@ -34,7 +34,7 @@ endif()
 
 if (WIN32)
 include_directories(
-
+    armadillo::armadillo
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
@@ -124,10 +124,10 @@ add_library(${TARGET_NAME} SHARED
 
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        ../../../../../ExternalDependencies/windows/lib
-        ../../../../../imagingsuite/external/lib64
-    )
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    #     ../../../../../ExternalDependencies/windows/lib
+    #     ../../../../../imagingsuite/external/lib64
+    # )
 
   target_link_libraries(${TARGET_NAME} 
   PUBLIC
@@ -142,13 +142,15 @@ if (WIN32)
       QtAddons
       QtModuleConfigure
       StdPreprocModules
+      OpenBLAS::OpenBLAS
       armadillo::armadillo
-      libblas
-      liblapack
+    #   FFTW3::fftw3
+   #   libblas
+    #   liblapack
 
     #   libxml2
-    #   libfftw3-3
-    #   libfftw3f-3
+    #    libfftw3-3
+    # libfftw3f-3
     #   cfitsio
     #   libtiff
   )

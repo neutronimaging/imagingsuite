@@ -349,13 +349,13 @@ if (WIN32)
         # ${LAPACK_LIBRARIES}
         # LAPACK::LAPACK
         #${BLAS_LIBRARIES}
-        # BLAS::BLAS
+        OpenBLAS::OpenBLAS
         #${ARMADILLO_LIBRARIES}
         armadillo::armadillo
         # FFTW3::Double
         # FFTW3::Float
         # FFTW3::fftw3
-        # FFTW3::fftw3_float
+        # FFTW3::fftw3f
         # ${CFITSIO_LIBRARIES}
         cfitsio::cfitsio
         # ${NEXUS_LIBRARIES}
@@ -363,8 +363,8 @@ if (WIN32)
         # libxml2
         # cfitsio
         # libtiff
-        liblapack
-        libblas
+        #liblapack
+        #libblas
         libfftw3-3
         libfftw3f-3
         NeXus

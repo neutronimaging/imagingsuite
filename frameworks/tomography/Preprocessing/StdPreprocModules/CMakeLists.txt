@@ -107,37 +107,28 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY HAVE_NEXUS ARMA_DONT_USE_WRAPPER ARMA_USE_BLAS ARMA_USE_LAPACK)
+target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY HAVE_NEXUS )
 
-add_definitions(-DHAVE_NEXUS -DARMA_DONT_USE_WRAPPER -DARMA_USE_BLAS -DARMA_USE_LAPACK)
+add_definitions(-DHAVE_NEXUS )
 
   message("StdPreprocModules ${CMAKE_HOST_SYSTEM_PROCESSOR}")
   if (WIN32)
-  target_link_directories(${TARGET_NAME} PRIVATE
-  ../../../../../ExternalDependencies/windows/lib
-  ../../../../../imagingsuite/external/lib64
-  ../../../../../imagingsuite/external/lib64/nexus
-  )
+  # target_link_directories(${TARGET_NAME} PRIVATE
+  # ../../../../../ExternalDependencies/windows/lib
+  # ../../../../../imagingsuite/external/lib64
+  # ../../../../../imagingsuite/external/lib64/nexus
+  # )
   
   target_link_libraries(${TARGET_NAME}
-  PRIVATE
+  PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
         ReaderConfig
         ReconFramework
-        # libxml2
-        # cfitsio
-        # libtiff
         armadillo::armadillo
-        liblapack
-        libopenblas
-        # libfftw3-3
-        # libfftw3f-3
-        # NeXus
-        # NeXusCPP
-        # Iphlpapi
-
+        # liblapack
+        # libopenblas
       )
 endif()
 
