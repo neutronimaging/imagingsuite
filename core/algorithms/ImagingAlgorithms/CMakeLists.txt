@@ -99,16 +99,19 @@ target_link_libraries(${TARGET_NAME}
 endif()
 
 if (WIN32)
-    # target_link_directories(${TARGET_NAME} public
-    # ../../../../ExternalDependencies/windows/lib
+    target_link_directories(${TARGET_NAME} PUBLIC
+     ../../../../ExternalDependencies/windows/lib
     # ../../../../imagingsuite/external/lib64
     # ../../../../imagingsuite/external/lib64/nexus
-    # )
+    )
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC
-        kipl
-        armadillo::armadillo
+      kipl
+      liblapack
+      libblas
+      #libopenblas
+      # armadillo::armadillo
     )
 endif()
 

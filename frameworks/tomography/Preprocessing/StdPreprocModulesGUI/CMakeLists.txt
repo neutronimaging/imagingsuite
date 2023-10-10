@@ -34,7 +34,6 @@ endif()
 
 if (WIN32)
 include_directories(
-    armadillo::armadillo
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
@@ -124,29 +123,28 @@ add_library(${TARGET_NAME} SHARED
 
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (WIN32)
-    # target_link_directories(${TARGET_NAME} PRIVATE
-    #     ../../../../../ExternalDependencies/windows/lib
+    target_link_directories(${TARGET_NAME} PRIVATE
+         ../../../../../ExternalDependencies/windows/lib
     #     ../../../../../imagingsuite/external/lib64
-    # )
+    )
 
   target_link_libraries(${TARGET_NAME} 
   PUBLIC
-      Qt${QT_VERSION_MAJOR}::Core
-      Qt${QT_VERSION_MAJOR}::Widgets
-      Qt${QT_VERSION_MAJOR}::Charts
-      kipl
-      ImagingAlgorithms
-      ModuleConfig
-      ReaderConfig
-      ReconFramework
-      QtAddons
-      QtModuleConfigure
-      StdPreprocModules
-      OpenBLAS::OpenBLAS
-      armadillo::armadillo
-    #   FFTW3::fftw3
-   #   libblas
-    #   liblapack
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Charts
+    kipl
+    ImagingAlgorithms
+    ModuleConfig
+    ReaderConfig
+    ReconFramework
+    QtAddons
+    QtModuleConfigure
+    StdPreprocModules
+
+    libblas
+    liblapack
+    #libopenblas
 
     #   libxml2
     #    libfftw3-3

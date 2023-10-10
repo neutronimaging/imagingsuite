@@ -113,11 +113,11 @@ add_definitions(-DHAVE_NEXUS )
 
   message("StdPreprocModules ${CMAKE_HOST_SYSTEM_PROCESSOR}")
   if (WIN32)
-  # target_link_directories(${TARGET_NAME} PRIVATE
-  # ../../../../../ExternalDependencies/windows/lib
-  # ../../../../../imagingsuite/external/lib64
-  # ../../../../../imagingsuite/external/lib64/nexus
-  # )
+    target_link_directories(${TARGET_NAME} PUBLIC
+    ../../../../../ExternalDependencies/windows/lib
+    # ../../../../../imagingsuite/external/lib64
+    # ../../../../../imagingsuite/external/lib64/nexus
+    )
   
   target_link_libraries(${TARGET_NAME}
   PUBLIC
@@ -126,9 +126,11 @@ add_definitions(-DHAVE_NEXUS )
         ModuleConfig
         ReaderConfig
         ReconFramework
-        armadillo::armadillo
-        # liblapack
-        # libopenblas
+        # armadillo::armadillo
+        libblas
+        liblapack
+        #libopenblas
+
       )
 endif()
 

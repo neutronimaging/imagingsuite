@@ -41,10 +41,9 @@ if (WIN32)
   # find_package(BLAS)
   # find_package(FFTW3 REQUIRED)
   # find_package(FFTW3f REQUIRED)
-  find_package(OpenBLAS REQUIRED)
-  
+  # find_package(OpenBLAS REQUIRED)
+  # find_package(armadillo REQUIRED)
   find_package(cfitsio REQUIRED)
-  find_package(armadillo REQUIRED)
   # find_package(lapack REQUIRED)
 endif()
 
