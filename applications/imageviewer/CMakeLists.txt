@@ -183,14 +183,14 @@ endif()
 if (WIN32)
 link_directories(../../../lib /opt/local/lib )
 
-target_link_directories(${TARGET_NAME} PRIVATE
+target_link_directories(${TARGET_NAME} PUBLIC
     /opt/local/lib
     ../../../ExternalDependencies/windows/lib
     ../../external/lib64/
     ../../external/lib64/nexus
     )
 
-target_link_libraries(${TARGET_NAME} PRIVATE
+target_link_libraries(${TARGET_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Concurrent
@@ -202,9 +202,9 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     ReaderGUI
     QtModuleConfigure
     QtImaging
-#    armadillo
-#    lapack
-#    blas
+    liblapack
+    libopenblas
+    armadillo::armadillo
     libtiff
     cfitsio
     #hdf5
