@@ -19,7 +19,7 @@ if (WIN32)
 include_directories(
     ../../../core/kipl/kipl/include
     # ../../../core/modules/ModuleConfig/include
-    # ../../../../ExternalDependencies/windows/include
+    ../../../../ExternalDependencies/windows/include
     # ../../../../ExternalDependencies/windows/include/nexus
     # ../../../../ExternalDependencies/windows/include/cfitsio
     ../../../external/include/
@@ -349,22 +349,20 @@ if (WIN32)
         # ${LAPACK_LIBRARIES}
         # LAPACK::LAPACK
         #${BLAS_LIBRARIES}
-        # BLAS::BLAS
+        #OpenBLAS::OpenBLAS
         #${ARMADILLO_LIBRARIES}
-        armadillo::armadillo
+        #armadillo::armadillo
         # FFTW3::Double
         # FFTW3::Float
         # FFTW3::fftw3
-        # FFTW3::fftw3_float
+        # FFTW3::fftw3f
         # ${CFITSIO_LIBRARIES}
         cfitsio::cfitsio
         # ${NEXUS_LIBRARIES}
 
-        # libxml2
-        # cfitsio
-        # libtiff
         liblapack
         libblas
+        #libopenblas
         libfftw3-3
         libfftw3f-3
         NeXus

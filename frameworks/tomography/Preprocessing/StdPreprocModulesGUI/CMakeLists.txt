@@ -34,7 +34,6 @@ endif()
 
 if (WIN32)
 include_directories(
-
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
@@ -125,30 +124,31 @@ add_library(${TARGET_NAME} SHARED
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
-        ../../../../../ExternalDependencies/windows/lib
-        ../../../../../imagingsuite/external/lib64
+         ../../../../../ExternalDependencies/windows/lib
+    #     ../../../../../imagingsuite/external/lib64
     )
 
   target_link_libraries(${TARGET_NAME} 
   PUBLIC
-      Qt${QT_VERSION_MAJOR}::Core
-      Qt${QT_VERSION_MAJOR}::Widgets
-      Qt${QT_VERSION_MAJOR}::Charts
-      kipl
-      ImagingAlgorithms
-      ModuleConfig
-      ReaderConfig
-      ReconFramework
-      QtAddons
-      QtModuleConfigure
-      StdPreprocModules
-      armadillo::armadillo
-      libblas
-      liblapack
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Charts
+    kipl
+    ImagingAlgorithms
+    ModuleConfig
+    ReaderConfig
+    ReconFramework
+    QtAddons
+    QtModuleConfigure
+    StdPreprocModules
+
+    libblas
+    liblapack
+    #libopenblas
 
     #   libxml2
-    #   libfftw3-3
-    #   libfftw3f-3
+    #    libfftw3-3
+    # libfftw3f-3
     #   cfitsio
     #   libtiff
   )

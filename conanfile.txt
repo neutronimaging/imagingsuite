@@ -1,4 +1,6 @@
 [requires]
+openblas/0.3.20
+armadillo/10.7.3
 pybind11/2.10.1
 pthreads4w/2.11.0
 libxml2/2.10.3
@@ -6,6 +8,7 @@ zlib/1.2.13
 openblas/0.3.20
 armadillo/10.7.3
 libtiff/4.3.0
+cfitsio/4.1.0
 fftw/3.3.9
 cfitsio/4.1.0
 

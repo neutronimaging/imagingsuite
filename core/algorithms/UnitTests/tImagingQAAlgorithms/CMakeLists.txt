@@ -31,6 +31,7 @@ endif()
 
 if (WIN32)
     include_directories(
+        ../../../../../ExternalDependencies/windows/include
         ../../../../external/include/
     )
 endif()

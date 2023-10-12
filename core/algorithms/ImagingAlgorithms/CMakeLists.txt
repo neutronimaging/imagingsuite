@@ -86,9 +86,9 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY HAVE_NEXUS ARMA_DONT_USE_WRAPPER ARMA_USE_BLAS ARMA_USE_LAPACK)
+target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY HAVE_NEXUS)
 
-add_definitions(-DHAVE_NEXUS -DARMA_DONT_USE_WRAPPER -DARMA_USE_BLAS -DARMA_USE_LAPACK)
+add_definitions(-DHAVE_NEXUS )
 
     
 if (APPLE)
@@ -99,26 +99,19 @@ target_link_libraries(${TARGET_NAME}
 endif()
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} public
-    ../../../../ExternalDependencies/windows/lib
-    ../../../../imagingsuite/external/lib64
-    ../../../../imagingsuite/external/lib64/nexus
+    target_link_directories(${TARGET_NAME} PUBLIC
+     ../../../../ExternalDependencies/windows/lib
+    # ../../../../imagingsuite/external/lib64
+    # ../../../../imagingsuite/external/lib64/nexus
     )
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC
-        kipl
-        # libxml2
-        # cfitsio
-        # libtiff
-        armadillo::armadillo
-        liblapack
-        libblas
-        # libfftw3-3
-        # libfftw3f-3
-        # NeXus
-        # NeXusCPP
-        # Iphlpapi
+      kipl
+      liblapack
+      libblas
+      #libopenblas
+      # armadillo::armadillo
     )
 endif()
 
