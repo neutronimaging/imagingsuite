@@ -127,9 +127,9 @@ add_definitions(-DHAVE_NEXUS )
         ReaderConfig
         ReconFramework
         # armadillo::armadillo
-        libblas
+        # libblas
         liblapack
-        #libopenblas
+        libopenblas
 
       )
 endif()

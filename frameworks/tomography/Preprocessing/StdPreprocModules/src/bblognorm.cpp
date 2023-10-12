@@ -454,6 +454,7 @@ void BBLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
                              1.0f,0.0f,
                              m_Config,fFlatDose); // i don't use the bias.. beacuse i think i use it later on
 
+    logger.message("Loaded references");
     SetReferenceImages(mydark,myflat);
 
 
@@ -468,7 +469,8 @@ void BBLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
 
     }
 
-     m_corrector.SetReferenceImages(&mflat,
+    logger.message("Setting references in the corrector");
+    m_corrector.SetReferenceImages(&mflat,
                                     &mdark,
                                     (bUseBB && nBBCount!=0 && nBBSampleCount!=0),
                                     (bUseExternalBB && nBBextCount!=0),
@@ -478,7 +480,7 @@ void BBLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
                                     (bUseNormROIBB && bUseNormROI),
                                     roi,
                                     m_Config.ProjectionInfo.dose_roi);
-
+    logger.message("Setting references in the corrector - Done.");
 }
 
 void BBLogNorm::LoadExternalBBData(const std::vector<size_t> &roi){
@@ -1477,9 +1479,11 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
             doselist[i] = doselist[i]-fDarkDose;
         }
     }
+    logger.message("Starting processing.");
         m_corrector.SetInteractor(m_Interactor);
         m_corrector.Process(img,doselist);
 
+    logger.message("Processing done.");
     if (doselist!=nullptr)
         delete [] doselist;
 

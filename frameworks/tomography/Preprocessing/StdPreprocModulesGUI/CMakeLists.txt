@@ -142,15 +142,8 @@ if (WIN32)
     QtModuleConfigure
     StdPreprocModules
 
-    libblas
+    libopenblas
     liblapack
-    #libopenblas
-
-    #   libxml2
-    #    libfftw3-3
-    # libfftw3f-3
-    #   cfitsio
-    #   libtiff
   )
 endif()
 

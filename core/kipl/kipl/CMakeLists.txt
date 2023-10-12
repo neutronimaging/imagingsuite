@@ -332,6 +332,45 @@ add_definitions(-DHAVE_NEXUS)
 
 message(kipl - ${CMAKE_HOST_SYSTEM_PROCESSOR})
 
+# if (WIN32)
+#     target_link_directories(${TARGET_NAME} PUBLIC
+#     ../../../../ExternalDependencies/windows/lib
+#     ../../../../imagingsuite/external/lib64
+#     ../../../../imagingsuite/external/lib64/nexus
+#     )
+
+#     find_package(OpenMP)
+
+#     target_link_libraries(${TARGET_NAME}
+#     PUBLIC
+#         OpenMP::OpenMP_CXX
+#         LibXml2::LibXml2
+#         TIFF::TIFF
+#         # ${LAPACK_LIBRARIES}
+#         # LAPACK::LAPACK
+#         #${BLAS_LIBRARIES}
+#         #OpenBLAS::OpenBLAS
+#         #${ARMADILLO_LIBRARIES}
+#         #armadillo::armadillo
+#         # FFTW3::Double
+#         # FFTW3::Float
+#         # FFTW3::fftw3
+#         # FFTW3::fftw3f
+#         # ${CFITSIO_LIBRARIES}
+#         cfitsio::cfitsio
+#         # ${NEXUS_LIBRARIES}
+
+#         liblapack
+#         libblas
+#         #libopenblas
+#         libfftw3-3
+#         libfftw3f-3
+#         NeXus
+#         NeXusCPP
+#         # Iphlpapi
+#     )
+# endif()
+
 if (WIN32)
     target_link_directories(${TARGET_NAME} PUBLIC
     ../../../../ExternalDependencies/windows/lib
@@ -339,30 +378,15 @@ if (WIN32)
     ../../../../imagingsuite/external/lib64/nexus
     )
 
-    find_package(OpenMP)
-
     target_link_libraries(${TARGET_NAME}
     PUBLIC
-        OpenMP::OpenMP_CXX
+        # OpenMP::OpenMP_CXX
         LibXml2::LibXml2
         TIFF::TIFF
-        # ${LAPACK_LIBRARIES}
-        # LAPACK::LAPACK
-        #${BLAS_LIBRARIES}
-        #OpenBLAS::OpenBLAS
-        #${ARMADILLO_LIBRARIES}
-        #armadillo::armadillo
-        # FFTW3::Double
-        # FFTW3::Float
-        # FFTW3::fftw3
-        # FFTW3::fftw3f
-        # ${CFITSIO_LIBRARIES}
         cfitsio::cfitsio
-        # ${NEXUS_LIBRARIES}
-
+        # armadillo
         liblapack
-        libblas
-        #libopenblas
+        libopenblas
         libfftw3-3
         libfftw3f-3
         NeXus
