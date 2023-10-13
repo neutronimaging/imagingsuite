@@ -16,7 +16,6 @@
 #include <ImagingException.h>
 
 #include <ProjectionReader.h>
-#include <analyzefileext.h>
 
 #include "bblognormdlg.h"
 #include "ui_bblognormdlg.h"
@@ -372,26 +371,24 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
 
     std::string filename, ext;
     kipl::strings::filenames::MakeFileName(blackbodyname,nBBFirstIndex,filename,ext,'#','0');
-
+    size_t found=blackbodyname.find("hdf");
     ProjectionReader reader;
     if ((QFile::exists(QString::fromStdString(filename)) || QFile::exists(QString::fromStdString(blackbodyname))) && blackbodyname!="./")
-    {
-        auto ext = readers::GetFileExtensionType(blackbodyname);
-            if (ext == readers::ExtensionHDF5 )
+        {
+            if (found==std::string::npos )
             {
-                m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
-                                                m_Config->ProjectionInfo.eFlip,
-                                                m_Config->ProjectionInfo.eRotate,
-                                                m_Config->ProjectionInfo.fBinning,
-                                                {});
-
-            }
-            else {
                 m_Preview_OBBB = reader.Read(filename,
                                              m_Config->ProjectionInfo.eFlip,
                                              m_Config->ProjectionInfo.eRotate,
                                              m_Config->ProjectionInfo.fBinning,
                                              {});
+            }
+            else {
+                 m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
+                                                 m_Config->ProjectionInfo.eFlip,
+                                                 m_Config->ProjectionInfo.eRotate,
+                                                 m_Config->ProjectionInfo.fBinning,
+                                                 {});
             }
             float lo,hi;
 

@@ -35,27 +35,27 @@ target_link_libraries(${TARGET_NAME}
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 
-#     if (WIN32)
-#     target_link_directories(${TARGET_NAME} PRIVATE
-#     ../../../../../ExternalDependencies/windows/lib
-#     ../../../../../imagingsuite/external/lib64
-#     # ../../../../imagingsuite/external/lib64/nexus
-#     )
+if (WIN32)
+    target_link_directories(${TARGET_NAME} PRIVATE
+    ../../../../../ExternalDependencies/windows/lib
+    ../../../../../imagingsuite/external/lib64
+    # ../../../../imagingsuite/external/lib64/nexus
+    )
     
-#     target_link_libraries(${TARGET_NAME}
-#     PRIVATE
-#         Qt6::Test
-#         kipl
-#         # libxml2
-#         # cfitsio
-#         # libtiff
-#         # armadillo
-#         liblapack
-#         libopenblas
-#         # libfftw3-3
-#         # libfftw3f-3
-#         # NeXus
-#         # NeXusCPP
-#         # Iphlpapi
-#     )
-# endif()
+    target_link_libraries(${TARGET_NAME}
+    PRIVATE
+        Qt6::Test
+        kipl
+        # libxml2
+        # cfitsio
+        # libtiff
+        liblapack
+        libopenblas
+        armadillo::armadillo
+        # libfftw3-3
+        # libfftw3f-3
+        # NeXus
+        # NeXusCPP
+        # Iphlpapi
+    )
+endif()
