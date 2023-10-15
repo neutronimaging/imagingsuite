@@ -110,8 +110,12 @@ void KiplFilters::test_MedianFilter()
     med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedian;
     auto res_single   = med(img,kipl::filters::FilterBase::EdgeZero);
 
+    QCOMPARE(img.Size(),res_single.Size());
+
     med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedianSTL;
     auto res_parallel = med(img,kipl::filters::FilterBase::EdgeZero);
+
+    QCOMPARE(img.Size(),res_parallel.Size());
 
     for (size_t i =0; i<res_single.Size(); ++i)
         QCOMPARE(res_single[i],res_parallel[i]);
