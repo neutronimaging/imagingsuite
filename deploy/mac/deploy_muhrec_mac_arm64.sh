@@ -151,6 +151,7 @@ chmod 666 libhdf5_hl.dylib libhdf5_cpp.dylib
 ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
 ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
 `$CPCMD /opt/homebrew/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib $DEST/Contents/Frameworks` # must be here to avoid deletion
+`$CPCMD /opt/homebrew/lib/libzstd.1.dylib        $DEST/Contents/Frameworks`
 
 install_name_tool -change @loader_path/../../../../opt/openblas/lib/libopenblas.0.dylib @rpath/libopenblas.0.dylib libarmadillo.12.dylib
 install_name_tool -change @loader_path/../../../../opt/arpack/libexec/lib/libarpack.2.dylib @rpath/libarpack.2.dylib libarmadillo.12.dylib

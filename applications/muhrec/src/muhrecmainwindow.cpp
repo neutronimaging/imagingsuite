@@ -2543,8 +2543,10 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
 {
     UpdateConfig();
     std::ostringstream msg;
-    if (m_pEngine!=nullptr) {
-        try {
+    if (m_pEngine!=nullptr) 
+    {
+        try 
+        {
 
             m_pEngine->Serialize(&m_Config.MatrixInfo);
             std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
@@ -2581,18 +2583,20 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
 //			report.CreateReport(reportname.str(),&config,&xy,&xy,&xy,hist,axis,nBins);
         }
         catch (ReconException &e) {
-            msg<<"A recon exception occurred "<<e.what();
+            msg<<"A recon exception occurred while saving the matrix.\n"<<e.what();
         }
         catch (kipl::base::KiplException &e) {
-            msg<<"A kipl exception occurred "<<e.what();
+            msg<<"A kipl exception occurred while saving the matrix.\n"<<e.what();
         }
         catch (std::exception &e) {
-            msg<<"A STL exception occurred "<<e.what();
+            msg<<"A STL exception occurred while saving the matrix.\n"<<e.what();
         }
         catch (...) {
-            msg<<"An unknown exception occurred ";
+            msg<<"An unknown exception occurred while saving the matrix.\n";
         }
-        if (!msg.str().empty()) {
+
+        if (!msg.str().empty()) 
+        {
             QMessageBox msgdlg;
 
             msgdlg.setWindowTitle("Error");
@@ -2603,7 +2607,8 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
             logger.error(msg.str());
         }
     }
-    else {
+    else 
+    {
         logger.warning("There is no matrix to save yet.");
         QMessageBox msgdlg;
 
