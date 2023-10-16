@@ -24,14 +24,24 @@ cp $WORKSPACE/install/lib/libReaderConfig.dylib .
 cp /opt/homebrew/opt/libtiff/lib/libtiff.6.dylib .
 cp /opt/homebrew/opt/armadillo/lib/libarmadillo.12.dylib .
 cp /opt/homebrew/opt/cfitsio/lib/libcfitsio.10.dylib .
-# cp libNeXus.1.dylib .
-# cp libNeXusCPP.1.dylib .
+cp $WORKSPACE/ExternalDependencies/macos/arm64/lib/libNeXus.1.0.0.dylib .
+cp $WORKSPACE/ExternalDependencies/macos/arm64/lib/libNeXusCPP.1.0.0.dylib .
+
 cp /opt/homebrew/opt/fftw/lib/libfftw3.3.dylib .
 cp /opt/homebrew/opt/fftw/lib/libfftw3f.3.dylib .
 cp /opt/homebrew/opt/openblas/lib/libopenblas.0.dylib .
 cp /opt/homebrew/opt/arpack/libexec/lib/libarpack.2.dylib .
 cp /opt/homebrew/opt/superlu/lib/libsuperlu.6.dylib .
 chmod 666 *.dylib
+
+
+rm -f libNeXus.1.dylib libNeXusCPP.1.dylib
+ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
+ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
+
+install_name_tool -add_rpath @executable_path muhrectomo.cpython-*-darwin.so
+install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib muhrectomo.cpython-*-darwin.so
+install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib muhrectomo.cpython-*-darwin.so
 
 cd ..
 mkdir -p utils
