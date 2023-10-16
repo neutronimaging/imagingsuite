@@ -2810,34 +2810,37 @@ void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
 
 void MuhRecMainWindow::on_spinBoxSlices_valueChanged(int arg1)
 {
-   QSignalBlocker sliderBlock(ui->sliderSlices);
+    QSignalBlocker sliderBlock(ui->sliderSlices);
 
-
-
-   if (m_pEngine==nullptr)
+    if (m_pEngine==nullptr)
        return;
 
-   std::ostringstream msg;
-   int nSelectedSlice=arg1;
+    std::ostringstream msg;
+    int nSelectedSlice=arg1;
 
-   if (arg1<0) {
+    if (arg1<0) 
+    {
        nSelectedSlice=static_cast<int>(m_Config.MatrixInfo.nDims[2]/2);
        ui->sliderSlices->setValue(nSelectedSlice);
-   }
+    }
 
-   ui->sliderSlices->setValue(nSelectedSlice);
+    ui->sliderSlices->setValue(nSelectedSlice);
 
-   try {
-       kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(static_cast<size_t>(nSelectedSlice),m_eSlicePlane);
-       ui->sliceViewer->set_image(slice.GetDataPtr(),slice.dims(),
-                                  static_cast<float>(ui->dspinGrayLow->value()),
-                                  static_cast<float>(ui->dspinGrayHigh->value()));
-       msg.str("");
-       msg<<" ("<<static_cast<size_t>(nSelectedSlice)+m_Config.ProjectionInfo.roi[1]<<")";
-       ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
-       // TODO Add line to indicate location of slice (XY-slices)
-   }
-   catch (kipl::base::KiplException &e) {
+    int index = ui->comboSlicePlane->currentIndex();
+    m_eSlicePlane = static_cast<kipl::base::eImagePlanes>(1<<index);
+    try 
+    {
+        kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(static_cast<size_t>(nSelectedSlice),m_eSlicePlane);
+        ui->sliceViewer->set_image(slice.GetDataPtr(),slice.dims(),
+                                    static_cast<float>(ui->dspinGrayLow->value()),
+                                    static_cast<float>(ui->dspinGrayHigh->value()));
+        msg.str("");
+        msg<<" ("<<static_cast<size_t>(nSelectedSlice)+m_Config.ProjectionInfo.roi[1]<<")";
+        ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
+        // TODO Add line to indicate location of slice (XY-slices)
+    }
+   catch (kipl::base::KiplException &e) 
+   {
        msg.str("");
        msg<<"Failed to display slice \n"<<e.what();
        logger.message(msg.str());

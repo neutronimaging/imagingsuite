@@ -133,7 +133,7 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
     msg<<"Writing dims=["<<img.Size(0)<<", "<<img.Size(1)<<", "<<img.Size(2)
         <<"], plane="<<enum2string(imageplane)
         <<", start="<<start<<", stop="<<stop;
-    logger.LogDebug(msg.str());
+    logger.debug(msg.str());
 
     if ( (filetype == TIFF8bitsMultiFrame) || (filetype == TIFF16bitsMultiFrame) || (filetype == TIFFfloatMultiFrame) )
     {
