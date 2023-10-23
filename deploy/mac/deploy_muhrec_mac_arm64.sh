@@ -162,25 +162,25 @@ install_name_tool -change @loader_path/../../../../opt/superlu/lib/libsuperlu.6.
 install_name_tool -change @loader_path/../../../../opt/libaec/lib/libsz.2.dylib @rpath/libsz.2.dylib libhdf5_cpp.310.dylib
 install_name_tool -change @loader_path/../../../../opt/libaec/lib/libsz.2.dylib @rpath/libsz.2.dylib libhdf5.310.dylib
 
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderGUI.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderGUI.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderConfig.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderConfig.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libImagingAlgorithms.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libImagingAlgorithms.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libkipl.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libkipl.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libQtAddons.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libQtAddons.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libQtModuleConfigure.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libQtModuleConfigure.dylib
-#install_name_tool -change @executable_path/../Frameworks/libzstd.1.dylib @rpath/libzstd.1.dylib libtiff.6.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReconFramework.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReconFramework.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libModuleConfig.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libModuleConfig.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libQtImaging.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libQtImaging.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderGUI.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderGUI.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderConfig.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderConfig.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libImagingAlgorithms.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libImagingAlgorithms.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libkipl.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libkipl.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libQtAddons.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libQtAddons.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libQtModuleConfigure.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libQtModuleConfigure.dylib
+# #install_name_tool -change @executable_path/../Frameworks/libzstd.1.dylib @rpath/libzstd.1.dylib libtiff.6.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReconFramework.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReconFramework.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libModuleConfig.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libModuleConfig.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libQtImaging.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libQtImaging.dylib
 
 codesign --force --deep --sign - $DEST # needed to fix signature issue on M1
 
