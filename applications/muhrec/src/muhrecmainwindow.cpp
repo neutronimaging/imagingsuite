@@ -793,6 +793,10 @@ void MuhRecMainWindow::MenuFileOpen()
     UpdateDialog();
 
     ProjectionIndexChanged(0);
+
+    ui->widgetDoseROI->setROI(m_Config.ProjectionInfo.dose_roi,true);
+    ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
+    
     ui->spinSlicesFirst->setValue(firstSlice);
     ui->spinSlicesLast->setValue(lastSlice);
 
@@ -1341,7 +1345,6 @@ void MuhRecMainWindow::UpdateMemoryUsage(const std::vector<size_t> & roi)
 
 void MuhRecMainWindow::UpdateDialog()
 {
-
     std::ostringstream str;
     QSignalBlocker blockFirstProjection(ui->spinFirstProjection);
     QSignalBlocker blockLastProjection(ui->spinLastProjection);

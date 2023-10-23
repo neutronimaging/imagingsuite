@@ -195,5 +195,5 @@ if [ ! -e "tmp/muhrec/Applications" ]; then
 fi
 
 cp -r $DEST /tmp/muhrec
-
-hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec-MacOS_$ARCH-build-$GITVER-`date +%Y%m%d`.dmg
+OSVERSION=`sw_vers --ProductVersion` 
+hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec-MacOS$OSVERSION-$ARCH-build-$GITVER-`date +%Y%m%d`.dmg
