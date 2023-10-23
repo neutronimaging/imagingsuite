@@ -2543,8 +2543,10 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
 {
     UpdateConfig();
     std::ostringstream msg;
-    if (m_pEngine!=nullptr) {
-        try {
+    if (m_pEngine!=nullptr) 
+    {
+        try 
+        {
 
             m_pEngine->Serialize(&m_Config.MatrixInfo);
             std::string fname=m_Config.MatrixInfo.sDestinationPath+"ReconConfig.xml";
@@ -2581,18 +2583,20 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
 //			report.CreateReport(reportname.str(),&config,&xy,&xy,&xy,hist,axis,nBins);
         }
         catch (ReconException &e) {
-            msg<<"A recon exception occurred "<<e.what();
+            msg<<"A recon exception occurred while saving the matrix.\n"<<e.what();
         }
         catch (kipl::base::KiplException &e) {
-            msg<<"A kipl exception occurred "<<e.what();
+            msg<<"A kipl exception occurred while saving the matrix.\n"<<e.what();
         }
         catch (std::exception &e) {
-            msg<<"A STL exception occurred "<<e.what();
+            msg<<"A STL exception occurred while saving the matrix.\n"<<e.what();
         }
         catch (...) {
-            msg<<"An unknown exception occurred ";
+            msg<<"An unknown exception occurred while saving the matrix.\n";
         }
-        if (!msg.str().empty()) {
+
+        if (!msg.str().empty()) 
+        {
             QMessageBox msgdlg;
 
             msgdlg.setWindowTitle("Error");
@@ -2603,7 +2607,8 @@ void MuhRecMainWindow::on_buttonSaveMatrix_clicked()
             logger.error(msg.str());
         }
     }
-    else {
+    else 
+    {
         logger.warning("There is no matrix to save yet.");
         QMessageBox msgdlg;
 
@@ -2805,34 +2810,37 @@ void MuhRecMainWindow::on_pushButton_measurePixelSize_clicked()
 
 void MuhRecMainWindow::on_spinBoxSlices_valueChanged(int arg1)
 {
-   QSignalBlocker sliderBlock(ui->sliderSlices);
+    QSignalBlocker sliderBlock(ui->sliderSlices);
 
-
-
-   if (m_pEngine==nullptr)
+    if (m_pEngine==nullptr)
        return;
 
-   std::ostringstream msg;
-   int nSelectedSlice=arg1;
+    std::ostringstream msg;
+    int nSelectedSlice=arg1;
 
-   if (arg1<0) {
+    if (arg1<0) 
+    {
        nSelectedSlice=static_cast<int>(m_Config.MatrixInfo.nDims[2]/2);
        ui->sliderSlices->setValue(nSelectedSlice);
-   }
+    }
 
-   ui->sliderSlices->setValue(nSelectedSlice);
+    ui->sliderSlices->setValue(nSelectedSlice);
 
-   try {
-       kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(static_cast<size_t>(nSelectedSlice),m_eSlicePlane);
-       ui->sliceViewer->set_image(slice.GetDataPtr(),slice.dims(),
-                                  static_cast<float>(ui->dspinGrayLow->value()),
-                                  static_cast<float>(ui->dspinGrayHigh->value()));
-       msg.str("");
-       msg<<" ("<<static_cast<size_t>(nSelectedSlice)+m_Config.ProjectionInfo.roi[1]<<")";
-       ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
-       // TODO Add line to indicate location of slice (XY-slices)
-   }
-   catch (kipl::base::KiplException &e) {
+    int index = ui->comboSlicePlane->currentIndex();
+    m_eSlicePlane = static_cast<kipl::base::eImagePlanes>(1<<index);
+    try 
+    {
+        kipl::base::TImage<float,2> slice=m_pEngine->GetSlice(static_cast<size_t>(nSelectedSlice),m_eSlicePlane);
+        ui->sliceViewer->set_image(slice.GetDataPtr(),slice.dims(),
+                                    static_cast<float>(ui->dspinGrayLow->value()),
+                                    static_cast<float>(ui->dspinGrayHigh->value()));
+        msg.str("");
+        msg<<" ("<<static_cast<size_t>(nSelectedSlice)+m_Config.ProjectionInfo.roi[1]<<")";
+        ui->label_sliceindex->setText(QString::fromStdString(msg.str()));
+        // TODO Add line to indicate location of slice (XY-slices)
+    }
+   catch (kipl::base::KiplException &e) 
+   {
        msg.str("");
        msg<<"Failed to display slice \n"<<e.what();
        logger.message(msg.str());
