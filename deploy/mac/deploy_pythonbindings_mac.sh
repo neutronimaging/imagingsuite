@@ -2,6 +2,8 @@ DIRECTORY=$WORKSPACE/deployed
 
 DEST="$DIRECTORY/nitools"
 
+BREWPATH="`brew --prefix`"
+
 mkdir -p $DEST
 pushd .
 cd $DEST
@@ -21,17 +23,19 @@ cp $WORKSPACE/install/lib/libReconFramework.dylib .
 cp $WORKSPACE/install/lib/libModuleConfig.dylib .
 cp $WORKSPACE/install/lib/libReaderConfig.dylib .
 
-cp /opt/homebrew/opt/libtiff/lib/libtiff.6.dylib .
-cp /opt/homebrew/opt/armadillo/lib/libarmadillo.12.dylib .
-cp /opt/homebrew/opt/cfitsio/lib/libcfitsio.10.dylib .
-cp $WORKSPACE/ExternalDependencies/macos/arm64/lib/libNeXus.1.0.0.dylib .
-cp $WORKSPACE/ExternalDependencies/macos/arm64/lib/libNeXusCPP.1.0.0.dylib .
+cp $BREWPATH/opt/libtiff/lib/libtiff.6.dylib .
+cp $BREWPATH/opt/armadillo/lib/libarmadillo.12.dylib .
+cp $BREWPATH/opt/cfitsio/lib/libcfitsio.10.dylib .
+# cp $WORKSPACE/ExternalDependencies/macos/arm64/lib/libNeXus.1.0.0.dylib .
+# cp $WORKSPACE/ExternalDependencies/macos/arm64/lib/libNeXusCPP.1.0.0.dylib .
+cp /usr/local/lib/libNeXus.1.0.0.dylib .
+cp /usr/local/lib/libNeXusCPP.1.0.0.dylib .
 
-cp /opt/homebrew/opt/fftw/lib/libfftw3.3.dylib .
-cp /opt/homebrew/opt/fftw/lib/libfftw3f.3.dylib .
-cp /opt/homebrew/opt/openblas/lib/libopenblas.0.dylib .
-cp /opt/homebrew/opt/arpack/libexec/lib/libarpack.2.dylib .
-cp /opt/homebrew/opt/superlu/lib/libsuperlu.6.dylib .
+cp $BREWPATH/opt/fftw/lib/libfftw3.3.dylib .
+cp $BREWPATH/opt/fftw/lib/libfftw3f.3.dylib .
+cp $BREWPATH/opt/openblas/lib/libopenblas.0.dylib .
+cp $BREWPATH/opt/arpack/libexec/lib/libarpack.2.dylib .
+cp $BREWPATH/opt/superlu/lib/libsuperlu.6.dylib .
 chmod 666 *.dylib
 
 
@@ -42,6 +46,8 @@ ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
 install_name_tool -add_rpath @executable_path muhrectomo.cpython-*-darwin.so
 install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib muhrectomo.cpython-*-darwin.so
 install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib muhrectomo.cpython-*-darwin.so
+install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib advfilters.cpython-*-darwin.so
+install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib advfilters.cpython-*-darwin.so
 
 cd ..
 mkdir -p utils

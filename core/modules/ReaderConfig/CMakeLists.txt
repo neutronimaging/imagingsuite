@@ -84,13 +84,14 @@ if (WIN32)
         )
 endif()
 
-if (APPLE)
-    target_link_libraries(${TARGET_NAME}
-    PUBLIC
-    kipl
-    ImagingAlgorithms
-  )
-endif()
+# if (APPLE)
+#     target_link_libraries(${TARGET_NAME}
+#     PUBLIC
+#     kipl
+#     ImagingAlgorithms
+#     ${NEXUS_LIBRARIES}
+#   )
+# endif()
 
 if (UNIX)
 
@@ -99,6 +100,7 @@ target_link_libraries(${TARGET_NAME}
     kipl
     ImagingAlgorithms
     LibXml2::LibXml2
+    ${NEXUS_LIBRARIES}
   )
 endif()
 
