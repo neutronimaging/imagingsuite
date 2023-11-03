@@ -347,7 +347,7 @@ void MultiProjectionBPparallel::BackProjectSTL(int first, int last)
                         sum = _mm_add_ps(a,b);
                         column[z]=_mm_add_ps(column[z],sum);
 
-                        fPosU-=centerinc;
+                        fPosU-=centerinc; // <<<<< Is this needed?
                     }
                 }
                 memcpy(volume.GetLinePtr(x-1,y-1),column,SizeZ*sizeof(__m128)); // Must be memcpy due to different data types
