@@ -45,6 +45,7 @@ set(INC_FILES
     readerexception.h
     imagewriter.h
     analyzefileext.h
+    folders.h
 )
 
 set(SRC_FILES
@@ -55,6 +56,7 @@ set(SRC_FILES
     readerexception.cpp
     imagewriter.cpp
     analyzefileext.cpp
+    folders.cpp
 )
 
 add_library(${TARGET_NAME} SHARED

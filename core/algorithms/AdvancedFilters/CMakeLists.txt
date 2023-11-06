@@ -47,7 +47,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 target_compile_definitions(${TARGET_NAME} PRIVATE ADVANCEDFILTERS_LIBRARY)
 
-add_definitions(-DHAVE_NEXUS)
+# add_definitions(-DHAVE_NEXUS)
 
 if (APPLE)
     target_link_libraries(${TARGET_NAME}
