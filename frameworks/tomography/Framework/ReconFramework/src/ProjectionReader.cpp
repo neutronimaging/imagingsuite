@@ -94,7 +94,7 @@ std::vector<size_t> ProjectionReader::GetImageSize(std::string filename, float b
         {
         case readers::ExtensionFITS  : dims=kipl::io::GetFITSDims(filename);  break;
         case readers::ExtensionTIFF  : dims=kipl::io::GetTIFFDims(filename);  break;
-        case readers::ExtensionHDF5  : dims=kipl::io::GetNexusDims(filename); break;
+        //case readers::ExtensionHDF5  : dims=kipl::io::GetNexusDims(filename); break;
         //case 3  : return GetImageSizePNG(filename.c_str(),dims);  break;
 
         default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;

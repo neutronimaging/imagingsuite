@@ -20,9 +20,11 @@
 #include "../math/sums.h"
 #include "../logging/logger.h"
 
+#ifdef HAVE_NEXUS
 #include <nexus/napi.h>
 #include <nexus/NeXusFile.hpp>
 #include <nexus/NeXusException.hpp>
+#endif
 
 // #ifdef _MSC_VER
 // #include <io.h>
@@ -44,6 +46,17 @@ using namespace std;
 
 namespace kipl { namespace io {
 
+/// \brief Gets the dimensions of a Nexus image without reading the image
+/// \param fname file name of the image file
+/// \param dims array with the dimensions
+std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string & fname);
+
+/// \brief Gets some infos of a Nexus image without reading the image
+/// \param fname file name of the image file
+/// \param dims array with the dimensions
+int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles);
+
+#ifdef HAVE_NEXUS
 size_t KIPLSHARED_EXPORT nexusTypeSize(NeXus::NXnumtype nt);
 
 /// \brief Read the image data content from Nexus file and stores it in the data type specified by the image
@@ -999,15 +1012,188 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img,
 }
 
 
-/// \brief Gets the dimensions of a Nexus image without reading the image
-/// \param fname file name of the image file
-/// \param dims array with the dimensions
-std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string & fname);
 
-/// \brief Gets some infos of a Nexus image without reading the image
-/// \param fname file name of the image file
-/// \param dims array with the dimensions
-int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles);
+#else
+
+//size_t KIPLSHARED_EXPORT nexusTypeSize(NeXus::NXnumtype nt);
+
+/// \brief Read the image data content from Nexus file and stores it in the data type specified by the image
+///	\param src the image to be stored
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, size_t number, const std::vector<size_t> & nCrop)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = number;
+    std::ignore = nCrop;
+
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Read the image data content from Nexus file and stores it in the data type specified by the image
+///	\param src the image to be stored
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const std::string &fname, size_t start, size_t end, const std::vector<size_t> & nCrop = {})
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = start;
+    std::ignore = end;
+    std::ignore = nCrop;
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+template <class ImgType, size_t NDim>
+int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const std::string &fname)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Write the reconstructed data as NeXus file in float format
+///	\param img the dataset to be written
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size) {
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = p_size;
+
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Write the reconstructed data as NeXus file in float format
+///	\param img the dataset to be written
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size, size_t first_slice, size_t last_slice)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = first_slice;
+    std::ignore = last_slice;
+    std::ignore = p_size;
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Write the reconstructed data as NeXus file in16 bit format
+///	\param img the dataset to be written
+///	\param fname file name of the destination file (including extension .hdf)
+/// \param p_size pixel size of the reconstructed datas
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> img, const char *fname, ImgType lo, ImgType hi, float p_size) 
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = hi;
+    std::ignore = lo;
+    std::ignore = p_size;
+
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+    return 0;
+}
+
+/// \brief Prepare the file to be used for NeXus saving reconstructed data
+///	\param fname file name of the destination file (including extension .hdf)
+/// \param dims dimensions of the 3D image to be saved
+/// \param img it is at the moment useless except for passing the template type
+/// \param p_size pixel size of the reconstructed datas
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = dims;
+    std::ignore = p_size;
+
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Prepare the file to be used for NeXus saving reconstructed data
+///	\param fname file name of the destination file (including extension .hdf)
+/// \param dims dimensions of the 3D image to be saved
+/// \param img it is at the moment useless except for passing the template type
+/// \param p_size pixel size of the reconstructed datas
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = dims;
+    std::ignore = p_size;
+    
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+
+/// todo: Add Doxygen information
+template <class ImgType, size_t NDim>
+int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img,
+                    const std::string &fname, size_t start,
+                    size_t size,
+                    const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
+                    const std::vector<size_t> &roi={})
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = start;
+    std::ignore = size;
+    std::ignore = imageplane;
+    std::ignore = roi;
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// todo: Add Doxygen information
+template <class ImgType, size_t NDim>
+int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img,
+                         const std::string &fname,
+                         size_t start,
+                         size_t size,
+                         ImgType lo,
+                         ImgType hi,
+                         const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
+                         const std::vector<size_t> &roi={})
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = start;
+    std::ignore = size;
+    std::ignore = lo;
+    std::ignore = hi;
+    std::ignore = imageplane;
+    std::ignore = roi;
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+#endif
 
 }} // end namespaces
 

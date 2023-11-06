@@ -51,7 +51,7 @@ if (UNIX)
   # for testing we will need the python interpreter
   find_package(BLAS REQUIRED)
   find_package(FFTW REQUIRED)
-  find_package(Nexus REQUIRED)
+  # find_package(Nexus REQUIRED)
   find_package(CFITSIO REQUIRED)
   find_package(Armadillo REQUIRED)
 endif()
