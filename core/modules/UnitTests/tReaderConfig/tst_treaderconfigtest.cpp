@@ -9,6 +9,8 @@
 #include <string>
 #include <cmath>
 #include <algorithm>
+#include <filesystem> 
+namespace fs = std::filesystem;
 
 #include <base/KiplException.h>
 #include <math/median.h>
@@ -18,6 +20,8 @@
 #include <imagereader.h>
 #include <imagewriter.h>
 #include <readerexception.h>
+#include <strings/filenames.h>
+#include <folders.h>
 
 class TReaderConfigTest : public QObject
 {
@@ -36,6 +40,7 @@ private Q_SLOTS:
     void testRead();
     void testCroppedRead();
     void testGetDose();
+    void testCreateDirectories();
 
 private:
     kipl::base::TImage<float> gradimg;
@@ -353,6 +358,30 @@ void TReaderConfigTest::testGetDose()
 
 }
 
+void TReaderConfigTest::testCreateDirectories()
+{
+    // void CheckFolders(const std::string &path, bool create);
+
+    std::string path1 = "a/b/c";
+    kipl::strings::filenames::CheckPathSlashes(path1,false);
+
+    QVERIFY_EXCEPTION_THROWN({
+                                CheckFolders(path1,false);
+                            },
+                            ReaderException);
+    CheckFolders(path1,true);
+    QVERIFY(fs::is_directory(path1));
+
+    CheckFolders(path1,true);
+
+    fs::remove_all("a");
+
+    std::string path2 = "a2/b/c/";
+    kipl::strings::filenames::CheckPathSlashes(path2,false);
+    CheckFolders(path2,true);
+    QVERIFY(fs::is_directory(path2));
+    fs::remove_all("a2");
+}
 
 
 QTEST_APPLESS_MAIN(TReaderConfigTest)

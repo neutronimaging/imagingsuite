@@ -71,7 +71,11 @@ int MuhRecCLI::exec()
                 ReconFactory factory;
                 ReconEngine *pEngine=factory.BuildEngine(config,nullptr);
 
-                if (pEngine!=nullptr) {
+                if (pEngine!=nullptr) 
+                {
+                    std::string confname=config.MatrixInfo.sDestinationPath;
+                    kipl::strings::filenames::CheckPathSlashes(confname,true);
+                    CheckFolders(confname)
                     logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
                     pEngine->Run3D();
                     logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
