@@ -15,6 +15,7 @@
 #include <base/textractor.h>
 #include <algorithms/datavalidator.h>
 #include <io/io_stack.h>
+#include <folders.h>
 #ifdef HAVE_NEXUS
     #include <io/io_nexus.h>
 #endif
@@ -44,12 +45,13 @@ ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *i
 	m_Interactor(interactor)
 {
     logger(kipl::logging::Logger::LogMessage,"C'tor Recon engine");
-    if (m_Interactor!=nullptr) {
+    if (m_Interactor!=nullptr) 
+    {
 		logger(kipl::logging::Logger::LogMessage,"Got an interactor");
 	}
-	else {
+	else 
+    {
 		logger(kipl::logging::Logger::LogMessage,"An interactor was not provided");
-
 	}
 
     publications.push_back(Publication(std::vector<std::string>({"A.P. Kaestner"}),
@@ -120,7 +122,8 @@ void ReconEngine::SetConfig(ReconConfig &config)
     msg.str(""); msg<<"Projection file to check size on "<<fname;
     logger(logger.LogMessage,msg.str());
 
-    try {
+    try 
+    {
         m_Config.ProjectionInfo.nDims = m_ProjectionReader.GetImageSize(fname,m_Config.ProjectionInfo.fBinning);
     }
     catch (ReconException &e) {
@@ -153,12 +156,13 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
 
         if (m_Config.MatrixInfo.FileType==kipl::io::NeXusfloat)
-            {
+        {
 
             // todo here: add the MatrixRoi option
             size_t dims[3];
 
-            if (m_Config.MatrixInfo.bUseROI){
+            if (m_Config.MatrixInfo.bUseROI)
+            {
                 dims[0] = m_Config.MatrixInfo.roi[2]-m_Config.MatrixInfo.roi[0]+1;
                 dims[1] = m_Config.MatrixInfo.roi[3]-m_Config.MatrixInfo.roi[1]+1;
             }
@@ -170,7 +174,6 @@ void ReconEngine::SetConfig(ReconConfig &config)
             dims[2] =  (m_Config.ProjectionInfo.roi[3]-m_Config.ProjectionInfo.roi[1]); // it is not necessarelly the entire dataset
 
             kipl::base::TImage<float, 3> img;
-
 
             std::stringstream str;
             str.str("");
@@ -314,7 +317,8 @@ int ReconEngine::Run()
         m_Config.MatrixInfo.nDims[2] = roi[3]-roi[1]+1;
         totalSlices=roi[3]-roi[1];
     }
-        m_Volume.resize(m_Config.MatrixInfo.nDims);
+    
+    m_Volume.resize(m_Config.MatrixInfo.nDims);
 
 	msg.str("");
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
@@ -628,6 +632,8 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
 	str.str("");
 	str<<m_Config.MatrixInfo.sDestinationPath<<m_Config.MatrixInfo.sFileMask;
 	
+    CheckFolders(m_Config.MatrixInfo.sDestinationPath,true);
+    
 	bool bTransposed=false;
 
     kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
@@ -848,6 +854,8 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 
 	str.str("");
 	str<<matrixconfig->sDestinationPath<<matrixconfig->sFileMask;
+
+    CheckFolders(matrixconfig->sDestinationPath,true);
 
     writePublicationList(matrixconfig->sDestinationPath+"citations.txt");
 

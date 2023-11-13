@@ -146,70 +146,71 @@ int RunOffline(QApplication *app)
     {
         if (args[1]=="-f") 
         {
-          logger(kipl::logging::Logger::LogMessage,"MuhRec is running in CLI mode");
-          try {
-                  ReconFactory factory;
-                  logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
-                  ReconConfig config("");
-                  config.LoadConfigFile(args[2],"reconstructor");
-                  config.GetCommandLinePars(args);
-                  config.MatrixInfo.bAutomaticSerialize=true;
-                  ReconEngine *pEngine=factory.BuildEngine(config,nullptr);
-                  if (pEngine!=nullptr) 
-                  {
-                          logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
-                          pEngine->Run3D();
-                          logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
+            logger(kipl::logging::Logger::LogMessage,"MuhRec is running in CLI mode");
+            try {
+                ReconFactory factory;
+                logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
+                ReconConfig config("");
+                config.LoadConfigFile(args[2],"reconstructor");
+                config.GetCommandLinePars(args);
+                config.MatrixInfo.bAutomaticSerialize=true;
+                ReconEngine *pEngine=factory.BuildEngine(config,nullptr);
+                if (pEngine!=nullptr) 
+                {
+                    std::string confname=config.MatrixInfo.sDestinationPath;
+                    kipl::strings::filenames::CheckPathSlashes(confname,true);
 
-                          std::string confname=config.MatrixInfo.sDestinationPath;
-                          kipl::strings::filenames::CheckPathSlashes(confname,true);
+                    CheckFolders(confname,true);
 
-                          std::string basename=config.MatrixInfo.sFileMask.substr(0,config.MatrixInfo.sFileMask.find_first_of('#'));
-                          confname+=basename+"_recon.xml";
+                    logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
+                    pEngine->Run3D();
+                    logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
 
-                          ofstream conffile(confname.c_str());
+                    std::string basename=config.MatrixInfo.sFileMask.substr(0,config.MatrixInfo.sFileMask.find_first_of('#'));
+                    confname+=basename+"_recon.xml";
 
-                          conffile<<config.WriteXML();
-                          conffile.close();
-                  }
-                  else {
-                          logger(kipl::logging::Logger::LogMessage, "There is no reconstruction engine, skipping reconstruction");
-                  }
-              }  // Exception handling as last resort to report unhandled faults
-              catch (ReconException &re) 
-              {
-                  std::cerr<<"An unhandled reconstructor exception occurred"<<std::endl;
-                  std::cerr<<"Trace :"<<std::endl<<re.what()<<std::endl;
-                  return -1;
-              }
-              catch (ModuleException &e) 
-              {
-                    msg<<"A module exception was thrown during the main window initialization\n"<<e.what();
-                    logger(kipl::logging::Logger::LogError,msg.str());
+                    ofstream conffile(confname.c_str());
 
-                    return -3;
+                    conffile<<config.WriteXML();
+                    conffile.close();
                 }
-              catch (kipl::base::KiplException &ke) 
-              {
-                  std::cerr<<"An unhandled kipl exception occurred"<<std::endl;
-                  std::cerr<<"Trace :"<<std::endl<<ke.what()<<std::endl;
-                  return -2;
-              }
+                else 
+                {
+                    logger(kipl::logging::Logger::LogMessage, "There is no reconstruction engine, skipping reconstruction");
+                }
+            }  // Exception handling as last resort to report unhandled faults
+            catch (ReconException &re) 
+            {
+                std::cerr<<"An unhandled reconstructor exception occurred"<<std::endl;
+                std::cerr<<"Trace :"<<std::endl<<re.what()<<std::endl;
+                return -1;
+            }
+            catch (ModuleException &e) 
+            {
+                msg<<"A module exception was thrown during the main window initialization\n"<<e.what();
+                logger(kipl::logging::Logger::LogError,msg.str());
 
-              catch (std::exception &e) 
-              {
-                  std::cerr<<"An unhandled STL exception occurred"<<std::endl;
-                  std::cerr<<"Trace :"<<std::endl<<e.what()<<std::endl;
-                  return -4;
-              }
-
-              catch (...) 
-              {
-                  std::cerr<<"An unknown exception occurred"<<std::endl;
-                  return -5;
-              }
-          }
-      }
+                return -3;
+            }
+            catch (kipl::base::KiplException &ke) 
+            {
+                std::cerr<<"An unhandled kipl exception occurred"<<std::endl;
+                std::cerr<<"Trace :"<<std::endl<<ke.what()<<std::endl;
+                return -2;
+            }
+            catch (std::exception &e) 
+            {
+                std::cerr<<"An unhandled STL exception occurred"<<std::endl;
+                std::cerr<<"Trace :"<<std::endl<<e.what()<<std::endl;
+                return -4;
+            }
+            catch (...) 
+            {
+                std::cerr<<"An unknown exception occurred"<<std::endl;
+                return -5;
+            }
+        }
+    }
 
     return 0;
 }
