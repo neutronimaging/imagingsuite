@@ -281,6 +281,7 @@ void WriteTIFF(kipl::base::TImage<ImgType,N> src,
 template <class ImgType>
 int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_t idx=0UL)
 {
+    kipl::logging::Logger logger("ReadTIFF");
     std::stringstream msg;
 	TIFF *image;
     uint16_t photo, spp, fillorder,bps, sformat;
@@ -325,7 +326,13 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_
 		sformat=1; // Assuming unsigned integer data if unknown
 	}
 
-    if ((TIFFGetField(image, TIFFTAG_SAMPLESPERPIXEL, &spp) == 0) || (spp != 1))
+    if (TIFFGetField(image, TIFFTAG_SAMPLESPERPIXEL, &spp) == 0) 
+    {
+        logger.warning("TIFFTAG_SAMPLESPERPIXEL is not defined using default spp=1");
+        spp=1;
+    }
+    
+    if (spp != 1)
     {
 		throw kipl::base::KiplException("ReadTIFF: Either undefined or unsupported number of samples per pixel",__FILE__,__LINE__);
 	}
@@ -559,7 +566,13 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 		sformat=1; // Assuming unsigned integer data if unknown
 	}
 
-    if ((TIFFGetField(image, TIFFTAG_SAMPLESPERPIXEL, &spp) == 0) || (spp != 1))
+    if (TIFFGetField(image, TIFFTAG_SAMPLESPERPIXEL, &spp) == 0) 
+    {
+        logger.warning("TIFFTAG_SAMPLESPERPIXEL is not defined using default spp=1");
+        spp=1;
+    }
+
+    if (spp != 1)
     {
 		throw kipl::base::KiplException("ReadTIFF: Either undefined or unsupported number of samples per pixel",__FILE__,__LINE__);
 	}

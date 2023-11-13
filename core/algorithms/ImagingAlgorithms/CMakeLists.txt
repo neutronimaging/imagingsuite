@@ -85,10 +85,11 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY HAVE_NEXUS ARMA_USE_BLAS ARMA_USE_LAPACK)
 
-add_definitions(-DHAVE_NEXUS)
-        
+add_definitions(-DHAVE_NEXUS -DARMA_USE_BLAS -DARMA_USE_LAPACK)
+
+    
 if (APPLE)
 target_link_libraries(${TARGET_NAME}
     PUBLIC
@@ -97,31 +98,19 @@ target_link_libraries(${TARGET_NAME}
 endif()
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-    ../../../../ExternalDependencies/windows/lib
-    ../../../../imagingsuite/external/lib64
-    ../../../../imagingsuite/external/lib64/nexus
+    target_link_directories(${TARGET_NAME} PUBLIC
+     ../../../../ExternalDependencies/windows/lib
+    # ../../../../imagingsuite/external/lib64
+    # ../../../../imagingsuite/external/lib64/nexus
     )
-endif()
-
-find_package(OpenMP)
-
-if(OpenMP_CXX_FOUND)
-    target_link_libraries(${TARGET_NAME} PUBLIC
-        OpenMP::OpenMP_CXX
-
-        PUBLIC
-        kipl
-        # xml2
-        # fftw3
-        # fftw3f
-        # cfitsio
-        # tiff
-        # armadillo
-        # lapack
-        # blas
-        # NeXus
-        # NeXusCPP
+    
+    target_link_libraries(${TARGET_NAME}
+    PUBLIC
+      kipl
+      liblapack
+      # libblas
+      libopenblas
+      armadillo::armadillo
     )
 else()
     target_link_libraries(${TARGET_NAME} 

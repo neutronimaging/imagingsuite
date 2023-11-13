@@ -32,6 +32,9 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
+    /// Test memory alignment
+    void testMemoryAlignment();
+
     /// Tests for ImageInformation
     void testImageInfoCtor();
     void testImageInfoResolutions();
@@ -82,6 +85,79 @@ void Tkiplbase::initTestCase()
 
 void Tkiplbase::cleanupTestCase()
 {
+}
+
+void Tkiplbase::testMemoryAlignment()
+{
+    const size_t alignment = 4UL;
+    QCOMPARE(__STDCPP_DEFAULT_NEW_ALIGNMENT__ % alignment, 0UL);
+
+    std::vector<size_t> sizes={4,8,32,64,1024};
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new char[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new short[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new float[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new double[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new int[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new size_t[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
 }
 
 void Tkiplbase::testImageInfoCtor()

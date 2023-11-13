@@ -12,6 +12,7 @@
 #include <segmentation/thresholds.h>
 #include <math/sums.h>
 #include <strings/miscstring.h>
+#include <utilities/threadpool.h>
 
 #include "../include/MorphSpotClean.h"
 #include "../include/ImagingException.h"
@@ -96,47 +97,38 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, float th, float 
 
 void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<float> &th, std::vector<float> &sigma)
 {
-    m_nCounter = 0;
-//    logger.message(dumpParameters());
+    kipl::utilities::ThreadPool pool(std::thread::hardware_concurrency());
+
+    auto pImg = &img;
     if (m_bUseThreading)
     {
-        logger.message("Multi-threaded processing");
-        std::ostringstream msg;
-        const size_t N = img.Size(2);
-        const size_t concurentThreadsSupported = std::min(m_nNumberOfThreads,static_cast<int>(N));
+        for (size_t i=0UL; i<img.Size(2); ++i)
+        {
+            pool.enqueue([this,pImg,i,&th,&sigma] {
+                kipl::base::TImage<float,2> slice(pImg->dims());
+    //            kipl::base::TImage<float,2> orig(pImg->dims());
+    //            msg.str("");
+                std::copy_n(pImg->GetLinePtr(0,i),slice.Size(),slice.GetDataPtr());
+    //            orig.Clone(slice);
+                this->process(slice,th,sigma);
 
-        std::vector<std::thread> threads;
-
-        size_t M=N/concurentThreadsSupported;
-
-        msg.str("");
-        msg<<N<<" projections on "<<concurentThreadsSupported<<" threads, "<<M<<" projections per thread";
-        logger.message(msg.str());
-        int restCnt = N % concurentThreadsSupported;
-        int begin = 0;
-        int end   = M + (restCnt>0 ? 1 :0) ;
-
-        auto pImg = &img;
-        for (size_t i = 0; i < concurentThreadsSupported; ++i)
-        {   // spawn threads
-            threads.push_back(std::thread([=] { process(pImg,begin,end, th,sigma,i); }));
-
-            --restCnt;
-            begin  = end;
-            end   += M + (restCnt>0 ? 1 :0) ;
+                std::copy_n(slice.GetDataPtr(), slice.Size(),pImg->GetLinePtr(0,i));
+    //                size_t cnt=0UL;
+    //                float *pRes=pImg->GetLinePtr(i);
+    //                for (size_t j=0; j<slice.Size(); ++j)
+    //                {
+    //                    if (orig[j]!=pRes[j])
+    //                        ++cnt;
+    //                }
+            });
         }
-        msg.str("");
-        msg<<"Started "<<threads.size()<<" threads";
-        logger.message(msg.str());
-
-        // call join() on each thread in turn
-        for_each(threads.begin(), threads.end(),
-            std::mem_fn(&std::thread::join));
+        pool.barrier();
     }
-    else
+    else 
     {
         logger.message("Single thread processing");
         process(&img,0UL,img.Size(2),th,sigma);
+
     }
 }
 
@@ -150,11 +142,11 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> *pImg, size_t first, s
     msg.str("");
     for (size_t i=first; i<last; ++i)
     {
-        std::copy_n(pImg->GetLinePtr(i),slice.Size(),slice.GetDataPtr());
+        std::copy_n(pImg->GetLinePtr(0,i),slice.Size(),slice.GetDataPtr());
         orig.Clone(slice);
         process(slice,th,sigma);
 
-        std::copy_n(slice.GetDataPtr(), slice.Size(),pImg->GetLinePtr(i));
+        std::copy_n(slice.GetDataPtr(), slice.Size(),pImg->GetLinePtr(0,i));
         size_t cnt=0UL;
         float *pRes=pImg->GetLinePtr(i);
         for (size_t j=0; j<slice.Size(); ++j)

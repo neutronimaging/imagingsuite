@@ -1,14 +1,14 @@
 //<LICENSE>
 
 #include "stdafx.h"
-#pragma message("start")
+
 #include "../include/ReconFramework_global.h"
 #include <iostream>
 #include <fstream>
 #include <string.h>
 #include <vector>
 #include <algorithm>
-#pragma message("std done")
+
 #include <logging/logger.h>
 #include <base/timage.h>
 #include <strings/miscstring.h>
@@ -18,18 +18,16 @@
 #ifdef HAVE_NEXUS
     #include <io/io_nexus.h>
 #endif
-#pragma message("kipl done")
 
 #include <ParameterHandling.h>
 #include <ModuleException.h>
 #include <publication.h>
 
-#pragma message("further suite h done")
 #include "../include/ReconException.h"
 #include "../include/ReconHelpers.h"
 #include "../include/processtiminglogger.h"
 #include "../include/ReconEngine.h"
-#pragma message("done")
+
 
 ReconEngine::ReconEngine(std::string name, kipl::interactors::InteractionBase *interactor) :
 	logger(name),
@@ -139,7 +137,8 @@ void ReconEngine::SetConfig(ReconConfig &config)
     }
 
     // check if I am writing to disk:
-    if (m_Config.MatrixInfo.bAutomaticSerialize==true) {
+    if (m_Config.MatrixInfo.bAutomaticSerialize==true) 
+    {
 
         float res=0.0f;
         if (m_Config.ProjectionInfo.beamgeometry==ReconConfig::cProjections::BeamGeometry_Parallel)
@@ -198,7 +197,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
                 logger(logger.LogError,"Failed to PrepareNeXusFile while configuring recon engine.");
                 throw std::runtime_error(e.what());
             }
-         }
+        }
 
         if (m_Config.MatrixInfo.FileType==kipl::io::NeXus16bits)
         {
@@ -631,15 +630,21 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
 	
 	bool bTransposed=false;
 
-   if (m_Config.MatrixInfo.FileType==kipl::io::NeXusfloat) {
+    kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
 
-       kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
+    if (m_BackProjector->GetModule()->MatrixAlignment == BackProjectorModuleBase::MatrixZXY)
+        plane=kipl::base::ImagePlaneYZ;
 
-       if (m_BackProjector->GetModule()->MatrixAlignment == BackProjectorModuleBase::MatrixZXY)
-           plane=kipl::base::ImagePlaneYZ;
+    size_t nSlices = m_BackProjector->GetModule()->GetNSlices();
 
-       size_t nSlices=0;
-       nSlices=m_BackProjector->GetModule()->GetNSlices();
+    msg.str("");
+    msg<<"Writing dims=["<<img.Size(0)<<", "<<img.Size(1)<<", "<<img.Size(2)
+        <<"], plane="<<enum2string(plane);
+
+    logger.message(msg.str());
+
+    if (m_Config.MatrixInfo.FileType==kipl::io::NeXusfloat) 
+    {
        size_t nSliceBlock=GetIntParameter(m_Config.backprojector.parameters,"SliceBlock");
 
        size_t Start = nSliceBlock*nProcessedBlocks;
@@ -651,49 +656,37 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
        }
 
 	}
-    else if (m_Config.MatrixInfo.FileType==kipl::io::NeXus16bits) {
+    else if (m_Config.MatrixInfo.FileType==kipl::io::NeXus16bits) 
+    {
+        size_t nSliceBlock = GetIntParameter(m_Config.backprojector.parameters,"SliceBlock");
 
-       kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
-
-       if (m_BackProjector->GetModule()->MatrixAlignment == BackProjectorModuleBase::MatrixZXY)
-           plane=kipl::base::ImagePlaneYZ;
-
-       size_t nSlices=0;
-       nSlices=m_BackProjector->GetModule()->GetNSlices();
-       size_t nSliceBlock=GetIntParameter(m_Config.backprojector.parameters,"SliceBlock");
-
-       size_t Start = nSliceBlock*nProcessedBlocks;
-       if (m_Config.MatrixInfo.bUseROI){
+        size_t Start = nSliceBlock*nProcessedBlocks;
+        if (m_Config.MatrixInfo.bUseROI)
+        {
             kipl::io::WriteNeXusStack16bit(img, str.str().c_str(), Start,nSlices, m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1], plane, m_Config.MatrixInfo.roi);
-       }
-       else {
+        }
+        else 
+        {
             kipl::io::WriteNeXusStack16bit(img, str.str().c_str(), Start,nSlices,m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1], plane);
-       }
+        }
 
     }
-	else {
-		kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY;
-
-		if (m_BackProjector->GetModule()->MatrixAlignment == BackProjectorModuleBase::MatrixZXY)
-			plane=kipl::base::ImagePlaneYZ;
-
-		size_t nSlices=0;
-		nSlices=m_BackProjector->GetModule()->GetNSlices();
-
+	else 
+    {
 		msg.str("");
 		msg<<"Serializing "<<nSlices<<" slices to "<<m_Config.MatrixInfo.sDestinationPath;
-		logger(kipl::logging::Logger::LogMessage,msg.str());
+		logger.message(msg.str());
         msg.str("");
         try {
             if (m_Config.MatrixInfo.bUseROI)
             {
-                logger(kipl::logging::Logger::LogMessage,"Serializing matrix with ROI");
+                logger.message("Serializing matrix with ROI");
                 if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
                 {
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices-1,m_Config.ProjectionInfo.roi[1],
+                        0UL,nSlices-1UL,m_Config.ProjectionInfo.roi[1],
                         m_Config.MatrixInfo.FileType,
                         plane,m_Config.MatrixInfo.roi,
                         m_Config.ProjectionInfo.roi[1]!=m_FirstSlice);
@@ -703,18 +696,18 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
                     kipl::io::WriteImageStack(img,
                                                   str.str(),
                                                   m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                                                  0,nSlices-1, CBroi[1], m_Config.MatrixInfo.FileType,plane,m_Config.MatrixInfo.roi);
+                                                  0UL,nSlices-1UL, CBroi[1], m_Config.MatrixInfo.FileType,plane,m_Config.MatrixInfo.roi);
                 }
             }
             else
             {
-                logger(kipl::logging::Logger::LogMessage,"Serializing full matrix");
+                logger.message("Serializing full matrix");
                 if (m_Config.ProjectionInfo.beamgeometry==m_Config.ProjectionInfo.BeamGeometry_Parallel)
                 {
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices-1,m_Config.ProjectionInfo.roi[1],
+                        0UL,nSlices-1UL,m_Config.ProjectionInfo.roi[1],
                         m_Config.MatrixInfo.FileType,plane,
                         {},
                         m_Config.ProjectionInfo.roi[1]!=m_FirstSlice);
@@ -724,7 +717,7 @@ bool ReconEngine::Serialize(std::vector<size_t> &dims)
                     kipl::io::WriteImageStack(img,
                         str.str(),
                         m_Config.MatrixInfo.fGrayInterval[0],m_Config.MatrixInfo.fGrayInterval[1],
-                        0,nSlices-1, CBroi[1], m_Config.MatrixInfo.FileType,plane);
+                        0UL,nSlices-1UL, CBroi[1], m_Config.MatrixInfo.FileType,plane);
                 }
             }
         }
@@ -848,11 +841,10 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 	std::stringstream msg;
 	std::stringstream str;
 
-
-	m_Volume.info.sArtist=m_Config.UserInformation.sOperator;
-	m_Volume.info.sCopyright=m_Config.UserInformation.sOperator;
-    m_Volume.info.sSoftware="MuhRec CT reconstructor";
-	m_Volume.info.sDescription=m_Config.UserInformation.sSample;
+	m_Volume.info.sArtist      = m_Config.UserInformation.sOperator;
+	m_Volume.info.sCopyright   = m_Config.UserInformation.sOperator;
+    m_Volume.info.sSoftware    = "MuhRec CT reconstructor";
+	m_Volume.info.sDescription = m_Config.UserInformation.sSample;
 
 	str.str("");
 	str<<matrixconfig->sDestinationPath<<matrixconfig->sFileMask;
@@ -895,7 +887,7 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
                 matrixconfig->fGrayInterval[0],
                 matrixconfig->fGrayInterval[1],
                 0,
-                nSlices,
+                nSlices-1,
                 m_FirstSlice,
                 matrixconfig->FileType,
                 plane);
@@ -984,7 +976,7 @@ int ReconEngine::Run3D(bool bRerunBackproj)
 
 void ReconEngine::ConfigSanityCheck(ReconConfig &config)
 {
-
+    std::ignore = config;
 }
 
 int ReconEngine::Run3DFull()

@@ -61,7 +61,7 @@ pybind11_add_module(${TARGET_NAME}
   
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
-set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
+# set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 set(LINK_TYPE "MODULE")
 

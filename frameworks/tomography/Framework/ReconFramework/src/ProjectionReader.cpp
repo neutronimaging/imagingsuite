@@ -889,7 +889,7 @@ float ProjectionReader::GetProjectionDose(const std::string &path,
 
     auto maskext = readers::GetFileExtensionType(filemask);
 
-    if (maskext == readers::ExtensionHDF5)
+    if (maskext != readers::ExtensionHDF5)
     {
         dose = GetProjectionDose(filename,flip,rotate,binning,nDoseROI);
     }
