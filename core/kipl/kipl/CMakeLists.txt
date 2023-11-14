@@ -384,7 +384,7 @@ if (WIN32)
         LibXml2::LibXml2
         TIFF::TIFF
         cfitsio::cfitsio
-        # armadillo
+        armadillo::armadillo
         liblapack
         libopenblas
         libfftw3-3
