@@ -57,12 +57,10 @@ endif()
 set(SRC_FILES
     main.cpp
     muhreccli.cpp
-#    stdafx.cpp
 )
 
 set(INC_FILES
     muhreccli.h
-#    stdafx.h
 )
 
 message(CLIApp Qt${QT_VERSION_MAJOR})
@@ -100,7 +98,6 @@ if (WIN32)
         )
 
     target_link_libraries(${TARGET_NAME} PRIVATE
- #       Qt${QT_VERSION_MAJOR}::Core
         kipl
         ModuleConfig
         ImagingAlgorithms
