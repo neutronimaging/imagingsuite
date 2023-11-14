@@ -174,8 +174,8 @@ target_link_directories(${TARGET_NAME} PRIVATE
     cfitsio
     hdf5
     xml2
-    NeXus
-    NeXusCPP
+    # NeXus
+    # NeXusCPP
 )
 endif()
 
@@ -209,8 +209,8 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     cfitsio
     #hdf5
 #    xml2
-    NeXus
-    NeXusCPP
+    # NeXus
+    # NeXusCPP
 )
 endif()
 set_target_properties(${TARGET_NAME} PROPERTIES

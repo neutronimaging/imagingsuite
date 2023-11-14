@@ -94,7 +94,11 @@ std::vector<size_t> ProjectionReader::GetImageSize(std::string filename, float b
         {
         case readers::ExtensionFITS  : dims=kipl::io::GetFITSDims(filename);  break;
         case readers::ExtensionTIFF  : dims=kipl::io::GetTIFFDims(filename);  break;
+    #ifdef HAVE_NEXUS
         case readers::ExtensionHDF5  : dims=kipl::io::GetNexusDims(filename); break;
+    #else
+        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
+    #endif
         //case 3  : return GetImageSizePNG(filename.c_str(),dims);  break;
 
         default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
