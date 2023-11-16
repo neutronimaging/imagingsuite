@@ -28,8 +28,8 @@ cp $BREWPATH/opt/armadillo/lib/libarmadillo.12.dylib .
 cp $BREWPATH/opt/cfitsio/lib/libcfitsio.10.dylib .
 # cp $WORKSPACE/ExternalDependencies/macos/arm64/lib/libNeXus.1.0.0.dylib .
 # cp $WORKSPACE/ExternalDependencies/macos/arm64/lib/libNeXusCPP.1.0.0.dylib .
-cp /usr/local/lib/libNeXus.1.0.0.dylib .
-cp /usr/local/lib/libNeXusCPP.1.0.0.dylib .
+# cp /usr/local/lib/libNeXus.1.0.0.dylib .
+# cp /usr/local/lib/libNeXusCPP.1.0.0.dylib .
 
 cp $BREWPATH/opt/fftw/lib/libfftw3.3.dylib .
 cp $BREWPATH/opt/fftw/lib/libfftw3f.3.dylib .
@@ -39,15 +39,15 @@ cp $BREWPATH/opt/superlu/lib/libsuperlu.6.dylib .
 chmod 666 *.dylib
 
 
-rm -f libNeXus.1.dylib libNeXusCPP.1.dylib
-ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
-ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
+# rm -f libNeXus.1.dylib libNeXusCPP.1.dylib
+# ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
+# ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
 
 install_name_tool -add_rpath @executable_path muhrectomo.cpython-*-darwin.so
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib muhrectomo.cpython-*-darwin.so
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib muhrectomo.cpython-*-darwin.so
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib advfilters.cpython-*-darwin.so
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib advfilters.cpython-*-darwin.so
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib muhrectomo.cpython-*-darwin.so
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib muhrectomo.cpython-*-darwin.so
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib advfilters.cpython-*-darwin.so
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib advfilters.cpython-*-darwin.so
 
 cd ..
 mkdir -p utils
