@@ -356,7 +356,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
                           nullptr,
                           &fileList);
 
-        if (static_cast<int>(fileList.size())<position) // Workaround for bad BuildFileList implementation
+        if (static_cast<int>(fileList.size())<(position-ui->sliderProjections->minimum())) // Workaround for bad BuildFileList implementation
         {
             logger.warning("Projection slider out of list range.");
             return;
