@@ -77,7 +77,8 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 
 	ProjCenter=mConfig.ProjectionInfo.fCenter;
 
-    float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
+    // float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
+	float dirWeight = mConfig.ProjectionInfo.eDirection==kipl::base::RotationDirCW ? 1.0f : -1.0f;
     msg.str("");
 
 	fWeights[nProjCounter]  = weight;
