@@ -80,18 +80,6 @@ if (UNIX AND NOT APPLE)
 
             kipl
             AdvancedFilters
-
-            # fftw3
-            # fftw3f
-            # xml2
-            # tiff
-            # armadillo
-            # lapack
-            # blas
-            # AdvancedFilters
-            # cfitsio
-            # NeXus
-            # NeXusCPP
             )
     else()
         target_link_libraries(${TARGET_NAME}
@@ -100,17 +88,6 @@ if (UNIX AND NOT APPLE)
 
             kipl
             AdvancedFilters
-
-            # fftw3
-            # fftw3f
-            # xml2
-            # tiff
-            # armadillo
-            # lapack
-            # blas
-            # cfitsio
-            # NeXus
-            # NeXusCPP
           )
     endif()
 endif()

@@ -89,17 +89,6 @@ PUBLIC
       ImagingAlgorithms
       ModuleConfig
       ReconFramework
-      # libxml2
-      # cfitsio
-      # libtiff
-      # liblapack
-      # libopenblas
-      # libfftw3-3
-      # libfftw3f-3
-      # NeXus
-      # NeXusCPP
-      # Iphlpapi
-
     )
 endif()
 

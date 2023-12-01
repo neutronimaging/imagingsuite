@@ -30,7 +30,8 @@ endif()
 
 if (WIN32)
     include_directories(
-        ../../../../external/include/
+        ../../../../../ExternalDependencies/windows/include/
+        ../../../../../imagingsuite/external/include/
     )
 endif()
 
