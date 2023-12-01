@@ -66,6 +66,8 @@ private Q_SLOTS:
     /// Test OS specifying enums
     void testOSenums();
 
+    void testRotationDirection();
+
 private:
     std::string data_path;
 };
@@ -729,6 +731,30 @@ void Tkiplbase::testOSenums()
     QCOMPARE(oe,kipl::base::OSUnknown);
 
     QVERIFY_EXCEPTION_THROWN(string2enum("OSMacos",oe),kipl::base::KiplException);
+}
+// Test conversion of rotation direction to and from string, all combinations using QTest
+void Tkiplbase::testRotationDirection()
+{
+    QCOMPARE(enum2string(kipl::base::RotationDirCW),std::string("RotationDirCW"));
+    QCOMPARE(enum2string(kipl::base::RotationDirCCW),std::string("RotationDirCCW"));
+
+    kipl::base::eRotationDirection oe;
+    string2enum("cw",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCW);
+    string2enum("ccw",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCCW);
+
+    string2enum("CW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCW);
+    string2enum("CCW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCCW);
+
+    string2enum("RotationDirCW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCW);
+    string2enum("RotationDirCCW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCCW);
+
+    QVERIFY_EXCEPTION_THROWN(string2enum("RotationDirectionclockwise",oe),kipl::base::KiplException);
 }
 
 QTEST_APPLESS_MAIN(Tkiplbase)
