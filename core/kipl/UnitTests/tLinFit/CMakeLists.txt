@@ -32,7 +32,7 @@ target_link_libraries(${TARGET_NAME}
     PRIVATE
         Qt6::Test
         kipl
-        armadillo::armadillo
+        # armadillo::armadillo
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

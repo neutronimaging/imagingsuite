@@ -44,7 +44,7 @@ else()
         PRIVATE
             Qt6::Test
             kipl
-            armadillo::armadillo
+            # armadillo::armadillo
         )
 endif()
 
