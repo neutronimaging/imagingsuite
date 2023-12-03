@@ -166,6 +166,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->dspinSOD->setMaximum(ui->dspinSDD->value());
     ui->dspinSDD->setMinimum(ui->dspinSOD->value());
     UpdateCBCTDistances();
+    ui->label_projPerView->setVisible(false);
+    ui->spinBox_projPerView->setVisible(false);
 }
 
 MuhRecMainWindow::~MuhRecMainWindow()
