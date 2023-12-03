@@ -28,6 +28,16 @@ set(SRC_FILES
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 
+if (WIN32)
+include_directories(
+    ../../../../../ExternalDependencies/windows/include)
+endif()
+
+if (APPLE)
+include_directories(
+    ../../../../../ExternalDependencies/macos/include)
+endif()
+
 target_link_libraries(${TARGET_NAME}
     PRIVATE
         Qt6::Test
