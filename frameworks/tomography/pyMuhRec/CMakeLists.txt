@@ -135,17 +135,6 @@ if (WIN32)
       ReconFramework
       StdBackProjectors
       FDKBackProjectors
-      # libxml2
-      # cfitsio
-      # libtiff
-      # armadillo
-      # liblapack
-      # libopenblas
-      # libfftw3-3
-      # libfftw3f-3
-      # NeXus
-      # NeXusCPP
-      # Iphlpapi
     )
 endif()
 

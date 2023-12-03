@@ -87,10 +87,10 @@ add_library(${TARGET_NAME} SHARED
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 #target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY HAVE_NEXUS ARMA_USE_BLAS ARMA_USE_LAPACK)
-target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY ARMA_USE_BLAS ARMA_USE_LAPACK)
+target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY )
 
 # add_definitions(-DHAVE_NEXUS )
-add_definitions(-DARMA_USE_BLAS -DARMA_USE_LAPACK)
+# add_definitions(-DARMA_USE_BLAS -DARMA_USE_LAPACK)
 
     
 if (APPLE)
@@ -102,19 +102,13 @@ endif()
 
 if (WIN32)
     target_link_directories(${TARGET_NAME} PUBLIC
-     ../../../../ExternalDependencies/windows/lib
-    # ../../../../imagingsuite/external/lib64
-    # ../../../../imagingsuite/external/lib64/nexus
-    )
+     ../../../../ExternalDependencies/windows/lib    )
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC
       kipl
-      liblapack
-      # libblas
       libopenblas
-      armadillo::armadillo
-    )
+      )
 endif()
 
 if (UNIX AND NOT APPLE)
@@ -125,31 +119,11 @@ if (UNIX AND NOT APPLE)
 
           PUBLIC
             kipl
-            # xml2
-            # fftw3
-            # fftw3f
-            # cfitsio
-            # tiff
-            # armadillo
-            # lapack
-            # blas
-            # NeXus
-            # NeXusCPP
         )
     else()
     target_link_libraries(${TARGET_NAME} 
           PUBLIC
             kipl
-            # xml2
-            # fftw3
-            # fftw3f
-            # cfitsio
-            # tiff
-            # armadillo
-            # lapack
-            # blas
-            # NeXus
-            # NeXusCPP
         )
     endif()
 endif()

@@ -37,14 +37,8 @@ find_package(TIFF REQUIRED)
 find_package(pybind11 REQUIRED)
 
 if (WIN32)
-  # find_package(BLAS)
-  # find_package(FFTW3 REQUIRED)
-  # find_package(FFTW3f REQUIRED)
-  # find_package(OpenBLAS REQUIRED)
-  # find_package(armadillo REQUIRED)
-  find_package(Armadillo REQUIRED COMPONENT OpenBLAS)
+  find_package(Armadillo REQUIRED )
   find_package(cfitsio REQUIRED)
-  # find_package(lapack REQUIRED)
 endif()
 
 if (UNIX)
@@ -152,6 +146,9 @@ add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
 add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
 add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
 add_subdirectory(core/kipl/UnitTests/tThreadPool)
+add_subdirectory(core/kipl/UnitTests/tKiplMath)
+add_subdirectory(core/kipl/UnitTests/tLinFit)
+
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
@@ -289,6 +286,7 @@ if(DYNAMIC_LIB)
 endif(DYNAMIC_LIB)
 
 if (WIN32)
+message("${OpenBLAS_LIBRARIES}")
 install(FILES 
   external/lib64/nexus/NeXus.dll	
   external/lib64/nexus/NeXusCPP.dll
@@ -302,18 +300,22 @@ install(FILES
   external/lib64/zlib1.dll
   external/lib64/libfftw3-3.dll
   external/lib64/libfftw3f-3.dll
-  external/lib64/libblas.dll
-  external/lib64/liblapack.dll
-  external/lib64/liblapacke.dll
-  external/lib64/libquadmath-0.dll
-  external/lib64/libgfortran_64-3.dll
-  external/lib64/libwinpthread-1.dll
-  external/lib64/libgcc_s_seh-1.dll
-  external/lib64/libgcc_s_seh_64-1.dll
-  ../ExternalDependencies/windows/bin/libopenblas.dll
+
+
+  # ${OpenBLAS_LIBRARIES}
+  # external/lib64/libblas.dll
+  # external/lib64/liblapack.dll
+  # external/lib64/liblapacke.dll
+  # external/lib64/libquadmath-0.dll
+  # external/lib64/libgfortran_64-3.dll
+  # external/lib64/libwinpthread-1.dll
+  # external/lib64/libgcc_s_seh-1.dll
+  # external/lib64/libgcc_s_seh_64-1.dll
+  # ../ExternalDependencies/windows/bin/libopenblas.dll
 
   ../ExternalDependencies/windows/bin/libxml2.dll 
   ../ExternalDependencies/windows/bin/cfitsio.dll
+  ../ExternalDependencies/windows/bin/libopenblas.dll
 
   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()

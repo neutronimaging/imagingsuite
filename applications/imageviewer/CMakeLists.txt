@@ -135,18 +135,9 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     ReaderConfig
     QtAddons
     ReaderGUI
-    # NeXus
-    # NeXusCPP
     QtModuleConfigure
     ReconFramework
     QtImaging
-    # xml2
-    # armadillo
-    # lapack
-    # blas
-    # tiff
-    # cfitsio
-    # hdf5
 )
 endif()
 
@@ -174,8 +165,6 @@ target_link_directories(${TARGET_NAME} PRIVATE
     cfitsio
     hdf5
     xml2
-    # NeXus
-    # NeXusCPP
 )
 endif()
 
@@ -202,15 +191,9 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     ReaderGUI
     QtModuleConfigure
     QtImaging
-    liblapack
     libopenblas
-    armadillo::armadillo
     libtiff
     cfitsio
-    #hdf5
-#    xml2
-    # NeXus
-    # NeXusCPP
 )
 endif()
 set_target_properties(${TARGET_NAME} PROPERTIES

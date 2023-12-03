@@ -94,12 +94,8 @@ if (WIN32)
         libxml2
         cfitsio
         libtiff
-        liblapack
-        libopenblas
         libfftw3-3
         libfftw3f-3
-        # NeXus
-        # NeXusCPP
         Iphlpapi
 
         )
@@ -122,7 +118,6 @@ if (UNIX AND NOT APPLE)
             OpenMP::OpenMP_CXX
             # pybind11::module
 
-        #   PRIVATE
             kipl
             ImagingAlgorithms
             ModuleConfig
@@ -143,7 +138,6 @@ if (UNIX AND NOT APPLE)
           PUBLIC
             # pybind11::module
 
-        #   PRIVATE
             kipl
             ImagingAlgorithms
             ModuleConfig

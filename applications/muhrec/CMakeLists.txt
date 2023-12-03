@@ -41,6 +41,7 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
+    ../../../ExternalDependencies/windows/include
     ../../external/include/
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )

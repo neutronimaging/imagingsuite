@@ -127,10 +127,8 @@ target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY )
         ModuleConfig
         ReaderConfig
         ReconFramework
-        # armadillo::armadillo
-        # libblas
-        liblapack
-        libopenblas
+        # liblapack
+        # ${OpenBLAS_LIBRARIES}
 
       )
 endif()
