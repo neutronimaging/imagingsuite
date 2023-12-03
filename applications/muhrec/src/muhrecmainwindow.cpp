@@ -166,6 +166,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->dspinSOD->setMaximum(ui->dspinSDD->value());
     ui->dspinSDD->setMinimum(ui->dspinSOD->value());
     UpdateCBCTDistances();
+    ui->label_projPerView->setVisible(false);
+    ui->spinBox_projPerView->setVisible(false);
 }
 
 MuhRecMainWindow::~MuhRecMainWindow()
@@ -290,7 +292,7 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
 
 void MuhRecMainWindow::ProjectionIndexChanged(int x)
 {
-    (void)x;
+    std::ignore = x;
 
     std::ostringstream msg;
     int first = ui->spinFirstProjection->value();
@@ -304,7 +306,14 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
         return ;
     }
 
-    on_comboBox_projectionViewer_currentIndexChanged(0);
+    QSignalBlocker sliderSignal(ui->sliderProjections);
+    QSignalBlocker spinSignal(ui->spinBoxProjections);
+    ui->sliderProjections->setMinimum(first);
+    ui->spinBoxProjections->setMinimum(first);
+    ui->sliderProjections->setMaximum(last);
+    ui->spinBoxProjections->setMaximum(last);
+
+    on_comboBox_projectionViewer_currentIndexChanged(first);
     PreviewProjection();
 }
 
@@ -349,18 +358,23 @@ void MuhRecMainWindow::PreviewProjection(int x)
                           nullptr,
                           &fileList);
 
-        if (static_cast<int>(fileList.size())<position) // Workaround for bad BuildFileList implementation
+        if (static_cast<int>(fileList.size())<(position-ui->sliderProjections->minimum())) // Workaround for bad BuildFileList implementation
         {
             logger.warning("Projection slider out of list range.");
             return;
         }
 
         auto it=fileList.begin();
-        if (position<=ui->sliderProjections->maximum())
-            std::advance(it,position-(position==0 ? 0 :1));
-        else {
-            logger.error("Slider out of range");
-            return;
+        if (position != ui->sliderProjections->minimum())  
+        {
+            position -= ui-> sliderProjections->minimum();
+            std::advance(it,position-1);
+            // if (position<=ui->sliderProjections->maximum())
+            //     std::advance(it,position-(position==0 ? 0 :1)ui->);
+            // else {
+            //     logger.error("Slider out of range");
+            //     return;
+            // }
         }
 
         name=it->second.name;
@@ -2985,6 +2999,7 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
         case 1:
             if (ui->spinOpenBeamCount->value() == 0) {
                 ui->comboBox_projectionViewer->setCurrentIndex(0);
+                logger.warning("There are no open beam images, switching back to projections");
                 return ;
             }
 
@@ -2996,6 +3011,7 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
         case 2:
             if (ui->spinDarkCount->value() == 0) {
                 ui->comboBox_projectionViewer->setCurrentIndex(0);
+                logger.warning("There are no dark current images, switching back to projections");
                 return ;
             }
             m_nPreviewFirst = ui->spinFirstDark->value();
@@ -3017,11 +3033,13 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
 
 void MuhRecMainWindow::on_spinFirstOpenBeam_valueChanged(int arg1)
 {
+    std::ignore = arg1;
     on_comboBox_projectionViewer_currentIndexChanged(1);
 }
 
 void MuhRecMainWindow::on_spinOpenBeamCount_valueChanged(int arg1)
 {
+    std::ignore = arg1;
     on_comboBox_projectionViewer_currentIndexChanged(1);
 }
 
@@ -3042,11 +3060,13 @@ void MuhRecMainWindow::on_editDarkMask_editingFinished()
 
 void MuhRecMainWindow::on_spinFirstDark_valueChanged(int arg1)
 {
+    std::ignore = arg1;
     on_comboBox_projectionViewer_currentIndexChanged(2);
 }
 
 void MuhRecMainWindow::on_spinDarkCount_valueChanged(int arg1)
 {
+    std::ignore = arg1;
     on_comboBox_projectionViewer_currentIndexChanged(2);
 }
 

@@ -57,8 +57,8 @@ fi
 	
 # `$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
 # `$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD /usr/local/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD /usr/local/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
+# `$CPCMD /usr/local/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
+# `$CPCMD /usr/local/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
 
 `$CPCMD $BREWPATH/lib/libarmadillo.12.dylib $DEST/Contents/Frameworks`
 
@@ -148,30 +148,30 @@ install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
 
 install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib @rpath/libxml2.2.dylib MuhRec
 install_name_tool -change @executable_path/../Frameworks/libarmadillo.12.dylib @rpath/libarmadillo.12.dylib MuhRec
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib MuhRec
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib MuhRec
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib MuhRec
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib MuhRec
 
 cd ../Frameworks
 
 chmod 666 libarmadillo.12.dylib
-chmod 666 libhdf5_hl.dylib libhdf5_cpp.dylib
-ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
-ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
+# chmod 666 libhdf5_hl.dylib libhdf5_cpp.dylib
+# ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
+# ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
 `$CPCMD $BREWPATH/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib $DEST/Contents/Frameworks` # must be here to avoid deletion
 
 install_name_tool -change @loader_path/../../../../opt/openblas/lib/libopenblas.0.dylib @rpath/libopenblas.0.dylib libarmadillo.12.dylib
 install_name_tool -change @loader_path/../../../../opt/arpack/libexec/lib/libarpack.2.dylib @rpath/libarpack.2.dylib libarmadillo.12.dylib
 install_name_tool -change @loader_path/../../../../opt/superlu/lib/libsuperlu.6.dylib @rpath/libsuperlu.6.dylib libarmadillo.12.dylib
-install_name_tool -change @loader_path/../../../../opt/libaec/lib/libsz.2.dylib @rpath/libsz.2.dylib libhdf5_cpp.310.dylib
-install_name_tool -change @loader_path/../../../../opt/libaec/lib/libsz.2.dylib @rpath/libsz.2.dylib libhdf5.310.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderGUI.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderGUI.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderConfig.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderConfig.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libImagingAlgorithms.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libImagingAlgorithms.dylib
-install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libkipl.dylib
-install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libkipl.dylib
+# install_name_tool -change @loader_path/../../../../opt/libaec/lib/libsz.2.dylib @rpath/libsz.2.dylib libhdf5_cpp.310.dylib
+# install_name_tool -change @loader_path/../../../../opt/libaec/lib/libsz.2.dylib @rpath/libsz.2.dylib libhdf5.310.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderGUI.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderGUI.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderConfig.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderConfig.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libImagingAlgorithms.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libImagingAlgorithms.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libkipl.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libkipl.dylib
 
 
 codesign --force --deep --sign - $DEST # needed to fix signature issue on M1
