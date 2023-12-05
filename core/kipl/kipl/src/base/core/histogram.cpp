@@ -237,6 +237,7 @@ std::vector<size_t> cumulativeHistogram(std::vector<size_t> &hist)
     return cumulated;
 
 }
+
 int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi)
 {
 	ptrdiff_t *cumulated=new ptrdiff_t[N];

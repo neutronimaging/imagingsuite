@@ -11,6 +11,7 @@
 
 #include <logging/logger.h>
 #include <base/timage.h>
+#include <base/thistogram.h>
 #include <strings/miscstring.h>
 #include <base/textractor.h>
 #include <algorithms/datavalidator.h>
@@ -837,6 +838,13 @@ void ReconEngine::writePublicationList(const std::string &fname)
 size_t ReconEngine::GetHistogram(float *axis, size_t *hist, size_t nBins)
 {
 	m_BackProjector->GetModule()->GetHistogram(axis,hist,nBins);
+
+	return nBins;
+}
+
+size_t ReconEngine::GetHistogram(std::vector<float> &axis, std::vector<size_t> &hist, size_t nBins)
+{
+	kipl::base::Histogram(m_Volume.GetDataPtr(),m_Volume.Size(),nBins,hist,axis,0.0f,0.0f,true);
 
 	return nBins;
 }

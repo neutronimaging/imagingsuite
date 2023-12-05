@@ -78,7 +78,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 	ProjCenter=mConfig.ProjectionInfo.fCenter;
 
     // float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
-	float dirWeight = mConfig.ProjectionInfo.eDirection==kipl::base::RotationDirCW ? 1.0f : -1.0f;
+	float dirWeight = mConfig.ProjectionInfo.eDirection==kipl::base::RotationDirCW ? -1.0f : 1.0f;
     msg.str("");
 
 	fWeights[nProjCounter]  = weight;
@@ -298,6 +298,44 @@ void StdBackProjectorBase::GetHistogram(float *axis, size_t *hist,size_t nBins)
 	axis[0]=matrixMin+scale/2.0f;
 	for (size_t i=1; i<nBins; i++)
 		axis[i]=axis[i-1]+scale;
+}
+
+void StdBackProjectorBase::GetHistogram(std::vector<float> &axis, std::vector<size_t> &hist, size_t nBins)
+{
+	axis = std::vector<float>(nBins,0.0f);
+	hist = std::vector<size_t>(nBins,0UL);
+
+	float matrixMin=Min();
+	float matrixMax=Max();
+	ostringstream msg;
+
+	msg<<"Preparing histogram; #bins: "<<nBins<<", Min: "<<matrixMin<<", Max: "<<matrixMax;
+	logger(kipl::logging::Logger::LogMessage,msg.str());
+
+	float scale=(matrixMax-matrixMin)/(nBins+1);
+	float invScale=1.0f/scale;
+	size_t index=0;
+    for (size_t y=0; y<mask.size(); ++y)
+    {
+        for (size_t x=mask[y].first; x<mask[y].second; ++x)
+        {
+			float *pLine=volume.GetLinePtr(x,y);
+            for (size_t z=0; z<volume.Size(0); ++z)
+            {
+				index=static_cast<size_t>(invScale*(pLine[z]-matrixMin));
+                if (pLine[z]<matrixMin)
+					index=0;
+				else if (nBins<=index)
+					index=nBins-1;
+				hist[index]++;
+			}
+		}
+	}
+
+	axis[0]=matrixMin+scale/2.0f;
+	for (size_t i=1; i<nBins; i++)
+		axis[i]=axis[i-1]+scale;
+
 }
 
 float StdBackProjectorBase::Min()
