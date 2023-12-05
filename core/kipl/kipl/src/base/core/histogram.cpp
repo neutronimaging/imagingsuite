@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <vector>
 #include <map>
+#include <mutex>          // std::mutex, std::lock_guard
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -17,12 +18,15 @@
 #include "../../../include/math/sums.h"
 #include "../../../include/math/image_statistics.h"
 #include "../../../include/base/thistogram.h"
+#include "../../../include/utilities/threadpool.h"
 #ifndef NO_TIFF
 #include "../../../include/io/io_tiff.h"
 #endif
 
 namespace kipl { namespace base {
 //int Histogram(float const * const data, size_t nData, size_t * const hist, const size_t nBins, float lo, float hi, float * const pAxis)
+
+std::mutex histmtx;
 
 int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t * hist, size_t nBins, float lo, float hi, float * pAxis, bool avoidZeros)
 {
@@ -91,6 +95,78 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t *
 	return 0;
 }
 
+// int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t nBins, std::vector<size_t> & hist, std::vector<float> &axis, float lo, float hi, bool avoidZeros)
+// {
+
+//     float start=0;
+//     float stop=1.0f;
+
+//     if (lo==hi)
+//     {
+//         kipl::math::minmax(data,nData,&start,&stop,true);
+
+//     }
+//     else
+//     {
+//         start=std::min(lo,hi);
+//         stop=std::max(lo,hi);
+//     }
+
+//     hist.resize(nBins);
+//     axis.resize(nBins);
+
+//     std::fill(hist.begin(),hist.end(),0UL);
+
+//     float scale=(nBins)/(stop-start);
+//     #pragma omp parallel firstprivate(nData,start,scale)
+//     {
+//         int index;
+//         long long int i=0;
+//         std::vector<size_t> temp_hist(nBins);
+//         std::fill(temp_hist.begin(),temp_hist.end(),0UL);
+
+//         const ptrdiff_t snData=static_cast<ptrdiff_t>(nData);
+//         const ptrdiff_t snBins=static_cast<ptrdiff_t>(nBins);
+//         if (avoidZeros)
+//         {
+//             #pragma omp for
+//             for (i=0; i<snData; i++) {
+//                 if ( (data[i]!=0.0f) && std::isfinite(data[i]))
+//                 {
+//                     index=static_cast<int>((data[i]-start)*scale);
+//                     if ((index<snBins) && (0<=index))
+//                         temp_hist[index]++;
+//                 }
+//             }
+//         }
+//         else
+//         {
+//             #pragma omp for
+//             for (i=0; i<snData; i++) {
+//                 index=static_cast<int>((data[i]-start)*scale);
+//                 if ((index<snBins) && (0<=index))
+//                     temp_hist[index]++;
+//             }
+//         }
+//         #pragma omp critical
+//         {
+//             for (i=0; i<static_cast<int>(hist.size()); i++)
+//                 hist[i]+=temp_hist[i];
+//         }
+//     }
+
+//     float binIncrement = (stop-start)/nBins;
+//     float binVal       = start+binIncrement/2;
+
+//     for (auto &bin : axis)
+//     {
+//         bin     = binVal;
+//         binVal += binIncrement;
+//     }
+
+//     return 0;
+// }
+
 int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t nBins, std::vector<size_t> & hist, std::vector<float> &axis, float lo, float hi, bool avoidZeros)
 {
 
@@ -114,42 +190,47 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
     std::fill(hist.begin(),hist.end(),0UL);
 
     float scale=(nBins)/(stop-start);
-    #pragma omp parallel firstprivate(nData,start,scale)
-    {
-        int index;
-        long long int i=0;
-        std::vector<size_t> temp_hist(nBins);
-        std::fill(temp_hist.begin(),temp_hist.end(),0UL);
 
-        const ptrdiff_t snData=static_cast<ptrdiff_t>(nData);
-        const ptrdiff_t snBins=static_cast<ptrdiff_t>(nBins);
-        if (avoidZeros)
-        {
-            #pragma omp for
-            for (i=0; i<snData; i++) {
-                if ( (data[i]!=0.0f) && std::isfinite(data[i]))
-                {
+    const auto nThreads = std::thread::hardware_concurrency()
+    kipl::utilities::ThreadPool pool(nThreads);
+
+    size_t nBlock = nData/nThreads;
+
+    for (size_t i=0; i<nThreads; ++i)
+    {
+        pool.enqueue([data, nBlock, start, scale, nBins, avoidZeros, &hist] {
+            int index;
+
+            std::vector<size_t> temp_hist(nBins,0UL);
+            
+            if (avoidZeros)
+            {
+                for (i=0; i<snData; i++) {
+                    if ( (data[i]!=0.0f) && std::isfinite(data[i]))
+                    {
+                        index=static_cast<int>((data[i]-start)*scale);
+                        if ((index<snBins) && (0<=index))
+                            temp_hist[index]++;
+                    }
+                }
+            }
+            else
+            {
+                for (i=0; i<snData; i++) {
                     index=static_cast<int>((data[i]-start)*scale);
                     if ((index<snBins) && (0<=index))
                         temp_hist[index]++;
                 }
             }
-        }
-        else
-        {
-            #pragma omp for
-            for (i=0; i<snData; i++) {
-                index=static_cast<int>((data[i]-start)*scale);
-                if ((index<snBins) && (0<=index))
-                    temp_hist[index]++;
+            std::lock_guard<std::mutex> lock(histmtx);
+            {
+                for (i=0; i<static_cast<int>(hist.size()); i++)
+                    hist[i]+=temp_hist[i];
             }
-        }
-        #pragma omp critical
-        {
-            for (i=0; i<static_cast<int>(hist.size()); i++)
-                hist[i]+=temp_hist[i];
-        }
+        });
     }
+
+    pool.barrier();
 
     float binIncrement = (stop-start)/nBins;
     float binVal       = start+binIncrement/2;
