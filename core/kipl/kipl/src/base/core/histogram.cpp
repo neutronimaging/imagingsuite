@@ -202,6 +202,8 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
     logger.debug("Number of threads: " + std::to_string(nThreads));
 
     size_t nBlockSize = 8192; //nData/nThreads;
+    if (nBlockSize>nData)
+        nBlockSize=nData;
     size_t nBlocks    = nData/nBlockSize;
     size_t nRem       = nData % nBlockSize; //nData%nThreads;
     auto pBlock       = data;
