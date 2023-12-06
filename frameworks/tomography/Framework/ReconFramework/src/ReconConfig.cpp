@@ -220,6 +220,7 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="sod")          ProjectionInfo.fSOD          = std::stof(value);
             if (var=="sdd")          ProjectionInfo.fSDD          = std::stof(value);
             if (var=="pPoint")       kipl::strings::String2Array(value,ProjectionInfo.fpPoint,2);
+            if (var=="skiplistmode") string2enum(value,ProjectionInfo.skipListMode);
         }
 
         if (group=="matrix")
@@ -328,6 +329,7 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
 	        if (sName=="projectionstep")  ProjectionInfo.nProjectionStep = atoi(sValue.c_str());
             if (sName=="repeatedview")    ProjectionInfo.nRepeatedView   = std::stoul(sValue);
             if (sName=="averagemethod")   string2enum(sValue,ProjectionInfo.averageMethod);
+            if (sName=="skiplistmode")    string2enum(sValue,ProjectionInfo.skipListMode);
 			if (sName=="skipprojections") {
 				kipl::strings::String2Set(sValue,ProjectionInfo.nlSkipList);
 				msg<<"Skip list: "<<kipl::strings::Set2String(ProjectionInfo.nlSkipList);
@@ -659,6 +661,7 @@ ReconConfig::cProjections::cProjections() :
     nProjectionStep(1),
     nRepeatedView(1),
     averageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    skipListMode(SkipMode_None),
     bRepeatLine(false),
     scantype(SequentialScan),
     nGoldenStartIdx(0),
@@ -702,6 +705,7 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	nProjectionStep(a.nProjectionStep),
     nRepeatedView(a.nRepeatedView),
     averageMethod(a.averageMethod),
+    skipListMode(a.skipListMode),
 	nlSkipList(a.nlSkipList),
 	bRepeatLine(a.bRepeatLine),
 	scantype(a.scantype),
@@ -744,6 +748,7 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	nProjectionStep = a.nProjectionStep;
     nRepeatedView   = a.nRepeatedView;
     averageMethod   = a.averageMethod;
+    skipListMode    = a.skipListMode;
 	bRepeatLine     = a.bRepeatLine;
 	scantype		= a.scantype;
     nGoldenStartIdx = a.nGoldenStartIdx;
@@ -801,6 +806,7 @@ std::string ReconConfig::cProjections::WriteXML(int indent)
 	str<<setw(indent+4)  <<" "<<"<projectionstep>"<<nProjectionStep<<"</projectionstep>"<<std::endl;
     str<<setw(indent+4)  <<" "<<"<repeatedview>"<<nRepeatedView<<"</repeatedview>"<<std::endl;
     str<<setw(indent+4)  <<" "<<"<averagemethod>"<<averageMethod<<"</averagemethod>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<skiplistmode>"<<skipListMode<<"</skiplistmode>"<<std::endl;
 	if (!nlSkipList.empty()) {
 		str<<setw(indent+4)  <<" "<<"<skipprojections>"<<kipl::strings::Set2String(nlSkipList)<<"</skipprojections>"<<std::endl;
 	}
@@ -1040,5 +1046,43 @@ std::string enum2string(const ReconConfig::cProjections::eScanType &st)
         default : throw ReconException("Unknown scan type encountered in operator<<", __FILE__,__LINE__);
     };
 
+    return s;
+}
+
+void string2enum(const std::string &str, ReconConfig::cProjections::eSkipListMode &mode)
+{
+    std::map<std::string,ReconConfig::cProjections::eSkipListMode> modes;
+
+    modes["none"] = ReconConfig::cProjections::SkipMode_None;
+    modes["skip"] = ReconConfig::cProjections::SkipMode_Skip;
+    modes["drop"] = ReconConfig::cProjections::SkipMode_Drop;
+
+    std::string tmpstr=kipl::strings::toLower(str);
+
+    if (modes.count(tmpstr)==0)
+        throw ReconException("The key string does not exist for eSkipMode",__FILE__,__LINE__);
+
+    mode=modes[tmpstr];
+
+}
+
+std::string enum2string(const ReconConfig::cProjections::eSkipListMode &mode)
+{
+   std::string s;
+    switch (mode)
+    {
+        case ReconConfig::cProjections::SkipMode_None: s="none"; break;
+        case ReconConfig::cProjections::SkipMode_Skip: s="skip"; break;
+        case ReconConfig::cProjections::SkipMode_Drop: s="drop"; break;
+        default : throw ReconException("Unknown skip mode encountered in enum2string", __FILE__,__LINE__);
+    }
+
+    return s;
+}
+
+std::ostream & operator<<(std::ostream &s, const ReconConfig::cProjections::eSkipListMode &mode)
+{
+    s<<enum2string(mode);
+ 
     return s;
 }

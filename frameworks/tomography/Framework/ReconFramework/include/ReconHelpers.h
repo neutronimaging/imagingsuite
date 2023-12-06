@@ -11,7 +11,6 @@
 
 #include "ReconConfig.h"
 
-
 struct RECONFRAMEWORKSHARED_EXPORT ProjectionInfo {
 	ProjectionInfo() : name(""),angle(0.0f), weight(0.0f) {}
 	ProjectionInfo(std::string _name, float _angle, float _weight=1.0f) : name(_name), angle(_angle), weight(_weight) {}
@@ -32,7 +31,6 @@ bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(std::string sFileMask, std::strin
 int RECONFRAMEWORKSHARED_EXPORT ComputeWeights(ReconConfig const * const config,
                                                std::multimap<float, ProjectionInfo> &multiProjectionList,
                                                std::map<float, ProjectionInfo>  * ProjectionList);
-
 
 
 #endif // RECONHELPERS_H_

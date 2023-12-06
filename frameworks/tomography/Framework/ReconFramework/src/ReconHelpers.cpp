@@ -17,7 +17,10 @@
 
 //#define EQUIDISTANT_WEIGHTS
 
-bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionInfo>  * ProjectionList, bool ignore_skiplist, char eolchar)
+bool BuildFileList( ReconConfig const * const config, 
+                    std::map<float, ProjectionInfo>  * ProjectionList, 
+                    bool ignore_skiplist, 
+                    char eolchar)
 {
 	kipl::logging::Logger logger("BuildFileList");
 	std::ostringstream msg;
@@ -194,11 +197,16 @@ bool BuildFileList(ReconConfig const * const config, std::map<float, ProjectionI
 	return sequence;
 }
 
-bool BuildFileList(std::string sFileMask, std::string sPath,
-                   int nFirstIndex, int nLastIndex, int nProjectionStep,
-                   const std::vector<float> &fScanArc, ReconConfig::cProjections::eScanType scantype, int goldenStartIdx,
-                   std::set<size_t> * nlSkipList,
-                   std::map<float, ProjectionInfo>  * ProjectionList)
+bool BuildFileList( std::string sFileMask, 
+                    std::string sPath,
+                    int nFirstIndex, 
+                    int nLastIndex, 
+                    int nProjectionStep,
+                    const std::vector<float> &fScanArc, 
+                    ReconConfig::cProjections::eScanType scantype, 
+                    int goldenStartIdx,
+                    std::set<size_t> * nlSkipList,
+                    std::map<float, ProjectionInfo>  * ProjectionList)
 {
     kipl::logging::Logger logger("BuildFileList");
     std::ostringstream msg;

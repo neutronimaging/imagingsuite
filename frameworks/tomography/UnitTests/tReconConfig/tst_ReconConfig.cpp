@@ -23,6 +23,7 @@ private slots:
     void testConfigCopyConstructor();
     void testConfigAssignment();
     void testScanTypeEnum();
+    void testSkipEnums();
 };
 
 
@@ -78,6 +79,19 @@ void ReconConfigTests::testScanTypeEnum()
     }
 }
 
+void ReconConfigTests::testSkipEnums()
+{
+    ReconConfig::cProjections::eSkipListMode mode;
+
+    QCOMPARE(enum2string(ReconConfig::cProjections::SkipMode_Skip),"skip");
+    QCOMPARE(enum2string(ReconConfig::cProjections::SkipMode_Drop),"drop");  
+
+    string2enum("skip",mode);
+    QCOMPARE(mode,ReconConfig::cProjections::SkipMode_Skip);
+    string2enum("drop",mode);
+    QCOMPARE(mode,ReconConfig::cProjections::SkipMode_Drop);
+
+}
 void ReconConfigTests::testCLIArgs()
 {
     ReconConfig config("path");
@@ -161,7 +175,8 @@ void ReconConfigTests::testCLIArgs()
             "projections:direction=RotationDirCCW",
             "projections:sod=12.0",
             "projections:sdd=23.0",
-            "projections:pPoint=1000 1020"
+            "projections:pPoint=1000 1020",
+            "projections:skiplistmode=drop"
         };
 
         config.GetCommandLinePars(argproj);
@@ -212,6 +227,7 @@ void ReconConfigTests::testCLIArgs()
         QCOMPARE(config.ProjectionInfo.fSDD,23.0f);
         QCOMPARE(config.ProjectionInfo.fpPoint[0],1000);
         QCOMPARE(config.ProjectionInfo.fpPoint[1],1020);
+        QCOMPARE(config.ProjectionInfo.skipListMode,ReconConfig::cProjections::SkipMode_Drop);
 
         std::vector<std::string> argmat ={"muhrec","-f","config.xml",
             "matrix:dims=11 12 13",
@@ -267,6 +283,7 @@ void ReconConfigTests::testConfigConstructor()
     QCOMPARE(config.ProjectionInfo.nLastIndex,         625UL);
     QCOMPARE(config.ProjectionInfo.nProjectionStep,    1UL);
     QCOMPARE(config.ProjectionInfo.nlSkipList.size(),  0UL);
+    QCOMPARE(config.ProjectionInfo.skipListMode,       ReconConfig::cProjections::SkipMode_None);
     QCOMPARE(config.ProjectionInfo.bRepeatLine,        false);
     QCOMPARE(config.ProjectionInfo.scantype,           config.ProjectionInfo.SequentialScan);
     QCOMPARE(config.ProjectionInfo.nGoldenStartIdx,    0UL);
@@ -340,6 +357,7 @@ void ReconConfigTests::testConfigCopyConstructor()
     config.ProjectionInfo.nLastIndex =         25UL;
     config.ProjectionInfo.nProjectionStep =     3UL;
     config.ProjectionInfo.nlSkipList = {1,2,3};
+    config.ProjectionInfo.skipListMode =       ReconConfig::cProjections::SkipMode_Drop;
 
     config.ProjectionInfo.bRepeatLine =        true;
     config.ProjectionInfo.scantype =           config.ProjectionInfo.GoldenSectionScan;
@@ -457,6 +475,8 @@ void ReconConfigTests::testConfigCopyConstructor()
     QCOMPARE(newconfig.ProjectionInfo.eRotate,            config.ProjectionInfo.eRotate);
 
     QCOMPARE(newconfig.ProjectionInfo.eDirection,         config.ProjectionInfo.eDirection);
+    QCOMPARE(newconfig.ProjectionInfo.skipListMode,       config.ProjectionInfo.skipListMode);
+
 }
 
 void ReconConfigTests::testConfigAssignment()
@@ -490,8 +510,9 @@ void ReconConfigTests::testConfigAssignment()
 
     config.ProjectionInfo.bTranslate =         true;
     config.ProjectionInfo.fTiltAngle =         0.1f;
-    config.ProjectionInfo.fTiltPivotPosition= 1.0f;
-    config.ProjectionInfo.bCorrectTilt=       true;
+    config.ProjectionInfo.fTiltPivotPosition = 1.0f;
+    config.ProjectionInfo.bCorrectTilt =       true;
+    config.ProjectionInfo.skipListMode =       ReconConfig::cProjections::SkipMode_Drop; 
 
     config.ProjectionInfo.sFileMask =          "projs_###.fits";
     config.ProjectionInfo.sPath =              "./";

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <QString>
 #include <QTextStream>
 #include <QtTest>
@@ -36,6 +35,8 @@ private Q_SLOTS:
     void testBuildFileList_GeneratedInvGolden();
     void testBuildFileList_GeneratedInvGolden_delay();
     void testBuildFileList();
+    void testBuildFileList_skipSequence();
+    void testBuildFileList_skipGolden();
     void testProcessTimingLogger();
 
 
@@ -1135,6 +1136,17 @@ void FrameWorkTest::testProcessTimingLogger()
     std::this_thread::sleep_for(chrono::seconds(1));
     entryData["hardware"]={{"proj","500"}};
     ptl.addLogEntry(entryData);
+}
+
+
+void FrameWorkTest::testBuildFileList_skipSequence()
+{
+
+}
+
+void FrameWorkTest::testBuildFileList_skipGolden()
+{
+
 }
 
 QTEST_APPLESS_MAIN(FrameWorkTest)
