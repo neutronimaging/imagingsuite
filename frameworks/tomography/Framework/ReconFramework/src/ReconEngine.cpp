@@ -11,6 +11,7 @@
 
 #include <logging/logger.h>
 #include <base/timage.h>
+#include <base/thistogram.h>
 #include <strings/miscstring.h>
 #include <base/textractor.h>
 #include <algorithms/datavalidator.h>
@@ -841,6 +842,17 @@ size_t ReconEngine::GetHistogram(float *axis, size_t *hist, size_t nBins)
 	return nBins;
 }
 
+size_t ReconEngine::GetHistogram(std::vector<float> &axis, std::vector<size_t> &hist, size_t nBins)
+{
+    if (m_histAxis.size()!=nBins)
+        kipl::base::Histogram(m_Volume.GetDataPtr(),m_Volume.Size(),nBins,m_histBins,m_histAxis,0.0f,0.0f,true);
+
+    axis = m_histAxis;
+    hist = m_histBins;
+
+	return nBins;
+}
+
 bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 {
 
@@ -908,7 +920,9 @@ bool ReconEngine::Serialize(ReconConfig::cMatrix *matrixconfig)
 int ReconEngine::Run3D(bool bRerunBackproj)
 {
     std::stringstream msg;
-
+    m_histAxis.clear();
+    m_histBins.clear();
+    
     int res=0;
     msg<<"Rerun backproj: "<<(bRerunBackproj ? "true" : "false")<<", status projection blocks "<<(m_ProjectionBlocks.empty() ? "empty" : "has data");
 

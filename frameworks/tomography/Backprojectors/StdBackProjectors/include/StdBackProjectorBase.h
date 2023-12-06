@@ -38,6 +38,7 @@ public:
 
 	
 	void GetHistogram(float *axis, size_t *hist,size_t nBins);
+	void GetHistogram(std::vector<float> &axis, std::vector<size_t> &hist, size_t nBins);
     std::vector<size_t> GetMatrixDims();
 
 	void ChangeMaskValue(float x);
