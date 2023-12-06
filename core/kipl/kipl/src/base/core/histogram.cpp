@@ -197,7 +197,7 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
 
     float scale=(nBins-1)/(stop-start);
 
-    const auto nThreads = 1; //std::thread::hardware_concurrency();
+    const auto nThreads = std::thread::hardware_concurrency();
     kipl::utilities::ThreadPool pool(nThreads);
     logger.debug("Number of threads: " + std::to_string(nThreads));
 

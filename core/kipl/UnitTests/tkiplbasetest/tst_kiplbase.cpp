@@ -245,13 +245,14 @@ void Tkiplbase::testHistogram()
 
     std::vector<float> axis;
     std::vector<size_t> hist;
-    kipl::base::Histogram(img.GetDataPtr(),img.Size(),1024UL,hist,axis,0.0f,0.0f,false);
-
+    QBENCHMARK {
+        kipl::base::Histogram(img.GetDataPtr(),img.Size(),1024UL,hist,axis,0.0f,0.0f,false);
+    }
+    
     size_t cnt = 0UL;
 
-    for (auto & val : hist)
-        cnt += val;
-
+    cnt = std::accumulate(hist.begin(),hist.end(),0UL); 
+    
     QCOMPARE(cnt,img.Size());
 }
 
