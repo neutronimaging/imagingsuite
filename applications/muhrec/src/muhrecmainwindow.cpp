@@ -1179,10 +1179,10 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     ui->tabMainControl->setCurrentIndex(3);
 
                     const int nBins=256;
-                    float     x[nBins];
-                    size_t    y[nBins];
+                    std::vector<float>     x;
+                    std::vector<size_t>    y;
                     m_pEngine->GetHistogram(x,y,nBins);
-                    ui->plotHistogram->setCurveData(0,x,y,nBins,"Volume histogram");
+                    ui->plotHistogram->setCurveData(0,x,y,"Volume histogram");
                     try
                     {
                         ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(ui->dspinGrayLow->value(),QColor("red"),QtAddons::PlotCursor::Vertical,"Lower limit"));
@@ -2683,13 +2683,13 @@ void MuhRecMainWindow::on_pushButton_levels95p_clicked()
 {
     if (m_pEngine!=nullptr) {
         const int nBins=256;
-        float x[nBins];
-        size_t y[nBins];
+        std::vector<float> x;
+        std::vector<size_t> y;
         m_pEngine->GetHistogram(x,y,nBins);
 
         size_t lowlevel=0;
         size_t highlevel=0;
-        kipl::base::FindLimits(y, nBins, 95.0, &lowlevel, &highlevel);
+        kipl::base::FindLimits(y, 95.0, lowlevel, highlevel);
         ui->dspinGrayLow->setValue(static_cast<double>(x[lowlevel]));
         ui->dspinGrayHigh->setValue(static_cast<double>(x[highlevel]));
     }
@@ -2701,13 +2701,13 @@ void MuhRecMainWindow::on_pushButton_levels99p_clicked()
 {
     if (m_pEngine!=nullptr) {
         const int nBins=256;
-        float x[nBins];
-        size_t y[nBins];
+        std::vector<float> x;
+        std::vector<size_t> y;
         m_pEngine->GetHistogram(x,y,nBins);
 
         size_t lowlevel=0;
         size_t highlevel=0;
-        kipl::base::FindLimits(y, nBins, 99.0, &lowlevel, &highlevel);
+        kipl::base::FindLimits(y, 99.0, lowlevel, highlevel);
         ui->dspinGrayLow->setValue(x[lowlevel]);
         ui->dspinGrayHigh->setValue(x[highlevel]);
     }
