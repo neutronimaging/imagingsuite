@@ -3,13 +3,16 @@
 #include "../../../include/kipl_global.h"
 
 #include <iostream>
+#include <sstream>
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
 #include <cmath>
+#include <string>
 #include <algorithm>
 #include <vector>
 #include <map>
+#include <thread>
 #include <mutex>          // std::mutex, std::lock_guard
 #ifdef _OPENMP
 #include <omp.h>
@@ -19,6 +22,7 @@
 #include "../../../include/math/image_statistics.h"
 #include "../../../include/base/thistogram.h"
 #include "../../../include/utilities/threadpool.h"
+#include "../../../include/logging/logger.h"
 #ifndef NO_TIFF
 #include "../../../include/io/io_tiff.h"
 #endif
@@ -170,6 +174,8 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t *
 int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t nBins, std::vector<size_t> & hist, std::vector<float> &axis, float lo, float hi, bool avoidZeros)
 {
 
+    kipl::logging::Logger logger("Histogram");
+
     float start=0;
     float stop=1.0f;
 
@@ -189,45 +195,77 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
 
     std::fill(hist.begin(),hist.end(),0UL);
 
-    float scale=(nBins)/(stop-start);
+    float scale=(nBins-1)/(stop-start);
 
-    const auto nThreads = std::thread::hardware_concurrency()
+    const auto nThreads = 1; //std::thread::hardware_concurrency();
     kipl::utilities::ThreadPool pool(nThreads);
+    logger.debug("Number of threads: " + std::to_string(nThreads));
 
-    size_t nBlock = nData/nThreads;
+    size_t nBlockSize = 8192; //nData/nThreads;
+    size_t nBlocks    = nData/nBlockSize;
+    size_t nRem       = nData % nBlockSize; //nData%nThreads;
+    auto pBlock       = data;
 
-    for (size_t i=0; i<nThreads; ++i)
+    size_t sum = 0;
+
+    for (size_t j=0; j<nBlocks; ++j)
     {
-        pool.enqueue([data, nBlock, start, scale, nBins, avoidZeros, &hist] {
+        size_t nBlockLen = nBlockSize;
+        if (j==0)
+            nBlockLen += nRem;
+        std::ostringstream oss;
+        oss << "Block " << j << " has length " << nBlockLen ;
+        logger.debug(oss.str());
+
+        pool.enqueue([pBlock, nBlockLen, start, scale, nBins, avoidZeros, &hist] {
+            kipl::logging::Logger tlogger("Histogram thread");
             int index;
 
             std::vector<size_t> temp_hist(nBins,0UL);
             
             if (avoidZeros)
             {
-                for (i=0; i<snData; i++) {
-                    if ( (data[i]!=0.0f) && std::isfinite(data[i]))
+                for (auto i=0; i<nBlockLen; i++)
+                {
+                    if ( (pBlock[i]!=0.0f) && std::isfinite(pBlock[i]))
                     {
-                        index=static_cast<int>((data[i]-start)*scale);
-                        if ((index<snBins) && (0<=index))
+                        index=static_cast<int>((pBlock[i]-start)*scale);
+                        if ((index<nBins) && (0<=index))
                             temp_hist[index]++;
+                        // else {
+                        //     std::ostringstream msg;
+                        //     msg << "Index out of range: " << index;  
+                        //     tlogger.debug(msg.str());
+                        // }
                     }
                 }
             }
             else
             {
-                for (i=0; i<snData; i++) {
-                    index=static_cast<int>((data[i]-start)*scale);
-                    if ((index<snBins) && (0<=index))
+                for (auto i=0; i<nBlockLen; i++) 
+                {
+                    index=static_cast<int>((pBlock[i]-start)*scale);
+                    if ((index<nBins) && (0<=index))
                         temp_hist[index]++;
+                    // else {
+                    //     std::ostringstream msg;
+                    //     msg << "Index out of range: " << index;  
+                    //     tlogger.debug(msg.str());
+                    // }
+                        
                 }
             }
+
             std::lock_guard<std::mutex> lock(histmtx);
             {
-                for (i=0; i<static_cast<int>(hist.size()); i++)
-                    hist[i]+=temp_hist[i];
+                // for (auto i=0; i<static_cast<int>(hist.size()); ++i)
+                //     hist[i]+=temp_hist[i];
+                std::transform(hist.begin(), hist.end(), temp_hist.begin(), hist.begin(), std::plus<size_t>());
             }
         });
+
+        pBlock += nBlockLen;
+        sum+=nBlockLen;
     }
 
     pool.barrier();
@@ -241,6 +279,7 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         binVal += binIncrement;
     }
 
+    std::cout << "Sum of all blocks: " << sum << std::endl;
     return 0;
 }
 
