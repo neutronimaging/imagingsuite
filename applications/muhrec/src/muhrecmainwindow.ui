@@ -153,22 +153,6 @@
                  </item>
                 </widget>
                </item>
-               <item row="4" column="8">
-                <widget class="QPushButton" name="buttonGetSkipList">
-                 <property name="toolTip">
-                  <string>Find the retake images in the projection data set</string>
-                 </property>
-                 <property name="whatsThis">
-                  <string/>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>Get skip list</string>
-                 </property>
-                </widget>
-               </item>
                <item row="5" column="7">
                 <widget class="QComboBox" name="comboRotateProjection">
                  <property name="toolTip">
@@ -444,16 +428,6 @@
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
-                <widget class="QCheckBox" name="checkBoxUseSkipList">
-                 <property name="toolTip">
-                  <string>The skip list allows you sort out bad projections that were retaken but remained in the image sequence.</string>
-                 </property>
-                 <property name="text">
-                  <string>Use skip list</string>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="8">
                 <widget class="QComboBox" name="comboBox_projectionCominationMethod">
                  <property name="currentIndex">
@@ -492,6 +466,41 @@
                  <item>
                   <property name="text">
                    <string>Max</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QPushButton" name="buttonGetSkipList">
+                 <property name="toolTip">
+                  <string>Find the retake images in the projection data set</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string>Get skip list</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="8">
+                <widget class="QComboBox" name="comboBox_skiplist">
+                 <item>
+                  <property name="text">
+                   <string>All projections</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Skip projections</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Drop projections</string>
                   </property>
                  </item>
                 </widget>
@@ -2470,7 +2479,7 @@
      <x>0</x>
      <y>0</y>
      <width>1343</width>
-     <height>37</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
