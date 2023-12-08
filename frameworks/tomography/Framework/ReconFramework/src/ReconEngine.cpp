@@ -116,7 +116,7 @@ void ReconEngine::SetConfig(ReconConfig &config)
 
     //kipl::strings::filenames::MakeFileName(m_Config.ProjectionInfo.sFileMask,m_Config.ProjectionInfo.nFirstIndex,fname,ext,'#','0');
     std::map<float, ProjectionInfo> ProjectionList;
-    BuildFileList( &m_Config, &ProjectionList);
+    BuildFileList( m_Config, ProjectionList);
 
     fname = ProjectionList.begin()->second.name;
 
@@ -287,7 +287,7 @@ int ReconEngine::Run()
 
 	std::stringstream msg;
 
-	BuildFileList(&m_Config,&m_ProjectionList);
+	BuildFileList(m_Config,m_ProjectionList);
 
 	size_t roi[4]={
 		m_Config.ProjectionInfo.roi[0],

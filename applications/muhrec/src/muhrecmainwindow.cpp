@@ -350,7 +350,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         std::map<float,ProjectionInfo> fileList;
         if (ui->comboBox_projectionViewer->currentIndex() == 0)
-            BuildFileList(&m_Config,&fileList);
+            BuildFileList(m_Config,fileList);
         else
             BuildFileList(m_sPreviewMask,"",m_nPreviewFirst,m_nPreviewLast,1,
                           m_Config.ProjectionInfo.fScanArc,

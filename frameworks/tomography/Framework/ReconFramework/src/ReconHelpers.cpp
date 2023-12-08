@@ -17,16 +17,15 @@
 
 //#define EQUIDISTANT_WEIGHTS
 
-bool BuildFileList( ReconConfig const * const config, 
-                    std::map<float, ProjectionInfo>  * ProjectionList, 
-                    bool ignore_skiplist, 
+bool BuildFileList( const ReconConfig & config, 
+                    std::map<float, ProjectionInfo>  & ProjectionList, 
                     char eolchar)
 {
 	kipl::logging::Logger logger("BuildFileList");
 	std::ostringstream msg;
-    msg<<config->ProjectionInfo.nlSkipList.size()<<" projections will be skipped";
+    msg<<config.ProjectionInfo.nlSkipList.size()<<" projections will be skipped";
     logger.debug(msg.str());
-	ProjectionList->clear();
+	ProjectionList.clear();
 
     std::multimap<float, ProjectionInfo> multiProjectionList;
 
@@ -35,14 +34,14 @@ bool BuildFileList( ReconConfig const * const config,
     std::string fname;
     std::string ext;
 
-    auto exttype = readers::GetFileExtensionType(config->ProjectionInfo.sFileMask);
+    auto exttype = readers::GetFileExtensionType(config.ProjectionInfo.sFileMask);
 
     if ((exttype==readers::ExtensionLST) ||
         (exttype==readers::ExtensionTXT) ||
         (exttype==readers::ExtensionCSV))
     {
-        logger(logger.LogMessage,"Using list file");
-        fname=config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask;
+        logger.message("Using list file");
+        fname=config.ProjectionInfo.sPath+config.ProjectionInfo.sFileMask;
         std::ifstream listfile(fname.c_str());
 
         if (listfile.fail())
@@ -52,15 +51,15 @@ bool BuildFileList( ReconConfig const * const config,
         char cline[2048];
         size_t line_cnt=1;
         listfile.getline(cline,2048);
-        while ((line_cnt < config->ProjectionInfo.nFirstIndex) && !listfile.eof())
+        while ((line_cnt < config.ProjectionInfo.nFirstIndex) && !listfile.eof())
         {
             line_cnt++;
             listfile.getline(cline,2048,eolchar);
-            logger(logger.LogMessage,cline);
+            logger.message(cline);
 
         }
 
-        while ((line_cnt <= config->ProjectionInfo.nLastIndex) && !listfile.eof())
+        while ((line_cnt <= config.ProjectionInfo.nLastIndex) && !listfile.eof())
         {
             line_cnt++;
             line=cline;
@@ -70,7 +69,7 @@ bool BuildFileList( ReconConfig const * const config,
             fname=fname.substr(fname.find_first_not_of("\t "));
             fname=fname.substr(0,fname.find_first_of("\n\r"));
 
-            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config->ProjectionInfo.sPath+fname,angle)));
+            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config.ProjectionInfo.sPath+fname,angle)));
             listfile.getline(cline,2048,eolchar);
         }
         listfile.close();
@@ -79,42 +78,57 @@ bool BuildFileList( ReconConfig const * const config,
     else
     {
         size_t skip=0;
-        switch (config->ProjectionInfo.scantype)
+        switch (config.ProjectionInfo.scantype)
         {
             case ReconConfig::cProjections::SequentialScan :
                {
-                    const float fAngleStep=(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0])/
-                            static_cast<float>(config->ProjectionInfo.nLastIndex-config->ProjectionInfo.nFirstIndex);
+                    size_t nCountAdjust = config.ProjectionInfo.skipListMode == ReconConfig::cProjections::SkipMode_Drop ? config.ProjectionInfo.nlSkipList.size() : 0;
+                    const float fAngleStep  = (config.ProjectionInfo.fScanArc[1]-config.ProjectionInfo.fScanArc[0])/
+                                               static_cast<float>(config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex-nCountAdjust);
 
-                    for (size_t i=config->ProjectionInfo.nFirstIndex;
-                        (i<=config->ProjectionInfo.nLastIndex);
-                        i+=config->ProjectionInfo.nProjectionStep)
+                    float angle=0.0f;
+
+                    for (size_t i=config.ProjectionInfo.nFirstIndex;
+                        (i<=config.ProjectionInfo.nLastIndex);
+                        i+=config.ProjectionInfo.nProjectionStep)
                     {
-                        if (!ignore_skiplist)
+                        while (config.ProjectionInfo.nlSkipList.find(i) != config.ProjectionInfo.nlSkipList.end()) // Loop until no more skips
                         {
-                            while (config->ProjectionInfo.nlSkipList.find(i)!=config->ProjectionInfo.nlSkipList.end())
+                            switch (config.ProjectionInfo.skipListMode)
                             {
-                                msg.str("");
-                                msg<<"Skipped projection "<<i;
-                                logger.message(msg.str());
-                                i++;
-                                skip++;
+                                case ReconConfig::cProjections::SkipMode_None:
+                                    break;
+                                case ReconConfig::cProjections::SkipMode_Skip:
+                                    if (config.ProjectionInfo.nlSkipList.find(i) != config.ProjectionInfo.nlSkipList.end())
+                                    {
+                                        logger.message("Skipped projection "+std::to_string(i));
+                                        i+=config.ProjectionInfo.nProjectionStep;
+                                    }
+                                    break;
+                                case ReconConfig::cProjections::SkipMode_Drop:
+                                    if (config.ProjectionInfo.nlSkipList.find(i) != config.ProjectionInfo.nlSkipList.end())
+                                    {
+                                        logger.message("Dropped projection " + std::to_string(i));
+                                        ++i;
+                                        ++skip;
+                                    }
+                                    break;
+                                default:
+                                    throw ReconException("Unknown skip list mode in BuildFileList",__FILE__,__LINE__);
                             }
                         }
 
+                        angle=(i-config.ProjectionInfo.nFirstIndex-skip)*fAngleStep+config.ProjectionInfo.fScanArc[0];
 
-						kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
-						float angle=(i-config->ProjectionInfo.nFirstIndex)*fAngleStep+config->ProjectionInfo.fScanArc[0];
-
-//                        auto exttype = readers::GetFileExtensionType(config->ProjectionInfo.sFileMask);
-
+						kipl::strings::filenames::MakeFileName(config.ProjectionInfo.sPath+config.ProjectionInfo.sFileMask,i,fname,ext,'#','0');
+						
                         if ( exttype != readers::ExtensionHDF5 )
                         {
                             multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(fname,angle)));
                         }
                         else
                         {
-                            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config->ProjectionInfo.sFileMask,angle)));
+                            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config.ProjectionInfo.sFileMask,angle)));
                         }
 					}
 				}
@@ -123,63 +137,63 @@ bool BuildFileList( ReconConfig const * const config,
             case ReconConfig::cProjections::InvGoldenSectionScan :
                 {
                     float fGoldenSection=0.5f*(1.0f+sqrt(5.0f));
-                    if (config->ProjectionInfo.scantype == ReconConfig::cProjections::InvGoldenSectionScan)
+                    if (config.ProjectionInfo.scantype == ReconConfig::cProjections::InvGoldenSectionScan)
                         fGoldenSection = 1.0f/fGoldenSection;
 
-					float arc=config->ProjectionInfo.fScanArc[1];
+					float arc=config.ProjectionInfo.fScanArc[1];
 					if ((arc!=180.0f) && (arc!=360.0f))
 						throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
 
-                    for (size_t i=0; i<config->ProjectionInfo.nFirstIndex; i++)
+                    // Fixing the skips before the first projection
+                    for (size_t i=0; i<config.ProjectionInfo.nFirstIndex; i++)
                     {
-                        if (!ignore_skiplist)
+                        switch (config.ProjectionInfo.skipListMode) 
                         {
-                            if (config->ProjectionInfo.nlSkipList.find(i)!=config->ProjectionInfo.nlSkipList.end())
-                            {
-                                msg.str("");
-                                msg<<"Skipped projection "<<i;
-                                logger.message(msg.str());
-                                i++;
-                                skip++;
-                            }
+                            case ReconConfig::cProjections::SkipMode_None: break;
+                            case ReconConfig::cProjections::SkipMode_Skip: 
+                                logger.message("Skipped projection "+std::to_string(i));
+                                ++i;
+                            break;
+                            case ReconConfig::cProjections::SkipMode_Drop:
+                                logger.message("Dropped projection "+std::to_string(i)); 
+                                ++i;
+                                ++skip;
+                            break;
                         }
 					}
 
-					for (size_t i=config->ProjectionInfo.nFirstIndex;
-                        (i<=(config->ProjectionInfo.nLastIndex+skip));
+					for (size_t i=config.ProjectionInfo.nFirstIndex;
+                        (i<=(config.ProjectionInfo.nLastIndex+skip));
 						i++)
 					{
-                        if (!ignore_skiplist)
+                        switch (config.ProjectionInfo.skipListMode) 
                         {
-                            while (config->ProjectionInfo.nlSkipList.find(i)!=config->ProjectionInfo.nlSkipList.end())
-                            {
-                                msg.str("");
-                                msg<<"Skipped projection "<<i;
-                                logger.message(msg.str());
-                                i++;
-                                skip++;
-                            }
+                            case ReconConfig::cProjections::SkipMode_None: break;
+                            case ReconConfig::cProjections::SkipMode_Skip: 
+                                logger.message("Skipped projection "+std::to_string(i));
+                                ++i;
+                            break;
+                            case ReconConfig::cProjections::SkipMode_Drop:
+                                logger.message("Dropped projection "+std::to_string(i)); 
+                                ++i;
+                                ++skip;
+                            break;
                         }
 
-                        kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
+                        kipl::strings::filenames::MakeFileName(config.ProjectionInfo.sPath+config.ProjectionInfo.sFileMask,i,fname,ext,'#','0');
 
-//                        int idx = i - config->ProjectionInfo.nFirstIndex
-//                                    - config->ProjectionInfo.nGoldenStartIdx
-//                                    - skip ;
-
-                        int idx = i - config->ProjectionInfo.nGoldenStartIdx
+                        int idx = i - config.ProjectionInfo.nGoldenStartIdx
                                     - skip ;
 
                         float angle=static_cast<float>(fmod(static_cast<float>(idx)*fGoldenSection*180.0f,arc)); // TODO Update equation to handle 360 deg scans
 
-//                        auto exttype = readers::GetFileExtensionType(config->ProjectionInfo.sFileMask);
                         if (exttype != readers::ExtensionHDF5 )
                         {
                             multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(fname,angle)));
                         }
                         else
                         {
-                            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config->ProjectionInfo.sFileMask,angle)));
+                            multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(config.ProjectionInfo.sFileMask,angle)));
                         }
 					}
 				}
@@ -191,7 +205,7 @@ bool BuildFileList( ReconConfig const * const config,
 	}
 
     ComputeWeights(config,multiProjectionList,ProjectionList);
-    msg.str(""); msg<<"proj list size="<<ProjectionList->size();
+    msg.str(""); msg<<"proj list size="<<ProjectionList.size();
     logger.verbose(msg.str());
 
 	return sequence;
@@ -388,15 +402,18 @@ bool BuildFileList( std::string sFileMask,
     return sequence;
 }
 
-int ComputeWeights(ReconConfig const * const config, std::multimap<float, ProjectionInfo> &multiProjectionList, std::map<float, ProjectionInfo>  * ProjectionList)
+int ComputeWeights(const ReconConfig & config, 
+std::multimap<float, ProjectionInfo> &multiProjectionList, 
+std::map<float, ProjectionInfo>  & ProjectionList)
 {
     kipl::logging::Logger logger("ComputeWeights");
-    if (multiProjectionList.size()<3) {
-        for (auto it=multiProjectionList.begin(); it!=multiProjectionList.end(); ++it)
+    if (multiProjectionList.size()<3) 
+    {
+        for (const auto & item : multiProjectionList)
         {
-            ProjectionInfo info=(*it).second;
+            ProjectionInfo info=item.second;
             info.weight=1.0/multiProjectionList.size();
-            ProjectionList->insert(std::make_pair((*it).first,info));
+            ProjectionList.insert(std::make_pair(item.first,info));
         }
         return 0;
     }
@@ -419,7 +436,7 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
 
     //
     // Compute weights for list start and end
-    if (175.0f<(config->ProjectionInfo.fScanArc[1]-config->ProjectionInfo.fScanArc[0]))
+    if (175.0f<(config.ProjectionInfo.fScanArc[1]-config.ProjectionInfo.fScanArc[0]))
     {
         logger(kipl::logging::Logger::LogDebug,"Normal arc");
         // Compute last weight
@@ -437,8 +454,8 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
         q0=q1;
         q1=q2++;
         if (repeatedLast
-                || config->ProjectionInfo.scantype==config->ProjectionInfo.GoldenSectionScan
-                || config->ProjectionInfo.scantype==config->ProjectionInfo.InvGoldenSectionScan)
+                || config.ProjectionInfo.scantype == config.ProjectionInfo.GoldenSectionScan
+                || config.ProjectionInfo.scantype == config.ProjectionInfo.InvGoldenSectionScan)
         {
             q1->second.weight=((q2->first)-(q0->first-180))/360.0f;
         }
@@ -447,7 +464,7 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
     }
     else
     {
-        logger(kipl::logging::Logger::LogDebug,"Short arc");
+        logger.debug("Short arc");
 
         q0=q2=multiProjectionList.begin();
         q2++;
@@ -508,9 +525,11 @@ int ComputeWeights(ReconConfig const * const config, std::multimap<float, Projec
 
     if (fabs(sum-0.5f)<0.001f)
     {
-        for (auto it=ProjectionList2.begin(); it!=ProjectionList2.end(); ++it)
-            it->second.weight*=2;
+        for (auto & item : ProjectionList2)
+            item.second.weight*=2;
     }
-    *ProjectionList=ProjectionList2;
+
+    ProjectionList=ProjectionList2;
+    
     return 0;
 }
