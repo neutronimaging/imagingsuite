@@ -364,6 +364,7 @@ if (UNIX)
             OpenMP::OpenMP_CXX
             LibXml2::LibXml2
             TIFF::TIFF
+            #${TIFF_LIBRARIES}
             ${LAPACK_LIBRARIES}
             ${BLAS_LIBRARIES}
             ${ARMADILLO_LIBRARIES}
@@ -377,6 +378,7 @@ if (UNIX)
             PUBLIC
                 LibXml2::LibXml2
                 TIFF::TIFF
+                #${TIFF_LIBRARIES}
                 ${LAPACK_LIBRARIES}
                 ${BLAS_LIBRARIES}
                 ${ARMADILLO_LIBRARIES}
