@@ -1958,6 +1958,13 @@
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="pushButton_levels999p">
+               <property name="text">
+                <string>99.5%</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer name="horizontalSpacer_5">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -2470,7 +2477,7 @@
      <x>0</x>
      <y>0</y>
      <width>1343</width>
-     <height>37</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
