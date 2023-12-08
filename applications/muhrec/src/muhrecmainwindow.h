@@ -87,6 +87,7 @@ protected:
     void ComputeVolumeSizeSpacing();
     void ComputeVolumeSize();
     void ComputeVoxelSpacing();
+    void set_slicelevels(float level);
 
 private slots:
     void on_buttonBrowseReference_clicked();
@@ -189,6 +190,8 @@ private slots:
 
     void on_pushButton_levels99p_clicked();
 
+    void on_pushButton_levels999p_clicked();
+    
     void on_checkBoxUseSkipList_toggled(bool checked);
 
     void on_pushButtonGetSliceROI_clicked();
@@ -240,6 +243,8 @@ private slots:
     void on_spinDarkCount_valueChanged(int arg1);
 
     void on_actionConvert_files_triggered();
+
+    
 
 private:
     // Data members
