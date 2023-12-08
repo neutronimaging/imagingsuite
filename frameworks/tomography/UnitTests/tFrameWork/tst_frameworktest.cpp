@@ -26,7 +26,7 @@ public:
     std::vector<float> goldenAngles(int n, int start, float arc);
     std::vector<float> invGoldenAngles(int n, int start, float arc);
 
-private Q_SLOTS:
+private slots:
     void testProjectionReader();
     void testBuildFileList_GeneratedSequence();
     void testBuildFileList_GeneratedGolden();

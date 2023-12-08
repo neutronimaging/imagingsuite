@@ -87,6 +87,7 @@ protected:
     void ComputeVolumeSizeSpacing();
     void ComputeVolumeSize();
     void ComputeVoxelSpacing();
+    void set_slicelevels(float level);
 
 private slots:
     void on_buttonBrowseReference_clicked();
@@ -183,6 +184,8 @@ private slots:
 
     void on_pushButton_levels99p_clicked();
 
+    void on_pushButton_levels999p_clicked();
+    
     void on_pushButtonGetSliceROI_clicked();
 
     void on_comboDataSequence_currentIndexChanged(int index);

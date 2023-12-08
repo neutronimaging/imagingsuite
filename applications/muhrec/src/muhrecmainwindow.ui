@@ -1967,6 +1967,13 @@
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="pushButton_levels999p">
+               <property name="text">
+                <string>99.5%</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer name="horizontalSpacer_5">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
