@@ -22,7 +22,7 @@ include_directories(
      ../../../../core/modules/ModuleConfig/include
     ../../../../core/kipl/kipl/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
-    # ../../../../../ExternalDependencies/macos/include
+    ../../../../../ExternalDependencies/macos/include
 )
 
 set(SRC_FILES
