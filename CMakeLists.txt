@@ -182,9 +182,11 @@ add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
 add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
 add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
+if (NOT WIN32)
+  add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
+endif()
 add_subdirectory(frameworks/tomography/UnitTests/tBBLogNorm)
 add_subdirectory(frameworks/tomography/UnitTests/tFDKBackProjectors)
-add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
 add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
 # add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
 add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)

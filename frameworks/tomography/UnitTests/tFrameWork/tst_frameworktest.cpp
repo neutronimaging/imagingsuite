@@ -19,6 +19,7 @@
 
 class FrameWorkTest : public QObject
 {
+    
     Q_OBJECT
 
 public:

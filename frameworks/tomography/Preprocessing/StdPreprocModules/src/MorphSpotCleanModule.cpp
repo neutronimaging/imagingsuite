@@ -1,5 +1,4 @@
 //<LICENSE>
-//#include "stdafx.h"
 #include <thread>
 #include <cstdlib>
 #include <functional>
