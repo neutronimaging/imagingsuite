@@ -1,5 +1,4 @@
 //<LICENSE>
-//#include "stdafx.h"
 #include <thread>
 #include <cstdlib>
 #include <functional>
@@ -155,14 +154,25 @@ int MorphSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::ma
 
     if (m_bThreading)
     {
-        if (m_bModuleThreading)
-        {
-            ProcessParallelStd(img);
-        }
-        else
-        {
-            ProcessParallelByCleaner(img);
-        }
+        ImagingAlgorithms::MorphSpotClean cleaner;
+
+        cleaner.useThreading(m_bThreading);
+        cleaner.setNumberOfThreads(-1);
+        cleaner.setCleanMethod(m_eDetectionMethod,m_eCleanMethod);
+        cleaner.setConnectivity(m_eConnectivity);
+        cleaner.setLimits(m_bClampData,m_fMinLevel,m_fMaxLevel,m_nMaxArea);
+        cleaner.setCleanInfNan(m_bRemoveInfNaN);
+        cleaner.setThresholdByFraction(m_bThresholdByFraction);
+    
+        cleaner.process(img,m_fThreshold,m_fSigma);
+        // if (m_bModuleThreading)
+        // {
+        //     ProcessParallelStd(img);
+        // }
+        // else
+        // {
+        //     ProcessParallelByCleaner(img);
+        // }
     }
     else
         ProcessSingle(img);

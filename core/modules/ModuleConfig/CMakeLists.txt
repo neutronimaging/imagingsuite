@@ -35,7 +35,7 @@ set(INC_FILES
 
 set(SRC_FILES
   src/publication.cpp 
-  src/stdafx.cpp 
+  # src/stdafx.cpp 
   src/ProcessModuleBase.cpp 
   src/ParameterHandling.cpp 
   src/ModuleItemBase.cpp 

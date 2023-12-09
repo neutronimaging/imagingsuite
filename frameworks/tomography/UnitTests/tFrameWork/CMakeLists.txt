@@ -22,12 +22,11 @@ include_directories(
      ../../../../core/modules/ModuleConfig/include
     ../../../../core/kipl/kipl/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
 )
 
 set(SRC_FILES
-    tst_frameworktest.cpp
-    stdafx.cpp)
+    tst_frameworktest.cpp)
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 

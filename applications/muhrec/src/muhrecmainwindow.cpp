@@ -168,6 +168,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     UpdateCBCTDistances();
     ui->label_projPerView->setVisible(false);
     ui->spinBox_projPerView->setVisible(false);
+    ui->comboBox_projectionCominationMethod->setVisible(false);
 }
 
 MuhRecMainWindow::~MuhRecMainWindow()
@@ -349,7 +350,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         std::map<float,ProjectionInfo> fileList;
         if (ui->comboBox_projectionViewer->currentIndex() == 0)
-            BuildFileList(&m_Config,&fileList);
+            BuildFileList(m_Config,fileList);
         else
             BuildFileList(m_sPreviewMask,"",m_nPreviewFirst,m_nPreviewLast,1,
                           m_Config.ProjectionInfo.fScanArc,
@@ -1178,7 +1179,7 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     PreviewProjection(); // Display the projection if it was not done already
                     ui->tabMainControl->setCurrentIndex(3);
 
-                    const int nBins=1024;
+                    const int nBins=256;
                     std::vector<float>     x;
                     std::vector<size_t>    y;
                     m_pEngine->GetHistogram(x,y,nBins);
@@ -1492,14 +1493,13 @@ void MuhRecMainWindow::UpdateDialog()
         for (it=m_Config.ProjectionInfo.nlSkipList.begin(); it!=m_Config.ProjectionInfo.nlSkipList.end(); it++)
             str<<*it<<" ";
         ui->editProjectionSkipList->setText(QString::fromStdString(str.str()));
-        ui->checkBoxUseSkipList->setChecked(true);
-        on_checkBoxUseSkipList_toggled(true);
     }
     else {
-        ui->checkBoxUseSkipList->setChecked(false);
         ui->editProjectionSkipList->clear();
-        on_checkBoxUseSkipList_toggled(false);
     }
+    ui->comboBox_skiplist->setCurrentIndex(static_cast<int>(m_Config.ProjectionInfo.skipListMode));
+    on_comboBox_skiplist_currentIndexChanged(static_cast<int>(m_Config.ProjectionInfo.skipListMode));
+
     ui->ConfiguratorBackProj->SetModule(m_Config.backprojector);
 
     ui->dspinSDD->setValue(m_Config.ProjectionInfo.fSDD);
@@ -1564,11 +1564,14 @@ void MuhRecMainWindow::UpdateConfig()
 
     m_Config.ProjectionInfo.nDCFirstIndex      = static_cast<size_t>(ui->spinFirstDark->value());
     m_Config.ProjectionInfo.nDCCount           = static_cast<size_t>(ui->spinDarkCount->value());
+    
+    m_Config.ProjectionInfo.skipListMode = static_cast<ReconConfig::cProjections::eSkipListMode>(ui->comboBox_skiplist->currentIndex());
     std::string str=ui->editProjectionSkipList->text().toStdString();
-    if (!str.empty() && ui->checkBoxUseSkipList->isChecked())
+    if (!str.empty())
         kipl::strings::String2Set(str,m_Config.ProjectionInfo.nlSkipList);
     else
         m_Config.ProjectionInfo.nlSkipList.clear();
+    
 
     ui->widgetDoseROI->getROI(m_Config.ProjectionInfo.dose_roi);
     ui->widgetProjectionROI->getROI(m_Config.ProjectionInfo.projection_roi);
@@ -2714,11 +2717,6 @@ void MuhRecMainWindow::set_slicelevels(float level)
 
 }
 
-void MuhRecMainWindow::on_checkBoxUseSkipList_toggled(bool checked)
-{
-    ui->buttonGetSkipList->setVisible(checked);
-    ui->editProjectionSkipList->setVisible(checked);
-}
 
 void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
 {
@@ -3075,5 +3073,19 @@ void MuhRecMainWindow::on_actionConvert_files_triggered()
     dlg.exec();
 }
 
+void MuhRecMainWindow::on_comboBox_skiplist_currentIndexChanged(int index)
+{
+    if (index == 0)
+    {
+        ui->editProjectionSkipList->setVisible(false);
+        ui->buttonGetSkipList->setVisible(false);
+    }
+    else
+    {
+        ui->editProjectionSkipList->setVisible(true);
+        ui->buttonGetSkipList->setVisible(true);
 
+    }
+
+}
 

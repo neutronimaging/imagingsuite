@@ -68,39 +68,6 @@
                <string>Projection images</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_2">
-               <item row="2" column="8">
-                <widget class="QComboBox" name="comboProjectionStyle">
-                 <property name="toolTip">
-                  <string>Data representation in the images</string>
-                 </property>
-                 <property name="whatsThis">
-                  <string/>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Projection</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Sinogram</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Same projection</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Same slice</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
                <item row="5" column="2">
                 <widget class="QSpinBox" name="spinProjectionBinning">
                  <property name="toolTip">
@@ -120,43 +87,20 @@
                  </property>
                 </widget>
                </item>
-               <item row="5" column="5">
-                <widget class="QComboBox" name="comboFlipProjection">
+               <item row="4" column="2" colspan="6">
+                <widget class="QLineEdit" name="editProjectionSkipList">
                  <property name="toolTip">
-                  <string>Mirror the projection in different directions</string>
-                 </property>
-                 <property name="whatsThis">
-                  <string/>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Space separated list of projection indices to exclude from the projection data. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
-                 <item>
-                  <property name="text">
-                   <string>No flip</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Horizontal flip</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Vertical flip</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Horizontal and vertical flip</string>
-                  </property>
-                 </item>
                 </widget>
                </item>
-               <item row="4" column="8">
+               <item row="4" column="0">
                 <widget class="QPushButton" name="buttonGetSkipList">
                  <property name="toolTip">
-                  <string>Find the retake images in the projection data set</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Find which projections to exclude from the projection data set.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="whatsThis">
                   <string/>
@@ -167,6 +111,74 @@
                  <property name="text">
                   <string>Get skip list</string>
                  </property>
+                </widget>
+               </item>
+               <item row="6" column="5">
+                <spacer name="verticalSpacer_5">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="0" column="2" colspan="6">
+                <widget class="QLineEdit" name="editProjectionMask">
+                 <property name="toolTip">
+                  <string>File mask of the projection images (Format: file_####.ext)</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="8">
+                <widget class="QComboBox" name="comboBox_projectionCominationMethod">
+                 <property name="currentIndex">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Single</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Sum</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Average</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Median</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Weighted average</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Min</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Max</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="5" column="7">
@@ -202,10 +214,26 @@
                  </item>
                 </widget>
                </item>
-               <item row="0" column="2" colspan="6">
-                <widget class="QLineEdit" name="editProjectionMask">
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
+                 <property name="text">
+                  <string>File index</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="8">
+                <widget class="QPushButton" name="buttonPreview">
                  <property name="toolTip">
-                  <string>File mask of the projection images (Format: file_####.ext)</string>
+                  <string>Preview the projection</string>
                  </property>
                  <property name="whatsThis">
                   <string/>
@@ -213,15 +241,11 @@
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
-                </widget>
-               </item>
-               <item row="4" column="2" colspan="6">
-                <widget class="QLineEdit" name="editProjectionSkipList">
-                 <property name="toolTip">
-                  <string>Space separated list of projection indices to skip from the projection data. Retake removal.</string>
+                 <property name="text">
+                  <string>Preview</string>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
+                 <property name="shortcut">
+                  <string>Meta+P</string>
                  </property>
                 </widget>
                </item>
@@ -380,39 +404,10 @@
                  </property>
                 </widget>
                </item>
-               <item row="6" column="5">
-                <spacer name="verticalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_8">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>File index</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="8">
-                <widget class="QPushButton" name="buttonPreview">
+               <item row="5" column="5">
+                <widget class="QComboBox" name="comboFlipProjection">
                  <property name="toolTip">
-                  <string>Preview the projection</string>
+                  <string>Mirror the projection in different directions</string>
                  </property>
                  <property name="whatsThis">
                   <string/>
@@ -420,12 +415,26 @@
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
-                 <property name="text">
-                  <string>Preview</string>
-                 </property>
-                 <property name="shortcut">
-                  <string>Meta+P</string>
-                 </property>
+                 <item>
+                  <property name="text">
+                   <string>No flip</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Horizontal flip</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Vertical flip</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Horizontal and vertical flip</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="0" column="8">
@@ -444,54 +453,60 @@
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
-                <widget class="QCheckBox" name="checkBoxUseSkipList">
+               <item row="4" column="8">
+                <widget class="QComboBox" name="comboBox_skiplist">
                  <property name="toolTip">
-                  <string>The skip list allows you sort out bad projections that were retaken but remained in the image sequence.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select if some projections should be excluded from the index sequence.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;All projections:&lt;/span&gt; No exclusions&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Drop projections:&lt;/span&gt; Use this option to exclude retakes&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Skip projections:&lt;/span&gt; Use this option to exclude under exposed projections. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
-                 <property name="text">
-                  <string>Use skip list</string>
+                 <property name="locale">
+                  <locale language="English" country="UnitedStates"/>
                  </property>
+                 <item>
+                  <property name="text">
+                   <string>All projections</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Skip projections</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Drop projections</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
-               <item row="1" column="8">
-                <widget class="QComboBox" name="comboBox_projectionCominationMethod">
-                 <property name="currentIndex">
-                  <number>0</number>
+               <item row="2" column="8">
+                <widget class="QComboBox" name="comboProjectionStyle">
+                 <property name="toolTip">
+                  <string>Data representation in the images</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true"/>
                  </property>
                  <item>
                   <property name="text">
-                   <string>Single</string>
+                   <string>Projection</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Sum</string>
+                   <string>Sinogram</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Average</string>
+                   <string>Same projection</string>
                   </property>
                  </item>
                  <item>
                   <property name="text">
-                   <string>Median</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Weighted average</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Min</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Max</string>
+                   <string>Same slice</string>
                   </property>
                  </item>
                 </widget>
@@ -524,7 +539,7 @@
                <item row="0" column="2">
                 <widget class="QPushButton" name="buttonBrowseReference">
                  <property name="toolTip">
-                  <string>Browse for reference data</string>
+                  <string>Browse for open beam images. Use count 0 if don't have any.</string>
                  </property>
                  <property name="whatsThis">
                   <string>Browse for reference data path</string>
@@ -611,6 +626,9 @@
                </item>
                <item row="3" column="2">
                 <widget class="QPushButton" name="buttonBrowseDC">
+                 <property name="toolTip">
+                  <string>Browse for dark current images. Use count 0 if you don't have any.</string>
+                 </property>
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
@@ -974,6 +992,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="pushButtonGetSliceROI">
+               <property name="toolTip">
+                <string>Make a selection in the projection viewer to get the slices to reconstruct.</string>
+               </property>
                <property name="text">
                 <string>Get slice interval</string>
                </property>
@@ -1098,6 +1119,9 @@
             <layout class="QHBoxLayout" name="horizontalLayout_19">
              <item>
               <widget class="QGroupBox" name="groupBox_scanArc">
+               <property name="toolTip">
+                <string>Select angle interval of the scan</string>
+               </property>
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
@@ -1553,6 +1577,9 @@
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
               <widget class="QRadioButton" name="radioButton_SOD">
+               <property name="toolTip">
+                <string>Set SOD to be calculated.</string>
+               </property>
                <property name="text">
                 <string>Source to object</string>
                </property>
@@ -1576,6 +1603,9 @@
              </item>
              <item>
               <widget class="QRadioButton" name="radioButton_SDD">
+               <property name="toolTip">
+                <string>Set SDD to be calculated.</string>
+               </property>
                <property name="text">
                 <string>Source to Detector</string>
                </property>
@@ -1599,6 +1629,9 @@
              </item>
              <item>
               <widget class="QRadioButton" name="radioButton_Magnification">
+               <property name="toolTip">
+                <string>Set the magnification to be calculated.</string>
+               </property>
                <property name="text">
                 <string>Magnification</string>
                </property>
@@ -1609,6 +1642,9 @@
              </item>
              <item>
               <widget class="QDoubleSpinBox" name="doubleSpinBox_magnification">
+               <property name="toolTip">
+                <string>The magnification of the current geometry.</string>
+               </property>
                <property name="decimals">
                 <number>4</number>
                </property>
@@ -1959,6 +1995,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_levels999p">
+               <property name="toolTip">
+                <string>Preset for the 99.5% gray level interval.</string>
+               </property>
                <property name="text">
                 <string>99.5%</string>
                </property>
@@ -2023,6 +2062,9 @@
                   <height>71</height>
                  </rect>
                 </property>
+                <property name="toolTip">
+                 <string>Reconstruction rotation dial.</string>
+                </property>
                 <property name="minimum">
                  <number>-1800</number>
                 </property>
@@ -2047,6 +2089,9 @@
                   <width>82</width>
                   <height>24</height>
                  </rect>
+                </property>
+                <property name="toolTip">
+                 <string>Set the rotation of the reconstructed image.</string>
                 </property>
                 <property name="wrapping">
                  <bool>true</bool>
@@ -2216,7 +2261,7 @@
            <item row="0" column="2">
             <widget class="QPushButton" name="buttonBrowseDestinationPath">
              <property name="toolTip">
-              <string>Browse for destination path</string>
+              <string>Browse for destination path for the reconstructed slices.</string>
              </property>
              <property name="text">
               <string>Browse</string>

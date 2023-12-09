@@ -120,12 +120,6 @@ private slots:
 
     void on_dspinResolution_valueChanged(double arg1);
 
-//    void on_comboDirRotation_currentIndexChanged(int);
-
-//    void on_spinSubVolumeSizeZ0_valueChanged(int arg1);
-
-//    void on_spinSubVolumeSizeZ1_valueChanged(int arg1);
-
     void on_actionRegister_for_news_letter_triggered();
 
     void on_sliderProjections_sliderMoved(int position);
@@ -192,8 +186,6 @@ private slots:
 
     void on_pushButton_levels999p_clicked();
     
-    void on_checkBoxUseSkipList_toggled(bool checked);
-
     void on_pushButtonGetSliceROI_clicked();
 
     void on_comboDataSequence_currentIndexChanged(int index);
@@ -244,7 +236,7 @@ private slots:
 
     void on_actionConvert_files_triggered();
 
-    
+    void on_comboBox_skiplist_currentIndexChanged(int index);
 
 private:
     // Data members
