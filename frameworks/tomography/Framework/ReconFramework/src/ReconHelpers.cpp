@@ -41,7 +41,7 @@ bool BuildFileList( ReconConfig const * const config,
         (exttype==readers::ExtensionTXT) ||
         (exttype==readers::ExtensionCSV))
     {
-        logger(logger.LogMessage,"Using list file");
+        logger.message("Using list file");
         fname=config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask;
         std::ifstream listfile(fname.c_str());
 
@@ -163,16 +163,11 @@ bool BuildFileList( ReconConfig const * const config,
 
                         kipl::strings::filenames::MakeFileName(config->ProjectionInfo.sPath+config->ProjectionInfo.sFileMask,i,fname,ext,'#','0');
 
-//                        int idx = i - config->ProjectionInfo.nFirstIndex
-//                                    - config->ProjectionInfo.nGoldenStartIdx
-//                                    - skip ;
-
                         int idx = i - config->ProjectionInfo.nGoldenStartIdx
                                     - skip ;
 
                         float angle=static_cast<float>(fmod(static_cast<float>(idx)*fGoldenSection*180.0f,arc)); // TODO Update equation to handle 360 deg scans
 
-//                        auto exttype = readers::GetFileExtensionType(config->ProjectionInfo.sFileMask);
                         if (exttype != readers::ExtensionHDF5 )
                         {
                             multiProjectionList.insert(std::make_pair(fmod(angle,180.0f),ProjectionInfo(fname,angle)));
