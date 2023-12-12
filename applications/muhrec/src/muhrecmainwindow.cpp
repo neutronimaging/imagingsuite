@@ -350,7 +350,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         std::map<float,ProjectionInfo> fileList;
         if (ui->comboBox_projectionViewer->currentIndex() == 0)
-            BuildFileList(&m_Config,&fileList);
+            BuildFileList(m_Config,fileList);
         else
             BuildFileList(m_sPreviewMask,"",m_nPreviewFirst,m_nPreviewLast,1,
                           m_Config.ProjectionInfo.fScanArc,
@@ -2684,39 +2684,39 @@ void MuhRecMainWindow::on_sliceViewer_levelsChanged(float low, float high)
 
 void MuhRecMainWindow::on_pushButton_levels95p_clicked()
 {
-    if (m_pEngine!=nullptr) {
-        const int nBins=256;
-        std::vector<float> x;
-        std::vector<size_t> y;
-        m_pEngine->GetHistogram(x,y,nBins);
-
-        size_t lowlevel=0;
-        size_t highlevel=0;
-        kipl::base::FindLimits(y, 95.0, lowlevel, highlevel);
-        ui->dspinGrayLow->setValue(static_cast<double>(x[lowlevel]));
-        ui->dspinGrayHigh->setValue(static_cast<double>(x[highlevel]));
-    }
-    else
-        logger(logger.LogMessage,"Level 95%: Missing engine");
+    set_slicelevels(95.0f);
 }
 
 void MuhRecMainWindow::on_pushButton_levels99p_clicked()
 {
-    if (m_pEngine!=nullptr) {
-        const int nBins=256;
+    set_slicelevels(99.0f);
+}
+
+void MuhRecMainWindow::on_pushButton_levels999p_clicked()
+{
+    set_slicelevels(99.5f);
+}
+
+void MuhRecMainWindow::set_slicelevels(float level)
+{
+    if (m_pEngine!=nullptr) 
+    {
+        const int nBins=1024;
         std::vector<float> x;
         std::vector<size_t> y;
         m_pEngine->GetHistogram(x,y,nBins);
 
         size_t lowlevel=0;
         size_t highlevel=0;
-        kipl::base::FindLimits(y, 99.0, lowlevel, highlevel);
+        kipl::base::FindLimits(y, level, lowlevel, highlevel);
         ui->dspinGrayLow->setValue(x[lowlevel]);
         ui->dspinGrayHigh->setValue(x[highlevel]);
     }
     else
-        logger(logger.LogMessage,"Level 99%: Missing engine");
+        logger(logger.LogMessage,"Level " + std::to_string(level) + "%: Missing engine");
+
 }
+
 
 void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
 {

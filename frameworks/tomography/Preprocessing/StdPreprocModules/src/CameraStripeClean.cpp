@@ -1,4 +1,5 @@
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "../include/StdPreprocModules_global.h"
 #include "../include/CameraStripeClean.h"
 #include <ParameterHandling.h>

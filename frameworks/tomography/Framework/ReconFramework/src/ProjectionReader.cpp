@@ -913,7 +913,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
 	kipl::base::TImage<float,2> proj;
 
 	std::map<float, ProjectionInfo> ProjectionList;
-	BuildFileList( &config, &ProjectionList);
+	BuildFileList( config, ProjectionList);
     msg.str(""); msg<<config.WriteXML();
     logger.message(msg.str());
 

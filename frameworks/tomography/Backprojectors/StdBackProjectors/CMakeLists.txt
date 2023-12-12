@@ -48,14 +48,14 @@ set(INC_FILES
     include/NNMultiProjBP.h
     include/MultiProjBPparallel.h
     include/MultiProjBP.h
-    src/stdafx.h
+    # src/stdafx.h
     include/StdBackProjectors_global.h
 )
 
 set(SRC_FILES
 src/StdBackProjectors.cpp
     src/StdBackProjectorBase.cpp
-    src/stdafx.cpp
+    # src/stdafx.cpp
     src/NNMultiProjBP.cpp
     src/MultiProjBPparallel.cpp
     src/MultiProjBP.cpp

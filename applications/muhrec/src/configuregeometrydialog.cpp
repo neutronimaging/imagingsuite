@@ -559,7 +559,7 @@ int ConfigureGeometryDialog::LoadImages()
 
 
         std::map<float,ProjectionInfo> projlist;
-        BuildFileList(&m_Config,&projlist);
+        BuildFileList(m_Config,projlist);
 
         if (ui->radioButton_fromProjections->isChecked())
         {

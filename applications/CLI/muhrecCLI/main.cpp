@@ -1,9 +1,5 @@
 //<LICENSE>
 
-//#include "stdafx.h"
-//#include <QCoreApplication>
-//#include <QDir>
-
 #include <string>
 #include <filesystem>
 #include <strings/filenames.h>

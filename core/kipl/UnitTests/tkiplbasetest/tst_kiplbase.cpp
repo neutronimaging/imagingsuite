@@ -18,6 +18,7 @@
 #include <base/imagecast.h>
 #include <base/tpermuteimage.h>
 #include <base/kiplenums.h>
+#include <logging/logger.h>
 #include <io/io_tiff.h>
 #include <io/io_serializecontainers.h>
 
@@ -46,6 +47,8 @@ private Q_SLOTS:
     void testBivariateHistogramInitialize();
 
     void testBivariateHistogram();
+
+    void testHistogram();
 
     /// Tests cropping
     void testSubImage();
@@ -229,6 +232,28 @@ void Tkiplbase::testImageInfoResolutions()
     infoA.SetDPCMX(10.0f);
     QVERIFY(infoA.GetMetricX()  == 1.0f);
 
+}
+
+void Tkiplbase::testHistogram()
+{
+    kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
+
+    kipl::base::TImage<float,3> img({2101,1234,123});
+
+    for (size_t i=0; i<img.Size(); ++i)
+        img[i]=static_cast<float>(i);
+
+    std::vector<float> axis;
+    std::vector<size_t> hist;
+    QBENCHMARK {
+        kipl::base::Histogram(img.GetDataPtr(),img.Size(),1024UL,hist,axis,0.0f,0.0f,false);
+    }
+    
+    size_t cnt = 0UL;
+
+    cnt = std::accumulate(hist.begin(),hist.end(),0UL); 
+    
+    QCOMPARE(cnt,img.Size());
 }
 
 void Tkiplbase::testHighEntropyHistogram()
