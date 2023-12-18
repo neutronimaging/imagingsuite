@@ -152,6 +152,9 @@ add_subdirectory(core/kipl/UnitTests/tLinFit)
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+add_subdirectory(core/algorithms/ScatteringCorrection)
+add_subdirectory(core/algorithms/UnitTests/tScatteringCorrection/)
+
 
 add_subdirectory(core/algorithms/AdvancedFilters)
 # add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
