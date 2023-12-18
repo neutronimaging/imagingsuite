@@ -90,6 +90,24 @@ void PlotWidget::setCurveData(int id, const std::vector<float> &x, const std::ve
     setCurveData(id,series);
 }
 
+void PlotWidget::setCurveData(int id, const std::vector<float> &x, const std::vector<size_t> &y, QString name)
+{
+    QLineSeries *series=new QLineSeries();
+
+    if (x.size() != y.size())
+        throw kipl::base::DimsException("PlotWidget got size mismatch in the vector lengths",__FILE__,__LINE__);
+
+    auto itX = x.begin();
+    auto itY = y.begin();
+    for (; itX != x.end() ; ++itX, ++itY)
+        series->append(*itX,*itY);
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
+}
+
 void PlotWidget::setCurveData(int id, const std::map<float, float> &data, QString name)
 {
     QLineSeries *series=new QLineSeries();

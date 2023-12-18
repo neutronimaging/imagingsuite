@@ -35,7 +35,7 @@ set(INC_FILES
 
 set(SRC_FILES
   src/publication.cpp 
-  src/stdafx.cpp 
+  # src/stdafx.cpp 
   src/ProcessModuleBase.cpp 
   src/ParameterHandling.cpp 
   src/ModuleItemBase.cpp 
@@ -53,10 +53,10 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY)
 # target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY)
 
-add_definitions(-DHAVE_NEXUS)
+#add_definitions(-DHAVE_NEXUS)
 
 if (WIN32)
 target_link_directories(${TARGET_NAME} PRIVATE

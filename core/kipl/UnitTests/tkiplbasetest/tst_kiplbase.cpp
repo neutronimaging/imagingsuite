@@ -18,6 +18,7 @@
 #include <base/imagecast.h>
 #include <base/tpermuteimage.h>
 #include <base/kiplenums.h>
+#include <logging/logger.h>
 #include <io/io_tiff.h>
 #include <io/io_serializecontainers.h>
 
@@ -47,6 +48,8 @@ private Q_SLOTS:
 
     void testBivariateHistogram();
 
+    void testHistogram();
+
     /// Tests cropping
     void testSubImage();
 
@@ -67,6 +70,8 @@ private Q_SLOTS:
     void testTranspose();
     /// Test OS specifying enums
     void testOSenums();
+
+    void testRotationDirection();
 
 private:
     std::string data_path;
@@ -229,6 +234,28 @@ void Tkiplbase::testImageInfoResolutions()
     infoA.SetDPCMX(10.0f);
     QVERIFY(infoA.GetMetricX()  == 1.0f);
 
+}
+
+void Tkiplbase::testHistogram()
+{
+    kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
+
+    kipl::base::TImage<float,3> img({2101,1234,123});
+
+    for (size_t i=0; i<img.Size(); ++i)
+        img[i]=static_cast<float>(i);
+
+    std::vector<float> axis;
+    std::vector<size_t> hist;
+    QBENCHMARK {
+        kipl::base::Histogram(img.GetDataPtr(),img.Size(),1024UL,hist,axis,0.0f,0.0f,false);
+    }
+    
+    size_t cnt = 0UL;
+
+    cnt = std::accumulate(hist.begin(),hist.end(),0UL); 
+    
+    QCOMPARE(cnt,img.Size());
 }
 
 void Tkiplbase::testHighEntropyHistogram()
@@ -753,6 +780,30 @@ void Tkiplbase::testOSenums()
     QCOMPARE(oe,kipl::base::OSUnknown);
 
     QVERIFY_EXCEPTION_THROWN(string2enum("OSMacos",oe),kipl::base::KiplException);
+}
+// Test conversion of rotation direction to and from string, all combinations using QTest
+void Tkiplbase::testRotationDirection()
+{
+    QCOMPARE(enum2string(kipl::base::RotationDirCW),std::string("RotationDirCW"));
+    QCOMPARE(enum2string(kipl::base::RotationDirCCW),std::string("RotationDirCCW"));
+
+    kipl::base::eRotationDirection oe;
+    string2enum("cw",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCW);
+    string2enum("ccw",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCCW);
+
+    string2enum("CW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCW);
+    string2enum("CCW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCCW);
+
+    string2enum("RotationDirCW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCW);
+    string2enum("RotationDirCCW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCCW);
+
+    QVERIFY_EXCEPTION_THROWN(string2enum("RotationDirectionclockwise",oe),kipl::base::KiplException);
 }
 
 QTEST_APPLESS_MAIN(Tkiplbase)

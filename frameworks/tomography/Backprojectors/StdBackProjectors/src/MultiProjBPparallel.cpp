@@ -98,7 +98,7 @@ void MultiProjectionBPparallel::BackProjectOpenMP()
                                                 *tan(mConfig.ProjectionInfo.fTiltAngle*fPi/180);
                 for (size_t i=0; i<nProjCounter; i++)
                 {
-                    fLocalStartUp[i]=fStartU[i] + fCos[i]*y-centeroffset;
+                    fLocalStartUp[i] = fStartU[i] + fCos[i]*y-centeroffset;
                 }
 
 
@@ -125,17 +125,31 @@ void MultiProjectionBPparallel::BackProjectOpenMP()
                         __m128 sum=_mm_set_ps1(0.0f);
                         for (size_t z=0; z<SizeZ; z++)	// Back-project on z
                         {
-                            const float interpB = abs(fPosU-z*centerinc);	// Interpolation weight right
+                            float fpz=fPosU-z*centerinc;
+                            nPosU = static_cast<int>(fpz);	
+                            const float interpB = abs(fpz-nPosU);			// Interpolation weight right
                             const float interpA = 1.0f-interpB;				// Interpolation weight left
 
                             __m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
                             __m128 w1_128=_mm_set_ps1(interpB);				// Interpolation weight left
 
-                            a=_mm_mul_ps(ProjColumnA[z],w0_128);
-                            b=_mm_mul_ps(ProjColumnB[z],w1_128);
-                            sum=_mm_add_ps(a,b);
+                            a   = _mm_mul_ps(ProjColumnA[z],w0_128);
+                            b   = _mm_mul_ps(ProjColumnB[z],w1_128);
+                            sum = _mm_add_ps(a,b);
                             column[z]=_mm_add_ps(column[z],sum);
-                            fPosU-=centerinc;
+
+                            fPosU-=centerinc; // <<<<< Is this needed?
+                            // const float interpB = abs(fPosU-z*centerinc);	// Interpolation weight right
+                            // const float interpA = 1.0f-interpB;				// Interpolation weight left
+
+                            // __m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
+                            // __m128 w1_128=_mm_set_ps1(interpB);				// Interpolation weight left
+
+                            // a=_mm_mul_ps(ProjColumnA[z],w0_128);
+                            // b=_mm_mul_ps(ProjColumnB[z],w1_128);
+                            // sum=_mm_add_ps(a,b);
+                            // column[z]=_mm_add_ps(column[z],sum);
+                            // fPosU-=centerinc;
                         }
                     }
                     memcpy(volume.GetLinePtr(x-1,y-1),column,SizeZ*sizeof(__m128));
@@ -273,7 +287,7 @@ void MultiProjectionBPparallel::BackProjectSTL(int first, int last)
             {
                 fLocalStartUp[i]=fStartU[i] + fCos[i]*y-centeroffset;
             }
-
+            
             for (size_t x=cfStartX+1; x<=cfStopX; x++)
             {
                 memcpy(column,volume.GetLinePtr(x-1,y-1),SizeZ*sizeof(__m128)); // Must be memcpy due to different data types
@@ -289,14 +303,15 @@ void MultiProjectionBPparallel::BackProjectSTL(int first, int last)
                         continue;
                     }
 
-                    fPosU-=nPosU;
                     __m128 * ProjColumnA = reinterpret_cast<__m128 *>(projections.GetLinePtr(nPosU, i));
                     __m128 * ProjColumnB = ProjColumnA+SizeV4;
 
                     __m128 sum=_mm_set_ps1(0.0f);
                     for (size_t z=0; z<SizeZ; z++)	// Back-project on z
                     {
-                        const float interpB = abs(fPosU-z*centerinc);			// Interpolation weight right
+                        float fpz=fPosU-z*centerinc;
+                        nPosU = static_cast<int>(fpz);	
+                        const float interpB = abs(fpz-nPosU);			// Interpolation weight right
                         const float interpA = 1.0f-interpB;				// Interpolation weight left
 
                         __m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
@@ -307,7 +322,7 @@ void MultiProjectionBPparallel::BackProjectSTL(int first, int last)
                         sum = _mm_add_ps(a,b);
                         column[z]=_mm_add_ps(column[z],sum);
 
-                        fPosU-=centerinc;
+                        fPosU-=centerinc; // <<<<< Is this needed?
                     }
                 }
                 memcpy(volume.GetLinePtr(x-1,y-1),column,SizeZ*sizeof(__m128)); // Must be memcpy due to different data types

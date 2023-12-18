@@ -47,17 +47,17 @@ set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 target_compile_definitions(${TARGET_NAME} PRIVATE ADVANCEDFILTERS_LIBRARY)
 
-add_definitions(-DHAVE_NEXUS)
+# add_definitions(-DHAVE_NEXUS)
 
 if (APPLE)
 
 endif()
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-    ../../../../ExternalDependencies/windows/lib
-    ../../../../imagingsuite/external/lib64
-    ../../../../imagingsuite/external/lib64/nexus
+ 
+    target_link_libraries(${TARGET_NAME}
+    PUBLIC
+        kipl
     )
 endif()
 

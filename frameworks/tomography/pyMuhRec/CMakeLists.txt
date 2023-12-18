@@ -60,7 +60,8 @@ pybind11_add_module(${TARGET_NAME}
   )
   
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
+#target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY )
 # set_target_properties(${TARGET_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN")
 
 set(LINK_TYPE "MODULE")
@@ -134,17 +135,6 @@ if (WIN32)
       ReconFramework
       StdBackProjectors
       FDKBackProjectors
-      # libxml2
-      # cfitsio
-      # libtiff
-      # armadillo
-      # liblapack
-      # libopenblas
-      # libfftw3-3
-      # libfftw3f-3
-      # NeXus
-      # NeXusCPP
-      # Iphlpapi
     )
 endif()
 

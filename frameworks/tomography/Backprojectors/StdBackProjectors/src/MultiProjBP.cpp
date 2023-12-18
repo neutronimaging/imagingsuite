@@ -1,6 +1,5 @@
 //<LICENSE>
 
-//#include "stdafx.h"
 #include "../include/MultiProjBP.h"
 #include "../include/ReconException.h"
 #include <base/timage.h>
@@ -85,16 +84,30 @@ void MultiProjectionBP::BackProject()
 					__m128 sum;
 					for (size_t z=0; z<SizeZ; z++)	// Back-project on z 
 					{
-						const float interpB = abs(fPosU-nPosU-z*centerinc);			// Interpolation weight right
-						const float interpA = 1.0f-interpB;				// Interpolation weight left
+						float fpz=fPosU-z*centerinc;
+                        nPosU = static_cast<int>(fpz);	
+                        const float interpB = abs(fpz-nPosU);			// Interpolation weight right
+                        const float interpA = 1.0f-interpB;				// Interpolation weight left
 
-						__m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
-						__m128 w1_128=_mm_set_ps1(interpB);				// Interpolation weight left
+                        __m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
+                        __m128 w1_128=_mm_set_ps1(interpB);				// Interpolation weight left
 
-						a=_mm_mul_ps(ProjColumnA[z],w0_128);
-						b=_mm_mul_ps(ProjColumnB[z],w1_128);
-						sum=_mm_add_ps(a,b);
-						column[z]=_mm_add_ps(column[z],sum);
+                        a   = _mm_mul_ps(ProjColumnA[z],w0_128);
+                        b   = _mm_mul_ps(ProjColumnB[z],w1_128);
+                        sum = _mm_add_ps(a,b);
+                        column[z]=_mm_add_ps(column[z],sum);
+
+                        fPosU-=centerinc; // <<<<< Is this needed?
+						// const float interpB = abs(fPosU-nPosU-z*centerinc);			// Interpolation weight right
+						// const float interpA = 1.0f-interpB;				// Interpolation weight left
+
+						// __m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
+						// __m128 w1_128=_mm_set_ps1(interpB);				// Interpolation weight left
+
+						// a=_mm_mul_ps(ProjColumnA[z],w0_128);
+						// b=_mm_mul_ps(ProjColumnB[z],w1_128);
+						// sum=_mm_add_ps(a,b);
+						// column[z]=_mm_add_ps(column[z],sum);
 					}
 				}
 				memcpy(volume.GetLinePtr(x-1,y-1),column,SizeZ*sizeof(__m128));

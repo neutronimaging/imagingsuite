@@ -166,6 +166,9 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     ui->dspinSOD->setMaximum(ui->dspinSDD->value());
     ui->dspinSDD->setMinimum(ui->dspinSOD->value());
     UpdateCBCTDistances();
+    ui->label_projPerView->setVisible(false);
+    ui->spinBox_projPerView->setVisible(false);
+    ui->comboBox_projectionCominationMethod->setVisible(false);
 }
 
 MuhRecMainWindow::~MuhRecMainWindow()
@@ -290,7 +293,7 @@ void MuhRecMainWindow::on_buttonBrowseReference_clicked()
 
 void MuhRecMainWindow::ProjectionIndexChanged(int x)
 {
-    (void)x;
+    std::ignore = x;
 
     std::ostringstream msg;
     int first = ui->spinFirstProjection->value();
@@ -304,7 +307,14 @@ void MuhRecMainWindow::ProjectionIndexChanged(int x)
         return ;
     }
 
-    on_comboBox_projectionViewer_currentIndexChanged(0);
+    QSignalBlocker sliderSignal(ui->sliderProjections);
+    QSignalBlocker spinSignal(ui->spinBoxProjections);
+    ui->sliderProjections->setMinimum(first);
+    ui->spinBoxProjections->setMinimum(first);
+    ui->sliderProjections->setMaximum(last);
+    ui->spinBoxProjections->setMaximum(last);
+
+    on_comboBox_projectionViewer_currentIndexChanged(first);
     PreviewProjection();
 }
 
@@ -340,7 +350,7 @@ void MuhRecMainWindow::PreviewProjection(int x)
 
         std::map<float,ProjectionInfo> fileList;
         if (ui->comboBox_projectionViewer->currentIndex() == 0)
-            BuildFileList(&m_Config,&fileList);
+            BuildFileList(m_Config,fileList);
         else
             BuildFileList(m_sPreviewMask,"",m_nPreviewFirst,m_nPreviewLast,1,
                           m_Config.ProjectionInfo.fScanArc,
@@ -349,18 +359,23 @@ void MuhRecMainWindow::PreviewProjection(int x)
                           nullptr,
                           &fileList);
 
-        if (static_cast<int>(fileList.size())<position) // Workaround for bad BuildFileList implementation
+        if (static_cast<int>(fileList.size())<(position-ui->sliderProjections->minimum())) // Workaround for bad BuildFileList implementation
         {
             logger.warning("Projection slider out of list range.");
             return;
         }
 
         auto it=fileList.begin();
-        if (position<=ui->sliderProjections->maximum())
-            std::advance(it,position-(position==0 ? 0 :1));
-        else {
-            logger.error("Slider out of range");
-            return;
+        if (position != ui->sliderProjections->minimum())  
+        {
+            position -= ui-> sliderProjections->minimum();
+            std::advance(it,position-1);
+            // if (position<=ui->sliderProjections->maximum())
+            //     std::advance(it,position-(position==0 ? 0 :1)ui->);
+            // else {
+            //     logger.error("Slider out of range");
+            //     return;
+            // }
         }
 
         name=it->second.name;
@@ -1165,10 +1180,10 @@ void MuhRecMainWindow::ExecuteReconstruction()
                     ui->tabMainControl->setCurrentIndex(3);
 
                     const int nBins=256;
-                    float     x[nBins];
-                    size_t    y[nBins];
+                    std::vector<float>     x;
+                    std::vector<size_t>    y;
                     m_pEngine->GetHistogram(x,y,nBins);
-                    ui->plotHistogram->setCurveData(0,x,y,nBins,"Volume histogram");
+                    ui->plotHistogram->setCurveData(0,x,y,"Volume histogram");
                     try
                     {
                         ui->plotHistogram->setCursor(0,new QtAddons::PlotCursor(ui->dspinGrayLow->value(),QColor("red"),QtAddons::PlotCursor::Vertical,"Lower limit"));
@@ -1478,14 +1493,13 @@ void MuhRecMainWindow::UpdateDialog()
         for (it=m_Config.ProjectionInfo.nlSkipList.begin(); it!=m_Config.ProjectionInfo.nlSkipList.end(); it++)
             str<<*it<<" ";
         ui->editProjectionSkipList->setText(QString::fromStdString(str.str()));
-        ui->checkBoxUseSkipList->setChecked(true);
-        on_checkBoxUseSkipList_toggled(true);
     }
     else {
-        ui->checkBoxUseSkipList->setChecked(false);
         ui->editProjectionSkipList->clear();
-        on_checkBoxUseSkipList_toggled(false);
     }
+    ui->comboBox_skiplist->setCurrentIndex(static_cast<int>(m_Config.ProjectionInfo.skipListMode));
+    on_comboBox_skiplist_currentIndexChanged(static_cast<int>(m_Config.ProjectionInfo.skipListMode));
+
     ui->ConfiguratorBackProj->SetModule(m_Config.backprojector);
 
     ui->dspinSDD->setValue(m_Config.ProjectionInfo.fSDD);
@@ -1550,11 +1564,14 @@ void MuhRecMainWindow::UpdateConfig()
 
     m_Config.ProjectionInfo.nDCFirstIndex      = static_cast<size_t>(ui->spinFirstDark->value());
     m_Config.ProjectionInfo.nDCCount           = static_cast<size_t>(ui->spinDarkCount->value());
+    
+    m_Config.ProjectionInfo.skipListMode = static_cast<ReconConfig::cProjections::eSkipListMode>(ui->comboBox_skiplist->currentIndex());
     std::string str=ui->editProjectionSkipList->text().toStdString();
-    if (!str.empty() && ui->checkBoxUseSkipList->isChecked())
+    if (!str.empty())
         kipl::strings::String2Set(str,m_Config.ProjectionInfo.nlSkipList);
     else
         m_Config.ProjectionInfo.nlSkipList.clear();
+    
 
     ui->widgetDoseROI->getROI(m_Config.ProjectionInfo.dose_roi);
     ui->widgetProjectionROI->getROI(m_Config.ProjectionInfo.projection_roi);
@@ -2667,46 +2684,39 @@ void MuhRecMainWindow::on_sliceViewer_levelsChanged(float low, float high)
 
 void MuhRecMainWindow::on_pushButton_levels95p_clicked()
 {
-    if (m_pEngine!=nullptr) {
-        const int nBins=256;
-        float x[nBins];
-        size_t y[nBins];
-        m_pEngine->GetHistogram(x,y,nBins);
-
-        size_t lowlevel=0;
-        size_t highlevel=0;
-        kipl::base::FindLimits(y, nBins, 95.0, &lowlevel, &highlevel);
-        ui->dspinGrayLow->setValue(static_cast<double>(x[lowlevel]));
-        ui->dspinGrayHigh->setValue(static_cast<double>(x[highlevel]));
-    }
-    else
-        logger(logger.LogMessage,"Level 95%: Missing engine");
+    set_slicelevels(95.0f);
 }
 
 void MuhRecMainWindow::on_pushButton_levels99p_clicked()
 {
-    if (m_pEngine!=nullptr) {
-        const int nBins=256;
-        float x[nBins];
-        size_t y[nBins];
+    set_slicelevels(99.0f);
+}
+
+void MuhRecMainWindow::on_pushButton_levels999p_clicked()
+{
+    set_slicelevels(99.5f);
+}
+
+void MuhRecMainWindow::set_slicelevels(float level)
+{
+    if (m_pEngine!=nullptr) 
+    {
+        const int nBins=1024;
+        std::vector<float> x;
+        std::vector<size_t> y;
         m_pEngine->GetHistogram(x,y,nBins);
 
         size_t lowlevel=0;
         size_t highlevel=0;
-        kipl::base::FindLimits(y, nBins, 99.0, &lowlevel, &highlevel);
+        kipl::base::FindLimits(y, level, lowlevel, highlevel);
         ui->dspinGrayLow->setValue(x[lowlevel]);
         ui->dspinGrayHigh->setValue(x[highlevel]);
     }
     else
-        logger(logger.LogMessage,"Level 99%: Missing engine");
+        logger(logger.LogMessage,"Level " + std::to_string(level) + "%: Missing engine");
+
 }
 
-
-void MuhRecMainWindow::on_checkBoxUseSkipList_toggled(bool checked)
-{
-    ui->buttonGetSkipList->setVisible(checked);
-    ui->editProjectionSkipList->setVisible(checked);
-}
 
 void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
 {
@@ -2985,6 +2995,7 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
         case 1:
             if (ui->spinOpenBeamCount->value() == 0) {
                 ui->comboBox_projectionViewer->setCurrentIndex(0);
+                logger.warning("There are no open beam images, switching back to projections");
                 return ;
             }
 
@@ -2996,6 +3007,7 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
         case 2:
             if (ui->spinDarkCount->value() == 0) {
                 ui->comboBox_projectionViewer->setCurrentIndex(0);
+                logger.warning("There are no dark current images, switching back to projections");
                 return ;
             }
             m_nPreviewFirst = ui->spinFirstDark->value();
@@ -3017,11 +3029,13 @@ void MuhRecMainWindow::on_comboBox_projectionViewer_currentIndexChanged(int inde
 
 void MuhRecMainWindow::on_spinFirstOpenBeam_valueChanged(int arg1)
 {
+    std::ignore = arg1;
     on_comboBox_projectionViewer_currentIndexChanged(1);
 }
 
 void MuhRecMainWindow::on_spinOpenBeamCount_valueChanged(int arg1)
 {
+    std::ignore = arg1;
     on_comboBox_projectionViewer_currentIndexChanged(1);
 }
 
@@ -3042,11 +3056,13 @@ void MuhRecMainWindow::on_editDarkMask_editingFinished()
 
 void MuhRecMainWindow::on_spinFirstDark_valueChanged(int arg1)
 {
+    std::ignore = arg1;
     on_comboBox_projectionViewer_currentIndexChanged(2);
 }
 
 void MuhRecMainWindow::on_spinDarkCount_valueChanged(int arg1)
 {
+    std::ignore = arg1;
     on_comboBox_projectionViewer_currentIndexChanged(2);
 }
 
@@ -3056,3 +3072,20 @@ void MuhRecMainWindow::on_actionConvert_files_triggered()
 
     dlg.exec();
 }
+
+void MuhRecMainWindow::on_comboBox_skiplist_currentIndexChanged(int index)
+{
+    if (index == 0)
+    {
+        ui->editProjectionSkipList->setVisible(false);
+        ui->buttonGetSkipList->setVisible(false);
+    }
+    else
+    {
+        ui->editProjectionSkipList->setVisible(true);
+        ui->buttonGetSkipList->setVisible(true);
+
+    }
+
+}
+

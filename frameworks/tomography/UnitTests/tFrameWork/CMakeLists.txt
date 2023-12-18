@@ -26,8 +26,7 @@ include_directories(
 )
 
 set(SRC_FILES
-    tst_frameworktest.cpp
-    stdafx.cpp)
+    tst_frameworktest.cpp)
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 

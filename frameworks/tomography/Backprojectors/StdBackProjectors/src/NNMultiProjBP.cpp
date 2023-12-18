@@ -1,6 +1,5 @@
 //<LICENSE>
 
-//#include "stdafx.h"
 #include "../include/NNMultiProjBP.h"
 #include "../include/ReconException.h"
 #include <base/timage.h>

@@ -102,24 +102,17 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> &img, std::vector<floa
     auto pImg = &img;
     if (m_bUseThreading)
     {
+        logger.message("Multi-thread processing using thread pool (" + std::to_string(pool.pool_size()) + " threads)");
         for (size_t i=0UL; i<img.Size(2); ++i)
         {
             pool.enqueue([this,pImg,i,&th,&sigma] {
                 kipl::base::TImage<float,2> slice(pImg->dims());
-    //            kipl::base::TImage<float,2> orig(pImg->dims());
-    //            msg.str("");
+
                 std::copy_n(pImg->GetLinePtr(0,i),slice.Size(),slice.GetDataPtr());
-    //            orig.Clone(slice);
+
                 this->process(slice,th,sigma);
 
                 std::copy_n(slice.GetDataPtr(), slice.Size(),pImg->GetLinePtr(0,i));
-    //                size_t cnt=0UL;
-    //                float *pRes=pImg->GetLinePtr(i);
-    //                for (size_t j=0; j<slice.Size(); ++j)
-    //                {
-    //                    if (orig[j]!=pRes[j])
-    //                        ++cnt;
-    //                }
             });
         }
         pool.barrier();

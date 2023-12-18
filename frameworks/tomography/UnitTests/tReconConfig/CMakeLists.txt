@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(TARGET_NAME "tReconConfig")
-project(tReconConfig LANGUAGES CXX)
+project(${TARGET_NAME} LANGUAGES CXX)
 
 enable_testing()
 

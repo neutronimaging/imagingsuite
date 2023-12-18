@@ -59,7 +59,7 @@ set(SRC_FILES
     AddModuleDialog.cpp
     ConfiguratorDialogBase.cpp
     singlemodulesettingsdialog.cpp
-    stdafx.cpp
+    # stdafx.cpp
 ) 
 
 set (INC_FILES
@@ -72,7 +72,7 @@ set (INC_FILES
     AddModuleDialog.h
     QListWidgetModuleItem.h
     ConfiguratorDialogBase.h
-    stdafx.h
+    # stdafx.h
     singlemodulesettingsdialog.h
 )
 

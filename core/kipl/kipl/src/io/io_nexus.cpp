@@ -6,6 +6,7 @@
 
 namespace kipl { namespace io{
 
+#ifdef HAVE_NEXUS 
 int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles)
 {
 //int GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles){
@@ -171,5 +172,30 @@ size_t KIPLSHARED_EXPORT nexusTypeSize(NeXus::NXnumtype nt)
 
     return 1;
 }
+#else
 
+
+int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles)
+{
+    throw kipl::base::KiplException("NEXUS is not supported",__FILE__,__LINE__);
+
+    return 1;
+}
+
+std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
+{
+    throw kipl::base::KiplException("NEXUS is not supported",__FILE__,__LINE__);
+
+    return std::vector<size_t>(0);
+
+}
+
+// size_t nexusTypeSize(NeXus::NXnumtype nt)
+// {
+//     throw kipl::base::KiplException("NEXUS is not supported",__FILE__,__LINE__);
+
+//     return 1;
+// }
+
+#endif
 }}

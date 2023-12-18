@@ -94,18 +94,20 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE FDKBACKPROJ_LIBRARY HAVE_NEXUS)
+# target_compile_definitions(${TARGET_NAME} PRIVATE FDKBACKPROJ_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE FDKBACKPROJ_LIBRARY)
 
-add_definitions(-DHAVE_NEXUS)
+# add_definitions(-DHAVE_NEXUS)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC
-    kipl
-    ImagingAlgorithms
-    ModuleConfig
-    ReconFramework
-)
+        kipl
+        ImagingAlgorithms
+        ModuleConfig
+        ReconFramework
+        )
+
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

@@ -99,7 +99,7 @@ target_link_libraries(${TARGET_NAME}
     kipl
     ReaderConfig
     QtAddons
-    ${NEXUS_LIBRARIES}
+    # ${NEXUS_LIBRARIES}
     )
 
 target_compile_definitions(${TARGET_NAME} PRIVATE READERGUI_LIBRARY)
