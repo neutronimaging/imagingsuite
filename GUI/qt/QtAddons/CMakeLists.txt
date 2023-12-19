@@ -117,7 +117,7 @@ target_link_libraries(${TARGET_NAME}
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Charts
-    # Qt${QT_VERSION_MAJOR}::PrintSupport
+    Qt${QT_VERSION_MAJOR}::PrintSupport
     kipl
     )
 

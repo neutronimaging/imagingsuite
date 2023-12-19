@@ -98,7 +98,7 @@ namespace kipl { namespace segmentation {
 	/// \param mask ROI mask, must have the same size as img or an xy slice of img
 	/// \param Nmask number mask elements 0=default -> Nmask = N
     template <typename T0, typename T1>
-	int Threshold(T0 * data,
+	int Threshold(const T0 * data,
 			T1 *result,
 			size_t N,
             T0 th,
@@ -108,13 +108,18 @@ namespace kipl { namespace segmentation {
 	{
 		T1 cmptrue,cmpfalse;
 		if (cmp==cmp_greater) 
-			cmptrue=1;
+		{
+			cmptrue  = 1;
+			cmpfalse = 0;
+		}
 		else
-			cmptrue=0;
+		{
+			cmptrue  = 0;
+			cmpfalse = 1;
+		}
 
-		cmpfalse=!cmptrue;
-
-        if (mask != nullptr) {
+		if (mask != nullptr) 
+		{
 			Nmask = Nmask==0 ? N : Nmask;
 			for (size_t i=0, j=0; i<N; i++, j++) {
 				if (j==Nmask) j=0;
@@ -125,9 +130,10 @@ namespace kipl { namespace segmentation {
 			}
 
 		}
-		else {
+		else 
+		{
 			for (size_t i=0; i<N; i++)
-				result[i]=(data[i]>=th) ? cmptrue: cmpfalse;;
+				result[i]=(th<data[i]) ? cmptrue: cmpfalse;;
 		}
 
 		return 0;
@@ -506,12 +512,15 @@ int DoubleThreshold(kipl::base::TImage<T,NDim> &img,
 	/// \param hist Vector containing the histogram of the image to be thresholded
 	/// \bug Sometimes the second attempt fails...
     int KIPLSHARED_EXPORT Threshold_Otsu(size_t const * const hist, const size_t N);
+	int KIPLSHARED_EXPORT Threshold_Otsu(std::vector<size_t> & hist);
+
+
 
 	/// \brief computes the threshold for a unimodal histogram
 	///	\param hist The histogram vector
 	///	\param tail Selects the tail
 	///	\param median_filter_len Length of the median filter
-    int KIPLSHARED_EXPORT Threshold_Rosin(size_t const * const hist, const TailType tail=tail_left, const size_t median_filter_len=0);
+    int KIPLSHARED_EXPORT Threshold_Rosin(const std::vector<size_t> & hist, const TailType tail=tail_left, const size_t median_filter_len=0);
 }}
 
 std::string KIPLSHARED_EXPORT enum2string(kipl::segmentation::CmpType cmp);

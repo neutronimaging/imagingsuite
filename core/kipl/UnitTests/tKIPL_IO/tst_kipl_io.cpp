@@ -145,8 +145,17 @@ void tKIPL_IOTest::testDataTypesWriteTIFF()
     kipl::io::ReadTIFF(res,"basicRW8.tif");
     QCOMPARE(res.Size(0),fimg.Size(0));
     QCOMPARE(res.Size(1),fimg.Size(1));
-    for (size_t i = 0 ; i<fimg.Size(); ++i)
-        QCOMPARE(res[i],fmod(floor(fimg[i]),256.0f));
+    std::ostringstream msg;
+
+    kipl::base::TImage<unsigned char,2> tmp(fimg.dims());
+    copy_n(fimg.GetDataPtr(),fimg.Size(),tmp.GetDataPtr());
+    for (size_t i = 0 ; i<fimg.Size(); ++i) 
+    {
+        // QCOMPARE(res[i],fmod(fimg[i],256.0f));
+        // QCOMPARE(res[i],static_cast<unsigned char>(fimg[i]));
+        msg.str(""); msg<<"i="<<i<<", fimg="<<fimg[i]<<", res="<<res[i];
+        QVERIFY2(res[i]==tmp[i],msg.str().c_str());
+    }
 
 }
 

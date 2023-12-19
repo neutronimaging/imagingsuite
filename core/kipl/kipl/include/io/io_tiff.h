@@ -38,6 +38,9 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
                kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY,
                bool append=false)
 {
+    if (src.Size() == 0UL)
+        throw kipl::base::KiplException("WriteTIFF can't write empty images");
+
     if ( (dt == kipl::base::UInt4) || (dt == kipl::base::UInt12))
         throw kipl::base::KiplException("WriteTIFF doesn't support 4- and 12-bit formats");
 
@@ -222,6 +225,8 @@ void WriteTIFF(kipl::base::TImage<ImgType,N> src,
                kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY,
                bool append=false)
 {
+    if (src.Size() == 0UL)
+        throw kipl::base::KiplException("WriteTIFF can't write empty images");
     std::stringstream msg;
     try
     {
@@ -525,10 +530,10 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	std::stringstream msg;
 	TIFF *image;
     uint16_t photo, spp, fillorder,bps, sformat;
-    tsize_t stripSize;
-    unsigned long imageOffset;
+    // tsize_t stripSize;
+    // unsigned long imageOffset;
 
-    int stripMax;
+    // int stripMax;
 	unsigned char *buffer, tempbyte;
 	unsigned long bufferSize, count;
 
@@ -578,9 +583,9 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	}
 
 	// Read in the possibly multiple strips
-    stripSize   = TIFFStripSize (image);
-    stripMax    = TIFFNumberOfStrips (image);
-	imageOffset = 0;
+    // stripSize   = TIFFStripSize (image);
+    // stripMax    = TIFFNumberOfStrips (image);
+	// imageOffset = 0;
 
 	int dimx,dimy;
 	// We need to set some values for basic tags before we can add any data

@@ -53,7 +53,7 @@ TFilterBase<T,nDims>::~TFilterBase()
 }
 
 template<typename T, size_t nDims>
-kipl::base::TImage<T,nDims> TFilterBase<T,nDims>::operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle epStyle)
+kipl::base::TImage<T,nDims> TFilterBase<T,nDims>::operator() (const kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle epStyle)
 {
 
     kipl::base::TImage<T,nDims> dest(src.dims());

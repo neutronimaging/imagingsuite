@@ -30,7 +30,7 @@ void TFilter<T,nDims>::InnerLoop(T const * const src, T *dest, T value, size_t N
 }
 
 template <typename T, size_t nDims>
-void TFilter<T,nDims>::InitResultArray(kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest)
+void TFilter<T,nDims>::InitResultArray(const kipl::base::TImage<T,nDims> &src, kipl::base::TImage<T,nDims> &dest)
 {
     dest.resize(src.dims());
 	dest=static_cast<T>(0);

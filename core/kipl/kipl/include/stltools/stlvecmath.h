@@ -273,23 +273,43 @@ template <class T>
 double median(std::vector<T> &v)
 {
 	double m;
-	double *tmp;
 	
-    size_t N=v.size();
-	tmp=new double[N];
+    size_t n=v.size();
 
-
-	for (size_t i=0; i<N; i++)
-		tmp[i]=v[i];
-
-	heapsort(tmp,N);
-
-	if (N%2)
-		m=tmp[N/2];
-	else
-		m=(tmp[N/2]+tmp[N/2-1])*0.5;
-
-	delete [] tmp;
+	if (n % 2 == 0) 
+	{
+        // Applying nth_element
+        // on n/2th index
+        std::nth_element(v.begin(),
+                    v.begin() + n / 2,
+                    v.end());
+  
+        // Applying nth_element
+        // on (n-1)/2 th index
+        std::nth_element(v.begin(),
+                    v.begin() + (n - 1) / 2,
+                    v.end());
+  
+        // Find the average of value at
+        // index N/2 and (N-1)/2
+        m = static_cast<double>(v[(n - 1) / 2] + v[n / 2])
+               / 2.0;
+    }
+  
+    // If size of the arr[] is odd
+    else 
+	{
+  
+        // Applying nth_element
+        // on n/2
+        std::nth_element(v.begin(),
+                    v.begin() + n / 2,
+                    v.end());
+  
+        // Value at index (N/2)th
+        // is the median
+        m =  static_cast<double>(v[n / 2]);
+    }
 
 	return m;
 }

@@ -149,6 +149,7 @@ add_subdirectory(core/kipl/UnitTests/tThreadPool)
 add_subdirectory(core/kipl/UnitTests/tKiplMath)
 add_subdirectory(core/kipl/UnitTests/tLinFit)
 add_subdirectory(core/kipl/UnitTests/tkiplmorphalgorithms)
+add_subdirectory(core/kipl/UnitTests/tSegmentationTest)
 
 
 
