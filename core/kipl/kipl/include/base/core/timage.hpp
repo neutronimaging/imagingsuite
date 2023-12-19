@@ -121,7 +121,27 @@ T & TImage<T,N>::operator()(size_t x, size_t y, size_t z)
 }
 
 template<typename T, size_t N>
+T TImage<T,N>::operator()(size_t x, size_t y, size_t z) const
+{
+    switch (N) {
+        case 0: throw base::KiplException("TImage: Zero dimension images does not have any axes.",__FILE__,__LINE__); break;
+        case 1: return m_buffer.GetDataPtr()[x]; break;
+        case 2: return m_buffer.GetDataPtr()[x + y*m_Dims[0]]; break;
+        case 3: return m_buffer.GetDataPtr()[x + y*m_Dims[0] + z*m_Dims[0]*m_Dims[1]]; break;
+    default: throw base::KiplException("TImage: Image dimensions greater than 3 cannot be accessed with coordinates",__FILE__,__LINE__);
+    }
+
+    return *m_buffer.GetDataPtr();
+}
+
+template<typename T, size_t N>
 T & TImage<T,N>::operator()(int x, int y, int z)
+{
+    return this->operator()(static_cast<size_t>(x),static_cast<size_t>(y),static_cast<size_t>(z));
+}
+
+template<typename T, size_t N>
+T TImage<T,N>::operator()(int x, int y, int z) const
 {
     return this->operator()(static_cast<size_t>(x),static_cast<size_t>(y),static_cast<size_t>(z));
 }

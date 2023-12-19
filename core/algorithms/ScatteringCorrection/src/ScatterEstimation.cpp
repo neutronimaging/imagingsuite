@@ -87,11 +87,11 @@ void ScatterEstimator::fit(const std::vector<float> &x, const std::vector<float>
 
     // Get dot intensity 
     std::vector<float> dotVals(x.size());
-    arma::vec b(x.size());
+    arma::vec bv(x.size());
 
     // for (size_t i=0; i<x.size(); ++i) 
     // {
-    //     b(i) = dotVals[i] = dotValue(bb,x[i],y[i],dotRadius);
+    //     bv(i) = dotVals[i] = dotValue(bb,x[i],y[i],dotRadius);
     //     msg.str("");
     //     msg<<"("<<x[i]<<", "<<y[i]<<") = "<<dotVals[i];
     //     logger.message(msg.str());
@@ -127,7 +127,7 @@ void ScatterEstimator::fit(const std::vector<float> &x, const std::vector<float>
 
     auto A = buildA(x,y);
 
-    m_fittedParameters = arma::solve(A, b);
+    m_fittedParameters = arma::solve(A, bv);
 
     msg.str("");
     msg<<"Parameters=[ ";
@@ -138,7 +138,7 @@ void ScatterEstimator::fit(const std::vector<float> &x, const std::vector<float>
 
     auto fit = A * m_fittedParameters;
 
-    m_fFitError = fitError(b,fit);
+    m_fFitError = fitError(bv,fit);
 
     transferFitParameters();
 
@@ -282,7 +282,8 @@ std::vector<float> ScatterEstimator::dotPixels(const kipl::base::TImage<float,2>
             float R=sqrt(x*x+y2);
             if (R<=radius)
             {
-                v.push_back(img(static_cast<size_t>(x0+x+0.5),static_cast<size_t>(y0+y+0.5)));
+                auto val = img(static_cast<size_t>(x0+x+0.5),static_cast<size_t>(y0+y+0.5));
+                v.push_back(val);
             }
         } 
     }
