@@ -108,7 +108,7 @@ public:
                                     ///< 2D coordinates, in pixel coordinates of the point on the image which is closest to the source: a pair of floating point number, in units of pixel
                                     ///< The first number is the column (x-coordinate) and the second number is the row  (y-coordinate)
                                     ///< The first pixel of the image is to be considered to be coordinate (0,0)
-        bool bTranslate;            ///< Indicates if the center of rotation is shifted to the margin.
+        // bool bTranslate;            ///< Indicates if the center of rotation is shifted to the margin.
         float fTiltAngle;           ///< Axis tilt angle
         float fTiltPivotPosition;   ///< Pivot point of the axis tilt. This is the slice were the center of rotation is correct.
         bool bCorrectTilt;          ///< Use the axis tilt correction

@@ -193,7 +193,7 @@ void ReconConfigTests::testCLIArgs()
         QCOMPARE(config.ProjectionInfo.scantype,ReconConfig::cProjections::SequentialScan);   
         QCOMPARE(config.ProjectionInfo.imagetype,ReconConfig::cProjections::ImageType_Sinograms);       
         QCOMPARE(config.ProjectionInfo.fCenter,3.1415f);   
-        QCOMPARE(config.ProjectionInfo.bTranslate,true);
+        // QCOMPARE(config.ProjectionInfo.bTranslate,true);
         // QCOMPARE(config.ProjectionInfo.fTiltAngle,0.123);   // Precision problems of float in the conversion
         QCOMPARE(config.ProjectionInfo.fTiltPivotPosition,456.7f);    
         QCOMPARE(config.ProjectionInfo.bCorrectTilt,true);
@@ -293,7 +293,7 @@ void ReconConfigTests::testConfigConstructor()
     QCOMPARE(config.ProjectionInfo.fSDD,               100.0f);
     QCOMPARE(config.ProjectionInfo.fpPoint.size(),     2UL);
 
-    QCOMPARE(config.ProjectionInfo.bTranslate,         false);
+    // QCOMPARE(config.ProjectionInfo.bTranslate,         false);
     QCOMPARE(config.ProjectionInfo.fTiltAngle,         0.0f);
     QCOMPARE(config.ProjectionInfo.fTiltPivotPosition, 0.0f);
     QCOMPARE(config.ProjectionInfo.bCorrectTilt,       false);
@@ -368,7 +368,7 @@ void ReconConfigTests::testConfigCopyConstructor()
     config.ProjectionInfo.fSDD =               1000.0f;
     config.ProjectionInfo.fpPoint = {123.4f, 456.6f};
 
-    config.ProjectionInfo.bTranslate =         true;
+    // config.ProjectionInfo.bTranslate =         true;
     config.ProjectionInfo.fTiltAngle =         0.1f;
     config.ProjectionInfo.fTiltPivotPosition= 1.0f;
     config.ProjectionInfo.bCorrectTilt=       true;
@@ -433,7 +433,7 @@ void ReconConfigTests::testConfigCopyConstructor()
     QCOMPARE(newconfig.ProjectionInfo.fSDD,               config.ProjectionInfo.fSDD);
     QCOMPARE(newconfig.ProjectionInfo.fpPoint.size(),     config.ProjectionInfo.fpPoint.size());
 
-    QCOMPARE(newconfig.ProjectionInfo.bTranslate,         config.ProjectionInfo.bTranslate);
+    // QCOMPARE(newconfig.ProjectionInfo.bTranslate,         config.ProjectionInfo.bTranslate);
     QCOMPARE(newconfig.ProjectionInfo.fTiltAngle,         config.ProjectionInfo.fTiltAngle);
     QCOMPARE(newconfig.ProjectionInfo.fTiltPivotPosition, config.ProjectionInfo.fTiltPivotPosition);
     QCOMPARE(newconfig.ProjectionInfo.bCorrectTilt,       config.ProjectionInfo.bCorrectTilt);
@@ -508,7 +508,7 @@ void ReconConfigTests::testConfigAssignment()
     config.ProjectionInfo.fSDD =               1000.0f;
     config.ProjectionInfo.fpPoint = {123.4f, 456.6f};
 
-    config.ProjectionInfo.bTranslate =         true;
+    // config.ProjectionInfo.bTranslate =         true;
     config.ProjectionInfo.fTiltAngle =         0.1f;
     config.ProjectionInfo.fTiltPivotPosition = 1.0f;
     config.ProjectionInfo.bCorrectTilt =       true;
@@ -574,7 +574,7 @@ void ReconConfigTests::testConfigAssignment()
     QCOMPARE(newconfig.ProjectionInfo.fSDD,               config.ProjectionInfo.fSDD);
     QCOMPARE(newconfig.ProjectionInfo.fpPoint.size(),     config.ProjectionInfo.fpPoint.size());
 
-    QCOMPARE(newconfig.ProjectionInfo.bTranslate,         config.ProjectionInfo.bTranslate);
+    // QCOMPARE(newconfig.ProjectionInfo.bTranslate,         config.ProjectionInfo.bTranslate);
     QCOMPARE(newconfig.ProjectionInfo.fTiltAngle,         config.ProjectionInfo.fTiltAngle);
     QCOMPARE(newconfig.ProjectionInfo.fTiltPivotPosition, config.ProjectionInfo.fTiltPivotPosition);
     QCOMPARE(newconfig.ProjectionInfo.bCorrectTilt,       config.ProjectionInfo.bCorrectTilt);

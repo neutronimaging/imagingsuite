@@ -1451,8 +1451,6 @@ void MuhRecMainWindow::UpdateDialog()
     on_checkCorrectTilt_clicked(m_Config.ProjectionInfo.bCorrectTilt);
     on_dspinRotationCenter_valueChanged(m_Config.ProjectionInfo.fCenter);
 
-
-    ui->check_stitchprojections->setChecked(m_Config.ProjectionInfo.bTranslate);
     ui->moduleconfigurator->SetModules(m_Config.modules);
     ui->dspinRotateRecon->setValue(m_Config.MatrixInfo.fRotation);
 
@@ -1590,7 +1588,6 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.fTiltAngle         = static_cast<float>(ui->dspinTiltAngle->value());
     m_Config.ProjectionInfo.fTiltPivotPosition = static_cast<float>(ui->dspinTiltPivot->value());
     m_Config.ProjectionInfo.bCorrectTilt       = ui->checkCorrectTilt->checkState();
-    m_Config.ProjectionInfo.bTranslate         = ui->check_stitchprojections->checkState();
 
     m_Config.ProjectionInfo.fSDD               = ui->dspinSDD->value();
     m_Config.ProjectionInfo.fSOD               = ui->dspinSOD->value();

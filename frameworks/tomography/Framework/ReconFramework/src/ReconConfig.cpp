@@ -182,7 +182,6 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="scantype")       string2enum(value,ProjectionInfo.scantype);
             if (var=="imagetype")      string2enum(value,ProjectionInfo.imagetype);
             if (var=="center")         ProjectionInfo.fCenter            = std::stof(value);
-            if (var=="translation")    ProjectionInfo.bTranslate         = kipl::strings::string2bool(value);
             if (var=="tiltangle")      ProjectionInfo.fTiltAngle         = std::stof(value);
             if (var=="tiltpivot")      ProjectionInfo.fTiltPivotPosition = std::stof(value);
             if (var=="correcttilt")    ProjectionInfo.bCorrectTilt=kipl::strings::string2bool(value);
@@ -344,7 +343,6 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
             if (sName=="sod")             ProjectionInfo.fSOD          = std::stof(sValue);
             if (sName=="sdd")             ProjectionInfo.fSDD          = std::stof(sValue);
             if (sName=="pPoint")          kipl::strings::String2Array(sValue,ProjectionInfo.fpPoint,2);
-            if (sName=="translation")     ProjectionInfo.bTranslate    = kipl::strings::string2bool(sValue);
             if (sName=="tiltangle")       ProjectionInfo.fTiltAngle    = std::stof(sValue);
             if (sName=="tiltpivot")       ProjectionInfo.fTiltPivotPosition = std::stof(sValue);
 
@@ -670,8 +668,6 @@ ReconConfig::cProjections::cProjections() :
     fSOD(100.0f),
     fSDD(100.0f),
     fpPoint(2,500.0f),
-    bTranslate(false),
-
     fTiltAngle(0.0f),
     fTiltPivotPosition(0.0f),
     bCorrectTilt(false),
@@ -715,7 +711,6 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
     fSOD(a.fSOD),
     fSDD(a.fSDD),
     fpPoint(a.fpPoint),
-	bTranslate(a.bTranslate),
 	fTiltAngle(a.fTiltAngle),
 	fTiltPivotPosition(a.fTiltPivotPosition),
 	bCorrectTilt(a.bCorrectTilt),
@@ -758,7 +753,6 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	fCenter         = a.fCenter;
     fSOD            = a.fSOD;
     fSDD            = a.fSDD;
-	bTranslate      = a.bTranslate;
 	fTiltAngle      = a.fTiltAngle;
 	fTiltPivotPosition = a.fTiltPivotPosition;
 	bCorrectTilt    = a.bCorrectTilt;
@@ -819,7 +813,6 @@ std::string ReconConfig::cProjections::WriteXML(int indent)
     str<<setw(indent+4)  <<" "<<"<sdd>"<<fSDD<<"</sdd>"<<std::endl;
     str<<setw(indent+4)  <<" "<<"<direction>"<<eDirection<<"</direction>"<<std::endl;
     str<<setw(indent+4)  <<" "<<"<pPoint>"<<fpPoint[0]<<" "<<fpPoint[1]<<"</pPoint>"<<std::endl;
-	str<<setw(indent+4)  <<" "<<"<translation>"<<(bTranslate==true ? "true" : "false")<<"</translation>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<tiltangle>"<<fTiltAngle<<"</tiltangle>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<tiltpivot>"<<fTiltPivotPosition<<"</tiltpivot>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<correcttilt>"<<(bCorrectTilt==true ? "true" : "false")<<"</correcttilt>"<<std::endl;
