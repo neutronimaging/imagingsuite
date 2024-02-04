@@ -25,8 +25,6 @@ set(SRC_FILES
     tst_MathFunctions.cpp
     )
 
-add_executable(${TARGET_NAME} ${SRC_FILES})
-
 if (WIN32)
     include_directories(
         ../../../../../ExternalDependencies/windows/include
@@ -35,16 +33,16 @@ endif()
 
 if (APPLE)
     include_directories(
-        ../../../../../ExternalDependencies/mac/include
-        )
-
+        ../../../../../ExternalDependencies/macos/include
+    )
 endif()
+
+add_executable(${TARGET_NAME} ${SRC_FILES})
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE
         Qt6::Test
         kipl
     )
-
-
+    
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

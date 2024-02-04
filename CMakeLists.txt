@@ -148,7 +148,9 @@ add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
 add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
 add_subdirectory(core/kipl/UnitTests/tThreadPool)
 add_subdirectory(core/kipl/UnitTests/tKiplMath)
+add_subdirectory(core/kipl/UnitTests/tKIPLMathFunctions)
 add_subdirectory(core/kipl/UnitTests/tLinFit)
+add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
 
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)

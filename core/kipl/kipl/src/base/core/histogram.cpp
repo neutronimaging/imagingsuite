@@ -281,7 +281,7 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         binVal += binIncrement;
     }
 
-    std::cout << "Sum of all blocks: " << sum << std::endl;
+    // std::cout << "Sum of all blocks: " << sum << std::endl;
     return 0;
 }
 
@@ -299,6 +299,7 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
 
     kipl::logging::Logger logger("HistogramOpt");
 
+    logger.warning("This function is not yet fully implemented. Use with caution. It is currently slower than the non-optimized version.");
     float start=0;
     float stop=1.0f;
 
@@ -415,7 +416,7 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
         binVal += binIncrement;
     }
 
-    std::cout << "Sum of all blocks: " << sum << std::endl;
+    // std::cout << "Sum of all blocks: " << sum << std::endl;
     return 0;
 }
 

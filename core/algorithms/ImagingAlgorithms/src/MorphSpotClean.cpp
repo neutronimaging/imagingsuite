@@ -316,27 +316,27 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
             switch (m_eMorphDetect)
             {
             case MorphDetectDarkSpots :
-                pImg[i]=kipl::math::SigmoidWeights(fabs(pHoles[i]-val),val,pHoles[i],threshold[0],sigma[0]);
+                pImg[i]=kipl::math::sigmoidWeights(fabs(pHoles[i]-val),val,pHoles[i],threshold[0],sigma[0]);
                 break;
             case MorphDetectBrightSpots :
-                pImg[i]=kipl::math::SigmoidWeights(fabs(val-pPeaks[i]),val,pPeaks[i],threshold[1],sigma[1]);
+                pImg[i]=kipl::math::sigmoidWeights(fabs(val-pPeaks[i]),val,pPeaks[i],threshold[1],sigma[1]);
                 break;
             case MorphDetectAllSpots :
                 dp=fabs(val-pPeaks[i]);
                 dh=fabs(pHoles[i]-val);
 
                 if (dh<dp)
-                    pImg[i]=kipl::math::SigmoidWeights(dp,val,pPeaks[i],threshold[0],m_fSigma[0]);
+                    pImg[i]=kipl::math::sigmoidWeights(dp,val,pPeaks[i],threshold[0],m_fSigma[0]);
                 else
-                    pImg[i]=kipl::math::SigmoidWeights(dh,val,pHoles[i],threshold[1],m_fSigma[1]);
+                    pImg[i]=kipl::math::sigmoidWeights(dh,val,pHoles[i],threshold[1],m_fSigma[1]);
 
                 break;
             case MorphDetectHoles :
-                pImg[i]=kipl::math::SigmoidWeights(pHoles[i]-val,val,pHoles[i],threshold[0],sigma[0]);
+                pImg[i]=kipl::math::sigmoidWeights(pHoles[i]-val,val,pHoles[i],threshold[0],sigma[0]);
                 break;
 
             case MorphDetectPeaks :
-                pImg[i]=kipl::math::SigmoidWeights(val-pPeaks[i],val,pPeaks[i],threshold[1],sigma[1]);
+                pImg[i]=kipl::math::sigmoidWeights(val-pPeaks[i],val,pPeaks[i],threshold[1],sigma[1]);
                 break;
 
             case MorphDetectBoth :
@@ -344,9 +344,9 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
                 dh=pHoles[i]-val;
 
                 if (fabs(dh)<fabs(dp))
-                    pImg[i]=kipl::math::SigmoidWeights(dp,val,pPeaks[i],threshold[0],m_fSigma[0]);
+                    pImg[i]=kipl::math::sigmoidWeights(dp,val,pPeaks[i],threshold[0],m_fSigma[0]);
                 else
-                    pImg[i]=kipl::math::SigmoidWeights(dh,val,pHoles[i],threshold[1],m_fSigma[1]);
+                    pImg[i]=kipl::math::sigmoidWeights(dh,val,pHoles[i],threshold[1],m_fSigma[1]);
 
                 break;
             }
@@ -383,7 +383,7 @@ void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
             diffH=abs(val-pHoles[i]);
             if (m_fThreshold[0]<diffH)
             {
-                spots.push_back(PixelInfo(i,val,kipl::math::Sigmoid(diffH,m_fThreshold[0],m_fSigma[0])));
+                spots.push_back(PixelInfo(i,val,kipl::math::sigmoid(diffH,m_fThreshold[0],m_fSigma[0])));
                 pRes[i]=mark;
             }
             break;
@@ -392,7 +392,7 @@ void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
             diffP=abs(val-pPeaks[i]);
             if (m_fThreshold[0]<diffP)
             {
-                spots.push_back(PixelInfo(i,val,kipl::math::Sigmoid(diffP,m_fThreshold[1],m_fSigma[1])));
+                spots.push_back(PixelInfo(i,val,kipl::math::sigmoid(diffP,m_fThreshold[1],m_fSigma[1])));
                 pRes[i]=mark;
             }
             break;
@@ -404,8 +404,8 @@ void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
             if ((m_fThreshold[0]<diffH) || (m_fThreshold[1]<diffP))
             {
                 spots.push_back(PixelInfo(i,val,
-                                          std::min(kipl::math::Sigmoid(diffP,m_fThreshold[0],m_fSigma[0]),
-                                                   kipl::math::Sigmoid(diffP,m_fThreshold[1],m_fSigma[1]))));
+                                          std::min(kipl::math::sigmoid(diffP,m_fThreshold[0],m_fSigma[0]),
+                                                   kipl::math::sigmoid(diffP,m_fThreshold[1],m_fSigma[1]))));
                 pRes[i]=mark;
             }
 

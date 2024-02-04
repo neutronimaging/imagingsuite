@@ -105,7 +105,7 @@ void SpotClean2Dlg::ApplyParameters()
     float threshold[N];
 
     for (size_t i=0; i<N; i++) {
-        threshold[i]=kipl::math::Sigmoid(axis[i], m_fGamma, m_fSigma);
+        threshold[i]=kipl::math::sigmoid(axis[i], m_fGamma, m_fSigma);
     }
     ui->plot_detection->setCurveData(1,axis,threshold,N99,"Threshold weight");
 
