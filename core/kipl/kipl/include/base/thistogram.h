@@ -45,6 +45,26 @@ int KIPLSHARED_EXPORT Histogram(const float * const data,
                                 float lo=0.0f, float hi=0.0f,
                                 bool avoidZeros=false);
 
+/// \brief Computes a histogram from the data present in an array
+/// \param data The data array
+/// \param Ndata number of data points in the array
+/// \param hist the histogram counts, array must be preallocated
+/// \param nBins Number of bins in the histogram
+/// \param lo Lower bound of the bins. Values less than this bound are counted in the first bin
+/// \param hi Upper bound of the bins. Values greater than this bound are counted in the last bin
+/// \note If lo==hi the histogram will be using min and max intensity as interval.
+/// \param pAxis optional bin axis value array, must be preallocated. Not considered if nullptr
+/// \returns Always 0
+int KIPLSHARED_EXPORT HistogramOpt(const float * const data,
+                                size_t Ndata,
+                                size_t nBIns,
+                                std::vector<size_t> &hist,
+                                std::vector<float> &axis,
+                                float lo=0.0f, float hi=0.0f,
+                                bool avoidZeros=false,
+                                size_t nChunkSize=1024UL);
+                        
+
 /// \brief Computes a histogram from the data present in an array. The histgram will be well filled also when the data contains outliers.
 /// \param data The data array
 /// \param Ndata number of data points in the array

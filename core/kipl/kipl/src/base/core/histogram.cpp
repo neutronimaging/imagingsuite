@@ -281,7 +281,142 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         binVal += binIncrement;
     }
 
-    std::cout << "Sum of all blocks: " << sum << std::endl;
+    // std::cout << "Sum of all blocks: " << sum << std::endl;
+    return 0;
+}
+
+
+int KIPLSHARED_EXPORT HistogramOpt(float const * const data, 
+                                    size_t nData, 
+                                    size_t nBins, 
+                                    std::vector<size_t> & hist, 
+                                    std::vector<float> &axis, 
+                                    float lo, 
+                                    float hi, 
+                                    bool avoidZeros,
+                                    size_t nChunkSize)
+{
+
+    kipl::logging::Logger logger("HistogramOpt");
+
+    logger.warning("This function is not yet fully implemented. Use with caution. It is currently slower than the non-optimized version.");
+    float start=0;
+    float stop=1.0f;
+
+    if (lo==hi)
+    {
+        kipl::math::minmax(data,nData,&start,&stop,true);
+
+    }
+    else
+    {
+        start=std::min(lo,hi);
+        stop=std::max(lo,hi);
+    }
+
+    hist.resize(nBins);
+    axis.resize(nBins);
+
+    std::fill(hist.begin(),hist.end(),0UL);
+
+    float scale=(nBins-1)/(stop-start);
+
+    const auto nThreads = std::thread::hardware_concurrency();
+    kipl::utilities::ThreadPool pool(nThreads);
+    logger.debug("Number of threads: " + std::to_string(nThreads));
+
+    size_t nBlockSize = 8192; //nData/nThreads;
+    if (nBlockSize>nData)
+        nBlockSize=nData;
+    size_t nBlocks    = nData/nBlockSize;
+    size_t nRem       = nData % nBlockSize; //nData%nThreads;
+    auto pBlock       = data;
+
+    size_t sum = 0;
+
+    for (size_t j=0; j<nBlocks; ++j)
+    {
+        size_t nBlockLen = nBlockSize;
+        if (j==0)
+            nBlockLen += nRem;
+        std::ostringstream oss;
+        oss << "Block " << j << " has length " << nBlockLen ;
+        logger.debug(oss.str());
+
+        pool.enqueue([pBlock, nBlockLen, start, scale, nBins, avoidZeros, &hist, nChunkSize] {
+            kipl::logging::Logger tlogger("Histogram thread");
+            int index;
+
+            std::vector<size_t> temp_hist(nBins,0UL);
+            std::vector<short> buffer(nChunkSize*2,0);
+
+            size_t nChunks = nBlockLen/nChunkSize;
+            size_t nRem    = nBlockLen % nChunkSize;
+            size_t begin = 0UL;
+
+            for (size_t i=0; i<nChunks; ++i)
+            {
+                size_t cnt = 0UL;
+                size_t nChunk = nChunkSize;
+                if (i==0)
+                    nChunk += nRem;
+
+                if (avoidZeros)
+                {
+                    for (auto j=begin; j<begin+nChunk; ++j)
+                    {
+                        if ( (pBlock[j]!=0.0f) && std::isfinite(pBlock[j]))
+                        {
+                            index=static_cast<short>((pBlock[j]-start)*scale);
+                            if ((index<nBins) && (0<=index))
+                                buffer[cnt++]=index;
+                        }
+                    }
+                }
+                else
+                {
+                    for (auto j=begin; j<begin+nChunk; ++j) 
+                    {
+                        index=static_cast<int>((pBlock[j]-start)*scale);
+                        if ((index<nBins) && (0<=index) && std::isfinite(pBlock[j]))
+                            buffer[cnt++]=index;
+                    }
+                }
+
+                std::sort(buffer.begin(), buffer.begin()+cnt);
+
+                for (auto j=0; j<cnt; ++j)
+                    temp_hist[buffer[j]]++;
+
+                begin += nChunk;
+            }            
+
+
+
+            std::lock_guard<std::mutex> lock(histmtx);
+            {
+                // for (auto i=0; i<static_cast<int>(hist.size()); ++i)
+                //     hist[i]+=temp_hist[i];
+                std::transform(hist.begin(), hist.end(), temp_hist.begin(), hist.begin(), std::plus<size_t>());
+            }
+        });
+
+        pBlock += nBlockLen;
+        sum+=nBlockLen;
+    }
+
+    pool.barrier();
+
+    float binIncrement = (stop-start)/nBins;
+    float binVal       = start+binIncrement/2;
+
+    for (auto &bin : axis)
+    {
+        bin     = binVal;
+        binVal += binIncrement;
+    }
+
+    // std::cout << "Sum of all blocks: " << sum << std::endl;
     return 0;
 }
 
