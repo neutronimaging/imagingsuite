@@ -7,12 +7,7 @@
 #include <sstream>
 #include <cmath>
 #include <cstring>
-#ifdef __aarch64__
-    #include <sse2neon.h>
-#else
-    #include <xmmintrin.h>
-    #include <emmintrin.h>
-#endif
+#include <cstdlib>
 #include <algorithm>
 
 #include "../KiplException.h"
@@ -52,7 +47,8 @@ class buffer {
 		/// \brief D'tor deallocated the buffer
         ~cref()
         {
-            if (m_pRawPointer!=nullptr) _mm_free(m_pRawPointer);
+            // if (m_pRawPointer!=nullptr) _mm_free(m_pRawPointer);
+			if (m_pRawPointer!=nullptr) std::free(m_pRawPointer);
         }
 
 		/// \returns The size of the allocated buffer 
@@ -70,11 +66,17 @@ class buffer {
             bool bExternalBuffer;
 			/// \brief Does the allocation and adjusts the data pointer to the beginning of the next 32 block
 			void _Allocate(size_t N) {
-				m_pRawPointer=reinterpret_cast<char *>(_mm_malloc((N+16)*sizeof(T),32));               
-
+				// m_pRawPointer=reinterpret_cast<char *>(_mm_malloc((N+16)*sizeof(T),32));               
+				auto size = (N+16)*sizeof(T);
+				const size_t Alignment = 32;
+				size = (size + (Alignment-1)) & ~(Alignment-1);
+    
+    			// Use std::aligned_alloc to allocate aligned memory
+				
+    			m_pRawPointer=reinterpret_cast<char *>(std::aligned_alloc(Alignment, size));
                 if (m_pRawPointer==nullptr) {
 					std::ostringstream msg;
-					msg<<"Failed to allocate "<<(N+16)*sizeof(T)<<" bytes";
+					msg<<"Failed to allocate "<<size<<" bytes";
                     throw kipl::base::KiplException(msg.str(),std::string(__FILE__),size_t(__LINE__));
 				}
 				data=reinterpret_cast<T*>(m_pRawPointer);
