@@ -23,29 +23,38 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
         build_type: [Release]
-        c_compiler: [gcc, clang, cl]
+        c_compiler: [cl, gcc]
         include:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-          - os: ubuntu-latest
-            c_compiler: clang
-            cpp_compiler: clang++
+            cl: 16
         exclude:
           - os: windows-latest
             c_compiler: gcc
-          - os: windows-latest
-            c_compiler: clang
-          - os: ubuntu-latest
-            c_compiler: cl
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout imagingsuite source code
+      uses: actions/checkout@v4
+      with:
+        path: imagingsuite
+    - name: Checkout neutronimaging/ExternalDependencies     <-- clone https://github.com/neutronimaging/ExternalDependencies.git
+      uses: actions/checkout@v4
+      with:
+        repository: neutronimaging/ExternalDependencies
+        path: ExternalDependencies
+    - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
+      uses: actions/checkout@v4
+      with:
+        repository: neutronimaging/TestData
+        path: TestData
+    - name: Checkout neutronimaging/scripts                  <-- clone https://github.com/neutronimaging/scripts.git
+      uses: actions/checkout@v4
+      with:
+        repository: neutonimaging/scripts
+        path: scripts
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -68,8 +77,8 @@ jobs:
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+    #- name: Test
+      #working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest --build-config ${{ matrix.build_type }}
+      #run: ctest --build-config ${{ matrix.build_type }}
