@@ -68,7 +68,6 @@ jobs:
 
     - name: Conan profile update
       run: |
-            conan profile update settings.compiler
             conan profile show default
 
     - name: Set reusable strings
