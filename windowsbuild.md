@@ -1,13 +1,19 @@
 # Windows build recipe
 
 ```bash
-mkdir build
-cd build
-conan install ..\imagingsuite\ --profile ..\imagingsuite\profiles\windows_msvc_16_release --build=missing
-activate.bat
-C:\Qt\Tools\CMake_64\bin\cmake.exe ..\imagingsuite\ -DCMAKE_BUILD_TYPE=Release -DCMAKE_MODULE_PATH=\Users\ander\source\repos\conan-build\ -Wno-dev -DCMAKE_INSTALL_PREFIX="..\install\" -G="Visual Studio 16 2019"
-cmake --build . --config Release
+mkdir build-imagingsuite
+mkdir install
+mkdir install\applications
+mkdir install\lib
+mkdir install\tests
+mkdir deployed
+cd build-imagingsuite
+pip install --upgrade conan
+conan install ..\imagingsuite\ --profile:host ..\imagingsuite\profiles\windows_msvc_16_release --profile:build ..\imagingsuite\profiles\windows_msvc_16_release --output-folder=..\build-imagingsuite
+conanbuild.bat
+C:\Qt\Tools\Cmake_64\bin\cmake.exe ..\imagingsuite\ -DCMAKE_PREFIX_PATH=C:\Qt\6.2.4\msvc2019_64\lib\cmake\ -DCMAKE_INSTALL_PREFIX=../install/ -G="Visual Studio 17 2022"
+cmake --build . --target install --config Release
 deactivate.bat
-cd ..
-conan install .. --build=all
+cd ../imagingsuite/deploy/win
+deploymuhrec_cmake.bat
 ```
