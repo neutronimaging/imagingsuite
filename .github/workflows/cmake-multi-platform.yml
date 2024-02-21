@@ -59,7 +59,9 @@ jobs:
 
     - name: Conan installation
       id: conan
-      uses: turtlebrowser/get-conan@v1.56
+      uses: turtlebrowser/get-conan@main
+      with:
+        version: 1.56
 
     - name: Conan version
       run: echo "${{steps.conan.outputs.version}}"
