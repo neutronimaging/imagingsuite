@@ -23,16 +23,16 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [windows-latest]
+        os: [windows-2019]
         build_type: [Release]
         c_compiler: [cl, gcc]
         include:
-          - os: windows-latest
+          - os: windows-2019
             c_compiler: cl
             cpp_compiler: cl
             cl: 16
         exclude:
-          - os: windows-latest
+          - os: windows-2019
             c_compiler: gcc
 
     steps:
@@ -61,16 +61,14 @@ jobs:
       id: conan
       uses: turtlebrowser/get-conan@main
       with:
-        version: 1.56
-
-    - name: Conan version
-      run: echo "${{steps.conan.outputs.version}}"
+        version: 1.56.0
 
     - name: Create default conan profile
       run: conan profile new default --detect
 
     - name: Conan profile update
       run: |
+            conan profile update settings.compiler
             conan profile show default
 
     - name: Set reusable strings
