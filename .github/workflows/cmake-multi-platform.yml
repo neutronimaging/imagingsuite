@@ -36,6 +36,7 @@ jobs:
             c_compiler: gcc
 
     steps:
+      # Checkouts all the nesecary source code to build the project
     - name: Checkout imagingsuite source code
       uses: actions/checkout@v4
       with:
@@ -53,8 +54,22 @@ jobs:
     - name: Checkout neutronimaging/scripts                  <-- clone https://github.com/neutronimaging/scripts.git
       uses: actions/checkout@v4
       with:
-        repository: neutonimaging/scripts
+        repository: neutronimaging/scripts
         path: scripts
+
+    - name: Conan installation
+      id: conan
+      uses: turtlebrowser/get-conan@v1.56
+
+    - name: Conan version
+      run: echo "${{steps.conan.outputs.version}}"
+
+    - name: Create default conan profile
+      run: conan profile new default --detect
+
+    - name: Conan profile update
+      run: |
+            conan profile show default
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
