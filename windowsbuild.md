@@ -11,7 +11,7 @@ cd build-imagingsuite
 pip install --upgrade conan
 conan install ..\imagingsuite\ --profile:host ..\imagingsuite\profiles\windows_msvc_16_release --profile:build ..\imagingsuite\profiles\windows_msvc_16_release --output-folder=..\build-imagingsuite
 conanbuild.bat
-C:\Qt\Tools\Cmake_64\bin\cmake.exe ..\imagingsuite\ -DCMAKE_PREFIX_PATH=C:\Qt\6.2.4\msvc2019_64\lib\cmake\ -DCMAKE_INSTALL_PREFIX=../install/ -G="Visual Studio 17 2022"
+cmake ..\imagingsuite\ -DCMAKE_INSTALL_PREFIX=../install/ -G="Visual Studio 17 2022"
 cmake --build . --target install --config Release
 deactivate.bat
 cd ../imagingsuite/deploy/win
