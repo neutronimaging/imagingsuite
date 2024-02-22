@@ -9,7 +9,7 @@ on:
     branches: [ "Package-update" ]
 
 env:
-  WORKSPACE: $GITHUB_WORKSPACE
+  WORKSPACE: ${{GITHUB_WORKSPACE}}
 
 jobs:
   build:
@@ -43,7 +43,7 @@ jobs:
     steps:
       # Checkouts all the nesecary source code to build the project
     - name: Check env
-      run: echo "WORSKAPCE IS $WORKSPACE"
+      run: echo "WORSKAPCE IS ${{WORKSPACE}}"
     - name: Checkout imagingsuite source code
       uses: actions/checkout@v4
       with:
@@ -74,7 +74,7 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         version: '6.2.4'
-        dir: '$WORKSPACE'
+        dir: '${{WORKSPACE}}'
         install-deps: 'true'
 
     - name: Check env
@@ -83,12 +83,14 @@ jobs:
     - name: Make build folders
       shell: cmd
       run: |
+        dir
         mkdir build-imagingsuite
         mkdir install
         mkdir install\applications
         mkdir install\lib
         mkdir install\tests
         mkdir deployed
+        dir
         cd build-imagingsuite
 
 
