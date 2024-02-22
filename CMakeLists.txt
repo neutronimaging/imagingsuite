@@ -328,6 +328,9 @@ install(FILES
 endif()
 
 message(${CMAKE_CURRENT_SOURCE_DIR})
+
+#set_property(TEST adder PROPERTY ENVIRONMENT_MODIFICATION PATH=path_list_append:$<TARGET_RUNTIME_DLL_DIRS:main>)
+
 ## define test
 #add_test(
 #  NAME
