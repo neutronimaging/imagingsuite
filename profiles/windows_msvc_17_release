@@ -7,4 +7,3 @@ compiler.cppstd=14
 compiler.version=193
 compiler.runtime=dynamic
 [options]
-[tool_requires]
