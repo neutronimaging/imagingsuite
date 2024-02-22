@@ -9,7 +9,7 @@ on:
     branches: [ "Package-update" ]
 
 env:
-  WORKSPACE: ${GITHUB_WORKSPACE}
+  WORKSPACE: $GITHUB_WORKSPACE
 
 jobs:
   build:
@@ -71,15 +71,12 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        version: '6.2.4'
-        host: 'windows'
-        target: 'desktop'
-        arch: 'win64_msvc2019_64'
-        dir: '${WORKSPACE}/qt/'
+        version: '6.2.*'
+        dir: '$WORKSPACE'
         install-deps: 'true'
 
     - name: Check env
-      run: echo "WORSKAPCE IS ${WORKSPACE}"
+      run: echo "WORSKAPCE IS $WORKSPACE, QT workspace is $QT_ROOT_DIR"
 
     - name: Make build folders
       shell: cmd
