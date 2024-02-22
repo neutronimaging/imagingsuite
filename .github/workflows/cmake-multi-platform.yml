@@ -125,5 +125,4 @@ jobs:
     - name: Save build artifact
       uses: actions/upload-artifact@master
       with:
-        name: ${ARTIFACT}
-        path: ${WORKSPACE}\deployed\${ARTIFACT}
+        path: ${WORKSPACE}\deployed\

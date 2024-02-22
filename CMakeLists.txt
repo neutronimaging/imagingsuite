@@ -34,6 +34,8 @@ endif(NOT CMAKE_BUILD_TYPE)
 # Sets environment based on github actions build
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${GITHUB.WORKSPACE}\\build-imagingsuite;${env.Qt6_Dir}\\lib\\cmake\\")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_BINARY_DIR};{GITHUB.WORKSPACE}\\build-imagingsuite")
+message("CMAKE_PREFIX_PATH is: ${CMAKE_PREFIX_PATH}")
+message("CMAKE_MODULE_PATH is: ${CMAKE_MODULE_PATH}")
 find_package(PythonInterp REQUIRED)
 
 find_package(LibXml2 REQUIRED)
