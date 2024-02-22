@@ -64,7 +64,7 @@ jobs:
         version: 2.1.0
 
     - name: Create default conan profile
-      run: conan profile new default --detect
+      run: conan profile new default detect --force
 
     - name: Conan profile update
       run: |
