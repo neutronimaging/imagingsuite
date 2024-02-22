@@ -1,19 +1,18 @@
 [requires]
-openblas/[<0.3.26]
-pybind11/[>2.10.1]
+openblas/[0.3.25]
+pybind11/[2.11.1]
 #pthreads4w/[>2.11.0]
-libxml2/[>2.10.3]
-zlib/[>1.2.13]
-armadillo/[>10.7.3]
-libtiff/[>4.3c.0]
-fftw/[>3.3.9]
-cfitsio/[>4.1.0]
+libxml2/[2.12.4]
+zlib/[1.3.1]
+armadillo/[12.6.4]
+libtiff/[4.6.0]
+fftw/[3.3.10]
+cfitsio/[4.3.1]
 
 [options]
-
+[tool_requires]
+cmake/[3.28.1]
 
 [generators]
 CMakeDeps
 CMakeToolchain
-#cmake_find_package
-VirtualBuildEnv
