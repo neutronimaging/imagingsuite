@@ -42,6 +42,8 @@ jobs:
 
     steps:
       # Checkouts all the nesecary source code to build the project
+    - name: Check env
+      run: echo "WORSKAPCE IS $WORKSPACE"
     - name: Checkout imagingsuite source code
       uses: actions/checkout@v4
       with:
@@ -69,9 +71,9 @@ jobs:
         version: 2.1.0
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
-        version: '6.2.*'
+        version: '6.2.4'
         dir: '$WORKSPACE'
         install-deps: 'true'
 
@@ -89,6 +91,9 @@ jobs:
         mkdir deployed
         cd build-imagingsuite
 
+
+    - name: Run conan
+      run: conan install ..\imagingsuite\ --profile:host ..\imagingsuite\profiles\windows_msvc_16_release --profile:build ..\imagingsuite\profiles\windows_msvc_16_release --output-folder=..\build-imagingsuite
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
