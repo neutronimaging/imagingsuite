@@ -9,7 +9,7 @@ on:
     branches: [ "Package-update" ]
 
 env:
-  WORKSPACE: ${{GITHUB_WORKSPACE}}
+  WORKSPACE: ${{GITHUB.WORKSPACE}}
 
 jobs:
   build:
@@ -43,7 +43,7 @@ jobs:
     steps:
       # Checkouts all the nesecary source code to build the project
     - name: Check env
-      run: echo "WORSKAPCE IS ${{WORKSPACE}}"
+      run: echo "WORSKAPCE IS ${{ env.WORKSPACE }}"
     - name: Checkout imagingsuite source code
       uses: actions/checkout@v4
       with:
@@ -74,11 +74,11 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         version: '6.2.4'
-        dir: '${{WORKSPACE}}'
+        dir: '${{env.WORKSPACE}}'
         install-deps: 'true'
 
     - name: Check env
-      run: echo "WORSKAPCE IS $WORKSPACE, QT workspace is $QT_ROOT_DIR"
+      run: echo "WORSKAPCE IS ${{env.WORKSPACE}}, QT workspace is ${{env.Qt6_Dir}}"
 
     - name: Make build folders
       shell: cmd
