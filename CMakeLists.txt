@@ -30,7 +30,6 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:\\Users\\christianvedel\\Imaging\\NeutronImaging_test\\build-imagingsuite;C:\\Qt\\6.2.4\\msvc2019_64\\lib\\cmake\\")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_BINARY_DIR};C:/Users/christianvedel/Imaging/NeutronImaging_test/build-imagingsuite")
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 find_package(PythonInterp REQUIRED)
 
 find_package(LibXml2 REQUIRED)
