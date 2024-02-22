@@ -88,6 +88,7 @@ jobs:
     - name: Run conan
       run: |
         cd build-imagingsuite
+        dir
         conan install ..\imagingsuite\ --profile:host ..\imagingsuite\profiles\windows_msvc_17_release --profile:build ..\imagingsuite\profiles\windows_msvc_17_release --output-folder=..\build-imagingsuite
 
     - name: Set reusable strings
