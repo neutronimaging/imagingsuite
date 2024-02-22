@@ -8,9 +8,6 @@ on:
   pull_request:
     branches: [ "Package-update" ]
 
-env:
-  WORKSPACE: ${{GITHUB.WORKSPACE}}
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -43,7 +40,7 @@ jobs:
     steps:
       # Checkouts all the nesecary source code to build the project
     - name: Check env
-      run: echo "WORSKAPCE IS ${{ env.WORKSPACE }}"
+      run: echo "WORSKAPCE IS ${{ GITHUB.WORKSPACE }}"
     - name: Checkout imagingsuite source code
       uses: actions/checkout@v4
       with:
@@ -74,28 +71,28 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         version: '6.2.4'
-        dir: '${{env.WORKSPACE}}'
+        dir: '${{GITHUB.WORKSPACE}}'
         install-deps: 'true'
 
     - name: Check env
-      run: echo "WORSKAPCE IS ${{env.WORKSPACE}}, QT workspace is ${{env.Qt6_Dir}}"
+      run: echo "WORSKAPCE IS ${{GITHUB.WORKSPACE}}, QT workspace is ${{env.Qt6_Dir}}"
 
     - name: Make build folders
       shell: cmd
       run: |
-        dir
         mkdir build-imagingsuite
         mkdir install
         mkdir install\applications
         mkdir install\lib
         mkdir install\tests
         mkdir deployed
-        dir
         cd build-imagingsuite
 
 
     - name: Run conan
-      run: conan install ..\imagingsuite\ --profile:host ..\imagingsuite\profiles\windows_msvc_16_release --profile:build ..\imagingsuite\profiles\windows_msvc_16_release --output-folder=..\build-imagingsuite
+      run: |
+        dir
+        conan install ..\imagingsuite\ --profile:host ..\imagingsuite\profiles\windows_msvc_16_release --profile:build ..\imagingsuite\profiles\windows_msvc_16_release --output-folder=..\build-imagingsuite
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
