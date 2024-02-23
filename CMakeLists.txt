@@ -29,10 +29,9 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # Sets environment based on local builds
-#set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "C:\\Users\\christianvedel\\Imaging\\NeutronImaging_test\\build-imagingsuite;C:\\Qt\\6.2.4\\msvc2019_64\\lib\\cmake\\")
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_BINARY_DIR};C:/Users/christianvedel/Imaging/NeutronImaging_test/build-imagingsuite")
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/build-imagingsuite;${Qt6_Dir}\\lib\\cmake\\")
 # Sets environment based on github actions build
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_BINARY_DIR}")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_BINARY_DIR};${PROJECT_SOURCE_DIR}/build-imagingsuite")
 message("CMAKE_PREFIX_PATH is: ${CMAKE_PREFIX_PATH}")
 message("CMAKE_MODULE_PATH is: ${CMAKE_MODULE_PATH}")
 find_package(PythonInterp REQUIRED)
