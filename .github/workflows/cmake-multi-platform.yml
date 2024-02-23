@@ -102,6 +102,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       env:
         CMAKE_INSTALL_PREFIX: ${{ GITHUB.WORKSPACE }}/install/
+        CMAKE_PREFIX_PATH: ${{env.Qt6_Dir}}
       run: |
         cd build-imagingsuite
         cmake --version
