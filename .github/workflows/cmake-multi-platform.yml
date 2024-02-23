@@ -106,6 +106,7 @@ jobs:
       #  CMAKE_PREFIX_PATH: ${{env.Qt6_Dir}}
       run: |
         cd build-imagingsuite
+        dir
         cmake --version
         cmake ..\imagingsuite\ -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_PREFIX_PATH=${{env.Qt6_Dir}}/lib/cmake/ -DCMAKE_INSTALL_PREFIX=${{ GITHUB.WORKSPACE }}/install/
     - name: Build
