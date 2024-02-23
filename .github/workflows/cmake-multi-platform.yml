@@ -71,6 +71,7 @@ jobs:
         version: '6.2.4'
         dir: '${{GITHUB.WORKSPACE}}'
         install-deps: 'true'
+        modules: 'qtcharts'
 
     - name: Check env
       run: echo "WORSKAPCE IS ${{GITHUB.WORKSPACE}}, QT workspace is ${{env.Qt6_Dir}}"
@@ -101,9 +102,6 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      #env:
-      #  CMAKE_INSTALL_PREFIX: ${{ GITHUB.WORKSPACE }}/install/
-      #  CMAKE_PREFIX_PATH: ${{env.Qt6_Dir}}
       run: |
         cd build-imagingsuite
         dir
