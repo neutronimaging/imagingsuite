@@ -28,10 +28,10 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/build-imagingsuite" PREFIX_PATH)
-file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR};${PROJECT_SOURCE_DIR}/build-imagingsuite" MODULE_PATH)
-#file(TO_CMAKE_PATH "C:\\Users\\christianvedel\\Imaging\\NeutronImaging_test\\build-imagingsuite;C:\\Qt\\6.2.4\\msvc2019_64\\lib\\cmake\\" PREFIX_PATH)
-#file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_BINARY_DIR};C:/Users/christianvedel/Imaging/NeutronImaging_test/build-imagingsuite" MODULE_PATH)
+# Ensure that paths are set correctly according to OS
+file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}" PREFIX_PATH)
+file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR}" MODULE_PATH)
+# Set environment variables so that CMAKE can find the packages
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PREFIX_PATH})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${MODULE_PATH})
 message("CMAKE_PREFIX_PATH is: ${CMAKE_PREFIX_PATH}")
