@@ -296,40 +296,40 @@ if(DYNAMIC_LIB)
 
 
 endif(DYNAMIC_LIB)
-# if (WIN32)
-# message("${OpenBLAS_LIBRARIES}")
-# install(FILES 
-#   external/lib64/nexus/NeXus.dll	
-#   external/lib64/nexus/NeXusCPP.dll
-#   external/lib64/hdf5/hdf5_hl.dll
-#   external/lib64/hdf5/hdf5.dll
-#   external/lib64/hdf5/hdf5_cpp.dll
-#   external/lib64/hdf5/zlib.dll
-#   external/lib64/hdf5/szip.dll
-#   external/lib64/libtiff.dll
-#   external/lib64/libjpeg-62.dll
-#   external/lib64/zlib1.dll
-#   external/lib64/libfftw3-3.dll
-#   external/lib64/libfftw3f-3.dll
+if (WIN32)
+message("${OpenBLAS_LIBRARIES}")
+install(FILES 
+  external/lib64/nexus/NeXus.dll	
+  external/lib64/nexus/NeXusCPP.dll
+  external/lib64/hdf5/hdf5_hl.dll
+  external/lib64/hdf5/hdf5.dll
+  external/lib64/hdf5/hdf5_cpp.dll
+  external/lib64/hdf5/zlib.dll
+  external/lib64/hdf5/szip.dll
+  external/lib64/libtiff.dll
+  external/lib64/libjpeg-62.dll
+  external/lib64/zlib1.dll
+  external/lib64/libfftw3-3.dll
+  external/lib64/libfftw3f-3.dll
 
 
-#   # ${OpenBLAS_LIBRARIES}
-#   # external/lib64/libblas.dll
-#   # external/lib64/liblapack.dll
-#   # external/lib64/liblapacke.dll
-#   # external/lib64/libquadmath-0.dll
-#   # external/lib64/libgfortran_64-3.dll
-#   # external/lib64/libwinpthread-1.dll
-#   # external/lib64/libgcc_s_seh-1.dll
-#   # external/lib64/libgcc_s_seh_64-1.dll
-#   # ../ExternalDependencies/windows/bin/libopenblas.dll
+  # ${OpenBLAS_LIBRARIES}
+  # external/lib64/libblas.dll
+  # external/lib64/liblapack.dll
+  # external/lib64/liblapacke.dll
+  # external/lib64/libquadmath-0.dll
+  # external/lib64/libgfortran_64-3.dll
+  # external/lib64/libwinpthread-1.dll
+  # external/lib64/libgcc_s_seh-1.dll
+  # external/lib64/libgcc_s_seh_64-1.dll
+  # ../ExternalDependencies/windows/bin/libopenblas.dll
 
-#   ../ExternalDependencies/windows/bin/libxml2.dll 
-#   ../ExternalDependencies/windows/bin/cfitsio.dll
-#   ../ExternalDependencies/windows/bin/libopenblas.dll
+  ../ExternalDependencies/windows/bin/libxml2.dll 
+  ../ExternalDependencies/windows/bin/cfitsio.dll
+  ../ExternalDependencies/windows/bin/libopenblas.dll
 
-#   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-# endif()
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+endif()
 message(${CMAKE_CURRENT_SOURCE_DIR})
 
 #set_property(TEST adder PROPERTY ENVIRONMENT_MODIFICATION PATH=path_list_append:$<TARGET_RUNTIME_DLL_DIRS:main>)
