@@ -17,6 +17,7 @@ endif(NOT DEFINED CMAKE_CXX_STANDARD)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE
@@ -222,7 +223,6 @@ add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
 add_subdirectory(core/algorithms/pyadvancedfilters)
 
-message("first message")
 if(DYNAMIC_LIB)
   # install(
   #   EXPORT ${EXPORT_NAME}
@@ -297,9 +297,7 @@ if(DYNAMIC_LIB)
 
 
 endif(DYNAMIC_LIB)
-message("second message")
 if (WIN32)
-message("third message")
 message("${OpenBLAS_LIBRARIES}")
 install(FILES 
   external/lib64/nexus/NeXus.dll	
@@ -333,7 +331,6 @@ install(FILES
 
   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
-message("last message")
 message(${CMAKE_CURRENT_SOURCE_DIR})
 
 #set_property(TEST adder PROPERTY ENVIRONMENT_MODIFICATION PATH=path_list_append:$<TARGET_RUNTIME_DLL_DIRS:main>)
