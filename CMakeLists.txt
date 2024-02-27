@@ -133,11 +133,11 @@ else()
   set(CMAKE_INSTALL_RPATH @loader_path)
 endif()
 
-# # turn on testing
-# enable_testing()
+# turn on testing
+enable_testing()
 
-# # Core libraries
-# add_subdirectory(core/kipl/kipl)
+# Core libraries
+add_subdirectory(core/kipl/kipl)
 
 # ## Core library tests
 # add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
