@@ -29,8 +29,8 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # Ensure that paths are set correctly according to OS
-file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}" PREFIX_PATH)
-file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR}" MODULE_PATH)
+file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}/generators" PREFIX_PATH)
+file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR}/generators" MODULE_PATH)
 # Set environment variables so that CMAKE can find the packages
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PREFIX_PATH})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${MODULE_PATH})
@@ -133,94 +133,94 @@ else()
   set(CMAKE_INSTALL_RPATH @loader_path)
 endif()
 
-# turn on testing
-enable_testing()
+# # turn on testing
+# enable_testing()
 
-# Core libraries
-add_subdirectory(core/kipl/kipl)
+# # Core libraries
+# add_subdirectory(core/kipl/kipl)
 
-## Core library tests
-add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
-add_subdirectory(core/kipl/UnitTests/tLogging)
-add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
-add_subdirectory(core/kipl/UnitTests/tkiplfilters)
-add_subdirectory(core/kipl/UnitTests/tFillHole)
-add_subdirectory(core/kipl/UnitTests/tImageOperators)
-add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
-add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
-#add_subdirectory(core/kipl/UnitTests/tNoiseImage)
-add_subdirectory(core/kipl/UnitTests/tedgefunction)
-add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
-add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
-add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
-add_subdirectory(core/kipl/UnitTests/tThreadPool)
-add_subdirectory(core/kipl/UnitTests/tKiplMath)
-add_subdirectory(core/kipl/UnitTests/tKIPLMathFunctions)
-add_subdirectory(core/kipl/UnitTests/tLinFit)
-#add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
-
-
-add_subdirectory(core/algorithms/ImagingAlgorithms)
-add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
-
-add_subdirectory(core/algorithms/AdvancedFilters)
-# add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
-# add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
-
-add_subdirectory(core/algorithms/ImagingQAAlgorithms)
-add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
+# ## Core library tests
+# add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
+# add_subdirectory(core/kipl/UnitTests/tLogging)
+# add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
+# add_subdirectory(core/kipl/UnitTests/tkiplfilters)
+# add_subdirectory(core/kipl/UnitTests/tFillHole)
+# add_subdirectory(core/kipl/UnitTests/tImageOperators)
+# add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
+# add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
+# #add_subdirectory(core/kipl/UnitTests/tNoiseImage)
+# add_subdirectory(core/kipl/UnitTests/tedgefunction)
+# add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
+# add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
+# add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
+# add_subdirectory(core/kipl/UnitTests/tThreadPool)
+# add_subdirectory(core/kipl/UnitTests/tKiplMath)
+# add_subdirectory(core/kipl/UnitTests/tKIPLMathFunctions)
+# add_subdirectory(core/kipl/UnitTests/tLinFit)
+# #add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
 
 
-add_subdirectory(core/modules/ModuleConfig)
+# add_subdirectory(core/algorithms/ImagingAlgorithms)
+# add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
-add_subdirectory(core/modules/ReaderConfig)
-add_subdirectory(core/modules/UnitTests/tReaderConfig)
+# add_subdirectory(core/algorithms/AdvancedFilters)
+# # add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
+# # add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
 
-add_subdirectory(GUI/qt/QtAddons)
-add_subdirectory(GUI/qt/QtImaging)
-add_subdirectory(core/modules/ReaderGUI)
-add_subdirectory(GUI/qt/QtModuleConfigure)
-# #add_subdirectory(GUI/qt/WidgetTests)
+# add_subdirectory(core/algorithms/ImagingQAAlgorithms)
+# add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
 
-# # Tomography
-add_subdirectory(frameworks/tomography/Framework/ReconFramework)
-add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
-add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
-add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
-add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
-add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
-add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
-add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
-if (NOT WIN32)
-  add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
-endif()
-add_subdirectory(frameworks/tomography/UnitTests/tBBLogNorm)
-add_subdirectory(frameworks/tomography/UnitTests/tFDKBackProjectors)
-add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
-# add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
-add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
-add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
+# add_subdirectory(core/modules/ModuleConfig)
 
-# Tomography GUI
-add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
-add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+# add_subdirectory(core/modules/ReaderConfig)
+# add_subdirectory(core/modules/UnitTests/tReaderConfig)
 
-# applications
-add_subdirectory(applications/muhrec)
-if (WIN32)
-   add_subdirectory(applications/CLI/muhrecCLI)
-#   add_subdirectory(applications/verticalslicer)
-#   add_subdirectory(applications/CLI/multiframesplitter)
-endif()
-add_subdirectory(applications/CLI/verticalslicer)
+# add_subdirectory(GUI/qt/QtAddons)
+# add_subdirectory(GUI/qt/QtImaging)
+# add_subdirectory(core/modules/ReaderGUI)
+# add_subdirectory(GUI/qt/QtModuleConfigure)
+# # #add_subdirectory(GUI/qt/WidgetTests)
 
-add_subdirectory(applications/imageviewer)
+# # # Tomography
+# add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+# add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
+# add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
+# add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+# add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
+# add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
-# # Binder modules
-add_subdirectory(frameworks/tomography/pyMuhRec)
-add_subdirectory(core/algorithms/pyimgalg)
-add_subdirectory(core/algorithms/pyadvancedfilters)
+# add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
+# add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
+# if (NOT WIN32)
+#   add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
+# endif()
+# add_subdirectory(frameworks/tomography/UnitTests/tBBLogNorm)
+# add_subdirectory(frameworks/tomography/UnitTests/tFDKBackProjectors)
+# add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
+# # add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
+# add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
+# add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
+
+# # Tomography GUI
+# add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
+# add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+
+# # applications
+# add_subdirectory(applications/muhrec)
+# if (WIN32)
+#    add_subdirectory(applications/CLI/muhrecCLI)
+# #   add_subdirectory(applications/verticalslicer)
+# #   add_subdirectory(applications/CLI/multiframesplitter)
+# endif()
+# add_subdirectory(applications/CLI/verticalslicer)
+
+# add_subdirectory(applications/imageviewer)
+
+# # # Binder modules
+# add_subdirectory(frameworks/tomography/pyMuhRec)
+# add_subdirectory(core/algorithms/pyimgalg)
+# add_subdirectory(core/algorithms/pyadvancedfilters)
 
 if(DYNAMIC_LIB)
   # install(
@@ -330,7 +330,7 @@ endif(DYNAMIC_LIB)
 
 #   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 # endif()
-message(${CMAKE_CURRENT_SOURCE_DIR})
+# message(${CMAKE_CURRENT_SOURCE_DIR})
 
 #set_property(TEST adder PROPERTY ENVIRONMENT_MODIFICATION PATH=path_list_append:$<TARGET_RUNTIME_DLL_DIRS:main>)
 

@@ -4,6 +4,6 @@
         "conan": {}
     },
     "include": [
-        "C:\\Users\\christianvedel\\Imaging\\NeutronImaging_test\\build-imagingsuite\\CMakePresets.json"
+        "C:\\Users\\christianvedel\\Imaging\\NeutronImaging_test\\build-imagingsuite\\generators\\CMakePresets.json"
     ]
 }
