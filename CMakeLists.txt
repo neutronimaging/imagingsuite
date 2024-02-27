@@ -215,7 +215,7 @@ if (WIN32)
 endif()
 add_subdirectory(applications/CLI/verticalslicer)
 
-# add_subdirectory(applications/imageviewer)
+add_subdirectory(applications/imageviewer)
 
 # # # Binder modules
 # add_subdirectory(frameworks/tomography/pyMuhRec)
