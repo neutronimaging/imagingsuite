@@ -217,10 +217,10 @@ add_subdirectory(applications/CLI/verticalslicer)
 
 add_subdirectory(applications/imageviewer)
 
-# # # Binder modules
-# add_subdirectory(frameworks/tomography/pyMuhRec)
-# add_subdirectory(core/algorithms/pyimgalg)
-# add_subdirectory(core/algorithms/pyadvancedfilters)
+# # Binder modules
+add_subdirectory(frameworks/tomography/pyMuhRec)
+add_subdirectory(core/algorithms/pyimgalg)
+add_subdirectory(core/algorithms/pyadvancedfilters)
 
 if(DYNAMIC_LIB)
   # install(
