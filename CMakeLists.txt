@@ -202,9 +202,9 @@ add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
 add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
 add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
 
-# # Tomography GUI
-# add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
-# add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+# Tomography GUI
+add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
 
 # # applications
 # add_subdirectory(applications/muhrec)
