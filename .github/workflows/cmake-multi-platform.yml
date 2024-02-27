@@ -126,21 +126,11 @@ jobs:
         cd build-imagingsuite
         cmake --install . --config ${{ matrix.build_type }}
 
-    - name: Check artifact
-      run: |
-        cd deployed
-        dir
-
     - name: Deploy
       shell: cmd
       run:  |
         cd imagingsuite/deploy/win
         deploymuhrec_cmake.bat
-
-    - name: Check artifact
-      run: |
-        cd deployed
-        dir
 
     - name: Save build artifact
       uses: actions/upload-artifact@master

@@ -171,10 +171,10 @@ add_subdirectory(core/algorithms/ImagingQAAlgorithms)
 add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
 
 
-# add_subdirectory(core/modules/ModuleConfig)
+add_subdirectory(core/modules/ModuleConfig)
 
-# add_subdirectory(core/modules/ReaderConfig)
-# add_subdirectory(core/modules/UnitTests/tReaderConfig)
+add_subdirectory(core/modules/ReaderConfig)
+add_subdirectory(core/modules/UnitTests/tReaderConfig)
 
 # add_subdirectory(GUI/qt/QtAddons)
 # add_subdirectory(GUI/qt/QtImaging)
