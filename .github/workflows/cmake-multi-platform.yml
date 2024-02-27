@@ -127,9 +127,9 @@ jobs:
         cmake --install . --config ${{ matrix.build_type }}
 
     - name: Check artifact
-        run: |
-          cd deployed
-          dir
+      run: |
+        cd deployed
+        dir
 
     - name: Deploy
       run:  |
