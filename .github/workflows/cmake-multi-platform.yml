@@ -79,7 +79,6 @@ jobs:
     - name: Make build folders
       shell: cmd
       run: |
-        mkdir build-imagingsuite
         mkdir install
         mkdir install\applications
         mkdir install\lib
@@ -88,8 +87,8 @@ jobs:
 
     - name: Run conan
       run: |
-        cd build-imagingsuite
-        conan install ..\imagingsuite\ --profile:host ..\imagingsuite\profiles\windows_msvc_17_release --profile:build ..\imagingsuite\profiles\windows_msvc_17_release --output-folder=..\build-imagingsuite
+        cd imagingsuite
+        conan install --profile:host profiles\windows_msvc_17_release --profile:build profiles\windows_msvc_17_release
 
     - name: Set reusable strings
       # Set environment variables for the subsequent steps of the job
