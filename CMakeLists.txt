@@ -182,13 +182,13 @@ add_subdirectory(core/modules/ReaderGUI)
 add_subdirectory(GUI/qt/QtModuleConfigure)
 # #add_subdirectory(GUI/qt/WidgetTests)
 
-# # # Tomography
-# add_subdirectory(frameworks/tomography/Framework/ReconFramework)
-# add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
-# add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
-# add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
-# add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
-# add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
+# # Tomography
+add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
+add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
+add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
+add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
 # add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
 # add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
