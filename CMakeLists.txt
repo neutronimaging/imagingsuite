@@ -176,11 +176,11 @@ add_subdirectory(core/modules/ModuleConfig)
 add_subdirectory(core/modules/ReaderConfig)
 add_subdirectory(core/modules/UnitTests/tReaderConfig)
 
-# add_subdirectory(GUI/qt/QtAddons)
-# add_subdirectory(GUI/qt/QtImaging)
-# add_subdirectory(core/modules/ReaderGUI)
-# add_subdirectory(GUI/qt/QtModuleConfigure)
-# # #add_subdirectory(GUI/qt/WidgetTests)
+add_subdirectory(GUI/qt/QtAddons)
+add_subdirectory(GUI/qt/QtImaging)
+add_subdirectory(core/modules/ReaderGUI)
+add_subdirectory(GUI/qt/QtModuleConfigure)
+# #add_subdirectory(GUI/qt/WidgetTests)
 
 # # # Tomography
 # add_subdirectory(frameworks/tomography/Framework/ReconFramework)
