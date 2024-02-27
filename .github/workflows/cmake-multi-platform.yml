@@ -88,7 +88,6 @@ jobs:
     - name: Run conan
       run: |
         cd imagingsuite
-        dir
         conan install . --profile:host profiles\windows_msvc_17_release --profile:build profiles\windows_msvc_17_release
 
     - name: Set reusable strings
@@ -112,7 +111,7 @@ jobs:
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: |
         cd build-imagingsuite
-        cmake --build . --target install --config ${{ matrix.build_type }}
+        cmake --build . --config ${{ matrix.build_type }}
     #- name: Test
       #working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
