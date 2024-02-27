@@ -160,15 +160,15 @@ add_subdirectory(core/kipl/UnitTests/tLinFit)
 #add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
 
 
-# add_subdirectory(core/algorithms/ImagingAlgorithms)
-# add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+add_subdirectory(core/algorithms/ImagingAlgorithms)
+add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
-# add_subdirectory(core/algorithms/AdvancedFilters)
-# # add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
-# # add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
+add_subdirectory(core/algorithms/AdvancedFilters)
+# add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
+# add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
 
-# add_subdirectory(core/algorithms/ImagingQAAlgorithms)
-# add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
+add_subdirectory(core/algorithms/ImagingQAAlgorithms)
+add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
 
 
 # add_subdirectory(core/modules/ModuleConfig)
