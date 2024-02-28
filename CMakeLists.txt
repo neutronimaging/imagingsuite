@@ -139,81 +139,81 @@ enable_testing()
 # Core libraries
 add_subdirectory(core/kipl/kipl)
 
-# # Core library tests
-# add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
-# add_subdirectory(core/kipl/UnitTests/tLogging)
-# add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
-# add_subdirectory(core/kipl/UnitTests/tkiplfilters)
-# add_subdirectory(core/kipl/UnitTests/tFillHole)
-# add_subdirectory(core/kipl/UnitTests/tImageOperators)
-# add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
-# add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
-# #add_subdirectory(core/kipl/UnitTests/tNoiseImage)
-# add_subdirectory(core/kipl/UnitTests/tedgefunction)
-# add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
-# add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
-# add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
-# add_subdirectory(core/kipl/UnitTests/tThreadPool)
-# add_subdirectory(core/kipl/UnitTests/tKiplMath)
-# add_subdirectory(core/kipl/UnitTests/tKIPLMathFunctions)
-# add_subdirectory(core/kipl/UnitTests/tLinFit)
-# #add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
+# Core library tests
+add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
+add_subdirectory(core/kipl/UnitTests/tLogging)
+add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
+add_subdirectory(core/kipl/UnitTests/tkiplfilters)
+add_subdirectory(core/kipl/UnitTests/tFillHole)
+add_subdirectory(core/kipl/UnitTests/tImageOperators)
+add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
+add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
+#add_subdirectory(core/kipl/UnitTests/tNoiseImage)
+add_subdirectory(core/kipl/UnitTests/tedgefunction)
+add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
+add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
+add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
+add_subdirectory(core/kipl/UnitTests/tThreadPool)
+add_subdirectory(core/kipl/UnitTests/tKiplMath)
+add_subdirectory(core/kipl/UnitTests/tKIPLMathFunctions)
+add_subdirectory(core/kipl/UnitTests/tLinFit)
+#add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
 
 
-# add_subdirectory(core/algorithms/ImagingAlgorithms)
-# add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+add_subdirectory(core/algorithms/ImagingAlgorithms)
+add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
-# add_subdirectory(core/algorithms/AdvancedFilters)
-# # add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
-# # add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
+add_subdirectory(core/algorithms/AdvancedFilters)
+# add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
+# add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
 
-# add_subdirectory(core/algorithms/ImagingQAAlgorithms)
-# add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
+add_subdirectory(core/algorithms/ImagingQAAlgorithms)
+add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
 
 
-# add_subdirectory(core/modules/ModuleConfig)
+add_subdirectory(core/modules/ModuleConfig)
 
 add_subdirectory(core/modules/ReaderConfig)
-# add_subdirectory(core/modules/UnitTests/tReaderConfig)
+add_subdirectory(core/modules/UnitTests/tReaderConfig)
 
-# add_subdirectory(GUI/qt/QtAddons)
-# add_subdirectory(GUI/qt/QtImaging)
-# add_subdirectory(core/modules/ReaderGUI)
-# add_subdirectory(GUI/qt/QtModuleConfigure)
-# #add_subdirectory(GUI/qt/WidgetTests)
+add_subdirectory(GUI/qt/QtAddons)
+add_subdirectory(GUI/qt/QtImaging)
+add_subdirectory(core/modules/ReaderGUI)
+add_subdirectory(GUI/qt/QtModuleConfigure)
+#add_subdirectory(GUI/qt/WidgetTests)
 
-# Tomography
-# add_subdirectory(frameworks/tomography/Framework/ReconFramework)
-# add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
-# add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
-# add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
-# add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
-# add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
+Tomography
+add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
+add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
+add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
+add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
-# add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
-# add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
-# if (NOT WIN32)
-#   add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
-# endif()
-# add_subdirectory(frameworks/tomography/UnitTests/tBBLogNorm)
-# add_subdirectory(frameworks/tomography/UnitTests/tFDKBackProjectors)
-# add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
-# # add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
-# add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
-# add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
+add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
+add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
+if (NOT WIN32)
+  add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
+endif()
+add_subdirectory(frameworks/tomography/UnitTests/tBBLogNorm)
+add_subdirectory(frameworks/tomography/UnitTests/tFDKBackProjectors)
+add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
+# add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
+add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
+add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
 
-# # Tomography GUI
-# add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
-# add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+# Tomography GUI
+add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
+add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
 
 # applications
-# add_subdirectory(applications/muhrec)
+add_subdirectory(applications/muhrec)
 # if (WIN32)
 #    add_subdirectory(applications/CLI/muhrecCLI)
 # #   add_subdirectory(applications/verticalslicer)
 # #   add_subdirectory(applications/CLI/multiframesplitter)
 # endif()
-add_subdirectory(applications/CLI/verticalslicer)
+# add_subdirectory(applications/CLI/verticalslicer)
 
 # add_subdirectory(applications/imageviewer)
 
