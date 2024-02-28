@@ -43,6 +43,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         path: imagingsuite
+        fetch-depth: 0
     - name: Checkout neutronimaging/ExternalDependencies     <-- clone https://github.com/neutronimaging/ExternalDependencies.git
       uses: actions/checkout@v4
       with:
