@@ -207,12 +207,12 @@ add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
 
 # applications
-add_subdirectory(applications/muhrec)
-if (WIN32)
-   add_subdirectory(applications/CLI/muhrecCLI)
-#   add_subdirectory(applications/verticalslicer)
-#   add_subdirectory(applications/CLI/multiframesplitter)
-endif()
+# add_subdirectory(applications/muhrec)
+# if (WIN32)
+#    add_subdirectory(applications/CLI/muhrecCLI)
+# #   add_subdirectory(applications/verticalslicer)
+# #   add_subdirectory(applications/CLI/multiframesplitter)
+# endif()
 # add_subdirectory(applications/CLI/verticalslicer)
 
 # add_subdirectory(applications/imageviewer)
