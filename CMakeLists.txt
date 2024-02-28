@@ -160,7 +160,7 @@ add_subdirectory(core/kipl/kipl)
 # #add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
 
 
-# add_subdirectory(core/algorithms/ImagingAlgorithms)
+add_subdirectory(core/algorithms/ImagingAlgorithms)
 # add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
 
 # add_subdirectory(core/algorithms/AdvancedFilters)
@@ -171,9 +171,9 @@ add_subdirectory(core/kipl/kipl)
 # add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
 
 
-# add_subdirectory(core/modules/ModuleConfig)
+add_subdirectory(core/modules/ModuleConfig)
 
-# add_subdirectory(core/modules/ReaderConfig)
+add_subdirectory(core/modules/ReaderConfig)
 # add_subdirectory(core/modules/UnitTests/tReaderConfig)
 
 # add_subdirectory(GUI/qt/QtAddons)
@@ -182,8 +182,8 @@ add_subdirectory(core/kipl/kipl)
 # add_subdirectory(GUI/qt/QtModuleConfigure)
 # #add_subdirectory(GUI/qt/WidgetTests)
 
-# # Tomography
-# add_subdirectory(frameworks/tomography/Framework/ReconFramework)
+# Tomography
+add_subdirectory(frameworks/tomography/Framework/ReconFramework)
 # add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
 # add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
 # add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
