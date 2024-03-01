@@ -31,4 +31,5 @@ target_link_libraries(${TARGET_NAME}
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
+#set_tests_properties(${TARGET_NAME} PROPERTIES ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:$<JOIN:$<TARGET_RUNTIME_DLL_DIRS:${TARGET_NAME}>,\;")
 

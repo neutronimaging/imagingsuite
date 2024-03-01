@@ -1,5 +1,5 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
 # execute_process(
 #   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
@@ -43,6 +43,7 @@ find_package(LibXml2 REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(pybind11 REQUIRED)
+#find_package(Qt6 REQUIRED)
 
 if (WIN32)
   find_package(Armadillo REQUIRED CONFIG)
@@ -76,6 +77,7 @@ execute_process(
   RESULT_VARIABLE HAVE_GIT_VERSION_INFO
   OUTPUT_VARIABLE GIT_VERSION_INFO
   OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND_ERROR_IS_FATAL ANY
 )
 if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   message(STATUS "Got version from Git: ${GIT_VERSION_INFO}")

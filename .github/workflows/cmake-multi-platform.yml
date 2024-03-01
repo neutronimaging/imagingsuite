@@ -4,9 +4,9 @@ name: CMake on multiple platforms
 
 on:
   push:
-    branches: [ "Package-update" ]
+    branches: [ "dynamic_libraries" ]
   pull_request:
-    branches: [ "Package-update" ]
+    branches: [ "dynamic_libraries" ]
 
 jobs:
   build:
@@ -31,14 +31,9 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             cl: 17
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
         exclude:
           - os: windows-2022
             c_compiler: gcc
-          - os: ubuntu-latest
-            c_compiler: cl
     
 
 
