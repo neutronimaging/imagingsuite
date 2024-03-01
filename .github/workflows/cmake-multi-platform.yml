@@ -31,9 +31,14 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             cl: 17
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
         exclude:
           - os: windows-2022
             c_compiler: gcc
+          - os: ubuntu-latest
+            c_compiler: cl
     
 
 
@@ -49,6 +54,7 @@ jobs:
       with:
         repository: neutronimaging/ExternalDependencies
         path: ExternalDependencies
+    # Are these code sources actually nessecary or not?
     # - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
     #   uses: actions/checkout@v4
     #   with:
@@ -87,8 +93,8 @@ jobs:
         mkdir deployed
 
     - name: Run conan
+      working-directory: imagingsuite
       run: |
-        cd imagingsuite
         conan install . --profile:host profiles\windows_msvc_17_release --profile:build profiles\windows_msvc_17_release
 
     - name: Set reusable strings
@@ -103,17 +109,16 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      working-directory: build-imagingsuite
       run: |
-        bash echo %WORKSPACE%
-        cd build-imagingsuite
         cmake --version
         cmake ..\imagingsuite\ -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_PREFIX_PATH='${{env.Qt6_Dir}}/lib/cmake/' -DCMAKE_INSTALL_PREFIX='${{ GITHUB.WORKSPACE }}/install/'
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      working-directory: build-imagingsuite
       run: |
-        cd build-imagingsuite
-        cmake --build . --config ${{ matrix.build_type }}
+        cmake --build . --target install --config ${{ matrix.build_type }}
     
     #- name: Test
       #working-directory: ${{ steps.strings.outputs.build-output-dir }}
@@ -121,11 +126,11 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       #run: ctest --build-config ${{ matrix.build_type }}
     
-    - name: Install
-      # Install your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: |
-        cd build-imagingsuite
-        cmake --install . --config ${{ matrix.build_type }}
+    # - name: Install
+    #   # Install your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+    #   run: |
+    #     cd build-imagingsuite
+    #     cmake --install . --config ${{ matrix.build_type }}
 
     - name: Deploy
       shell: cmd

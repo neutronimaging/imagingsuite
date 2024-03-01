@@ -6,6 +6,3 @@ compiler=gcc
 compiler.version=7
 compiler.libcxx=libstdc++11
 [options]
-[env]
-[build_requires]
-cmake/3.19.0

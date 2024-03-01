@@ -11,9 +11,7 @@ conan install . --profile:host profiles\windows_msvc_17_release --profile:build 
 conanbuild.bat
 cd ../build-imagingsuite
 cmake ..\imagingsuite\ -DCMAKE_INSTALL_PREFIX=../install/ -DCMAKE_PREFIX_PATH=%QTPATH%/lib/cmake/ -G="Visual Studio 17 2022" -B .
-#cmake --build . --target install --config Release
-cmake --build . --config Release
-cmake --install . --config Release
+cmake --build . --target install --config Release
 deactivate_conanbuild.bat
 cd ../imagingsuite/deploy/win
 deploymuhrec_cmake.bat
