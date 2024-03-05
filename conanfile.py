@@ -1,10 +1,12 @@
-import os
-
 from conan import ConanFile
+from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
+from conan.tools.env import VirtualRunEnv
+from conan.tools.files import copy
+import os
 
 class MuhrecRecipe(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    generators = "CMakeToolchain", "CMakeDeps"
+    default_options = {"*:shared": True}
 
     def requirements(self):
         self.requires("zlib/1.3.1")
@@ -16,19 +18,36 @@ class MuhrecRecipe(ConanFile):
         self.requires("libtiff/[4.6.0]")
         self.requires("fftw/[3.3.10]")
         self.requires("cfitsio/[4.3.1]")
-        self.requires("qt/[6.6.1]")
+        #self.requires("qt/[6.6.1]") Does work but QtCharts is not included
 
-    def build_requirements(self):
-        self.tool_requires("cmake/3.28.1") # Only used if conanbuild.bat environment is used
+#    def build_requirements(self):
+#        self.tool_requires("cmake/3.28.1") # Only used if conanbuild.bat environment is used
 
     def layout(self):
-        # We make the assumption that if the compiler is msvc the
-        # CMake generator is multi-config
-        # System independent way of setting the correct build path
-        multi = True if self.settings.get_safe("compiler") == "msvc" else False
-        if multi:
-            self.folders.generators = os.path.join(os.pardir, "build-imagingsuite", "generators")
-            self.folders.build = os.path.join(os.pardir, "build-imagingsuite")
-        else:
-            self.folders.generators = os.path.join(os.pardir, "build-imagingsuite", str(self.settings.build_type), "generators")
-            self.folders.build = os.path.join(os.pardir, "build-imagingsuite", str(self.settings.build_type))
+        cmake_layout(self)
+
+    def generate(self):
+        deps = CMakeDeps(self)
+        deps.generate()
+        tc = CMakeToolchain(self)
+        tc.generate()
+        ms = VirtualRunEnv(self)
+        ms.generate()
+        dst = os.path.join(self.build_folder, self.cpp.build.bindir)
+        # Copy dynamic libraries from conan
+        for dep in self.dependencies.values():
+            copy(self, "*.dll", dep.cpp_info.bindirs[0], dst)
+            copy(self, "*.dylib", dep.cpp_info.bindirs[0], dst)
+            copy(self, "*.so", dep.cpp_info.bindirs[0], dst)
+        # Copy dynamic libraries from qt
+        qtpath = os.environ["QTPATH"]
+        Qt_dynamic_library_list = ["Qt6Charts", "Qt6Core", "Qt6Gui", "Qt6OpenGL", "Qt6OpenGLWidgets","Qt6PrintSupport","Qt6Svg","Qt6Widgets","Qt6Addons","Qt6Imaging","Qt6ModuleConfigure"]
+        for library in Qt_dynamic_library_list:
+            copy(self, library+".dll", os.path.join(qtpath, "bin"), dst)
+            copy(self, library+".dylib", os.path.join(qtpath, "bin"), dst)
+            copy(self, library+".so", os.path.join(qtpath, "bin"), dst)
+
+    def build(self):
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
