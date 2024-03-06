@@ -25,6 +25,16 @@ class MuhrecRecipe(ConanFile):
 
     def layout(self):
         cmake_layout(self)
+        # We make the assumption that if the compiler is msvc the
+        # CMake generator is multi-config
+        # System independent way of setting the correct build path
+        multi = True if self.settings.get_safe("compiler") == "msvc" else False
+        if multi:
+            self.folders.generators = os.path.join(os.pardir, "build-imagingsuite", "generators")
+            self.folders.build = os.path.join(os.pardir, "build-imagingsuite")
+        else:
+            self.folders.generators = os.path.join(os.pardir, "build-imagingsuite", str(self.settings.build_type), "generators")
+            self.folders.build = os.path.join(os.pardir, "build-imagingsuite", str(self.settings.build_type))
 
     def generate(self):
         deps = CMakeDeps(self)
@@ -33,7 +43,8 @@ class MuhrecRecipe(ConanFile):
         tc.generate()
         ms = VirtualRunEnv(self)
         ms.generate()
-        dst = os.path.join(self.build_folder, self.cpp.build.bindir)
+        print(self.build_folder)
+        dst = os.path.join(self.build_folder, "applications", self.cpp.build.bindir)
         # Copy dynamic libraries from conan
         for dep in self.dependencies.values():
             copy(self, "*.dll", dep.cpp_info.bindirs[0], dst)
