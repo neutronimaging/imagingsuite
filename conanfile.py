@@ -41,7 +41,7 @@ class MuhrecRecipe(ConanFile):
             copy(self, "*.so", dep.cpp_info.bindirs[0], dst)
         # Copy dynamic libraries from qt
         qtpath = os.environ["QTPATH"]
-        Qt_dynamic_library_list = ["Qt6Charts", "Qt6Core", "Qt6Gui", "Qt6OpenGL", "Qt6OpenGLWidgets","Qt6PrintSupport","Qt6Svg","Qt6Widgets","Qt6Addons","Qt6Imaging","Qt6ModuleConfigure"]
+        Qt_dynamic_library_list = ["Qt6PrintSupport", "Qt6Charts", "Qt6OpenGLWidgets", "Qt6OpenGl", "Qt6Test"]
         for library in Qt_dynamic_library_list:
             copy(self, library+".dll", os.path.join(qtpath, "bin"), dst)
             copy(self, library+".dylib", os.path.join(qtpath, "bin"), dst)

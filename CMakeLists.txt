@@ -43,7 +43,6 @@ find_package(LibXml2 REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(pybind11 REQUIRED)
-#find_package(Qt6 REQUIRED)
 
 if (WIN32)
   find_package(Armadillo REQUIRED CONFIG)
@@ -334,8 +333,6 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
 message(${CMAKE_CURRENT_SOURCE_DIR})
-
-#set_property(TEST adder PROPERTY ENVIRONMENT_MODIFICATION PATH=path_list_append:$<TARGET_RUNTIME_DLL_DIRS:main>)
 
 ## define test
 #add_test(
