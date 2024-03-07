@@ -110,8 +110,8 @@ jobs:
       #working-directory: build-imagingsuite/applications/Release
       shell: bash
       run: |
-        ${QTPATH}/bin/windeployqt muhrec.exe
-        ${{env.Qt6_Dir}}/bin/windeployqt imageviewer.exe
+        ${QTPATH}/bin/windeployqt
+        #${{env.Qt6_Dir}}/bin/windeployqt
 
     # - name: Test
     #   working-directory: build-imagingsuite
