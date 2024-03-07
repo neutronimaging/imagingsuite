@@ -43,6 +43,7 @@ find_package(LibXml2 REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(pybind11 REQUIRED)
+find_package(FFTW3 REQUIRED)
 
 if (WIN32)
   find_package(Armadillo REQUIRED CONFIG)

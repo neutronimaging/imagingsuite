@@ -191,8 +191,9 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     ReaderGUI
     QtModuleConfigure
     QtImaging
-    libopenblas
-    libtiff
+    #libopenblas
+    OpenBLAS::OpenBLAS
+    TIFF::TIFF
     cfitsio
 )
 endif()

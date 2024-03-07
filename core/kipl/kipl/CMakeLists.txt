@@ -348,10 +348,11 @@ if (WIN32)
         LibXml2::LibXml2
         TIFF::TIFF
         cfitsio::cfitsio
-        libopenblas
-
-        libfftw3-3
-        libfftw3f-3
+        #libopenblas
+        OpenBLAS::OpenBLAS
+        #libfftw3-3
+        #libfftw3f-3
+        fftw::fftw
     )
 endif()
 

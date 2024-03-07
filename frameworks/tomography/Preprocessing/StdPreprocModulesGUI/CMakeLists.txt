@@ -142,7 +142,8 @@ if (WIN32)
     QtModuleConfigure
     StdPreprocModules
 
-    libopenblas
+    #libopenblas
+    OpenBLAS::OpenBLAS
     liblapack
   )
 endif()
@@ -177,8 +178,9 @@ endif()
         QtModuleConfigure
         StdPreprocModules
         xml2
-        fftw3
-        fftw3f
+        #fftw3
+        #fftw3f
+        fftw::fftw
         cfitsio
         tiff
         armadillo

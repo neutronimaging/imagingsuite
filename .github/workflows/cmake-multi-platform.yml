@@ -44,12 +44,12 @@ jobs:
       with:
         path: imagingsuite
         fetch-depth: 0
-    - name: Checkout neutronimaging/ExternalDependencies     <-- clone https://github.com/neutronimaging/ExternalDependencies.git
-      uses: actions/checkout@v4
-      with:
-        repository: neutronimaging/ExternalDependencies
-        path: ExternalDependencies
     # Are these code sources actually nessecary or not?
+    # - name: Checkout neutronimaging/ExternalDependencies     <-- clone https://github.com/neutronimaging/ExternalDependencies.git
+    #   uses: actions/checkout@v4
+    #   with:
+    #     repository: neutronimaging/ExternalDependencies
+    #     path: ExternalDependencies
     # - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
     #   uses: actions/checkout@v4
     #   with:
@@ -75,18 +75,6 @@ jobs:
         install-deps: 'true'
         modules: 'qtcharts'
 
-    - name: Check env
-      run: echo "WORSKAPCE IS ${{GITHUB.WORKSPACE}}, QT workspace is ${{env.Qt6_Dir}}"
-
-    - name: Make build folders
-      shell: cmd
-      run: |
-        mkdir install
-        mkdir install\applications
-        mkdir install\lib
-        mkdir install\tests
-        mkdir deployed
-
     - name: Run conan
       working-directory: imagingsuite
       run: |
@@ -97,8 +85,6 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/build-imagingsuite" >> "$GITHUB_OUTPUT"
-        echo "WORKSPACE=${{ github.workspace }}" >> "$GITHUB_ENV"
         echo "QTPATH=${{env.Qt6_Dir}}" >> "$GITHUB_ENV"
 
     - name: Configure CMake
@@ -107,33 +93,28 @@ jobs:
       working-directory: build-imagingsuite
       run: |
         cmake --version
-        cmake ..\imagingsuite\ -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_PREFIX_PATH='${{env.Qt6_Dir}}/lib/cmake/' -DCMAKE_INSTALL_PREFIX='${{ GITHUB.WORKSPACE }}/install/'
+        cmake ..\imagingsuite\ -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_PREFIX_PATH='${{env.Qt6_Dir}}/lib/cmake/'
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       working-directory: build-imagingsuite
       run: |
-        cmake --build . --target install --config ${{ matrix.build_type }}
-    
-    #- name: Test
-      #working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      #run: ctest --build-config ${{ matrix.build_type }}
-    
-    # - name: Install
-    #   # Install your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-    #   run: |
-    #     cd build-imagingsuite
-    #     cmake --install . --config ${{ matrix.build_type }}
+        cmake --build . --config ${{ matrix.build_type }}
+  
+    - name: Qt Deploy
+      working-directory: build-imagingsuite/applications/Release
+      shell: bash
+      run: |
+        ${{env.Qt6_Dir}}/bin/windeployqt muhrec.exe
+        ${{env.Qt6_Dir}}/bin/windeployqt imageviewer.exe
 
-    - name: Deploy
-      shell: cmd
-      run:  |
-        cd imagingsuite/deploy/win
-        deploymuhrec_cmake.bat
+    - name: Test
+      working-directory: build-imagingsuite
+      #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest --build-config ${{ matrix.build_type }}
 
     - name: Save build artifact
       uses: actions/upload-artifact@master
       with:
-        path: ${{ github.workspace }}\deployed\
+        path: ${{ github.workspace }}/build-imagingsuite/applications/Release

@@ -43,7 +43,6 @@ class MuhrecRecipe(ConanFile):
         tc.generate()
         ms = VirtualRunEnv(self)
         ms.generate()
-        print(self.build_folder)
         dst = os.path.join(self.build_folder, "applications", self.cpp.build.bindir)
         # Copy dynamic libraries from conan
         for dep in self.dependencies.values():
@@ -57,6 +56,9 @@ class MuhrecRecipe(ConanFile):
             copy(self, library+".dll", os.path.join(qtpath, "bin"), dst)
             copy(self, library+".dylib", os.path.join(qtpath, "bin"), dst)
             copy(self, library+".so", os.path.join(qtpath, "bin"), dst)
+        if not os.path.exists(os.path.join(dst,"resources")):
+            os.mkdir(os.path.join(dst,"resources"))
+        copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
 
     def build(self):
         cmake = CMake(self)

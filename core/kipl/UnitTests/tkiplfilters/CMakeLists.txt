@@ -41,7 +41,8 @@ include_directories(
         Qt6::Test
         kipl
 
-        libopenblas
+        #libopenblas
+        OpenBLAS::OpenBLAS
     )
 else()
 

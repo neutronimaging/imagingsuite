@@ -93,9 +93,10 @@ if (WIN32)
         ReconFramework
         libxml2
         cfitsio
-        libtiff
-        libfftw3-3
-        libfftw3f-3
+        TIFF::TIFF
+        #libfftw3-3
+        #libfftw3f-3
+        fftw::fftw
         Iphlpapi
 
         )
@@ -123,10 +124,11 @@ if (UNIX AND NOT APPLE)
             ModuleConfig
             ReconFramework
             xml2
-            fftw3
-            fftw3f
+            #fftw3
+            #fftw3f
+            fftw::fftw
             cfitsio
-            tiff
+            TIFF::TIFF
             armadillo
             lapack
             blas
@@ -143,10 +145,11 @@ if (UNIX AND NOT APPLE)
             ModuleConfig
             ReconFramework
             xml2
-            fftw3
-            fftw3f
+            #fftw3
+            #fftw3f
+            fftw::fftw
             cfitsio
-            tiff
+            TIFF::TIFF
             armadillo
             lapack
             blas

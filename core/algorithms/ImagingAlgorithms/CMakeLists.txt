@@ -107,7 +107,8 @@ if (WIN32)
     target_link_libraries(${TARGET_NAME}
     PUBLIC
       kipl
-      libopenblas
+      #libopenblas
+      OpenBLAS::OpenBLAS
       )
 endif()
 
