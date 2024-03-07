@@ -11,4 +11,5 @@ cmake --build . --config Release
 cd ./applications/Release
 %QTPATH%/bin/windeployqt muhrec.exe
 %QTPATH%/bin/windeployqt imageviewer.exe
+"C:\Program Files\7-Zip\7z.exe" a ./MuhRec-Windows.zip "./applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe -xr!Testing "./lib/Release/*.cp*"
 ```

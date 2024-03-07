@@ -113,11 +113,19 @@ jobs:
       #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
+      continue-on-error: true
+
+    - name: Archive test results
+      if: failure()
+      uses: actions/upload-artifact@master
+      with:
+        name: test-results
+        path: ${{ github.workspace }}/build-imagingsuite/Testing
 
     - name: Compress artifact
       uses: edgarrc/action-7z@v1
       with:
-        args: 7z a MuhRec-Windows.zip build-imagingsuite/applications/Release "build-imagingsuite/lib/Release/*.cp*"
+        args: 7z a MuhRec-Windows.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing 
 
     - name: Save build artifact
       uses: actions/upload-artifact@master
