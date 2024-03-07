@@ -87,11 +87,6 @@ jobs:
       run: |
         echo "QTPATH=${{env.Qt6_Dir}}" >> "$GITHUB_ENV"
 
-    - name: Check environment variable
-      shell: bash
-      run:
-        echo %QTPATH%
-
     # - name: Run conan
     #   working-directory: imagingsuite
     #   run: |
@@ -111,12 +106,12 @@ jobs:
     #   run: |
     #     cmake --build . --config ${{ matrix.build_type }}
   
-    # - name: Qt Deploy
-    #   working-directory: build-imagingsuite/applications/Release
-    #   shell: bash
-    #   run: |
-    #     ${{env.Qt6_Dir}}/bin/windeployqt muhrec.exe
-    #     ${{env.Qt6_Dir}}/bin/windeployqt imageviewer.exe
+    - name: Qt Deploy
+      working-directory: build-imagingsuite/applications/Release
+      shell: bash
+      run: |
+        ${{env.Qt6_Dir}}/bin/windeployqt.exe muhrec.exe
+        ${{env.Qt6_Dir}}/bin/windeployqt imageviewer.exe
 
     # - name: Test
     #   working-directory: build-imagingsuite
