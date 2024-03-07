@@ -109,6 +109,7 @@ jobs:
         ${QTPATH}/bin/windeployqt imageviewer.exe
 
     - name: Test
+      id: tests
       working-directory: build-imagingsuite
       #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
@@ -116,7 +117,7 @@ jobs:
       continue-on-error: true
 
     - name: Archive test results
-      if: failure()
+      if: steps.tests.outcome == 'failure'
       uses: actions/upload-artifact@master
       with:
         name: test-results
