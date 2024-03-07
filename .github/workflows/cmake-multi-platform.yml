@@ -76,7 +76,7 @@ jobs:
         modules: 'qtcharts'
 
     - name: Check Qt deployscripts
-      run:
+      run: |
         cd ${{env.Qt6_Dir}}/bin
         dir
 
