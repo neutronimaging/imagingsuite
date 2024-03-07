@@ -102,7 +102,7 @@ jobs:
         cmake --build . --config ${{ matrix.build_type }}
   
     - name: Qt Deploy
-      #working-directory: build-imagingsuite/applications/Release
+      working-directory: build-imagingsuite/applications/Release
       shell: bash
       run: |
         ${QTPATH}/bin/windeployqt muhrec.exe
@@ -114,7 +114,12 @@ jobs:
       #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
 
+    - name: Compress artifact
+      uses: edgarrc/action-7z@v1
+      with:
+        args: 7z a MuhRec-Windows.zip build-imagingsuite/applications/Release "build-imagingsuite/lib/Release/*.cp*"
+
     - name: Save build artifact
       uses: actions/upload-artifact@master
       with:
-        path: ${{ github.workspace }}/build-imagingsuite/applications/Release
+        path: ${{ github.workspace }}/MuhRec-Windows.zip
