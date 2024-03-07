@@ -75,17 +75,17 @@ jobs:
         install-deps: 'true'
         modules: 'qtcharts'
 
-    - name: Run conan
-      working-directory: imagingsuite
-      run: |
-        conan install . --profile:host profiles\windows_msvc_17_release --profile:build profiles\windows_msvc_17_release
-
     - name: Set reusable strings
-      # Set environment variables for the subsequent steps of the job
+        # Set environment variables for the subsequent steps of the job
       id: strings
       shell: bash
       run: |
         echo "QTPATH=${{env.Qt6_Dir}}" >> "$GITHUB_ENV"
+        
+    - name: Run conan
+      working-directory: imagingsuite
+      run: |
+        conan install . --profile:host profiles\windows_msvc_17_release --profile:build profiles\windows_msvc_17_release
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
