@@ -10,4 +10,5 @@ cmake --build . --config Release
 #deactivate_conanbuild.bat
 cd ./applications/Release
 %QTPATH%/bin/windeployqt muhrec.exe
+%QTPATH%/bin/windeployqt imageviewer.exe
 ```
