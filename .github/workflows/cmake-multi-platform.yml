@@ -124,9 +124,8 @@ jobs:
         path: ${{ github.workspace }}/build-imagingsuite/Testing
 
     - name: Compress artifact
-      uses: edgarrc/action-7z@v1
-      with:
-        args: 7z a MuhRec-Windows.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing 
+      shell: bash
+      run: C:/Program Files/7-Zip/7z.exe a MuhRec-Windows.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing 
 
     - name: Save build artifact
       uses: actions/upload-artifact@master
