@@ -107,7 +107,7 @@ jobs:
     #     cmake --build . --config ${{ matrix.build_type }}
   
     - name: Qt Deploy
-      working-directory: build-imagingsuite/applications/Release
+      #working-directory: build-imagingsuite/applications/Release
       shell: bash
       run: |
         ${{env.Qt6_Dir}}/bin/windeployqt.exe muhrec.exe
