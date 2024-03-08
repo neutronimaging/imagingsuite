@@ -23,7 +23,7 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [windows-2022]
+        os: [ubuntu-latest, windows-2022]
         build_type: [Release]
         c_compiler: [cl, gcc]
         include:
@@ -31,10 +31,16 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             cl: 17
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
         exclude:
           - os: windows-2022
             c_compiler: gcc
-    
+          - os: ubuntu-latest
+            c_compiler: cl
+          - os: windows-2022
+            c_compiler: cl
 
 
     steps:
@@ -85,7 +91,10 @@ jobs:
     - name: Run conan
       working-directory: imagingsuite
       run: |
-        conan install . --profile:host profiles\windows_msvc_17_release --profile:build profiles\windows_msvc_17_release
+        if ["$RUNNER_OS" == "Windows"]; then
+          conan install . --profile:host profiles\windows_msvc_17_release --profile:build profiles\windows_msvc_17_release
+        elif ["$RUNNER_OS" == "Linux"]; then
+          conan install . --profile:host profiles\linux_gcc_7_release --profile:build profiles\linux_gcc_7_release
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -105,8 +114,9 @@ jobs:
       working-directory: build-imagingsuite/applications/Release
       shell: bash
       run: |
-        ${QTPATH}/bin/windeployqt muhrec.exe
-        ${QTPATH}/bin/windeployqt imageviewer.exe
+        if ["$RUNNER_OS" == "Windows"]; then
+          ${QTPATH}/bin/windeployqt muhrec.exe
+          ${QTPATH}/bin/windeployqt imageviewer.exe
 
     - name: Test
       id: tests
