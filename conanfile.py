@@ -43,14 +43,14 @@ class MuhrecRecipe(ConanFile):
         for dep in self.dependencies.values():
             copy(self, "*.dll", dep.cpp_info.bindirs[0], dst)
             copy(self, "*.dylib", dep.cpp_info.bindirs[0], dst)
-            copy(self, "*.so", dep.cpp_info.bindirs[0], dst)
+            copy(self, "*.so*", dep.cpp_info.bindirs[0], dst)
         # Copy dynamic libraries from qt
         qtpath = os.environ["QTPATH"]
         Qt_dynamic_library_list = ["Qt6PrintSupport", "Qt6Charts", "Qt6OpenGLWidgets", "Qt6OpenGl", "Qt6Test"]
         for library in Qt_dynamic_library_list:
             copy(self, library+".dll", os.path.join(qtpath, "bin"), dst)
             copy(self, library+".dylib", os.path.join(qtpath, "bin"), dst)
-            copy(self, library+".so", os.path.join(qtpath, "bin"), dst)
+            copy(self, library+".so*", os.path.join(qtpath, "bin"), dst)
         if not os.path.exists(os.path.join(dst,"resources")):
             os.mkdir(os.path.join(dst,"resources"))
         copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
