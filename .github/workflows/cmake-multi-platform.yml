@@ -94,9 +94,9 @@ jobs:
       working-directory: imagingsuite
       shell: bash
       run: |
-        if ["$RUNNER_OS" == "Windows"]; then
+        if ["${RUNNER_OS}" == "Windows"]; then
           conan install . --profile:host profiles\windows_msvc_17_release --profile:build profiles\windows_msvc_17_release
-        elif ["$RUNNER_OS" == "Linux"]; then
+        elif ["${RUNNER_OS}" == "Linux"]; then
           conan install . --profile:host profiles\linux_gcc_7_release --profile:build profiles\linux_gcc_7_release
         fi
     - name: Configure CMake
@@ -117,9 +117,10 @@ jobs:
       working-directory: build-imagingsuite/applications/Release
       shell: bash
       run: |
-        if ["$RUNNER_OS" == "Windows"]; then
+        if ["${RUNNER_OS}" == "Windows"]; then
           ${QTPATH}/bin/windeployqt muhrec.exe
           ${QTPATH}/bin/windeployqt imageviewer.exe
+        fi
 
     - name: Test
       id: tests
