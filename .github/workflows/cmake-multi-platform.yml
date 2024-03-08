@@ -41,7 +41,6 @@ jobs:
             c_compiler: cl
           - os: windows-2022
             c_compiler: cl
-            cpp_compiler: cl
             cl: 17
 
 
