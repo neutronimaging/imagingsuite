@@ -7,7 +7,7 @@
 #include <vector>
 #include <tuple>
 
-#include <armadillo>
+#include <armadillo.h>
 
 #include "../../include/math/nonlinfit.h"
 #include "../../include/math/mathconstants.h"
