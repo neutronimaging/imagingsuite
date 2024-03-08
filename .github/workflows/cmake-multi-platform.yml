@@ -41,7 +41,7 @@ jobs:
       # Checkouts all the nesecary source code to build the project
      - name: Check 7zip
        shell: bash
-       run: 7zip.exe
+       run: 7z
     # - name: Checkout imagingsuite source code
     #   uses: actions/checkout@v4
     #   with:
