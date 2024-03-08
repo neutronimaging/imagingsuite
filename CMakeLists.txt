@@ -62,7 +62,7 @@ if (UNIX)
   find_package(FFTW3 REQUIRED)
   # find_package(Nexus REQUIRED)
   find_package(CFITSIO REQUIRED)
-  find_package(Armadillo REQUIRED)
+  find_package(Armadillo REQUIRED CONFIG)
 endif()
 
 if (WIN32)
