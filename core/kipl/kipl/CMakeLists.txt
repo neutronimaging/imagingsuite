@@ -369,8 +369,9 @@ if (UNIX)
             ${LAPACK_LIBRARIES}
             ${BLAS_LIBRARIES}
             ${ARMADILLO_LIBRARIES}
-            FFTW::Double
-            FFTW::Float
+            #FFTW::Double
+            #FFTW::Float
+            fftw::fftw
             ${CFITSIO_LIBRARIES}
             # ${NEXUS_LIBRARIES}
         )
@@ -383,8 +384,9 @@ if (UNIX)
                 ${LAPACK_LIBRARIES}
                 ${BLAS_LIBRARIES}
                 ${ARMADILLO_LIBRARIES}
-                FFTW::Double
-                FFTW::Float
+                #FFTW::Double
+                #FFTW::Float
+                fftw::fftw
                 ${CFITSIO_LIBRARIES}
                 # ${NEXUS_LIBRARIES}
             )
