@@ -39,10 +39,10 @@ jobs:
             c_compiler: gcc
           - os: ubuntu-latest
             c_compiler: cl
-          # - os: windows-2022
-          #   c_compiler: cl
-          #   cpp_compiler: cl
-          #   cl: 17
+          - os: windows-2022
+            c_compiler: cl
+            cpp_compiler: cl
+            cl: 17
 
 
     steps:
@@ -97,7 +97,7 @@ jobs:
         if [ "${RUNNER_OS}" == "Windows" ]; then
           conan install . --profile:host profiles/windows_msvc_17_release --profile:build profiles/windows_msvc_17_release
         elif [ "${RUNNER_OS}" == "Linux" ]; then
-          conan install . --profile:host profiles/linux_gcc_7_release --profile:build profiles/linux_gcc_7_release
+          conan install . --profile:host profiles/linux_gcc_11_release --profile:build profiles/linux_gcc_11_release
         fi
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
