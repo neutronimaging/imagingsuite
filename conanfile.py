@@ -36,8 +36,9 @@ class MuhrecRecipe(ConanFile):
         tc.generate()
         ms = VirtualRunEnv(self)
         ms.generate()
-        print(self.cpp.build.bindirs[0])
+        print("bindirs is: ",self.cpp.build.bindirs[0])
         dst = os.path.abspath(os.path.join(self.build_folder, "applications", self.cpp.build.bindir))
+        print("dst is: ",dst)
         # Copy dynamic libraries from conan
         for dep in self.dependencies.values():
             copy(self, "*.dll", dep.cpp_info.bindirs[0], dst)
