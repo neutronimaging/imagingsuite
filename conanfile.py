@@ -28,13 +28,8 @@ class MuhrecRecipe(ConanFile):
         # We make the assumption that if the compiler is msvc the
         # CMake generator is multi-config
         # System independent way of setting the correct build path
-        multi = True if self.settings.get_safe("compiler") == "msvc" else False
-        if multi:
-            self.folders.generators = os.path.join(os.pardir, "build-imagingsuite", "generators")
-            self.folders.build = os.path.join(os.pardir, "build-imagingsuite")
-        else:
-            self.folders.generators = os.path.join(os.pardir, "build-imagingsuite", str(self.settings.build_type), "generators")
-            self.folders.build = os.path.join(os.pardir, "build-imagingsuite", str(self.settings.build_type))
+        self.folders.generators = os.path.join(os.pardir, "build-imagingsuite", "generators")
+        self.folders.build = os.path.join(os.pardir, "build-imagingsuite")
 
     def generate(self):
         deps = CMakeDeps(self)
