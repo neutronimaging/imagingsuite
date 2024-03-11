@@ -31,10 +31,10 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../external/mac/include/
-    ../../../ExternalDependencies/macos/include
-    ../../../ExternalDependencies/macos/include/nexus
-    ../../external/mac/include/hdf5
+    # ../../external/mac/include/
+    #  ../../../ExternalDependencies/macos/include
+    #  ../../../ExternalDependencies/macos/include/nexus
+    # ../../external/mac/include/hdf5
     )
 endif()
 
@@ -46,11 +46,11 @@ include_directories(
     ../../../core/algorithms/ImagingAlgorithms/include
     ../../../frameworks/tomography/Framework/ReconFramework/include/
     ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../ExternalDependencies/windows/include
-    ../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../ExternalDependencies/windows/include/nexus
-    ../../../external/include/
-    ../../../external/mac/include/hdf5
+    # ../../../../ExternalDependencies/windows/include
+    # ../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../ExternalDependencies/windows/include/nexus
+    # ../../../external/include/
+    # ../../../external/mac/include/hdf5
     )
 endif()
 
@@ -75,7 +75,7 @@ if (APPLE)
 
     target_link_directories(${TARGET_NAME} PRIVATE
         /opt/local/lib
-        ../../../external/mac/lib/
+        #../../../external/mac/lib/
         )
 
     target_link_libraries(${TARGET_NAME} PRIVATE
@@ -92,19 +92,19 @@ if (APPLE)
     )
 endif()
 
-if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        ../../../../ExternalDependencies/windows/lib
-        )
+# if (WIN32)
+#     target_link_directories(${TARGET_NAME} PRIVATE
+#         ../../../../ExternalDependencies/windows/lib
+#         )
 
-    target_link_libraries(${TARGET_NAME} PRIVATE
-        kipl
-        ModuleConfig
-        ImagingAlgorithms
-        ReaderConfig
-        ReconFramework
-    )
-endif()
+#     target_link_libraries(${TARGET_NAME} PRIVATE
+#         kipl
+#         ModuleConfig
+#         ImagingAlgorithms
+#         ReaderConfig
+#         ReconFramework
+#     )
+# endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/${TARGET_NAME})

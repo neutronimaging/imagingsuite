@@ -50,9 +50,14 @@ find_package(ZLIB REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(FFTW3 REQUIRED)
+find_package(Armadillo REQUIRED)
+
+target_link_libraries(${PROJECT_NAME} 
+    armadillo::armadillo
+    )
 
 if (WIN32)
-  find_package(Armadillo REQUIRED CONFIG)
+  #find_package(Armadillo REQUIRED CONFIG)
   find_package(cfitsio REQUIRED)
 endif()
 

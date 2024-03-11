@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (APPLE)
 include_directories(
      ../../../core/kipl/kipl/include
-     ../../../../ExternalDependencies/macos/include
+     # ../../../../ExternalDependencies/macos/include
     )
 endif()
 
@@ -19,10 +19,10 @@ if (WIN32)
 include_directories(
     ../../../core/kipl/kipl/include
     # ../../../core/modules/ModuleConfig/include
-    ../../../../ExternalDependencies/windows/include
+    # ../../../../ExternalDependencies/windows/include
     # ../../../../ExternalDependencies/windows/include/nexus
     # ../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../external/include/
+    # ../../../external/include/
     )
 endif()
 
@@ -334,11 +334,11 @@ target_compile_definitions(${TARGET_NAME} PRIVATE KIPL_LIBRARY NOMINMAX)
 message(kipl - ${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PUBLIC
-    ../../../../ExternalDependencies/windows/lib
-    ../../../../imagingsuite/external/lib64
-    ../../../../imagingsuite/external/lib64/nexus
-    )
+    # target_link_directories(${TARGET_NAME} PUBLIC
+    # ../../../../ExternalDependencies/windows/lib
+    # ../../../../imagingsuite/external/lib64
+    # ../../../../imagingsuite/external/lib64/nexus
+    # )
 
     find_package(OpenMP)
 

@@ -26,9 +26,9 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../../ExternalDependencies/macos/include
-    ../../../ExternalDependencies/macos/include/nexus
-    ../../external/mac/include/
+    # ../../../ExternalDependencies/macos/include
+    # ../../../ExternalDependencies/macos/include/nexus
+    # ../../external/mac/include/
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -45,11 +45,11 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../../ExternalDependencies/windows/include
-    ../../../ExternalDependencies/windows/include/cfitsio
-    ../../../ExternalDependencies/windows/include/libxml2
-    ../../../ExternalDependencies/windows/include/nexus
-    ../../external/include/
+    # ../../../ExternalDependencies/windows/include
+    # ../../../ExternalDependencies/windows/include/cfitsio
+    # ../../../ExternalDependencies/windows/include/libxml2
+    # ../../../ExternalDependencies/windows/include/nexus
+    # ../../external/include/
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -121,8 +121,8 @@ link_directories(../../../lib /opt/local/lib )
 
 target_link_directories(${TARGET_NAME} PRIVATE
     /opt/local/lib
-    ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    ../../external/mac/lib/
+    # ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+    # ../../external/mac/lib/
     )
 
 target_link_libraries(${TARGET_NAME} PUBLIC
@@ -174,9 +174,9 @@ link_directories(../../../lib /opt/local/lib )
 
 target_link_directories(${TARGET_NAME} PUBLIC
     /opt/local/lib
-    ../../../ExternalDependencies/windows/lib
-    ../../external/lib64/
-    ../../external/lib64/nexus
+    # ../../../ExternalDependencies/windows/lib
+    # ../../external/lib64/
+    # ../../external/lib64/nexus
     )
 
 target_link_libraries(${TARGET_NAME} PUBLIC

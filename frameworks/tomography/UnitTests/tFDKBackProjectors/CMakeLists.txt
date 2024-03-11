@@ -24,21 +24,21 @@ include_directories(
     ../../../../core/kipl/kipl/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
 )
-if (APPLE)
-    include_directories(
-        ../../../../../ExternalDependencies/macos/include
-    )
-endif()
+# if (APPLE)
+#     include_directories(
+#         ../../../../../ExternalDependencies/macos/include
+#     )
+# endif()
 
-if (WIN32)
-include_directories(
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/nexus
-    ../../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../external/include/
-    )
-endif()
+# if (WIN32)
+# include_directories(
+#     ../../../../../ExternalDependencies/windows/include
+#     ../../../../../ExternalDependencies/windows/include/nexus
+#     ../../../../../ExternalDependencies/windows/include/cfitsio
+#     ../../../../../ExternalDependencies/windows/include/libxml2
+#     ../../../../external/include/
+#     )
+# endif()
 
 set(SRC_FILES
     tst_FDKBackprojectors.cpp)

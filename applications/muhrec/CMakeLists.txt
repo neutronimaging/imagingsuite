@@ -24,7 +24,7 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../../ExternalDependencies/macos/include
+    # ../../../ExternalDependencies/macos/include
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -41,8 +41,8 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../../ExternalDependencies/windows/include
-    ../../external/include/
+    # ../../../ExternalDependencies/windows/include
+    # ../../external/include/
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()

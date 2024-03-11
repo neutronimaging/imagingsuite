@@ -25,10 +25,10 @@ include_directories(
     /opt/local/include/libxml2
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    ../../../external/mac/include/
-    ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/hdf5
+    # ../../../external/mac/include/
+    # ../../../../ExternalDependencies/macos/include
+    # ../../../../ExternalDependencies/macos/include/nexus
+    # ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 
@@ -104,13 +104,13 @@ add_library(${TARGET_NAME} SHARED
   ${UI_FILES}
 )
 
-if (WIN32)
-  target_link_directories(${TARGET_NAME} PRIVATE
-    # ../../../../ExternalDependencies/windows/lib
-    ../../../../imagingsuite/external/lib64
-    # ../../../../imagingsuite/external/lib64/nexus
-  )
-endif()
+# if (WIN32)
+#   target_link_directories(${TARGET_NAME} PRIVATE
+#     # ../../../../ExternalDependencies/windows/lib
+#     ../../../../imagingsuite/external/lib64
+#     # ../../../../imagingsuite/external/lib64/nexus
+#   )
+# endif()
 
 target_link_libraries(${TARGET_NAME} 
   PUBLIC

@@ -25,7 +25,7 @@ include_directories(
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
     ../StdPreprocModules/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
     #Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 
@@ -42,9 +42,9 @@ include_directories(
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
     ../StdPreprocModules/include
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../../imagingsuite/external/include
+    # ../../../../../ExternalDependencies/windows/include
+    # ../../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../../imagingsuite/external/include
     )
 
 endif()
@@ -123,10 +123,10 @@ add_library(${TARGET_NAME} SHARED
 
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-         ../../../../../ExternalDependencies/windows/lib
-    #     ../../../../../imagingsuite/external/lib64
-    )
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    #      ../../../../../ExternalDependencies/windows/lib
+    # #     ../../../../../imagingsuite/external/lib64
+    # )
 
   target_link_libraries(${TARGET_NAME} 
   PUBLIC
