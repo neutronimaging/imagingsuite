@@ -26,7 +26,6 @@ include_directories(
     )
 endif()
 
-
 set(INC_FILES
     include/filters/core/savitzkygolayfilter.hpp
     include/filters/savitzkygolayfilter.h
@@ -342,6 +341,7 @@ if (WIN32)
 
     find_package(OpenMP)
 
+
     target_link_libraries(${TARGET_NAME}
     PUBLIC
         OpenMP::OpenMP_CXX
@@ -356,6 +356,9 @@ if (WIN32)
     )
 endif()
 
+# target_link_libraries(${PROJECT_NAME} 
+#     armadillo::armadillo
+#     )
 
 if (UNIX)
     find_package(OpenMP)

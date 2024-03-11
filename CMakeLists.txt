@@ -55,8 +55,6 @@ find_package(cfitsio REQUIRED)
 find_package(ZLIB REQUIRED)
 
 
-
-
 # if (WIN32)
 #   #find_package(Armadillo REQUIRED CONFIG)
 #   find_package(cfitsio REQUIRED)
