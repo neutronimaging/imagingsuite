@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
 project(imagingsuite VERSION 4.3 LANGUAGES CXX)
 
+set(CMAKE_FIND_DEBUG_MODE OFF)
 # require C++17
 if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
@@ -47,7 +48,9 @@ find_package(PythonInterp REQUIRED)
 
 find_package(pybind11 REQUIRED)
 find_package(LibXml2 REQUIRED)
+#set(CMAKE_FIND_DEBUG_MODE ON)
 find_package(armadillo REQUIRED)
+set(CMAKE_FIND_DEBUG_MODE OFF)
 find_package(OpenBLAS REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(FFTW3 REQUIRED)

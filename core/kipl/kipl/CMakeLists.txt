@@ -353,6 +353,7 @@ if (WIN32)
         #libfftw3-3
         #libfftw3f-3
         fftw::fftw
+        #armadillo::armadillo
     )
 endif()
 
