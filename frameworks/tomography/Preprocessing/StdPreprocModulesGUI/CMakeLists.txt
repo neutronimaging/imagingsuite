@@ -144,7 +144,7 @@ if (WIN32)
 
     #libopenblas
     OpenBLAS::OpenBLAS
-    liblapack
+    #liblapack #Supplies by OpenBLAS
   )
 endif()
 

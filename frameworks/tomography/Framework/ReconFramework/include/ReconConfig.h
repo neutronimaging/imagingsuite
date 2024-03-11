@@ -9,7 +9,7 @@
 #include <set>
 #include <string>
 
-#include <libxml/xmlreader.h>
+// #include <libxml/xmlreader.h> //< Is this neseccary? Should be included with the package
 
 #include <ModuleConfig.h>
 #include <ConfigBase.h>

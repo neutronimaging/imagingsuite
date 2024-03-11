@@ -338,7 +338,6 @@ if (WIN32)
     # ../../../../imagingsuite/external/lib64
     # ../../../../imagingsuite/external/lib64/nexus
     # )
-
     find_package(OpenMP)
 
 
@@ -354,6 +353,7 @@ if (WIN32)
         #libfftw3f-3
         fftw::fftw
         armadillo::armadillo
+        dirent::dirent
     )
 endif()
 

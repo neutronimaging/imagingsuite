@@ -55,7 +55,7 @@ find_package(TIFF REQUIRED)
 find_package(FFTW3 REQUIRED)
 find_package(cfitsio REQUIRED)
 find_package(ZLIB REQUIRED)
-
+find_package(dirent)
 
 # if (WIN32)
 #   #find_package(Armadillo REQUIRED CONFIG)

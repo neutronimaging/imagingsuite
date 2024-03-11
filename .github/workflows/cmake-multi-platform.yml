@@ -4,9 +4,9 @@ name: CMake on multiple platforms
 
 on:
   push:
-    branches: [ "dynamic_libraries" ]
+    branches: [ "RemoveExternal" ]
   pull_request:
-    branches: [ "dynamic_libraries" ]
+    branches: [ "RemoveExternal" ]
 
 jobs:
   build:
@@ -51,11 +51,11 @@ jobs:
         path: imagingsuite
         fetch-depth: 0
     # Are these code sources actually nessecary or not?
-    - name: Checkout neutronimaging/ExternalDependencies     <-- clone https://github.com/neutronimaging/ExternalDependencies.git
-      uses: actions/checkout@v4
-      with:
-        repository: neutronimaging/ExternalDependencies
-        path: ExternalDependencies
+    # - name: Checkout neutronimaging/ExternalDependencies     <-- clone https://github.com/neutronimaging/ExternalDependencies.git
+    #   uses: actions/checkout@v4
+    #   with:
+    #     repository: neutronimaging/ExternalDependencies
+    #     path: ExternalDependencies
     - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
       uses: actions/checkout@v4
       with:
