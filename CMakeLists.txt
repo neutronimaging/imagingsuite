@@ -45,30 +45,31 @@ message("CMAKE_PREFIX_PATH is: ${CMAKE_PREFIX_PATH}")
 message("CMAKE_MODULE_PATH is: ${CMAKE_MODULE_PATH}")
 find_package(PythonInterp REQUIRED)
 
-find_package(LibXml2 REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(TIFF REQUIRED)
 find_package(pybind11 REQUIRED)
+find_package(LibXml2 REQUIRED)
+find_package(armadillo REQUIRED)
+find_package(OpenBLAS REQUIRED)
+find_package(TIFF REQUIRED)
 find_package(FFTW3 REQUIRED)
-find_package(Armadillo REQUIRED)
+find_package(cfitsio REQUIRED)
+find_package(ZLIB REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} 
-    armadillo::armadillo
-    )
 
-if (WIN32)
-  #find_package(Armadillo REQUIRED CONFIG)
-  find_package(cfitsio REQUIRED)
-endif()
 
-if (UNIX)
-  # for testing we will need the python interpreter
-  find_package(BLAS REQUIRED)
-  find_package(FFTW3 REQUIRED)
-  # find_package(Nexus REQUIRED)
-  find_package(CFITSIO REQUIRED)
-  find_package(Armadillo REQUIRED CONFIG)
-endif()
+
+# if (WIN32)
+#   #find_package(Armadillo REQUIRED CONFIG)
+#   find_package(cfitsio REQUIRED)
+# endif()
+
+# if (UNIX)
+#   # for testing we will need the python interpreter
+#   find_package(BLAS REQUIRED)
+#   find_package(FFTW3 REQUIRED)
+#   # find_package(Nexus REQUIRED)
+#   find_package(CFITSIO REQUIRED)
+#   find_package(Armadillo REQUIRED CONFIG)
+# endif()
 
 if (WIN32)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/applications)
