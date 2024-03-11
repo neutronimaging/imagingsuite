@@ -18,9 +18,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (APPLE)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    /usr/include/libxml2
+    # /opt/local/include
+    # /opt/local/include/libxml2
+    # /usr/include/libxml2
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
     ../../core/modules/ReaderConfig
@@ -70,27 +70,34 @@ add_executable(${TARGET_NAME}
         ${INC_FILES}
     )
 
-if (APPLE)
-    link_directories(../../../lib /opt/local/lib )
-
-    target_link_directories(${TARGET_NAME} PRIVATE
-        /opt/local/lib
-        #../../../external/mac/lib/
-        )
-
-    target_link_libraries(${TARGET_NAME} PRIVATE
-        Qt${QT_VERSION_MAJOR}::Core
-        kipl
-        ModuleConfig
-        ImagingAlgorithms
-        ReaderConfig
-        ReconFramework
-        xml2
-        armadillo
-        lapack
-        blas
+target_link_libraries(${TARGET_NAME} PRIVATE
+    kipl
+    ModuleConfig
+    ImagingAlgorithms
+    ReaderConfig
+    ReconFramework
     )
-endif()
+# if (APPLE)
+#     link_directories(../../../lib /opt/local/lib )
+
+#     target_link_directories(${TARGET_NAME} PRIVATE
+#         /opt/local/lib
+#         #../../../external/mac/lib/
+#         )
+
+#     target_link_libraries(${TARGET_NAME} PRIVATE
+#         Qt${QT_VERSION_MAJOR}::Core
+#         kipl
+#         ModuleConfig
+#         ImagingAlgorithms
+#         ReaderConfig
+#         ReconFramework
+#         xml2
+#         armadillo
+#         lapack
+#         blas
+#     )
+# endif()
 
 # if (WIN32)
 #     target_link_directories(${TARGET_NAME} PRIVATE
