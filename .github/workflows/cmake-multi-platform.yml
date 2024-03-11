@@ -39,8 +39,10 @@ jobs:
             c_compiler: gcc
           - os: ubuntu-latest
             c_compiler: cl
-          - os: windows-2022
-            c_compiler: cl
+          # - os: windows-2022
+          #   c_compiler: cl
+          - os: ubuntu-latest
+            c_compiler: gcc
 
 
     steps:
