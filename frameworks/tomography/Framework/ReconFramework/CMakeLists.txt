@@ -101,6 +101,7 @@ target_link_libraries(${TARGET_NAME}
         ImagingAlgorithms
         ModuleConfig
         ReaderConfig
+        LibXml2::LibXml2
 )
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
