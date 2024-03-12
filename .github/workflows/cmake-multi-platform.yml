@@ -27,22 +27,22 @@ jobs:
         build_type: [Release]
         c_compiler: [cl, gcc]
         include:
-          - os: windows-2022
-            c_compiler: cl
-            cpp_compiler: cl
-            cl: 17
-          # - os: ubuntu-latest
-          #   c_compiler: gcc
-          #   cpp_compiler: g++
+          # - os: windows-2022
+          #   c_compiler: cl
+          #   cpp_compiler: cl
+          #   cl: 17
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
         exclude:
           - os: windows-2022
             c_compiler: gcc
           - os: ubuntu-latest
             c_compiler: cl
-          # - os: windows-2022
-          #   c_compiler: cl
-          - os: ubuntu-latest
-            c_compiler: gcc
+          - os: windows-2022
+            c_compiler: cl
+          # - os: ubuntu-latest
+          #   c_compiler: gcc
 
 
     steps:
