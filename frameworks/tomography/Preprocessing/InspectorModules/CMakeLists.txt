@@ -36,10 +36,9 @@ endif()
 if (UNIX)
 include_directories(
     ../../../../core/kipl/kipl/include
-    /usr/include/libxml2
+    #/usr/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
     )
 endif()
