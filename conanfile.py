@@ -52,15 +52,18 @@ class MuhrecRecipe(ConanFile):
         # Copy dynamic libraries from qt
         qtpath = os.environ["QTPATH"]
         Qt_dynamic_library_list = ["Qt6PrintSupport", "Qt6Charts", "Qt6OpenGLWidgets", "Qt6OpenGl", "Qt6Test"]
+        Qt_linux_library_list = ["Qt6Core","Qt6Gui","Qt6Widgets","Qt6DBus","Qt6XcbQpa","icui18n","icudata","icuuc"]
         for library in Qt_dynamic_library_list:
             copy(self, library+".dll", os.path.join(qtpath, "bin"), dst)
             copy(self, library+".dylib", os.path.join(qtpath, "bin"), dst)
-            copy(self, library+".so*", os.path.join(qtpath, "lib"), dst)
+            copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), dst)
+        if self.settings.os == "Linux":
+            for library in Qt_linux_library_list:
+                copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), dst)
         shutil.copytree(os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
         #if not os.path.exists(os.path.join(dst,"resources")):
         #    os.mkdir(os.path.join(dst,"resources"))
         #copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
-
     def build(self):
         cmake = CMake(self)
         cmake.configure()

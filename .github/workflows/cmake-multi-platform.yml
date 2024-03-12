@@ -147,7 +147,12 @@ jobs:
 
     - name: Compress artifact
       shell: bash
-      run: 7z a MuhRec-Windows.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing 
+      run: |
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          7z a MuhRec-Windows.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing
+        elif [ "${RUNNER_OS}" == "Linux" ]; then
+          zip MuhRec-Linux.zip "build-imagingsuite/Release/applications/*" 
+        fi
 
     - name: Save build artifact
       uses: actions/upload-artifact@master
