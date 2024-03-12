@@ -157,4 +157,4 @@ jobs:
     - name: Save build artifact
       uses: actions/upload-artifact@master
       with:
-        path: ${{ github.workspace }}/MuhRec-Windows.zip
+        path: "${{ github.workspace }}/MuhRec*.zip"
