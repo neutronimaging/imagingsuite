@@ -56,6 +56,7 @@ find_package(FFTW3 REQUIRED)
 find_package(cfitsio REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(dirent)
+find_package(HDF5 REQUIRED)
 
 # if (WIN32)
 #   #find_package(Armadillo REQUIRED CONFIG)
