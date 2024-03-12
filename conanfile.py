@@ -43,7 +43,7 @@ class MuhrecRecipe(ConanFile):
         dst = os.path.abspath(os.path.join(self.build_folder, "applications", self.cpp.build.bindir))
         # Copy dynamic libraries from conan
         for dep in self.dependencies.values():
-            print(dep.cpp_info.libdirs)
+            print(os.listdir(dep.cpp_info.libdirs[0]))
             if len(dep.cpp_info.bindirs)>0: # Avoid errors when using header-only files such as dirent. Can probably be done neater
                 copy(self, "*.dll", dep.cpp_info.bindirs[0], dst)
                 copy(self, "*.dylib", dep.cpp_info.bindirs[0], dst)
