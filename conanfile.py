@@ -3,6 +3,7 @@ from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.env import VirtualRunEnv
 from conan.tools.files import copy
 import os
+import shutil
 
 class MuhrecRecipe(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
@@ -53,9 +54,10 @@ class MuhrecRecipe(ConanFile):
             copy(self, library+".dll", os.path.join(qtpath, "bin"), dst)
             copy(self, library+".dylib", os.path.join(qtpath, "bin"), dst)
             copy(self, library+".so*", os.path.join(qtpath, "lib"), dst)
-        if not os.path.exists(os.path.join(dst,"resources")):
-            os.mkdir(os.path.join(dst,"resources"))
-        copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
+        shutil.copytree(os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
+        #if not os.path.exists(os.path.join(dst,"resources")):
+        #    os.mkdir(os.path.join(dst,"resources"))
+        #copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
 
     def build(self):
         cmake = CMake(self)
