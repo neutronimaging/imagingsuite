@@ -142,9 +142,9 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 endif()
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-target_link_directories(${TARGET_NAME} PRIVATE
-    #/usr/lib/x86_64-linux-gnu/
-    #/usr/lib/x86_64-linux-gnu/hdf5/serial # What is this? Is this needed? Can't this be done with a conan library?
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /usr/lib/x86_64-linux-gnu/
+        /usr/lib/x86_64-linux-gnu/hdf5/serial # What is this? Is this needed? Can't this be done with a conan library?
     )
     target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
@@ -163,9 +163,9 @@ target_link_directories(${TARGET_NAME} PRIVATE
     OpenBLAS::OpenBLAS
     TIFF::TIFF
     cfitsio::cfitsio
-    hdf5
-    xml2
-)
+    HDF5::HDF5
+    LibXml2::LibXml2
+    )
 endif()
 
 
