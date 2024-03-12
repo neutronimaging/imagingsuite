@@ -369,14 +369,17 @@ if (UNIX)
             OpenMP::OpenMP_CXX
             LibXml2::LibXml2
             TIFF::TIFF
+            cfitsio::cfitsio
+            OpenBLAS::OpenBLAS
+            armadillo::armadillo
             #${TIFF_LIBRARIES}
             ${LAPACK_LIBRARIES}
-            ${BLAS_LIBRARIES}
+            #${BLAS_LIBRARIES}
             ${ARMADILLO_LIBRARIES}
             #FFTW::Double
             #FFTW::Float
             fftw::fftw
-            ${CFITSIO_LIBRARIES}
+            #${CFITSIO_LIBRARIES}
             # ${NEXUS_LIBRARIES}
         )
     else()
@@ -384,14 +387,17 @@ if (UNIX)
             PUBLIC
                 LibXml2::LibXml2
                 TIFF::TIFF
+                cfitsio::cfitsio
+                OpenBLAS::OpenBLAS
+                armadillo::armadillo
                 #${TIFF_LIBRARIES}
                 ${LAPACK_LIBRARIES}
-                ${BLAS_LIBRARIES}
+                #${BLAS_LIBRARIES}
                 ${ARMADILLO_LIBRARIES}
                 #FFTW::Double
                 #FFTW::Float
                 fftw::fftw
-                ${CFITSIO_LIBRARIES}
+                #${CFITSIO_LIBRARIES}
                 # ${NEXUS_LIBRARIES}
             )
     endif()
