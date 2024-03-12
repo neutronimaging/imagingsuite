@@ -27,10 +27,10 @@ jobs:
         build_type: [Release]
         c_compiler: [cl, gcc]
         include:
-          - os: windows-2022
-            c_compiler: cl
-            cpp_compiler: cl
-            cl: 17
+          # - os: windows-2022
+          #   c_compiler: cl
+          #   cpp_compiler: cl
+          #   cl: 17
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
@@ -39,8 +39,8 @@ jobs:
             c_compiler: gcc
           - os: ubuntu-latest
             c_compiler: cl
-          # - os: windows-2022
-          #   c_compiler: cl
+          - os: windows-2022
+            c_compiler: cl
           # - os: ubuntu-latest
           #   c_compiler: gcc
 
@@ -121,10 +121,11 @@ jobs:
         cmake --build . --config ${{ matrix.build_type }}
   
     - name: Qt Deploy
-      working-directory: build-imagingsuite/applications/Release
+      working-directory: build-imagingsuite
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
+          cd applications/Release
           ${QTPATH}/bin/windeployqt muhrec.exe
           ${QTPATH}/bin/windeployqt imageviewer.exe
         fi
