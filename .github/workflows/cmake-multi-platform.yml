@@ -34,6 +34,7 @@ jobs:
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
+            gcc: 11
         exclude:
           - os: windows-2022
             c_compiler: gcc
