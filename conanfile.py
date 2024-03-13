@@ -52,7 +52,6 @@ class MuhrecRecipe(ConanFile):
         qtpath = os.environ["QTPATH"]
         Qt_dynamic_library_list = ["Qt6PrintSupport", "Qt6Charts", "Qt6OpenGLWidgets", "Qt6OpenGl", "Qt6Test"]
         Qt_linux_library_list = ["Qt6Core","Qt6Gui","Qt6Widgets","Qt6DBus","Qt6XcbQpa","icui18n","icudata","icuuc"]
-        print(os.listdir(qtpath))
         for library in Qt_dynamic_library_list:
             copy(self, library+".dll", os.path.join(qtpath, "bin"), dst)
             copy(self, library+".dylib", os.path.join(qtpath, "bin"), dst)
@@ -61,7 +60,6 @@ class MuhrecRecipe(ConanFile):
             for library in Qt_linux_library_list:
                 copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), dst)
         shutil.copytree(os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
-        print(os.listdir(dst))
         #if not os.path.exists(os.path.join(dst,"resources")):
         #    os.mkdir(os.path.join(dst,"resources"))
         #copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
