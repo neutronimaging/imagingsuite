@@ -43,7 +43,6 @@ class MuhrecRecipe(ConanFile):
         dst = os.path.abspath(os.path.join(self.build_folder, "applications", self.cpp.build.bindir))
         # Copy dynamic libraries from conan
         for dep in self.dependencies.values():
-            print(os.listdir(dep.cpp_info.libdirs[0]))
             if len(dep.cpp_info.bindirs)>0: # Avoid errors when using header-only files such as dirent. Can probably be done neater
                 copy(self, "*.dll", dep.cpp_info.bindirs[0], dst)
                 copy(self, "*.dylib", dep.cpp_info.bindirs[0], dst)
@@ -53,6 +52,7 @@ class MuhrecRecipe(ConanFile):
         qtpath = os.environ["QTPATH"]
         Qt_dynamic_library_list = ["Qt6PrintSupport", "Qt6Charts", "Qt6OpenGLWidgets", "Qt6OpenGl", "Qt6Test"]
         Qt_linux_library_list = ["Qt6Core","Qt6Gui","Qt6Widgets","Qt6DBus","Qt6XcbQpa","icui18n","icudata","icuuc"]
+        os.listdir(qtpath)
         for library in Qt_dynamic_library_list:
             copy(self, library+".dll", os.path.join(qtpath, "bin"), dst)
             copy(self, library+".dylib", os.path.join(qtpath, "bin"), dst)
