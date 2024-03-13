@@ -100,56 +100,56 @@ jobs:
           conan install . --profile:host profiles/linux_gcc_11_release --profile:build profiles/linux_gcc_11_release
         fi
 
-    # - name: Configure CMake
-    #   # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-    #   # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-    #   working-directory: build-imagingsuite
-    #   run: |
-    #     cmake --version
-    #     cmake ../imagingsuite/ -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_PREFIX_PATH='${{env.Qt6_Dir}}/lib/cmake/'
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      working-directory: build-imagingsuite
+      run: |
+        cmake --version
+        cmake ../imagingsuite/ -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_PREFIX_PATH='${{env.Qt6_Dir}}/lib/cmake/'
 
-    # - name: Build
-    #   # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-    #   working-directory: build-imagingsuite
-    #   run: |
-    #     cmake --build . --config ${{ matrix.build_type }}
+    - name: Build
+      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      working-directory: build-imagingsuite
+      run: |
+        cmake --build . --config ${{ matrix.build_type }}
   
-    # - name: Qt Deploy
-    #   working-directory: build-imagingsuite
-    #   shell: bash
-    #   run: |
-    #     if [ "${RUNNER_OS}" == "Windows" ]; then
-    #       cd applications/Release
-    #       ${QTPATH}/bin/windeployqt muhrec.exe
-    #       ${QTPATH}/bin/windeployqt imageviewer.exe
-    #     fi
+    - name: Qt Deploy
+      working-directory: build-imagingsuite
+      shell: bash
+      run: |
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          cd applications/Release
+          ${QTPATH}/bin/windeployqt muhrec.exe
+          ${QTPATH}/bin/windeployqt imageviewer.exe
+        fi
 
-    # - name: Test
-    #   id: tests
-    #   working-directory: build-imagingsuite
-    #   #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-    #   #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-    #   run: ctest --build-config ${{ matrix.build_type }}
-    #   continue-on-error: true
+    - name: Test
+      id: tests
+      working-directory: build-imagingsuite
+      #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest --build-config ${{ matrix.build_type }}
+      continue-on-error: true
 
-    # - name: Archive test results
-    #   if: steps.tests.outcome == 'failure'
-    #   uses: actions/upload-artifact@master
-    #   with:
-    #     name: test-results
-    #     path: ${{ github.workspace }}/build-imagingsuite/Testing
+    - name: Archive test results
+      if: steps.tests.outcome == 'failure'
+      uses: actions/upload-artifact@master
+      with:
+        name: test-results
+        path: ${{ github.workspace }}/build-imagingsuite/Testing
 
-    # - name: Compress artifact
-    #   shell: bash
-    #   run: |
-    #     if [ "${RUNNER_OS}" == "Windows" ]; then
-    #       7z a MuhRec-Windows.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing
-    #     elif [ "${RUNNER_OS}" == "Linux" ]; then
-    #       cd build-imagingsuite/Release/applications
-    #       zip -r ../../../MuhRec-Linux.zip * -x "t*" -x "verticalslicer"
-    #     fi
+    - name: Compress artifact
+      shell: bash
+      run: |
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          7z a MuhRec-Windows.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing
+        elif [ "${RUNNER_OS}" == "Linux" ]; then
+          cd build-imagingsuite/Release/applications
+          zip -r ../../../MuhRec-Linux.zip * -x "t*" -x "verticalslicer"
+        fi
 
-    # - name: Save build artifact
-    #   uses: actions/upload-artifact@master
-    #   with:
-    #     path: "${{ github.workspace }}/MuhRec*.zip"
+    - name: Save build artifact
+      uses: actions/upload-artifact@master
+      with:
+        path: "${{ github.workspace }}/MuhRec*.zip"
