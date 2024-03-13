@@ -89,7 +89,7 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "QTPATH=${{env.Qt6_Dir}}" >> "$GITHUB_ENV"
+        echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
 
     - name: Run conan
       working-directory: imagingsuite
