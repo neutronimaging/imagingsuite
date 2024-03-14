@@ -137,7 +137,7 @@ jobs:
       if: steps.tests.outcome == 'failure'
       uses: actions/upload-artifact@master
       with:
-        name: test-results
+        name: ${RUNNER_OS}-test-results
         path: ${{ github.workspace }}/build-imagingsuite/Testing
 
     - name: Compress artifact
