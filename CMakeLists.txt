@@ -45,7 +45,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 message("CMAKE_PREFIX_PATH is: ${CMAKE_PREFIX_PATH}")
 message("CMAKE_MODULE_PATH is: ${CMAKE_MODULE_PATH}")
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
-find_package(PythonInterp REQUIRED)
+find_package(Python3 COMPONENTS Interpreter)
 
 find_package(armadillo REQUIRED)
 find_package(pybind11 REQUIRED)

@@ -14,7 +14,7 @@ set(
 )
 
 # for testing we will need the python interpreter
-find_package(PythonInterp REQUIRED)
+find_package(Python3 COMPONENTS Interpreter)
 
 add_subdirectory(../kipl/kipl)
 add_subdirectory(ImagingAlgorithms)
