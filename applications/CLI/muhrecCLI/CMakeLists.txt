@@ -77,27 +77,29 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     ReaderConfig
     ReconFramework
     )
-# if (APPLE)
-#     link_directories(../../../lib /opt/local/lib )
+if (APPLE)
+    link_directories(../../../lib /opt/local/lib )
 
-#     target_link_directories(${TARGET_NAME} PRIVATE
-#         /opt/local/lib
-#         #../../../external/mac/lib/
-#         )
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /opt/local/lib
+        #../../../external/mac/lib/
+        )
 
-#     target_link_libraries(${TARGET_NAME} PRIVATE
-#         Qt${QT_VERSION_MAJOR}::Core
-#         kipl
-#         ModuleConfig
-#         ImagingAlgorithms
-#         ReaderConfig
-#         ReconFramework
-#         xml2
-#         armadillo
-#         lapack
-#         blas
-#     )
-# endif()
+    target_link_libraries(${TARGET_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        kipl
+        ModuleConfig
+        ImagingAlgorithms
+        ReaderConfig
+        ReconFramework
+
+        LibXml2::LibXml2
+        armadillo::armadillo
+        OpenBLAS::OpenBLAS
+        #lapack
+        #blas
+    )
+endif()
 
 # if (WIN32)
 #     target_link_directories(${TARGET_NAME} PRIVATE

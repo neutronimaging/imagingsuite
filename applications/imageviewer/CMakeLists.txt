@@ -159,7 +159,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     QtModuleConfigure
     QtImaging
     armadillo::armadillo
-    lapack
+    #lapack
     OpenBLAS::OpenBLAS
     TIFF::TIFF
     cfitsio::cfitsio
