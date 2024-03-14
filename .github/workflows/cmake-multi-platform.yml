@@ -137,7 +137,7 @@ jobs:
       if: steps.tests.outcome == 'failure'
       uses: actions/upload-artifact@master
       with:
-        name: ${RUNNER_OS}-test-results
+        name: ${{RUNNER_OS}}-test-results
         path: ${{ github.workspace }}/build-imagingsuite/Testing
 
     - name: Compress artifact
@@ -153,4 +153,5 @@ jobs:
     - name: Save build artifact
       uses: actions/upload-artifact@master
       with:
+        name: MuhRec-${{RUNNER_OS}}
         path: "${{ github.workspace }}/MuhRec*.zip"
