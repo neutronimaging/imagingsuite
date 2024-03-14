@@ -181,11 +181,12 @@ endif()
         #fftw3
         #fftw3f
         fftw::fftw
-        cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
+        TIFF::TIFF
+        cfitsio::cfitsio
+        armadillo::armadillo
+        OpenBLAS::OpenBLAS
+        #lapack
+        #blas
     )
   endif()
 

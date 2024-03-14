@@ -96,6 +96,7 @@ if (WIN32)
         TIFF::TIFF
         #libfftw3-3
         #libfftw3f-3
+        OpenBLAS::OpenBLAS
         fftw::fftw
         Iphlpapi
 
@@ -130,8 +131,9 @@ if (UNIX AND NOT APPLE)
             cfitsio
             TIFF::TIFF
             armadillo
-            lapack
-            blas
+            OpenBLAS::OpenBLAS
+            #lapack
+            #blas
             # NeXus
             # NeXusCPP
             )
