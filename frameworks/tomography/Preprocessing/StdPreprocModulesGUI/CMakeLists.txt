@@ -177,7 +177,7 @@ endif()
         QtAddons
         QtModuleConfigure
         StdPreprocModules
-        xml2
+        LibXml2::LibXml2 
         #fftw3
         #fftw3f
         fftw::fftw

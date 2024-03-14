@@ -91,8 +91,8 @@ if (WIN32)
         ImagingAlgorithms
         ModuleConfig
         ReconFramework
-        libxml2
-        cfitsio
+        LibXml2::LibXml2
+        cfitsio::cfitsio
         TIFF::TIFF
         #libfftw3-3
         #libfftw3f-3
@@ -124,13 +124,13 @@ if (UNIX AND NOT APPLE)
             ImagingAlgorithms
             ModuleConfig
             ReconFramework
-            xml2
+            LibXml2::LibXml2 
             #fftw3
             #fftw3f
             fftw::fftw
-            cfitsio
+            cfitsio::cfitsio
             TIFF::TIFF
-            armadillo
+            armadillo::armadillo
             OpenBLAS::OpenBLAS
             #lapack
             #blas
@@ -146,15 +146,16 @@ if (UNIX AND NOT APPLE)
             ImagingAlgorithms
             ModuleConfig
             ReconFramework
-            xml2
+            LibXml2::LibXml2 
             #fftw3
             #fftw3f
             fftw::fftw
-            cfitsio
+            cfitsio::cfitsio
             TIFF::TIFF
-            armadillo
-            lapack
-            blas
+            armadillo::armadillo
+            OpenBLAS::OpenBLAS
+            #lapack
+            #blas
             # NeXus
             # NeXusCPP
           )

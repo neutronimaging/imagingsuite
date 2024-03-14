@@ -144,7 +144,7 @@ endif()
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     target_link_directories(${TARGET_NAME} PRIVATE
         /usr/lib/x86_64-linux-gnu/
-        /usr/lib/x86_64-linux-gnu/hdf5/serial # What is this? Is this needed? Can't this be done with a conan library?
+        /usr/lib/x86_64-linux-gnu/hdf5/serial
     )
     target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core

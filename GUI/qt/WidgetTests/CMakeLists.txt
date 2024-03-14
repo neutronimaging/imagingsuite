@@ -68,7 +68,7 @@ endif()
 target_link_libraries(${TARGET_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
-    xml2
+    LibXml2::LibXml2 
     kipl
     ModuleConfig
     ImagingAlgorithms

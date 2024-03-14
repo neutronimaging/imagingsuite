@@ -101,19 +101,19 @@ if (APPLE)
     )
 endif()
 
-# if (WIN32)
-#     target_link_directories(${TARGET_NAME} PRIVATE
-#         ../../../../ExternalDependencies/windows/lib
-#         )
+if (WIN32)
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    #     ../../../../ExternalDependencies/windows/lib
+    #     )
 
-#     target_link_libraries(${TARGET_NAME} PRIVATE
-#         kipl
-#         ModuleConfig
-#         ImagingAlgorithms
-#         ReaderConfig
-#         ReconFramework
-#     )
-# endif()
+    target_link_libraries(${TARGET_NAME} PRIVATE
+        kipl
+        ModuleConfig
+        ImagingAlgorithms
+        ReaderConfig
+        ReconFramework
+    )
+endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/${TARGET_NAME})

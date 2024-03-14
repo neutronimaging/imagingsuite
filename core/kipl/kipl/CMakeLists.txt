@@ -373,9 +373,9 @@ if (UNIX)
             OpenBLAS::OpenBLAS
             armadillo::armadillo
             #${TIFF_LIBRARIES}
-            ${LAPACK_LIBRARIES}
+            #${LAPACK_LIBRARIES}
             #${BLAS_LIBRARIES}
-            ${ARMADILLO_LIBRARIES}
+            #${ARMADILLO_LIBRARIES}
             #FFTW::Double
             #FFTW::Float
             fftw::fftw
@@ -391,9 +391,9 @@ if (UNIX)
                 OpenBLAS::OpenBLAS
                 armadillo::armadillo
                 #${TIFF_LIBRARIES}
-                ${LAPACK_LIBRARIES}
+                #${LAPACK_LIBRARIES}
                 #${BLAS_LIBRARIES}
-                ${ARMADILLO_LIBRARIES}
+                #${ARMADILLO_LIBRARIES}
                 #FFTW::Double
                 #FFTW::Float
                 fftw::fftw
