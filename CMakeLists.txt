@@ -45,7 +45,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 message("CMAKE_PREFIX_PATH is: ${CMAKE_PREFIX_PATH}")
 message("CMAKE_MODULE_PATH is: ${CMAKE_MODULE_PATH}")
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
-find_package(Python3 COMPONENTS Interpreter)
+find_package(Python3 COMPONENTS Interpreter Development)
 
 find_package(armadillo REQUIRED)
 find_package(pybind11 REQUIRED)
@@ -85,10 +85,10 @@ else()
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Release/lib)
 endif()
 
-if("${PYTHON3_VERSION_MAJOR}.${PYTHON3_VERSION_MINOR}" VERSION_LESS "3.5")
+if("${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}" VERSION_LESS "3.5")
   message(
     FATAL_ERROR
-      "Python v3 interpreter must be greater than or equal to 3.5. Found ${PYTHON3_VERSION_MAJOR}.${PYTHON3_VERSION_MINOR}"
+      "Python v3 interpreter must be greater than or equal to 3.5. Found ${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}"
   )
 endif()
 

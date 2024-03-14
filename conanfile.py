@@ -59,7 +59,11 @@ class MuhrecRecipe(ConanFile):
         if self.settings.os == "Linux":
             for library in Qt_linux_library_list:
                 copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), dst)
-        shutil.copytree(os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
+        shutil.copytree(
+            os.path.join(self.source_folder,"applications","muhrec","Resources"), 
+            os.path.join(dst,"resources"), 
+            dirs_exist_ok=True,
+            )
         #if not os.path.exists(os.path.join(dst,"resources")):
         #    os.mkdir(os.path.join(dst,"resources"))
         #copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
