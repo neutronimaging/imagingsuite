@@ -125,6 +125,11 @@ jobs:
           ${QTPATH}/bin/windeployqt imageviewer.exe
         fi
 
+    - name: Ammend shared libraries runpaths
+      working-directory: build-imagingsuite/Release/lib
+      if: runner.os == 'Linux'
+      run: patchelf --set-rpath '$ORIGIN' *.so*
+
     - name: Test
       id: tests
       working-directory: build-imagingsuite
