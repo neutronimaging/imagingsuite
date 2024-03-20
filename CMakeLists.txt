@@ -157,7 +157,7 @@ set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 if(NOT APPLE)
   set(CMAKE_INSTALL_RPATH $ORIGIN/../lib)
 else()
-  set(CMAKE_INSTALL_RPATH @loader_path)
+  set(CMAKE_INSTALL_RPATH @loader_path/../lib)
 endif()
 
 # turn on testing
