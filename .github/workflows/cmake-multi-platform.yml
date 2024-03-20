@@ -115,7 +115,7 @@ jobs:
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           conan install . --profile:host profiles/linux_gcc_11_release --profile:build profiles/linux_gcc_11_release
         elif [ "${RUNNER_OS}" == "macOS" ]; then
-          conan install . --profile:host profiles/macos_clang_14_release --profile:build profiles/macos_clang_14_release
+          conan install . --profile:host profiles/macos_clang_13_release --profile:build profiles/macos_clang_13_release
         fi
 
     - name: Configure CMake
