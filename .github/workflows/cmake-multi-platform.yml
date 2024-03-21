@@ -27,14 +27,14 @@ jobs:
         build_type: [Release]
         c_compiler: [cl, gcc, clang]
         include:
-          # - os: windows-2022
-          #   c_compiler: cl
-          #   cpp_compiler: cl
-          #   cl: 17
-          # - os: ubuntu-latest
-          #   c_compiler: gcc
-          #   cpp_compiler: g++
-          #   gcc: 11
+          - os: windows-2022
+            c_compiler: cl
+            cpp_compiler: cl
+            cl: 17
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            gcc: 11
           - os: macos-11
             c_compiler: clang
             cpp_compiler: clang++
@@ -55,10 +55,10 @@ jobs:
 
           # - os: macos-11
           #   c_compiler: clang
-          - os: windows-2022
-            c_compiler: cl
-          - os: ubuntu-latest
-            c_compiler: gcc
+          # - os: windows-2022
+          #   c_compiler: cl
+          # - os: ubuntu-latest
+          #   c_compiler: gcc
 
 
     steps:
@@ -142,7 +142,6 @@ jobs:
           ${QTPATH}/bin/windeployqt imageviewer.exe
         elif [ "${RUNNER_OS}" == "macOS" ]; then
           cd Release/applications
-          ls -a
           ${QTPATH}/bin/macdeployqt muhrec.app
           ${QTPATH}/bin/macdeployqt imageviewer.app
         fi
@@ -153,9 +152,6 @@ jobs:
         if [ "${RUNNER_OS}" == "Linux" ]; then
           cd lib
           patchelf --set-rpath '$ORIGIN' *.so*
-        elif [ "${RUNNER_OS}" == "macOS" ]; then
-          cd applications
-          #install_name_tool -id '*.dylib' '@loader_path' 
         fi
 
     - name: Test
