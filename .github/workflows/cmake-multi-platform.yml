@@ -148,6 +148,7 @@ jobs:
 
     - name: Ammend shared libraries runpaths
       working-directory: build-imagingsuite
+      shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Linux" ]; then
           cd Release/lib
