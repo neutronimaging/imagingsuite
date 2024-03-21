@@ -155,7 +155,7 @@ jobs:
           patchelf --set-rpath '$ORIGIN' *.so*
         elif [ "${RUNNER_OS}" == "macOS" ]; then
           cd applications
-          patchelf --set-rpath '@loader_path' "*.dylib"
+          install_name_tool -id '*.dylib' '@loader_path' 
         fi
 
     - name: Test
