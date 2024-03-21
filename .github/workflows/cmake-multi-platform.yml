@@ -147,10 +147,10 @@ jobs:
         fi
 
     - name: Ammend shared libraries runpaths
-      working-directory: build-imagingsuite/Release
+      working-directory: build-imagingsuite
       run: |
         if [ "${RUNNER_OS}" == "Linux" ]; then
-          cd lib
+          cd Release/lib
           patchelf --set-rpath '$ORIGIN' *.so*
         fi
 
