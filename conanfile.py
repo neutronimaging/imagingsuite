@@ -10,16 +10,16 @@ class MuhrecRecipe(ConanFile):
     default_options = {"*:shared": True}
 
     def requirements(self):
-        self.requires("zlib/[<=1.3.1]")
-        self.requires("openblas/[<=0.3.25]")
-        self.requires("pybind11/[<=2.11.1]")
+        self.requires("zlib/[1.3.1]")
+        self.requires("openblas/[0.3.25]")
+        self.requires("pybind11/[2.11.1]")
         #self.requires("pthreads4w/[>2.11.0]")
-        self.requires("libxml2/[<=2.12.4]")
-        self.requires("armadillo/[<=12.6.4]")
-        self.requires("libtiff/[<=4.6.0]")
-        self.requires("fftw/[<=3.3.10]")
-        self.requires("cfitsio/[<=4.3.1]")
-        self.requires("hdf5/[<=1.14.3]")
+        self.requires("libxml2/[2.12.4]")
+        self.requires("armadillo/[12.6.4]")
+        self.requires("libtiff/[4.6.0]")
+        self.requires("fftw/[3.3.10]")
+        self.requires("cfitsio/[4.3.1]")
+        self.requires("hdf5/[1.14.3]")
         if self.settings.os == "Windows":
             self.requires("dirent/1.24") # Header files only
         #self.requires("qt/[6.6.1]") Does work but QtCharts is not included
