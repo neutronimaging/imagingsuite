@@ -142,8 +142,9 @@ jobs:
           ${QTPATH}/bin/windeployqt imageviewer.exe
         elif [ "${RUNNER_OS}" == "macOS" ]; then
           cd Release/applications
-          ${QTPATH}/bin/macdeployqt muhrec.exe
-          ${QTPATH}/bin/macdeployqt imageviewer.exe
+          ls -a
+          ${QTPATH}/bin/macdeployqt muhrec.app
+          ${QTPATH}/bin/macdeployqt imageviewer.app
         fi
 
     - name: Ammend shared libraries runpaths
