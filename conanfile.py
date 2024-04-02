@@ -60,6 +60,7 @@ class MuhrecRecipe(ConanFile):
         if self.settings.os == "Linux":
             for library in Qt_linux_library_list:
                 copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), lib_folder)
+            copy(self, "libqxcb.so", os.path.join(qtpath, "plugins", "platforms"), os.path.join(bin_folder, 'platforms'))
         shutil.copytree(
             os.path.join(self.source_folder,"applications","muhrec","Resources"), 
             os.path.join(bin_folder,"resources"), 
