@@ -24,7 +24,7 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
         #os: [ubuntu-latest, windows-2022, macos-11, flyci-macos-14-m1, flyci-macos-14-m2]
-        #build_type: [Release]
+        build_type: [Release]
         #c_compiler: [cl, gcc, clang]
         include:
           # - os: windows-2022
