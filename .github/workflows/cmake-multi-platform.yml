@@ -149,7 +149,7 @@ jobs:
           ${QTPATH}/bin/windeployqt muhrec.exe
           ${QTPATH}/bin/windeployqt imageviewer.exe
         elif [ "${RUNNER_OS}" == "macOS" ]; then
-          cd Release/applications
+          cd Release
           ${QTPATH}/bin/macdeployqt muhrec.app
           ${QTPATH}/bin/macdeployqt imageviewer.app
         fi
