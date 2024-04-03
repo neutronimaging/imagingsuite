@@ -46,7 +46,7 @@ class MuhrecRecipe(ConanFile):
         for dep in self.dependencies.values():
             if len(dep.cpp_info.bindirs)>0: # Avoid errors when using header-only files such as dirent. Can probably be done neater
                 copy(self, "*.dll", dep.cpp_info.bindirs[0], bin_folder)
-                copy(self, "*.dylib", dep.cpp_info.bindirs[0], bin_folder)
+                #copy(self, "*.dylib", dep.cpp_info.bindirs[0], bin_folder)
             if len(dep.cpp_info.libdirs)>0:
                 copy(self, "*.so*", dep.cpp_info.libdirs[0], lib_folder)
         # Copy dynamic libraries from qt
@@ -55,23 +55,16 @@ class MuhrecRecipe(ConanFile):
         Qt_linux_library_list = ["Qt6Core","Qt6Gui","Qt6Widgets","Qt6DBus","Qt6XcbQpa","icui18n","icudata","icuuc"]
         for library in Qt_dynamic_library_list:
             copy(self, library+".dll", os.path.join(qtpath, "bin"), bin_folder)
-            copy(self, library+".dylib", os.path.join(qtpath, "bin"), bin_folder)
+            #copy(self, library+".dylib", os.path.join(qtpath, "bin"), bin_folder)
             copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), lib_folder)
         if self.settings.os == "Linux":
             for library in Qt_linux_library_list:
                 copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), lib_folder)
-            copy(self, "libqxcb.so", os.path.join(qtpath, "plugins", "platforms"), os.path.join(bin_folder, 'platforms'))
-            shutil.copytree(
-                os.path.join(self.source_folder,"applications","muhrec","Resources"), 
-                os.path.join(bin_folder, os.pardir, "resources"), 
-                dirs_exist_ok=True,
+        shutil.copytree(
+            os.path.join(self.source_folder,"applications","muhrec","Resources"), 
+            os.path.join(bin_folder,"resources"), 
+            dirs_exist_ok=True,
             )
-        else:
-            shutil.copytree(
-                os.path.join(self.source_folder,"applications","muhrec","Resources"), 
-                os.path.join(bin_folder,"resources"), 
-                dirs_exist_ok=True,
-                )
         #if not os.path.exists(os.path.join(dst,"resources")):
         #    os.mkdir(os.path.join(dst,"resources"))
         #copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))

@@ -31,14 +31,14 @@ jobs:
           #   c_compiler: cl
           #   cpp_compiler: cl
           #   cl: 17
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-            gcc: 11
-          # - os: macos-11
-          #   c_compiler: clang
-          #   cpp_compiler: clang++
-          #   clang: 13
+          # - os: ubuntu-latest
+          #   c_compiler: gcc
+          #   cpp_compiler: g++
+          #   gcc: 11
+          - os: macos-11
+            c_compiler: clang
+            cpp_compiler: clang++
+            clang: 13
             # - os: flyci-macos-14-m1
             #   c_compiler: clang
             #   cpp_compiler: clang++
@@ -188,7 +188,7 @@ jobs:
           zip -r ../../MuhRec-Linux.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
         elif [ "${RUNNER_OS}" == "macOS" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../MuhRec-MacOS.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
+          zip -r ../../MuhRec-MacOS.zip * -x "t*" -x "verticalslicer" -x "generators*"
         fi
 
     - name: Save build artifact
