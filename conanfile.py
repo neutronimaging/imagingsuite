@@ -50,9 +50,9 @@ class MuhrecRecipe(ConanFile):
                 copy(self, "*.dll", dep.cpp_info.bindirs[0], bin_folder)
             if len(dep.cpp_info.libdirs)>0:
                 copy(self, "*.so*", dep.cpp_info.libdirs[0], lib_folder)
-                copy(self, "*.dylib", dep.cpp_info.libdirs[0], lib_folder)
-                #copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_ImageViewer)
-                #copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_MuhRec)
+                #copy(self, "*.dylib", dep.cpp_info.libdirs[0], lib_folder)
+                copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_ImageViewer)
+                copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_MuhRec)
             
         # Copy dynamic libraries from qt
         qtpath = os.environ["QTPATH"]

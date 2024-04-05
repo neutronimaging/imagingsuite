@@ -12,9 +12,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
-if (APPLE)
-file(COPY ${CMAKE_BINARY_DIR}/Release/lib/ DESTINATION "${CMAKE_BINARY_DIR}/Release/${PROJECT_NAME}.app/Contents/Frameworks")
-endif()
+# if (APPLE)
+# file(COPY ${CMAKE_BINARY_DIR}/Release/lib/ DESTINATION "${CMAKE_BINARY_DIR}/Release/${PROJECT_NAME}.app/Contents/Frameworks")
+# endif()
 
 if (APPLE)
 include_directories(
