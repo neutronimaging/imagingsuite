@@ -15,6 +15,10 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
 #find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
 
 if (APPLE)
+file(COPY ${CMAKE_BINARY_DIR}/Release/lib/ DESTINATION "${CMAKE_BINARY_DIR}/Release/${PROJECT_NAME}.app/Contents/Frameworks")
+endif()
+
+if (APPLE)
 include_directories(
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
