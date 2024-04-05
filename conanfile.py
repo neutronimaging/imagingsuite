@@ -50,9 +50,9 @@ class MuhrecRecipe(ConanFile):
                 copy(self, "*.dll", dep.cpp_info.bindirs[0], bin_folder)
             if len(dep.cpp_info.libdirs)>0:
                 copy(self, "*.so*", dep.cpp_info.libdirs[0], lib_folder)
+                copy(self, "*.dylib", dep.cpp_info.libdirs[0], lib_folder)
                 #copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_ImageViewer)
                 #copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_MuhRec)
-                copy(self, "*.dylib", dep.cpp_info.libdirs[0], self.cpp.build.frameworksdirs)
             
         # Copy dynamic libraries from qt
         qtpath = os.environ["QTPATH"]
@@ -78,11 +78,6 @@ class MuhrecRecipe(ConanFile):
                 dirs_exist_ok=True,
                 )
 
-    #def deploy(self):
-        #copy(self, "*", src=self.package_folder, dst=self.deploy_folder)
-        #if not os.path.exists(os.path.join(dst,"resources")):
-        #    os.mkdir(os.path.join(dst,"resources"))
-        #copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
     def build(self):
         cmake = CMake(self)
         cmake.configure()
