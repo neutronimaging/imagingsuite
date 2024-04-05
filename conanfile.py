@@ -42,15 +42,16 @@ class MuhrecRecipe(ConanFile):
         ms.generate()
         bin_folder = os.path.abspath(os.path.join(self.build_folder, "applications", self.cpp.build.bindir))
         lib_folder = os.path.abspath(os.path.join(self.build_folder, "lib", self.cpp.build.bindir))
+        framework_folder_ImageViewer = os.path.abspath(os.path.join(self.build_folder, self.cpp.build.bindir, 'ImageViewer.app', 'Contents', 'Frameworks'))
+        framework_folder_MuhRec = os.path.abspath(os.path.join(self.build_folder, self.cpp.build.bindir, 'MuhRec.app', 'Contents', 'Frameworks'))
         # Copy dynamic libraries from conan
         for dep in self.dependencies.values():
             if len(dep.cpp_info.bindirs)>0: # Avoid errors when using header-only files such as dirent. Can probably be done neater
                 copy(self, "*.dll", dep.cpp_info.bindirs[0], bin_folder)
-                copy(self, "*.dylib", dep.cpp_info.bindirs[0], bin_folder)
             if len(dep.cpp_info.libdirs)>0:
                 copy(self, "*.so*", dep.cpp_info.libdirs[0], lib_folder)
-                print('libdir:')
-                print(os.listdir(dep.cpp_info.libdirs[0]))
+                copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_ImageViewer)
+                copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_MuhRec)
             
         # Copy dynamic libraries from qt
         qtpath = os.environ["QTPATH"]
@@ -63,11 +64,21 @@ class MuhrecRecipe(ConanFile):
         if self.settings.os == "Linux":
             for library in Qt_linux_library_list:
                 copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), lib_folder)
-        shutil.copytree(
-            os.path.join(self.source_folder,"applications","muhrec","Resources"), 
-            os.path.join(bin_folder,"resources"), 
-            dirs_exist_ok=True,
-            )
+        if self.settings.os != "Apple":
+            shutil.copytree(
+                os.path.join(self.source_folder,"applications","muhrec","Resources"), 
+                os.path.join(bin_folder,"resources"), 
+                dirs_exist_ok=True,
+                )
+        else:
+            shutil.copytree(
+                os.path.join(self.source_folder,"applications","muhrec","Resources"), 
+                os.path.join(framework_folder_MuhRec,"../",'Resources'), 
+                dirs_exist_ok=True,
+                )
+
+    #def deploy(self):
+        #copy(self, "*", src=self.package_folder, dst=self.deploy_folder)
         #if not os.path.exists(os.path.join(dst,"resources")):
         #    os.mkdir(os.path.join(dst,"resources"))
         #copy(self, "*.*", os.path.join(self.source_folder,"applications","muhrec","Resources"), os.path.join(dst,"resources"))
