@@ -52,6 +52,7 @@ class MuhrecRecipe(ConanFile):
                 copy(self, "*.so*", dep.cpp_info.libdirs[0], lib_folder)
                 copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_ImageViewer)
                 copy(self, "*.dylib", dep.cpp_info.libdirs[0], framework_folder_MuhRec)
+                #copy(self, "*.dylib", dep.cpp_info.libdirs[0], self.cpp.build.frameworksdirs)
             
         # Copy dynamic libraries from qt
         qtpath = os.environ["QTPATH"]
@@ -64,7 +65,7 @@ class MuhrecRecipe(ConanFile):
         if self.settings.os == "Linux":
             for library in Qt_linux_library_list:
                 copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), lib_folder)
-        if self.settings.os != "Apple":
+        if self.settings.os != "Macos":
             shutil.copytree(
                 os.path.join(self.source_folder,"applications","muhrec","Resources"), 
                 os.path.join(bin_folder,"resources"), 
