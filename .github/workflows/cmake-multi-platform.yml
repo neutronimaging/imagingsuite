@@ -114,14 +114,13 @@ jobs:
       working-directory: imagingsuite
       shell: bash
       run: |
-        echo "${RUNNER_ARCH}"
         if [ "${RUNNER_OS}" == "Windows" ]; then
           conan install . --profile:host profiles/windows_msvc_17_release --profile:build profiles/windows_msvc_17_release
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           conan install . --profile:host profiles/linux_gcc_11_release --profile:build profiles/linux_gcc_11_release
         elif [ "${RUNNER_OS}" == "macOS" && "${RUNNER_ARCH}" == "X64"]; then
           conan install . --profile:host profiles/macos_x64_clang_13_release --profile:build profiles/macos_x64_clang_13_release --build=missing
-        elif [ "${RUNNER_OS}" == "macOS" && "${RUNNER_ARCH}" == "ARM"]; then
+        elif [ "${RUNNER_OS}" == "macOS" && "${RUNNER_ARCH}" == "ARM64"]; then
           conan install . --profile:host profiles/macos_arm_clang_15_release --profile:build profiles/macos_arm_clang_15_release
         fi
 
