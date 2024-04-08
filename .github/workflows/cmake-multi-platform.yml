@@ -114,6 +114,7 @@ jobs:
       working-directory: imagingsuite
       shell: bash
       run: |
+        echo "${RUNNER_ARCH}"
         if [ "${RUNNER_OS}" == "Windows" ]; then
           conan install . --profile:host profiles/windows_msvc_17_release --profile:build profiles/windows_msvc_17_release
         elif [ "${RUNNER_OS}" == "Linux" ]; then
