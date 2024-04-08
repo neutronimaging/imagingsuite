@@ -27,26 +27,22 @@ jobs:
         build_type: [Release]
         #c_compiler: [cl, gcc, clang]
         include:
-          - os: windows-2022
-            c_compiler: cl
-            cpp_compiler: cl
-            cl: 17
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-            gcc: 11
-          - os: macos-11
-            c_compiler: clang
-            cpp_compiler: clang++
-            clang: 13
-            # - os: flyci-macos-14-m1
-            #   c_compiler: clang
-            #   cpp_compiler: clang++
-            #   clang: 13
-            # - os: flyci-macos-14-m2
-            #   c_compiler: clang
-            #   cpp_compiler: clang++
-            #   clang: 13
+          # - os: windows-2022
+          #   c_compiler: cl
+          #   cpp_compiler: cl
+          #   cl: 17
+          # - os: ubuntu-latest
+          #   c_compiler: gcc
+          #   cpp_compiler: g++
+          #   gcc: 11
+          # - os: macos-11
+          #   c_compiler: clang
+          #   cpp_compiler: clang++
+          #   clang: 13
+            - os: flyci-macos-14-m2
+              c_compiler: clang
+              cpp_compiler: clang++
+              clang: 13
         # exclude:
         #   - os: windows-2022
         #     c_compiler: gcc
@@ -70,6 +66,8 @@ jobs:
 
 
     steps:
+    - name: Check clang version
+      run: clang --version
       # Checkouts all the nesecary source code to build the project
     - name: Checkout imagingsuite source code
       uses: actions/checkout@v4
@@ -99,6 +97,9 @@ jobs:
       with:
         version: 2.1.0
 
+    - name: Conan profile
+      run: conan profile detect --force
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
@@ -122,8 +123,10 @@ jobs:
           conan install . --profile:host profiles/windows_msvc_17_release --profile:build profiles/windows_msvc_17_release
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           conan install . --profile:host profiles/linux_gcc_11_release --profile:build profiles/linux_gcc_11_release
-        elif [ "${RUNNER_OS}" == "macOS" ]; then
-          conan install . --profile:host profiles/macos_clang_13_release --profile:build profiles/macos_clang_13_release --build=missing
+        elif [ "${RUNNER_OS}" == "macOS" && "${RUNNER_ARCH}" == "X64"]; then
+          conan install . --profile:host profiles/macos_x64_clang_13_release --profile:build profiles/macos_x64_clang_13_release --build=missing
+        elif [ "${RUNNER_OS}" == "macOS" && "${RUNNER_ARCH}" == "ARM"]; then
+          conan install . --profile:host profiles/macos_arm_clang_13_release --profile:build profiles/macos_arm_clang_13_release
         fi
 
     - name: Configure CMake
@@ -155,11 +158,10 @@ jobs:
         fi
 
     - name: Ammend shared libraries runpaths
-      working-directory: build-imagingsuite
+      working-directory: build-imagingsuite/Release/lib
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Linux" ]; then
-          cd Release/lib
           patchelf --set-rpath '$ORIGIN' *.so*
         fi
 
@@ -175,20 +177,23 @@ jobs:
       if: steps.tests.outcome == 'failure'
       uses: actions/upload-artifact@master
       with:
-        name: ${{runner.os}}-test-results
+        name: ${{runner.os}}-${{runner.arch}}-test-results
         path: ${{ github.workspace }}/build-imagingsuite/Testing
 
     - name: Compress artifact
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          7z a MuhRec-Windows.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing
+          7z a Windows-MuhRec.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../MuhRec-Linux.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
-        elif [ "${RUNNER_OS}" == "macOS" ]; then
+          zip -r ../../Ubuntu-MuhRec.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
+        elif [ "${RUNNER_OS}" == "macOS" && "${RUNNER_ARCH}" == "X64" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../MuhRec-MacOS.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
+          zip -r ../../MacOS-x64-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
+        elif [ "${RUNNER_OS}" == "macOS" && "${RUNNER_ARCH}" == "ARM" ]; then
+          cd build-imagingsuite/Release
+          zip -r ../../MacOS-arm-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
         fi
 
     - name: Save build artifact
