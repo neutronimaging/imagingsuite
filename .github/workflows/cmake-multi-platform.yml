@@ -1,6 +1,9 @@
 # This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
 name: CMake on multiple platforms
+env:
+  CONAN_USER_HOME: ${{ github.workspace }}/release/
+  CONAN_USER_HOME_SHORT: ${{ github.workspace }}/release/short
 
 on:
   push:
@@ -11,7 +14,6 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    environment: Conan
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
@@ -72,22 +74,11 @@ jobs:
       with:
         path: imagingsuite
         fetch-depth: 0
-    # Are these code sources actually nessecary or not?
-    # - name: Checkout neutronimaging/ExternalDependencies     <-- clone https://github.com/neutronimaging/ExternalDependencies.git
-    #   uses: actions/checkout@v4
-    #   with:
-    #     repository: neutronimaging/ExternalDependencies
-    #     path: ExternalDependencies
     - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
       uses: actions/checkout@v4
       with:
         repository: neutronimaging/TestData
         path: TestData
-    # - name: Checkout neutronimaging/scripts                  <-- clone https://github.com/neutronimaging/scripts.git
-    #   uses: actions/checkout@v4
-    #   with:
-    #     repository: neutronimaging/scripts
-    #     path: scripts
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
