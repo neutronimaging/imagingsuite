@@ -2,8 +2,7 @@
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
 name: CMake on multiple platforms
 env:
-  CONAN_USER_HOME: ${{ github.workspace }}/release/
-  CONAN_USER_HOME_SHORT: ${{ github.workspace }}/release/short
+  CONAN_HOME: ${{ github.workspace }}/Cache/
 
 on:
   push:
@@ -94,6 +93,16 @@ jobs:
       with:
         version: 2.1.0
 
+    - name: Set reusable strings
+        # Set environment variables for the subsequent steps of the job
+      id: strings
+      shell: bash
+      run: |
+        echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
+        ls -a
+        cd ${{ env.CONAN_HOME }}
+        ls -a
+
     # Check if GitHub Cache has it, because that's free
     - name: Using the builtin GitHub Cache Action for .conan
       id: github-cache-conan
@@ -101,17 +110,9 @@ jobs:
       env:
         cache-name: cache-conan-modules
       with:
-        path: ${{ env.CONAN_USER_HOME }}
+        path: ${{ env.CONAN_HOME }}
         key: ${{ runner.os }}-${{ runner.arch }}
 
-    - name: Set reusable strings
-        # Set environment variables for the subsequent steps of the job
-      id: strings
-      shell: bash
-      run: |
-        echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
-        cd ${{ env.CONAN_USER_HOME }}
-        ls -a
 
     - name: Run conan
       working-directory: imagingsuite
