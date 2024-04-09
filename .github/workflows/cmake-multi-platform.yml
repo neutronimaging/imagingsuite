@@ -102,7 +102,7 @@ jobs:
         cache-name: cache-conan-modules
       with:
         path: ${{ env.CONAN_USER_HOME }}
-        key: host-${{ runner.os }}-target-${{ runner.os }}-${{ hashFiles('conanfile.py') }}
+        key: ${{ runner.os }}-${{ runner.arch }}
 
     - name: Set reusable strings
         # Set environment variables for the subsequent steps of the job
@@ -115,8 +115,6 @@ jobs:
       working-directory: imagingsuite
       shell: bash
       run: |
-        echo "${RUNNER_OS}"
-        echo "${RUNNER_ARCH}"
         if [ "${RUNNER_OS}" == "Windows" ]; then
           conan install . --profile:host profiles/windows_msvc_17_release --profile:build profiles/windows_msvc_17_release
         elif [ "${RUNNER_OS}" == "Linux" ]; then
