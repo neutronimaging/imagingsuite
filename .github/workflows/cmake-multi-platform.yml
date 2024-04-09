@@ -99,7 +99,6 @@ jobs:
       shell: bash
       run: |
         echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
-        ls -a
         cd ${{ env.CONAN_HOME }}
         ls -a
 
