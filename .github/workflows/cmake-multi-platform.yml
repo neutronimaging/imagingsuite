@@ -94,7 +94,7 @@ jobs:
         version: 2.1.0
 
     - name: Set reusable strings
-        # Set environment variables for the subsequent steps of the job 
+        # Set environment variables for the subsequent steps of the job
       id: strings
       shell: bash
       run: |
