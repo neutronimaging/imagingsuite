@@ -100,18 +100,28 @@ jobs:
       run: |
         echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
         cd ${{ env.CONAN_HOME }}
-        ls -a
 
-    # Check if GitHub Cache has it, because that's free
-    - name: Using the builtin GitHub Cache Action for .conan
-      id: github-cache-conan
-      uses: actions/cache@v3
-      env:
-        cache-name: cache-conan-modules
+    # # Check if GitHub Cache has it, because that's free
+    # - name: Using the builtin GitHub Cache Action for .conan
+    #   id: github-cache-conan
+    #   uses: actions/cache@v3
+    #   env:
+    #     cache-name: cache-conan-modules
+    #   with:
+    #     path: ${{ env.CONAN_HOME }}
+    #     key: ${{ runner.os }}-${{ runner.arch }}
+
+    # If GitHub Cache doesn't have it, get from Conan Cache (has git lfs cost)
+    - name: Cache Conan modules
+      # if: steps.github-cache-conan.outputs.cache-hit != 'true'
+      id: cache-conan
+      uses: turtlebrowser/conan-cache@master
       with:
-        path: ${{ env.CONAN_HOME }}
-        key: ${{ runner.os }}-${{ runner.arch }}
-
+          bot_name: VedelBot
+          bot_token: ${{ secrets.CONANCACHE_TOKEN }}
+          cache_name: damskii9992/ConanCache
+          key: ${{ runner.os }}-${{ runner.arch }}
+          lfs_limit: 60
 
     - name: Run conan
       working-directory: imagingsuite
