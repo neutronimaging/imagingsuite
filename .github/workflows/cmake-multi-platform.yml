@@ -33,14 +33,14 @@ jobs:
           #   c_compiler: cl
           #   cpp_compiler: cl
           #   cl: 17
-          # - os: ubuntu-latest
-          #   c_compiler: gcc
-          #   cpp_compiler: g++
-          #   gcc: 11
-          - os: macos-11
-            c_compiler: clang
-            cpp_compiler: clang++
-            clang: 13
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            gcc: 11
+          # - os: macos-11
+          #   c_compiler: clang
+          #   cpp_compiler: clang++
+          #   clang: 13
           # - os: flyci-macos-14-m2
           #   c_compiler: clang
           #   cpp_compiler: clang++
@@ -110,6 +110,8 @@ jobs:
       shell: bash
       run: |
         echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
+        cd ${{ env.CONAN_USER_HOME }}
+        ls -a
 
     - name: Run conan
       working-directory: imagingsuite
