@@ -83,27 +83,6 @@ jobs:
         repository: neutronimaging/TestData
         path: TestData
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v3
-      with:
-        version: '6.2.4'
-        dir: '${{GITHUB.WORKSPACE}}'
-        install-deps: 'true'
-        modules: 'qtcharts'
-
-    - name: Conan installation
-      id: conan
-      uses: turtlebrowser/get-conan@main
-      with:
-        version: 2.1.0
-
-    - name: Set reusable strings
-        # Set environment variables for the subsequent steps of the job
-      id: strings
-      shell: bash
-      run: |
-        echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
-
     # # Check if GitHub Cache has it, because that's free
     # - name: Using the builtin GitHub Cache Action for .conan
     #   id: github-cache-conan
@@ -125,6 +104,27 @@ jobs:
           cache_name: ${{ env.CACHE_GITHUB }}/${{ env.CACHE_GITHUB_REPO }}
           key: ${{ runner.os }}-${{ runner.arch }}
           lfs_limit: 60
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.2.4'
+        dir: '${{GITHUB.WORKSPACE}}'
+        install-deps: 'true'
+        modules: 'qtcharts'
+
+    - name: Conan installation
+      id: conan
+      uses: turtlebrowser/get-conan@main
+      with:
+        version: 2.1.0
+
+    - name: Set reusable strings
+        # Set environment variables for the subsequent steps of the job
+      id: strings
+      shell: bash
+      run: |
+        echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
 
     - name: Run conan
       working-directory: imagingsuite
