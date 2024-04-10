@@ -36,18 +36,18 @@ jobs:
           #   c_compiler: cl
           #   cpp_compiler: cl
           #   cl: 17
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-            gcc: 11
+          # - os: ubuntu-latest
+          #   c_compiler: gcc
+          #   cpp_compiler: g++
+          #   gcc: 11
           # - os: macos-11
           #   c_compiler: clang
           #   cpp_compiler: clang++
           #   clang: 13
-          # - os: flyci-macos-14-m2
-          #   c_compiler: clang
-          #   cpp_compiler: clang++
-          #   clang: 15
+          - os: flyci-macos-14-m2
+            c_compiler: clang
+            cpp_compiler: clang++
+            clang: 15
         # exclude:
         #   - os: windows-2022
         #     c_compiler: gcc
@@ -136,7 +136,7 @@ jobs:
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
           conan install . --profile:host profiles/macos_x64_clang_13_release --profile:build profiles/macos_x64_clang_13_release --build=missing
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          conan install . --profile:host profiles/macos_arm_clang_15_release --profile:build profiles/macos_arm_clang_15_release
+          conan install . --profile:host profiles/macos_arm_clang_15_release --profile:build profiles/macos_arm_clang_15_release --build=missing
         fi
 
     # - name: Configure CMake
