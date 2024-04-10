@@ -4,7 +4,7 @@ name: CMake on multiple platforms
 env:
   CONAN_HOME: ${{ github.workspace }}/Cache/
   CACHE_GITHUB: damskii9992
-  CACGE_GITHUB_REPO: ConanCache
+  CACHE_GITHUB_REPO: ConanCache
 
 on:
   push:
