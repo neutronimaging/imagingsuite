@@ -5,6 +5,8 @@ env:
   CONAN_HOME: ${{ github.workspace }}/Cache/
   CACHE_GITHUB: damskii9992
   CACHE_GITHUB_REPO: ConanCache
+  CONAN_USER_HOME: ${{ github.workspace }}/Cache/
+  CONAN_USER_HOME_SHORT: ${{ github.workspace }}/Cache//short
 
 on:
   push:
@@ -101,7 +103,6 @@ jobs:
       shell: bash
       run: |
         echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
-        cd ${{ env.CONAN_HOME }}
 
     # # Check if GitHub Cache has it, because that's free
     # - name: Using the builtin GitHub Cache Action for .conan
