@@ -69,7 +69,6 @@ jobs:
         #   - os: ubuntu-latest
         #     c_compiler: gcc
 
-
     steps:
       # Checkouts all the nesecary source code to build the project
     - name: Checkout imagingsuite source code
