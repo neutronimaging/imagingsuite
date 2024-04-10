@@ -3,6 +3,8 @@
 name: CMake on multiple platforms
 env:
   CONAN_HOME: ${{ github.workspace }}/Cache/
+  CACHE_GITHUB: damskii9992
+  CACGE_GITHUB_REPO: ConanCache
 
 on:
   push:
@@ -117,9 +119,9 @@ jobs:
       id: cache-conan
       uses: turtlebrowser/conan-cache@master
       with:
-          bot_name: VedelBot
-          bot_token: ${{ secrets.CONANCACHE_TOKEN }}
-          cache_name: damskii9992/ConanCache
+          bot_name: ${{ secrets.BOT_NAME }}
+          bot_token: ${{ secrets.BOT_TOKEN }}
+          cache_name: ${{ env.CACHE_GITHUB }}/${{ env.CACHE_GITHUB_REPO }}
           key: ${{ runner.os }}-${{ runner.arch }}
           lfs_limit: 60
 
