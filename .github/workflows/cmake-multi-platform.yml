@@ -98,7 +98,7 @@ jobs:
 
     # If GitHub Cache doesn't have it, get from Conan Cache (has git lfs cost)
     - name: Cache Conan modules
-      # if: steps.github-cache-conan.outputs.cache-hit != 'true'
+      if: steps.github-cache-conan.outputs.cache-hit != 'true'
       id: cache-conan
       uses: turtlebrowser/conan-cache@master
       with:
@@ -145,7 +145,7 @@ jobs:
 
     - name: Install sse2neon
       # Needed to compile ARM programs and not currently available on Conan
-      if: ${{ runner.os }} == "macOS" && ${{ runner.arch }} == "ARM64"
+      if: (${{ runner.os }} == "macOS" && ${{ runner.arch }} == "ARM64")
       run: |
         brew install sse2neon
 
