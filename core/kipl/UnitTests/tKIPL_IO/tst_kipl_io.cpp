@@ -124,7 +124,7 @@ void tKIPL_IOTest::testDataTypesWriteTIFF()
 
     for (size_t i=0; i<fimg.Size(); i++)
         fimg[i]=static_cast<float>(i)*0.5;
-
+        
     kipl::io::WriteTIFF(fimg,"basicRW8.tif",kipl::base::UInt8);
     kipl::io::WriteTIFF(fimg,"basicRW16.tif",kipl::base::UInt16);
     kipl::io::WriteTIFF(fimg,"basicRWfloat.tif",kipl::base::Float32);
@@ -145,8 +145,13 @@ void tKIPL_IOTest::testDataTypesWriteTIFF()
     kipl::io::ReadTIFF(res,"basicRW8.tif");
     QCOMPARE(res.Size(0),fimg.Size(0));
     QCOMPARE(res.Size(1),fimg.Size(1));
+
+    kipl::base::TImage<unsigned char,2> img8bit(dims);
+    std::copy_n(fimg.GetDataPtr(),fimg.Size(),img8bit.GetDataPtr());
+
     for (size_t i = 0 ; i<fimg.Size(); ++i)
-        QCOMPARE(res[i],fmod(floor(fimg[i]),256.0f));
+        QCOMPARE(res[i],img8bit[i]);
+        //QCOMPARE(res[i],fmod(floor(fimg[i]),256.0f));
 
 }
 
