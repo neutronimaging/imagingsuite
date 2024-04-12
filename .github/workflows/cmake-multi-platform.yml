@@ -86,7 +86,10 @@ jobs:
         repository: neutronimaging/TestData
         path: TestData
 
-    # # If GitHub Cache doesn't have it, get from Conan Cache (has git lfs cost)
+    # This action is an alternative to the builtin GitHub Cache action which circumvents storage size and time limits
+    # It can be used in tandem with the builtin Cache but it has LFS costs
+    # To use it, change order of actions to GH cache -> this action -> install Qt -> Conan install
+    # The current order of actions is, for some reason, neseccary to properly run Ronan to compile new libraries
     # - name: Cache Conan modules
     #   if: steps.github-cache-conan.outputs.cache-hit != 'true'
     #   id: cache-conan
@@ -112,7 +115,6 @@ jobs:
       with:
         version: 2.1.0
 
-    # Check if GitHub Cache has it, because that's free
     - name: Using the builtin GitHub Cache Action for .conan
       id: github-cache-conan
       uses: actions/cache@v4
@@ -178,12 +180,10 @@ jobs:
         fi
 
     - name: Ammend shared libraries runpaths
+      if: ${{ runner.os == 'Linux' }}
       working-directory: build-imagingsuite/Release/lib
       shell: bash
-      run: |
-        if [ "${RUNNER_OS}" == "Linux" ]; then
-          patchelf --set-rpath '$ORIGIN' *.so*
-        fi
+      run: patchelf --set-rpath '$ORIGIN' *.so*
 
     - name: Test
       id: tests
@@ -220,4 +220,4 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: MuhRec-${{runner.os}}
-        path: "${{ github.workspace }}/MuhRec*.zip"
+        path: "${{ github.workspace }}/*MuhRec.zip"
