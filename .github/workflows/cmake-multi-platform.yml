@@ -29,25 +29,29 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
         #os: [ubuntu-latest, windows-2022, macos-11, flyci-macos-14-m1, flyci-macos-14-m2]
-        build_type: [Release]
+        #build_type: [Release]
         #c_compiler: [cl, gcc, clang]
         include:
           - os: windows-2022
             c_compiler: cl
             cpp_compiler: cl
             cl: 17
+            build_type: Release
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
             gcc: 11
+            build_type: Release
           - os: macos-11
             c_compiler: clang
             cpp_compiler: clang++
             clang: 13
+            build_type: Release
           # - os: flyci-macos-14-m2
           #   c_compiler: clang
           #   cpp_compiler: clang++
           #   clang: 15
+          #   build_type: Release
         # exclude:
         #   - os: windows-2022
         #     c_compiler: gcc
@@ -85,7 +89,7 @@ jobs:
     # Check if GitHub Cache has it, because that's free
     - name: Using the builtin GitHub Cache Action for .conan
       id: github-cache-conan
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
         cache-name: cache-conan-modules
       with:
