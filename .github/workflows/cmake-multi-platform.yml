@@ -86,27 +86,17 @@ jobs:
         repository: neutronimaging/TestData
         path: TestData
 
-    # Check if GitHub Cache has it, because that's free
-    - name: Using the builtin GitHub Cache Action for .conan
-      id: github-cache-conan
-      uses: actions/cache@v4
-      env:
-        cache-name: cache-conan-modules
-      with:
-        path: ${{ env.CONAN_HOME }}
-        key: ${{ runner.os }}-${{ runner.arch }}
-
-    # If GitHub Cache doesn't have it, get from Conan Cache (has git lfs cost)
-    - name: Cache Conan modules
-      if: steps.github-cache-conan.outputs.cache-hit != 'true'
-      id: cache-conan
-      uses: turtlebrowser/conan-cache@master
-      with:
-          bot_name: ${{ secrets.BOT_NAME }}
-          bot_token: ${{ secrets.BOT_TOKEN }}
-          cache_name: ${{ env.CACHE_GITHUB }}/${{ env.CACHE_GITHUB_REPO }}
-          key: ${{ runner.os }}-${{ runner.arch }}
-          lfs_limit: 60
+    # # If GitHub Cache doesn't have it, get from Conan Cache (has git lfs cost)
+    # - name: Cache Conan modules
+    #   if: steps.github-cache-conan.outputs.cache-hit != 'true'
+    #   id: cache-conan
+    #   uses: turtlebrowser/conan-cache@master
+    #   with:
+    #       bot_name: ${{ secrets.BOT_NAME }}
+    #       bot_token: ${{ secrets.BOT_TOKEN }}
+    #       cache_name: ${{ env.CACHE_GITHUB }}/${{ env.CACHE_GITHUB_REPO }}
+    #       key: ${{ runner.os }}-${{ runner.arch }}
+    #       lfs_limit: 60
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
@@ -121,6 +111,16 @@ jobs:
       uses: turtlebrowser/get-conan@main
       with:
         version: 2.1.0
+
+    # Check if GitHub Cache has it, because that's free
+    - name: Using the builtin GitHub Cache Action for .conan
+      id: github-cache-conan
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-conan-modules
+      with:
+        path: ${{ env.CONAN_HOME }}
+        key: ${{ runner.os }}-${{ runner.arch }}
 
     - name: Set reusable strings
         # Set environment variables for the subsequent steps of the job
@@ -145,7 +145,7 @@ jobs:
 
     - name: Install sse2neon
       # Needed to compile ARM programs and not currently available on Conan
-      if: (${{ runner.os }} == "macOS" && ${{ runner.arch }} == "ARM64")
+      if: ${{ ( runner.os == 'macOS' ) &&  (runner.arch == 'ARM64') }}
       run: |
         brew install sse2neon
 
