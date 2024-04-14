@@ -37,5 +37,5 @@ std::vector<float> DummyProcessor::process(std::vector<float> &data)
 void DummyProcessor::subprocess(std::vector<float> &in, std::vector<float> &out,size_t begin, size_t end)
 {
     for (size_t i=begin; i<end; ++i)
-        out[i]=sqrt(in[i]);
+        out[i]=std::floor(sqrt(in[i])*10000);
 }
