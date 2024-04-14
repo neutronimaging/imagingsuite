@@ -250,8 +250,8 @@ void ConfigBaseTest::testLibNameManagerWindows()
     std::string appPath    = "C:\\Users\\kaestner\\git\\deployed\\muhrec\\";
     std::string modulePath = "C:\\Users\\kaestner\\git\\deployed\\muhrec\\StdPreprocModules.dll";
 
-    kipl::strings::filenames::CheckPathSlashes(appPath,true);
-    kipl::strings::filenames::CheckPathSlashes(modulePath,false);
+    // kipl::strings::filenames::CheckPathSlashes(appPath,true);
+    // kipl::strings::filenames::CheckPathSlashes(modulePath,false);
 
     ModuleLibNameManger mlnm(appPath);
 
