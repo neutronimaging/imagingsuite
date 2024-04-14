@@ -100,7 +100,7 @@ void TestThreadPool::test_Processor()
     QCOMPARE(data.size(),result.size());
 
     for (size_t i=0; i<data.size(); ++i)
-        QCOMPARE(result[i],std::floor(sqrt(data[i])*10000));
+        QCOMPARE(result[i],std::floor(sqrt(data[i])*1000.0f));
 }
 
 void TestThreadPool::test_ProcessorSingle()
@@ -119,7 +119,7 @@ void TestThreadPool::test_ProcessorSingle()
     QCOMPARE(data.size(),result.size());
 
     for (size_t i=0; i<data.size(); ++i)
-        QCOMPARE(result[i],std::floor(sqrt(data[i])*10000));
+        QCOMPARE(result[i],std::floor(sqrt(data[i])*1000.0f));
 }
 
 QTEST_APPLESS_MAIN(TestThreadPool)
