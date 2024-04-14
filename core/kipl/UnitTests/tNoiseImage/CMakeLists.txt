@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tDirAnalysis")
-project(tDirAnalysis LANGUAGES CXX)
+set(TARGET_NAME "tNoiseImage")
+project(${TARGET_NAME} LANGUAGES CXX)
+
+enable_testing()
 
 find_package(QT NAMES Qt6 COMPONENTS Test REQUIRED)
 find_package(Qt6 COMPONENTS Test REQUIRED)
@@ -17,12 +19,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/include
+)
+
+if (APPLE)
+    include_directories(
+        ../../../../../ExternalDependencies/macos/include
     )
+endif()
 
-set(SRC_FILES,
-    tst_tdiranalysistest.cpp)
+# if (WIN32)
+#     include_directories(
+#         ../../../external/include/
+#     )
+# endif()
 
-add_executable(${TARGET_NAME} tst_tdiranalysistest.cpp)
+set(SRC_FILES
+    tst_noiseimage.cpp)
+
+add_executable(${TARGET_NAME} ${SRC_FILES})
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC

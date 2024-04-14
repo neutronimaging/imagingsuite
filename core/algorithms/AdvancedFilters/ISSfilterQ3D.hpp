@@ -390,7 +390,7 @@ int ISSfilterQ3D<T>::_FirstDerivate(std::list<kipl::base::TImage<T,2> > &img_que
     #pragma omp parallel for
     for (int y=0; y<sy; y++)
     {
-		kipl::base::uFQuad d;
+		// kipl::base::uFQuad d;
 
 		T* pImg0=img1.GetLinePtr(y);
 		T* pImgX=img1.GetLinePtr(y)-1;
@@ -903,8 +903,8 @@ int ISSfilterQ3D<T>::_CurvatureSSE(   std::list<kipl::base::TImage<T,2> > &dx_qu
 		T d2y = static_cast<T>(0);
 		T d2z = static_cast<T>(0);
 
-		const int sx = dx.Size(0);
-		const int sy = dx.Size(1);
+		// const int sx = dx.Size(0);
+		// const int sy = dx.Size(1);
 
 		int i=0;
 		const int Nx= static_cast<int>(dx.Size())-1;
