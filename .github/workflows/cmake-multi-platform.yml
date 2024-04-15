@@ -214,6 +214,11 @@ jobs:
         elif [ "${RUNNER_OS}" == "macOS" && "${RUNNER_ARCH}" == "ARM" ]; then
           cd build-imagingsuite/Release
           zip -r ../../MacOS-arm-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
+          ls -a
+          cd ..
+          ls -a
+          cd ..
+          ls -a
         fi
 
     - name: Save build artifact
