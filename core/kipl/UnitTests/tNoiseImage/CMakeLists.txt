@@ -21,11 +21,11 @@ include_directories(
     ../../kipl/include
 )
 
-if (APPLE)
-    include_directories(
-        ../../../../../ExternalDependencies/macos/include
-    )
-endif()
+# if (APPLE)
+#     include_directories(
+#         ../../../../../ExternalDependencies/macos/include
+#     )
+# endif()
 
 # if (WIN32)
 #     include_directories(
