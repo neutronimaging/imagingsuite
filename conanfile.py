@@ -79,9 +79,8 @@ class MuhrecRecipe(ConanFile):
                 sse2neon_dir = StringIO()
                 self.run("brew --prefix sse2neon", stdout=sse2neon_dir)
                 sse2neon = sse2neon_dir.getvalue().strip()
-                print("sse2neon is: ", sse2neon)
                 print("sse2neon_dir is: ", os.listdir(os.path.join(sse2neon, "include")))
-                copy(self, "*", os.path.join(sse2neon, "include"), lib_folder)
+                copy(self, 'sse2neon.h', os.path.join(sse2neon, "include"), lib_folder)
                 print("contensts of lib_folder after copy is: ", os.listdir(lib_folder))
 
     def build(self):
