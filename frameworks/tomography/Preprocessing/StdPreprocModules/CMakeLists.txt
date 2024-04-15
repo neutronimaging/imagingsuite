@@ -14,7 +14,7 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
 
     )
 endif()
@@ -36,11 +36,11 @@ if (WIN32)
         ../../../../core/modules/ReaderConfig
         ../../../../core/algorithms/ImagingAlgorithms/include
         ../../Framework/ReconFramework/include
-        ../../../../../ExternalDependencies/windows/include
-        ../../../../../ExternalDependencies/windows/include/nexus
-        ../../../../../ExternalDependencies/windows/include/cfitsio
-        ../../../../../ExternalDependencies/windows/include/libxml2
-        ../../../../external/include/
+        # ../../../../../ExternalDependencies/windows/include
+        # ../../../../../ExternalDependencies/windows/include/nexus
+        # ../../../../../ExternalDependencies/windows/include/cfitsio
+        # ../../../../../ExternalDependencies/windows/include/libxml2
+        # ../../../../external/include/
         )
 endif()
 
@@ -114,11 +114,11 @@ target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY )
 
   message("StdPreprocModules ${CMAKE_HOST_SYSTEM_PROCESSOR}")
   if (WIN32)
-    target_link_directories(${TARGET_NAME} PUBLIC
-    ../../../../../ExternalDependencies/windows/lib
-    # ../../../../../imagingsuite/external/lib64
-    # ../../../../../imagingsuite/external/lib64/nexus
-    )
+    # target_link_directories(${TARGET_NAME} PUBLIC
+    # ../../../../../ExternalDependencies/windows/lib
+    # # ../../../../../imagingsuite/external/lib64
+    # # ../../../../../imagingsuite/external/lib64/nexus
+    # )
   
   target_link_libraries(${TARGET_NAME}
   PUBLIC

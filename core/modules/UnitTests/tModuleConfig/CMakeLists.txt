@@ -22,7 +22,7 @@ include_directories(
     ../../ModuleConfig/include
     ../../../../frameworks/tomography/Framework/ReconFramework/include
     ../../../algorithms/ImagingAlgorithms/include
-    ../../../../../ExternalDependencies/macos/include/
+    # ../../../../../ExternalDependencies/macos/include/
 )
 
 set(SRC_FILES,

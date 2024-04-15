@@ -15,21 +15,21 @@ include_directories(
     ../../../../core/modules/ReaderConfig
 )
 
-if (APPLE)
-include_directories(
-    ../../../../../ExternalDependencies/macos/include
-    )
-endif()
+# if (APPLE)
+# include_directories(
+#     ../../../../../ExternalDependencies/macos/include
+#     )
+# endif()
 
-if (WIN32)
-include_directories(
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/nexus
-    ../../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../external/include/
-)
-endif()
+# if (WIN32)
+# include_directories(
+#     ../../../../../ExternalDependencies/windows/include
+#     ../../../../../ExternalDependencies/windows/include/nexus
+#     ../../../../../ExternalDependencies/windows/include/cfitsio
+#     ../../../../../ExternalDependencies/windows/include/libxml2
+#     ../../../../external/include/
+# )
+# endif()
 
 # if (UNIX)
 # include_directories(
@@ -87,13 +87,13 @@ target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY)
 
 message(${TARGET_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR})
 
-if (WIN32)
-    target_link_directories(${TARGET_NAME} PUBLIC
-    ../../../../../ExternalDependencies/windows/lib
-    ../../../../../imagingsuite/external/lib64
-    ../../../../../imagingsuite/external/lib64/nexus
-    )
-endif()   
+# if (WIN32)
+#     target_link_directories(${TARGET_NAME} PUBLIC
+#     ../../../../../ExternalDependencies/windows/lib
+#     ../../../../../imagingsuite/external/lib64
+#     ../../../../../imagingsuite/external/lib64/nexus
+#     )
+# endif()   
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC
@@ -101,6 +101,7 @@ target_link_libraries(${TARGET_NAME}
         ImagingAlgorithms
         ModuleConfig
         ReaderConfig
+        LibXml2::LibXml2
 )
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

@@ -34,3 +34,4 @@ _deps
 *.png
 moc_*
 *.moc
+CMakeUserPresets.json

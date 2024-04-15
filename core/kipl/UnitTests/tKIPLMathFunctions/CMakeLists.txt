@@ -25,17 +25,17 @@ set(SRC_FILES
     tst_MathFunctions.cpp
     )
 
-if (WIN32)
-    include_directories(
-        ../../../../../ExternalDependencies/windows/include
-        )
-endif()
+# if (WIN32)
+#     include_directories(
+#         ../../../../../ExternalDependencies/windows/include
+#         )
+# endif()
 
-if (APPLE)
-    include_directories(
-        ../../../../../ExternalDependencies/macos/include
-    )
-endif()
+# if (APPLE)
+#     include_directories(
+#         ../../../../../ExternalDependencies/macos/include
+#     )
+# endif()
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 

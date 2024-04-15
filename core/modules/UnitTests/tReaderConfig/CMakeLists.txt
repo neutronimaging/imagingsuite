@@ -22,7 +22,7 @@ include_directories(
     ../../../algorithms/ImagingAlgorithms/include
     ../../ReaderConfig
 
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
 )
 
 set(SRC_FILES,
