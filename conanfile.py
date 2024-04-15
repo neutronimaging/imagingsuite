@@ -77,9 +77,8 @@ class MuhrecRecipe(ConanFile):
                 )
             if self.settings.arch == "armv8":
                 sse2neon_dir = StringIO()
-                print("lib_folder is: ", lib_folder)
                 self.run("brew --prefix sse2neon", stdout=sse2neon_dir)
-                print("sse2neon_dir is: ", sse2neon_dir.getvalue())
+                print("sse2neon_dir is: ", os.listdir(sse2neon_dir.getvalue()))
                 copy(self, "*", sse2neon_dir.getvalue(), lib_folder)
                 print("contensts of lib_folder after copy is: ", os.listdir(lib_folder))
 
