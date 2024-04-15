@@ -220,4 +220,4 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: MuhRec-${{runner.os}}
-        path: "${{ github.workspace }}/*MuhRec.zip"
+        path: "${{ github.workspace }}/*MuhRec*.zip"
