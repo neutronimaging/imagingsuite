@@ -32,21 +32,21 @@ jobs:
         #build_type: [Release]
         #c_compiler: [cl, gcc, clang]
         include:
-          # - os: windows-2022
-          #   c_compiler: cl
-          #   cpp_compiler: cl
-          #   cl: 17
-          #   build_type: Release
-          # - os: ubuntu-latest
-          #   c_compiler: gcc
-          #   cpp_compiler: g++
-          #   gcc: 11
-          #   build_type: Release
-          # - os: macos-11
-          #   c_compiler: clang
-          #   cpp_compiler: clang++
-          #   clang: 13
-          #   build_type: Release
+          - os: windows-2022
+            c_compiler: cl
+            cpp_compiler: cl
+            cl: 17
+            build_type: Release
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            gcc: 11
+            build_type: Release
+          - os: macos-11
+            c_compiler: clang
+            cpp_compiler: clang++
+            clang: 13
+            build_type: Release
           - os: flyci-macos-14-m2
             c_compiler: clang
             cpp_compiler: clang++
@@ -134,10 +134,7 @@ jobs:
     - name: Install sse2neon
       # Needed to compile ARM programs and not currently available on Conan
       if: ${{ ( runner.os == 'macOS' ) &&  (runner.arch == 'ARM64') }}
-      run: |
-        brew install sse2neon
-        brew --prefix sse2neon
-
+      run: brew install sse2neon
 
     - name: Run conan
       working-directory: imagingsuite
@@ -210,15 +207,12 @@ jobs:
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           cd build-imagingsuite/Release
           zip -r ../../Ubuntu-MuhRec.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
-        elif [ "${RUNNER_OS}" == "macOS" ]; then
+        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../MacOS-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
-        # elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-        #   cd build-imagingsuite/Release
-        #   zip -r ../../MacOS-x64-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
-        # elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM" ]; then
-        #   cd build-imagingsuite/Release
-        #   zip -r ../../MacOS-arm-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
+          zip -r ../../MacOS-x64-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
+        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM" ]; then
+          cd build-imagingsuite/Release
+          zip -r ../../MacOS-arm-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib" -x "lib/*.h"
         fi
 
     - name: Save build artifact
