@@ -74,6 +74,9 @@ class MuhrecRecipe(ConanFile):
                 os.path.join(framework_folder_MuhRec,"../",'Resources'), 
                 dirs_exist_ok=True,
                 )
+            sse2neon_dir = self.run("brew --prefix sse2neon")
+            copy(self, sse2neon_dir, lib_folder)
+            print(os.listdir(lib_folder))
 
     def build(self):
         cmake = CMake(self)
