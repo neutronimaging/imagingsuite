@@ -10,9 +10,9 @@ env:
 
 on:
   push:
-    branches: [ "RemoveExternal" ]
+    branches: [ "Master" ]
   pull_request:
-    branches: [ "RemoveExternal" ]
+    branches: [ "Master" ]
 
 jobs:
   build:
@@ -210,7 +210,7 @@ jobs:
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
           cd build-imagingsuite/Release
           zip -r ../../MacOS-x64-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
-        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM" ]; then
+        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
           cd build-imagingsuite/Release
           zip -r ../../MacOS-arm-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib" -x "lib/*.h"
         fi
