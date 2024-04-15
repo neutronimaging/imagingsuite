@@ -68,6 +68,7 @@ private :
 private:
     void TestGradient();
     kipl::base::TImage<float,2> sin2D;
+    std::string data_path;
 };
 
 TKiplMathTest::TKiplMathTest()
@@ -84,6 +85,10 @@ TKiplMathTest::TKiplMathTest()
         }
     }
     sin2D=img;
+
+    data_path = QT_TESTCASE_BUILDDIR;
+    data_path = data_path + "/../../../../../TestData/";
+    kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
 
 void TKiplMathTest::testCOG()
@@ -331,7 +336,9 @@ void TKiplMathTest::testARMANonLinFit_realDataFit()
 {
     std::map<std::string,std::vector<float>> data;
     try {
-        data = kipl::io::readCSV("../TestData/1D/edgeprofiles/edgederiv_2mm.txt",',',false);
+        std::string fname=data_path+"1D/edgeprofiles/edgederiv_2mm.txt"; // Image size 122x300
+        kipl::strings::filenames::CheckPathSlashes(fname,false);
+        data = kipl::io::readCSV(fname,',',false);
     }
     catch (std::exception & e)
     {
