@@ -35,10 +35,8 @@ def build_batch(template,step,first,last,output):
         else:
             mname = parts[0]+f"_frame{frame:02d}"+'_'+parts[-1]
         task['arguments']['matrix:matrixname'] = mname
-        # print(task)
         data.append(task)
 
-    print(templ)
 
     with open(output, 'w') as f:
         json.dump(data, f, indent=4)
