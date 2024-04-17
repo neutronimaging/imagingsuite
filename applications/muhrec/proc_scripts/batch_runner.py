@@ -1,4 +1,4 @@
-from subprocess import call
+import subprocess
 import json
 import sys
 
@@ -15,11 +15,21 @@ def run_batch(batch_file,muhrec_path):
 
         call_info = [muhrec_path, "-f", task['config']]
         for arg in task['arguments']:
-            # print("Adding argument {0} with value {1}".format(arg,task['arguments'][arg]))
-            call_info.append(arg+"="+str(task['arguments'][arg]))
+            call_info.append(f"\"{arg}={task['arguments'][arg]}\"")
         
-        # print("Calling muhrec with arguments: {0}".format(call_info))
-        #call([muhrec_path, "-f", tasks['cfgpath'], tasks['firstindex'], tasks['lastindex'], tasks['matrixname'], tasks['scanarc']])  
+        print("Calling muhrec with arguments:")
+        for arg in call_info:
+            print(arg)
+        
+        try:
+            # result = subprocess.run(call_info, capture_output=True, text=True, check=True)
+            result = subprocess.call(call_info)
+            # print("Standard Output:\n", result.stdout)
+            # print("Standard Error:\n", result.stderr)
+        except subprocess.CalledProcessError as e:
+            print("Error Occurred:", e)
+
+        print("Project {0} completed\n-----------------------\n".format(task['name'])) 
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
