@@ -360,8 +360,23 @@ void ConfigBase::ParseArgv(std::vector<std::string> &args)
     }
 }
 
+std::string ConfigBase::FilterQuotes(const std::string &value, char quote)
+{
+    auto q1=value.find_first_of(quote);
+    auto q2=value.find_last_of(quote);
+
+    if ((q1!=std::string::npos) && (q2!=std::string::npos)) 
+    {
+            return value.substr(q1+1,q2-q1-1);
+    }
+    
+    return value;
+}
+
 void ConfigBase::EvalArg(std::string arg, std::string &group, std::string &var, std::string &value)
 {
+    arg=FilterQuotes(arg,'\"'); // Remove any quotes
+    arg=FilterQuotes(arg,'\'');
     size_t possep=arg.find(':');
     if (possep==std::string::npos)
         throw ModuleException("Could not find a separator",__FILE__,__LINE__);

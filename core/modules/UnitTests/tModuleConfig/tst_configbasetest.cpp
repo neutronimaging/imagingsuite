@@ -162,6 +162,18 @@ void ConfigBaseTest::testEvalArg()
     QVERIFY2(var=="roi",var.c_str());
     QVERIFY2(value=="40 40 50 50",value.c_str());
 
+    arg="\"projections:roi=10 20 40 60\"";
+    config.EvalArg(arg, group, var, value);
+    QVERIFY2(group=="projections","Extract group");
+    QVERIFY2(var=="roi",var.c_str());
+    QVERIFY2(value=="10 20 40 60",value.c_str());
+
+    arg="'projections:roi=1 2 4 6'";
+    config.EvalArg(arg, group, var, value);
+    QVERIFY2(group=="projections","Extract group");
+    QVERIFY2(var=="roi",var.c_str());
+    QVERIFY2(value=="1 2 4 6",value.c_str());
+
 }
 
 void ConfigBaseTest::testGetCommandLinePars()
@@ -238,8 +250,8 @@ void ConfigBaseTest::testLibNameManagerWindows()
     std::string appPath    = "C:\\Users\\kaestner\\git\\deployed\\muhrec\\";
     std::string modulePath = "C:\\Users\\kaestner\\git\\deployed\\muhrec\\StdPreprocModules.dll";
 
-    kipl::strings::filenames::CheckPathSlashes(appPath,true);
-    kipl::strings::filenames::CheckPathSlashes(modulePath,false);
+    // kipl::strings::filenames::CheckPathSlashes(appPath,true);
+    // kipl::strings::filenames::CheckPathSlashes(modulePath,false);
 
     ModuleLibNameManger mlnm(appPath);
 

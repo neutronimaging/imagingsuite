@@ -8,7 +8,7 @@ ModuleLibNameManger::ModuleLibNameManger(const std::string &path) :
     logger("ModuleLibNameManger"),
     m_sApplicationPath(path)
 {
-    kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
+//   kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
 }
 
 std::string ModuleLibNameManger::generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os)
@@ -91,8 +91,9 @@ std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
 std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
 {
     if (!libInAppPath(path,m_sApplicationPath))
+    {
         return path;
-
+    }
     std::string libName;
 
     libName = path.substr(path.find_last_of("/\\")+1);
@@ -143,9 +144,15 @@ std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 bool ModuleLibNameManger::libInAppPath(const std::string &path, const std::string &appPath)
 {
     if (path.size()<appPath.size())
+    {
+        logger.message(path +" < "+appPath);
         return false;
+    }
 
     auto truncated = path.substr(0,appPath.size());
+
+    logger.message(truncated +" == "+appPath);
+
     if ((truncated != appPath) || path.find_first_of("/\\",appPath.size()+1)!=std::string::npos)
     {
         logger.warning(truncated +" != "+appPath);
