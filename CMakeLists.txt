@@ -1,5 +1,5 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
 # execute_process(
 #   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 project(imagingsuite VERSION 4.3 LANGUAGES CXX)
 
+set(CMAKE_FIND_DEBUG_MODE OFF)
 # require C++17
 if(NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
@@ -28,36 +29,70 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
-find_package(PythonInterp REQUIRED)
+# Ensure that paths are set correctly according to OS
+if (WIN32)
+  file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}/generators" PREFIX_PATH)
+  file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR}/generators" MODULE_PATH)
+else()
+  file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}/Release/generators" PREFIX_PATH)
+  file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR}/Release/generators" MODULE_PATH)
+endif()
 
-find_package(LibXml2 REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(TIFF REQUIRED)
+# Set environment variables so that CMAKE can find the packages
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PREFIX_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${MODULE_PATH})
+message("CMAKE_PREFIX_PATH is: ${CMAKE_PREFIX_PATH}")
+message("CMAKE_MODULE_PATH is: ${CMAKE_MODULE_PATH}")
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
+find_package(Python3 COMPONENTS Interpreter Development)
+
+find_package(armadillo REQUIRED)
 find_package(pybind11 REQUIRED)
+find_package(libxml2 REQUIRED)
+find_package(OpenBLAS REQUIRED)
+find_package(TIFF REQUIRED)
+find_package(FFTW3 REQUIRED)
+find_package(cfitsio REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(HDF5 REQUIRED)
 
 if (WIN32)
-  find_package(Armadillo REQUIRED )
-  find_package(cfitsio REQUIRED)
+  find_package(dirent)
 endif()
 
-if (UNIX)
-  # for testing we will need the python interpreter
-  find_package(BLAS REQUIRED)
-  find_package(FFTW REQUIRED)
-  # find_package(Nexus REQUIRED)
-  find_package(CFITSIO REQUIRED)
-  find_package(Armadillo REQUIRED)
+# if (WIN32)
+#   #find_package(Armadillo REQUIRED CONFIG)
+#   find_package(cfitsio REQUIRED)
+# endif()
+
+# if (UNIX)
+#   # for testing we will need the python interpreter
+#   find_package(BLAS REQUIRED)
+#   find_package(FFTW3 REQUIRED)
+#   # find_package(Nexus REQUIRED)
+#   find_package(CFITSIO REQUIRED)
+#   find_package(Armadillo REQUIRED CONFIG)
+# endif()
+
+if (WIN32)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/applications)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+elseif (LINUX)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Release/applications)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Release/lib)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Release/lib)
+elseif (APPLE)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Release)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Release/lib)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Release/lib)
+  include_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/applications)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-if("${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" VERSION_LESS "3.5")
+if("${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}" VERSION_LESS "3.5")
   message(
     FATAL_ERROR
-      "Python v3 interpreter must be greater than or equal to 3.5. Found ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
+      "Python v3 interpreter must be greater than or equal to 3.5. Found ${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}"
   )
 endif()
 
@@ -68,6 +103,7 @@ execute_process(
   RESULT_VARIABLE HAVE_GIT_VERSION_INFO
   OUTPUT_VARIABLE GIT_VERSION_INFO
   OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND_ERROR_IS_FATAL ANY
 )
 if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   message(STATUS "Got version from Git: ${GIT_VERSION_INFO}")
@@ -119,20 +155,22 @@ set(INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 set(EXPORT_NAME ${PROJECT_NAME}-targets)
 
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+SET(CMAKE_SKIP_BUILD_RPATH FALSE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 
 if(NOT APPLE)
-  set(CMAKE_INSTALL_RPATH $ORIGIN)
+  set(CMAKE_INSTALL_RPATH $ORIGIN/../lib)
 else()
-  set(CMAKE_INSTALL_RPATH @loader_path)
+  set(CMAKE_INSTALL_RPATH @loader_path/../Frameworks @loader_path/../../../lib @loader_path/lib)
 endif()
-
 # turn on testing
 enable_testing()
 
 # Core libraries
 add_subdirectory(core/kipl/kipl)
 
-## Core library tests
+# Core library tests
 add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
 add_subdirectory(core/kipl/UnitTests/tLogging)
 add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
@@ -173,9 +211,9 @@ add_subdirectory(GUI/qt/QtAddons)
 add_subdirectory(GUI/qt/QtImaging)
 add_subdirectory(core/modules/ReaderGUI)
 add_subdirectory(GUI/qt/QtModuleConfigure)
-# #add_subdirectory(GUI/qt/WidgetTests)
+#add_subdirectory(GUI/qt/WidgetTests)
 
-# # Tomography
+# Tomography
 add_subdirectory(frameworks/tomography/Framework/ReconFramework)
 add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
 add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
@@ -210,7 +248,7 @@ add_subdirectory(applications/CLI/verticalslicer)
 
 add_subdirectory(applications/imageviewer)
 
-# # Binder modules
+# Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
 add_subdirectory(core/algorithms/pyadvancedfilters)
@@ -289,7 +327,6 @@ if(DYNAMIC_LIB)
 
 
 endif(DYNAMIC_LIB)
-
 if (WIN32)
 message("${OpenBLAS_LIBRARIES}")
 install(FILES 
@@ -324,8 +361,8 @@ install(FILES
 
   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
-
 message(${CMAKE_CURRENT_SOURCE_DIR})
+
 ## define test
 #add_test(
 #  NAME

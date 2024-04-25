@@ -21,7 +21,7 @@ if (APPLE)
 include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    ../../../../ExternalDependencies/macos/include
+    # ../../../../ExternalDependencies/macos/include
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -33,10 +33,10 @@ include_directories(
     ../../../core/modules/ModuleConfig/include
     ../../../core/modules/ReaderConfig
     ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../ExternalDependencies/windows/include
-    ../../../../ExternalDependencies/windows/include/nexus
-    ../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../ExternalDependencies/windows/include/cfitsio
+    # ../../../../ExternalDependencies/windows/include
+    # ../../../../ExternalDependencies/windows/include/nexus
+    # ../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../ExternalDependencies/windows/include/cfitsio
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()

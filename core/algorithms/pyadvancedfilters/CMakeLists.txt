@@ -12,17 +12,17 @@ find_package(OpenMP)
 
 include_directories(
     ../../kipl/kipl/include
-    ../../../../ExternalDependencies/macos/include
+    # ../../../../ExternalDependencies/macos/include
     )
 
 if (WIN32)
     include_directories(
         ../../../core/kipl/kipl/include
         ../../../core/modules/ModuleConfig/include
-        ../../../external/include/
-        ../../../../ExternalDependencies/windows/include
-        ../../../../ExternalDependencies/windows/include/nexus
-        ../../../../ExternalDependencies/windows/include/cfitsio
+        # ../../../external/include/
+        # ../../../../ExternalDependencies/windows/include
+        # ../../../../ExternalDependencies/windows/include/nexus
+        # ../../../../ExternalDependencies/windows/include/cfitsio
         )
 endif()
 
@@ -55,11 +55,11 @@ target_link_libraries(${TARGET_NAME}
 endif(APPLE)
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-    ../../../../ExternalDependencies/windows/lib
-    ../../../../imagingsuite/external/lib64
-    ../../../../imagingsuite/external/lib64/nexus
-    )
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    # ../../../../ExternalDependencies/windows/lib
+    # ../../../../imagingsuite/external/lib64
+    # ../../../../imagingsuite/external/lib64/nexus
+    # )
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC

@@ -11,7 +11,7 @@ if (APPLE)
 include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    ../../../../ExternalDependencies/macos/include
+    # ../../../../ExternalDependencies/macos/include
     )
 endif()
 
@@ -19,10 +19,10 @@ if (WIN32)
     include_directories(
         ../../../core/kipl/kipl/include
         ../../../core/modules/ModuleConfig/include
-        ../../../external/include/
-        ../../../../ExternalDependencies/windows/include
-        ../../../../ExternalDependencies/windows/include/nexus
-        ../../../../ExternalDependencies/windows/include/cfitsio
+        # ../../../external/include/
+        # ../../../../ExternalDependencies/windows/include
+        # ../../../../ExternalDependencies/windows/include/nexus
+        # ../../../../ExternalDependencies/windows/include/cfitsio
         )
 endif()
 
@@ -31,13 +31,13 @@ include_directories(
     /opt/local/include
     /opt/local/include/libxml2
     ../../../core/kipl/kipl/include
-    ../../../external/src/linalg
+    # ../../../external/src/linalg
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    ../../../external/mac/include/
-    ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/hdf5
+    # ../../../external/mac/include/
+    # ../../../../ExternalDependencies/macos/include
+    # ../../../../ExternalDependencies/macos/include/nexus
+    # ../../../external/mac/include/hdf5
     )
 endif()
 
@@ -101,13 +101,14 @@ target_link_libraries(${TARGET_NAME}
 endif()
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PUBLIC
-     ../../../../ExternalDependencies/windows/lib    )
+    # target_link_directories(${TARGET_NAME} PUBLIC
+    #  ../../../../ExternalDependencies/windows/lib    )
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC
       kipl
-      libopenblas
+      #libopenblas
+      OpenBLAS::OpenBLAS
       )
 endif()
 

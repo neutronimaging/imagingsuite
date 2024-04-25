@@ -24,10 +24,10 @@ include_directories(
     ../../../GUI/qt/QtAddons
     ../../../GUI/qt/QtModuleConfigure
     ../../../core/modules/ReaderGUI
-    ../../../external/mac/include/
-    ../../../../ExternalDependencies/macos/include
-    ../../../../ExternalDependencies/macos/include/nexus
-    ../../../external/mac/include/hdf5
+    # ../../../external/mac/include/
+    # ../../../../ExternalDependencies/macos/include
+    # ../../../../ExternalDependencies/macos/include/nexus
+    # ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 
@@ -68,7 +68,7 @@ endif()
 target_link_libraries(${TARGET_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
-    xml2
+    LibXml2::LibXml2 
     kipl
     ModuleConfig
     ImagingAlgorithms

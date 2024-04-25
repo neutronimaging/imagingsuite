@@ -23,7 +23,7 @@ include_directories(
     ../../../core/modules/ModuleConfig/include
     ../../../core/modules/ReaderConfig
     ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../ExternalDependencies/macos/include
+    # ../../../../ExternalDependencies/macos/include
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -35,8 +35,8 @@ include_directories(
     ../../../core/modules/ModuleConfig/include
     ../../../core/modules/ReaderConfig
     ../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../ExternalDependencies/windows/include
-    ../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../ExternalDependencies/windows/include
+    # ../../../../ExternalDependencies/windows/include/libxml2
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()

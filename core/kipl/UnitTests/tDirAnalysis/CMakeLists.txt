@@ -30,4 +30,5 @@ target_link_libraries(${TARGET_NAME}
         kipl
     )
 
+
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

@@ -20,12 +20,12 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # for testing we will need the python interpreter
-find_package(PythonInterp REQUIRED)
+find_package(Python3 COMPONENTS Interpreter)
 
-if("${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" VERSION_LESS "3.5")
+if("${PYTHON3_VERSION_MAJOR}.${PYTHON3_VERSION_MINOR}" VERSION_LESS "3.5")
   message(
     FATAL_ERROR
-      "Python v3 interpreter must be greater than or equal to 3.5. Found ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
+      "Python v3 interpreter must be greater than or equal to 3.5. Found ${PYTHON3_VERSION_MAJOR}.${PYTHON3_VERSION_MINOR}"
   )
 endif()
 
