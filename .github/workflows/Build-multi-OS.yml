@@ -177,16 +177,16 @@ jobs:
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          7z a Windows-MuhRec.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing
+          7z a MuhRec-${{runner.os}}-${{runner.arch}}.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../Ubuntu-MuhRec.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../MacOS-x64-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../MacOS-arm-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib" -x "lib/*.h"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib" -x "lib/*.h"
         fi
 
     - name: Save build artifact
