@@ -1,12 +1,12 @@
-# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
-# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
-name: CMake on multiple platforms
+# This workflow builds, tests, deploys and uploads the MuhRec application on different configrations specified on the matrix.
+name: Build MuhRec on multiple platforms
 env:
-  CONAN_HOME: ${{ github.workspace }}/Cache/
-  CACHE_GITHUB: damskii9992
-  CACHE_GITHUB_REPO: ConanCache
-  CONAN_USER_HOME: ${{ github.workspace }}/Cache/
-  CONAN_USER_HOME_SHORT: ${{ github.workspace }}/Cache//short
+  CONAN_HOME: ${{ github.workspace }}/Cache/ # Used by the built-in GH cache action to cache conan dependencies
+  CACHE_GITHUB: damskii9992 # Used by turtlebrowers conan cache action, if enabled
+  CACHE_GITHUB_REPO: ConanCache # Used by turtlebrowers conan cache action, if enabled
+  CONAN_USER_HOME: ${{ github.workspace }}/Cache/ # Used by turtlebrowers conan cache action, if enabled
+  CONAN_USER_HOME_SHORT: ${{ github.workspace }}/Cache//short # Used by turtlebrowers conan cache action, if enabled
+#  MACOSX_DEPLOYMENT_TARGET: 10.15 # Can be set to build for older version of MacOS, ignored by other OSs. Currently does not work.
 
 on:
   workflow_dispatch:
@@ -18,16 +18,13 @@ jobs:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
 
-      # Set up a matrix to run the following 3 configurations:
-      # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
-      # 2. <Linux, Release, latest GCC compiler toolchain on the default runner image, default generator>
-      # 3. <Linux, Release, latest Clang compiler toolchain on the default runner image, default generator>
-      #
-      # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
+      # Build on the following 4 configurations: 
+      # 1. <Windows, Release, 2022 MSVC compiler toolchain>
+      # 2. <Ubuntu latest, i.e. version 22.04, Release, GCC 11 compiler toolchain>
+      # 3. <MacOS 11 with x86-64 arch, Release, Clang 13 compiler toolchain>
+      # 4. <MacOS 14 with arm64 arch via FlyCI, Release, Clang 15 compiler toolchain
+      # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix:
-        #os: [ubuntu-latest, windows-2022, macos-11, flyci-macos-14-m1, flyci-macos-14-m2]
-        #build_type: [Release]
-        #c_compiler: [cl, gcc, clang]
         include:
           - os: windows-2022
             c_compiler: cl
@@ -49,34 +46,15 @@ jobs:
             cpp_compiler: clang++
             clang: 15
             build_type: Release
-        # exclude:
-        #   - os: windows-2022
-        #     c_compiler: gcc
-        #   - os: windows-2022
-        #     c_compiler: clang
-        #   - os: ubuntu-latest
-        #     c_compiler: cl
-        #   - os: ubuntu-latest
-        #     c_compiler: clang
-        #   - os: macos-11
-        #     c_compiler: cl
-        #   - os: macos-11
-        #     c_compiler: gcc
-
-        #   - os: macos-11
-        #     c_compiler: clang
-        #   - os: windows-2022
-        #     c_compiler: cl
-        #   - os: ubuntu-latest
-        #     c_compiler: gcc
 
     steps:
-      # Checkouts all the nesecary source code to build the project
+      # Checkouts the source code to build the project with the git history
     - name: Checkout imagingsuite source code
       uses: actions/checkout@v4
       with:
         path: imagingsuite
         fetch-depth: 0
+      # Checks out the test data repository for the c++ tests with ctest
     - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
       uses: actions/checkout@v4
       with:
@@ -87,6 +65,7 @@ jobs:
     # It can be used in tandem with the builtin Cache but it has LFS costs
     # To use it, change order of actions to GH cache -> this action -> install Qt -> Conan install
     # The current order of actions is, for some reason, neseccary to properly run Ronan to compile new libraries
+    # Requires the used environment variables to be set up properly as well as a bot account with write access and an external cache repo
     # - name: Cache Conan modules
     #   if: steps.github-cache-conan.outputs.cache-hit != 'true'
     #   id: cache-conan
@@ -98,6 +77,7 @@ jobs:
     #       key: ${{ runner.os }}-${{ runner.arch }}
     #       lfs_limit: 60
 
+    # This version of Qt only allows python versions in the range 3.6-3.11
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
@@ -121,9 +101,7 @@ jobs:
         path: ${{ env.CONAN_HOME }}
         key: ${{ runner.os }}-${{ runner.arch }}
 
-    - name: Set reusable strings
-        # Set environment variables for the subsequent steps of the job
-      id: strings
+    - name: Set QTPATH environment variable
       shell: bash
       run: |
         echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
@@ -148,8 +126,7 @@ jobs:
         fi
 
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      # Configure CMake in the 'build-imagingsuite' directory created during the conan run. 
       working-directory: build-imagingsuite
       run: |
         cmake --version
@@ -200,16 +177,16 @@ jobs:
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          7z a Windows-MuhRec.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing
+          7z a MuhRec-${{runner.os}}-${{runner.arch}}.zip "build-imagingsuite/applications/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe "build-imagingsuite/lib/Release/*.cp*" #-xr!Testing
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../Ubuntu-MuhRec.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../MacOS-x64-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
           cd build-imagingsuite/Release
-          zip -r ../../MacOS-arm-MuhRec.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib" -x "lib/*.h"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib" -x "lib/*.h"
         fi
 
     - name: Save build artifact
