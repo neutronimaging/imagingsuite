@@ -137,25 +137,16 @@ jobs:
           conan install . --profile:host profiles/macos_arm_clang_15_release --profile:build profiles/macos_arm_clang_15_release --build=missing
         fi
 
-    - name: Configure CMake
-      # Configure CMake in the 'build-imagingsuite' directory created during the conan run. 
-      working-directory: build-imagingsuite
-      run: |
-        cmake --version
-        cmake ../imagingsuite/ -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_PREFIX_PATH='${{env.Qt6_Dir}}/lib/cmake/'
-
     - name: Build
-      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      working-directory: build-imagingsuite
-      run: |
-        cmake --build . --config ${{ matrix.build_type }}
+      working-directory: imagingsuite
+      run: conan build .
   
     - name: Qt Deploy
       working-directory: build-imagingsuite
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          cd applications/Release
+          cd bin/Release
           ${QTPATH}/bin/windeployqt muhrec.exe
           ${QTPATH}/bin/windeployqt imageviewer.exe
         elif [ "${RUNNER_OS}" == "macOS" ]; then
@@ -175,7 +166,7 @@ jobs:
       working-directory: build-imagingsuite
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          cd applications/Release
+          cd bin/Release
           cp *.dll ../../../imagingsuite/package/pymuhrec
           cp *.pyd ../../../imagingsuite/package/pymuhrec
         elif [ "${RUNNER_OS}" == "Linux" ]; then

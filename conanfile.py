@@ -27,14 +27,14 @@ class MuhrecRecipe(ConanFile):
         #self.requires("qt/[6.6.1]") Does work but QtCharts is not included
 
 
-    def build_requirements(self): # Only used if conanbuild.bat environment is used
+    def build_requirements(self): # Only used if conanbuild.bat environment is used, such as by "conan build ."
         self.tool_requires("ninja/[1.12.0]")
         self.tool_requires("cmake/[3.28.1]") 
 
     def layout(self):
         cmake_layout(
             self,
-            build_folder="../build-imagingsuite2",
+            build_folder="../build-imagingsuite",
             )
 
     def generate(self):
@@ -44,7 +44,7 @@ class MuhrecRecipe(ConanFile):
         tc.generate()
         ms = VirtualRunEnv(self)
         ms.generate()
-        bin_folder = os.path.abspath(os.path.join(self.build_folder, "applications", self.cpp.build.bindir))
+        bin_folder = os.path.abspath(os.path.join(self.build_folder, "bin", self.cpp.build.bindir))
         print("bindir is: ", self.cpp.build.bindir)
         lib_folder = os.path.abspath(os.path.join(self.build_folder, "lib", self.cpp.build.bindir))
         framework_folder_MuhRec = os.path.abspath(os.path.join(self.build_folder, self.cpp.build.bindir, 'MuhRec.app', 'Contents', 'Frameworks'))
