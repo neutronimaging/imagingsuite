@@ -6,7 +6,20 @@ build-backend = "setuptools.build_meta"
 name = "pymuhrec"
 authors = [{name = "Anders Kaestner"}]
 description = "pymuhrec package"
-version = "0.0.1"
+version = "4.4.3"
+homepage = "https://neutronimaging.github.io"
+repository = "https://github.com/neutronimaging/imagingsuite"
+documentation = "https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec"
+keywords = ["image processing", "neutron imaging", "computed tomography", "denoising"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]
