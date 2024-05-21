@@ -29,12 +29,8 @@ add_executable(${TARGET_NAME} tst_kiplfilters.cpp)
 if (WIN32)
 include_directories(
     ../../kipl/include
-    # ../../../../../ExternalDependencies/windows/include
     )
 
-    # target_link_directories(${TARGET_NAME} PRIVATE
-    # ../../../../../ExternalDependencies/windows/lib
-    # )
     
     target_link_libraries(${TARGET_NAME}
     PRIVATE
@@ -46,9 +42,6 @@ include_directories(
     )
 else()
 
-# include_directories(
-#     ../../../../../ExternalDependencies/macos/include
-#     )
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE

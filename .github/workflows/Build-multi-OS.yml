@@ -101,10 +101,14 @@ jobs:
         path: ${{ env.CONAN_HOME }}
         key: ${{ runner.os }}-${{ runner.arch }}
 
-    - name: Set QTPATH environment variable
+    - name: Set environment variables
       shell: bash
       run: |
         echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          echo "BUILD_ROOT=${{ github.workspace }}/build-imagingsuite" >> "$GITHUB_ENV"
+        else
+          echo "BUILD_ROOT=${{ github.workspace }}/build-imagingsuite/Release" >> "$GITHUB_ENV"
 
     - name: Install sse2neon
       # Needed to compile ARM programs and not currently available on Conan
@@ -151,7 +155,7 @@ jobs:
 
     - name: Test
       id: tests
-      working-directory: build-imagingsuite
+      working-directory: ${{  BUILD_ROOT  }}
       #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
@@ -162,21 +166,19 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: ${{runner.os}}-${{runner.arch}}-test-results
-        path: ${{ github.workspace }}/build-imagingsuite/Testing
+        path: ${{  BUILD_ROOT  }}/Testing
 
     - name: Compress artifact
       shell: bash
+      working-directory: ${{  BUILD_ROOT  }}
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          7z a MuhRec-${{runner.os}}-${{runner.arch}}.zip "build-imagingsuite/bin/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe
+          7z a ../MuhRec-${{runner.os}}-${{runner.arch}}.zip "bin/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe
         elif [ "${RUNNER_OS}" == "Linux" ]; then
-          cd build-imagingsuite/Release
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "applications/t*" -x "applications/verticalslicer" -x "generators*"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip bin/* lib/* -x "bin/t*" -x "bin/verticalslicer" 
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          cd build-imagingsuite/Release
           zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          cd build-imagingsuite/Release
           zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib" -x "lib/*.h"
         fi
 
@@ -184,4 +186,4 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: MuhRec-${{runner.os}}-${{runner.arch}}
-        path: "${{ github.workspace }}/*MuhRec.zip"
+        path: "${{ github.workspace }}/MuhRec*.zip"
