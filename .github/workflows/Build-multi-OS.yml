@@ -31,21 +31,25 @@ jobs:
             cpp_compiler: cl
             cl: 17
             build_type: Release
+            build_root: build-imagingsuite
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
             gcc: 11
             build_type: Release
+            build_root: build-imagingsuite/Release
           - os: macos-11
             c_compiler: clang
             cpp_compiler: clang++
             clang: 13
             build_type: Release
+            build_root: build-imagingsuite/Release
           - os: flyci-macos-14-m2
             c_compiler: clang
             cpp_compiler: clang++
             clang: 15
             build_type: Release
+            build_root: build-imagingsuite/Release
 
     steps:
       # Checkouts the source code to build the project with the git history
@@ -101,14 +105,10 @@ jobs:
         path: ${{ env.CONAN_HOME }}
         key: ${{ runner.os }}-${{ runner.arch }}
 
-    - name: Set environment variables
+    - name: Set QTAPTH environment variable
       shell: bash
       run: |
         echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
-        if [ "${RUNNER_OS}" == "Windows" ]; then
-          echo "BUILD_ROOT=${{ github.workspace }}/build-imagingsuite" >> "$GITHUB_ENV"
-        else
-          echo "BUILD_ROOT=${{ github.workspace }}/build-imagingsuite/Release" >> "$GITHUB_ENV"
 
     - name: Install sse2neon
       # Needed to compile ARM programs and not currently available on Conan
@@ -155,7 +155,7 @@ jobs:
 
     - name: Test
       id: tests
-      working-directory: ${BUILD_ROOT}
+      working-directory: ${{ matrix.build_root }}
       #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
@@ -166,11 +166,11 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: ${{runner.os}}-${{runner.arch}}-test-results
-        path: ${BUILD_ROOT}/Testing
+        path: ${{ matrix.build_root }}/Testing
 
     - name: Compress artifact
       shell: bash
-      working-directory: ${BUILD_ROOT}
+      working-directory: ${{ matrix.build_root }}
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
           7z a ../MuhRec-${{runner.os}}-${{runner.arch}}.zip "bin/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe
