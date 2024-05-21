@@ -187,9 +187,11 @@ jobs:
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip bin/* lib/* -x "bin/t*" -x "bin/verticalslicer" 
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
+          #zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "t*" -x "lib/*.dylib"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip *
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib" -x "lib/*.h"
+          #zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "t*" -x "lib/*.dylib" -x "lib/*.h"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip *
         fi
 
     - name: Save build artifact
