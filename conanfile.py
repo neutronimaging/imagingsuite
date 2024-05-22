@@ -48,6 +48,7 @@ class MuhrecRecipe(ConanFile):
         print("bindir is: ", self.cpp.build.bindir)
         lib_folder = os.path.abspath(os.path.join(self.build_folder, "lib", self.cpp.build.bindir))
         framework_folder_MuhRec = os.path.abspath(os.path.join(self.build_folder, self.cpp.build.bindir, 'MuhRec.app', 'Contents', 'Frameworks'))
+        framework_folder_imageviewer = os.path.abspath(os.path.join(self.build_folder, self.cpp.build.bindir, 'ImageViewer.app', 'Contents', 'Frameworks'))
         # Copy dynamic libraries from conan
         for dep in self.dependencies.values():
             if len(dep.cpp_info.bindirs)>0: # Avoid errors when using header-only files such as dirent. Can probably be done neater
@@ -97,3 +98,6 @@ class MuhrecRecipe(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
+        if self.settings.os == "MacOS":
+            copy(self, "*.dylib", lib_folder, framework_folder_MuhRec, excludes='*cpython*')
+            copy(self, "*.dylib", lib_folder, framework_folder_imageviewer, excludes='*cpython*')
