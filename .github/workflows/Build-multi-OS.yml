@@ -21,7 +21,7 @@ jobs:
       # Build on the following 4 configurations: 
       # 1. <Windows, Release, 2022 MSVC compiler toolchain>
       # 2. <Ubuntu latest, i.e. version 22.04, Release, GCC 11 compiler toolchain>
-      # 3. <MacOS 11 with x86-64 arch, Release, Clang 13 compiler toolchain>
+      # 3. <MacOS 12 with x86-64 arch, Release, Clang 14 compiler toolchain>
       # 4. <MacOS 14 with arm64 arch via FlyCI, Release, Clang 15 compiler toolchain
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix:
@@ -38,10 +38,10 @@ jobs:
             gcc: 11
             build_type: Release
             build_root: build-imagingsuite/Release
-          - os: macos-11
+          - os: macos-12
             c_compiler: clang
             cpp_compiler: clang++
-            clang: 13
+            clang: 14
             build_type: Release
             build_root: build-imagingsuite/Release
           - os: flyci-macos-14-m2
@@ -115,21 +115,7 @@ jobs:
       if: ${{ ( runner.os == 'macOS' ) &&  (runner.arch == 'ARM64') }}
       run: brew install sse2neon
 
-    - name: Run conan
-      working-directory: imagingsuite
-      shell: bash
-      run: |
-        if [ "${RUNNER_OS}" == "Windows" ]; then
-          conan install . --profile:all profiles/windows_msvc_17_release --build=missing
-        elif [ "${RUNNER_OS}" == "Linux" ]; then
-          conan install . --profile:all profiles/linux_gcc_11_release --build=missing
-        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          conan install . --profile:all profiles/macos_x64_clang_13_release --build=missing
-        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          conan install . --profile:all profiles/macos_arm_clang_15_release --build=missing
-        fi
-
-    - name: Build
+    - name: Build with Conan
       working-directory: imagingsuite
       shell: bash
       run: |
@@ -138,7 +124,7 @@ jobs:
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           conan build . --profile:all profiles/linux_gcc_11_release
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          conan build . --profile:all profiles/macos_x64_clang_13_release
+          conan build . --profile:all profiles/macos_x64_clang_14_release
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
           conan build . --profile:all profiles/macos_arm_clang_15_release
         fi
@@ -187,11 +173,9 @@ jobs:
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip bin/* lib/* -x "bin/t*" -x "bin/verticalslicer" 
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          #zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "t*" -x "lib/*.dylib"
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip *
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib"
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          #zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "t*" -x "lib/*.dylib" -x "lib/*.h"
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip *
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib" -x "lib/*.h"
         fi
 
     - name: Save build artifact
