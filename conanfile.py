@@ -98,6 +98,6 @@ class MuhrecRecipe(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
-        if self.settings.os == "MacOS":
+        if self.settings.os == "Macos":
             copy(self, "*.dylib", lib_folder, framework_folder_MuhRec, excludes='*cpython*')
             copy(self, "*.dylib", lib_folder, framework_folder_imageviewer, excludes='*cpython*')
