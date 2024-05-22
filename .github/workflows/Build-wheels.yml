@@ -132,13 +132,13 @@ jobs:
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          conan build . --profile:all profiles/windows_msvc_17_release
+          conan build . --profile:all profiles/windows_msvc_17_release --build=missing
         elif [ "${RUNNER_OS}" == "Linux" ]; then
-          conan build . --profile:all profiles/linux_gcc_11_release
+          conan build . --profile:all profiles/linux_gcc_11_release --build=missing
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          conan build . --profile:all profiles/macos_x64_clang_14_release
+          conan build . --profile:all profiles/macos_x64_clang_14_release --build=missing
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          conan build . --profile:all profiles/macos_arm_clang_15_release
+          conan build . --profile:all profiles/macos_arm_clang_15_release --build=missing
         fi
   
     - name: Qt Deploy
