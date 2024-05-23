@@ -21,7 +21,7 @@ jobs:
       # Build on the following 4 configurations: 
       # 1. <Windows, Release, 2022 MSVC compiler toolchain>
       # 2. <Ubuntu latest, i.e. version 22.04, Release, GCC 11 compiler toolchain>
-      # 3. <MacOS 11 with x86-64 arch, Release, Clang 13 compiler toolchain>
+      # 3. <MacOS 12 with x86-64 arch, Release, Clang 14 compiler toolchain>
       # 4. <MacOS 14 with arm64 arch via FlyCI, Release, Clang 15 compiler toolchain
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix:
@@ -31,21 +31,25 @@ jobs:
             cpp_compiler: cl
             cl: 17
             build_type: Release
+            build_root: build-imagingsuite
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
             gcc: 11
             build_type: Release
-          - os: macos-11
+            build_root: build-imagingsuite/Release
+          - os: macos-12
             c_compiler: clang
             cpp_compiler: clang++
-            clang: 13
+            clang: 14
             build_type: Release
+            build_root: build-imagingsuite/Release
           - os: flyci-macos-14-m2
             c_compiler: clang
             cpp_compiler: clang++
             clang: 15
             build_type: Release
+            build_root: build-imagingsuite/Release
 
     steps:
       # Checkouts the source code to build the project with the git history
@@ -101,37 +105,29 @@ jobs:
         path: ${{ env.CONAN_HOME }}
         key: ${{ runner.os }}-${{ runner.arch }}
 
-    - name: Set environment variables
+    - name: Set QTAPTH environment variable
       shell: bash
       run: |
         echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
-        if [ "${RUNNER_OS}" == "Windows" ]; then
-          echo "BUILD_ROOT=${{ github.workspace }}/build-imagingsuite" >> "$GITHUB_ENV"
-        else
-          echo "BUILD_ROOT=${{ github.workspace }}/build-imagingsuite/Release" >> "$GITHUB_ENV"
 
     - name: Install sse2neon
       # Needed to compile ARM programs and not currently available on Conan
       if: ${{ ( runner.os == 'macOS' ) &&  (runner.arch == 'ARM64') }}
       run: brew install sse2neon
 
-    - name: Run conan
+    - name: Build with Conan
       working-directory: imagingsuite
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          conan install . --profile:host profiles/windows_msvc_17_release --profile:build profiles/windows_msvc_17_release
+          conan build . --profile:all profiles/windows_msvc_17_release --build=missing
         elif [ "${RUNNER_OS}" == "Linux" ]; then
-          conan install . --profile:host profiles/linux_gcc_11_release --profile:build profiles/linux_gcc_11_release
+          conan build . --profile:all profiles/linux_gcc_11_release --build=missing
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          conan install . --profile:host profiles/macos_x64_clang_13_release --profile:build profiles/macos_x64_clang_13_release --build=missing
+          conan build . --profile:all profiles/macos_x64_clang_14_release --build=missing
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          conan install . --profile:host profiles/macos_arm_clang_15_release --profile:build profiles/macos_arm_clang_15_release --build=missing
+          conan build . --profile:all profiles/macos_arm_clang_15_release --build=missing
         fi
-
-    - name: Build
-      working-directory: imagingsuite
-      run: conan build .
   
     - name: Qt Deploy
       working-directory: build-imagingsuite
@@ -155,7 +151,7 @@ jobs:
 
     - name: Test
       id: tests
-      working-directory: ${{  BUILD_ROOT  }}
+      working-directory: ${{ matrix.build_root }}
       #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
@@ -166,20 +162,20 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: ${{runner.os}}-${{runner.arch}}-test-results
-        path: ${{  BUILD_ROOT  }}/Testing
+        path: ${{ matrix.build_root }}/Testing
 
     - name: Compress artifact
       shell: bash
-      working-directory: ${{  BUILD_ROOT  }}
+      working-directory: ${{ matrix.build_root }}
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
           7z a ../MuhRec-${{runner.os}}-${{runner.arch}}.zip "bin/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip bin/* lib/* -x "bin/t*" -x "bin/verticalslicer" 
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib"
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip * -x "t*" -x "verticalslicer" -x "generators*" -x "lib/*.dylib" -x "lib/*.h"
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib" -x "lib/*.h"
         fi
 
     - name: Save build artifact

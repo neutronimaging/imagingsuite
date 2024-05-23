@@ -29,15 +29,9 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-# The environment variable QTPATH needs to be set according to the local QT installation
-# Ensure that paths are set correctly according to OS
-if (WIN32)
-  file(TO_CMAKE_PATH "$ENV{QTPATH}/lib/cmake/;${CMAKE_BINARY_DIR}/generators" PREFIX_PATH)
-  file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR}/generators" MODULE_PATH)
-else()
-  file(TO_CMAKE_PATH "$ENV{QTPATH}/lib/cmake/;${CMAKE_BINARY_DIR}/Release/generators" PREFIX_PATH)
-  file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR}/Release/generators" MODULE_PATH)
-endif()
+file(TO_CMAKE_PATH "$ENV{QTPATH}/lib/cmake/;${CMAKE_BINARY_DIR}/generators" PREFIX_PATH)
+file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR}/generators" MODULE_PATH)
+
 # Set environment variables so that CMAKE can find the packages
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PREFIX_PATH})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${MODULE_PATH})
@@ -47,7 +41,7 @@ message("QTPATH is: $ENV{QTPATH}")
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 find_package(Python3 COMPONENTS Interpreter Development)
 
-find_package(armadillo REQUIRED)
+find_package(Armadillo REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(libxml2 REQUIRED)
 find_package(OpenBLAS REQUIRED)
@@ -60,20 +54,6 @@ find_package(HDF5 REQUIRED)
 if (WIN32)
   find_package(dirent)
 endif()
-
-# if (WIN32)
-#   #find_package(Armadillo REQUIRED CONFIG)
-#   find_package(cfitsio REQUIRED)
-# endif()
-
-# if (UNIX)
-#   # for testing we will need the python interpreter
-#   find_package(BLAS REQUIRED)
-#   find_package(FFTW3 REQUIRED)
-#   # find_package(Nexus REQUIRED)
-#   find_package(CFITSIO REQUIRED)
-#   find_package(Armadillo REQUIRED CONFIG)
-# endif()
 
 if (WIN32)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Release)
