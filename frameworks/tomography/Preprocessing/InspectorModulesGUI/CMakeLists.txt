@@ -26,7 +26,7 @@ include_directories(
     ../../../../GUI/qt/QtModuleConfigure/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
     )
 endif()
 
@@ -38,8 +38,8 @@ include_directories(
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
     ../../../../core/modules/ModuleConfig/include
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../../ExternalDependencies/windows/include
+    # ../../../../../ExternalDependencies/windows/include/libxml2
     )
 endif()
 
@@ -87,11 +87,11 @@ message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
 
-    target_link_directories(${TARGET_NAME} PRIVATE
-        ../../../../../ExternalDependencies/windows/lib
-        ../../../../../imagingsuite/external/lib64
-        ../../../../../imagingsuite/external/lib64/nexus
-        )
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    #     ../../../../../ExternalDependencies/windows/lib
+    #     ../../../../../imagingsuite/external/lib64
+    #     ../../../../../imagingsuite/external/lib64/nexus
+    #     )
     target_link_libraries(${TARGET_NAME}
         PRIVATE
         Qt${QT_VERSION_MAJOR}::Core

@@ -13,11 +13,11 @@ include_directories(
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../Framework/ReconFramework/include/)
 
-if (APPLE)
-include_directories(
-    ../../../../../ExternalDependencies/macos/include
-    )
-endif()
+# if (APPLE)
+# include_directories(
+#     ../../../../../ExternalDependencies/macos/include
+#     )
+# endif()
 
 if (WIN32)
 include_directories(
@@ -25,21 +25,20 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../Framework/ReconFramework/include
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/nexus
-    ../../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../external/include/
+    # ../../../../../ExternalDependencies/windows/include
+    # ../../../../../ExternalDependencies/windows/include/nexus
+    # ../../../../../ExternalDependencies/windows/include/cfitsio
+    # ../../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../external/include/
     )
 endif()
 
 if (UNIX)
 include_directories(
     ../../../../core/kipl/kipl/include
-    /usr/include/libxml2
+    #/usr/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
     )
 endif()
@@ -76,13 +75,6 @@ target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULES_LIBRARY )
 # add_definitions(-DHAVE_NEXUS)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
-if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-    ../../../../../ExternalDependencies/windows/lib
-    ../../../../../imagingsuite/external/lib64
-    ../../../../../imagingsuite/external/lib64/nexus
-    )
-endif()
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC
@@ -90,7 +82,33 @@ target_link_libraries(${TARGET_NAME}
       ImagingAlgorithms
       ModuleConfig
       ReconFramework
-    )
+)
 
+# Made the target link libraries os-inspecific
+# if (WIN32)
+# # target_link_directories(${TARGET_NAME} PRIVATE
+# # ../../../../../ExternalDependencies/windows/lib
+# # ../../../../../imagingsuite/external/lib64
+# # ../../../../../imagingsuite/external/lib64/nexus
+# # )
+
+#   target_link_libraries(${TARGET_NAME}
+#   PUBLIC
+#         kipl
+#         ImagingAlgorithms
+#         ModuleConfig
+#         ReconFramework
+#   )
+# endif()
+
+# if (APPLE)
+#     target_link_libraries(${TARGET_NAME}
+#         PUBLIC
+#         kipl
+#         ImagingAlgorithms
+#         ModuleConfig
+#         ReconFramework
+#     )
+# endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

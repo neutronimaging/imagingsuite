@@ -20,7 +20,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(
     ../../../kipl/kipl/include
     ../../AdvancedFilters
-    ../../../../../ExternalDependencies/macos/include/
+    # ../../../../../ExternalDependencies/macos/include/
 )
 
 set(SRC_FILES,

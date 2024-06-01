@@ -19,7 +19,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
     )
 
 set(SRC_FILES
@@ -28,15 +28,15 @@ set(SRC_FILES
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 
-if (WIN32)
-include_directories(
-    ../../../../../ExternalDependencies/windows/include)
-endif()
+# if (WIN32)
+# include_directories(
+#     ../../../../../ExternalDependencies/windows/include)
+# endif()
 
-if (APPLE)
-include_directories(
-    ../../../../../ExternalDependencies/macos/include)
-endif()
+# if (APPLE)
+# include_directories(
+#     ../../../../../ExternalDependencies/macos/include)
+# endif()
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE

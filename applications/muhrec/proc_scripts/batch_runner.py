@@ -1,6 +1,7 @@
-from subprocess import call
+import subprocess
 import json
 import sys
+import argparse
 
 def load_batch(batch_file):
     """Load batch from json formatted file and return a dictionary"""
@@ -15,19 +16,25 @@ def run_batch(batch_file,muhrec_path):
 
         call_info = [muhrec_path, "-f", task['config']]
         for arg in task['arguments']:
-            # print("Adding argument {0} with value {1}".format(arg,task['arguments'][arg]))
-            call_info.append(arg+"="+str(task['arguments'][arg]))
+            call_info.append(f"\"{arg}={task['arguments'][arg]}\"")
         
-        # print("Calling muhrec with arguments: {0}".format(call_info))
-        #call([muhrec_path, "-f", tasks['cfgpath'], tasks['firstindex'], tasks['lastindex'], tasks['matrixname'], tasks['scanarc']])  
+        print("Calling muhrec with arguments:")
+        for arg in call_info:
+            print(arg)
+        
+        try:
+            result = subprocess.call(call_info)
+        except subprocess.CalledProcessError as e:
+            print("Error Occurred:", e)
+
+        print("Project {0} completed\n-----------------------\n".format(task['name'])) 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print("Usage: python batch_runner.py batch_file.json muhrec_path")
-        sys.exit(1)
-    
-    batch_file = sys.argv[1]
-    muhrec_path = sys.argv[2]
+    parser = argparse.ArgumentParser(description="Runs a set of reconstruction batches using MuhRec.")
+    parser.add_argument('-b','--batchfile', help="A json file with batch descriptions.")
+    parser.add_argument('-m','--muhrecpath', help="Path to the muhrec executable.")
 
-    run_batch(batch_file=batch_file,muhrec_path=muhrec_path)
+    args = parser.parse_args()
+
+    run_batch(batch_file=args.batchfile,muhrec_path=args.muhrecpath)
 

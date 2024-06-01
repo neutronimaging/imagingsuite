@@ -1,0 +1,205 @@
+# This workflow builds, tests, and uploads the MuhRec pybindings as the pymuhrec package for different pythons versions on multiple platforms
+name: Build pymuhrec for multiple python versions
+env:
+  CONAN_HOME: ${{ github.workspace }}/Cache/ # Used by the built-in GH cache action to cache conan dependencies
+  CACHE_GITHUB: damskii9992 # Used by turtlebrowers conan cache action, if enabled
+  CACHE_GITHUB_REPO: ConanCache # Used by turtlebrowers conan cache action, if enabled
+  CONAN_USER_HOME: ${{ github.workspace }}/Cache/ # Used by turtlebrowers conan cache action, if enabled
+  CONAN_USER_HOME_SHORT: ${{ github.workspace }}/Cache//short # Used by turtlebrowers conan cache action, if enabled
+#  MACOSX_DEPLOYMENT_TARGET: 10.15 # Can be set to build for older version of MacOS, ignored by other OSs. Currently does not work.
+
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+
+      # Build on the following 4 configurations: 
+      # 1. <Windows, Release, 2022 MSVC compiler toolchain>
+      # 2. <Ubuntu latest, i.e. version 22.04, Release, GCC 11 compiler toolchain>
+      # 3. <MacOS 11 with x86-64 arch, Release, Clang 13 compiler toolchain>
+      # 4. <MacOS 14 with arm64 arch via FlyCI, Release, Clang 15 compiler toolchain
+      # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
+      matrix: # Qt requires py7zr==0.20.x which requires python 3.7^
+        python-version: ["3.7","3.8","3.9", "3.10", "3.11", "3.12"]
+        os: [windows-2022, ubuntu-latest, macos-12, flyci-macos-14-m2]
+        include:
+          - os: windows-2022
+            c_compiler: cl
+            cpp_compiler: cl
+            cl: 17
+            build_type: Release
+            build_root: build-imagingsuite
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            gcc: 11
+            build_type: Release
+            build_root: build-imagingsuite/Release
+          - os: macos-12
+            c_compiler: clang
+            cpp_compiler: clang++
+            clang: 14
+            build_type: Release
+            build_root: build-imagingsuite/Release
+          - os: flyci-macos-14-m2
+            c_compiler: clang
+            cpp_compiler: clang++
+            clang: 15
+            build_type: Release
+            build_root: build-imagingsuite/Release
+        exclude: # Python 3.7 not supported on ARM architecture
+          - os: flyci-macos-14-m2
+            python-version: 3.7
+
+    steps:
+      # Checkouts the source code to build the project with the git history
+    - name: Checkout imagingsuite source code
+      uses: actions/checkout@v4
+      with:
+        path: imagingsuite
+        fetch-depth: 0
+
+    # This action is an alternative to the builtin GitHub Cache action which circumvents storage size and time limits
+    # It can be used in tandem with the builtin Cache but it has LFS costs
+    # To use it, change order of actions to GH cache -> this action -> install Qt -> Conan install
+    # The current order of actions is, for some reason, neseccary to properly run Ronan to compile new libraries
+    # Requires the used environment variables to be set up properly as well as a bot account with write access and an external cache repo
+    # - name: Cache Conan modules
+    #   if: steps.github-cache-conan.outputs.cache-hit != 'true'
+    #   id: cache-conan
+    #   uses: turtlebrowser/conan-cache@master
+    #   with:
+    #       bot_name: ${{ secrets.BOT_NAME }}
+    #       bot_token: ${{ secrets.BOT_TOKEN }}
+    #       cache_name: ${{ env.CACHE_GITHUB }}/${{ env.CACHE_GITHUB_REPO }}
+    #       key: ${{ runner.os }}-${{ runner.arch }}
+    #       lfs_limit: 60
+
+    - name: Set up python ${{ matrix.python-version }}
+      uses: actions/setup-python@master
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install build tool
+      run: |
+        python --version
+        python -m pip install --upgrade pip
+        pip install build
+
+    # This version of Qt only allows python versions in the range 3.6-3.11 #
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.5.3'
+        dir: '${{GITHUB.WORKSPACE}}'
+        install-deps: 'true'
+        modules: 'qtcharts'
+        setup-python: 'false'
+
+    - name: Conan installation
+      id: conan
+      uses: turtlebrowser/get-conan@main
+      with:
+        version: 2.1.0
+
+    - name: Using the builtin GitHub Cache Action for .conan
+      id: github-cache-conan
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-conan-modules 
+      with:
+        path: ${{ env.CONAN_HOME }}
+        key: ${{ runner.os }}-${{ runner.arch }}
+
+    - name: Set QTPATH environment variable
+      shell: bash
+      run: |
+        echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
+
+    - name: Install sse2neon
+      # Needed to compile ARM programs and not currently available on Conan
+      if: ${{ ( runner.os == 'macOS' ) &&  (runner.arch == 'ARM64') }}
+      run: brew install sse2neon
+
+    - name: Build with Conan
+      working-directory: imagingsuite
+      shell: bash
+      run: |
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          conan build . --profile:all profiles/windows_msvc_17_release --build=missing
+        elif [ "${RUNNER_OS}" == "Linux" ]; then
+          conan build . --profile:all profiles/linux_gcc_11_release --build=missing
+        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
+          conan build . --profile:all profiles/macos_x64_clang_14_release --build=missing
+        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
+          conan build . --profile:all profiles/macos_arm_clang_15_release --build=missing
+        fi
+  
+    - name: Qt Deploy
+      working-directory: build-imagingsuite
+      shell: bash
+      run: |
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          cd bin/Release
+          ${QTPATH}/bin/windeployqt muhrec.exe
+          ${QTPATH}/bin/windeployqt imageviewer.exe
+        elif [ "${RUNNER_OS}" == "macOS" ]; then
+          cd Release
+          ${QTPATH}/bin/macdeployqt muhrec.app
+          ${QTPATH}/bin/macdeployqt imageviewer.app
+        fi
+
+    - name: Ammend shared libraries runpaths
+      if: ${{ runner.os == 'Linux' }}
+      working-directory: build-imagingsuite/Release/lib
+      shell: bash
+      run: patchelf --set-rpath '$ORIGIN' *.so*
+
+    - name: Copy bindings and shared libraries to package folder
+      shell: bash
+      working-directory: build-imagingsuite
+      run: |
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          cd bin/Release
+          cp *.dll ../../../imagingsuite/package/pymuhrec
+          cp *.pyd ../../../imagingsuite/package/pymuhrec
+        elif [ "${RUNNER_OS}" == "Linux" ]; then
+          cd Release/lib
+          cp * ../../../imagingsuite/package/pymuhrec
+        elif [ "${RUNNER_OS}" == "macOS" ]; then
+          cd Release/lib
+          cp *.dylib ../../../imagingsuite/package/pymuhrec
+          cp *.so ../../../imagingsuite/package/pymuhrec
+        fi
+
+    - name: Build wheels
+      shell: bash
+      working-directory: imagingsuite/package
+      run: | 
+          if [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
+            export _PYTHON_HOST_PLATFORM="macosx-14.0-arm64"
+            export ARCHFLAGS="-arch arm64"
+          elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
+            export _PYTHON_HOST_PLATFORM="macosx-12.0-x86_64"
+            export ARCHFLAGS="-arch x86_64"
+          fi
+          python -m build
+
+    - name: Test wheel
+      shell: bash
+      working-directory: imagingsuite/package/dist
+      run: |
+        pip install *.whl
+        python ../../importTest.py
+
+    - name: Save wheels
+      uses: actions/upload-artifact@master
+      with:
+        name: pymuhrec-${{runner.os}}-${{runner.arch}}-cp${{ matrix.python-version }}
+        path: "${{ github.workspace }}/imagingsuite/package/dist/*.whl"

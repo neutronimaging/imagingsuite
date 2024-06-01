@@ -12,7 +12,7 @@ include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../core/modules/ModuleConfig/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
     ../../Framework/ReconFramework/include
     )
 endif()
@@ -24,11 +24,11 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../Framework/ReconFramework/include
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/nexus
-    ../../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../external/include/
+    # ../../../../../ExternalDependencies/windows/include
+    # ../../../../../ExternalDependencies/windows/include/nexus
+    # ../../../../../ExternalDependencies/windows/include/cfitsio
+    # ../../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../external/include/
     )
 endif()
 
@@ -79,11 +79,11 @@ target_compile_definitions(${TARGET_NAME} PRIVATE STDBACKPROJECTORS_LIBRARY)
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-    ../../../../../ExternalDependencies/windows/lib
-    ../../../../../imagingsuite/external/lib64
-    ../../../../../imagingsuite/external/lib64/nexus
-    )
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    # ../../../../../ExternalDependencies/windows/lib
+    # ../../../../../imagingsuite/external/lib64
+    # ../../../../../imagingsuite/external/lib64/nexus
+    # )
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC
@@ -91,11 +91,13 @@ if (WIN32)
         ImagingAlgorithms
         ModuleConfig
         ReconFramework
-        libxml2
-        cfitsio
-        libtiff
-        libfftw3-3
-        libfftw3f-3
+        LibXml2::LibXml2
+        cfitsio::cfitsio
+        TIFF::TIFF
+        #libfftw3-3
+        #libfftw3f-3
+        OpenBLAS::OpenBLAS
+        fftw::fftw
         Iphlpapi
 
         )
@@ -122,14 +124,16 @@ if (UNIX AND NOT APPLE)
             ImagingAlgorithms
             ModuleConfig
             ReconFramework
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
+            LibXml2::LibXml2 
+            #fftw3
+            #fftw3f
+            fftw::fftw
+            cfitsio::cfitsio
+            TIFF::TIFF
+            armadillo::armadillo
+            OpenBLAS::OpenBLAS
+            #lapack
+            #blas
             # NeXus
             # NeXusCPP
             )
@@ -142,14 +146,16 @@ if (UNIX AND NOT APPLE)
             ImagingAlgorithms
             ModuleConfig
             ReconFramework
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
+            LibXml2::LibXml2 
+            #fftw3
+            #fftw3f
+            fftw::fftw
+            cfitsio::cfitsio
+            TIFF::TIFF
+            armadillo::armadillo
+            OpenBLAS::OpenBLAS
+            #lapack
+            #blas
             # NeXus
             # NeXusCPP
           )

@@ -66,10 +66,6 @@ int main(int argc, char *argv[])
     msg<<"MuhRec "<<VERSION<<"\nCompile date: "<<__DATE__<<" at "<<__TIME__;
     logger.message(msg.str());
 
-    std::string application_path=app.applicationDirPath().toStdString();
-
-    kipl::strings::filenames::CheckPathSlashes(application_path,true);
-
     if (app.arguments().size()==1) {
         logger.message("Running MuhRec in GUI mode.");
         return RunGUI(&app);
@@ -150,8 +146,15 @@ int RunOffline(QApplication *app)
             try {
                 ReconFactory factory;
                 logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
-                ReconConfig config("");
+
+                std::string application_path=app->applicationDirPath().toStdString();
+
+                kipl::strings::filenames::CheckPathSlashes(application_path,true);
+                
+                ReconConfig config(application_path);
+
                 config.LoadConfigFile(args[2],"reconstructor");
+
                 config.GetCommandLinePars(args);
                 config.MatrixInfo.bAutomaticSerialize=true;
                 ReconEngine *pEngine=factory.BuildEngine(config,nullptr);
