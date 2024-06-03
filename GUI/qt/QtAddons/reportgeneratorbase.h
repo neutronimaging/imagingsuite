@@ -14,6 +14,7 @@
 
 #include <string>
 #include <QPainter>
+#include <QPrinter>
 #include <QColor>
 
 #include <QString>
@@ -31,9 +32,9 @@ public:
 
 protected:
     void OpenDestination(QString fname);
-#ifndef QT_NO_PRINTER
+// #ifndef QT_NO_PRINTER
     QPrinter m_Printer;
-#endif
+// #endif
     QPainter m_Painter;
     ImagePainter m_ImagePainter;
     double m_fWidth;

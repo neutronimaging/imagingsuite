@@ -1,7 +1,7 @@
 #include "reportgeneratorbase.h"
 #include <sstream>
 #include <ctime>
-
+ 
 namespace QtAddons {
 ReportGeneratorBase::ReportGeneratorBase(std::string name) :
     logger(name),
@@ -15,6 +15,7 @@ ReportGeneratorBase::ReportGeneratorBase(std::string name) :
 
 void ReportGeneratorBase::OpenDestination(QString fname)
 {
+
     m_Printer.setOutputFormat(QPrinter::PdfFormat);
     m_Printer.setPageSize(QPageSize(QPageSize::A4));
     m_Printer.setPageMargins(QMarginsF(m_fMargin,m_fMargin,m_fMargin,m_fMargin),QPageLayout::Millimeter);

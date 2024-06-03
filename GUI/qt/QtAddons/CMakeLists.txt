@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
 
 #find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Charts printsupport)
 
 message("Using Qt${QT_VERSION_MAJOR}")
 
