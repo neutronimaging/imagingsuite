@@ -83,7 +83,7 @@ std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 3 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
 
-    fullName = fullName+"Frameworks/lib"+name+".so.1.0.0";
+    fullName = fullName+"lib/lib"+name+".so";
 
     return fullName;
 }

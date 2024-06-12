@@ -226,9 +226,9 @@ void ConfigBaseTest::testLibNameManagerMac()
 
 void ConfigBaseTest::testLibNameManagerLinux()
 {
-    std::string appPath    = "/Users/kaestner/git/deployed/muhrec/bin/";
-    std::string modulePath = "/Users/kaestner/git/deployed/muhrec/Frameworks/libStdBackProjectors.so.1.0.0";
-    std::string modulePath3 = "/Users/kaestner/git/deployed/muhrec/bin/../Frameworks/libStdBackProjectors.so.1.0.0";
+    std::string appPath    = "../build-imagingsuite/Release/bin";
+    std::string modulePath = "../build-imagingsuite/Release/lib/libStdBackProjectors.so";
+    std::string modulePath3 = "../build-imagingsuite/Release/lib/libStdBackProjectors.so";
 
     ModuleLibNameManger mlnm(appPath);
 
@@ -238,7 +238,7 @@ void ConfigBaseTest::testLibNameManagerLinux()
 
     QCOMPARE(mlnm.generateLibName("StdBackProjectors",kipl::base::OSLinux),modulePath);
 
-    std::string modulePath2 = "/Users/kaestner/libStdBackProjectors.so.1.0.0";
+    std::string modulePath2 = "../build-imagingsuite/Release/lib/libStdBackProjectors.so";
 
     QCOMPARE(mlnm.stripLibName(modulePath2,kipl::base::OSLinux),modulePath2);
 
