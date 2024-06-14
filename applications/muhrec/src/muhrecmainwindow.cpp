@@ -110,7 +110,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     #ifdef Q_OS_MAC
         defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.dylib";
     #else
-        defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.so";
+        //defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.so";
+	defaultmodules = m_sApplicationPath + "../lib/libStdBackProjectors.so";
     #endif
 #endif
     ui->ConfiguratorBackProj->Configure("muhrecbp",defaultmodules,m_sApplicationPath);
@@ -121,7 +122,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     #ifdef Q_OS_MAC
         defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.dylib";
     #else
-        defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.so";
+        //defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.so";
+	defaultmodules = m_sApplicationPath+"../lib/libstdPreprocModules.so";
     #endif
 #endif
 
