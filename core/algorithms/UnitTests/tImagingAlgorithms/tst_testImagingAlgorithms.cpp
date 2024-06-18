@@ -80,6 +80,8 @@ TestImagingAlgorithms::TestImagingAlgorithms()
     dataPath = QT_TESTCASE_BUILDDIR;
     #ifdef __APPLE__
         dataPath = dataPath + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        dataPath = dataPath + "/../../../../../../TestData/";
     #else
         dataPath = dataPath + "/../../../../../TestData/";
     #endif
