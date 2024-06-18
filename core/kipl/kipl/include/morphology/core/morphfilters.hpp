@@ -10,10 +10,10 @@
 
 namespace kipl { namespace morphology {
 template<typename T>
-void ErodeInnerLoop(T const * const src, T * dest, T value, size_t N)
+void ErodeInnerLoop(T const * const src, T * dest, T /*value*/, size_t N)
 {
-    (void)value;
-	for (size_t j=0; j<N; j++) {
+	for (size_t j=0; j<N; j++) 
+	{
 		dest[j]=min(dest[j],src[j]);
 	} 
 
@@ -22,7 +22,8 @@ void ErodeInnerLoop(T const * const src, T * dest, T value, size_t N)
 template<typename T>
 void DilateInnerLoop(T const * const src, T * dest, T /*value*/, size_t N)
 {
-	for (size_t j=0; j<N; j++) {
+	for (size_t j=0; j<N; j++) 
+	{
 		dest[j]=max(dest[j],src[j]);
 	} 
 
