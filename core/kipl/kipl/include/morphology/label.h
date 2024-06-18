@@ -26,7 +26,7 @@ namespace kipl {namespace morphology {
 	/// \note If the input image is a grayscale image will the regions be determined as 
 	/// neighbours having the same graylevel.
 	template <class ImgType, size_t NDim>
-        size_t LabelImage(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<int,NDim> & lbl,kipl::base::eConnectivity conn=kipl::base::conn4, ImgType bg=(ImgType)0)
+        size_t LabelImage(kipl::base::TImage<ImgType,NDim> & img, kipl::base::TImage<int,NDim> & lbl,kipl::base::eConnectivity conn=kipl::base::conn4, ImgType bg=static_cast<ImgType>(0))
 	{
         list<ptrdiff_t> stack;
 		
@@ -44,9 +44,11 @@ namespace kipl {namespace morphology {
         ptrdiff_t pp,q,qq;
         ImgType t=static_cast<ImgType>(0);
 		
-        for (size_t p=0; p<N ; ++p) {
+        for (size_t p=0; p<N ; ++p) 
+		{
             NG.setPosition(p);
-            if ( (!pLbl[p]) && (pImg[p]!=bg) ) {
+            if ( (!pLbl[p]) && (pImg[p]!=bg) ) 
+			{
                 t=pImg[p];
                 ++cnt;
                 pLbl[p]=cnt;
@@ -138,7 +140,8 @@ namespace kipl {namespace morphology {
         copy(remove_list.begin(),remove_list.end(),back_inserter(remove_queue));
 
 
-        for (const auto & pix : remove_queue) {
+        for (const auto & pix : remove_queue) 
+		{
             pTmp[pix]=replaceval;
 		}
 		
@@ -218,7 +221,8 @@ namespace kipl {namespace morphology {
 		
 		/// \brief Assignment operator
 		/// \param item the item to assign
-        const LabelledItem & operator=(const LabelledItem &item) {
+        const LabelledItem & operator=(const LabelledItem &item) 
+		{
 			Copy(item); 
 			return *this;
 		}
@@ -262,15 +266,20 @@ namespace kipl {namespace morphology {
         LabelledItem tmp;
 		cout<<N-2<<" items are present in the sample"<<endl;
 		cout<<"Preparing item list"<<endl;
-		for (i=0; i<N; i++) {
+		for (i=0; i<N; i++) 
+		{
             tmp=LabelledItem(i-1,NDim);
 			itemList.push_back(tmp);
 		}
 
 		cout<<"Scanning image"<<endl;
-		for (i=0, z=0; z<dims[2]; z++)
-			for (y=0; y<dims[1]; y++)
-				for (x=0; x<dims[0]; x++, i++) 
+		int dimx = dims[0];
+		int dimy = dims[1];
+		int dimz = dims[2];
+
+		for (i=0, z=0; z<dimz; ++z)
+			for (y=0; y<dimy; ++y)
+				for (x=0; x<dimy; ++x, ++i) 
 					if (img[i]>=0)
 						itemList[img[i]+1].AddPosition(x,y,z);
 					else
