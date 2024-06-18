@@ -82,7 +82,7 @@ Tkiplbase::Tkiplbase()
     #ifdef __APPLE__
         data_path = data_path + "/../../../../../../TestData/";
     #elif defined(__linux__)
-        dataPath = data_path + "/../../../../../../TestData/";
+        data_path = data_path + "/../../../../../../TestData/";
     #else
         data_path = data_path + "/../../../../../TestData/";
     #endif
