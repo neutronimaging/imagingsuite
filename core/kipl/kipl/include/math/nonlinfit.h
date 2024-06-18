@@ -131,7 +131,7 @@ public:
 private:
 
 
-    static const int NDONE=4; //Convergence parameters.
+    static constexpr int NDONE=4; //Convergence parameters.
     int maxIterations;
     int ndat, ma, mfit;
 
@@ -168,7 +168,7 @@ public:
     ///
     ///	\param x The input argument
     ///	\param hes The numerical Hessian at x
-    virtual int Hessian(double x, arma::mat &hes);
+    virtual int Hessian(double x, arma::mat & hes);
 
     /// \brief Computes the numerical Jacobian
     ///
