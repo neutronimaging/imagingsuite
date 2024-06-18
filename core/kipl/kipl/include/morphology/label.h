@@ -41,6 +41,7 @@ namespace kipl {namespace morphology {
 
         int cnt=0;
         size_t N=img.Size();
+		ptrdiff_t uN = static_cast<ptrdiff_t>(N);
         ptrdiff_t pp,q,qq;
         ImgType t=static_cast<ImgType>(0);
 		
@@ -70,7 +71,7 @@ namespace kipl {namespace morphology {
                     for (const auto & neighborPix: NG.neighborhood())
                     {
                         qq = q + neighborPix;
-                        if ((qq < 0) || (img.Size()<=qq))
+                        if ((qq < 0) || (uN<=qq))
                         {
                             return 0;
                         }
@@ -279,7 +280,7 @@ namespace kipl {namespace morphology {
 
 		for (i=0, z=0; z<dimz; ++z)
 			for (y=0; y<dimy; ++y)
-				for (x=0; x<dimy; ++x, ++i) 
+				for (x=0; x<dimx; ++x, ++i) 
 					if (img[i]>=0)
 						itemList[img[i]+1].AddPosition(x,y,z);
 					else
