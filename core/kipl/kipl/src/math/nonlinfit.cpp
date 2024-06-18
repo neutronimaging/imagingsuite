@@ -14,7 +14,7 @@
 #include "../../include/logging/logger.h"
 #include "../../include/base/KiplException.h"
 #include "../../include/strings/miscstring.h"
-
+#include "../../../../../utils/macros.h"
 namespace Nonlinear {
 
 
@@ -329,7 +329,8 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Gaussian::Hessian(double x, arma::mat &hes)
     {
-        std::ignore=hes;
+        UNUSED_VARIABLE(x)
+        UNUSED_VARIABLE(hes)
 
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;

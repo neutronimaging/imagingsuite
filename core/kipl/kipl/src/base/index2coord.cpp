@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "../../include/base/index2coord.h"
+#include "../../../../../utils/macros.h"
 
 namespace kipl { namespace base {
     Index2Coordinates::Index2Coordinates(const std::vector<size_t> &dims, size_t N) :
@@ -11,6 +12,7 @@ namespace kipl { namespace base {
         dInvSX(1.0/static_cast<double>(nSX)),
         dInvSXY(1.0/static_cast<double>(nSXY))
 	{
+        UNUSED_VARIABLE(N)
 		// nSX=;
     
 		// ;
