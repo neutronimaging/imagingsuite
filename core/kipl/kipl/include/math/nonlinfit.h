@@ -131,7 +131,7 @@ public:
 private:
 
 
-    static constexpr int NDONE=4; //Convergence parameters.
+    static const int NDONE=4; //Convergence parameters.
     int maxIterations;
     int ndat, ma, mfit;
 
