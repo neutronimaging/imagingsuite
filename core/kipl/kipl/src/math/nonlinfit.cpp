@@ -327,9 +327,8 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         return 1;
     }
 
-    int Gaussian::Hessian(double x, arma::mat &hes)
+    int Gaussian::Hessian(double x, arma::mat & /*hes*/)
     {
-        (void) hes;
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
 
