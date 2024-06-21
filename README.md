@@ -8,6 +8,9 @@ The project has a [public webpage](https://neutronimaging.github.io/) where you 
 - [MuhRec](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec)
 - [KipTool](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-KipTool)
 
+# Contributing
+-[How to contribute](https://github.com/neutronimaging/imagingsuite/blob/master/CONTRIBUTING.md)
+
 # Build instructions
 - [Prerequisities](https://github.com/neutronimaging/imagingsuite/wiki/Prerequisites-for-building)
 - [How to build](https://github.com/neutronimaging/imagingsuite/wiki/Build-instructions)
