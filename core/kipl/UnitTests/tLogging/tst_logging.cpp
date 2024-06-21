@@ -73,7 +73,7 @@ void LoggingTests::testLogWriter()
 
 void LoggingTests::testLogStreamWriter()
 {
-    QVERIFY_EXCEPTION_THROWN(kipl::logging::LogStreamWriter badlw("sdfsdfsdfsfsg/dsfs.log"),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, kipl::logging::LogStreamWriter badlw("sdfsdfsdfsfsg/dsfs.log"));
 
    // QCOMPARE(badlw.isValid(),false);
 
