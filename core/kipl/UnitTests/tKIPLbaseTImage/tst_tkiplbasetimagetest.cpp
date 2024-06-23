@@ -90,7 +90,7 @@ void TKIPLbaseTImageTest::testSharedBuffer()
     QVERIFY(b.Size()==10);
 
     // Ridiculusly huge allocation
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,kipl::base::core::buffer<float> c(100000000000000UL);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,kipl::base::core::buffer<float> c(100000000000000UL));
 }
 
 void TKIPLbaseTImageTest::testConstructors()
@@ -119,7 +119,7 @@ void TKIPLbaseTImageTest::testConstructors()
     QVERIFY(img2D.Size()==dims2[0]*dims2[1]);
     QVERIFY(img2D.Size(0)==dims2[0]);
     QVERIFY(img2D.Size(1)==dims2[1]);
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,img2D.Size(2))
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,img2D.Size(2));
 
     std::vector<size_t> dims3={3,4,5};
     kipl::base::TImage<float,3> img3D(dims3);

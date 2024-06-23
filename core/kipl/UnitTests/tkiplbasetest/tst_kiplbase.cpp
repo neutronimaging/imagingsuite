@@ -755,7 +755,7 @@ void Tkiplbase::testOSenums()
     string2enum("OSUnknown",oe);
     QCOMPARE(oe,kipl::base::OSUnknown);
 
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,string2enum("OSMacos",oe);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,string2enum("OSMacos",oe));
 }
 // Test conversion of rotation direction to and from string, all combinations using QTest
 void Tkiplbase::testRotationDirection()
