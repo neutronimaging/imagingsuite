@@ -93,10 +93,10 @@ void tKIPL_IOTest::testReadRoiTIFF()
     QCOMPARE(img.Size(1),roi2[3]-roi2[1]);
 
     std::vector<size_t> roi3={10,10,20,400}; // Vertical slab outside the image size
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, kipl::io::ReadTIFF(img,fname,roi3,0));
-    
+    QVERIFY_THROWS_EXCEPTION( kipl::base::KiplException, kipl::io::ReadTIFF(img,fname,roi3,0));
+
     std::vector<size_t> roi4={10,300,20,200}; // Vertical slab outside the image size
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, kipl::io::ReadTIFF(img,fname,roi4,0));
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,kipl::io::ReadTIFF(img,fname,roi4,0));
 }
 
 

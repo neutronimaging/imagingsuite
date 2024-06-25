@@ -389,7 +389,7 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
         QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
-        QWARN("The horizontal/vertical test is currently excluded");
+        qWarning()<<"The horizontal/vertical test is currently excluded";
 //        for (size_t i=0; i<res_fits.Size(); ++i) {
 //            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
 //            QVERIFY2(res_fits[i]==crop_ref[i],msg.toStdString().c_str());
