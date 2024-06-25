@@ -99,8 +99,6 @@ jobs:
     - name: Conan installation
       id: conan
       uses: turtlebrowser/get-conan@main
-      with:
-        version: 2.1.0
 
     - name: Using the builtin GitHub Cache Action for .conan
       id: github-cache-conan
