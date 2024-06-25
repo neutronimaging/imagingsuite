@@ -91,7 +91,7 @@ inline __m128 SortQuad2(__m128 data)
 
 void median_quick_select_sse(float *arr, const size_t n, float *med)
 {
-	kipl::base::uFQuad data;
+	//kipl::base::uFQuad data;
 	kipl::base::uFQuad sorted;
 	data.q.d=std::numeric_limits<float>::max();
 	__m128 d;
