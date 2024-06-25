@@ -149,11 +149,11 @@ void ConfigBaseTest::testEvalArg()
     // Provoke no value
     arg="userinformation:sample";
     group.clear(); var.clear(); value.clear();
-    QVERIFY_EXCEPTION_THROWN(config.EvalArg(arg,group,var,value), ModuleException);
+    QVERIFY_THROWS_EXCEPTION(ModuleException, config.EvalArg(arg,group,var,value));
 
     arg="userinformationsample";
     group.clear(); var.clear(); value.clear();
-    QVERIFY_EXCEPTION_THROWN(config.EvalArg(arg,group,var,value), ModuleException);
+    QVERIFY_THROWS_EXCEPTION(ModuleException, config.EvalArg(arg,group,var,value));
 
     arg="projections:roi=40 40 50 50";
     config.EvalArg(arg, group, var, value);

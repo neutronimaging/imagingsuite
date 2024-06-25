@@ -115,9 +115,11 @@ void TestImagingAlgorithms::MorphSpotClean_Initialization()
     QCOMPARE(cleaner.connectivity(),kipl::base::conn8);
     cleaner.setConnectivity(kipl::base::conn4);
     QCOMPARE(cleaner.connectivity(),kipl::base::conn4);
-    QVERIFY_EXCEPTION_THROWN(cleaner.setConnectivity(kipl::base::conn6),kipl::base::KiplException);
-    QVERIFY_EXCEPTION_THROWN(cleaner.setConnectivity(kipl::base::conn18),kipl::base::KiplException);
-    QVERIFY_EXCEPTION_THROWN(cleaner.setConnectivity(kipl::base::conn26),kipl::base::KiplException);
+    
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn6));
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn18));
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn26));
+
     QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::MorphDetectHoles);
     QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::MorphCleanReplace);
 
@@ -221,7 +223,7 @@ void TestImagingAlgorithms::MorphSpotClean_enums()
         QCOMPARE(mdm,item.second);
     }
 
-    QVERIFY_EXCEPTION_THROWN(string2enum("qwerty",mdm);,kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, string2enum("qwerty",mdm));
 }
 
 void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
@@ -513,11 +515,8 @@ void TestImagingAlgorithms::ProjectionFilterParameters()
     QCOMPARE(pf.order(),            3.0f);
     QCOMPARE(pf.cutOff(),           0.5f);
 
-    QVERIFY_EXCEPTION_THROWN(pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,1.0f,3.0f),
-                             ImagingException);
-
-    QVERIFY_EXCEPTION_THROWN(pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,-1.0f,3.0f),
-                             ImagingException);
+    QVERIFY_THROWS_EXCEPTION(ImagingException, pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,1.0f,3.0f));
+    QVERIFY_THROWS_EXCEPTION(ImagingException, pf.setFilter(ImagingAlgorithms::ProjectionFilterButterworth,-1.0f,3.0f));
 }
 
 void TestImagingAlgorithms::ProjectionFilterProcessing()
@@ -578,11 +577,11 @@ void TestImagingAlgorithms::StripeFilterParameters()
    std::vector<size_t> dims={sino.Size(0),sino.Size(1)};
    QCOMPARE(sf.checkDims(dims),true);
    dims[0]--;
-   QVERIFY_EXCEPTION_THROWN(sf.checkDims(dims),ImagingException);
+   QVERIFY_THROWS_EXCEPTION(ImagingException,sf.checkDims(dims));
    dims[1]--;
-   QVERIFY_EXCEPTION_THROWN(sf.checkDims(dims),ImagingException);
+   QVERIFY_THROWS_EXCEPTION(ImagingException,sf.checkDims(dims));
    dims[0]++;
-   QVERIFY_EXCEPTION_THROWN(sf.checkDims(dims),ImagingException);
+   QVERIFY_THROWS_EXCEPTION(ImagingException,sf.checkDims(dims));
 
    std::vector<int> dims2={static_cast<int>(sino.Size(0)), static_cast<int>(sino.Size(1))};
 
@@ -595,11 +594,11 @@ void TestImagingAlgorithms::StripeFilterParameters()
    dims[1]=sino.Size(1);
    QCOMPARE(sf2.checkDims(dims),true);
    dims[0]--;
-   QVERIFY_EXCEPTION_THROWN(sf2.checkDims(dims),ImagingException);
+   QVERIFY_THROWS_EXCEPTION(ImagingException,sf2.checkDims(dims));
    dims[1]--;
-   QVERIFY_EXCEPTION_THROWN(sf2.checkDims(dims),ImagingException);
+   QVERIFY_THROWS_EXCEPTION(ImagingException,sf2.checkDims(dims));
    dims[0]++;
-   QVERIFY_EXCEPTION_THROWN(sf2.checkDims(dims),ImagingException);
+   QVERIFY_THROWS_EXCEPTION(ImagingException,sf2.checkDims(dims));
 
 }
 
@@ -638,8 +637,8 @@ void TestImagingAlgorithms::RefImgCorrection_enums()
         QCOMPARE(item.second,em);
     }
     em=static_cast<ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod>(9999);
-    QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
-    QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+    QVERIFY_THROWS_EXCEPTION(ImagingException,enum2string(em));
+    QVERIFY_THROWS_EXCEPTION(ImagingException,string2enum("flipfolp",em));
 }
 
 void TestImagingAlgorithms::ProjSeriesCorr_Enums()
@@ -657,8 +656,8 @@ void TestImagingAlgorithms::ProjSeriesCorr_Enums()
             QCOMPARE(item.second,em);
         }
         em=static_cast<ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierDetection>(9999);
-        QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
-        QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+        QVERIFY_THROWS_EXCEPTION(ImagingException,enum2string(em));
+        QVERIFY_THROWS_EXCEPTION(ImagingException,string2enum("flipfolp",em));
     }
 
     {
@@ -674,8 +673,8 @@ void TestImagingAlgorithms::ProjSeriesCorr_Enums()
             QCOMPARE(item.second,em);
         }
         em=static_cast<ImagingAlgorithms::ReplaceUnderexposed::eDoseOutlierReplacement>(9999);
-        QVERIFY_EXCEPTION_THROWN(enum2string(em),ImagingException);
-        QVERIFY_EXCEPTION_THROWN(string2enum("flipfolp",em),ImagingException);
+        QVERIFY_THROWS_EXCEPTION(ImagingException,enum2string(em));
+        QVERIFY_THROWS_EXCEPTION(ImagingException,string2enum("flipfolp",em));
     }
 }
 

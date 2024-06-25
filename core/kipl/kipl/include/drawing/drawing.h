@@ -84,7 +84,11 @@ protected:
     /// \param y the y-coordinate for the drawing object
     /// \param value intensity value of the item
     /// \param paintmethod selects how the object is inserted into the image
-    virtual void Draw(kipl::base::TImage<T,2> &img, int x, int y, T value, ePaintMethod paintmethod = PaintInsert) {}
+    virtual void Draw(kipl::base::TImage<T,2> & /* img */, 
+                      int /* x */, int /* y */, 
+                      T /* value */, 
+                      ePaintMethod paintmethod = PaintInsert) 
+                      { (void)paintmethod;}
 
 	float m_fRadius;
 	int m_nRadius;
@@ -115,7 +119,12 @@ protected:
     /// \param y the y-coordinate for the drawing object
     /// \param value intensity value of the item
     /// \param paintmethod selects how the object is inserted into the image
-    virtual void Draw(kipl::base::TImage<T,2> &img, int x, int y, T value, ePaintMethod paintmethod = PaintInsert) {}
+    virtual void Draw(kipl::base::TImage<T,2> & /* img */, 
+                      int /* x */, int /* y */, 
+                      T /* value */, 
+                      ePaintMethod paintmethod = PaintInsert) 
+                      { (void)paintmethod;}
+
 
 	int m_nSide;
 };
@@ -145,7 +154,11 @@ protected:
     /// \param z the z-coordinate for the drawing object
     /// \param value intensity value of the item
     /// \param paintmethod selects how the object is inserted into the image
-    virtual void Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod paintmethod = PaintInsert) {}
+    virtual void Draw(kipl::base::TImage<T,3> & /* img */, 
+                    int /* x */, int /* y */, int /* z */, 
+                    T /* value */, 
+                    ePaintMethod paintmethod = PaintInsert) 
+                    { (void)paintmethod;}
 };
 
 /// \brief A class to draw filled circles in 2D images.
@@ -172,7 +185,11 @@ protected:
     /// \param z the z-coordinate for the drawing object
     /// \param value intensity value of the item
     /// \param paintmethod selects how the object is inserted into the image
-    virtual void Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod paintmethod = PaintInsert) {}
+    virtual void Draw(kipl::base::TImage<T,3> & /* img */, 
+                    int /*x*/, int /*y*/, int /*z*/, 
+                    T /*value*/, 
+                    ePaintMethod paintmethod = PaintInsert) 
+                    { (void)paintmethod;}
 
     float m_fRadius;
     int m_nRadius;
@@ -203,7 +220,11 @@ protected:
     /// \param z the z-coordinate for the drawing object
     /// \param value intensity value of the item
     /// \param paintmethod selects how the object is inserted into the image
-    virtual void Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod paintmethod = PaintInsert) {}
+    virtual void Draw(kipl::base::TImage<T,3> &/*img*/, 
+                    int /*x*/, int /*y*/, int /*z*/,
+                    T /*value*/, 
+                    ePaintMethod paintmethod = PaintInsert) 
+                    { (void)paintmethod;}
 };
 
 
@@ -231,7 +252,11 @@ protected:
     /// \param z the z-coordinate for the drawing object
     /// \param value intensity value of the item
     /// \param paintmethod selects how the object is inserted into the image
-    virtual void Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod paintmethod = PaintInsert) {}
+    virtual void Draw(kipl::base::TImage<T,3> & /* img */, 
+                        int /* x */, int /* y */, int /* z */, 
+                        T /* value */, 
+                        ePaintMethod paintmethod = PaintInsert) 
+                        {(void)paintmethod;}
 };
 
 
@@ -259,7 +284,11 @@ protected:
     /// \param z the z-coordinate for the drawing object
     /// \param value intensity value of the item
     /// \param paintmethod selects how the object is inserted into the image
-    virtual void Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value, ePaintMethod paintmethod = PaintInsert) {}
+    virtual void Draw(kipl::base::TImage<T,3> &/*img*/, 
+                        int /*x*/, int /*y*/, int /*z*/, 
+                        T /*value*/, 
+                        ePaintMethod paintmethod = PaintInsert) 
+                        {(void)paintmethod;}
 };
 
 
@@ -292,7 +321,9 @@ protected:
     /// \param z the z-coordinate for the drawing object
     /// \param value intensity value of the item
     /// \param paintmethod selects how the object is inserted into the image
-    virtual void Draw(kipl::base::TImage<T,3> &img, int x, int y, int z, T value) {}
+    virtual void Draw(kipl::base::TImage<T,3> &/*img*/, 
+                        int /*x*/, int /*y*/, int /*z*/, 
+                        T /*value*/) {}
 };
 
 }}
