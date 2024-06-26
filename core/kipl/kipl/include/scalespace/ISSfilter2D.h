@@ -196,8 +196,8 @@ int ISSfilter<T>::_LagDiff( 	kipl::base::TImage<T,2> &img,
 	size_t x,y;
 
     auto dims=img.dims();
-	int sx=dims[0]-1;	
-	int sy=dims[1]-1;	
+	// int sx=dims[0]-1;	
+	// int sy=dims[1]-1;	
 	switch (dir) {
 		case dirX : 
 			for (y=0; y<dims[1]; y++) {
