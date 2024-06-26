@@ -113,15 +113,15 @@ void AdaptiveFilterDlg::ApplyParameters()
 
     float *sinoprofile=new float[m_Sino.Size(1)];
     kipl::base::VerticalProjection2D(m_Sino.GetDataPtr(),m_Sino.dims(),sinoprofile,true);
-    float maxprof=*std::max_element(sinoprofile,sinoprofile+m_Sino.Size(1));
-    float minprof=*std::min_element(sinoprofile,sinoprofile+m_Sino.Size(1));
+    // float maxprof=*std::max_element(sinoprofile,sinoprofile+m_Sino.Size(1));
+    // float minprof=*std::min_element(sinoprofile,sinoprofile+m_Sino.Size(1));
 
     float *weightprofile=new float[m_Sino.Size(1)];
     float *sinoangles=new float[m_Sino.Size(1)];
 
     ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
     float da=(rc->ProjectionInfo.fScanArc[1]-rc->ProjectionInfo.fScanArc[0])/(m_Sino.Size(1)-1);
-    float wscale=maxprof-minprof;
+    // float wscale=maxprof-minprof;
     for (size_t i=0; i<m_Sino.Size(1); i++) {
         sinoangles[i]=rc->ProjectionInfo.fScanArc[0]+i*da;
 //        weightprofile[i]=minprof+0.1*wscale+0.8*wscale*kipl::math::Sigmoid(static_cast<float>(i),m_fLambda,m_fSigma);
@@ -177,7 +177,7 @@ void AdaptiveFilterDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["NegSinograms"]= kipl::strings::bool2string(bNegative);
 }
 
-void AdaptiveFilterDlg::on_buttonBox_clicked(QAbstractButton *button)
+void AdaptiveFilterDlg::on_buttonBox_clicked(QAbstractButton * /*button*/)
 {
 
 //    if (button->text().toLatin1()=="Apply"){

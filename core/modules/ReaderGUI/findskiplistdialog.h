@@ -31,6 +31,7 @@ public:
     explicit FindSkipListDialog(QWidget *parent = 0);
     ~FindSkipListDialog();
     
+    using QDialog::exec;
     virtual int exec(std::string path, std::string fmask, int first, int last);
     virtual int exec(std::vector<std::string> &filelist);
     std::vector<int> getSkipList();

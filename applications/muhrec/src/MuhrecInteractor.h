@@ -19,15 +19,15 @@ public:
 	/// Updates the status of the reconstruction, to be called by the engine and back-projector
 	///
 	/// Returns true if the process should be aborted.
-	virtual bool SetProgress(float progress, std::string msg="");
+	bool SetProgress(float progress, std::string msg="") override;
 
     /// Updates the status of the reconstruction, to be called by the engine and back-projector
     ///
     /// Returns true if the process should be aborted.
-    virtual bool SetOverallProgress(float progress);
+    bool SetOverallProgress(float progress) override;
 
-	virtual float CurrentProgress();
-	virtual std::string CurrentMessage();
+	float CurrentProgress() override;
+	std::string CurrentMessage() override;
 };
 
 #endif /* MUHRECINTERACTOR_H_ */
