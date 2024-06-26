@@ -358,10 +358,18 @@ void TReaderConfigTest::testCreateDirectories()
 {
     // void CheckFolders(const std::string &path, bool create);
 
+
     std::string path1 = "a/b/c";
     kipl::strings::filenames::CheckPathSlashes(path1,false);
+    try {
+        std::filesystem::remove_all(path1);
+    }
+    catch (std::filesystem::filesystem_error &e)
+    {
+        qDebug() << e.what();
+    }
 
-    QVERIFY_THROWS_EXCEPTION(ReaderException,{ CheckFolders(path1,true); });
+    QVERIFY_THROWS_EXCEPTION(ReaderException,{ CheckFolders(path1,false); });
     CheckFolders(path1,true);
     QVERIFY(fs::is_directory(path1));
 
@@ -370,7 +378,7 @@ void TReaderConfigTest::testCreateDirectories()
     fs::remove_all("a");
 
     std::string path2 = "a2/b/c/";
-    kipl::strings::filenames::CheckPathSlashes(path2,false);
+    kipl::strings::filenames::CheckPathSlashes(path2,true);
     CheckFolders(path2,true);
     QVERIFY(fs::is_directory(path2));
     fs::remove_all("a2");
