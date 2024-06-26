@@ -78,7 +78,14 @@ private:
 Tkiplbase::Tkiplbase()
 {
     data_path = QT_TESTCASE_BUILDDIR;
-    data_path = data_path + "/../../../../../TestData/";
+
+    #ifdef __APPLE__
+        data_path = data_path + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        data_path = data_path + "/../../../../../../TestData/";
+    #else
+        data_path = data_path + "/../../../../../TestData/";
+    #endif
     kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
 

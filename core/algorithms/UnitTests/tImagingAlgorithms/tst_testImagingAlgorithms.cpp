@@ -78,7 +78,14 @@ private:
 TestImagingAlgorithms::TestImagingAlgorithms() 
 {
     dataPath = QT_TESTCASE_BUILDDIR;
-    dataPath = dataPath + "/../../../../../TestData/";
+    #ifdef __APPLE__
+        dataPath = dataPath + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        dataPath = dataPath + "/../../../../../../TestData/";
+    #else
+        dataPath = dataPath + "/../../../../../TestData/";
+    #endif
+    
     kipl::strings::filenames::CheckPathSlashes(dataPath,true);
 
     std::string fname = dataPath+"2D/tiff/spots/balls.tif";
