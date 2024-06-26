@@ -15,13 +15,13 @@ public:
     AdaptiveFilter(kipl::interactors::InteractionBase *interactor=nullptr);
 	virtual ~AdaptiveFilter();
 
-	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-    virtual bool SetROI(const std::vector<size_t> &roi) {return false;}
+	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
+    bool SetROI(const std::vector<size_t> &roi) override;
 	//virtual int Process(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
 
-	virtual std::map<std::string, std::string> GetParameters();
+	std::map<std::string, std::string> GetParameters() override;
     int ProcessSingle(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters); // moved here by Chiara
-    int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
+    int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters) override;
 
 protected:
     int SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters);
