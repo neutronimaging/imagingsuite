@@ -222,8 +222,7 @@ void MathFunctionsTest::testEntropy()
 
     vec = {0.0, 0.0, 0.0, 0.0};
 
-    QVERIFY_EXCEPTION_THROWN(kipl::math::entropy(vec), std::runtime_error);
-    
+    QVERIFY_THROWS_EXCEPTION(std::runtime_error, kipl::math::entropy(vec));
 }
 
 void MathFunctionsTest::testSign()

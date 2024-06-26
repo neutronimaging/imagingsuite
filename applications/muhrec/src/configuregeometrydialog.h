@@ -21,6 +21,7 @@ public:
     
     void SetConfig(ReconConfig * config);
     void GetConfig(ReconConfig &config);
+    using QDialog::exec; 
     virtual int exec(ReconConfig &config);
 
 
