@@ -15,7 +15,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
 #find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
 
 if (APPLE)
-file(COPY ${CMAKE_BINARY_DIR}/Release/lib/ DESTINATION "${CMAKE_BINARY_DIR}/Release/${PROJECT_NAME}.app/Contents/Frameworks")
+file(COPY ${CMAKE_BINARY_DIR}/lib/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks")
 endif()
 
 if (APPLE)
@@ -121,13 +121,13 @@ message(App Qt${QT_VERSION_MAJOR})
 #endif()
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-link_directories(../../../lib /opt/local/lib )
+link_directories(../../../lib) # /opt/local/lib )
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    # ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    # ../../external/mac/lib/
-    )
+# target_link_directories(${TARGET_NAME} PRIVATE
+#     #/opt/local/lib
+#     # ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+#     # ../../external/mac/lib/
+#     )
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core

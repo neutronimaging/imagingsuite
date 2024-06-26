@@ -59,7 +59,7 @@ std::map<std::string, std::string> GenericBP::GetParameters()
     return parameters;
 }
 
-void GenericBP::SetROI(size_t *roi)
+void GenericBP::SetROI(const std::vector<size_t> &roi)
 {
     mConfig.ProjectionInfo.roi[0]=roi[0];
     mConfig.ProjectionInfo.roi[1]=roi[1];

@@ -27,28 +27,32 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix: # Qt requires py7zr==0.20.x which requires python 3.7^
         python-version: ["3.7","3.8","3.9", "3.10", "3.11", "3.12"]
-        os: [windows-2022, ubuntu-latest, macos-11, flyci-macos-14-m2]
+        os: [windows-2022, ubuntu-latest, macos-12, flyci-macos-14-m2]
         include:
           - os: windows-2022
             c_compiler: cl
             cpp_compiler: cl
             cl: 17
             build_type: Release
+            build_root: build-imagingsuite
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
             gcc: 11
             build_type: Release
-          - os: macos-11
+            build_root: build-imagingsuite/Release
+          - os: macos-12
             c_compiler: clang
             cpp_compiler: clang++
-            clang: 13
+            clang: 14
             build_type: Release
+            build_root: build-imagingsuite/Release
           - os: flyci-macos-14-m2
             c_compiler: clang
             cpp_compiler: clang++
             clang: 15
             build_type: Release
+            build_root: build-imagingsuite/Release
         exclude: # Python 3.7 not supported on ARM architecture
           - os: flyci-macos-14-m2
             python-version: 3.7
@@ -123,39 +127,26 @@ jobs:
       if: ${{ ( runner.os == 'macOS' ) &&  (runner.arch == 'ARM64') }}
       run: brew install sse2neon
 
-    - name: Run conan
+    - name: Build with Conan
       working-directory: imagingsuite
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          conan install . --profile:host profiles/windows_msvc_17_release --profile:build profiles/windows_msvc_17_release
+          conan build . --profile:all profiles/windows_msvc_17_release --build=missing
         elif [ "${RUNNER_OS}" == "Linux" ]; then
-          conan install . --profile:host profiles/linux_gcc_11_release --profile:build profiles/linux_gcc_11_release
+          conan build . --profile:all profiles/linux_gcc_11_release --build=missing
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          conan install . --profile:host profiles/macos_x64_clang_13_release --profile:build profiles/macos_x64_clang_13_release --build=missing
+          conan build . --profile:all profiles/macos_x64_clang_14_release --build=missing
         elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          conan install . --profile:host profiles/macos_arm_clang_15_release --profile:build profiles/macos_arm_clang_15_release --build=missing
+          conan build . --profile:all profiles/macos_arm_clang_15_release --build=missing
         fi
-
-    - name: Configure CMake
-      # Configure CMake in the 'build-imagingsuite' directory created during the conan run. 
-      working-directory: build-imagingsuite
-      run: |
-        cmake --version
-        cmake ../imagingsuite/ -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_PREFIX_PATH='${{env.Qt6_Dir}}/lib/cmake/'
-
-    - name: Build
-      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      working-directory: build-imagingsuite
-      run: |
-        cmake --build . --config ${{ matrix.build_type }}
   
     - name: Qt Deploy
       working-directory: build-imagingsuite
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          cd applications/Release
+          cd bin/Release
           ${QTPATH}/bin/windeployqt muhrec.exe
           ${QTPATH}/bin/windeployqt imageviewer.exe
         elif [ "${RUNNER_OS}" == "macOS" ]; then
@@ -175,7 +166,7 @@ jobs:
       working-directory: build-imagingsuite
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          cd applications/Release
+          cd bin/Release
           cp *.dll ../../../imagingsuite/package/pymuhrec
           cp *.pyd ../../../imagingsuite/package/pymuhrec
         elif [ "${RUNNER_OS}" == "Linux" ]; then
@@ -195,7 +186,7 @@ jobs:
             export _PYTHON_HOST_PLATFORM="macosx-14.0-arm64"
             export ARCHFLAGS="-arch arm64"
           elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-            export _PYTHON_HOST_PLATFORM="macosx-11.0-x86_64"
+            export _PYTHON_HOST_PLATFORM="macosx-12.0-x86_64"
             export ARCHFLAGS="-arch x86_64"
           fi
           python -m build

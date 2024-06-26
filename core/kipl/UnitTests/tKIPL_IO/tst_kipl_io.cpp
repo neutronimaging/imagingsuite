@@ -31,7 +31,14 @@ private:
 tKIPL_IOTest::tKIPL_IOTest()
 {
     data_path = QT_TESTCASE_BUILDDIR;
-    data_path = data_path + "/../../../../../TestData/";
+    #ifdef __APPLE__
+        data_path = data_path + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        data_path = data_path + "/../../../../../../TestData/";
+    #else
+        data_path = data_path + "/../../../../../TestData/";
+    #endif
+    
     kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
 
@@ -93,10 +100,10 @@ void tKIPL_IOTest::testReadRoiTIFF()
     QCOMPARE(img.Size(1),roi2[3]-roi2[1]);
 
     std::vector<size_t> roi3={10,10,20,400}; // Vertical slab outside the image size
-    QVERIFY_EXCEPTION_THROWN( kipl::io::ReadTIFF(img,fname,roi3,0),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION( kipl::base::KiplException, kipl::io::ReadTIFF(img,fname,roi3,0));
 
     std::vector<size_t> roi4={10,300,20,200}; // Vertical slab outside the image size
-    QVERIFY_EXCEPTION_THROWN( kipl::io::ReadTIFF(img,fname,roi4,0),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,kipl::io::ReadTIFF(img,fname,roi4,0));
 }
 
 
