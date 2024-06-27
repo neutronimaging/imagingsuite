@@ -605,18 +605,19 @@ void TKiplMathTest::testMinMax()
     QCOMPARE(mi,0.0f);
     QCOMPARE(ma,img.Size()-1.0f);
     float zero=0.0f;
-    img[1]=sqrt(-1.0f);
-    img[2]=-sqrt(-1.0f);
-    img[3]=1.0f/zero;
-    img[4]=-1.0f/zero;
+    img[1] = std::numeric_limits<float>::quiet_NaN();
+    img[2] = -std::numeric_limits<float>::quiet_NaN();
+
 
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
-    QCOMPARE(mi,0.0f);
-    QCOMPARE(ma,img.Size()-1.0f);
+    QCOMPARE(mi,-std::numeric_limits<float>::quiet_NaN());
+    QCOMPARE(ma, std::numeric_limits<float>::quiet_NaN());
 
+    img[1] = std::numeric_limits<float>::infinity();
+    img[2] =-std::numeric_limits<float>::infinity();
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,false);
-    QCOMPARE(mi,-1.0f/zero);
-    QCOMPARE(ma,1.0f/zero);
+    QCOMPARE(mi,-std::numeric_limits<float>::infinity(););
+    QCOMPARE(ma, std::numeric_limits<float>::infinity(););
 
 }
 
