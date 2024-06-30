@@ -75,7 +75,7 @@
     <string>Image</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget1">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -104,7 +104,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget2">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -130,7 +130,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget3">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -246,12 +246,12 @@
     <string>Get dose list</string>
    </property>
   </widget>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget1</zorder>
+  <zorder>layoutWidget2</zorder>
   <zorder>buttonBox</zorder>
   <zorder>skip_plot</zorder>
   <zorder>skip_imageviewer</zorder>
-  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget3</zorder>
   <zorder>label_7</zorder>
   <zorder>label_8</zorder>
   <zorder>skip_button_getdoselist</zorder>
