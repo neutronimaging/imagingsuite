@@ -341,69 +341,76 @@ template <typename T, size_t NDim>
     this->v.Clone(); // Use memcpy instead to save new/delete operations
     this->u=static_cast<T>(0);
 
-	int sx=this->u.Size(0);
-	int sy=this->u.Size(1);
-	int sz=this->u.Size(2),sxy=sx*sy;
-	int i,j,k;
+	int sx  = static_cast<int>(this->u.Size(0));
+	int sy  = static_cast<int>(this->u.Size(1));
+	int sz  = static_cast<int>(this->u.Size(2));
+	int sxy = sx*sy;
+	// int i,j,k;
 
 	float *pG,*pF,*pU, *pX;
 	
-	for (k=0; k<sz; k++) {
+	for (int k=0; k<sz; ++k) 
+	{
 		// Operating on Rows
-		for (i=0; i<sy; i++) {
+		for (int i=0; i<sy; ++i) 
+		{
 			pG=getG(i,k);
 			//pF=f.GetLinePtr(i,k); // MSP 041115
 			pF=this->v.GetLinePtr(i,k);
-
-			for (j=0; j<sx-1; j++) {
-				q[j] = pG[j]+pG[j+1]; //(d(1:end-1,:)+d(2:end,:));
-				d[j]=pF[j]; // RHS of B u = d
+			int jj = 0;
+			for (jj=0; jj<sx-1; ++jj) 
+			{
+				q[jj] = pG[jj]+pG[jj+1]; //(d(1:end-1,:)+d(2:end,:));
+				d[jj]=pF[jj]; // RHS of B u = d
 			}
-			d[j]=pF[j];
+			d[jj]=pF[jj];
 			p[0] = q[0];
 			p[sx-1] = q[sx-2];
 
-			for (j=1; j<sx-1; j++) 
+			for (int j=1; j<sx-1; ++j) 
 				p[j]=q[j-1]+q[j]; //p(2:end-1,:) = ( q(1:end-1,:) + q(2:end,:) );
 
-			for (j=0; j<sx; j++) // Compute the main diagonal
+			for (int j=0; j<sx; ++j) // Compute the main diagonal
 				a[j] = 1 + this->tau*p[j]; //(p is -1*p)
 
-			for (j=0; j<sx-1; j++) // Compute the left and right off-diagonals
+			for (int j=0; j<sx-1; ++j) // Compute the left and right off-diagonals
 				b[j] = -this->tau*q[j];
 
 			SolveThomas(a,b,b,d,x,sx);
 
 			pU=this->u.GetLinePtr(i,k);			// Insert the solution in u
 			pX=x;
-			for (int j=0; j<sx; j++) 
+			for (int j=0; j<sx; ++j) 
 				pU[j]=pX[j];
 		}
 
 
 		// Operating on Columns
 		
-		for (i=0; i<sx; i++) {
+		for (int i=0; i<sx; ++i) 
+		{
 			pG=this->g.GetLinePtr(0,k)+i;
 			//pF=f.getSliceptr(k)+i;
 			pF=this->v.GetLinePtr(0,k)+i;
-			for (j=0; j<sy-1; j++,pG+=sx, pF+=sx) {
-				q[j] = *pG+*(pG+sx); //(d(1:end-1,:)+d(2:end,:));
-				d[j] = *pF;
+			int jj = 0;
+			for (jj=0; jj<sy-1; ++jj,pG+=sx, pF+=sx) 
+			{
+				q[jj] = *pG+*(pG+sx); //(d(1:end-1,:)+d(2:end,:));
+				d[jj] = *pF;
 			}
-			d[j]=*pF;
+			d[jj]=*pF;
 
 			p[0] = q[0];
 			p[sy-1] = q[sy-2];
 
-			for (j=1; j<sy-1; j++) 
+			for (int j=1; j<sy-1; ++j) 
 				p[j]=q[j-1]+q[j]; //p(2:end-1,:) = ( q(1:end-1,:) + q(2:end,:) );
 
 
-			for (j=0; j<sy; j++)
+			for (int j=0; j<sy; ++j)
 				a[j] = 1 + this->tau*p[j]; //(p is -1*p)
 
-			for (j=0; j<sy-1; j++)
+			for (int j=0; j<sy-1; ++j)
 				b[j] = -this->tau*q[j];
 
 			SolveThomas(a,b,b,d,x,sy);
@@ -422,30 +429,33 @@ template <typename T, size_t NDim>
 	}
 
 	// Operating on Pillars
-	if (NDim==3) {
+	if (NDim==3) 
+	{
 		float third=1/3.0f;
-		for (i=0; i<sxy; i++) {
+		for (int i=0; i<sxy; ++i) 
+		{
 			pG=this->g.GetDataPtr()+i;
 			//pF=f.GetDataPtr()+i;
 			pF=this->v.GetDataPtr()+i;
-
-			for (j=0; j<sz-1; j++,pG+=sxy, pF+=sxy) {
-				q[j] = *pG+*(pG+sxy); //(d(1:end-1,:)+d(2:end,:));
-				d[j] = *pF;
+			int jj = 0;
+			for (jj=0; jj<sz-1; ++jj,pG+=sxy, pF+=sxy) 
+			{
+				q[jj] = *pG+*(pG+sxy); //(d(1:end-1,:)+d(2:end,:));
+				d[jj] = *pF;
 			}
-			d[j]=*pF;
+			d[jj]=*pF;
 
 			p[0] = q[0];
 			p[sy-1] = q[sy-2];
 
-			for (j=1; j<sz-1; j++) 
+			for (int j=1; j<sz-1; ++j) 
 				p[j]=q[j-1]+q[j]; //p(2:end-1,:) = ( q(1:end-1,:) + q(2:end,:) );
 
 
-			for (j=0; j<sz; j++)
+			for (int j=0; j<sz; ++j)
 				a[j] = 1 + this->tau*p[j]; //(p is -1*p)
 
-			for (j=0; j<sz-1; j++)
+			for (int j=0; j<sz-1; ++j)
 				b[j] = -this->tau*q[j];
 
 			SolveThomas(a,b,b,d,x,sz);
@@ -454,7 +464,7 @@ template <typename T, size_t NDim>
 			pX=x;
 			
 
-			for (int j=0; j<sz; j++, pU+=sxy,pX++) 
+			for (int j=0; j<sz; ++j, pU+=sxy,++pX) 
 				*pU=(*pU+*pX)*third;
 
 		}
@@ -464,22 +474,22 @@ template <typename T, size_t NDim>
 }
 
     template <typename T, size_t NDim>
-        int NonLinDiffusionFilter<T,NDim>::SolveThomas(float *alpha, float *beta, float *gamma, float *d, float *uk, int N)
+        int NonLinDiffusionFilter<T,NDim>::SolveThomas(float *alpha, float *beta, float *gamma, float *dd, float *uk, int N)
 	{
-		int i;
 		m[0]=1/alpha[0];
-		for (i=0; i<N-1; i++) {
+		for (int i=0; i<N-1; ++i) 
+		{
 			l[i]=gamma[i]*m[i];
 			m[i+1]=1/(alpha[i+1]-l[i]*beta[i]);
 		}
 
-		y[0]=d[0];
-		for (i=1; i<N; i++) 
-			y[i]=d[i]-l[i-1]*y[i-1];
+		y[0]=dd[0];
+		for (int i=1; i<N; ++i) 
+			y[i]=dd[i]-l[i-1]*y[i-1];
 
 		uk[N-1]=y[N-1]*m[N-1];
 
-		for (i=N-2; i>=0; i--)
+		for (int i=N-2; i>=0; --i)
 			uk[i]=(y[i]-beta[i]*uk[i+1])*m[i];
 
 /*
@@ -506,14 +516,17 @@ template <typename T, size_t NDim>
 	{
 		float *pG=this->g.GetDataPtr();
 		
-        if (this->lambdaest !=nullptr) {
+        if (this->lambdaest !=nullptr) 
+		{
             float lambdaold=lambda;
             lambda=(*(this->lambdaest))(this->g);
             if (lambdaold!=lambda)
                 ComputeLUT(this->NLut);
         }
+
 		float invLUTindStep=1/this->LUTindStep;
-		for (size_t i=0; i<this->g.Size(); i++) {
+		for (size_t i=0; i<this->g.Size(); ++i) 
+		{
 			if (pG[i]<=this->LUTindMin)
                 pG[i]=static_cast<T>(1);
 			else
@@ -549,17 +562,19 @@ template <typename T, size_t NDim>
 		this->LUTindMin=lambda*pow(-3.315f/(log(NumLimitDiffusivity)),0.125f);
 		this->LUTindMax=lambda*pow(-3.315f/(log(1.0f-1e-7f)),0.125f);
 		this->LUTindStep=(this->LUTindMax-this->LUTindMin)/(N-1);
-        if (this->gLUT)
+        if (this->gLUT != nullptr)
             delete [] this->gLUT;
         std::cout<<"G(min)="<<this->LUTindMin<<" G(max)="<<this->LUTindMax<<std::endl;
-		this->gLUT=new float[N];
+
+		this->gLUT = new float[N];
 
 		this->NLut=N;
 
 		float *pGLut=this->gLUT;
-		int i;
-		float s;
-		for (i=0, s=this->LUTindMin; i<this->NLut; i++, s+=this->LUTindStep)
+		
+		float s = this->LUTindMin;
+
+		for (int i=0; i<this->NLut; ++i, s+=this->LUTindStep)
 			pGLut[i]=1.0f-exp(-3.315f/pow(s/lambda,8.0f));
 
 		return 1;
