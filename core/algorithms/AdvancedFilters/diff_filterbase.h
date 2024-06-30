@@ -561,9 +561,11 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 	
         std::deque<T *> lineQ;
 				
-		float *pV, *pU,*pFilt;
-		int *pIndFilt;
-		int pos, h,i,j,k;
+		float *pV{nullptr};
+		float *pU{nullptr};
+		// float *pFilt{nullptr};
+		int   *pIndFilt{nullptr};
+		int pos{0}, h{0}, i{0}, j{0}, k{0};
 	
         std::vector<size_t> dims=img.dims();
 		int sxy,sx;
@@ -587,7 +589,7 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 		}
 
 		for (int dim=0; dim<NDim; dim++) {
-			pFilt=GaussKernel;
+			// pFilt=GaussKernel;
 			pIndFilt=IndGaussKernel+dim*NGauss;
 			
 			if (dim==2) { // Edge processing top/bottom
@@ -987,13 +989,12 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 
 		}
 
-		
 		return 0;
 	}
 	
 	
     template <typename T, size_t NDim>
-    int DiffusionBaseFilter<T,NDim>::SaveSlice(kipl::base::TImage<T,NDim> & img, int i, const string suffix)
+    int DiffusionBaseFilter<T,NDim>::SaveSlice(kipl::base::TImage<T,NDim> & /*img*/, int /*i*/, const string /*suffix*/)
 	{
 
 //		if (!iteration_filename.empty()) {
