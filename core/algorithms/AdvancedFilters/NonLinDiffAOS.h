@@ -126,15 +126,15 @@ template <typename T, size_t NDim>
 NonLinDiffusionFilter<T,NDim>::NonLinDiffusionFilter(kipl::interactors::InteractionBase *interactor):
   DiffusionBaseFilter<T,NDim>(1.0f,0.25f,10,interactor),
   lambdaest(nullptr),
-  a(nullptr),
-  b(nullptr),
-  d(nullptr),
   p(nullptr),
   q(nullptr),
+  d(nullptr),
+  a(nullptr),
+  b(nullptr),
   x(nullptr),
   y(nullptr),
-  m(nullptr),
-  l(nullptr)
+  l(nullptr),
+  m(nullptr)
 {
 
 
@@ -145,15 +145,15 @@ NonLinDiffusionFilter<T,NDim>::NonLinDiffusionFilter(float Sigma, float Tau, flo
 DiffusionBaseFilter<T,NDim>(Sigma,Tau,It,interactor),
     lambda(Lambda),
     lambdaest(nullptr),
-    a(nullptr),
-    b(nullptr),
-    d(nullptr),
-    p(nullptr),
-    q(nullptr),
-    x(nullptr),
-    y(nullptr),
-    m(nullptr),
-    l(nullptr)
+	p(nullptr),
+	q(nullptr),
+	d(nullptr),
+	a(nullptr),
+	b(nullptr),
+	x(nullptr),
+	y(nullptr),
+	l(nullptr),
+	m(nullptr)
 {
 	this->sigma.clear();
 	this->sigma.push_back(Sigma);
