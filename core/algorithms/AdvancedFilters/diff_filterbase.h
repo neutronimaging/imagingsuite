@@ -331,16 +331,19 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 													bool squared)
 	{
         std::vector<size_t> dims=img.dims();
-		float *pG;
-
+		
         ag.resize(dims);
-		for (int dim=0; dim<NGrad; dim++) {
+		for (int dim=0; dim<NGrad; ++dim) 
+		{
 			Gradient(img,ag,dim,false,true);
 		}
 		
 		if (!squared)
-			for (size_t i=0; i<img.Size(); i++)
+		{
+			auto pG=ag.GetDataPtr();
+			for (size_t i=0; i<img.Size(); ++i)
 				pG[i]=sqrt(pG[i]);
+		}
 
 		return 1;
 	}
@@ -482,7 +485,8 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 			pV=img.GetLinePtr(0,h);
 		
 			ltmp=0; rtmp=0;
-			for (int k=0; k<NGradInd; k++) { // Left and right edge
+			for (int k=0; k<NGradInd; k++) 
+			{ // Left and right edge
 				t=indFilt[k]%sxy;
 				t=indFilt[k]>0 ? t-sxy : t;
 				if (abs(t+sx)<=1)
@@ -503,7 +507,8 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 			pD[0]+=!squared ? ltmp : ltmp*ltmp;
 			pD[dims[0]-1]+=!squared ? rtmp : rtmp*rtmp;
 			
-			for (int j=1; j<dims[0]-1; j++) { // Main part
+			for (size_t j=1; j<dims[0]-1; ++j) 
+			{ // Main part
 				tmp=0;
 				for (int k=0; k<NGradInd; k++) {
 					t=indFilt[k]%sxy;
@@ -519,12 +524,14 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 			}
 			//---------------------
 			// Plane processing 
-			for (int i=1; i<dims[1]-1; i++) { 
+			for (size_t i=1; i<dims[1]-1; ++i) 
+			{ 
 				pD=d.GetLinePtr(i,h);
 				pV=img.GetLinePtr(i,h);
 			
 				ltmp=0; rtmp=0;
-				for (int k=0; k<NGradInd; k++) { // Left and right edge
+				for (int k=0; k<NGradInd; ++k) 
+				{ // Left and right edge
 					ref=indFilt[k]%dims[0];
 					ref=ref-(ref>0 ? sx : 0 );
 					
@@ -538,9 +545,11 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 				pD[0]+=!squared ? ltmp : ltmp*ltmp;
 				pD[dims[0]-1]+=!squared ? rtmp : rtmp*rtmp;
 				
-				for (int j=1; j<dims[0]-1; j++) { // Main part
+				for (size_t j=1; j<dims[0]-1; ++j) 
+				{ // Main part
 					tmp=0;
-					for (int k=0; k<NGradInd; k++) {
+					for (int k=0; k<NGradInd; ++k) 
+					{
 						pos=j+indFilt[k];
 						tmp+=pV[pos]* GradKernel[k];
 					}
@@ -588,7 +597,8 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 			
 		}
 
-		for (int dim=0; dim<NDim; dim++) {
+		for (size_t dim=0; dim<NDim; ++dim) 
+		{
 			// pFilt=GaussKernel;
 			pIndFilt=IndGaussKernel+dim*NGauss;
 			
@@ -596,7 +606,8 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 					int bottom;
 					j=0;
 					lineQ.clear();
-					while (lineQ.size()<NGauss) {
+					while (static_cast<int>(lineQ.size())<NGauss) 
+					{
 						lineQ.push_front(f.GetLinePtr(0,j));
 						lineQ.push_back(f.GetLinePtr(0,j));
 						j++;
@@ -616,14 +627,17 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 					
 					lineQ.clear();
 					
-					for (i=zlimits[dim][1]; i<dims[2]; i++) { // Bottom
+					for (i=zlimits[dim][1]; i<static_cast<int>(dims[2]); ++i) 
+					{ // Bottom
 						bottom=(dims[2]-i-1)*sxy;
-                        for (j=0; j<static_cast<int>(dims[1]); j++) {
+                        for (j=0; j<static_cast<int>(dims[1]); ++j) 
+						{
 							pU=f.GetLinePtr(j,i);
 							pV=res.GetLinePtr(j,i);
 							
 							
-                            for (k=0; k<static_cast<int>(dims[0]); k++) {
+                            for (k=0; k<static_cast<int>(dims[0]); ++k) 
+							{
 								pV[k]=0.0f;
 								for (h=0; h<NGauss; h++) { 
 									if (pIndFilt[h]>bottom) 
@@ -639,21 +653,25 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 								
 			}
 			
-			for (i=zlimits[dim][0]; i<zlimits[dim][1]; i++) {
+			for (i=zlimits[dim][0]; i<zlimits[dim][1]; ++i) 
+			{
 				front=i*sxy;
 				back=(i+1)*sxy-1;
 				
 				if (dim==1) { // Edge processing front/back
 
-                    for (j=ylimits[dim][1]; j<static_cast<int>(dims[1]); j++) {
+                    for (j=ylimits[dim][1]; j<static_cast<int>(dims[1]); ++j) 
+					{
 						pU=f.GetLinePtr(j,i);
 						pV=res.GetLinePtr(j,i);
 						
 						back=(dims[1]-j-1)*sx;
-                        for (k=0; k<static_cast<int>(dims[0]); k++) {
+                        for (k=0; k<static_cast<int>(dims[0]); ++k) 
+						{
 							pV[k]=0.0f;
 							
-							for (h=0; h<NGauss; h++) { // Fix right edge
+							for (h=0; h<NGauss; h++) 
+							{ // Fix right edge
 								if (pIndFilt[h]>back)
 									pos=k+2*back-pIndFilt[h]+sx;
 								else
@@ -664,14 +682,17 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 						}
 					}
 
-					for (j=0; j<ylimits[dim][0]; j++) {
+					for (j=0; j<ylimits[dim][0]; j++) 
+					{
 						pU=f.GetLinePtr(j,i);
 						pV=res.GetLinePtr(j,i);
 						
 						front=-sx*j;
-                        for (k=0; k<static_cast<int>(dims[0]); k++) {
+                        for (k=0; k<static_cast<int>(dims[0]); k++) 
+						{
 							pV[k]=0.0f;
-							for (h=0; h<NGauss; h++) { // Fix left edge
+							for (h=0; h<NGauss; h++) 
+							{ // Fix left edge
 								if (pIndFilt[h]<front)
 									pos=k+(front-pIndFilt[h]);
 								else
@@ -682,14 +703,17 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 						}
 					} 
 
-                    for (j=ylimits[dim][1]; j<static_cast<int>(dims[1]); j++) {
+                    for (j=ylimits[dim][1]; j<static_cast<int>(dims[1]); j++) 
+					{
 						pU=f.GetLinePtr(j,i);
 						pV=res.GetLinePtr(j,i);
 						
 						back=((dims[1]-1)-j)*sx;
-                        for (k=0; k<static_cast<int>(dims[0]); k++) {
+                        for (k=0; k<static_cast<int>(dims[0]); k++) 
+						{
 							pV[k]=0.0f;
-							for (h=0; h<NGauss; h++) { // Fix back edge
+							for (h=0; h<NGauss; h++) 
+							{ // Fix back edge
 								if (pIndFilt[h]>back) 
 									pos=k+2*back-pIndFilt[h]+sx;
 								else
@@ -702,7 +726,8 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 				}
 				
 				// Main processing of the slice
-				for (j=ylimits[dim][0]; j<ylimits[dim][1]; j++) {
+				for (j=ylimits[dim][0]; j<ylimits[dim][1]; j++) 
+				{
 					pU=f.GetLinePtr(j,i);
 					pV=res.GetLinePtr(j,i);
 					
@@ -755,7 +780,8 @@ int DiffusionBaseFilter<T,NDim>::AbsGradient(kipl::base::TImage<T,NDim> &img,
 	{
 		float s;
         std::ostringstream msg;
-		if (cnt<sigma.size()) {
+		if (static_cast<size_t>(cnt)<sigma.size()) 
+		{
 			s=sigma[cnt];
 				
 			//NGauss=int(ceil(s*1.96))*2+1;	// This must be made flexible depending on the value of sigma.
