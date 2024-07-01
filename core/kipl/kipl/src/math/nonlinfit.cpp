@@ -141,7 +141,7 @@ void LevenbergMarquardt::fit(arma::vec &x, arma::vec &y,
 }
 
 void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, arma::vec &x, arma::vec &y,
-                                arma::vec &sig, arma::mat &alpha, arma::vec &beta)
+                                arma::vec &sig, arma::mat &_alpha, arma::vec &beta)
 {
 //Used by fit to evaluate the linearized fitting matrix alpha, and vector beta as in (15.5.8), and to calculate 2.
     int i,j,k,l,m;
@@ -151,7 +151,7 @@ void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, arma::vec &x, ar
     for (j=0; j<mfit; j++)
     { //Initialize (symmetric) alpha, beta.
         for (k=0; k<=j; k++)
-            alpha.at(j,k)=0.0;
+            _alpha.at(j,k)=0.0;
         beta[j]=0.0;
     }
 
@@ -171,33 +171,33 @@ void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, arma::vec &x, ar
             {
                 wt=dyda[l]*sig2i;
                 for (k=0,m=0;m<l+1;m++)
-                    if (fn.isFree(m)) alpha.at(j,k++) += wt*dyda[m];
+                    if (fn.isFree(m)) _alpha.at(j,k++) += wt*dyda[m];
                 beta[j++] += dy*wt;
             }
         }
-        chisq += dy*dy*sig2i; // And find 2.
+        chisq += dy*dy*sig2i; // And find chi2.
     }
     for (j=1;j<mfit;j++) //Fill in the symmetric side.
-        for (k=0;k<j;k++) alpha.at(k,j)=alpha.at(j,k);
+        for (k=0;k<j;k++) alpha.at(k,j)=_alpha.at(j,k);
 }
 
-void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn)
+void LevenbergMarquardt::covsrt(arma::mat &_covar, Nonlinear::FitFunctionBase &fn)
 {
 //Expand in storage the covariance matrix covar, so as to take into account parameters that
 //are being held fixed. (For the latter, return zero covariances.)
     int i,j,k;
     for (i=mfit;i<ma;i++)
         for (j=0;j<i+1;j++)
-            covar.at(i,j) = covar.at(j,i) = 0.0;
+            _covar.at(i,j) = _covar.at(j,i) = 0.0;
     k=mfit-1;
     for (j=ma-1;j>=0;j--)
     {
         if (fn.isFree(j))
         {
             for (i=0;i<ma;i++)
-                std::swap(covar.at(i,k),covar.at(i,j));
+                std::swap(_covar.at(i,k),_covar.at(i,j));
             for (i=0;i<ma;i++)
-                std::swap(covar.at(k,i),covar.at(j,i));
+                std::swap(_covar.at(k,i),_covar.at(j,i));
             k--;
         }
     }

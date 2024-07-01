@@ -23,6 +23,7 @@ std::vector<size_t> GetPNGDims(const std::string &fname)
 
 int KIPLSHARED_EXPORT ReadPNG(std::string fname, kipl::base::TImage<float,2> &img, int idx, size_t *roi)
 {
+    std::ignore = fname;
     std::ignore = img;
     std::ignore = idx;
     std::ignore = roi;
@@ -34,6 +35,7 @@ int KIPLSHARED_EXPORT ReadPNG(std::string fname, kipl::base::TImage<float,2> &im
 
 int KIPLSHARED_EXPORT WritePNG(std::string fname, kipl::base::TImage<float,2> & img, float low, float high)
 {
+    std::ignore = fname;
     std::ignore = img;
     std::ignore = low;
     std::ignore = high;
