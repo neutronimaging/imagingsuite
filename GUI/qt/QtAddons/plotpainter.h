@@ -44,6 +44,7 @@ public:
     enum { Margin = 30 };
     bool m_bShowGrid;
     QFont m_Font;
+    QWidget * parent() { return m_pParent; }
 
 private:
     void refreshBounds();

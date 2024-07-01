@@ -70,6 +70,7 @@ public:
     QSize zoomedImageSize();
     QSize imageSize();
     //void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp;}
+    QWidget * parent() {return m_pParent;}
 protected:
     void preparePixbuf();
     void createZoomImage(QRect roi);

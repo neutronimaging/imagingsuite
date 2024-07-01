@@ -60,7 +60,7 @@ void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
     ostringstream msg;
 
     ui->listROI->clear();
-    for (const auto roiItem : rois) {
+    for (const auto & roiItem : rois) {
         ROIListItem *item = new ROIListItem;
 
         item->roi=roiItem;

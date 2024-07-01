@@ -140,7 +140,7 @@ void CompareVolumeViewer::updateBounds()
     updateViews(midslice);
 }
 
-void QtAddons::CompareVolumeViewer::on_comboBox_imagePlanes_currentIndexChanged(int index)
+void QtAddons::CompareVolumeViewer::on_comboBox_imagePlanes_currentIndexChanged(int /*index*/)
 {
     updateBounds();
 }
