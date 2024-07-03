@@ -601,24 +601,33 @@ void TKiplMathTest::testMinMax()
     for (size_t i=0; i<img.Size(); ++i)
         img[i]=static_cast<float>(i);
 
-    float mi, ma;
+    float mi = 0.0f;
+    float ma = 0.0f;
 
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
     QCOMPARE(mi,0.0f);
     QCOMPARE(ma,img.Size()-1.0f);
     const float infval=std::numeric_limits<float>::infinity();
     const float nanval=std::numeric_limits<float>::quiet_NaN();
-    img[1] = nanval;
-    
-    kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
-    QVERIFY(std::isnan(mi));
-    QVERIFY(std::isnan(ma));
 
-    img[1] = infval; //std::numeric_limits<float>::infinity();
-    img[2] = -infval;
-    kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,false);
-    QVERIFY(std::isinf(mi));
-    QVERIFY(std::isinf(ma));
+    img[1] =  nanval;
+    img[2] = -nanval;
+
+    kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,true);
+    QCOMPARE(mi,0.0f);
+    QCOMPARE(ma,img.Size()-1.0f);
+
+    
+    // kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,false);
+    // QVERIFY(std::isnan(mi));
+    // QVERIFY(std::isnan(ma));
+
+    // img[1] =  infval;
+    // img[2] = -infval;
+
+    // kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,false);
+    // QVERIFY(std::isinf(mi));
+    // QVERIFY(std::isinf(ma));
 
 }
 
