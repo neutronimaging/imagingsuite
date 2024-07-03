@@ -26,15 +26,17 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
 {
     std::vector<size_t> crop(4,0UL);
 
-    if (roi.empty()) {
-        logger(logger.LogMessage,"Using default crop (reduction by 10\%).");
+    if (roi.empty()) 
+    {
+        logger.message("Using default crop (reduction by 10%).");
         float marg=0.05;
         crop[0]=static_cast<size_t>(img.Size(0)*marg);
         crop[1]=static_cast<size_t>(img.Size(1)*marg);
         crop[2]=static_cast<size_t>(crop[0]+(1-2*marg)*img.Size(0));
         crop[3]=static_cast<size_t>(crop[1]+(1-2*marg)*img.Size(1));
     }
-    else {
+    else 
+    {
         crop = roi;
     }
 
@@ -65,7 +67,8 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
     std::ostringstream msg;
     correctedImage=img-dc;
 
-    if (gaincorrection) {
+    if (gaincorrection) 
+    {
         int N=static_cast<int>(img.Size(0));
 
 // Too good kernel
@@ -88,27 +91,30 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
         kipl::base::HorizontalProjection2D(gradImage.GetDataPtr(), gradImage.dims(), profile, true);
 
         kipl::math::Statistics stats;
-        for (int i=0; i<N; ++i) {
+        for (int i=0; i<N; ++i) 
+        {
             stats.put(profile[i]);
         }
         profile[0]= m_gainThreshold < abs(profile[0]-stats.E())/stats.s()? 0 : profile[0];
         msg.str(""); msg<<"Piercing point stats "<<stats<<"\n";
         logger.message(msg.str());
-        for (int i=1; i<N; ++i) {
+        for (int i=1; i<N; ++i) 
+        {
             profile[i]= m_gainThreshold < abs(profile[i]-stats.E())/stats.s() ? profile[i] : 0;
             profile[i]+=profile[i-1];
         }
 
         float *pLine=nullptr;
- //        kipl::io::WriteTIFF(correctedImage,"pp_obdc.tif",0.0f,65535.0f);
-        for (int y=0; y<static_cast<int>(correctedImage.Size(1)); ++y) {
+
+        for (int y=0; y<static_cast<int>(correctedImage.Size(1)); ++y) 
+        {
             pLine=correctedImage.GetLinePtr(y);
-            for (int x=0; x<N; ++x) {
+            for (int x=0; x<N; ++x) 
+            {
                 pLine[x]-=profile[x];
             }
         }
 
- //       kipl::io::WriteTIFF(correctedImage,"pp_obdc_gain.tif",0.0f,65535.0f);
         delete [] profile;
     }
 
@@ -123,16 +129,18 @@ void PiercingPointEstimator::ComputeEstimate(kipl::base::TImage<float,2> &img)
     arma::vec I(img.Size());
 
     size_t i=0;
-    for (double y=0; y<img.Size(1); ++y) {
-        for (double x=0; x<img.Size(0); ++x,++i) {
-                  H.at(i,0) = 1;
-                  H.at(i,1) = x;
-                  H.at(i,2) = y;
-                  H.at(i,3) = x*y;
-                  H.at(i,4) = x*x;
-                  H.at(i,5) = y*y;
-                  I.at(i)    = img[i];
-            }
+    for (double y=0; y<img.Size(1); ++y) 
+    {
+        for (double x=0; x<img.Size(0); ++x,++i) 
+        {
+            H.at(i,0) = 1;
+            H.at(i,1) = x;
+            H.at(i,2) = y;
+            H.at(i,3) = x*y;
+            H.at(i,4) = x*x;
+            H.at(i,5) = y*y;
+            I.at(i)    = img[i];
+        }
 
     }
 
@@ -145,7 +153,7 @@ void PiercingPointEstimator::ComputeEstimate(kipl::base::TImage<float,2> &img)
        <<parameters[4]<<", "
        <<parameters[5];
 
-    logger(logger.LogMessage,msg.str());
+    logger.message(msg.str());
 
 }
 
@@ -185,7 +193,7 @@ pair<float,float> PiercingPointEstimator::LocateMax()
 
     msg.str("");
     msg<<"Got pair "<<position.first<<", "<<position.second<<", ";
-    logger(logger.LogMessage,msg.str());
+    logger.message(msg.str());
     return position;
 }
 
