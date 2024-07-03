@@ -119,8 +119,8 @@ kipl::base::TImage<float,2> SpotClean::CleanByList(kipl::base::TImage<float,2> i
 	float *pWeight=s.GetDataPtr();
 	float *pRes=result.GetDataPtr();
 
-    float mark = numeric_limits<float>::max();
-	for (size_t i=0; i<img.Size(); i++) {
+	for (size_t i=0; i<img.Size(); i++) 
+	{
 		if (pWeight[i]!=0) {
 			processList.push_back(PixelInfo(i,pRes[i],pWeight[i]));
 			pRes[i]=mark;
@@ -384,7 +384,7 @@ double SpotClean::ChangeStatistics(kipl::base::TImage<float,2> img)
 	return static_cast<double>(cnt)/static_cast<double>(N);
 }
 
-kipl::base::TImage<float,2> SpotClean::DetectionImage(kipl::base::TImage<float,2> img, DetectionMethod method, size_t dims)
+kipl::base::TImage<float,2> SpotClean::DetectionImage(kipl::base::TImage<float,2> img, DetectionMethod /*method*/, size_t /*dims*/)
 {
 	return DetectionImage(img);
 }
