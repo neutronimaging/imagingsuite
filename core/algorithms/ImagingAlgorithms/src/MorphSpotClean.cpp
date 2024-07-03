@@ -411,6 +411,9 @@ void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
 
 
             break;
+        case MorphDetectDarkSpots:   throw ImagingException("Dark spots not supported in mixed mode",__FILE__,__LINE__); break;
+        case MorphDetectBrightSpots: throw ImagingException("Bright spots not supported in mixed mode",__FILE__,__LINE__); break;
+        case MorphDetectAllSpots:    throw ImagingException("All spots not supported in mixed mode",__FILE__,__LINE__); break;
         }
     }
 
@@ -809,13 +812,20 @@ void MorphSpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
     vector<size_t> removelist;
 
     kipl::morphology::LabelArea(lbl,N,area);
-    vector<pair<size_t,size_t> >::iterator it;
+    // vector<pair<size_t,size_t> >::iterator it;
 
-    for (it=area.begin(); it!=area.end(); it++)
+    // for (it=area.begin(); it!=area.end(); it++)
+    // {
+    //     if (m_nMaxArea<(it->first))
+    //         removelist.push_back(it->second);
+    // }
+    size_t nMaxArea = m_nMaxArea;
+    for (const auto &x : area)
     {
-        if (m_nMaxArea<(it->first))
-            removelist.push_back(it->second);
+        if (nMaxArea<x.first)
+            removelist.push_back(x.second);
     }
+
     msg<<"Found "<<N<<" regions, "<<removelist.size()<<" are larger than "<<m_nMaxArea;
     logger.message(msg.str());
 
