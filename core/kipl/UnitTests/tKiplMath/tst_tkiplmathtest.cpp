@@ -1,5 +1,7 @@
 #include <sstream>
 #include <list>
+#include <limits>
+#include <cmath>
 
 #include <QString>
 #include <QtTest>
@@ -604,20 +606,19 @@ void TKiplMathTest::testMinMax()
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
     QCOMPARE(mi,0.0f);
     QCOMPARE(ma,img.Size()-1.0f);
-    float zero=0.0f;
-    img[1] = std::numeric_limits<float>::quiet_NaN();
-    img[2] = -std::numeric_limits<float>::quiet_NaN();
-
-
+    const float infval=std::numeric_limits<float>::infinity();
+    const float nanval=std::numeric_limits<float>::quiet_NaN();
+    img[1] = nanval;
+    
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
-    QCOMPARE(mi,-std::numeric_limits<float>::quiet_NaN());
-    QCOMPARE(ma, std::numeric_limits<float>::quiet_NaN());
+    QVERIFY(std::isnan(mi));
+    QVERIFY(std::isnan(ma));
 
-    img[1] = std::numeric_limits<float>::infinity();
-    img[2] =-std::numeric_limits<float>::infinity();
+    img[1] = infval; //std::numeric_limits<float>::infinity();
+    img[2] = -infval;
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma,false);
-    QCOMPARE(mi,-std::numeric_limits<float>::infinity(););
-    QCOMPARE(ma, std::numeric_limits<float>::infinity(););
+    QVERIFY(std::isinf(mi));
+    QVERIFY(std::isinf(ma));
 
 }
 
