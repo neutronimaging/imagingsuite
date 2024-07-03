@@ -117,7 +117,7 @@ void NormalizeImage::normalizeSlices(kipl::base::TImage<float, 3> &img, size_t b
     }
 }
 
-float NormalizeImage::computeDose(kipl::base::TImage<float, 2> &img)
+float NormalizeImage::computeDose(kipl::base::TImage<float, 2> & /*img*/)
 {
     return 1.0f;
 }
