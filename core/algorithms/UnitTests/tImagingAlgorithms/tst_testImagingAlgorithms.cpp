@@ -69,8 +69,8 @@ private:
     std::string dataPath;
     kipl::base::TImage<float,2> holes;
     std::map<size_t,float> points;
-    size_t pos1;
-    size_t pos2;
+    // size_t pos1;
+    // size_t pos2;
 
 
 };
@@ -370,6 +370,8 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
 
 void TestImagingAlgorithms::PiercingPoint_Processing()
 {
+    QSKIP("Test is not implemented",__FILE__,__LINE__);
+
     std::vector<size_t> dims={386,256};
     kipl::base::TImage<float,2> img(dims);
 
@@ -389,9 +391,9 @@ void TestImagingAlgorithms::PiercingPoint_Processing()
 
 //    kipl::io::WriteTIFF(img,"/Users/kaestner/repos/lib/sq.tif",kipl::base::Float32);
 
-    ImagingAlgorithms::PiercingPointEstimator pe;
+    // ImagingAlgorithms::PiercingPointEstimator pe;
 
-    pair<float,float> pos=pe(img);
+    // pair<float,float> pos=pe(img);
 
 //    std::ostringstream msg;
 //    msg<<"pos=("<<pos.first<<", "<<pos.second<<")";
@@ -698,6 +700,9 @@ void TestImagingAlgorithms::ProjSeriesCorr_Correction()
 
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 QTEST_APPLESS_MAIN(TestImagingAlgorithms)
+#pragma clang diagnostic pop
 
 #include "tst_testImagingAlgorithms.moc"
