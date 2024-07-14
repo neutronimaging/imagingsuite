@@ -1,7 +1,7 @@
 //<LICENSE>
 
-#ifndef GENERICBP_H
-#define GENERICBP_H
+#ifndef EXPBP_H
+#define EXPBP_H
 
 #include <map>
 
@@ -10,11 +10,11 @@
 #include <ReconConfig.h>
 #include <BackProjectorModuleBase.h>
 
-class GenericBP : public BackProjectorModuleBase
+class ExperimentalBP : public BackProjectorModuleBase
 {
 public:
-    GenericBP(kipl::interactors::InteractionBase *interactor=nullptr);
-    virtual ~GenericBP();
+    ExperimentalBP(kipl::interactors::InteractionBase *interactor=nullptr);
+    virtual ~ExperimentalBP();
 
     /// Add one projection to the back-projection stack
     /// \param proj The projection
@@ -42,13 +42,14 @@ public:
 
     /// Sets the region of interest on the projections.
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-    virtual void SetROI(const std::vector<size_t> &roi);
+    void SetROI(const std::vector<size_t> &roi) override;
 
     /// Get the histogram of the reconstructed matrix. This should be calculated in the masked region only to avoid unnescessary zero counts.
     /// \param x the bin values of the x axis
     /// \param y the histogram bins
     /// \param N number of bins
-    virtual void GetHistogram(float *x, size_t *y, size_t N);
+    void GetHistogram(float *x, size_t *y, size_t N) override;
+    virtual void GetHistogram(std::vector<float> &axis, std::vector<size_t> &hist, size_t nBins);
 
 protected:
     std::string m_sStringParameter;
@@ -58,4 +59,4 @@ protected:
 
 };
 
-#endif // GENERICBP_H
+#endif // EXPBP_H

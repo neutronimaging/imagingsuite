@@ -1,13 +1,13 @@
 //<LICENSE>
 
-#include "genericbackproj.h"
+#include "expbackproj.h"
 
 #include <cstdlib>
 #include <string>
 
-#include <backprojectorbase.h>
+#include <BackProjectorModuleBase.h>
 #include <interactors/interactionbase.h>
-#include "genericbp.h"
+#include "expbp.h"
 
 
 
@@ -20,8 +20,8 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
     if (name!=nullptr) {
         std::string sName=name;
 
-        if (sName=="GenericBP")
-            return new GenericBP(interactor);
+        if (sName=="ExperimentalBP")
+            return new ExperimentalBP(interactor);
     }
 
     return nullptr;
@@ -29,13 +29,13 @@ void * GetModule(const char *application, const char * name, void *vinteractor)
 
 int Destroy(const char *application,void *obj)
 {
-    kipl::logging::Logger logger("GenericBackProj::Destroy");
+    kipl::logging::Logger logger("ExerimentalBackProj::Destroy");
     if (strcmp(application,"muhrecbp"))
         return -1;
 
     std::ostringstream msg;
     if (obj!=nullptr) {
-        BackProjectorBase *module=reinterpret_cast<BackProjectorBase *>(obj);
+        BackProjectorModuleBase *module=reinterpret_cast<BackProjectorModuleBase *>(obj);
         delete module;
     }
 
@@ -54,8 +54,8 @@ int GetModuleList(const char * application, void *listptr)
 
     std::map<std::string, std::map<std::string, std::string> > *modulelist=reinterpret_cast<std::map<std::string, std::map<std::string, std::string> > *>(listptr);
 
-    GenericBP mpbp;
-    modulelist->operator []("GenericBP")=mpbp.GetParameters();
+    ExperimentalBP expbp;
+    modulelist->operator []("ExperimentalBP")=expbp.GetParameters();
 
     return 0;
 }

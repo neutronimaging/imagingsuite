@@ -199,6 +199,7 @@ add_subdirectory(frameworks/tomography/Framework/ReconFramework)
 add_subdirectory(frameworks/tomography/Framework/ReconAlgorithms/ReconAlgorithms)
 add_subdirectory(frameworks/tomography/Backprojectors/StdBackProjectors)
 add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
+add_subdirectory(frameworks/tomography/Backprojectors/ExperimentalRecon)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 

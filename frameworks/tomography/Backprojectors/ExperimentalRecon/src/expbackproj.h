@@ -1,15 +1,15 @@
 //<LICENSE>
 
-#ifndef GENERICBACKPROJ_H
-#define GENERICBACKPROJ_H
+#ifndef EXPBACKPROJ_H
+#define EXPBACKPROJ_H
 
-#include "genericbackproj_global.h"
+#include "expbackproj_global.h"
 
 extern "C" {
-GENERICBACKPROJSHARED_EXPORT void * GetModule(const char * application, const char * name, void *vinteractor);
-GENERICBACKPROJSHARED_EXPORT int Destroy(const char * application, void *obj);
-GENERICBACKPROJSHARED_EXPORT int LibVersion();
-GENERICBACKPROJSHARED_EXPORT int GetModuleList(const char *application, void *listptr);
+EXPBACKPROJSHARED_EXPORT void * GetModule(const char * application, const char * name, void *vinteractor);
+EXPBACKPROJSHARED_EXPORT int Destroy(const char * application, void *obj);
+EXPBACKPROJSHARED_EXPORT int LibVersion();
+EXPBACKPROJSHARED_EXPORT int GetModuleList(const char *application, void *listptr);
 }
 
-#endif // GENERICBACKPROJ_H
+#endif // EXPBACKPROJ_H

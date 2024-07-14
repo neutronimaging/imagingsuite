@@ -1,13 +1,13 @@
 //<LICENSE>
 
-#include "genericbp.h"
+#include "expbp.h"
 
 #include <ParameterHandling.h>
 #include <interactors/interactionbase.h>
 #include <strings/miscstring.h>
 
-GenericBP::GenericBP(kipl::interactors::InteractionBase *interactor) :
-    BackProjectorModuleBase("muhrec","GenericBP",BackProjectorModuleBase::MatrixXYZ,interactor),
+ExperimentalBP::ExperimentalBP(kipl::interactors::InteractionBase *interactor) :
+    BackProjectorModuleBase("muhrec","ExperimentalBP",BackProjectorModuleBase::MatrixXYZ,interactor),
     m_sStringParameter("string"),
     m_fFloatParameter(1.23f),
     m_bBooleanParameter(true),
@@ -16,19 +16,19 @@ GenericBP::GenericBP(kipl::interactors::InteractionBase *interactor) :
 
 }
 
-GenericBP::~GenericBP()
+ExperimentalBP::~ExperimentalBP()
 {
 
 }
 
-size_t GenericBP::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
+size_t ExperimentalBP::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
 {
  // Back project single projections at angle and weighted. This is an inifite task that is terminated when bLastProjection is true.
 
     return 0;
 }
 
-size_t GenericBP::Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters)
+size_t ExperimentalBP::Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters)
 {
     // Back project a set of projections stored in a volume as xy-slices
     // In the parameter list there will be the parameters angles and weights are provided from the framework.
@@ -36,7 +36,7 @@ size_t GenericBP::Process(kipl::base::TImage<float,3> proj, std::map<std::string
     return 0;
 }
 
-int GenericBP::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int ExperimentalBP::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
     mConfig = config;
     BackProjectorModuleBase::Configure(config, parameters);
@@ -47,7 +47,7 @@ int GenericBP::Configure(ReconConfig config, std::map<std::string, std::string> 
     return 0;
 }
 
-std::map<std::string, std::string> GenericBP::GetParameters()
+std::map<std::string, std::string> ExperimentalBP::GetParameters()
 {
     std::map<std::string, std::string> parameters;
 
@@ -60,13 +60,22 @@ std::map<std::string, std::string> GenericBP::GetParameters()
     return parameters;
 }
 
-void GenericBP::SetROI(const std::vector<size_t> &roi)
+void ExperimentalBP::SetROI(const std::vector<size_t> &roi)
 {
     mConfig.ProjectionInfo.roi = roi;
     // Initialize region to reconstruct
 }
 
-void GenericBP::GetHistogram(float *x, size_t *y, size_t N)
+void ExperimentalBP::GetHistogram(std::vector<float> &axis, std::vector<size_t> &hist, size_t nBins)
+{
+    // axis and hist shall be allocated before calling GetHistogram.
+    axis.resize(nBins);
+    hist.resize(nBins);
+
+    // Compute histogram of the reconstructed matrix.
+}
+
+void ExperimentalBP::GetHistogram(float *x, size_t *y, size_t N)
 {
     // x and y shall be allocated before calling GetHistogram.
     memset(x,0,sizeof(float)*N);
