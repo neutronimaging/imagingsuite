@@ -735,12 +735,12 @@ std::map<float, map<float,size_t> > BivariateHistogram::CompressedHistogram(kipl
 
     std::map<float, std::map<float,size_t> > hist;
 
-    size_t *pLine;
+    //size_t *pLine;
     switch (mainaxis) {
     case kipl::base::ImageAxisX:
         for (size_t i=0; i<m_bins.Size(1); i++)
         {
-            pLine=m_bins.GetLinePtr(i);
+            //pLine=m_bins.GetLinePtr(i);
 // todo: fix the code
 //            std::map<float,size_t> listline;
 //            for (size_t j=0; j<m_Bins.Size(0); j++)
