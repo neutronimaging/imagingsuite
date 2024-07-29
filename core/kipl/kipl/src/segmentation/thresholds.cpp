@@ -120,7 +120,7 @@ int Threshold_Otsu(size_t const * const hist, const size_t N)
 	return t;
 }
 
-int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t median_filter_len) 
+int Threshold_Rosin(size_t const * const /*hist*/, const TailType tail, const size_t /*median_filter_len*/) 
 {
 //	if ((tail!=tail_left) && (tail!=tail_right))
 //		tail=tail_left;
@@ -150,7 +150,6 @@ int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t
 		if (first==last)
 			first--;
 		min=*first;
-		d=distance(first,last);
 	}
 	else {
 		first=maxIt;
@@ -166,8 +165,9 @@ int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t
 		if (last==first)
 			last++;
 		min=*last;
-		d=distance(first,last);
+	//	d=distance(first,last);
 	}
+    d=distance(first,last);
 
 	max=*maxIt;
 	
