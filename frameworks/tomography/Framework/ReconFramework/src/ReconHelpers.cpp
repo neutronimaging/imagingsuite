@@ -140,9 +140,9 @@ bool BuildFileList( const ReconConfig & config,
                     if (config.ProjectionInfo.scantype == ReconConfig::cProjections::InvGoldenSectionScan)
                         fGoldenSection = 1.0f/fGoldenSection;
 
-					float arc=config.ProjectionInfo.fScanArc[1];
-					if ((arc!=180.0f) && (arc!=360.0f))
-						throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
+					float arc=config.ProjectionInfo.fScanArc[1]- config.ProjectionInfo.fScanArc[0];
+					// if ((arc!=180.0f) && (arc!=360.0f))
+					// 	throw ReconException("The golden ratio reconstruction requires arc to be 180 or 360 degrees",__FILE__,__LINE__);
 
                     // Fixing the skips before the first projection
                     for (size_t i=0; i<config.ProjectionInfo.nFirstIndex; i++)
@@ -185,7 +185,7 @@ bool BuildFileList( const ReconConfig & config,
                         int idx = i - config.ProjectionInfo.nGoldenStartIdx
                                     - skip ;
 
-                        float angle=static_cast<float>(fmod(static_cast<float>(idx)*fGoldenSection*180.0f,arc)); // TODO Update equation to handle 360 deg scans
+                        float angle=static_cast<float>(fmod(static_cast<float>(idx)*fGoldenSection*arc,arc))-config.ProjectionInfo.fScanArc[0]; // TODO Update equation to handle 360 deg scans
 
                         if (exttype != readers::ExtensionHDF5 )
                         {
