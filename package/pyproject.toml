@@ -7,6 +7,14 @@ name = "pymuhrec"
 authors = [{name = "Anders Kaestner"}]
 description = "pymuhrec package"
 version = "0.0.1"
+dependencies = [
+    "astropy",
+    "numpy",
+    "scipy",
+    "tqdm",
+    "scikit-image",
+    "jupyter"
+]
 
 [tool.setuptools.packages.find]
 where = ["."]
