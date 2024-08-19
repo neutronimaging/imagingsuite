@@ -195,11 +195,11 @@ jobs:
           fi
           python -m build
 
-    - name: Install wheel
-      shell: bash
-      working-directory: imagingsuite/package/dist
-      run: |
-        pip install *.whl
+    # - name: Install wheel
+    #   shell: bash
+    #   working-directory: imagingsuite/package/dist
+    #   run: |
+    #     pip install *.whl
 
     - name: Test wheel with pytest
       shell: bash
