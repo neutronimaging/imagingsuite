@@ -11,13 +11,19 @@ env:
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - 'master'
+  push:
+    branches:
+      - 'master'
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
-      fail-fast: false
+      fail-fast: true
 
       # Build on the following 4 configurations: 
       # 1. <Windows, Release, 2022 MSVC compiler toolchain>
@@ -105,8 +111,6 @@ jobs:
     - name: Conan installation
       id: conan
       uses: turtlebrowser/get-conan@main
-      with:
-        version: 2.1.0
 
     - name: Using the builtin GitHub Cache Action for .conan
       id: github-cache-conan
@@ -191,12 +195,17 @@ jobs:
           fi
           python -m build
 
-    - name: Test wheel
+    - name: Install wheel
       shell: bash
       working-directory: imagingsuite/package/dist
       run: |
         pip install *.whl
-        python ../../importTest.py
+
+    - name: Test wheel with pytest
+      shell: bash
+      run: |
+        pip install pytest
+        pytest imagingsuite/package/tests
 
     - name: Save wheels
       uses: actions/upload-artifact@master
