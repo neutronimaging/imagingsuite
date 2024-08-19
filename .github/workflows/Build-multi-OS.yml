@@ -28,7 +28,7 @@ jobs:
       # 1. <Windows, Release, 2022 MSVC compiler toolchain>
       # 2. <Ubuntu latest, i.e. version 22.04, Release, GCC 11 compiler toolchain>
       # 3. <MacOS 12 with x86-64 arch, Release, Clang 14 compiler toolchain>
-      # 4. <MacOS 14 with arm64 arch via FlyCI, Release, Clang 15 compiler toolchain
+      # 4. <MacOS 14 with arm64 arch, Release, Clang 15 compiler toolchain
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix:
         include:
@@ -50,7 +50,7 @@ jobs:
             clang: 14
             build_type: Release
             build_root: build-imagingsuite/Release
-          - os: flyci-macos-14-m2
+          - os: macos-14
             c_compiler: clang
             cpp_compiler: clang++
             clang: 15
