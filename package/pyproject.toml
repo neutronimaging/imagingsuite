@@ -13,7 +13,8 @@ dependencies = [
     "scipy",
     "tqdm",
     "scikit-image",
-    "jupyter"
+    "jupyter",
+    "matplotlib"
 ]
 
 [tool.setuptools.packages.find]
