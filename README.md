@@ -1,5 +1,5 @@
-[![CMake on multiple platforms](https://github.com/neutronimaging/imagingsuite/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/neutronimaging/imagingsuite/actions/workflows/cmake-multi-platform.yml)
-
+[![Build MuhRec on multiple platforms](https://github.com/neutronimaging/imagingsuite/actions/workflows/Build-multi-OS.yml/badge.svg)](https://github.com/neutronimaging/imagingsuite/actions/workflows/Build-multi-OS.yml)
+[![Build pymuhrec for multiple python versions](https://github.com/neutronimaging/imagingsuite/actions/workflows/Build-wheels.yml/badge.svg)](https://github.com/neutronimaging/imagingsuite/actions/workflows/Build-wheels.yml)
 # The imaging suite core
 The imaging suite repository contains the core functionality sources for and documentation related to MuhRec, KipTool, and nGITool.
 The project has a [public webpage](https://neutronimaging.github.io/) where you get some more information.
