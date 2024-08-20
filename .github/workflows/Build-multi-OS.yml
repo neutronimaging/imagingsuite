@@ -50,7 +50,7 @@ jobs:
             clang: 14
             build_type: Release
             build_root: build-imagingsuite/Release
-          - os: flyci-macos-14-m2
+          - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
             clang: 15
