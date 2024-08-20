@@ -75,13 +75,14 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, std::vector<float
     if (m_bClampData)
          kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
 
+    // TODO: These assignments are not thread safe
     m_fThreshold = th;
     m_fSigma     = sigma;
 
     switch (m_eMorphClean)
     {
         case MorphCleanReplace  : ProcessReplace(img); break;
-        case MorphCleanFill     : ProcessFill(img); break;
+        case MorphCleanFill     : ProcessFill(img);    break;
     default : throw ImagingException("Unkown cleaning method selected", __FILE__,__LINE__);
     }
 
@@ -140,15 +141,16 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> *pImg, size_t first, s
         process(slice,th,sigma);
 
         std::copy_n(slice.GetDataPtr(), slice.Size(),pImg->GetLinePtr(0,i));
-        size_t cnt=0UL;
-        float *pRes=pImg->GetLinePtr(i);
-        for (size_t j=0; j<slice.Size(); ++j)
-        {
-            if (orig[j]!=pRes[j])
-                ++cnt;
-        }
-
-        msg<<i<<": "<<cnt<<", ";
+        // Debugging code
+        // size_t cnt=0UL;
+        // float *pRes=pImg->GetLinePtr(i);
+        // for (size_t j=0; j<slice.Size(); ++j)
+        // {
+        //     if (orig[j]!=pRes[j])
+        //         ++cnt;
+        // }
+        // msg.str("");
+        // msg<<i<<": "<<cnt<<", ";
         ++m_nCounter;
         UpdateStatus(static_cast<float>(m_nCounter.load())/static_cast<float>(pImg->Size(2)),"Morph spot clean");
     }
