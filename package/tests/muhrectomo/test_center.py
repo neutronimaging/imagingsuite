@@ -1,4 +1,4 @@
-import imgalg 
+import pymuhrec as pm 
 import pytest
 import numpy as np
 class TestCentering:
@@ -6,7 +6,7 @@ class TestCentering:
     @pytest.fixture(autouse=True)
     def center(self):
         print("Setup")
-        self.center = imgalg.Center()
+        self.center = pm.TomoCenter()
 
     def test_center_fixture(self):
         # When Then Expect

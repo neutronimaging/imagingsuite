@@ -1,4 +1,4 @@
-import muhrectomo.imgalg as imgalg
+import pymuhrec as pm
 import pytest
 import numpy as np
 
@@ -7,7 +7,7 @@ class TestRingClean:
     @pytest.fixture(autouse=True)
     def ringclean(self):
         print("Setup")
-        self.ringclean = imgalg.StripeFilter([100,100],"daub7",4,0.05)
+        self.ringclean = pm.StripeFilter([100,100],"daub7",4,0.05)
 
     def test_ringclean_fixture(self):
         # When Then Expect

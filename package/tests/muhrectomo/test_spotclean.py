@@ -1,4 +1,4 @@
-import muhrectomo.imgalg as imgalg
+import pymuhrec as pm
 import pytest
 import numpy as np
 class TestSpotClean:
@@ -6,7 +6,7 @@ class TestSpotClean:
     @pytest.fixture(autouse=True)
     def spotclean(self):
         print("Setup")
-        self.spotclean = imgalg.SpotClean()
+        self.spotclean = pm.MorphSpotClean()
 
     def test_spotclean_fixture(self):
         # When Then Expect
