@@ -8,14 +8,16 @@ class TestNormalization:
 
     @pytest.fixture(autouse=True)
     def normalize(self):
-        print("Setup")
+        # print("Setup")
         self.normalize = pm.NormalizeImage(True)
 
-        self.path = os.path.dirname(os.path.abspath(__file__))+"/../../../../../TestData/"
-        print(self.path)
-        self.img = rd.read_image(self.path + "2D/tiff/tomo/04_ct5s375_128lines/ct5s_00001.tif")
-        self.ob  = rd.read_image(self.path + "2D/tiff/tomo/04_ct5s375_128lines/ob_00001.tif")
-        self.dc  = rd.read_image(self.path + "2D/tiff/tomo/04_ct5s375_128lines/dc_00001.tif")
+        self.path  = os.path.dirname(os.path.abspath(__file__))+'/'
+        os.makedirs(self.path + 'output', exist_ok=True)
+        self.data_path = self.path + "../../../../../TestData/"
+        # print(self.path)
+        self.img = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ct5s_00001.tif")
+        self.ob  = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ob_00001.tif")
+        self.dc  = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/dc_00001.tif")
 
 
     def test_normalize_fixture(self):
@@ -40,9 +42,9 @@ class TestNormalization:
         o = (self.ob-self.dc)
         o[o<1] = 1
         n = i/o
-        n = np.log(n)
+        n = -np.log(n)
         #assert np.allclose(n,cproj,1e-3)    
-        rd.save_TIFF(self.path+"pynorm.tif",n)
-        rd.save_TIFF(self.path+"bindnorm.tif",cproj)
-        s = np.sum(n != cproj)
-        print(s)
+        rd.save_TIFF(self.path+"output/pynorm.tif",n)
+        rd.save_TIFF(self.path+"output/bindnorm.tif",cproj)
+        s = np.sum(np.fabs(n-cproj)>0.00001)
+        assert s == 0
