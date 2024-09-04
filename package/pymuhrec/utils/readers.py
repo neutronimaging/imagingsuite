@@ -111,10 +111,12 @@ def save_TIFF(fname, img, startIndex=0) :
         the function doesn't return anything
     '''
     if len(img.shape)<3 :
-        tiff.imsave(fname,np.squeeze(img), {'photometric': 'minisblack'})
+        # tiff.imsave(fname,np.squeeze(img), {'photometric': 'minisblack'})
+        tiff.imwrite(fname,np.squeeze(img))
     else :
         for idx in tqdm(range(img.shape[0])) :
-            tiff.imsave(fname.format(idx+startIndex),np.squeeze(img[idx]), {'photometric': 'minisblack'})
+            # tiff.imsave(fname.format(idx+startIndex),np.squeeze(img[idx]), {'photometric': 'minisblack'})
+            tiff.imwrite(fname.format(idx+startIndex),np.squeeze(img[idx]))
 
 def read_fits_meta_data(fname,parlist = []) :
     '''Reads selected meta data from a fits file
