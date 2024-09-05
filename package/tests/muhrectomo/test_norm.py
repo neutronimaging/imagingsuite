@@ -48,3 +48,27 @@ class TestNormalization:
         rd.save_TIFF(self.path+"output/bindnorm.tif",cproj)
         s = np.sum(np.fabs(n-cproj)>0.00001)
         assert s == 0
+        assert np.isclose(n,cproj,atol=1e-3).all()
+
+    def test_normstack(self) :
+        self.normalize.setReferences(self.ob,self.dc)
+
+        imgs = rd.read_images(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ct5s_{0:05d}.tif", first=1, last=5)
+
+        cproj = imgs.copy()
+        self.normalize.process(cproj)
+        assert cproj is not None
+        assert np.array_equal(cproj.shape,imgs.shape)
+        n = np.zeros(cproj.shape)
+        for idx in range(0,imgs.shape[0]):
+            i = (imgs[idx]-self.dc)
+            i[i<1] = 1
+            o = (self.ob-self.dc)
+            o[o<1] = 1
+            n[idx] = i/o
+
+        n = -np.log(n)
+
+        assert np.isclose(n,cproj,atol=1e-3).all()
+        
+    
