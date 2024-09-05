@@ -70,5 +70,27 @@ class TestNormalization:
         n = -np.log(n)
 
         assert np.isclose(n,cproj,atol=1e-3).all()
+
+    def test_dosecorrection(self) :
+        doseROI = [10,10,50,50]
+        self.normalize.setDoseROI(doseROI)
+        self.normalize.setReferences(self.ob,self.dc)
+
+        cproj = self.img.copy()
+        self.normalize.process(cproj)
+        assert cproj is not None
+        assert np.array_equal(cproj.shape,self.img.shape)
+        
+        i = (self.img-self.dc)
+        i[i<1] = 1
+        o = (self.ob-self.dc)
+        o[o<1] = 1
+        n = i/o
+        n = -np.log(n)
+        # rd.save_TIFF(self.path+"output/pynorm.tif",n)
+        rd.save_TIFF(self.path+"output/bindnorm_dose.tif",cproj)
+
+
+        # assert np.isclose(n,cproj,atol=1e-3).all()
         
     
