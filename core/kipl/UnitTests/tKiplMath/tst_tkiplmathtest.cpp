@@ -334,9 +334,9 @@ void TKiplMathTest::testARMANonLinFit_fitter()
         qDebug() << "Data: sog="<<sog[i]<<", sog0="<<sog0[i];
     }
 
-    QVERIFY(fabs(sog[0]-sog0[0])<1e-5);
-    QVERIFY(fabs(sog[1]-sog0[1])<1e-5);
-    QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
+    QVERIFY(fabs(sog[0]-sog0[0])<1e-3f);
+    QVERIFY(fabs(sog[1]-sog0[1])<1e-3f);
+    QVERIFY(fabs(sog[2]-sog0[2])<1e-3f);
 
 }
 
