@@ -13,7 +13,7 @@
 	#pragma clang diagnostic ignored "-Wcast-align"
 	#pragma clang diagnostic ignored "-Wpedantic"
 	#pragma clang diagnostic ignored "-W#warnings"
-		#include <sse2neon.h>
+		#include <sse2neon/sse2neon.h>
 	#pragma clang diagnostic pop
 #else
     #include <xmmintrin.h>
