@@ -27,28 +27,29 @@ class TestWorkflow:
         # Normalize projections with dose correction        
         normalize = pm.NormalizeImage(True)
         doseROI = [10,10,50,50]
-        self.normalize.setDoseROI(doseROI)
+        normalize.setDoseROI(doseROI)
         normalize.setReferences(ob,dc)
         normalize.process(imgs)
 
         # Apply spot cleaning
         # Clean 1% of dark and bright spots with a fuzzyness sigma of 0.01
         spotclean = pm.MorphSpotClean()
-        self.spotclean.setCleanMethod(detectionMethod=pm.MorphDetectAllSpots, cleanMethod=pm.MorphCleanReplace)
-        self.spotclean.process(imgs,th=[0.99, 0.99],sigma=[0.01, 0.01])
+        spotclean.setCleanMethod(detectionMethod=pm.MorphDetectAllSpots, cleanMethod=pm.MorphCleanReplace)
+        spotclean.process(imgs,th=[0.99, 0.99],sigma=[0.01, 0.01])
 
         # Apply ring cleaning
         ringclean = pm.StripeFilter([imgs.shape[2],imgs.shape[0]],"daub7",4,0.05)
         ringclean.process(imgs,pm.eStripeFilterOperation.VerticalComponentFFT)
         
         # Setup the reconstructor
-        Nproj = imgs.shape[2]
+        Nproj = imgs.shape[0]
         
         args = {"angles" : np.linspace(0,360,num=Nproj), 
                 "weights" : np.ones(Nproj)}
         
         center = pm.TomoCenter()
-        c_est= center.estimate(imgs[0], imgs[imgs.shape[2]//2], pm.centerLeastSquare, False)
+        print(imgs.shape)
+        c_est= center.estimate(imgs[0], imgs[imgs.shape[0]//2], pm.centerLeastSquare, False)
 
         reconstructor = pm.Reconstructor(pm.bpMultiProjParallel)
 
@@ -58,8 +59,8 @@ class TestWorkflow:
                                  "resolution" : 0.135})
         
         # run the reconstruction
-        self.reconstructor.process(imgs,args)
-        vol = self.reconstructor.volume()
+        reconstructor.process(imgs,args)
+        vol = reconstructor.volume()
 
         # assert type(vol) == np.ndarray
         # assert vol.shape == (256,256,256)
