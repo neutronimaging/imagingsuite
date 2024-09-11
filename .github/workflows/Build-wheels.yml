@@ -70,6 +70,12 @@ jobs:
       with:
         path: imagingsuite
         fetch-depth: 0
+      # Checks out the test data repository for the c++ tests with ctest
+    - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
+      uses: actions/checkout@v4
+      with:
+        repository: neutronimaging/TestData
+        path: TestData
 
     # This action is an alternative to the builtin GitHub Cache action which circumvents storage size and time limits
     # It can be used in tandem with the builtin Cache but it has LFS costs
