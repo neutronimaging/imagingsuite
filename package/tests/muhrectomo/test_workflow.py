@@ -1,28 +1,20 @@
 import pymuhrec as pm 
 import pytest
 import numpy as np
-import utils.readers as rd
-import os
+import pymuhrec.utils.readers as rd
+from pathlib import Path
 
 class TestWorkflow:
 
-    @pytest.fixture(autouse=True)
-    def workflow(self):
-        print("Setup")
-        self.path  = os.path.dirname(os.path.abspath(__file__))+'/'
-        os.makedirs(self.path + 'output/workflow', exist_ok=True)
-        self.data_path = self.path + "../../../../../TestData/"
-        
+    def test_full_reconstruction_workflow(self):
+        # Read in images and set paths
+        self.output_dirs  = Path(__file__).parent / "output" / "workflow"
+        self.output_dirs.mkdir(exist_ok=True)
+        self.data_path = Path(__file__).parents[4] / "TestData" / "2D" / "tiff" / "tomo" / "04_ct5s375_128lines"
 
-    def test_reconstructor_fixture(self):
-        # When Then Expect
-        # assert self.reconstructor is not None
-        print("Fixture")
-
-    def test_reconstructor_init(self):
-        imgs = rd.read_images(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ct5s_{0:05d}.tif", first=1, last=376)
-        dc   = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/dc_00001.tif")
-        ob   = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ob_00001.tif")
+        imgs = rd.read_images(str(self.data_path / "ct5s_{0:05d}.tif"), first=1, last=376)
+        dc   = rd.read_image(str(self.data_path / "dc_00001.tif"))    
+        ob   = rd.read_image(str(self.data_path / "ob_00001.tif"))
 
         # Normalize projections with dose correction        
         normalize = pm.NormalizeImage(True)
@@ -64,4 +56,4 @@ class TestWorkflow:
 
         # assert type(vol) == np.ndarray
         # assert vol.shape == (256,256,256)
-        rd.save_TIFF(self.path+"output/workflow/recon_{0:05d}.tif",vol)
+        rd.save_TIFF(str(self.output_dirs / "recon_{0:05d}.tif"),vol)

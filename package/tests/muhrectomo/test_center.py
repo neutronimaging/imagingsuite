@@ -2,24 +2,23 @@ import pymuhrec as pm
 import pytest
 import numpy as np
 import matplotlib.pyplot as plt
-import utils.readers as rd
-import os
+import pymuhrec.utils.readers as rd
+from pathlib import Path
 
 class TestCentering:
 
     @pytest.fixture(autouse=True)
     def center(self):
-        print("Setup")
         self.center = pm.TomoCenter()
 
-        self.path  = os.path.dirname(os.path.abspath(__file__))+'/'
-        os.makedirs(self.path + 'output/center', exist_ok=True)
-        self.data_path = self.path + "../../../../../TestData/"
-        
-        self.img0   = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ct5s_00001.tif")
-        self.img180 = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ct5s_00187.tif")
-        dc          = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/dc_00001.tif")
-        ob          = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ob_00001.tif")
+        self.output_dirs  = Path(__file__).parent / "output" / "center"
+        self.output_dirs.mkdir(exist_ok=True)
+        self.data_path = Path(__file__).parents[4] / "TestData" / "2D" / "tiff" / "tomo" / "04_ct5s375_128lines"
+
+        self.img0   = rd.read_image(str(self.data_path / "ct5s_00001.tif"))
+        self.img180 = rd.read_image(str(self.data_path / "ct5s_00187.tif"))
+        dc          = rd.read_image(str(self.data_path / "dc_00001.tif"))
+        ob          = rd.read_image(str(self.data_path / "ob_00001.tif"))
         
         normalize = pm.NormalizeImage(True)
         normalize.setReferences(ob,dc)
@@ -42,7 +41,7 @@ class TestCentering:
         ax.imshow(img)
 
         ax.plot(centers, np.arange(len(centers)), 'r')
-        ax.set_title('Center at x={0:0.2f}'.format(est))
-        fig.savefig(self.path + 'output/center/center_basic.png')
+        ax.set_title('Center at x={0:0.2f}'.format(est[0]))
+        fig.savefig(str(self.output_dirs / 'center_basic.png'))
         print(est)
         assert True
