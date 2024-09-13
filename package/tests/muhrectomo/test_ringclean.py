@@ -10,7 +10,7 @@ class TestRingClean:
     def ringclean(self):
 
         self.output_dirs  = Path(__file__).parent / "output" / "ringclean"
-        self.output_dirs.mkdir(exist_ok=True)
+        self.output_dirs.mkdir(parents=True, exist_ok=True)
         self.data_path = Path(__file__).parents[4] / "TestData" / "2D" / "tiff"
         self.img = rd.read_image(str(self.data_path / "woodsino_0200.tif"))
 

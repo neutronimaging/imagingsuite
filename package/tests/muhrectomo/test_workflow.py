@@ -9,7 +9,7 @@ class TestWorkflow:
     def test_full_reconstruction_workflow(self):
         # Read in images and set paths
         self.output_dirs  = Path(__file__).parent / "output" / "workflow"
-        self.output_dirs.mkdir(exist_ok=True)
+        self.output_dirs.mkdir(parents=True, exist_ok=True)
         self.data_path = Path(__file__).parents[4] / "TestData" / "2D" / "tiff" / "tomo" / "04_ct5s375_128lines"
 
         imgs = rd.read_images(str(self.data_path / "ct5s_{0:05d}.tif"), first=1, last=376)

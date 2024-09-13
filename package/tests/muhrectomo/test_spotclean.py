@@ -12,7 +12,7 @@ class TestSpotClean:
         self.spotclean = pm.MorphSpotClean()
 
         self.output_dirs  = Path(__file__).parent / "output" / "spotclean"
-        self.output_dirs.mkdir(exist_ok=True)
+        self.output_dirs.mkdir(parents=True, exist_ok=True)
         self.data_path = Path(__file__).parents[4] / "TestData" / "2D" / "tiff" / "tomo" / "04_ct5s375_128lines"
 
         self.img = rd.read_image(str(self.data_path.parents[1] / "normalized_projection.tif"))

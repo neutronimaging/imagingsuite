@@ -12,7 +12,7 @@ class TestCentering:
         self.center = pm.TomoCenter()
 
         self.output_dirs  = Path(__file__).parent / "output" / "center"
-        self.output_dirs.mkdir(exist_ok=True)
+        self.output_dirs.mkdir(parents=True, exist_ok=True)
         self.data_path = Path(__file__).parents[4] / "TestData" / "2D" / "tiff" / "tomo" / "04_ct5s375_128lines"
 
         self.img0   = rd.read_image(str(self.data_path / "ct5s_00001.tif"))
