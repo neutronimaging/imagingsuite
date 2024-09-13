@@ -58,6 +58,7 @@ set(INC_FILES
   include/ReplaceUnderexposed.h
   include/tomocenter.h
   include/normalizeimage.h
+  include/LagCorrection.h
 )
 
 set(SRC_FILES
@@ -76,6 +77,7 @@ set(SRC_FILES
   src/ReplaceUnderexposed.cpp
   src/tomocenter.cpp  
   src/normalizeimage.cpp
+  src/LagCorrection.cpp
 )
 
 
