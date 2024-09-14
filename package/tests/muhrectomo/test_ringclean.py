@@ -1,18 +1,19 @@
 import pymuhrec as pm 
 import pytest
 import numpy as np
-import utils.readers as rd
-import os
+import pymuhrec.utils.readers as rd
+from pathlib import Path
 
 class TestRingClean:
 
     @pytest.fixture(autouse=True)
     def ringclean(self):
-        print("Setup")
-        self.path  = os.path.dirname(os.path.abspath(__file__))+'/'
-        os.makedirs(self.path + 'output/ringclean', exist_ok=True)
-        self.data_path = self.path + "../../../../../TestData/"
-        self.img = rd.read_image(self.data_path + "2D/tiff/woodsino_0200.tif")
+
+        self.output_dirs  = Path(__file__).parent / "output" / "ringclean"
+        self.output_dirs.mkdir(parents=True, exist_ok=True)
+        self.data_path = Path(__file__).parents[4] / "TestData" / "2D" / "tiff"
+        self.img = rd.read_image(str(self.data_path / "woodsino_0200.tif"))
+
         self.ringclean = pm.StripeFilter([self.img.shape[1],self.img.shape[0]],"daub7",4,0.05)
 
     def test_ringclean_fixture(self):
@@ -20,7 +21,7 @@ class TestRingClean:
         assert self.ringclean is not None
 
     def test_ringclean_basic(self):
-        rd.save_TIFF(self.path+"output/ringclean/ring_rawsino.tif",self.img)
+        rd.save_TIFF(str(self.output_dirs / "ring_rawsino.tif"),self.img)
 
         # checking configured values
         assert self.ringclean.dims() == [self.img.shape[1],self.img.shape[0]] # self.img.shape
@@ -35,12 +36,12 @@ class TestRingClean:
         assert sino is not None
         assert np.array_equal(sino.shape,self.img.shape)
 
-        rd.save_TIFF(self.path+"output/ringclean/ringcleaned.tif",sino)
+        rd.save_TIFF(str(self.output_dirs / "ringcleaned.tif"),sino)
         
     def test_multiple_sinograms(self):
-        imgs = rd.read_images(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ct5s_{0:05d}.tif", first=1, last=376)
-        dc   = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/dc_00001.tif")
-        ob   = rd.read_image(self.data_path + "2D/tiff/tomo/04_ct5s375_128lines/ob_00001.tif")
+        imgs = rd.read_images(str(self.data_path / "tomo" / "04_ct5s375_128lines" / "ct5s_{0:05d}.tif"), first=1, last=376)
+        dc   = rd.read_image(str(self.data_path / "tomo" / "04_ct5s375_128lines" / "dc_00001.tif"))
+        ob   = rd.read_image(str(self.data_path / "tomo" / "04_ct5s375_128lines" / "ob_00001.tif"))
         
         normalize = pm.NormalizeImage(True)
         normalize.setReferences(ob,dc)
@@ -54,8 +55,8 @@ class TestRingClean:
         assert sinos is not None
         
 
-        rd.save_TIFF(self.path+"output/ringclean/rc_{0:05d}.tif",sinos)
-        rd.save_TIFF(self.path+"output/ringclean/raw_sino_50.tif",imgs[:,50,:])
-        rd.save_TIFF(self.path+"output/ringclean/raw_sino_100.tif",imgs[:,100,:])
-        rd.save_TIFF(self.path+"output/ringclean/rcsino_50.tif",sinos[:,50,:])
-        rd.save_TIFF(self.path+"output/ringclean/rcsino_100.tif",sinos[:,100,:])
+        rd.save_TIFF(str(self.output_dirs / "rc_{0:05d}.tif"),sinos)
+        rd.save_TIFF(str(self.output_dirs / "raw_sino_50.tif"),imgs[:,50,:])
+        rd.save_TIFF(str(self.output_dirs / "raw_sino_100.tif"),imgs[:,100,:])
+        rd.save_TIFF(str(self.output_dirs / "rcsino_50.tif"),sinos[:,50,:])
+        rd.save_TIFF(str(self.output_dirs / "rcsino_100.tif"),sinos[:,100,:])
