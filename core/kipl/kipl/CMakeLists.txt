@@ -11,18 +11,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (APPLE)
 include_directories(
      ../../../core/kipl/kipl/include
-     # ../../../../ExternalDependencies/macos/include
     )
 endif()
 
 if (WIN32)
 include_directories(
     ../../../core/kipl/kipl/include
-    # ../../../core/modules/ModuleConfig/include
-    # ../../../../ExternalDependencies/windows/include
-    # ../../../../ExternalDependencies/windows/include/nexus
-    # ../../../../ExternalDependencies/windows/include/cfitsio
-    # ../../../external/include/
     )
 endif()
 
@@ -333,11 +327,6 @@ target_compile_definitions(${TARGET_NAME} PRIVATE KIPL_LIBRARY NOMINMAX)
 message(kipl - ${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
-    # target_link_directories(${TARGET_NAME} PUBLIC
-    # ../../../../ExternalDependencies/windows/lib
-    # ../../../../imagingsuite/external/lib64
-    # ../../../../imagingsuite/external/lib64/nexus
-    # )
     find_package(OpenMP)
 
 
@@ -347,19 +336,15 @@ if (WIN32)
         LibXml2::LibXml2
         TIFF::TIFF
         cfitsio::cfitsio
-        #libopenblas
+
         OpenBLAS::OpenBLAS
-        #libfftw3-3
-        #libfftw3f-3
         fftw::fftw
         armadillo::armadillo
         dirent::dirent
     )
 endif()
 
-# target_link_libraries(${PROJECT_NAME} 
-#     armadillo::armadillo
-#     )
+
 
 if (UNIX)
     find_package(OpenMP)
@@ -372,15 +357,7 @@ if (UNIX)
             cfitsio::cfitsio
             OpenBLAS::OpenBLAS
             armadillo::armadillo
-            #${TIFF_LIBRARIES}
-            #${LAPACK_LIBRARIES}
-            #${BLAS_LIBRARIES}
-            #${ARMADILLO_LIBRARIES}
-            #FFTW::Double
-            #FFTW::Float
             fftw::fftw
-            #${CFITSIO_LIBRARIES}
-            # ${NEXUS_LIBRARIES}
         )
     else()
         target_link_libraries(${TARGET_NAME}
@@ -390,15 +367,7 @@ if (UNIX)
                 cfitsio::cfitsio
                 OpenBLAS::OpenBLAS
                 armadillo::armadillo
-                #${TIFF_LIBRARIES}
-                #${LAPACK_LIBRARIES}
-                #${BLAS_LIBRARIES}
-                #${ARMADILLO_LIBRARIES}
-                #FFTW::Double
-                #FFTW::Float
                 fftw::fftw
-                #${CFITSIO_LIBRARIES}
-                # ${NEXUS_LIBRARIES}
             )
     endif()
 endif()

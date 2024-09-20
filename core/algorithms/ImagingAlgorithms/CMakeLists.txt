@@ -19,10 +19,6 @@ if (WIN32)
     include_directories(
         ../../../core/kipl/kipl/include
         ../../../core/modules/ModuleConfig/include
-        # ../../../external/include/
-        # ../../../../ExternalDependencies/windows/include
-        # ../../../../ExternalDependencies/windows/include/nexus
-        # ../../../../ExternalDependencies/windows/include/cfitsio
         )
 endif()
 
@@ -31,18 +27,13 @@ include_directories(
     /opt/local/include
     /opt/local/include/libxml2
     ../../../core/kipl/kipl/include
-    # ../../../external/src/linalg
-    ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    # ../../../external/mac/include/
-    # ../../../../ExternalDependencies/macos/include
-    # ../../../../ExternalDependencies/macos/include/nexus
-    # ../../../external/mac/include/hdf5
     )
 endif()
 
 set(INC_FILES
   include/StripeFilter.h  
+  include/StripeFilterManager.h
   include/SpotClean.h  
   include/PolynomialCorrection.h  
   include/ImagingException.h  
@@ -58,10 +49,13 @@ set(INC_FILES
   include/ReplaceUnderexposed.h
   include/tomocenter.h
   include/normalizeimage.h
+  include/sinogram.h
+
 )
 
 set(SRC_FILES
-  src/StripeFilter.cpp  
+  src/StripeFilter.cpp 
+  src/StripeFilterManager.cpp 
   src/SpotClean.cpp  
   src/PolynomialCorrection.cpp  
   src/ImagingException.cpp  
@@ -76,6 +70,7 @@ set(SRC_FILES
   src/ReplaceUnderexposed.cpp
   src/tomocenter.cpp  
   src/normalizeimage.cpp
+  src/sinogram.cpp
 )
 
 
