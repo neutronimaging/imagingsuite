@@ -15,20 +15,23 @@ StripeFilterManager::StripeFilterManager(   const std::vector<size_t> & dims,
                                             int scale, 
                                             float sigma) :
     logger("StripeFilterManager"),
-    pool(std::thread::hardware_concurrency()),
-    filters(pool.pool_size(), StripeFilter(dims, wname, scale, sigma))
+    pool(std::thread::hardware_concurrency())
 {
+    for (size_t i=0; i<pool.pool_size(); ++i)
+        filters.emplace_back(dims, wname, scale, sigma);
 }
 
-StripeFilterManager::StripeFilterManager(   const std::vector<int> &dims, 
-                                            const string &wname, 
-                                            int   scale, 
-                                            float sigma):
-    logger("StripeFilterManager"),
-    pool(std::thread::hardware_concurrency()),
-    filters(pool.pool_size(), StripeFilter(dims, wname, scale, sigma))
-{
-}
+// StripeFilterManager::StripeFilterManager(   const std::vector<int> &dims, 
+//                                             const string &wname, 
+//                                             int   scale, 
+//                                             float sigma):
+//     logger("StripeFilterManager"),
+//     pool(std::thread::hardware_concurrency()),
+//     filters(pool.pool_size())
+// {
+//     for (auto & flt: filters)
+//         flt=StripeFilter(dims, wname, scale, sigma);
+// }
 
 StripeFilterManager::~StripeFilterManager()
 {}

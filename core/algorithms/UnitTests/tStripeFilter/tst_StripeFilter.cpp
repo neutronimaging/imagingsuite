@@ -13,9 +13,13 @@
 #include <io/io_fits.h>
 #include <io/io_tiff.h>
 #include <io/io_csv.h>
+#include <imagereader.h>
+#include <normalizeimage.h>
+#include <ImagingException.h>
 
 #include <StripeFilter.h>
-#include <ImagingException.h>
+#include <StripeFilterManager.h>
+#include <sinogram.h>
 
 class TestStripeFilter : public QObject
 {
@@ -25,13 +29,23 @@ public:
     TestStripeFilter();
     
 private Q_SLOTS:
-    void StripeFilterParameters();
-    void StripeFilterProcessing2D();
-
+    void testExtractSinogram();
+    void testInsertSinogram();
+    void testStripeFilterParameters();
+    void testStripeFilterProcessing2D();
+    void testManagerInitialization();
+    // void testManagerInitialization();
+    // void testManagerParameters();
+    // void testManagerSingleThreadProcessing();
+    // void testManagerMultiThreadProcessing();
+    // void testManagerBoundaryConditions();
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
     std::string dataPath;
+    kipl::base::TImage<float,3> proj;
+    kipl::base::TImage<float,2> ob;
+    kipl::base::TImage<float,2> dc;
 };
 
 TestStripeFilter::TestStripeFilter() 
@@ -50,9 +64,75 @@ TestStripeFilter::TestStripeFilter()
     // std::string fname = dataPath+"2D/tiff/spots/balls.tif";
     // kipl::strings::filenames::CheckPathSlashes(fname,false);
     // kipl::io::ReadTIFF(holes,fname);
+    ImageReader reader;
+
+    proj = reader.Read(dataPath+"2D/tiff/tomo/04_ct5s375_128lines/ct5s_#####.tif",
+                        1,376,1,
+                        kipl::base::eImageFlip::ImageFlipNone,
+                        kipl::base::eImageRotate::ImageRotateNone,
+                        1.0f,
+                        {});
+
+    ob  = reader.Read(dataPath+"2D/tiff/tomo/04_ct5s375_128lines/ob_00001.tif");
+    dc  = reader.Read(dataPath+"2D/tiff/tomo/04_ct5s375_128lines/dc_00001.tif");
+
+    ImagingAlgorithms::NormalizeImage norm(true);
+
+    norm.setReferences(ob,dc);
+    norm.process(proj);
 }
 
-void TestStripeFilter::StripeFilterParameters()
+void TestStripeFilter::testExtractSinogram()
+{
+    kipl::base::TImage<float,3> img({10,11,12});
+
+    std::iota(img.GetDataPtr(),img.GetDataPtr()+img.Size(),0);
+
+    kipl::base::TImage<float,2> sino;
+
+    for (size_t y=0; y<img.Size(1); ++y)
+    {
+        ImagingAlgorithms::ExtractSinogram(img,sino,y);
+
+        QCOMPARE(sino.Size(),img.Size(0)*img.Size(2));
+        QCOMPARE(sino.Size(0),img.Size(0));
+        QCOMPARE(sino.Size(1),img.Size(2));
+
+        for (size_t z=0; z<img.Size(2); ++z)
+        {
+            for (size_t x=0; x<img.Size(0); ++x)
+            {
+                QCOMPARE(sino(x,z),img(x,y,z));
+            }
+        }
+    }
+}
+
+void TestStripeFilter::testInsertSinogram()
+{
+    kipl::base::TImage<float,3> img({10,11,12});
+
+    img = 0.0f;
+
+    kipl::base::TImage<float,2> sino({img.Size(0),img.Size(1)});
+    for (size_t y=0; y<img.Size(1); ++y)
+    {
+        std::iota(sino.GetDataPtr(),sino.GetDataPtr()+sino.Size(),y);
+
+        ImagingAlgorithms::InsertSinogram(sino,img,y);
+
+        for (size_t z=0; z<img.Size(2); ++z)
+        {
+            for (size_t x=0; x<img.Size(0); ++x)
+            {
+                QCOMPARE(sino(x,z),img(x,y,z));
+            }
+        }
+    }
+
+}
+
+void TestStripeFilter::testStripeFilterParameters()
 {
    kipl::base::TImage<float,2> sino;
 #ifdef DEBUG
@@ -93,7 +173,7 @@ void TestStripeFilter::StripeFilterParameters()
 
 }
 
-void TestStripeFilter::StripeFilterProcessing2D()
+void TestStripeFilter::testStripeFilterProcessing2D()
 {
     kipl::base::TImage<float,2> sino;
 
@@ -106,6 +186,50 @@ void TestStripeFilter::StripeFilterProcessing2D()
 
     sf.process(sino);
 }
+
+void TestStripeFilter::testManagerInitialization() 
+{
+    std::vector<size_t> dims = {100, 101}; // Example image dimensions
+    ImagingAlgorithms::StripeFilterManager manager(dims, "daub7", 2, 0.001f);
+    auto dims2 = manager.dims();
+    // QCOMPARE(dims2.size(), dims.size()); // Replace expected_size with the actual expected size
+    // QCOMPARE(dims2[0],dims[0]);
+    // QCOMPARE(dims2[1],dims[1]);
+    // QCOMPARE(manager.waveletName(), "daub7"); // Replace expected_waveletName with the actual expected wavelet name
+    // QCOMPARE(manager.decompositionLevels(), 2); // Replace expected_decompositionLevels with the actual expected decomposition levels
+    // QCOMPARE(manager.sigma(), 0.001f); // Replace expected_sigma with the actual expected sigma value
+    QCOMPARE(manager.numberOfThreads(), std::thread::hardware_concurrency()); // Replace expected_numberOfThreads with the actual expected number of threads
+}
+
+// void TestStripeFilter::testSingleThreadProcessing() {
+//     StripeFilterManager manager;
+//     kipl::base::TImage<float, 2> img({100, 100}); // Example image dimensions
+//     size_t nStart = 0;
+//     size_t nEnd = 1;
+//     size_t nBlockSize = 1;
+//     size_t nRemainder = 0;
+//     auto op = [](auto& sino) { /* Example operation */ };
+
+//     manager.processImage(img, nStart, nEnd, nBlockSize, nRemainder, op);
+
+//     // Verify the processing results
+//     QVERIFY(/* condition to verify the result */);
+// }
+
+// void TestStripeFilter::testMultiThreadProcessing() {
+//     StripeFilterManager manager;
+//     kipl::base::TImage<float, 2> img({100, 100}); // Example image dimensions
+//     size_t nStart = 0;
+//     size_t nEnd = 10;
+//     size_t nBlockSize = 5;
+//     size_t nRemainder = 0;
+//     auto op = [](auto& sino) { /* Example operation */ };
+
+//     manager.processImage(img, nStart, nEnd, nBlockSize, nRemainder, op);
+
+//     // Verify the processing results
+//     QVERIFY(/* condition to verify the result */);
+// }
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"

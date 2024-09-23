@@ -19,6 +19,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../../kipl/kipl/include
+    ../../../modules/ReaderConfig
     ../../ImagingAlgorithms/include
 )
 
@@ -32,6 +33,7 @@ target_link_libraries(${TARGET_NAME}
         Qt6::Test
         kipl
         ImagingAlgorithms
+        ReaderConfig
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

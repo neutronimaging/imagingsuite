@@ -1,10 +1,14 @@
+//<LICENCE>
 
 #include <algorithm>
 #include <base/timage.h>
+#include "include/sinogram.h"
 
 namespace ImagingAlgorithms 
 {
-int ExtractSinogram(kipl::base::TImage<float,3> &projections, kipl::base::TImage<float,2> &sinogram, size_t idx)
+int ExtractSinogram(const kipl::base::TImage<float,3> &projections, 
+					      kipl::base::TImage<float,2> &sinogram, 
+					const size_t idx)
 {
     std::vector<size_t> dims = { projections.Size(0),
                                  projections.Size(2)};
@@ -19,7 +23,9 @@ int ExtractSinogram(kipl::base::TImage<float,3> &projections, kipl::base::TImage
 	return 0;
 }
 
-int InsertSinogram(kipl::base::TImage<float,2> &sinogram, kipl::base::TImage<float,3> &projections, size_t idx)
+int InsertSinogram( const kipl::base::TImage<float,2> &sinogram, 
+					      kipl::base::TImage<float,3> &projections, 
+					const size_t idx)
 {
     auto dims=sinogram.dims();
 

@@ -32,7 +32,7 @@ public:
     /// \param wname Name of the wavelet base
     /// \param scale number of decomosition levels
     /// \param sigma High pass cut-off frequency
-    StripeFilterManager(const std::vector<int> &dims, const string &wname, int scale, float sigma);
+    // StripeFilterManager(const std::vector<int> &dims, const string &wname, int scale, float sigma);
 
     virtual ~StripeFilterManager();
 
