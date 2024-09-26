@@ -55,9 +55,11 @@ public:
     /// \brief Applies the stripe filter to a 3D image. The operation is inplace.
     /// \param img the image to process. The result will be stored into the same image
     /// \param op Selects filter operation
-    void process(kipl::base::TImage<float,3> &img, eStripeFilterOperation op=VerticalComponentFFT);
+    void process(kipl::base::TImage<float,3> &img, eStripeFilterOperation op=VerticalComponentFFT, bool multiThreaded=true);
 
 protected:
+    void processMultiThreaded(kipl::base::TImage<float,3> &img, eStripeFilterOperation op=VerticalComponentFFT);
+    void processSingleThreaded(kipl::base::TImage<float,3> &img, eStripeFilterOperation op=VerticalComponentFFT);
     kipl::utilities::ThreadPool pool; ///< The thread pool for parallel processing
     std::vector<ImagingAlgorithms::StripeFilter *> filters; ///< The filter instances for each thread                              
 };

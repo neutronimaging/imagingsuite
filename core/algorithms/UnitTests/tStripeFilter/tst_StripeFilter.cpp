@@ -41,6 +41,8 @@ private Q_SLOTS:
     // void testManagerParameters();
     // void testManagerSingleThreadProcessing();
     void testManagerMultiThreadProcessing();
+    void benchmarkManagerProcessingSingleThreaded();
+    void benchmarkManagerProcessingMultiThreaded();
     // void testManagerBoundaryConditions();
 private:
     void MorphSpotClean_ListAlgorithm();
@@ -258,10 +260,37 @@ void TestStripeFilter::testManagerMultiThreadProcessing()
 
     ImageWriter writer;
     writer.write(img, resultPath+"orig_####.tif", kipl::base::Float32 );
-    manager.process(img, ImagingAlgorithms::VerticalComponentFFT);
+    manager.process(img, ImagingAlgorithms::VerticalComponentFFT,true);
     writer.write(img, resultPath+"flt_####.tif", kipl::base::Float32);
 }
 
+void TestStripeFilter::benchmarkManagerProcessingMultiThreaded() 
+{
+    std::vector<size_t> dims = {proj.Size(0), proj.Size(2)}; // Example image dimensions
+    ImagingAlgorithms::StripeFilterManager manager(dims, "daub7", 2, 0.001f);
+
+    kipl::base::TImage<float, 3> img;
+    img.Clone(proj); // Example image
+    
+    QBENCHMARK {
+        manager.process(img, ImagingAlgorithms::VerticalComponentFFT,true);
+    }
+
+}
+
+void TestStripeFilter::benchmarkManagerProcessingSingleThreaded() 
+{
+    std::vector<size_t> dims = {proj.Size(0), proj.Size(2)}; // Example image dimensions
+    ImagingAlgorithms::StripeFilterManager manager(dims, "daub7", 2, 0.001f);
+
+    kipl::base::TImage<float, 3> img;
+    img.Clone(proj); // Example image
+    
+    QBENCHMARK {
+        manager.process(img, ImagingAlgorithms::VerticalComponentFFT,false);
+    }
+
+}
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 QTEST_APPLESS_MAIN(TestStripeFilter)

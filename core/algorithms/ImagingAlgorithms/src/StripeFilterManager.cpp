@@ -93,7 +93,19 @@ void StripeFilterManager::process(  kipl::base::TImage<float,2> &img,
     filters[0]->process(img, op);
 }
 
+
 void StripeFilterManager::process(  kipl::base::TImage<float,3> &img, 
+                                    eStripeFilterOperation       op,
+                                    bool                         multiThreaded)
+{
+    if (multiThreaded)
+        processMultiThreaded(img, op);
+    else
+        processSingleThreaded(img, op);
+}
+
+
+void StripeFilterManager::processMultiThreaded(  kipl::base::TImage<float,3> &img, 
                                     eStripeFilterOperation       op)
 {
     if (filters.size() < pool.pool_size())
@@ -110,14 +122,14 @@ void StripeFilterManager::process(  kipl::base::TImage<float,3> &img,
     size_t nStart = 0;
     size_t nEnd   = nBlockSize + (nRemainder-- > 0 ? 1 : 0);
 
-    std::ostringstream msg;
-    msg << "Processing parameters start:"<<nStart
-    <<", nEnd:"<<nEnd
-    <<", size:"<<img.Size(1)
-    <<", nSinograms:"<<nSinograms
-    <<", nBlockSize:"<<nBlockSize
-    <<", nRemainder:"<<nRemainder;
-    logger.message(msg.str());
+    // std::ostringstream msg;
+    // msg << "Processing parameters start:"<<nStart
+    // <<", nEnd:"<<nEnd
+    // <<", size:"<<img.Size(1)
+    // <<", nSinograms:"<<nSinograms
+    // <<", nBlockSize:"<<nBlockSize
+    // <<", nRemainder:"<<nRemainder;
+    // logger.message(msg.str());
 
     for (size_t i = 0; i<pool.pool_size(); i++)
     {
@@ -150,5 +162,22 @@ void StripeFilterManager::process(  kipl::base::TImage<float,3> &img,
     pool.barrier();
 }
 
+void StripeFilterManager::processSingleThreaded(  kipl::base::TImage<float,3> &img, 
+                                                  eStripeFilterOperation       op)
+{
+    auto  &filter = *filters[0];
+    for (size_t i = 0; i<img.Size(1); i++)
+    {
+        std::vector<size_t> dims = { static_cast<size_t>(filter.dims()[0]),
+                                         static_cast<size_t>(filter.dims()[1])};
+        kipl::base::TImage<float,2> sino(dims);
+
+        ExtractSinogram(img, sino, i);
+        filter.checkDims(sino.dims());
+        filter.process(sino,op);
+        InsertSinogram(sino,img,i);
+            
+    }
 
 }
+} // namespace ImagingAlgorithms
