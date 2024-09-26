@@ -41,6 +41,7 @@ TImage<T,N>::TImage(const TImage<T,N> &img) :
 }
 
 template<typename T, size_t N>
+// template<typename U, typename>
 TImage<T,N>::TImage(const std::vector<size_t> & dims) :
     m_Dims(dims.begin(),dims.begin()+N),
     m_NData(_ComputeNElements(m_Dims)),
@@ -48,6 +49,12 @@ TImage<T,N>::TImage(const std::vector<size_t> & dims) :
 {
     std::fill_n(m_buffer.GetDataPtr(), m_NData,0);
 }
+
+// template<typename T, size_t N>
+// // template<typename U, typename>
+// TImage<T,N>::TImage(const std::vector<int> & dims) :
+// 	TImage(std::vector<size_t>(dims.begin(),dims.end()))
+// {}
 
 template<typename T, size_t N>
 TImage<T,N>::TImage(T *pBuffer, const std::vector<size_t> & dims) :

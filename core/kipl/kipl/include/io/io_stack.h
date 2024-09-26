@@ -34,7 +34,8 @@ int ReadImageStack(kipl::base::TImage<ImgType,3> & img,
 				  const size_t start,
 				  const size_t n,
 				  const size_t nstep=1,
-                  size_t const * const crop=nullptr)
+                //   size_t const * const crop=nullptr)
+                  const std::vector<size_t> &crop={})
 {
 	kipl::base::TImage<ImgType,2> tmp; 
 	std::string filename,ext;
@@ -53,7 +54,7 @@ int ReadImageStack(kipl::base::TImage<ImgType,3> & img,
 			}
 
 			if (i==0) {
-				if (crop) {
+				if (crop.size()==4) {
 					size_t dims[]={crop[2]-crop[0],crop[3]-crop[1],n};
 					img.Resize(dims);
 				}

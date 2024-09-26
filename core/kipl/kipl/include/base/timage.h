@@ -27,7 +27,13 @@ public:
 	TImage(const TImage<T,N> &img);
 	/// \brief Constructor to specify the image size
 	/// \param dims Array containing the dimensions of the image. The first index in the dimension array refers to the fast index increment in the image.
-    TImage(const std::vector<size_t> & dims);
+    // template<typename U = size_t, typename = typename std::enable_if<std::is_same<U, size_t>::value>::type>
+	TImage(const std::vector<size_t> & dims);
+
+	// /// \brief Constructor to specify the image size
+	// /// \param dims Array containing the dimensions of the image. The first index in the dimension array refers to the fast index increment in the image.
+    // template<typename U = int, typename = typename std::enable_if<std::is_same<U, int>::value>::type>
+	// TImage(const std::vector<int> & dims);
 
     /// \brief C'tor to initialize image to use an external buffer
     /// \param pBuffer pointer to the externa buffer

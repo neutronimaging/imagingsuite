@@ -59,7 +59,7 @@ public:
 
 protected:
     kipl::utilities::ThreadPool pool; ///< The thread pool for parallel processing
-    std::vector<ImagingAlgorithms::StripeFilter> filters; ///< The filter instances for each thread                              
+    std::vector<ImagingAlgorithms::StripeFilter *> filters; ///< The filter instances for each thread                              
 };
 }
 

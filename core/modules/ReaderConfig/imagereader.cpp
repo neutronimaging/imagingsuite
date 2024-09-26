@@ -207,7 +207,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
     }
     std::vector<size_t> local_crop;
     std::vector<size_t> pCrop;
-    if (! nCrop.empty())
+    if (nCrop.size()==4)
     {
         local_crop = nCrop;
 

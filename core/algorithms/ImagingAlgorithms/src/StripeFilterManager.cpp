@@ -15,10 +15,11 @@ StripeFilterManager::StripeFilterManager(   const std::vector<size_t> & dims,
                                             int scale, 
                                             float sigma) :
     logger("StripeFilterManager"),
-    pool(std::thread::hardware_concurrency())
+    pool(std::thread::hardware_concurrency()),
+    filters(pool.pool_size(), nullptr)
 {
     for (size_t i=0; i<pool.pool_size(); ++i)
-        filters.emplace_back(dims, wname, scale, sigma);
+        filters[i] = new StripeFilter(dims, wname, scale, sigma);
 }
 
 // StripeFilterManager::StripeFilterManager(   const std::vector<int> &dims, 
@@ -34,38 +35,44 @@ StripeFilterManager::StripeFilterManager(   const std::vector<size_t> & dims,
 // }
 
 StripeFilterManager::~StripeFilterManager()
-{}
+{
+    for (auto &f : filters)
+        delete f;
+}
 
 std::vector<int> StripeFilterManager::dims()
 {
-    return filters[0].dims();
+    if (filters[0] == nullptr)
+        throw ImagingException("The filter vector is not initialized", __FILE__, __LINE__);
+
+    return filters[0]->dims();
 }
 
 std::string StripeFilterManager::waveletName()
 {
-    return filters[0].waveletName();
+    return filters[0]->waveletName();
 }
 
 int StripeFilterManager::decompositionLevels()
 {
-    return filters[0].decompositionLevels();
+    return filters[0]->decompositionLevels();
 }
 
 float StripeFilterManager::sigma()
 {
-    return filters[0].sigma();
+    return filters[0]->sigma();
 }
 
 std::vector<float> StripeFilterManager::filterWindow(int level)
 {
-    return filters[0].filterWindow(level);
+    return filters[0]->filterWindow(level);
 }
     
 void StripeFilterManager::configure(const std::vector<int> &dims, const std::string &wname, int scale, float sigma)
 {
     for (auto &f : filters) 
     {
-        f.configure(dims, wname, scale, sigma);
+        f->configure(dims, wname, scale, sigma);
     }
 
 }
@@ -83,7 +90,7 @@ int  StripeFilterManager::numberOfThreads()
 void StripeFilterManager::process(  kipl::base::TImage<float,2> &img, 
                                     eStripeFilterOperation       op)
 {
-    filters[0].process(img, op);
+    filters[0]->process(img, op);
 }
 
 void StripeFilterManager::process(  kipl::base::TImage<float,3> &img, 
@@ -96,25 +103,43 @@ void StripeFilterManager::process(  kipl::base::TImage<float,3> &img,
         throw ImagingException(msg.str(), __FILE__, __LINE__);
     }  
 
-    size_t nSinograms = img.Size(2); 
+    size_t nSinograms = img.Size(1); 
     size_t nBlockSize = nSinograms / pool.pool_size();
     int nRemainder    = nSinograms % pool.pool_size();
 
     size_t nStart = 0;
     size_t nEnd   = nBlockSize + (nRemainder-- > 0 ? 1 : 0);
 
+    std::ostringstream msg;
+    msg << "Processing parameters start:"<<nStart
+    <<", nEnd:"<<nEnd
+    <<", size:"<<img.Size(1)
+    <<", nSinograms:"<<nSinograms
+    <<", nBlockSize:"<<nBlockSize
+    <<", nRemainder:"<<nRemainder;
+    logger.message(msg.str());
+
     for (size_t i = 0; i<pool.pool_size(); i++)
     {
         pool.enqueue([this, &img, nStart, nEnd, i, op]() 
         {
-            std::vector<size_t> dims(filters[i].dims().begin(),filters[i].dims().end());
+            std::vector<size_t> dims = { static_cast<size_t>(this->filters[i]->dims()[0]),
+                                         static_cast<size_t>(this->filters[i]->dims()[1])};
             kipl::base::TImage<float,2> sino(dims);
 
+            if ((nStart > img.Size(1)) || (nEnd > img.Size(1)))
+            {
+                std::ostringstream msg;
+                msg << "The sinogram index is out of bounds. start:"<<nStart
+                    <<", nEnd:"<<nEnd
+                    <<", size:"<<img.Size(1);
+                throw ImagingException(msg.str(), __FILE__, __LINE__);
+            }
             for (size_t j = nStart; j < nEnd; j++)
             {    
                 ExtractSinogram(img, sino, j);
-                filters[i].checkDims(sino.dims());
-                filters[i].process(sino,op);
+                this->filters[i]->checkDims(sino.dims());
+                this->filters[i]->process(sino,op);
                 InsertSinogram(sino,img,j);
             }
         });

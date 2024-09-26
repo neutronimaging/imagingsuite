@@ -19,13 +19,11 @@ ImageWriter::~ImageWriter()
     logger.message("Writer ended");
 }
 
-void ImageWriter::write(kipl::base::TImage<float,2> &img, std::string fname,kipl::base::eDataType dt)
+void ImageWriter::write(kipl::base::TImage<float,2> &img, const std::string &fname,kipl::base::eDataType dt)
 {
 
     readers::eExtensionTypes exttype=readers::GetFileExtensionType(fname);
     std::ostringstream msg;
-    msg<<"File "<<fname<<" has ext "<<exttype;
-    logger.message(msg.str());
     try {
         switch (exttype) {
             case readers::ExtensionDMP :
@@ -33,14 +31,12 @@ void ImageWriter::write(kipl::base::TImage<float,2> &img, std::string fname,kipl
             case readers::ExtensionRAW : throw ReaderException("Saving raw data is not supported",__FILE__,__LINE__);
                     break;
             case readers::ExtensionFITS:
-                logger.message(msg.str());
                 kipl::io::WriteFITS(img,fname.c_str());
                 msg.str("");
                 msg<<"Wrote image "<<img<<" as "<<fname<<" using WriteFITS ";
                 logger(logger.LogDebug,msg.str());
                 break;
             case readers::ExtensionTIFF:
-                logger.message(msg.str());
                 kipl::io::WriteTIFF(img,fname.c_str(),dt);
                 msg.str("");
                 msg<<"Wrote image "<<img<<" as "<<fname<<" using WriteTIFF ";
@@ -72,5 +68,20 @@ void ImageWriter::write(kipl::base::TImage<float,2> &img, std::string fname,kipl
         msg.str("");
         msg<<"ImageWriter failed to save the image (Unknown exception):";
         throw ReaderException(msg.str(),__FILE__,__LINE__);
+    }
+}
+
+
+void ImageWriter::write(kipl::base::TImage<float,3> &img, const std::string &fmask, kipl::base::eDataType dt)
+{
+    kipl::base::TImage<float,2> slice(img.dims());
+    for (size_t i=0; i<img.Size(2); ++i)
+    {
+        std::string filename;
+        std::string ext;
+        kipl::strings::filenames::MakeFileName(fmask,i,filename,ext,'#','0');
+
+        copy_n(img.GetLinePtr(0,i),slice.Size(),slice.GetDataPtr());
+        write(slice,filename,dt);
     }
 }
