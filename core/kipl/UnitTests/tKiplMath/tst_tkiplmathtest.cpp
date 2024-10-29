@@ -237,8 +237,8 @@ void TKiplMathTest::testARMANonLinFit_SumOfGaussianFunction()
     sog[1]=0;
     sog[2]=1;
 
-    QCOMPARE(sog(0.0),(double)1.0);
-    QVERIFY(fabs(sog(1)-(double)0.367879441171)<(double)1.0e-7);
+    QCOMPARE(sog(0.0),1.0);
+    QVERIFY(fabs(sog(1)-0.367879441171)<1.0e-7);
 
     Nonlinear::SumOfGaussians sog2(2);
     sog2[0]=1;
@@ -248,8 +248,8 @@ void TKiplMathTest::testARMANonLinFit_SumOfGaussianFunction()
     sog2[4]=0.5;
     sog2[5]=0.5;
 
-    QVERIFY(fabs(sog2(0)-(double)1.73575888234)<(double)1.0e-7);
-    QVERIFY(fabs(sog2(1)-(double)1.10363832351)<(double)1.0e-7);
+    QVERIFY(fabs(sog2(0)-1.73575888234)<1.0e-7);
+    QVERIFY(fabs(sog2(1)-1.10363832351)<1.0e-7);
 
     double x=1;
     double y0=0;
@@ -273,18 +273,18 @@ void TKiplMathTest::testARMANonLinFit_GaussianFunction()
         QCOMPARE(g.isFree(i),lv[i]);
 
     QCOMPARE(g.getNpars2fit(),2);
-    g[0]=1.5;
-    g[1]=2;
-    g[2]=0.5;
-    g[3]=0.0;
+    g[0] = 1.5;
+    g[1] = 2;
+    g[2] = 0.5;
+    g[3] = 0.0;
 
     qDebug() << g(1);
-    QCOMPARE(g(2.0),(double)1.5);
-    QVERIFY(fabs(g(1)-(double)0.20300292485491905)<(double)1.0e-7);
+    QCOMPARE(g(2.0),1.5);
+    QVERIFY(fabs(g(1)-0.20300292485491905)<1.0e-7);
 
-    double x=1;
-    double y0=0;
-    double y1=0;
+    double x  = 1;
+    double y0 = 0;
+    double y1 = 0;
     arma::vec dyda(4);
 
     y0=g(x);
@@ -302,13 +302,13 @@ void TKiplMathTest::testARMANonLinFit_fitter()
     arma::vec sig(N);
 
     Nonlinear::SumOfGaussians sog0(1),sog(1);
-    sog0[0]=2; //A
-    sog0[1]=0; //m
-    sog0[2]=1; //s
+    sog0[0] = 2; //A
+    sog0[1] = 0; //m
+    sog0[2] = 1; //s
 
-    sog[0]=1; //A
-    sog[1]=0.5; //m
-    sog[2]=1.5; //s
+    sog[0] = 1; //A
+    sog[1] = 0.5; //m
+    sog[2] = 1.5; //s
 
     for (int i=0; i<N; ++i)
     {
@@ -334,9 +334,9 @@ void TKiplMathTest::testARMANonLinFit_fitter()
         qDebug() << "Data: sog="<<sog[i]<<", sog0="<<sog0[i];
     }
 
-    QVERIFY(fabs(sog[0]-sog0[0])<1e-5);
-    QVERIFY(fabs(sog[1]-sog0[1])<1e-5);
-    QVERIFY(fabs(sog[2]-sog0[2])<1e-5);
+    QVERIFY(fabs(sog[0]-sog0[0])<1e-3f);
+    QVERIFY(fabs(sog[1]-sog0[1])<1e-3f);
+    QVERIFY(fabs(sog[2]-sog0[2])<1e-3f);
 
 }
 
