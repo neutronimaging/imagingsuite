@@ -8,10 +8,10 @@
 
 namespace kipl { namespace math {
 
-size_t Poisson(float lambda, float N)
+size_t Poisson(float lambda, float /*N*/)
 {
     const long double scale=1.0L/static_cast<long double>(RAND_MAX);
-    const long double L=exp(-lambda);
+    //const long double L=exp(-lambda);
 
 
     long double ll=static_cast<long double>(lambda);
@@ -30,13 +30,13 @@ size_t Poisson(float lambda, float N)
     return --k;
 }
 
-void PoissonNoise(float *pData, size_t N, float lambda, float k)
+void PoissonNoise(float * /*pData*/, size_t /*N*/, float /*lambda*/, float /*k*/)
 {
 
 
 }
 
-void AddPoissonNoise(float *pData, size_t N, float lambda, float k)
+void AddPoissonNoise(float * /*pData*/, size_t /*N*/, float /*lambda*/, float /*k*/)
 {
 
 }
