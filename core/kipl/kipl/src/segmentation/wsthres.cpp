@@ -32,8 +32,9 @@ int Threshold_Watershed(std::vector<size_t> &hist, double height, size_t medianl
 	kipl::STLmorphology::MinImpose(normHist, localMin, medHist);
 
 	std::vector<int> ws;
+#ifdef USE_WATERSHED
 	kipl::STLmorphology::watershed(medHist,ws);
-
+#endif
     std::vector<int>::iterator wsIt;
 	int i;
 	thvec.clear();
