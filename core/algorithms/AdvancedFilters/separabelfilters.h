@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __SEPARABLE_FILTERS_H_
 #define __SEPARABLE_FILTERS_H_

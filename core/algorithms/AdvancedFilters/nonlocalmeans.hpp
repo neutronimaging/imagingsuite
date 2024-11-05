@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef NONLOCALMEANS_HPP
 #define NONLOCALMEANS_HPP

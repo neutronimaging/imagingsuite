@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef DIRANALYZER_H
 #define DIRANALYZER_H

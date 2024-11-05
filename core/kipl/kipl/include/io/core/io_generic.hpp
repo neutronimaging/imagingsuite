@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IO_GENERIC_HPP
 #define IO_GENERIC_HPP

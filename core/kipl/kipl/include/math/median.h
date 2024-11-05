@@ -1,4 +1,4 @@
-//<LICENCE>
+
 #include <vector>
 
 #ifndef MEDIAN_H_

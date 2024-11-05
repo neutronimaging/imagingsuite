@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <cstddef>
 #ifdef _OPENMP

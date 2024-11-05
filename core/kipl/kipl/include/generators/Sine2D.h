@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef SINE2D_H_
 #define SINE2D_H_

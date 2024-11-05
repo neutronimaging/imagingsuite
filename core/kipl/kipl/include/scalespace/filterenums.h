@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __FILTERENUMS_H
 #define __FILTERENUMS_H

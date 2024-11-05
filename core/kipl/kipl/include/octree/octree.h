@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef OCTREE_H_
 #define OCTREE_H_

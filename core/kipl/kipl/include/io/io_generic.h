@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IO_GENERIC_H
 #define IO_GENERIC_H

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 #include "advancedfilters_global.h"
 #include <cmath>
 #include <fstream>

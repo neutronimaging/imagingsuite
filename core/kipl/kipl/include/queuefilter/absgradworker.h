@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __ABSGRADWORKER_H
 #define __ABSGRADWORKER_H

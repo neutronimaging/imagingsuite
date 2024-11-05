@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __MORPHQUANTIFY_H
 #define __MORPHQUANTIFY_H

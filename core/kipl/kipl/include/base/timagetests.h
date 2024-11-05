@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef TIMAGETESTS_H_
 #define TIMAGETESTS_H_

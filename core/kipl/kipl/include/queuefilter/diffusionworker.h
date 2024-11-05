@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __DIFFUSIONWORKER_H
 #define __DIFFUSIONWORKER_H

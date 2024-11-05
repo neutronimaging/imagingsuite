@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __FILTERBASE_HPP_
 #define __FILTERBASE_HPP_

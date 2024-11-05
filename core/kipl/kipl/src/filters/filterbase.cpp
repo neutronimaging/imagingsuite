@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include "../../include/filters/filterbase.h"
 

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __WATERSHEDSTL_H
 #define __WATERSHEDSTL_H

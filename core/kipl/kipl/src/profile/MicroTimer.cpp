@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <iostream>
 #ifdef _MSC_VER

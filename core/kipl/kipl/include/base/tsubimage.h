@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef TSUBIMAGE_H_
 #define TSUBIMAGE_H_

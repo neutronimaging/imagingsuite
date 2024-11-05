@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IMAGECAST_HPP
 #define IMAGECAST_HPP

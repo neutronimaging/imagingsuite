@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <cstring>
 #include <complex>

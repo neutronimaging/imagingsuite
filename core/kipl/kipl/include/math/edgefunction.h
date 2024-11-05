@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef EDGEFUNCTION_H
 #define EDGEFUNCTION_H

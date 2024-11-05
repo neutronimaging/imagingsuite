@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __RANKFILTERWORKER_H
 #define __RANKFILTERWORKER_H

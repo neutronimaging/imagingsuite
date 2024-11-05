@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IMAGEINFO_H
 #define IMAGEINFO_H

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __MORPHDIST_H
 #define __MORPHDIST_H

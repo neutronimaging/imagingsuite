@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <sstream>
 #include <list>

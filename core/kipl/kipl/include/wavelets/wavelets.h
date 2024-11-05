@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef WAVELETS_H
 #define WAVELETS_H

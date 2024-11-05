@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __GEODESICSTL_H
 #define __GEODESICSTL_H

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __GABORFILTER_H
 #define __GABORFILTER_H

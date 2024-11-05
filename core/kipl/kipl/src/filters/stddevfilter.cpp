@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include "../../include/math/mathfunctions.h"
 #include "../../include/filters/filterbase.h"

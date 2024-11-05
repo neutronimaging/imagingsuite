@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef KIPLENUMS_H
 #define KIPLENUMS_H
