@@ -327,11 +327,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         return 1;
     }
 
-<<<<<<< HEAD
-    int Gaussian::Hessian(double x, arma::mat & /*hes*/)
-=======
     int Gaussian::Hessian(double /*x*/, arma::mat & /*hes*/)
->>>>>>> 24b421bf (Fixed the override warning.)
     {
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
