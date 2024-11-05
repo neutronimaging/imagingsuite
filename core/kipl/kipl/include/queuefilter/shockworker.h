@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __SHOCKWORKER_H
 #define __SHOCKWORKER_H

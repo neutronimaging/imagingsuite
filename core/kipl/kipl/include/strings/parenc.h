@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __PARENC_H
 #define __PARENC_H

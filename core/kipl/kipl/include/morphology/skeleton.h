@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __SKELETON_H
 #define __SKELETON_H

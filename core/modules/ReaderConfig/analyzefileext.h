@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef ANALYZEFILEEXT_H
 #define ANALYZEFILEEXT_H

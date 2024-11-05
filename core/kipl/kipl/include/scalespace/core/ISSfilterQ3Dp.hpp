@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef ISSFILTERQ3DP_HPP_
 #define ISSFILTERQ3DP_HPP_

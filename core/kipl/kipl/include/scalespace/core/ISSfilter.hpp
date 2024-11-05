@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef ISSFILTER_HPP_
 #define ISSFILTER_HPP_

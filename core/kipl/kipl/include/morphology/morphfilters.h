@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef MORPHFILTERS_H
 #define MORPHFILTERS_H

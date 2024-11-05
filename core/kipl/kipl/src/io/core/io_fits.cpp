@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <exception>
 #include <sstream>

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __WSTHRES_H
 #define __WSTHRES_H

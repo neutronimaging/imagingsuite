@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef LUTBASE_H_
 #define LUTBASE_H_

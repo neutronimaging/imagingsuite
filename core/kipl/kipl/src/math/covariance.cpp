@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <string>
 #include <iostream>

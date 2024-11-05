@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __MODIFIERWORKER_H
 #define __MODIFIERWORKER_H

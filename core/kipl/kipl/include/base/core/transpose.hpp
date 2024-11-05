@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef TRANSPOSE_HPP
 #define TRANSPOSE_HPP

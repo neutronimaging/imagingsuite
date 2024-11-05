@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef MPITIMER_H
 #define MPITIMER_H

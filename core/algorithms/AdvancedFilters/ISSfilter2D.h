@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __ISSFILTER2D_H_
 #define __ISSFILTER2D_H_

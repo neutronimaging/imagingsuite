@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef _PALAGYI_SKELETON_
 #define _PALAGYI_SKELETON_

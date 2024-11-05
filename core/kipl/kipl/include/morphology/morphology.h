@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __MORPHOLOGY_H
 #define __MORPHOLOGY_H

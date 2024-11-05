@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef _COMPLEXIMAGE_H_
 #define _COMPLEXIMAGE_H_

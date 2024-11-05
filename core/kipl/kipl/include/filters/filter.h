@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef CONVOLUTION_H_
 #define CONVOLUTION_H_

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef TROTATE_H_
 #define TROTATE_H_

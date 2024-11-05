@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IMAGESAMPLERS_HPP
 #define IMAGESAMPLERS_HPP

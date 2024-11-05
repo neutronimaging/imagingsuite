@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef STRING2ARRAY_H_
 #define STRING2ARRAY_H_

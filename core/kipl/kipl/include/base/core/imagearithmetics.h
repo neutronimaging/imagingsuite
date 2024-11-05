@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IMAGEARITHMETICS_H_
 #define IMAGEARITHMETICS_H_

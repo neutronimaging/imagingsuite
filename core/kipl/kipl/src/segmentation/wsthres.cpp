@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <vector>
 #include <iostream>

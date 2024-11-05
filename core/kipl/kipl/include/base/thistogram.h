@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef THISTOGRAM_H
 #define THISTOGRAM_H

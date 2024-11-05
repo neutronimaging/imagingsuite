@@ -43,3 +43,7 @@ _deps
 moc_*
 *.moc
 CMakeUserPresets.json
+*~
+*.swp
+*.swo
+*.bak

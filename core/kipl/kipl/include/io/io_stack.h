@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IOSTACK_H_
 #define IOSTACK_H_

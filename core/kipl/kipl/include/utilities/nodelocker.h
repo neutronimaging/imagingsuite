@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __NODELOCKER_H
 #define __NODELOCKER_H

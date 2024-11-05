@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __DRAWING_H
 #define __DRAWING_H

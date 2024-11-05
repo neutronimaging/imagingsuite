@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef FILTER_HPP_
 #define FILTER_HPP_

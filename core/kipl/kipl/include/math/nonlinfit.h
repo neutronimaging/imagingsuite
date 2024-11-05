@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef NONLINFIT_H
 #define NONLINFIT_H

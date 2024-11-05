@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef KIPL_STATISTICS_H__
 #define KIPL_STATISTICS_H__

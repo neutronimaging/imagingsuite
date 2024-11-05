@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __ANISODIFF_H
 #define __ANISODIFF_H

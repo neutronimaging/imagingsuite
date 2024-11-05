@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef _SignalGenerator_H_
 #define _SignalGenerator_H_

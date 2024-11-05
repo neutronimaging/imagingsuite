@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __NUMFUNC_H
 #define __NUMFUNC_H

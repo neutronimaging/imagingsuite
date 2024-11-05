@@ -1,4 +1,4 @@
-//<LICENCE>
+
 #include <armadillo>
 #include "../../include/segmentation/multivariateclassifyerbase.h"
 

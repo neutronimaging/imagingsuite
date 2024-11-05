@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef KIPLEXCEPTION_H
 #define KIPLEXCEPTION_H

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef TIMEDATE_H
 #define TIMEDATE_H

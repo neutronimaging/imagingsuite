@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __LAMBDAEST_H
 #define __LAMBDAEST_H

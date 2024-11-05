@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __ORIENTEDUPDATER_H
 #define __ORIENTEDUPDATER_H

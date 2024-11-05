@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef PIXELITERATOR_H
 #define PIXELITERATOR_H

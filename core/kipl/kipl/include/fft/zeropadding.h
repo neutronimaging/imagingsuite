@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef ZEROPADDING_H_
 #define ZEROPADDING_H_

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __ARRAYBUFFER_H
 #define __ARRAYBUFFER_H

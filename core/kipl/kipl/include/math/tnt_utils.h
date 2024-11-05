@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __TNT_UTILS_H
 #define __TNT_UTILS_H

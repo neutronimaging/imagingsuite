@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef _MEDIANFILTER_H_
 #define _MEDIANFILTER_H_

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include "../../include/octree/octree.h"
 

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __IMAGETHRES_H
 #define __IMAGETHRES_H

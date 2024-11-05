@@ -1,4 +1,4 @@
-//<LICENCE>
+
 #ifndef ISSFILTERQ3D_H
 #define ISSFILTERQ3D_H
 #include <iostream>

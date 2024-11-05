@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef MISCSTRING_H_
 #define MISCSTRING_H_

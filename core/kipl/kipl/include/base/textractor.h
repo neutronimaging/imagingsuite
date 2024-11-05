@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef TEXTRACTOR_H_
 #define TEXTRACTOR_H_

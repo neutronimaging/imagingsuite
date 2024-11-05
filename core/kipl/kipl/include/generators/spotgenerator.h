@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef SPOTGENERATOR_H
 #define SPOTGENERATOR_H

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __MAKEFNAME_H
 #define __MAKEFNAME_H

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IMAGEOPERATORS_H_
 #define IMAGEOPERATORS_H_

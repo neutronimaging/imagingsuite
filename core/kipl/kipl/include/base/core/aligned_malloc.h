@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef ALIGNED_MALLOC_H_
 #define ALIGNED_MALLOC_H_

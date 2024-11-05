@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef SHAREDBUFFER_H_
 #define SHAREDBUFFER_H_

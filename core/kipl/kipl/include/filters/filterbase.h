@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __FILTERBASE_H
 #define __FILTERBASE_H

@@ -1,3 +1,3 @@
-//<LICENCE>
+
 
 // empty file

@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef STDDEVFILTER_H
 #define STDDEVFILTER_H

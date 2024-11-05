@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __SHOCK_FILTER_H
 #define __SHOCK_FILTER_H

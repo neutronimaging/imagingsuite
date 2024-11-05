@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __PCA_HPP
 #define __PCA_HPP

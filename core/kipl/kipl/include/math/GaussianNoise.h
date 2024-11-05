@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef BOXMULLER_H_
 #define BOXMULLER_H_

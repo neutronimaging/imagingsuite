@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef TPERMUTEIMAGE_H
 #define TPERMUTEIMAGE_H

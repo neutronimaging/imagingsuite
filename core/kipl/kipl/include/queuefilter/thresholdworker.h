@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __THRESHOLDWORKER_H
 #define __THRESHOLDWORKER_H

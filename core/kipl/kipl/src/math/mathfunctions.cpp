@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <cmath>
 #include <cstdlib>

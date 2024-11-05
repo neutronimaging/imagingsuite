@@ -1,4 +1,4 @@
-//<LICENCE>
+
 #ifndef MORPHDIST_HPP_
 #define MORPHDIST_HPP_
 

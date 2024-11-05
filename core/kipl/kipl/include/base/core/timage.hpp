@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef TIMAGE_HPP_
 #define TIMAGE_HPP_

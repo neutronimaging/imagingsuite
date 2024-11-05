@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef TEXTRACTOR_HPP_
 #define TEXTRACTOR_HPP_

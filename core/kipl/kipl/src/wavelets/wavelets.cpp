@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 //
 //#include "../../include/base/KiplException.h"

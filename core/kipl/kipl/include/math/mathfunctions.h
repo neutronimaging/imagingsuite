@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef _MATHFUNCTIONS_H_
 #define _MATHFUNCTIONS_H_
