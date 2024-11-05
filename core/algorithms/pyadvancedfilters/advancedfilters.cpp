@@ -22,8 +22,9 @@ void bindISSfilter(py::module &m)
                  bool saveiterations=false,
                  std::string itpath="")
     {
+#if 0 
         auto r = x.unchecked<3>(); // x must have ndim = 3; can be non-writeable
-
+#endif
         py::buffer_info buf1 = x.request();
 
         std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[2]),

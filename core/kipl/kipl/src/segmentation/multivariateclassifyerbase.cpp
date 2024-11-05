@@ -6,7 +6,7 @@
 namespace kipl {
 
 namespace segmentation {
-ClassDescriptor::ClassDescriptor(std::string _name)
+ClassDescriptor::ClassDescriptor(std::string /*_name*/)
 {
 
 }
@@ -71,7 +71,7 @@ double ClassDescriptor::EuclideanDistance(ClassDescriptor &cd)
     return sqrt(EuclideanDistance2(cd));
 }
 
-double ClassDescriptor::EuclideanDistance2(ClassDescriptor &cd)
+double ClassDescriptor::EuclideanDistance2(ClassDescriptor &/*cd*/)
 {
     double val=0.0;
     double sum=0.0;

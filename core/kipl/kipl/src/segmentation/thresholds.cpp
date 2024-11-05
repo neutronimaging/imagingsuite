@@ -134,8 +134,9 @@ int Threshold_Rosin(size_t const * const /*hist*/, const TailType tail, const si
 	vector<long>::iterator maxIt, first,last,thIt, it;
 	int max,min;
 	maxIt=max_element(h.begin(),h.end());
+#if 0
 	int d=distance(h.begin(),maxIt);
-	
+#endif
 	if (tail==tail_left) {
 		last=maxIt;
 		
