@@ -84,7 +84,7 @@ double ClassDescriptor::EuclideanDistance2(ClassDescriptor &/*cd*/)
     return sum;
 }
 
-double ClassDescriptor::MahalanobisDistance(ClassDescriptor &cd)
+double ClassDescriptor::MahalanobisDistance(ClassDescriptor &/*cd*/)
 {
     throw kipl::base::KiplException("MahalanobisDistance is not implemented",__FILE__,__LINE__);
 
