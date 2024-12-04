@@ -24,6 +24,7 @@ private slots:
     void test_FillTaskList();
     void test_Processor();
     void test_ProcessorSingle();
+    void test_Transform();
 
 
 private:
@@ -121,6 +122,21 @@ void TestThreadPool::test_ProcessorSingle()
     for (size_t i=0; i<data.size(); ++i)
         QCOMPARE(result[i],std::floor(sqrt(data[i])*1000.0f));
 }
+
+void TestThreadPool::test_Transform()
+{
+    kipl::utilities::ThreadPool pool(std::thread::hardware_concurrency());
+
+    std::vector<float> data(1000000);
+    std::iota(data.begin(),data.end(),0);
+
+    pool.transform(data.data(),data.size(),[](float &val){
+        val = std::floor(sqrt(val)*1000.0f);
+    });
+
+    for (size_t i=0; i<data.size(); ++i)
+        QCOMPARE(data[i],std::floor(sqrt(i)*1000.0f));
+}   
 
 QTEST_APPLESS_MAIN(TestThreadPool)
 
