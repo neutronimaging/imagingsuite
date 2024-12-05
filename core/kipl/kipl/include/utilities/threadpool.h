@@ -68,10 +68,13 @@ public:
     /// @param f The lambda containing the transformation
     /// @param block_size The size of the block to be processed in one go
     template<class T, class F>
-    void transform(T* data, size_t size, F &&f, size_t block_size = 1) {
+    void transform(T* data, size_t size, F &&f, size_t block_size = 1024) {
         for (size_t i = 0; i < size; i += block_size) {
-            enqueue([=] {
+            // std::cout << "Processed block " << i << " to " << std::min(i + block_size, size) << std::endl;
+            this->enqueue([&, i] {
+                // std::cout << "Task processed block " << i << " to " << std::min(i + block_size, size) << std::endl;
                 for (size_t j = i; j < std::min(i + block_size, size); ++j) {
+                    auto val = data[j];
                     f(data[j]);
                 }
             });

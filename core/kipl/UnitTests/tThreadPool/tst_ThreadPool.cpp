@@ -29,7 +29,7 @@ private slots:
 
 private:
     std::string dataPath;
-
+    size_t Ndata;
 };
 
 TestThreadPool::TestThreadPool()
@@ -38,6 +38,7 @@ TestThreadPool::TestThreadPool()
     dataPath = dataPath + "/../../../../../TestData/";
     // kipl::strings::filenames::CheckPathSlashes(dataPath,true);
 
+    Ndata = 100000;
 
 }
 
@@ -90,7 +91,7 @@ void TestThreadPool::test_Processor()
     size_t N=std::thread::hardware_concurrency();
     DummyProcessor processor(N);
 
-    std::vector<float> data(1000000*N);
+    std::vector<float> data(Ndata*N);
     std::vector<float> result;
     std::iota(data.begin(),data.end(),0);
 
@@ -109,7 +110,7 @@ void TestThreadPool::test_ProcessorSingle()
     size_t N=std::thread::hardware_concurrency();
     DummyProcessor processor(1);
 
-    std::vector<float> data(1000000*N);
+    std::vector<float> data(Ndata*N);
     std::vector<float> result;
     std::iota(data.begin(),data.end(),0);
 
@@ -125,17 +126,23 @@ void TestThreadPool::test_ProcessorSingle()
 
 void TestThreadPool::test_Transform()
 {
-    kipl::utilities::ThreadPool pool(std::thread::hardware_concurrency());
+    size_t N=std::thread::hardware_concurrency();
+    kipl::utilities::ThreadPool pool(N);
 
-    std::vector<float> data(1000000);
-    std::iota(data.begin(),data.end(),0);
+    std::vector<float> data(Ndata*N);
 
-    pool.transform(data.data(),data.size(),[](float &val){
-        val = std::floor(sqrt(val)*1000.0f);
-    });
+    QBENCHMARK {
+        std::iota(data.begin(),data.end(),0);
 
-    for (size_t i=0; i<data.size(); ++i)
-        QCOMPARE(data[i],std::floor(sqrt(i)*1000.0f));
+        pool.transform(data.data(),data.size(),[](float &val){
+            val = std::floor(sqrt(val)*1000.0f);
+        },8192UL);
+    }
+
+    for (size_t i=0; i<data.size(); ++i) {
+        std::string errorMsg = "Error in data[" + std::to_string(i) + "]=" + std::to_string(data[i]) + " != " + std::to_string(std::floor(sqrt(static_cast<float>(i)) * 1000.0f));
+        QVERIFY2(data[i] == std::floor(sqrt(static_cast<float>(i)) * 1000.0f), errorMsg.c_str());
+    }
 }   
 
 QTEST_APPLESS_MAIN(TestThreadPool)
