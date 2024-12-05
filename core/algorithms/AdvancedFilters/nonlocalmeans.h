@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef NONLOCALMEANS_H
 #define NONLOCALMEANS_H

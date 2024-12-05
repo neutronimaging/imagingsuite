@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef LINEARALGEBRA_H_
 #define LINEARALGEBRA_H_

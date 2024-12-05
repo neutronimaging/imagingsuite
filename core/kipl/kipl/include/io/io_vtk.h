@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IO_VTK_H_
 #define IO_VTK_H_

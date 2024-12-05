@@ -1,4 +1,4 @@
-//<LICENCE>
+
 #include <map>
 #include <utility>
 #include "../../include/stltools/stlvecmath.h"

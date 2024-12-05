@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include "stdafx.h"
 #undef max

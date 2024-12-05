@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __INDEX2COORD_H	
 #define __INDEX2COORD_H	

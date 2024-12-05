@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include "advancedfilterexception.h"
 #include "filterenums.h"

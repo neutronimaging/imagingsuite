@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __SUMS_H
 #define __SUMS_H

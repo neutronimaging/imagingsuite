@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef MAPUPDATER_HPP
 #define MAPUPDATER_HPP

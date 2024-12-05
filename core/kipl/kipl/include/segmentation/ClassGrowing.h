@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef CLASSGROWING_H_
 #define CLASSGROWING_H_

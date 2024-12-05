@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef IO_FITS_H_
 #define IO_FITS_H_

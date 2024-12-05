@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __FACTORYWORKER_H
 #define __FACTORYWORKER_H

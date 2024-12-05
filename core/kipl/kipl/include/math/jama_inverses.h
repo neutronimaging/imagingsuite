@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __JAMA_INVERSES_H
 #define __JAMA_INVERSES_H

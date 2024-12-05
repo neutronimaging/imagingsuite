@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __sortalg_h
 #define __sortalg_h

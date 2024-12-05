@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifdef __aarch64__
     #pragma clang diagnostic push

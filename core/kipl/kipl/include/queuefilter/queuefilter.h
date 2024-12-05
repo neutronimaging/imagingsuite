@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __QUEUEFITLER_H
 #define __QUEUEFITLER_H

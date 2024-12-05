@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __KERNELBASE_H_
 #define __KERNELBASE_H_

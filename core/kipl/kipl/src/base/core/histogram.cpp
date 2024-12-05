@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include "../../../include/kipl_global.h"
 

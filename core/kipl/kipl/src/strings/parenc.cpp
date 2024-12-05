@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <cstdio>
 #include <cstring>

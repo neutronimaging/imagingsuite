@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <ctype.h>
 #include <string>

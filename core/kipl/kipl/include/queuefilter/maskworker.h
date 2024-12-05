@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __MASKWORKER_H
 #define __MASKWORKER_H

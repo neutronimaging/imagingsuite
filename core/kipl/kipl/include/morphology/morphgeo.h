@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef MORPHGEO_H
 #define MORPHGEO_H

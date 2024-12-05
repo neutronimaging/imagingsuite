@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef LUTCOLLECTION_H_
 #define LUTCOLLECTION_H_

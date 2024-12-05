@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef COVARIANCE_H
 #define COVARIANCE_H

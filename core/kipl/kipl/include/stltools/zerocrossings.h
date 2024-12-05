@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __ZEROCROSSINGS_H
 #define __ZEROCROSSINGS_H

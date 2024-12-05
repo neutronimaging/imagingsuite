@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include "../../include/math/linfit.h"
 #include <armadillo>

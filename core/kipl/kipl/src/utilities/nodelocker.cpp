@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <fstream>
 #include <cstdlib>

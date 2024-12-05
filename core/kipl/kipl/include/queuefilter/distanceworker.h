@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef __DISTANCEWORKER_H
 #define __DISTANCEWORKER_H

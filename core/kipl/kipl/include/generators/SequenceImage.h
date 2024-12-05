@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #ifndef SEQUENCEIMAGE_H_
 #define SEQUENCEIMAGE_H_

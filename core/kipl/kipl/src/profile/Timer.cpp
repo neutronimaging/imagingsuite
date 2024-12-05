@@ -1,4 +1,4 @@
-//<LICENCE>
+
 
 #include <iostream>
 #include <time.h>
