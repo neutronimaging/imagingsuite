@@ -167,6 +167,14 @@ void tKIPL_IOTest::testReadNexus()
 
 }
 
-QTEST_APPLESS_MAIN(tKIPL_IOTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(tKIPL_IOTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(tKIPL_IOTest)
+#endif
+
 
 #include "tst_kipl_io.moc"

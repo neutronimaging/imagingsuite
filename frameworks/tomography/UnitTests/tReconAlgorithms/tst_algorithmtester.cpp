@@ -91,6 +91,15 @@ void AlgorithmTesterTest::testLinearFwd()
 
   //  QVERIFY2(true, "Failure");
 }
-QTEST_APPLESS_MAIN(AlgorithmTesterTest)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(AlgorithmTesterTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(AlgorithmTesterTest)
+#endif
+
 
 #include "tst_algorithmtester.moc"

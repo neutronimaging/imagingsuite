@@ -161,6 +161,14 @@ void tedgefunction::test_case1()
     std::cout << "testing case 1 empty" << std::endl;
 }
 
-QTEST_APPLESS_MAIN(tedgefunction)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(tedgefunction)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(tedgefunction)
+#endif
+
 
 #include "tst_tedgefunction.moc"

@@ -253,6 +253,14 @@ void MathFunctionsTest::testFactorial()
     QCOMPARE(kipl::math::factorial(10), 3628800);
 }
 
-QTEST_APPLESS_MAIN(MathFunctionsTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(MathFunctionsTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(MathFunctionsTest)
+#endif
+
 
 #include "tst_MathFunctions.moc"

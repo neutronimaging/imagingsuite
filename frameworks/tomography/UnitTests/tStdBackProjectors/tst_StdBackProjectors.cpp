@@ -58,6 +58,14 @@ void TStdBackProjectors::test_NNMultiProjBP_Initialize()
 
 }
 
-QTEST_APPLESS_MAIN(TStdBackProjectors)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TStdBackProjectors)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TStdBackProjectors)
+#endif
+
 
 #include "tst_StdBackProjectors.moc"

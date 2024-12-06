@@ -618,6 +618,14 @@ void ReconConfigTests::testConfigAssignment()
     QCOMPARE(newconfig.ProjectionInfo.eDirection,         config.ProjectionInfo.eDirection);
 }
 
-QTEST_APPLESS_MAIN(ReconConfigTests)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(ReconConfigTests)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(ReconConfigTests)
+#endif
+
 
 #include "tst_ReconConfig.moc"

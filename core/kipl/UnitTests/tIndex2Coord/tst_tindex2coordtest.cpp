@@ -181,8 +181,15 @@ void TIndex2CoordTest::testIndex2Coord3D()
 
 }
 
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TIndex2CoordTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TIndex2CoordTest)
+#endif
 
 
-QTEST_APPLESS_MAIN(TIndex2CoordTest)
 
 #include "tst_tindex2coordtest.moc"
