@@ -705,6 +705,8 @@ void TestImagingAlgorithms::ProjSeriesCorr_Correction()
     #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
     QTEST_APPLESS_MAIN(TestImagingAlgorithms)
     #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TestImagingAlgorithms)
 #endif
 
 #include "tst_testImagingAlgorithms.moc"

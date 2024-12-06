@@ -468,7 +468,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
     logger.verbose("backproj loop");
 #pragma omp parallel for // not sure about this firstprivate
-    for (size_t k = 0; k < volume.Size(2); ++k)
+    for (ptrdiff_t k = 0; k < static_cast<ptrdiff_t>(volume.Size(2)); ++k)
     {
         //            int long p = k * volume.Size(1) * volume.Size(0);
         for (size_t j = 0; j < volume.Size(1); ++j)
