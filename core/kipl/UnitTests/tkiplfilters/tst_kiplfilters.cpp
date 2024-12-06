@@ -162,6 +162,14 @@ void KiplFilters::benchmark_MedianFilterParallel()
     }
 }
 
-QTEST_APPLESS_MAIN(KiplFilters)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(KiplFilters)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(KiplFilters)
+#endif
+
 
 #include "tst_kiplfilters.moc"

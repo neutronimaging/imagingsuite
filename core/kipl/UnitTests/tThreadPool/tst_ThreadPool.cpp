@@ -122,6 +122,14 @@ void TestThreadPool::test_ProcessorSingle()
         QCOMPARE(result[i],std::floor(sqrt(data[i])*1000.0f));
 }
 
-QTEST_APPLESS_MAIN(TestThreadPool)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TestThreadPool)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TestThreadPool)
+#endif
+
 
 #include "tst_ThreadPool.moc"

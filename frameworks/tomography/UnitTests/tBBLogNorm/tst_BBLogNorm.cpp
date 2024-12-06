@@ -30,6 +30,14 @@ void TBBLogNorm::test_parameters()
     QSKIP("Placeholder for future development of the BB plugin.");
 }
 
-QTEST_APPLESS_MAIN(TBBLogNorm)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TBBLogNorm)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TBBLogNorm)
+#endif
+
 
 #include "tst_BBLogNorm.moc"
