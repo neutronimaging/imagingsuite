@@ -317,11 +317,11 @@ size_t FDKbp_single::reconstruct(kipl::base::TImage<float,2> &proj, float angles
             //project_volume_onto_image_reference (proj, proj_matrix, nProj);
             break;
         case eFDKbp_single_c:   
-            logger.message("Using FDK back-projector");
+            // logger.message("Using FDK back-projector");
             project_volume_onto_image_c (proj, proj_matrix, nProj);
             break;
         case eFDKbp_single_c2:  
-            logger.message("Using revised FDK back-projector");
+            // logger.message("Using revised FDK back-projector");
             project_volume_onto_image_c2 (proj, proj_matrix, nProj);
             break;
     }
@@ -574,13 +574,11 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
     float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
     float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
 
-    float origin[3];
-
-    origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing.x-spacing.x/2;
-    origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing.y-spacing.y/2;
-    origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]))*spacing.z-spacing.z/2;
-
-    float radius = static_cast<float>(volume.Size(1))*mConfig.MatrixInfo.fVoxelSize[0]/2;
+    kipl::base::coords3Df origin(-(U-mConfig.ProjectionInfo.fCenter)*spacing.x-spacing.x/2,
+                                  -(U-mConfig.ProjectionInfo.fCenter)*spacing.y-spacing.y/2,
+                                  -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]))*spacing.z-spacing.z/2);
+    
+    float radius = static_cast<float>(volume.Size(1))*mConfig.MatrixInfo.fVoxelSize[0]/2.0f;
 
     size_t CBCT_roi[] ={0UL,0UL,0UL,0UL};
     CBCT_roi[0] = mConfig.ProjectionInfo.roi[0];
@@ -664,7 +662,7 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
 //#pragma omp parallel for
     for (size_t i = 0; i < volume.Size(0); ++i)
     {
-        float x = static_cast<float> (origin[0] + i * spacing.x);
+        float x = static_cast<float> (origin.x + i * spacing.x);
         xip[i].x = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
         xip[i].y = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
         xip[i].z = x *  proj_matrix[8];
@@ -673,7 +671,7 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
 //#pragma omp parallel for
     for (size_t j = 0; j < volume.Size(1); ++j)
     {
-        float y = static_cast<float> (origin[1] + j * spacing.y);
+        float y = static_cast<float> (origin.y + j * spacing.y);
         yip[j].x = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
         yip[j].y = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
         yip[j].z = y * proj_matrix[9];
@@ -684,7 +682,7 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
 //#pragma omp parallel for
     for (size_t k = 0; k < volume.Size(2); ++k)
     {
-        float z = static_cast<float> (origin[2] + k * spacing.z);
+        float z = static_cast<float> (origin.z + k * spacing.z);
 
         // not so elegant solution but it seems to work POSSIBLY ANCHE QST DA ADATTARE
         if (mConfig.ProjectionInfo.bCorrectTilt)
@@ -712,11 +710,11 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
         //            int long p = k * volume.Size(1) * volume.Size(0);
         for (size_t j = 0; j < volume.Size(1); ++j)
         {
-            float acc2[3];
+            kipl::base::coords3Df acc2;
             
-            acc2[0] = zip[k].x + yip[j].x;
-            acc2[1] = zip[k].y + yip[j].y;
-            acc2[2] = zip[k].z + yip[j].z;
+            acc2.x = zip[k].x + yip[j].x;
+            acc2.y = zip[k].y + yip[j].y;
+            acc2.z = zip[k].z + yip[j].z;
             
             int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
             
@@ -724,10 +722,10 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
             {
                 float dw;
 
-                dw = 1.0f / (acc2[2]+xip[i].z);
+                dw = 1.0f / (acc2.z+xip[i].z);
 
                 img[p+i] +=
-                        dw * dw * get_pixel_value_c (cbi, dw*(acc2[1]+xip[i].y), dw*(acc2[0]+xip[i].x));
+                        dw * dw * get_pixel_value_c (cbi, dw*(acc2.y+xip[i].y), dw*(acc2.x+xip[i].x));
             }
         }
     }
@@ -842,13 +840,12 @@ void FDKbp_single::project_volume_onto_image_reference (
 
 
 // get_pixel_value_c seems to be no faster than get_pixel_value_b, despite having two fewer compares.
-float FDKbp_single::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, float r, float c)
+inline float FDKbp_single::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, float r, float c)
 {
     r += 0.5f;
-    if ((r < 0.0f) || (r >= static_cast<float>(cbi.Size(1)))) return 0.0f;
-    
     c += 0.5f;
-    if ((c < 0.0f) || (c >= static_cast<float>(cbi.Size(0)))) return 0.0f;
+    if ((r < 0.0f) || (r >= static_cast<float>(cbi.Size(1))) ||
+        (c < 0.0f) || (c >= static_cast<float>(cbi.Size(0)))) return 0.0f;
     
     size_t rr = static_cast<size_t>(r);
     size_t cc = static_cast<size_t>(c);
