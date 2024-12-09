@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <sstream>
+#include <map>
 #include <string>
 #include <iostream>
 #include <cmath>
@@ -44,7 +45,8 @@
 
 
 FDKbp_single::FDKbp_single(kipl::interactors::InteractionBase *interactor) :
-    FdkReconBase("muhrec","FDKbp_single",BackProjectorModuleBase::MatrixXYZ,interactor)
+    FdkReconBase("muhrec","FDKbp_single",BackProjectorModuleBase::MatrixXYZ,interactor),
+    m_algorithm(eFDKbp_single_c)
 {
     publications.push_back(Publication(std::vector<std::string>({"L. A. Feldkamp","L. C. Davis","J. W. Kress"}),
                                        "Practical cone-beam algorithm",
@@ -72,9 +74,31 @@ FDKbp_single::~FDKbp_single()
 
 }
 
+
+int FDKbp_single::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+{
+    mConfig=config;
+
+    FdkReconBase::Configure(config,parameters);
+
+    string2enum(GetStringParameter(parameters,"Algorithm"),m_algorithm);
+
+    return 0;
+}
+
 int FDKbp_single::Initialize()
 {
     return 0;
+}
+
+std::map<std::string, std::string> FDKbp_single::GetParameters()
+{
+    std::map<std::string, std::string> parameters;
+    parameters = FdkReconBase::GetParameters();
+
+    parameters["Algorithm"]=enum2string(m_algorithm);
+
+    return parameters;
 }
 
 void FDKbp_single::multiplyMatrix(float *mat1, float *mat2, float *result, int rows, int columns, int columns1)
@@ -284,7 +308,23 @@ size_t FDKbp_single::reconstruct(kipl::base::TImage<float,2> &proj, float angles
 
     //       DEFAULT FDK BACK PROJECTOR:
 //    project_volume_onto_image_c (proj, &proj_matrix[0], nProj);
-    project_volume_onto_image_c (proj, proj_matrix, nProj);
+
+    switch (m_algorithm)
+    {
+        case eFDKbp_single_reference:
+            logger.warning("Reference FDK back-projector is not implemented");
+            //project_volume_onto_image_reference (proj, proj_matrix, nProj);
+            break;
+        case eFDKbp_single_c:   
+            logger.message("Using FDK back-projector");
+            project_volume_onto_image_c (proj, proj_matrix, nProj);
+            break;
+        case eFDKbp_single_c2:  
+            logger.message("Using revised FDK back-projector");
+            project_volume_onto_image_c2 (proj, proj_matrix, nProj);
+            break;
+    }
+    // project_volume_onto_image_c (proj, proj_matrix, nProj);
     return 0L;
 }
 
@@ -293,6 +333,230 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
     float *proj_matrix, size_t /*nProj*/)
 {
     logger.debug("Started FDK back-projector");
+
+    // long int i, j, k;
+
+    float* img = cbct_volume.GetDataPtr();
+
+    float sad_sid_2;
+    float scale = mConfig.ProjectionInfo.fSDD/mConfig.ProjectionInfo.fSOD; // compensate for resolution that is already included in weights
+
+    // spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
+    // magnification = SDD/SOD
+
+    float spacing[3]; // detector pixel spacing divided by the magnification
+    spacing[0] = mConfig.MatrixInfo.fVoxelSize[0];
+    spacing[1] = mConfig.MatrixInfo.fVoxelSize[1];
+    spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
+
+
+    float origin[3];
+    float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
+    float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
+
+    origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
+    origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
+    origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]))*spacing[2]-spacing[2]/2;
+
+    float radius = static_cast<float>(volume.Size(1))*mConfig.MatrixInfo.fVoxelSize[0]/2;
+
+    size_t CBCT_roi[] ={0UL,0UL,0UL,0UL};
+    CBCT_roi[0] = mConfig.ProjectionInfo.roi[0];
+    CBCT_roi[2] = mConfig.ProjectionInfo.roi[2];
+
+    if (   mConfig.ProjectionInfo.fpPoint[1] >= static_cast<float>(mConfig.ProjectionInfo.roi[1])
+        && mConfig.ProjectionInfo.fpPoint[1] >= static_cast<float>(mConfig.ProjectionInfo.roi[3]))
+    {
+        CBCT_roi[3] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[3]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD+radius))/mConfig.ProjectionInfo.fResolution[0]);
+        float value = mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0];
+        if(value<=0)
+            CBCT_roi[1] = 0;
+        else
+            CBCT_roi[1] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0]);
+    }
+
+    if (   mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[1])
+        && mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[3]))
+    {
+        float value = mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[1])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD+radius))/mConfig.ProjectionInfo.fResolution[0];
+        CBCT_roi[1] = static_cast<size_t>(value);
+
+        float value2 = mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[3])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0];
+        if (value2>=mConfig.ProjectionInfo.projection_roi[3])
+            CBCT_roi[3] = mConfig.ProjectionInfo.projection_roi[3];
+        else
+            CBCT_roi[3] = static_cast<float>(value2);
+    }
+
+    if (mConfig.ProjectionInfo.fpPoint[1]>=static_cast<float>(mConfig.ProjectionInfo.roi[1]) && mConfig.ProjectionInfo.fpPoint[1]<static_cast<float>(mConfig.ProjectionInfo.roi[3]))
+    {
+        float value = mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0];
+        if(value<=0)
+            CBCT_roi[1] = 0;
+        else
+            CBCT_roi[1] = static_cast<size_t>(mConfig.ProjectionInfo.fpPoint[1]-((mConfig.ProjectionInfo.fpPoint[1]-static_cast<float>(mConfig.ProjectionInfo.roi[1]))*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0]);
+
+        float value2 = mConfig.ProjectionInfo.fpPoint[1]+((static_cast<float>(mConfig.ProjectionInfo.roi[3])-mConfig.ProjectionInfo.fpPoint[1])*mConfig.MatrixInfo.fVoxelSize[0]*mConfig.ProjectionInfo.fSDD/(mConfig.ProjectionInfo.fSOD-radius))/mConfig.ProjectionInfo.fResolution[0];
+        if (value2>=mConfig.ProjectionInfo.projection_roi[3])
+            CBCT_roi[3] = mConfig.ProjectionInfo.projection_roi[3];
+        else
+            CBCT_roi[3] = static_cast<float>(value2);
+    }
+
+//    if ((8<CBCT_roi[1]) && (CBCT_roi[1]!=0))
+    if (8<CBCT_roi[1])
+        CBCT_roi[1] -=8;
+    if ((CBCT_roi[3]+8)<=mConfig.ProjectionInfo.projection_roi[3])
+        CBCT_roi[3] +=8;
+
+
+
+
+    float ic[2] = {mConfig.ProjectionInfo.fpPoint[0]-CBCT_roi[0], mConfig.ProjectionInfo.fpPoint[1]-CBCT_roi[1]};
+
+
+    // Rescale image (destructive rescaling)
+    //        sad_sid_2 = (pmat->sad * pmat->sad) / (pmat->sid * pmat->sid);
+    //        sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD) / (nProj*0.1f);
+    sad_sid_2 = (mConfig.ProjectionInfo.fSOD * mConfig.ProjectionInfo.fSOD) / (mConfig.ProjectionInfo.fSDD * mConfig.ProjectionInfo.fSDD);
+
+
+    //        for (i = 0; i < cbi->dim[0]*cbi->dim[1]; i++) {
+    //        cbi->img[i] *= sad_sid_2;	// Speedup trick re: Kachelsreiss
+    //        cbi->img[i] *= scale;		// User scaling
+    //        }
+
+//#pragma omp parallel for
+    for (size_t i=0; i<cbi.Size(0)*cbi.Size(1); ++i)
+    {
+        cbi[i] *=sad_sid_2; 	// Speedup trick re: Kachelsreiss
+        cbi[i] *=scale;         // User scaling
+    }
+
+    //        ramp_filter(cbi);
+
+    float *xip = new float[3*volume.Size(0)];
+    float *yip = new float[3*volume.Size(1)];
+    float *zip = new float[3*volume.Size(2)];
+
+    //        /* Precompute partial projections here */
+    //        for (i = 0; i < vol->dim[0]; i++) {
+    //        float x = (float) (vol->offset[0] + i * vol->spacing[0]);
+    //        xip[i*3+0] = x * (pmat->matrix[0] + pmat->ic[0] * pmat->matrix[8]);
+    //        xip[i*3+1] = x * (pmat->matrix[4] + pmat->ic[1] * pmat->matrix[8]);
+    //        xip[i*3+2] = x * pmat->matrix[8];
+    //        }
+    //        for (j = 0; j < vol->dim[1]; j++) {
+    //        float y = (float) (vol->offset[1] + j * vol->spacing[1]);
+    //        yip[j*3+0] = y * (pmat->matrix[1] + pmat->ic[0] * pmat->matrix[9]);
+    //        yip[j*3+1] = y * (pmat->matrix[5] + pmat->ic[1] * pmat->matrix[9]);
+    //        yip[j*3+2] = y * pmat->matrix[9];
+    //        }
+    //        for (k = 0; k < vol->dim[2]; k++) {
+    //        float z = (float) (vol->offset[2] + k * vol->spacing[2]);
+    //        zip[k*3+0] = z * (pmat->matrix[2] + pmat->ic[0] * pmat->matrix[10])
+    //            + pmat->ic[0] * pmat->matrix[11] + pmat->matrix[3];
+    //        zip[k*3+1] = z * (pmat->matrix[6] + pmat->ic[1] * pmat->matrix[10])
+    //            + pmat->ic[1] * pmat->matrix[11] + pmat->matrix[7];
+    //        zip[k*3+2] = z * pmat->matrix[10] + pmat->matrix[11];
+    //        }
+
+    // Precompute partial projections here
+//#pragma omp parallel for
+    for (size_t i = 0; i < volume.Size(0); ++i)
+    {
+        float x = static_cast<float> (origin[0] + i * spacing[0]);
+        xip[i*3+0] = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
+        xip[i*3+1] = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
+        xip[i*3+2] = x *  proj_matrix[8];
+    }
+
+//#pragma omp parallel for
+    for (size_t j = 0; j < volume.Size(1); ++j)
+    {
+        float y = static_cast<float> (origin[1] + j * spacing[1]);
+        yip[j*3+0] = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
+        yip[j*3+1] = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
+        yip[j*3+2] = y * proj_matrix[9];
+    }
+
+    float cor_tilted;
+
+//#pragma omp parallel for
+    for (size_t k = 0; k < volume.Size(2); ++k)
+    {
+        float z = static_cast<float> (origin[2] + k * spacing[2]);
+
+        // not so elegant solution but it seems to work POSSIBLY ANCHE QST DA ADATTARE
+        if (mConfig.ProjectionInfo.bCorrectTilt)
+        {
+            //                    float pos = static_cast<float> (mConfig.ProjectionInfo.roi[3])-static_cast<float>(k)-static_cast<float>(mConfig.ProjectionInfo.fTiltPivotPosition);
+            float pos      = static_cast<float> (CBCT_roi[3])-static_cast<float>(k)-static_cast<float>(mConfig.ProjectionInfo.fTiltPivotPosition);
+            cor_tilted     = tan(-mConfig.ProjectionInfo.fTiltAngle*dPi/180)*pos+mConfig.ProjectionInfo.fCenter;
+            proj_matrix[3] = ((cor_tilted-(mConfig.ProjectionInfo.fpPoint[0]-mConfig.ProjectionInfo.roi[0]))*mConfig.MatrixInfo.fVoxelSize[0])/mConfig.ProjectionInfo.fResolution[0];
+
+        }
+
+        zip[k*3+0] = z * (proj_matrix[2] + ic[0] * proj_matrix[10])
+                     + ic[0] * proj_matrix[11] + proj_matrix[3];
+        zip[k*3+1] = z * (proj_matrix[6] + ic[1] * proj_matrix[10])
+                     + ic[1] * proj_matrix[11] + proj_matrix[7];
+        zip[k*3+2] = z * proj_matrix[10] + proj_matrix[11];
+    }
+
+// Main backprojection loop
+
+    logger.verbose("backproj loop");
+#pragma omp parallel for // not sure about this firstprivate
+    for (ptrdiff_t k = 0; k < static_cast<ptrdiff_t>(volume.Size(2)); ++k)
+    {
+        //            int long p = k * volume.Size(1) * volume.Size(0);
+        for (size_t j = 0; j < volume.Size(1); ++j)
+        {
+            float acc2[3];
+            //            static inline void vec3_add3 (float* v1, const float* v2, const float* v3) {
+            //                v1[0] = v2[0] + v3[0]; v1[1] = v2[1] + v3[1]; v1[2] = v2[2] + v3[2];
+            //            }
+            //            vec3_add3 (acc2, &zip[3*k], &yip[3*j]);
+            acc2[0] = zip[3*k]   + yip[3*j];
+            acc2[1] = zip[3*k+1] + yip[3*j+1];
+            acc2[2] = zip[3*k+2] + yip[3*j+2];
+            int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
+            for (size_t i = mask[j].first+1; i <= mask[j].second; ++i)
+            {
+                //                for (i = 0; i < volume.Size(0); i++) {
+
+                float dw;
+                // float acc3[3];
+                //            vec3_add3 (acc3, acc2, &xip[3*i]);
+                // AK
+                //                        acc3[0] = acc2[0]+xip[3*i];
+                //                        acc3[1] = acc2[1]+xip[3*i+1];
+                //                        acc3[2] = acc2[2]+xip[3*i+2];
+                //                        dw = 1.0 / acc3[2];
+                //                        acc3[0] = acc3[0] * dw;
+                //                        acc3[1] = acc3[1] * dw;
+
+                dw = 1.0f / (acc2[2]+xip[3*i+2]);
+
+                img[p+i] +=
+                        dw * dw * get_pixel_value_c (cbi, dw*(acc2[1]+xip[3*i+1]), dw*(acc2[0]+xip[3*i]));
+                //            volume[p++] +=
+                //                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
+            }
+        }
+    }
+
+    delete [] xip;
+    delete [] yip;
+    delete [] zip;
+    logger.verbose("end project vol onto image");
+}
+
+void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cbi,
+    float *proj_matrix, size_t /*nProj*/)
+{
+    logger.debug("Started revised FDK back-projector");
 
     // long int i, j, k;
 
@@ -633,3 +897,41 @@ float FDKbp_single::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, float r
 
     return cbi[rr*cbi.Size(0) + cc];
 }
+
+
+void string2enum(const std::string &str, eFDKbp_singleAlgorithms &alg)
+{
+    std::map<std::string, eFDKbp_singleAlgorithms> map;
+
+    map["eFDKbp_single_reference"] = eFDKbp_single_reference;
+    map["eFDKbp_single_c"] = eFDKbp_single_c;
+    map["eFDKbp_single_c2"] = eFDKbp_single_c2;
+    
+    if (map.find(str) == map.end())
+    {
+        throw std::runtime_error("Unknown FDK algorithm: " + str);
+    }
+
+    alg = map[str];
+}
+std::string enum2string(eFDKbp_singleAlgorithms alg)
+{
+
+    switch(alg)
+    {
+        case eFDKbp_single_reference:
+            return "eFDKbp_single_reference";
+        case eFDKbp_single_c:
+            return "eFDKbp_single_c";
+        case eFDKbp_single_c2:
+            return "eFDKbp_single_c2";
+        default:
+            throw std::runtime_error("Unknown FDK algorithm enum");
+    }
+
+}
+ostringstream& operator<<(ostringstream& os, eFDKbp_singleAlgorithms alg)
+{
+    os << enum2string(alg);
+    return os;
+}   
