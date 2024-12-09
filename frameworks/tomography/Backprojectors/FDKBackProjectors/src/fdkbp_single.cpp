@@ -22,6 +22,7 @@
 #endif
 
 #include <base/timage.h>
+#include <base/index2coord.h>
 #include <base/tpermuteimage.h>
 #include <math/mathconstants.h>
 #include <interactors/interactionbase.h>
@@ -567,20 +568,17 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
 
     // spacing of the reconstructed volume. Maximum resolution for CBCT = detector pixel spacing/ magnification.
     // magnification = SDD/SOD
+    
+    kipl::base::coords3Df spacing(mConfig.MatrixInfo.fVoxelSize); // detector pixel spacing divided by the magnification
 
-    float spacing[3]; // detector pixel spacing divided by the magnification
-    spacing[0] = mConfig.MatrixInfo.fVoxelSize[0];
-    spacing[1] = mConfig.MatrixInfo.fVoxelSize[1];
-    spacing[2] = mConfig.MatrixInfo.fVoxelSize[2];
-
-
-    float origin[3];
     float U = static_cast<float>(mConfig.ProjectionInfo.roi[2]-mConfig.ProjectionInfo.roi[0]);
     float V = static_cast<float>(mConfig.ProjectionInfo.roi[3]-mConfig.ProjectionInfo.roi[1]);
 
-    origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[0]-spacing[0]/2;
-    origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing[1]-spacing[1]/2;
-    origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]))*spacing[2]-spacing[2]/2;
+    float origin[3];
+
+    origin[0] = -(U-mConfig.ProjectionInfo.fCenter)*spacing.x-spacing.x/2;
+    origin[1] = -(U-mConfig.ProjectionInfo.fCenter)*spacing.y-spacing.y/2;
+    origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]))*spacing.z-spacing.z/2;
 
     float radius = static_cast<float>(volume.Size(1))*mConfig.MatrixInfo.fVoxelSize[0]/2;
 
@@ -689,7 +687,7 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
 //#pragma omp parallel for
     for (size_t i = 0; i < volume.Size(0); ++i)
     {
-        float x = static_cast<float> (origin[0] + i * spacing[0]);
+        float x = static_cast<float> (origin[0] + i * spacing.x);
         xip[i*3+0] = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
         xip[i*3+1] = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
         xip[i*3+2] = x *  proj_matrix[8];
@@ -698,7 +696,7 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
 //#pragma omp parallel for
     for (size_t j = 0; j < volume.Size(1); ++j)
     {
-        float y = static_cast<float> (origin[1] + j * spacing[1]);
+        float y = static_cast<float> (origin[1] + j * spacing.y);
         yip[j*3+0] = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
         yip[j*3+1] = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
         yip[j*3+2] = y * proj_matrix[9];
@@ -709,7 +707,7 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
 //#pragma omp parallel for
     for (size_t k = 0; k < volume.Size(2); ++k)
     {
-        float z = static_cast<float> (origin[2] + k * spacing[2]);
+        float z = static_cast<float> (origin[2] + k * spacing.z);
 
         // not so elegant solution but it seems to work POSSIBLY ANCHE QST DA ADATTARE
         if (mConfig.ProjectionInfo.bCorrectTilt)
