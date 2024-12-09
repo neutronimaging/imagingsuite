@@ -17,7 +17,7 @@
 #include <base/trotate.h>
 #include <math/mathconstants.h>
 
-FdkReconBase::FdkReconBase(std::string application, std::string name, eMatrixAlignment alignment, kipl::interactors::InteractionBase *interactor) :
+FdkReconBase::FdkReconBase(std::string /*application*/, std::string name, eMatrixAlignment alignment, kipl::interactors::InteractionBase *interactor) :
     BackProjectorModuleBase("muhrec",name,alignment,interactor),
     nProjCounter(0),
     SizeU(0),
@@ -67,7 +67,7 @@ int FdkReconBase::Initialize()
     return 0;
 }
 
-int FdkReconBase::InitializeBuffers(int width, int height)
+int FdkReconBase::InitializeBuffers(int /*width*/, int /*height*/)
 {
     return 0;
 }
@@ -174,18 +174,18 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, floa
 
     kipl::base::TImage<float,2> img;
     proj*=weight;
-    size_t N=0;
+    // size_t N=0;
     if (MatrixAlignment==MatrixZXY)
     {
         kipl::base::Transpose<float,8> transpose;
         img=transpose(proj);
         pProj=img.GetDataPtr();
-        N=img.Size(0);
+        // N=img.Size(0);
     }
     else
     {
         pProj=proj.GetDataPtr();
-        N=proj.Size(0);
+        // N=proj.Size(0);
     }
 
 #ifdef USE_PROJ_PADDING
@@ -216,16 +216,16 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, floa
 /// Starts the back-projection process of projections stored as a 3D volume.
 /// \param proj The projection data
 /// \param parameters A list of parameters, the list shall contain at least the parameters angles and weights each containing a space separated list with as many values as projections
-size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<std::string, std::string> parameters)
+size_t FdkReconBase::Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters)
 {
     logger.message("FdkReconBase::Process 3D");
 
     if (volume.Size()==0)
         throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
-    kipl::base::TImage<float,2> img(projections.dims());
+    kipl::base::TImage<float,2> img(proj.dims());
 
-    size_t nProj=projections.Size(2);
+    size_t nProj=proj.Size(2);
 
     // Extract the projection parameters
     std::vector<float> weights;
@@ -244,19 +244,18 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> projections, std::map<s
 
     logger.verbose("Starting recon loop over projections");
 
-    for (int i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj,"FDK back-projection")); ++i)
+    for (size_t i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj,"FDK back-projection")); ++i)
     {
         msg.str("");
         msg<<"Reconstructing projection" << i;
         logger.verbose(msg.str());
-        pProj=projections.GetLinePtr(0,i);
+        pProj=proj.GetLinePtr(0,i);
 
         std::copy_n(pProj,img.Size(),pImg);
         img *= weights[i];
 
         //           Process(img,angles[i],weights[i],i,i==(nProj-1)); // to ask for
         this->reconstruct(img, angles[i], nProj);
-
     }
 
 //    FinalizeBuffers();
@@ -393,6 +392,6 @@ float FdkReconBase::Max()
     return maxval;
 }
 
-size_t FdkReconBase::ComputeGeometryMatrices(float *matrices){
+size_t FdkReconBase::ComputeGeometryMatrices(float */*matrices*/){
     return 1;
 }

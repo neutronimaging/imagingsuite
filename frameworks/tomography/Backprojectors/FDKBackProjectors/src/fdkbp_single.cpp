@@ -28,15 +28,15 @@
 
 #include "fdkbp_single.h"
 
-#ifndef DEGTORADF
-static const float DEGTORADF = fPi/ 180.0f;
-#endif
+// #ifndef DEGTORADF
+// static const float DEGTORADF = fPi/ 180.0f;
+// #endif
 
-#ifndef MARGINF
-static const unsigned int MARGINF = 5;
-#else
-#error "MARGINF IS DEFINED"
-#endif
+// #ifndef MARGINF
+// static const unsigned int MARGINF = 5;
+// #else
+// #error "MARGINF IS DEFINED"
+// #endif
 
 
 // Matrix element m[i,j] for matrix with c columns
@@ -290,11 +290,11 @@ size_t FDKbp_single::reconstruct(kipl::base::TImage<float,2> &proj, float angles
 
 
 void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
-    float *proj_matrix, size_t nProj)
+    float *proj_matrix, size_t /*nProj*/)
 {
     logger.debug("Started FDK back-projector");
 
-    long int i, j, k;
+    // long int i, j, k;
 
     float* img = cbct_volume.GetDataPtr();
 
@@ -387,7 +387,7 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
     //        }
 
 //#pragma omp parallel for
-    for (i=0; i<cbi.Size(0)*cbi.Size(1); ++i)
+    for (size_t i=0; i<cbi.Size(0)*cbi.Size(1); ++i)
     {
         cbi[i] *=sad_sid_2; 	// Speedup trick re: Kachelsreiss
         cbi[i] *=scale;         // User scaling
@@ -423,18 +423,18 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
     // Precompute partial projections here
 //#pragma omp parallel for
-    for (i = 0; i < volume.Size(0); ++i)
+    for (size_t i = 0; i < volume.Size(0); ++i)
     {
-        float x = (float) (origin[0] + i * spacing[0]);
+        float x = static_cast<float> (origin[0] + i * spacing[0]);
         xip[i*3+0] = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
         xip[i*3+1] = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
         xip[i*3+2] = x *  proj_matrix[8];
     }
 
 //#pragma omp parallel for
-    for (j = 0; j < volume.Size(1); ++j)
+    for (size_t j = 0; j < volume.Size(1); ++j)
     {
-        float y = (float) (origin[1] + j * spacing[1]);
+        float y = static_cast<float> (origin[1] + j * spacing[1]);
         yip[j*3+0] = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
         yip[j*3+1] = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
         yip[j*3+2] = y * proj_matrix[9];
@@ -443,9 +443,9 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
     float cor_tilted;
 
 //#pragma omp parallel for
-    for (k = 0; k < volume.Size(2); ++k)
+    for (size_t k = 0; k < volume.Size(2); ++k)
     {
-        float z = (float) (origin[2] + k * spacing[2]);
+        float z = static_cast<float> (origin[2] + k * spacing[2]);
 
         // not so elegant solution but it seems to work POSSIBLY ANCHE QST DA ADATTARE
         if (mConfig.ProjectionInfo.bCorrectTilt)
@@ -468,13 +468,11 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
 
     logger.verbose("backproj loop");
 #pragma omp parallel for // not sure about this firstprivate
-    for (k = 0; k < volume.Size(2); ++k)
+    for (ptrdiff_t k = 0; k < static_cast<ptrdiff_t>(volume.Size(2)); ++k)
     {
         //            int long p = k * volume.Size(1) * volume.Size(0);
-        int long j;
-        for (j = 0; j < volume.Size(1); ++j)
+        for (size_t j = 0; j < volume.Size(1); ++j)
         {
-            int long i;
             float acc2[3];
             //            static inline void vec3_add3 (float* v1, const float* v2, const float* v3) {
             //                v1[0] = v2[0] + v3[0]; v1[1] = v2[1] + v3[1]; v1[2] = v2[2] + v3[2];
@@ -484,12 +482,12 @@ void FDKbp_single::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi
             acc2[1] = zip[3*k+1] + yip[3*j+1];
             acc2[2] = zip[3*k+2] + yip[3*j+2];
             int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
-            for (i = mask[j].first+1; i <= mask[j].second; ++i)
+            for (size_t i = mask[j].first+1; i <= mask[j].second; ++i)
             {
                 //                for (i = 0; i < volume.Size(0); i++) {
 
                 float dw;
-                float acc3[3];
+                // float acc3[3];
                 //            vec3_add3 (acc3, acc2, &xip[3*i]);
                 // AK
                 //                        acc3[0] = acc2[0]+xip[3*i];
@@ -524,20 +522,20 @@ void FDKbp_single::project_volume_onto_image_reference (
     float *nrm
 )
 {
-    int i, j, k, p;
+    // int i, j, k, p;
     float vp[4];   /* vp = voxel position */
     //    float* img = (float*) vol->img; // voxel data of the reconstructed volume -> è il mio volume.
     float *img = volume.GetDataPtr(); // do i need this?
 
 
 
-    const size_t SizeZ  = volume.Size(0)>>2;
-    __m128 column[2048]; // not used for now..
+    // const size_t SizeZ  = volume.Size(0)>>2;
+    // __m128 column[2048]; // not used for now..
 
     //    Proj_matrix *pmat = cbi->pmat; /* projection matrix 3D -> 2D in homogenous coordinates */
 
-    p = 0;
-    vp[3] = 1.0;
+    size_t p = 0UL;
+    vp[3] = 1.0f;
     /* Loop k (slices), j (rows), i (cols) */
 
 
@@ -560,22 +558,22 @@ void FDKbp_single::project_volume_onto_image_reference (
 
     // the following part is not updated
 
-    for (k = 0; k < volume.Size(2); k++)
+    for (size_t k = 0; k < volume.Size(2); k++)
     {
 
         //        vp[2] = (float) (vol->origin[2] + k * vol->spacing[2]);
-        vp[2] = (float) (origin[2] + k * spacing[2]);
+        vp[2] = static_cast<float> (origin[2] + k * spacing[2]);
 
-        for (j = 0; j < volume.Size(1); j++)
+        for (size_t j = 0; j < volume.Size(1); j++)
         {
-            vp[1] = (float) (origin[1] + j * spacing[1]);
+            vp[1] = static_cast<float> (origin[1] + j * spacing[1]);
 
-            for (i = 0; i < volume.Size(0); i++)
+            for (size_t i = 0; i < volume.Size(0); i++)
             {
 
                 float ip[3];        // ip = image position
                 float s;            // s = projection of vp onto s axis
-                vp[0] = (float) (origin[0] + i * spacing[0]);
+                vp[0] = static_cast<float> (origin[0] + i * spacing[0]);
                 //            mat43_mult_vec3 (ip, pmat->matrix, vp);
                 // ip = matrix * vp
                 ip[0] = proj_matrix[0]*vp[0]+proj_matrix[1]*vp[1]+proj_matrix[2]*vp[2]+proj_matrix[3]*vp[3];
@@ -611,13 +609,12 @@ void FDKbp_single::project_volume_onto_image_reference (
 // Nearest neighbor interpolation of intensity value on image
  float FDKbp_single::get_pixel_value_b (kipl::base::TImage<float, 2> &cbi, float r, float c)
 {
-    int rr, cc;
+    if ( (r < 0.0f) || (r >= static_cast<float>(cbi.Size(1)))) return 0.0f;
+    if ( (c < 0.0f) || (c >= static_cast<float>(cbi.Size(0)))) return 0.0f;
+    
+    size_t rr = static_cast<size_t>(r);
+    size_t cc = static_cast<size_t>(c);
 
-    rr = (int)(r);
-    if ( (rr < 0) || (rr >= cbi.Size(1)) ) return 0.0;
-    cc = (int)(c);
-
-    if (cc < 0 || cc >= cbi.Size(0)) return 0.0;
     return cbi[rr*cbi.Size(0) + cc];
 }
 
@@ -625,20 +622,14 @@ void FDKbp_single::project_volume_onto_image_reference (
 // get_pixel_value_c seems to be no faster than get_pixel_value_b, despite having two fewer compares.
 float FDKbp_single::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, float r, float c)
 {
-    int rr, cc;
-
-    r += 0.5;
-    if (r < 0) return 0.0;
-    if (r >= static_cast<float>(cbi.Size(1)))
-        return 0.0;
-
-    rr = static_cast<int>(r);
-
-    c += 0.5;
-    if (c < 0) return 0.0;
-    if (c >= static_cast<float>(cbi.Size(0)))
-        return 0.0f;
-    cc = static_cast<int>(c);
+    r += 0.5f;
+    if ((r < 0.0f) || (r >= static_cast<float>(cbi.Size(1)))) return 0.0f;
+    
+    c += 0.5f;
+    if ((c < 0.0f) || (c >= static_cast<float>(cbi.Size(0)))) return 0.0f;
+    
+    size_t rr = static_cast<size_t>(r);
+    size_t cc = static_cast<size_t>(c);
 
     return cbi[rr*cbi.Size(0) + cc];
 }

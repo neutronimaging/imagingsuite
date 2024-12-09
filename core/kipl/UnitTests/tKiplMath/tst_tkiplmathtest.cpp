@@ -786,6 +786,14 @@ void TKiplMathTest::testFindLimits()
     QCOMPARE(hi,89UL);
 }
 
-QTEST_APPLESS_MAIN(TKiplMathTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TKiplMathTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TKiplMathTest)
+#endif
+
 
 #include "tst_tkiplmathtest.moc"
