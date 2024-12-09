@@ -655,51 +655,28 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
         cbi[i] *=scale;         // User scaling
     }
 
-    //        ramp_filter(cbi);
 
-    float *xip = new float[3*volume.Size(0)];
-    float *yip = new float[3*volume.Size(1)];
-    float *zip = new float[3*volume.Size(2)];
-
-    //        /* Precompute partial projections here */
-    //        for (i = 0; i < vol->dim[0]; i++) {
-    //        float x = (float) (vol->offset[0] + i * vol->spacing[0]);
-    //        xip[i*3+0] = x * (pmat->matrix[0] + pmat->ic[0] * pmat->matrix[8]);
-    //        xip[i*3+1] = x * (pmat->matrix[4] + pmat->ic[1] * pmat->matrix[8]);
-    //        xip[i*3+2] = x * pmat->matrix[8];
-    //        }
-    //        for (j = 0; j < vol->dim[1]; j++) {
-    //        float y = (float) (vol->offset[1] + j * vol->spacing[1]);
-    //        yip[j*3+0] = y * (pmat->matrix[1] + pmat->ic[0] * pmat->matrix[9]);
-    //        yip[j*3+1] = y * (pmat->matrix[5] + pmat->ic[1] * pmat->matrix[9]);
-    //        yip[j*3+2] = y * pmat->matrix[9];
-    //        }
-    //        for (k = 0; k < vol->dim[2]; k++) {
-    //        float z = (float) (vol->offset[2] + k * vol->spacing[2]);
-    //        zip[k*3+0] = z * (pmat->matrix[2] + pmat->ic[0] * pmat->matrix[10])
-    //            + pmat->ic[0] * pmat->matrix[11] + pmat->matrix[3];
-    //        zip[k*3+1] = z * (pmat->matrix[6] + pmat->ic[1] * pmat->matrix[10])
-    //            + pmat->ic[1] * pmat->matrix[11] + pmat->matrix[7];
-    //        zip[k*3+2] = z * pmat->matrix[10] + pmat->matrix[11];
-    //        }
+    std::vector<kipl::base::coords3Df> xip(volume.Size(0));
+    std::vector<kipl::base::coords3Df> yip(volume.Size(1));
+    std::vector<kipl::base::coords3Df> zip(volume.Size(2));
 
     // Precompute partial projections here
 //#pragma omp parallel for
     for (size_t i = 0; i < volume.Size(0); ++i)
     {
         float x = static_cast<float> (origin[0] + i * spacing.x);
-        xip[i*3+0] = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
-        xip[i*3+1] = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
-        xip[i*3+2] = x *  proj_matrix[8];
+        xip[i].x = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
+        xip[i].y = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
+        xip[i].z = x *  proj_matrix[8];
     }
 
 //#pragma omp parallel for
     for (size_t j = 0; j < volume.Size(1); ++j)
     {
         float y = static_cast<float> (origin[1] + j * spacing.y);
-        yip[j*3+0] = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
-        yip[j*3+1] = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
-        yip[j*3+2] = y * proj_matrix[9];
+        yip[j].x = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
+        yip[j].y = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
+        yip[j].z = y * proj_matrix[9];
     }
 
     float cor_tilted;
@@ -719,11 +696,11 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
 
         }
 
-        zip[k*3+0] = z * (proj_matrix[2] + ic[0] * proj_matrix[10])
+        zip[k].x = z * (proj_matrix[2] + ic[0] * proj_matrix[10])
                      + ic[0] * proj_matrix[11] + proj_matrix[3];
-        zip[k*3+1] = z * (proj_matrix[6] + ic[1] * proj_matrix[10])
+        zip[k].y = z * (proj_matrix[6] + ic[1] * proj_matrix[10])
                      + ic[1] * proj_matrix[11] + proj_matrix[7];
-        zip[k*3+2] = z * proj_matrix[10] + proj_matrix[11];
+        zip[k].z = z * proj_matrix[10] + proj_matrix[11];
     }
 
 // Main backprojection loop
@@ -736,42 +713,25 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
         for (size_t j = 0; j < volume.Size(1); ++j)
         {
             float acc2[3];
-            //            static inline void vec3_add3 (float* v1, const float* v2, const float* v3) {
-            //                v1[0] = v2[0] + v3[0]; v1[1] = v2[1] + v3[1]; v1[2] = v2[2] + v3[2];
-            //            }
-            //            vec3_add3 (acc2, &zip[3*k], &yip[3*j]);
-            acc2[0] = zip[3*k]   + yip[3*j];
-            acc2[1] = zip[3*k+1] + yip[3*j+1];
-            acc2[2] = zip[3*k+2] + yip[3*j+2];
+            
+            acc2[0] = zip[k].x + yip[j].x;
+            acc2[1] = zip[k].y + yip[j].y;
+            acc2[2] = zip[k].z + yip[j].z;
+            
             int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
+            
             for (size_t i = mask[j].first+1; i <= mask[j].second; ++i)
             {
-                //                for (i = 0; i < volume.Size(0); i++) {
-
                 float dw;
-                // float acc3[3];
-                //            vec3_add3 (acc3, acc2, &xip[3*i]);
-                // AK
-                //                        acc3[0] = acc2[0]+xip[3*i];
-                //                        acc3[1] = acc2[1]+xip[3*i+1];
-                //                        acc3[2] = acc2[2]+xip[3*i+2];
-                //                        dw = 1.0 / acc3[2];
-                //                        acc3[0] = acc3[0] * dw;
-                //                        acc3[1] = acc3[1] * dw;
 
-                dw = 1.0f / (acc2[2]+xip[3*i+2]);
+                dw = 1.0f / (acc2[2]+xip[i].z);
 
                 img[p+i] +=
-                        dw * dw * get_pixel_value_c (cbi, dw*(acc2[1]+xip[3*i+1]), dw*(acc2[0]+xip[3*i]));
-                //            volume[p++] +=
-                //                dw * dw * get_pixel_value_c (cbi, acc3[1], acc3[0]);
+                        dw * dw * get_pixel_value_c (cbi, dw*(acc2[1]+xip[i].y), dw*(acc2[0]+xip[i].x));
             }
         }
     }
 
-    delete [] xip;
-    delete [] yip;
-    delete [] zip;
     logger.verbose("end project vol onto image");
 }
 
