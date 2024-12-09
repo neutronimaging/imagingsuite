@@ -707,7 +707,7 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
 #pragma omp parallel for // not sure about this firstprivate
     for (ptrdiff_t k = 0; k < static_cast<ptrdiff_t>(volume.Size(2)); ++k)
     {
-        //            int long p = k * volume.Size(1) * volume.Size(0);
+        ptrdiff_t pk = k * volume.Size(1) * volume.Size(0);
         for (size_t j = 0; j < volume.Size(1); ++j)
         {
             kipl::base::coords3Df acc2;
@@ -716,16 +716,14 @@ void FDKbp_single::project_volume_onto_image_c2(kipl::base::TImage<float, 2> &cb
             acc2.y = zip[k].y + yip[j].y;
             acc2.z = zip[k].z + yip[j].z;
             
-            int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
-            
+            int long p=pk+j *volume.Size(0);
+            float *pimg = img+p;
             for (size_t i = mask[j].first+1; i <= mask[j].second; ++i)
             {
-                float dw;
+                float dw = 1.0f / (acc2.z+xip[i].z);
 
-                dw = 1.0f / (acc2.z+xip[i].z);
-
-                img[p+i] +=
-                        dw * dw * get_pixel_value_c (cbi, dw*(acc2.y+xip[i].y), dw*(acc2.x+xip[i].x));
+                pimg[i] +=
+                        dw*dw * get_pixel_value_c (cbi, dw*(acc2.y+xip[i].y), dw*(acc2.x+xip[i].x));
             }
         }
     }
