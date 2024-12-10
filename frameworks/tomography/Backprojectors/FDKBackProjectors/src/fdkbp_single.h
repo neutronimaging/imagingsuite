@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include <interactors/interactionbase.h>
+#include <utilities/threadpool.h>
 
 //namespace reconstructor{ namespace UnitTests {
 //    class testBasicReconstructor;
@@ -18,7 +19,8 @@ enum eFDKbp_singleAlgorithms
 {
     eFDKbp_single_reference,
     eFDKbp_single_c,
-    eFDKbp_single_c2
+    eFDKbp_single_c2,
+    eFDKbp_single_stl
 };
 
 class FDKBACKPROJSHARED_EXPORT FDKbp_single : public FdkReconBase
@@ -40,10 +42,14 @@ protected:
     void  project_volume_onto_image_reference (kipl::base::TImage<float,2>  &cbi, float *proj_matrix, float *nrm);///< Reference FDK implementation is the most straightforward implementation, also it is the slowest
     void  project_volume_onto_image_c (kipl::base::TImage<float,2>  &cbi, float *proj_matrix, size_t nProj);///< Multi core accelerated FDK implementation
     void  project_volume_onto_image_c2 (kipl::base::TImage<float,2>  &cbi, float *proj_matrix, size_t nProj);///< Multi core accelerated FDK implementation cleanups
+    void  project_volume_onto_image_stl (kipl::base::TImage<float,2>  &cbi, float *proj_matrix, size_t nProj);///< Multi core accelerated FDK implementation cleanups
+    
     float get_pixel_value_b (kipl::base::TImage<float,2> &cbi, float r, float c);
     float get_pixel_value_c (kipl::base::TImage<float,2> &cbi, float r, float c);
     void  getProjMatrix(float angles, float* nrm, float *proj_matrix);
     void  multiplyMatrix (float *mat1, float *mat2, float *result, int rows, int columns, int columns1);
+
+    kipl::utilities::ThreadPool *m_threadPool;
 };
 
 FDKBACKPROJSHARED_EXPORT void string2enum(const std::string &str, eFDKbp_singleAlgorithms &alg);
