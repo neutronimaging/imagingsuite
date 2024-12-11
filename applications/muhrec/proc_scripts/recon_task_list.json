@@ -1,6 +1,7 @@
 [
     {
         "name" : "recon1",
+        "active" : true,
         "config" : "path/to/template/reconconfig.xml",
         "arguments" : {
             "projections:filemask" : "path/to/data/image_####.tif",
@@ -15,6 +16,7 @@
     },
     {
         "name" : "recon2",
+        "active" : true,
         "config" : "path/to/template/reconconfig.xml",
         "arguments" : {
             "projections:filemask" : "path/to/data/image_####.tif",
@@ -29,6 +31,7 @@
     },
     {
         "name" : "recon3",
+        "active" : true,
         "config" : "path/to/template/reconconfig2.xml",
         "arguments" : {
             "projections:filemask" : "path/to/data1/image_####.tif",
