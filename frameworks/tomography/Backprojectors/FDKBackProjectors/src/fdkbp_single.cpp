@@ -47,7 +47,7 @@
 
 FDKbp_single::FDKbp_single(kipl::interactors::InteractionBase *interactor) :
     FdkReconBase("muhrec","FDKbp_single",BackProjectorModuleBase::MatrixXYZ,interactor),
-    m_algorithm(eFDKbp_single_c),
+    m_algorithm(eFDKbp_single_stl),
     m_threadPool(nullptr)
 {
     publications.push_back(Publication(std::vector<std::string>({"L. A. Feldkamp","L. C. Davis","J. W. Kress"}),
