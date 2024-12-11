@@ -218,6 +218,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,2> proj, float angle, floa
 /// \param parameters A list of parameters, the list shall contain at least the parameters angles and weights each containing a space separated list with as many values as projections
 size_t FdkReconBase::Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters)
 {
+    timer.Tic();
     logger.message("FdkReconBase::Process 3D");
 
     if (volume.Size()==0)
@@ -280,6 +281,7 @@ size_t FdkReconBase::Process(kipl::base::TImage<float,3> proj, std::map<std::str
         memcpy(volume.GetLinePtr(0,volume.Size(2)-k-1),rotated.GetDataPtr(),sizeof(float)*cbct_volume.Size(0)*cbct_volume.Size(1));
     }
 
+    timer.Toc();
     //    delete [] weights;
     //    delete [] angles;
     return 0L;
