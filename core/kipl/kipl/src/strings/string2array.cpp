@@ -159,14 +159,14 @@ size_t String2Array(std::string str, std::vector<float> &v, size_t cnt)
     data=str;
     bool status=true;
     v.clear();
-    size_t i=0;
+    // size_t i=0;
     while (status)
     {
         status=GetElement(data,element);
         if (!element.empty())
         {
             v.push_back(std::stof(element));
-            ++i;
+            // ++i;
         }
     }
 
@@ -185,14 +185,14 @@ size_t String2Array(std::string str, std::vector<size_t> &v, size_t cnt)
     data=str;
     bool status=true;
     v.clear();
-    size_t i=0;
+    // size_t i=0;
     while (status)
     {
         status=GetElement(data,element);
         if (!element.empty())
         {
             v.push_back(std::stoul(element));
-            ++i;
+            // ++i;
         }
     }
 
@@ -211,14 +211,14 @@ size_t String2Array(std::string str, std::vector<int> &v, size_t cnt)
     data=str;
     bool status=true;
     v.clear();
-    size_t i=0;
+    // size_t i=0;
     while (status)
     {
         status=GetElement(data,element);
         if (!element.empty())
         {
             v.push_back(std::stoi(element));
-            ++i;
+            // ++i;
         }
     }
 
@@ -312,7 +312,7 @@ size_t String2List(std::string str, std::list<std::string> &slist)
 
 std::string List2String(std::list<int> &v)
 {
-    std::ostringstream s;
+    std::ostringstream s;s
     int i=0;
     for (auto it=v.begin(); it!=v.end(); ++it, ++i) {
         s<<(*it)<<(i<(v.size()-1) ? " " : "");
