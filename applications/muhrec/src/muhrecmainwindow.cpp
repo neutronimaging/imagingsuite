@@ -747,7 +747,12 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
     }
 
-    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
+    // m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
+
+    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.size());
+    std::transform(m_Config.ProjectionInfo.projection_roi.begin(), m_Config.ProjectionInfo.projection_roi.end(), m_oldROI.begin(), [](size_t val) {
+        return static_cast<int>(val);
+    });
 
     ui->plotHistogram->clearAllCurves();
     ui->plotHistogram->clearAllCursors();
