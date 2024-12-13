@@ -70,14 +70,14 @@ void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base
         if (it->first.ProjectionInfo.beamgeometry == it->first.ProjectionInfo.BeamGeometry_Parallel)
         {
             msg<<it->first.UserInformation.sDate<<std::endl
-               <<"Center="<<(it->first.ProjectionInfo.fCenter)<<std::endl
-              <<"Slice="<<(it->first.ProjectionInfo.roi[1])<<std::endl;
+               <<"Center="<<std::to_string(it->first.ProjectionInfo.fCenter)<<std::endl
+              <<"Slice="<<std::to_string(it->first.ProjectionInfo.roi[1])<<std::endl;
         }
         else if (it->first.ProjectionInfo.beamgeometry == it->first.ProjectionInfo.BeamGeometry_Cone)
         {
             msg<<it->first.UserInformation.sDate<<std::endl
-               <<"Center="<<(it->first.ProjectionInfo.fCenter)<<std::endl
-              <<"Slice="<<(it->first.ProjectionInfo.roi[3]-it->first.MatrixInfo.voi[5])<<std::endl;
+               <<"Center="<<std::to_string(it->first.ProjectionInfo.fCenter)<<std::endl
+              <<"Slice="<<std::to_string(it->first.ProjectionInfo.roi[3]-it->first.MatrixInfo.voi[5])<<std::endl;
         }
         ConfigListItem *item = new ConfigListItem;
 
@@ -112,7 +112,6 @@ QPixmap ViewGeometryListDialog::CreateIconFromImage(kipl::base::TImage<float,2> 
     std::vector<uchar> buffer(img.Size() + 1024);
 
     std::string header = "P5\n" + std::to_string(img.Size(0)) + "\n" + std::to_string(img.Size(1)) + "\n255\n";
-    // std::memcpy(buffer.data(), header.c_str(), header.size());
     std::copy(header.begin(), header.end(), buffer.begin());
     int offset = header.size();
 
