@@ -75,6 +75,8 @@ std::vector<size_t> ProjectionReader::GetImageSizeNexus(string filename, float b
         dims[0]/=binning;
         dims[1]/=binning;
     #else
+        std::ignore = filename;
+        std::ignore = binning;
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
 
@@ -138,6 +140,7 @@ void ProjectionReader::UpdateCrop(kipl::base::eImageFlip flip,
         nTmpCrop[3]=nCropOrig[3]=nCrop[3];
 
         switch (flip) {
+        case kipl::base::ImageFlipDefault : doFlip=false; break;
         case kipl::base::ImageFlipNone : doFlip=false; break;
 		case kipl::base::ImageFlipHorizontal :
             nTmpCrop[0]=nDims[0]-nCropOrig[2];
@@ -156,6 +159,9 @@ void ProjectionReader::UpdateCrop(kipl::base::eImageFlip flip,
 		}
 
 		switch (rotate) {
+        case kipl::base::ImageRotateDefault :
+            doRotate = false;
+            break;
         case kipl::base::ImageRotateNone :
             doRotate = false;
             break;
@@ -322,6 +328,7 @@ kipl::base::TImage<float,3> ProjectionReader::ReadNexusTomo(string filename)
     #ifdef HAVE_NEXUS
         kipl::io::ReadNexus(tmp, filename.c_str());
     #else
+        std::ignore = filename;
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
 
@@ -370,6 +377,9 @@ int ProjectionReader::GetNexusInfo(string filename, size_t *NofImg, double *Scan
 
 
     #else
+        std::ignore = filename;
+        std::ignore = NofImg;
+        std::ignore = ScanAngles;
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
 

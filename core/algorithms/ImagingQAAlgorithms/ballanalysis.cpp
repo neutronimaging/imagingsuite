@@ -26,9 +26,9 @@ void BallAnalysis::setImage(kipl::base::TImage<float,3> _img)
 /// \param r0 The start radius
 /// \param r1 The end radius
 /// \param profile a map containg the average intensity for each encountered radius.
-void BallAnalysis::getEdgeProfile(float azimuth_angle,
-                    float elevation_angle,
-                    float cone_angle,
+void BallAnalysis::getEdgeProfile(float /*azimuth_angle*/,
+                    float /*elevation_angle*/,
+                    float /*cone_angle*/,
                     float r0, float r1, std::map<float,float> &profile)
 {
     kipl::base::coords3D b0(0,0,0);

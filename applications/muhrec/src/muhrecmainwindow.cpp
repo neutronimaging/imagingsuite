@@ -2372,7 +2372,6 @@ void MuhRecMainWindow::on_buttonProjectionPath_clicked()
         if (fi.m_sExt!="hdf") {
             std::string pdir=projdir.toStdString();
 
-            kipl::io::DirAnalyzer da;
             fi=da.GetFileMask(pdir);
 
 
@@ -2726,7 +2725,7 @@ void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
     int first=roi.top();
     int last=roi.bottom();
 
-    size_t projROI[4];
+    int projROI[4];
     ui->widgetProjectionROI->getROI(projROI);
 
     if (first<projROI[1]) {
