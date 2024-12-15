@@ -101,9 +101,12 @@ void bindMorphSpotClean(py::module &m)
     mscClass.def("detectionImage",
                  [](ImagingAlgorithms::MorphSpotClean &msc, py::array_t<float> &x, bool remove_bias)
     {
-        auto r = x.unchecked<2>(); // x must have ndim = 2; can be non-writeable
+        // auto r = x.unchecked<2>(); // x must have ndim = 2; can be non-writeable
 
         py::buffer_info buf1 = x.request();
+        if (buf1.ndim != 2) {
+            throw std::runtime_error("Input array must have 2 dimensions");
+        }
 
         std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[1]),
                                     static_cast<size_t>(buf1.shape[0])};
