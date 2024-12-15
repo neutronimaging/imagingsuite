@@ -208,8 +208,6 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
     size_t nRem       = nData % nBlockSize; //nData%nThreads;
     auto pBlock       = data;
 
-    size_t sum = 0;
-
     for (size_t j=0; j<nBlocks; ++j)
     {
         size_t nBlockLen = nBlockSize;
@@ -223,38 +221,28 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
             kipl::logging::Logger tlogger("Histogram thread");
             int index;
 
+            int inBins = static_cast<int>(nBins);
             std::vector<size_t> temp_hist(nBins,0UL);
             
             if (avoidZeros)
             {
-                for (auto i=0; i<nBlockLen; i++)
+                for (size_t i=0; i<nBlockLen; ++i)
                 {
                     if ( (pBlock[i]!=0.0f) && std::isfinite(pBlock[i]))
                     {
                         index=static_cast<int>((pBlock[i]-start)*scale);
-                        if ((index<nBins) && (0<=index))
-                            temp_hist[index]++;
-                        // else {
-                        //     std::ostringstream msg;
-                        //     msg << "Index out of range: " << index;  
-                        //     tlogger.debug(msg.str());
-                        // }
+                        if ((index<inBins) && (0<=index))
+                            ++temp_hist[index];
                     }
                 }
             }
             else
             {
-                for (auto i=0; i<nBlockLen; i++) 
+                for (size_t i=0; i<nBlockLen; ++i) 
                 {
                     index=static_cast<int>((pBlock[i]-start)*scale);
-                    if ((index<nBins) && (0<=index))
-                        temp_hist[index]++;
-                    // else {
-                    //     std::ostringstream msg;
-                    //     msg << "Index out of range: " << index;  
-                    //     tlogger.debug(msg.str());
-                    // }
-                        
+                    if ((index<inBins) && (0<=index))
+                        ++temp_hist[index];            
                 }
             }
 
@@ -267,7 +255,6 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         });
 
         pBlock += nBlockLen;
-        sum+=nBlockLen;
     }
 
     pool.barrier();
@@ -332,7 +319,7 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
     size_t nRem       = nData % nBlockSize; //nData%nThreads;
     auto pBlock       = data;
 
-    size_t sum = 0;
+    //size_t sum = 0;
 
     for (size_t j=0; j<nBlocks; ++j)
     {
@@ -346,7 +333,7 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
         pool.enqueue([pBlock, nBlockLen, start, scale, nBins, avoidZeros, &hist, nChunkSize] {
             kipl::logging::Logger tlogger("Histogram thread");
             int index;
-
+            int inBins = static_cast<int>(nBins);
             std::vector<size_t> temp_hist(nBins,0UL);
             std::vector<short> buffer(nChunkSize*2,0);
 
@@ -368,7 +355,7 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
                         if ( (pBlock[j]!=0.0f) && std::isfinite(pBlock[j]))
                         {
                             index=static_cast<short>((pBlock[j]-start)*scale);
-                            if ((index<nBins) && (0<=index))
+                            if ((index<inBins) && (0<=index))
                                 buffer[cnt++]=index;
                         }
                     }
@@ -378,14 +365,14 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
                     for (auto j=begin; j<begin+nChunk; ++j) 
                     {
                         index=static_cast<int>((pBlock[j]-start)*scale);
-                        if ((index<nBins) && (0<=index) && std::isfinite(pBlock[j]))
+                        if ((index<inBins) && (0<=index) && std::isfinite(pBlock[j]))
                             buffer[cnt++]=index;
                     }
                 }
 
                 std::sort(buffer.begin(), buffer.begin()+cnt);
 
-                for (auto j=0; j<cnt; ++j)
+                for (size_t j=0; j<cnt; ++j)
                     temp_hist[buffer[j]]++;
 
                 begin += nChunk;
@@ -402,7 +389,7 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
         });
 
         pBlock += nBlockLen;
-        sum+=nBlockLen;
+        // sum+=nBlockLen;
     }
 
     pool.barrier();
