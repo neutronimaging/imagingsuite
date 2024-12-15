@@ -27,7 +27,7 @@ TBBLogNorm::~TBBLogNorm()
 
 void TBBLogNorm::test_parameters()
 {
-    QSKIP("Placeholder for future development of the BB plugin.");
+    // QSKIP("Placeholder for future development of the BB plugin.");
 }
 
 #ifdef __APPLE__

@@ -74,7 +74,7 @@ public:
             this->enqueue([&, i] {
                 // std::cout << "Task processed block " << i << " to " << std::min(i + block_size, size) << std::endl;
                 for (size_t j = i; j < std::min(i + block_size, size); ++j) {
-                    auto val = data[j];
+                    // auto val = data[j];
                     f(data[j]);
                 }
             });

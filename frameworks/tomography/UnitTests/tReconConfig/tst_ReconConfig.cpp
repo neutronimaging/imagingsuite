@@ -39,7 +39,7 @@ ReconConfigTests::~ReconConfigTests()
 
 void ReconConfigTests::testConfigEnums()
 {
-    QSKIP("No implemented");
+    // QSKIP("No implemented");
     // //    enum2string();
     // QCOMPARE(enum2string(kipl::logging::Logger::LogDebug).c_str(),   "debug");
     // QCOMPARE(enum2string(kipl::logging::Logger::LogVerbose).c_str(), "verbose");

@@ -70,14 +70,17 @@ void TestThreadPool::test_FillTaskList()
 
     std::ostringstream msg;
     size_t N=200;
-    for (int i = 0; i < N; ++i) 
+
+    std::vector<float> sums(N,0.0f);
+    for (size_t i = 0; i < N; ++i) 
     {
-        int b = i*2;
-        pool.enqueue([i,b] {
+        pool.enqueue([i,&sums] {
             float sum=0.0f;
 
             for (size_t cnt=0; cnt<100000; ++cnt)
                 sum+=sqrt(static_cast<float>(cnt));
+
+            sums[i]=sum;
         });
     }
 
@@ -130,6 +133,7 @@ void TestThreadPool::test_Transform()
     kipl::utilities::ThreadPool pool(N);
 
     std::vector<float> data(Ndata*N);
+
 
     QBENCHMARK {
         std::iota(data.begin(),data.end(),0);

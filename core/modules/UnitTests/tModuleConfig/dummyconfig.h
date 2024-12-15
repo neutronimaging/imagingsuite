@@ -12,11 +12,11 @@ public:
 
     virtual std::string SanitySlicesCheck() {return "";}
 
-    virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName) {}
+    virtual void ParseConfig(xmlTextReaderPtr /*reader*/, std::string /*sName*/) {}
 
-    virtual std::string SanityMessage(bool mess) {return "";}
+    virtual std::string SanityMessage(bool /*mess*/) {return "";}
 
-    virtual void ParseProcessChain(xmlTextReaderPtr reader) {}
+    virtual void ParseProcessChain(xmlTextReaderPtr /*reader*/) {}
 
     class cProjectionInfo {
         public:
