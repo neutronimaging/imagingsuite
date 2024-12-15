@@ -117,7 +117,7 @@ QPixmap ViewGeometryListDialog::CreateIconFromImage(kipl::base::TImage<float,2> 
 
     float scale = 255.0f / (hi - lo);
     auto pImg = img.GetDataPtr();
-    std::transform(pImg, pImg + img.Size(), buffer.begin() + offset, [lo, hi, scale](float val) {
+    std::transform(pImg, pImg + img.Size(), buffer.begin() + offset, [lo, scale](float val) {
         return static_cast<uchar>(std::clamp((val - lo) * scale, 0.0f, 255.0f));
     });
 
