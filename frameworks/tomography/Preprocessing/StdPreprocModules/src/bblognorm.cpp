@@ -658,7 +658,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 
     float *temp_parameters;
     size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
-    size_t step = (nProj)/(nBBSampleCount);
+    // size_t step = (nProj)/(nBBSampleCount);
 
     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
@@ -1011,7 +1011,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 
      float *temp_parameters;
      size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
-     size_t step = (nProj)/(nBBSampleCount);
+    //  size_t step = (nProj)/(nBBSampleCount);
 
      float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
      m_corrector.SetAngles(angles, nProj, nBBSampleCount);
@@ -1300,7 +1300,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 
                          }
 
-                         float dose = dosesample/(current_dose*tau);
+                        //  float dose = dosesample/(current_dose*tau);
                      }
 
                      memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*(values.size()+3)*nBBSampleCount);
@@ -1328,7 +1328,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 int BBLogNorm::GetnProjwithAngle(float angle){
 
     // range of projection angles
-    double nProj=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
+    double nProj=(static_cast<double>(m_Config.ProjectionInfo.nLastIndex)-static_cast<double>(m_Config.ProjectionInfo.nFirstIndex+1))/static_cast<double>(m_Config.ProjectionInfo.nProjectionStep);
 
     int index =0;
     float curr_angle;
@@ -1459,7 +1459,7 @@ float BBLogNorm::computedose(kipl::base::TImage<float,2>&img){
 
 }
 
-int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & /*img*/, std::map<std::string, std::string> & /*coeff*/)
 {
 
     return 0;
