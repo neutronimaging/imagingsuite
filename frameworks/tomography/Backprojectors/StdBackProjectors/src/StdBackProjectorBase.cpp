@@ -226,14 +226,14 @@ std::vector<size_t> StdBackProjectorBase::GetMatrixDims()
     return dims;
 }
 
-void StdBackProjectorBase::ChangeMaskValue(float x)
+void StdBackProjectorBase::ChangeMaskValue(float val)
 {
 	const size_t N=std::max(std::max(volume.Size(0),volume.Size(1)),volume.Size(2));
 	
 	float *data=new float[N];
     for (size_t i=0; i<N; i++)
     {
-		data[i]=x;
+		data[i]=val;
 	}
 	
     if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ)

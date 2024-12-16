@@ -560,6 +560,12 @@ kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
             return img;
 
     #else
+        std::ignore = filename;
+        std::ignore = number;
+        std::ignore = flip;
+        std::ignore = rotate;
+        std::ignore = binning;
+        std::ignore = nCrop;
         logger.warning("HAVE_NEXUS not defined");
 //        throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
 //        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
@@ -678,6 +684,14 @@ kipl::base::TImage<float, 3> ProjectionReader::ReadNexusStack(std::string filena
 //             return img;
 
      #else
+        std::ignore = filename;
+        std::ignore = start;
+        std::ignore = end;
+        std::ignore = flip;
+        std::ignore = rotate;
+        std::ignore = binning;
+        std::ignore = nCrop;
+
          logger.warning("HAVE_NEXUS not defined");
            throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
              throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
@@ -749,13 +763,15 @@ kipl::base::TImage<float,2> ProjectionReader::ReadTIFF(const std::string &filena
 	return img;
 }
 
-kipl::base::TImage<float,2> ProjectionReader::ReadPNG(const std::string &filename, const std::vector<size_t> &nCrop)
+kipl::base::TImage<float,2> ProjectionReader::ReadPNG(  const std::string & /*filename*/, 
+                                                        const std::vector<size_t> & /*nCrop*/)
 {
 	throw ReconException("ReadPNG is not implemented",__FILE__, __LINE__); 
 	return kipl::base::TImage<float,2>();
 }
 
-kipl::base::TImage<float,2> ProjectionReader::ReadHDF(const string &filename, const std::vector<size_t> &nCrop)
+kipl::base::TImage<float,2> ProjectionReader::ReadHDF(  const string & /*filename*/, 
+                                                        const std::vector<size_t> & /*nCrop*/)
 {
     kipl::base::TImage<float,2> img;
     try
@@ -1011,9 +1027,9 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
                                                         config.ProjectionInfo.dose_roi);
 
 
-            for (size_t i=0; i<dims[2]; ++i)
+            for (size_t j=0; j<dims[2]; ++j)
             {
-                dose << doselist[i] << " ";
+                dose << doselist[j] << " ";
             }
 
             for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++)

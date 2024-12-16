@@ -261,8 +261,8 @@ bool BuildFileList( std::string sFileMask,
             line=cline;
             float angle=static_cast<float>(atof(line.c_str()));
 
-            std::string fname=line.substr(line.find_first_of("\t")+1);
-            (*ProjectionList)[angle]=ProjectionInfo(sPath+fname,angle);
+            std::string proj_fname=line.substr(line.find_first_of("\t")+1);
+            (*ProjectionList)[angle]=ProjectionInfo(sPath+proj_fname,angle);
             listfile.getline(cline,2048);
         }
         listfile.close();
