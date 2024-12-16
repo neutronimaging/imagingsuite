@@ -25,7 +25,7 @@ FFTBase::FFTBase(const std::vector<size_t> &_dims) :
     cBufferA(nullptr),
     cBufferB(nullptr),
     rBuffer(nullptr),
-    Ndata(std::accumulate(_dims.begin(), _dims.end(), 1, std::multiplies<size_t>())),
+    Ndata(std::accumulate(_dims.begin(), _dims.end(), 1UL, std::multiplies<size_t>())),
     dims(_dims)
 {
     ndim=dims.size();

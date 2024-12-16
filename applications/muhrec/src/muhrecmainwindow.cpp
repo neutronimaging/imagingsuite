@@ -1396,7 +1396,13 @@ void MuhRecMainWindow::UpdateDialog()
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
 
-    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
+    // m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
+    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.size());
+    std::transform( m_Config.ProjectionInfo.projection_roi.begin(), 
+                    m_Config.ProjectionInfo.projection_roi.end(), m_oldROI.begin(), [](size_t val) {
+        return static_cast<int>(val);
+    });
+
 
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
 

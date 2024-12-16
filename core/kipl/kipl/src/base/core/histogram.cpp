@@ -529,8 +529,8 @@ int  KIPLSHARED_EXPORT FindLimits(std::vector<size_t> &hist, float percentage, s
     hi=0;
 
     float fraction=(100.0f-percentage)/200.0f;
-    ptrdiff_t lowlevel  = static_cast<ptrdiff_t>(cumulated.back()*fraction);
-    ptrdiff_t highlevel = static_cast<ptrdiff_t>(cumulated.back()*(1-fraction));
+    size_t lowlevel  = static_cast<size_t>(cumulated.back()*fraction);
+    size_t highlevel = static_cast<size_t>(cumulated.back()*(1-fraction));
 
     lo = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), lowlevel));
     hi = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), highlevel));

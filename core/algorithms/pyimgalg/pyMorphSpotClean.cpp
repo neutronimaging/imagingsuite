@@ -223,7 +223,9 @@ void bindMorphSpotClean(py::module &m)
 
             kipl::base::TImage<float,2> img(dims);
 
-            std::copy_n(data,img.Size(),img.GetDataPtr());
+            std::transform(data, data + img.Size(), img.GetDataPtr(), [](double val) {
+                                                                            return static_cast<float>(val);
+                                                                        });
 
             msc.process(img,th,sigma);
             std::copy_n(img.GetDataPtr(),img.Size(),data);
@@ -240,10 +242,17 @@ void bindMorphSpotClean(py::module &m)
 
             kipl::base::TImage<float,3> img(dims);
 
-            std::copy_n(data,img.Size(),img.GetDataPtr());
+            //std::copy_n(data,img.Size(),img.GetDataPtr());
+            std::transform(data, data + img.Size(), img.GetDataPtr(), [](double val) {
+                    return static_cast<float>(val);
+                });
 
             msc.process(img,th,sigma);
             std::copy_n(img.GetDataPtr(),img.Size(),data);
+           
+            std::transform(img.GetDataPtr(), img.GetDataPtr() + img.Size(), data, [](float val) {
+                    return static_cast<double>(val);
+                });
         }
         else
             throw ImagingException("Morphspot clean only supports 2- and 3-D data",__FILE__,__LINE__);
@@ -273,10 +282,16 @@ void bindMorphSpotClean(py::module &m)
 
         kipl::base::TImage<float,2> img(dims);
 
-        std::copy_n(data,img.Size(),img.GetDataPtr());
+        // std::copy_n(data,img.Size(),img.GetDataPtr());
+        std::transform(data, data + img.Size(), img.GetDataPtr(), [](double val) {
+                return static_cast<float>(val);
+            });
 
         msc.process(img,th,sigma);
-        std::copy_n(img.GetDataPtr(),img.Size(),data);
+        // std::copy_n(img.GetDataPtr(),img.Size(),data);
+        std::transform(img.GetDataPtr(), img.GetDataPtr() + img.Size(),data, [](float val) {
+                return static_cast<double>(val);
+            });
     },
 
                 "Cleans spots from the image in place using th as threshold and sigma as mixing width.",
