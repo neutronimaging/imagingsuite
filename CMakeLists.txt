@@ -59,14 +59,20 @@ if (WIN32)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Release)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Release)
+  set(PREPROCESSOR_MODULES_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Release/Preprocessors)
+  set(PROJECTOR_MODULES_DIRECTORY    ${CMAKE_BINARY_DIR}/bin/Release/BackProjectors)
 elseif (LINUX)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  set(PREPROCESSOR_MODULES_DIRECTORY ${CMAKE_BINARY_DIR}/Preprocessors)
+  set(PROJECTOR_MODULES_DIRECTORY    ${CMAKE_BINARY_DIR}/BackProjectors)
 elseif (APPLE)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  set(PREPROCESSOR_MODULES_DIRECTORY ${CMAKE_BINARY_DIR}/Preprocessors)
+  set(PROJECTOR_MODULES_DIRECTORY    ${CMAKE_BINARY_DIR}/BackProjectors)
   include_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 endif()
 
@@ -234,130 +240,14 @@ add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
 add_subdirectory(core/algorithms/pyadvancedfilters)
 
-# if(DYNAMIC_LIB)
-  # install(
-  #   EXPORT ${EXPORT_NAME}
-  #   DESTINATION "lib/cmake/kipl"
-  #   NAMESPACE kipl::
-  # )
+set_target_properties(InspectorModules StdPreprocModules
+    PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${PREPROCESSOR_MODULES_DIRECTORY}
+    RUNTIME_OUTPUT_DIRECTORY ${PREPROCESSOR_MODULES_DIRECTORY}
+)
 
-  # include(CMakePackageConfigHelpers)
-  # configure_package_config_file(
-  #   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}-config.cmake.in
-  #   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
-  #   INSTALL_DESTINATION lib/cmake/kipl
-  # )
-  # write_basic_package_version_file(
-  #   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
-  #   VERSION "${CMAKE_PROJECT_VERSION}"
-  #   COMPATIBILITY SameMinorVersion # switch to SameMajorVersion after 1.0
-  #                                  # release
-  # )
-  # install(
-  #   FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
-  #         "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
-  #   DESTINATION lib/cmake/kipl
-  # )
-  # if (LINUX)
-  #   print('Linux')
-  #   install(FILES 
-  #     ../lib/libkipl.so.1.0.0 
-  #     ../lib/libModuleConfig.so.1.0.0 
-  #     ../lib/libReconFramework.so.1.0.0
-  #     ../lib/libStdBackProjectors.so.1.0.0
-  #     ../lib/libFDKBackProjectors.so.1.0.0
-  #     ../lib/libImagingAlgorithms.so.1.0.0
-  #     ../lib/libReaderConfig.so.1.0.0
-  #     ../lib/libNeXus.so.1.0.0	
-  #     ../lib/libhdf5_cpp.so.11
-  #     ../lib/libNeXusCPP.so.1.0.0
-  #     ../lib/libhdf5_hl.so.10
-  #     ../lib/libhdf5.so.10	
-  #     ../lib/libsz.so.2
-
-  #   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-
-  #   execute_process(
-  #     COMMAND for f in `ls *.so.1.0.0`; do ln -s $f `basename $f .so.1.0.0`.so.1; done 
-  #     WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
-  #   )
-  # endif()
-  # if (APPLE)
-  #   install(FILES 
-  #   # ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXus.1.0.0.dylib
-  #   # ../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib/libNeXusCPP.1.0.0.dylib
-  #   # /opt/homebrew/lib/libhdf5.dylib
-  #   # /opt/homebrew/lib/libhdf5_cpp.dylib 
-    
-  #   # external/mac/lib/libNeXus.1.0.0.dylib	
-  #   # external/mac/lib//libhdf5_cpp.11.dylib
-  #   # external/mac/lib//libNeXusCPP.1.0.0.dylib
-  #   # external/mac/lib//libhdf5_hl.10.dylib
-  #   # external/mac/lib//libhdf5.10.dylib	
-  #   # external/mac/lib//libsz.2.dylib
-
-  #   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-
-  #   execute_process(
-  #     COMMAND for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done 
-  #     WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib"
-  #   )
-  # endif()
-  
-
-
-
-# endif(DYNAMIC_LIB)
-# if (WIN32)
-# message("${OpenBLAS_LIBRARIES}")
-# install(FILES 
-#   external/lib64/nexus/NeXus.dll	
-#   external/lib64/nexus/NeXusCPP.dll
-#   external/lib64/hdf5/hdf5_hl.dll
-#   external/lib64/hdf5/hdf5.dll
-#   external/lib64/hdf5/hdf5_cpp.dll
-#   external/lib64/hdf5/zlib.dll
-#   external/lib64/hdf5/szip.dll
-#   external/lib64/libtiff.dll
-#   external/lib64/libjpeg-62.dll
-#   external/lib64/zlib1.dll
-#   external/lib64/libfftw3-3.dll
-#   external/lib64/libfftw3f-3.dll
-
-
-#   # ${OpenBLAS_LIBRARIES}
-#   # external/lib64/libblas.dll
-#   # external/lib64/liblapack.dll
-#   # external/lib64/liblapacke.dll
-#   # external/lib64/libquadmath-0.dll
-#   # external/lib64/libgfortran_64-3.dll
-#   # external/lib64/libwinpthread-1.dll
-#   # external/lib64/libgcc_s_seh-1.dll
-#   # external/lib64/libgcc_s_seh_64-1.dll
-#   # ../ExternalDependencies/windows/bin/libopenblas.dll
-
-#   ../ExternalDependencies/windows/bin/libxml2.dll 
-#   ../ExternalDependencies/windows/bin/cfitsio.dll
-#   ../ExternalDependencies/windows/bin/libopenblas.dll
-
-#   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-# endif()
-# message(${CMAKE_CURRENT_SOURCE_DIR})
-
-## define test
-#add_test(
-#  NAME
-#    testBindAverageImage
-#  COMMAND
-#    ${CMAKE_COMMAND} -E env IMAGALG_MODULE_PATH=$<TARGET_FILE_DIR:imagalg>
-#    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindAverageImage.py
-#    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindAverageImage.py
-#)
-#
-#add_test(
-#  NAME
-#    testBindPolynomialCorrection
-#  COMMAND
-#    ${CMAKE_COMMAND} -E env IMAGALG_MODULE_PATH=$<TARGET_FILE_DIR:imagalg>
-#    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/UnitTests/python/testBindPolynomialCorrection.py
-#)
+set_target_properties(FDKBackProjectors StdBackProjectors
+    PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${PROJECTOR_MODULES_DIRECTORY}
+    RUNTIME_OUTPUT_DIRECTORY ${PROJECTOR_MODULES_DIRECTORY}
+)
