@@ -319,7 +319,11 @@ void ViewGeometryListDialog::getROI(std::vector<size_t> &roi)
 
 void ViewGeometryListDialog::getROIi(std::vector<int> &roi)
 {
-    std::copy(m_nMatrixROI.begin(),m_nMatrixROI.end(),roi.begin());
+    // std::copy(m_nMatrixROI.begin(),m_nMatrixROI.end(),roi.begin());
+    std::transform( m_nMatrixROI.begin(),
+                    m_nMatrixROI.end(),
+                    roi.begin(),
+                    [](size_t val){return static_cast<int>(val);});
 }
 
 

@@ -132,7 +132,8 @@ void ProjectionReader::UpdateCrop(kipl::base::eImageFlip flip,
 
         std::vector<int> nCropOrig(4,0);
         std::vector<int> nTmpCrop(4,0);
-        std::vector<int> nDims(dims.begin(),dims.end());
+        std::vector<int> nDims(dims.size());
+        std::transform(dims.begin(),dims.end(),nDims.begin(),[](size_t x){return static_cast<int>(x);});
 
         nTmpCrop[0]=nCropOrig[0]=nCrop[0];
         nTmpCrop[1]=nCropOrig[1]=nCrop[1];

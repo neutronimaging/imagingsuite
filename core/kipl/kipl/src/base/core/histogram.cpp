@@ -540,11 +540,14 @@ int  KIPLSHARED_EXPORT FindLimits(std::vector<size_t> &hist, float percentage, s
 
 int  KIPLSHARED_EXPORT FindLimit(std::vector<size_t> &hist, float fraction, size_t & lo)
 {
+    if ((fraction<0.0f) && (fraction>1.0f))
+        throw kipl::base::KiplException("Fraction must be between 0 and 1 in FindLimit().",__FILE__,__LINE__);  
+
     std::vector<size_t> cumulated=cumulativeHistogram(hist);
 
     lo=0;
 
-    ptrdiff_t lowlevel  = static_cast<ptrdiff_t>(cumulated.back()*fraction);
+    size_t lowlevel  = static_cast<ptrdiff_t>(cumulated.back()*fraction);
     lo = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), lowlevel));
 
     return 0;

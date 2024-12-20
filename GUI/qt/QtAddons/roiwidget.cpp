@@ -64,7 +64,10 @@ void ROIWidget::setROI(int *roi)
 
 void ROIWidget::setROI(size_t *roi)
 {
-    std::copy(roi,roi+4,mroi);
+    // std::copy(roi,roi+4,mroi);
+    std::transform(roi,roi+4,mroi,[](size_t val) {
+    return static_cast<int>(val);});
+
 
     updateFields();
 }

@@ -534,9 +534,10 @@ void BBLogNorm::PrepareBBData(){
     if (blackbodysamplename.empty() && nBBSampleCount!=0)
         throw ReconException("The sample image with BBs image mask is empty", __FILE__,__LINE__);
 
-
-
-    std::vector<int> diffroi(BBroi.begin(),BBroi.end());
+    std::vector<int> diffroi(BBroi.size());
+    std::transform(BBroi.begin(), BBroi.end(), diffroi.begin(), [](size_t val) {
+        return static_cast<int>(val);
+    });
 
     m_corrector.setDiffRoi(diffroi);
     m_corrector.SetRadius(radius);
@@ -1383,8 +1384,8 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,0.0f,m_Config,blackdose);
 
 
-    std::vector<int> diffroi(BBroi.begin(),BBroi.end()); // it is now just the BBroi position, makes more sense
-
+    std::vector<int> diffroi(BBroi.size()); // it is now just the BBroi position, makes more sense
+    std::transform(BBroi.begin(), BBroi.end(), diffroi.begin(), [](size_t val){return static_cast<int>(val);}); // now it is the difference between the BBroi and the absolute image coordinates
 
     m_corrector.SetRadius(radius);
     m_corrector.SetMinArea(min_area);
