@@ -194,9 +194,11 @@ void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
 {      
     logger(kipl::logging::Logger::LogMessage,"browse");
 
+    QString appPath = QCoreApplication::applicationDirPath();
     QString fileName;
+
     #ifdef Q_OS_WIN
-        QString appPath = QCoreApplication::applicationDirPath()+"\\";
+        appPath+="/Preprocessors";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
     #else
         QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks/";
