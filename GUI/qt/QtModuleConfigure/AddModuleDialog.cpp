@@ -77,6 +77,10 @@ int AddModuleDialog::exec()
     QString appPath = QCoreApplication::applicationDirPath();
     std::ostringstream msg;
 
+    #ifdef Q_OS_WIN
+        appPath+="/Preprocessors";
+    #endif
+
     msg<<"appPath "<<appPath.toStdString();
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
@@ -89,7 +93,6 @@ int AddModuleDialog::exec()
     if (fileName.empty()) {
         #ifdef Q_OS_WIN
             qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
-
         #else
             QDir dir;
 
@@ -133,7 +136,11 @@ int AddModuleDialog::UpdateModuleCombobox(QString &fname)
     if (!dir.exists(fname))
     {
         logger.warning("Module file doesn't exist");
-        QFileDialog dlg(this,"Select a module file",QCoreApplication::applicationDirPath());
+        QString appPath = QCoreApplication::applicationDirPath();
+        #ifdef Q_OS_WIN
+            appPath+="/Preprocessors";
+        #endif
+        QFileDialog dlg(this,"Select a module file",appPath);
 
         auto res = dlg.exec();
 
@@ -255,6 +262,7 @@ void AddModuleDialog::on_change_objectfile()
     QString fileName;
 
     #ifdef Q_OS_WIN
+        appPath+="/Preprocessors";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
     #else
         appPath+="/../Frameworks";

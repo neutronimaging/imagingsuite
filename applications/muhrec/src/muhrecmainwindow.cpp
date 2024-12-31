@@ -63,6 +63,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_nCurrentPage(0),
     m_nRequiredMemory(0),
     m_sApplicationPath(app->applicationDirPath().toStdString()),
+    m_sPreprocessorsPath(""),
+    m_sBackProjectorsPath(""),
     m_sHomePath(QDir::homePath().toStdString()),
     m_sConfigFilename("noname.xml"),
     m_sPreviewMask(""),
@@ -93,45 +95,40 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
         dir.mkdir(QString::fromStdString(m_sConfigPath));
     }
 
-    msg.str("");
-    msg<<"ApplicationPath = "<<m_sApplicationPath<<std::endl
-      <<"HomePath         = "<<m_sHomePath<<std::endl
-      <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
-    logger.message(msg.str());
-
-
     ui->projectionViewer->hold_annotations(true);
 
     // Setup default module libs in the config
-    std::string defaultmodules;
+    std::string defaultpreprocessors;
+    std::string defaultprojectors;
 #ifdef Q_OS_WIN
-        defaultmodules=m_sApplicationPath+"\\StdBackProjectors.dll";
+        m_sPreprocessorsPath = m_sApplicationPath+"Preprocessors\\";
+        m_sBackProjectorsPath = m_sApplicationPath+"BackProjectors\\";
+        defaultpreprocessors=m_sPreprocessorsPath+"StdPreprocModules.dll";
+        defaultprojectors=m_sBackProjectorsPath+"StdBackProjectors.dll";
 #else
     #ifdef Q_OS_MAC
         defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.dylib";
     #else
         //defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.so";
-	defaultmodules = m_sApplicationPath + "../lib/libStdBackProjectors.so";
-    #endif
-#endif
-    ui->ConfiguratorBackProj->Configure("muhrecbp",defaultmodules,m_sApplicationPath);
-
-#ifdef Q_OS_WIN
-        defaultmodules=m_sApplicationPath+"\\StdPreprocModules.dll";
-#else
-    #ifdef Q_OS_MAC
-        defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.dylib";
-    #else
-        //defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.so";
-	defaultmodules = m_sApplicationPath+"../lib/libstdPreprocModules.so";
+	    defaultmodules = m_sApplicationPath + "../lib/libStdBackProjectors.so";
     #endif
 #endif
 
+    kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
+    kipl::strings::filenames::CheckPathSlashes(m_sBackProjectorsPath,true);
+
+    msg.str("");
+    msg<<"ApplicationPath = "<<m_sApplicationPath<<std::endl
+      <<"PreprocessorsPath = "<<m_sPreprocessorsPath<<std::endl
+      <<"BackProjectorsPath = "<<m_sBackProjectorsPath<<std::endl
+      <<"HomePath         = "<<m_sHomePath<<std::endl
+      <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
+    logger.message(msg.str());
+
+    ui->ConfiguratorBackProj->Configure("muhrecbp",defaultprojectors,m_sApplicationPath);
     ui->moduleconfigurator->configure("muhrec",m_sApplicationPath,&m_ModuleConfigurator);
-    ui->moduleconfigurator->SetDefaultModuleSource(defaultmodules);
+    ui->moduleconfigurator->SetDefaultModuleSource(defaultpreprocessors);
     ui->moduleconfigurator->SetApplicationObject(this);
-
-
 
     m_oldROI = {0,0,1,1};
 
@@ -643,10 +640,6 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
     std::string defaultsname=m_sHomePath+".imagingtools/CurrentRecon.xml";
     kipl::strings::filenames::CheckPathSlashes(defaultsname,false);
 
-
-    std::string sModulePath=m_sApplicationPath;
-    kipl::strings::filenames::CheckPathSlashes(sModulePath,true);
-
     msg.str("");
     msg<<"default name is "<<defaultsname<<" it "<<(dir.exists(QString::fromStdString(defaultsname))==true ? "exists" : "doesn't exist")<<" and should "<< (checkCurrent ? " " : "not ")<<"be used";
     logger.message(msg.str());
@@ -658,7 +651,6 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
     else {
 #ifdef Q_OS_DARWIN
         defaultsname=m_sApplicationPath+"../Resources/defaults_mac.xml";
-        sModulePath+="..";
 #endif
 
 #ifdef Q_OS_WIN
@@ -667,7 +659,6 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
 
 #ifdef Q_OS_LINUX
         defaultsname=m_sApplicationPath+"../resources/defaults_linux.xml";
-        sModulePath+="..";
 #endif
         bUseDefaults=true;
     }
@@ -711,7 +702,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         m_Config.ProjectionInfo.sReferencePath     = m_sHomePath;
         m_Config.MatrixInfo.sDestinationPath       = m_sHomePath;
 
-        std::string sSearchStr = "@executable_path";
+        std::string sSearchStr = m_sApplicationPath;
 
         // Replace template path by module path for pre processing
         size_t pos=0;
@@ -722,7 +713,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
             pos=module.m_sSharedObject.find(sSearchStr);
 
             if (pos!=std::string::npos)
-                module.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
+                module.m_sSharedObject.replace(pos,sSearchStr.length(),m_sPreprocessorsPath);
 
             logger.message(module.m_sSharedObject);
         }
@@ -730,7 +721,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         logger(logger.LogMessage,"Updating path of back projector");
         pos=m_Config.backprojector.m_sSharedObject.find(sSearchStr);
         if (pos!=std::string::npos)
-            m_Config.backprojector.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
+            m_Config.backprojector.m_sSharedObject.replace(pos,sSearchStr.size(),m_sBackProjectorsPath);
 
         logger.message(m_Config.backprojector.m_sSharedObject);
 
