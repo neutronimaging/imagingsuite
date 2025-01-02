@@ -100,18 +100,21 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     // Setup default module libs in the config
     std::string defaultpreprocessors;
     std::string defaultprojectors;
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN)
         m_sPreprocessorsPath = m_sApplicationPath+"Preprocessors\\";
         m_sBackProjectorsPath = m_sApplicationPath+"BackProjectors\\";
         defaultpreprocessors=m_sPreprocessorsPath+"StdPreprocModules.dll";
         defaultprojectors=m_sBackProjectorsPath+"StdBackProjectors.dll";
-#else
-    #ifdef Q_OS_MAC
-        defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.dylib";
-    #else
-        //defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.so";
-	    defaultmodules = m_sApplicationPath + "../lib/libStdBackProjectors.so";
-    #endif
+#elif defined(Q_OS_MAC)
+        m_sPreprocessorsPath = m_sApplicationPath+"../Preprocessors/";
+        m_sBackProjectorsPath = m_sApplicationPath+"../BackProjectors/";
+        defaultpreprocessors=m_sPreprocessorsPath+"StdPreprocModules.dylib";
+        defaultprojectors=m_sBackProjectorsPath+"StdBackProjectors.dylib";
+#elif defined(Q_OS_LINUX)
+        m_sPreprocessorsPath = m_sApplicationPath+"../Preprocessors/";
+        m_sBackProjectorsPath = m_sApplicationPath+"../BackProjectors/";
+        defaultpreprocessors=m_sPreprocessorsPath+"StdPreprocModules.so";
+        defaultprojectors=m_sBackProjectorsPath+"StdBackProjectors.so";
 #endif
 
     kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
@@ -649,15 +652,11 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         bUseDefaults=false;
     }
     else {
-#ifdef Q_OS_DARWIN
+#if defined(Q_OS_DARWIN)
         defaultsname=m_sApplicationPath+"../Resources/defaults_mac.xml";
-#endif
-
-#ifdef Q_OS_WIN
-         defaultsname=m_sApplicationPath+"resources/defaults_windows.xml";
-#endif
-
-#ifdef Q_OS_LINUX
+#elif defined(Q_OS_WIN)
+        defaultsname=m_sApplicationPath+"resources/defaults_windows.xml";
+#elif defined(Q_OS_LINUX)
         defaultsname=m_sApplicationPath+"../resources/defaults_linux.xml";
 #endif
         bUseDefaults=true;

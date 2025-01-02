@@ -77,8 +77,12 @@ int AddModuleDialog::exec()
     QString appPath = QCoreApplication::applicationDirPath();
     std::ostringstream msg;
 
-    #ifdef Q_OS_WIN
+    #if defined(Q_OS_WIN)
         appPath+="/Preprocessors";
+    #elif defined(Q_OS_MAC)
+        appPath+="/../Preprocessors";
+    #elif defined(Q_OS_LINUX)
+        appPath+="/../Preprocessors";
     #endif
 
     msg<<"appPath "<<appPath.toStdString();
@@ -91,16 +95,12 @@ int AddModuleDialog::exec()
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     if (fileName.empty()) {
-        #ifdef Q_OS_WIN
+        #if defined(Q_OS_WIN)
             qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
-        #else
-            QDir dir;
-
-            if (dir.exists(appPath+"/../Frameworks"))
-                appPath += "/../Frameworks";
-
-            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
-
+        #elif defined(Q_OS_MAC)
+            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib)"));
+        #elif defined(Q_OS_LINUX)
+            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.so)"));
         #endif
     }
 
@@ -137,8 +137,12 @@ int AddModuleDialog::UpdateModuleCombobox(QString &fname)
     {
         logger.warning("Module file doesn't exist");
         QString appPath = QCoreApplication::applicationDirPath();
-        #ifdef Q_OS_WIN
+        #if defined(Q_OS_WIN)
             appPath+="/Preprocessors";
+        #elif defined(Q_OS_MAC)
+            appPath+="/../Preprocessors";
+        #elif defined(Q_OS_LINUX)
+            appPath+="/../Preprocessors";
         #endif
         QFileDialog dlg(this,"Select a module file",appPath);
 
@@ -261,12 +265,15 @@ void AddModuleDialog::on_change_objectfile()
 
     QString fileName;
 
-    #ifdef Q_OS_WIN
+    #if defined(Q_OS_WIN)
         appPath+="/Preprocessors";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
-    #else
-        appPath+="/../Frameworks";
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+    #elif defined(Q_OS_MAC)
+        appPath+="/../Preprocessors";
+        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib)"));
+    #elif defined(Q_OS_LINUX)
+        appPath+="/../Preprocessors";
+        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.so)"));
     #endif
 
     logger(kipl::logging::Logger::LogMessage,fileName.toStdString());

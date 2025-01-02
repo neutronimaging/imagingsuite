@@ -197,13 +197,17 @@ void  SingleModuleSettingsDialog::on_ButtonBrowse_Clicked()
     QString appPath = QCoreApplication::applicationDirPath();
     QString fileName;
 
-    #ifdef Q_OS_WIN
+    #if defined(Q_OS_WIN)
         appPath+="/Preprocessors";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
-    #else
-        QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks/";
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
+    #elif defined(Q_OS_MAC)
+        appPath+="/../Preprocessors";
+        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib)"));
+    #elif defined(Q_OS_LINUX)
+        appPath+="/../Preprocessors";
+        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.so)"));
     #endif
+
     logger(kipl::logging::Logger::LogMessage,appPath.toStdString());
 
     if ( fileName.isNull() )
