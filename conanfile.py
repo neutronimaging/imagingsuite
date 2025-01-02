@@ -81,18 +81,11 @@ class MuhrecRecipe(ConanFile):
                 self.run("brew --prefix sse2neon", stdout=sse2neon_dir)
                 sse2neon = sse2neon_dir.getvalue().strip()
                 copy(self, 'sse2neon/sse2neon.h', os.path.join(sse2neon, "include"), self.lib_folder)
-        # dirs_exist_ok was only added in python 3.9
-        if sys.version_info[1] > 9:
-            shutil.copytree(
-                os.path.join(self.source_folder,"applications","muhrec","Resources"), 
-                dst,
-                dirs_exist_ok=True,
-                )
-        else:
-            shutil.copytree(
-                os.path.join(self.source_folder,"applications","muhrec","Resources"), 
-                dst
-                )
+        shutil.copytree(
+            os.path.join(self.source_folder,"applications","muhrec","Resources"), 
+            dst,
+            dirs_exist_ok=True,
+            )
 
     def build(self):
         cmake = CMake(self)

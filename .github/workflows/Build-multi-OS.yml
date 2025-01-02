@@ -168,22 +168,50 @@ jobs:
         name: ${{runner.os}}-${{runner.arch}}-test-results
         path: ${{ matrix.build_root }}/Testing
 
-    - name: Compress artifact
-      shell: bash
-      working-directory: ${{ matrix.build_root }}
-      run: |
-        if [ "${RUNNER_OS}" == "Windows" ]; then
-          7z a ../MuhRec-${{runner.os}}-${{runner.arch}}.zip "bin/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe
-        elif [ "${RUNNER_OS}" == "Linux" ]; then
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip bin/* lib/* -x "bin/t*" -x "bin/verticalslicer" 
-        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib"
-        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib" -x "lib/*.h"
-        fi
+    # - name: Compress artifact
+    #   shell: bash
+    #   working-directory: ${{ matrix.build_root }}
+    #   run: |
+    #     if [ "${RUNNER_OS}" == "Windows" ]; then
+    #       7z a ../MuhRec-${{runner.os}}-${{runner.arch}}.zip "bin/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe
+    #     elif [ "${RUNNER_OS}" == "Linux" ]; then
+    #       zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip bin/* lib/* -x "bin/t*" -x "bin/verticalslicer" 
+    #     elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
+    #       zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib"
+    #     elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
+    #       zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib" -x "lib/*.h"
+    #     fi
 
-    - name: Save build artifact
+    - name: Save build artifact Windows
+      if: ${{ runner.os == 'Windows' }}
       uses: actions/upload-artifact@master
       with:
         name: MuhRec-${{runner.os}}-${{runner.arch}}
-        path: "${{ github.workspace }}/MuhRec*.zip"
+        path: |
+          ${{ matrix.build_root }}/bin/Release/*
+          !${{ matrix.build_root }}/bin/Release/t*.exe
+
+    - name: Save build artifact Linux
+      if: ${{ runner.os == 'Linux' }}
+      uses: actions/upload-artifact@master
+      with:
+        name: MuhRec-${{runner.os}}-${{runner.arch}}
+        path: |
+          ${{ matrix.build_root }}/bin/*
+          !${{ matrix.build_root }}/bin/t*
+          ${{ matrix.build_root }}/Preprocessors/*
+          ${{ matrix.build_root }}/BackProjectors/*
+          ${{ matrix.build_root }}/lib/*
+
+    - name: Save build artifact MacOS
+      if: ${{ runner.os == 'macOS' }}
+      uses: actions/upload-artifact@master
+      with:
+        name: MuhRec-${{runner.os}}-${{runner.arch}}
+        path: |
+          ${{ matrix.build_root }}/*.app/*
+          ${{ matrix.build_root }}/Preprocessors/*
+          ${{ matrix.build_root }}/BackProjectors/*
+          ${{ matrix.build_root }}/lib/*
+          !${{ matrix.build_root }}/lib/*.dylib
+          !${{ matrix.build_root }}/lib/*.h

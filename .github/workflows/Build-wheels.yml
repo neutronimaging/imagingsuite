@@ -32,7 +32,7 @@ jobs:
       # 4. <MacOS 14 with arm64 arch, Release, Clang 15 compiler toolchain
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix: # Qt requires py7zr==0.20.x which requires python 3.7^
-        python-version: ["3.7","3.8","3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         os: [windows-2022, ubuntu-latest, macos-13, macos-14]
         include:
           - os: windows-2022
