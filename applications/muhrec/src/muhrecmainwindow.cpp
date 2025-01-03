@@ -108,13 +108,13 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
 #elif defined(Q_OS_MAC)
         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
         m_sBackProjectorsPath = m_sApplicationPath+"../PlugIns/BackProjectors/";
-        defaultpreprocessors=m_sPreprocessorsPath+"StdPreprocModules.dylib";
-        defaultprojectors=m_sBackProjectorsPath+"StdBackProjectors.dylib";
+        defaultpreprocessors=m_sPreprocessorsPath+"libStdPreprocModules.dylib";
+        defaultprojectors=m_sBackProjectorsPath+"libStdBackProjectors.dylib";
 #elif defined(Q_OS_LINUX)
         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
         m_sBackProjectorsPath = m_sApplicationPath+"../PlugIns/BackProjectors/";
-        defaultpreprocessors=m_sPreprocessorsPath+"StdPreprocModules.so";
-        defaultprojectors=m_sBackProjectorsPath+"StdBackProjectors.so";
+        defaultpreprocessors=m_sPreprocessorsPath+"libStdPreprocModules.so";
+        defaultprojectors=m_sBackProjectorsPath+"libStdBackProjectors.so";
 #endif
 
     kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);

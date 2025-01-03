@@ -166,7 +166,7 @@ jobs:
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           cp ./PlugIns/Preprocessors/* ./PlugIns/BackProjectors/* ./lib/
         elif [ "${RUNNER_OS}" == "macOS" ]; then
-          cp ./lib/PlugIns/Preprocessors/* ./lib/PlugIns/BackProjectors/* ./lib/
+          cp ./lib/Preprocessors/* ./lib/BackProjectors/* ./lib/
         fi
 
         ctest --build-config ${{ matrix.build_type }}
@@ -176,7 +176,7 @@ jobs:
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           rm lib/*Modules.so lib/*Projectors.so
         elif [ "${RUNNER_OS}" == "macOS" ]; then
-          rm lib/*Modules.dylib lib/*Projectors.dylib
+          rm -r lib/*Modules.dylib lib/*Projectors.dylib lib/sse2neon
         fi
       continue-on-error: true
 
