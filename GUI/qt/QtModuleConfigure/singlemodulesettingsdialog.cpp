@@ -258,13 +258,13 @@ void SingleModuleSettingsDialog::on_pushButton_Browse_clicked()
     QString appPath = QCoreApplication::applicationDirPath();
     QString fileName;
     #if defined(Q_OS_WIN)
-        appPath += "/BackProjectors";
+        appPath += "/PlugIns/BackProjectors";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
     #elif defined(Q_OS_MAC)
-        appPath +="/../BackProjectors/";
+        appPath +="/../PlugIns/BackProjectors/";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib)"));
     #elif defined(Q_OS_LINUX)
-        appPath +="/../BackProjectors/";
+        appPath +="/../PlugIns/BackProjectors/";
         fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.so)"));
     #endif
     logger.message(appPath.toStdString());

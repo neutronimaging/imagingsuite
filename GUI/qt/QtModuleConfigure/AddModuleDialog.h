@@ -62,6 +62,7 @@ protected:
 	std::map<std::string, std::map<std::string, std::string> > modulelist;
 	std::string m_sApplication;
 	std::string m_sApplicationPath;
+    std::string m_sPreprocessorsPath;
     std::string m_sDefaultModuleSource;
     ModuleConfig m_ModuleConfig;
 };

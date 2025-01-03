@@ -162,15 +162,17 @@ jobs:
       # The seperation of module files into seperate folders breaks the ctest test discovery, copy temprarily to the root folder for testing
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          cp ./Preprocessors/* ./BackProjectors/* ./
-        else
-          cp ./Preprocessors/* ./BackProjectors/* ./lib/
+          cp ./bin/Release/PlugIns/Preprocessors/* ./bin/Release/PlugIns/BackProjectors/* ./bin/Release/
+        elif [ "${RUNNER_OS}" == "Linux" ]; then
+          cp ./PlugIns/Preprocessors/* ./PlugIns/BackProjectors/* ./lib/
+        elif [ "${RUNNER_OS}" == "macOS" ]; then
+          cp ./lib/PlugIns/Preprocessors/* ./lib/PlugIns/BackProjectors/* ./lib/
         fi
 
         ctest --build-config ${{ matrix.build_type }}
         
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          rm *Modules.dll *Projectors.dll
+          rm ./bin/Release/*Modules.dll ./bin/Release/*Projectors.dll
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           rm lib/*Modules.so lib/*Projectors.so
         elif [ "${RUNNER_OS}" == "macOS" ]; then
@@ -207,6 +209,7 @@ jobs:
         path: |
           ${{ matrix.build_root }}/bin/Release/*
           !${{ matrix.build_root }}/bin/Release/t*.exe
+          !${{ matrix.build_root }}/bin/Release/*.pyd
 
     - name: Save build artifact Linux
       if: ${{ runner.os == 'Linux' }}
@@ -216,9 +219,10 @@ jobs:
         path: |
           ${{ matrix.build_root }}/bin/*
           !${{ matrix.build_root }}/bin/t*
-          ${{ matrix.build_root }}/Preprocessors/*
-          ${{ matrix.build_root }}/BackProjectors/*
+          ${{ matrix.build_root }}/PlugIns/*
           ${{ matrix.build_root }}/lib/*
+          !${{ matrix.build_root }}/lib/*cpython*
+          ${{ matrix.build_root }}/resources/*
 
     - name: Save build artifact MacOS
       if: ${{ runner.os == 'macOS' }}
@@ -227,8 +231,3 @@ jobs:
         name: MuhRec-${{runner.os}}-${{runner.arch}}
         path: |
           ${{ matrix.build_root }}/*.app/*
-          ${{ matrix.build_root }}/Preprocessors/*
-          ${{ matrix.build_root }}/BackProjectors/*
-          ${{ matrix.build_root }}/lib/*
-          !${{ matrix.build_root }}/lib/*.dylib
-          !${{ matrix.build_root }}/lib/*.h
