@@ -8,7 +8,7 @@ MUHREC_BASE_PATH=$BASEPATH
 # Check if the Frameworks directory is already in LD_LIBRARY_PATH
 case ":$LD_LIBRARY_PATH:" in
   *":$BASEPATH/Frameworks:"*) ;;
-  *) LD_LIBRARY_PATH=$BASEPATH/Frameworks:$LD_LIBRARY_PATH ;;
+  *) LD_LIBRARY_PATH=$BASEPATH/lib:$LD_LIBRARY_PATH ;;
 esac
 
 export MUHREC_BASE_PATH
@@ -20,5 +20,5 @@ do
 	args=$args" "$arg
 done
 
-$BASEPATH/bin/muhrec $args
+$BASEPATH/bin/MuhRec $args
 
