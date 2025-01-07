@@ -258,7 +258,7 @@ void Tkiplbase::testHistogram()
     
     size_t cnt = 0UL;
 
-    cnt = std::accumulate(hist.begin(),hist.end(),0UL); 
+    cnt = std::accumulate(hist.begin(),hist.end(),static_cast<size_t>(0)); 
     
     QCOMPARE(cnt,img.Size());
 }

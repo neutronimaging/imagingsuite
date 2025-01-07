@@ -896,13 +896,14 @@ void FDKbp_single::project_volume_onto_image_stl(kipl::base::TImage<float, 2> &c
                 acc2.y = zip[k].y + yip[j].y;
                 acc2.z = zip[k].z + yip[j].z;
                 
-                float *pimg = img+pk+j*volume.Size(0);
+                float *pimg = img+pk+j*volume.Size(0) + mask[j].first+1;
                 for (size_t i = mask[j].first+1; i <= mask[j].second; ++i)
                 {
-                    float dw = 1.0f / (acc2.z+xip[i].z);
+                    auto current_xip = xip[i];
+                    float dw = 1.0f / (acc2.z+current_xip.z);
 
-                    pimg[i] +=
-                            dw*dw * get_pixel_value_c (cbi, dw*(acc2.y+xip[i].y), dw*(acc2.x+xip[i].x));
+                    *(pimg++) +=
+                            dw*dw * get_pixel_value_c (cbi, dw*(acc2.y+current_xip.y), dw*(acc2.x+current_xip.x));
                 }
             }
         });
@@ -1020,13 +1021,11 @@ void FDKbp_single::project_volume_onto_image_reference (
 // get_pixel_value_c seems to be no faster than get_pixel_value_b, despite having two fewer compares.
 inline float FDKbp_single::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, float r, float c)
 {
-    r += 0.5f;
-    c += 0.5f;
-    if ((r < 0.0f) || (r >= static_cast<float>(cbi.Size(1))) ||
-        (c < 0.0f) || (c >= static_cast<float>(cbi.Size(0)))) return 0.0f;
+    if ((r < -0.5f) || (r >= static_cast<float>(cbi.Size(1))) ||
+        (c < -0.5f) || (c >= static_cast<float>(cbi.Size(0)))) return 0.0f;
     
-    size_t rr = static_cast<size_t>(r);
-    size_t cc = static_cast<size_t>(c);
+    size_t rr = static_cast<size_t>(r+0.5f);
+    size_t cc = static_cast<size_t>(c+0.5f);
 
     return cbi[rr*cbi.Size(0) + cc];
 }

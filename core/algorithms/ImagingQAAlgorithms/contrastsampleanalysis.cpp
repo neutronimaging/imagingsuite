@@ -129,7 +129,7 @@ std::vector<kipl::base::coords3Df> ContrastSampleAnalysis::getInsetCoordinates()
     logger(logger.LogMessage,"Find centers");
     kipl::math::CircularHoughTransform cht;
 
-    const float radius = 0.5f*metricInsetDiameter/pixelsize;
+    radius = 0.5f*metricInsetDiameter/pixelsize;
     logger(logger.LogMessage,"Circ Hough transform");
     return m_insetCenters;
 }

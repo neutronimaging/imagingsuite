@@ -23,7 +23,7 @@ PreprocModuleBase::~PreprocModuleBase(void)
 }
 
 
-bool PreprocModuleBase::SetROI(const std::vector<size_t> & roi)
+bool PreprocModuleBase::SetROI(const std::vector<size_t> & /*roi*/)
 {
     return false;
 }

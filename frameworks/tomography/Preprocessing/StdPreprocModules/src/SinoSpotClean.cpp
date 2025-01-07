@@ -15,7 +15,7 @@ SinoSpotClean::~SinoSpotClean() {
 	// TODO Auto-generated destructor stub
 }
 
-int SinoSpotClean::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int SinoSpotClean::Configure(ReconConfig /*config*/, std::map<std::string, std::string> /*parameters*/)
 {
 
 
@@ -33,7 +33,7 @@ std::map<std::string, std::string> SinoSpotClean::GetParameters()
 	return parameters;
 }
 
-int SinoSpotClean::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters)
+int SinoSpotClean::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &/*parameters*/)
 {
 	kipl::base::TImage<float,2> sino;
 	int N=static_cast<int>(img.Size(2));

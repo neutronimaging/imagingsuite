@@ -23,7 +23,7 @@ private slots:
 
 tedgefunction::tedgefunction()
 {
-    QSKIP("Testing non-supported features");
+    // QSKIP("Testing non-supported features");
     // here I should create the data that I want to use for testing, or something like this,  so for example a vector t of lambda values
 //     double *t = new double[30];
 

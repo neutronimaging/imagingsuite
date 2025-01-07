@@ -343,7 +343,7 @@ std::vector<T> vecabs(std::vector<T> &v)
 template <class T>
 std::vector<T> cumsum(std::vector<T> &v, bool norm=false)
 {
-	T tmp=0;
+	// T tmp=0;
     std::vector<T> tv;
 	tv.resize(v.size());
 
