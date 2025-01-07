@@ -4,7 +4,13 @@ RP="`readlink -e $0`"
 BASEPATH="`dirname $RP`"
 
 MUHREC_BASE_PATH=$BASEPATH
-LD_LIBRARY_PATH=$BASEPATH/Frameworks:$LD_LIBRARY_PATH
+
+# Check if the Frameworks directory is already in LD_LIBRARY_PATH
+case ":$LD_LIBRARY_PATH:" in
+  *":$BASEPATH/Frameworks:"*) ;;
+  *) LD_LIBRARY_PATH=$BASEPATH/Frameworks:$LD_LIBRARY_PATH ;;
+esac
+
 export MUHREC_BASE_PATH
 export LD_LIBRARY_PATH
 
