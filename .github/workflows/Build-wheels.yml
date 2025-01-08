@@ -177,14 +177,14 @@ jobs:
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
           cd bin/Release
-          cp *.dll ../../../imagingsuite/package/pymuhrec
+          cp *.dll PlugIns/BackProjectors/*.dll PlugIns/Preprocessors/*.dll ../../../imagingsuite/package/pymuhrec
           cp *.pyd ../../../imagingsuite/package/pymuhrec
         elif [ "${RUNNER_OS}" == "Linux" ]; then
-          cd Release/lib
-          cp * ../../../imagingsuite/package/pymuhrec
+          cd Release
+          cp lib/* PlugIns/BackProjectors/*.so PlugIns/Preprocessors/*.so ../../imagingsuite/package/pymuhrec
         elif [ "${RUNNER_OS}" == "macOS" ]; then
           cd Release/lib
-          cp *.dylib ../../../imagingsuite/package/pymuhrec
+          cp *.dylib BackProjectors/*.dylib Preprocessors/*.dylib ../../../imagingsuite/package/pymuhrec
           cp *.so ../../../imagingsuite/package/pymuhrec
         fi
 
