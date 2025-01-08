@@ -165,12 +165,6 @@ jobs:
           ${QTPATH}/bin/macdeployqt imageviewer.app
         fi
 
-    - name: Ammend shared libraries runpaths
-      if: ${{ runner.os == 'Linux' }}
-      working-directory: build-imagingsuite/Release/lib
-      shell: bash
-      run: patchelf --set-rpath '$ORIGIN' *.so*
-
     - name: Copy bindings and shared libraries to package folder
       shell: bash
       working-directory: build-imagingsuite
@@ -187,6 +181,13 @@ jobs:
           cp *.dylib BackProjectors/*.dylib Preprocessors/*.dylib ../../../imagingsuite/package/pymuhrec
           cp *.so ../../../imagingsuite/package/pymuhrec
         fi
+
+    - name: Ammend shared libraries runpaths
+      if: ${{ runner.os == 'Linux' }}
+      working-directory: imagingsuite/package/pymuhrec
+      shell: bash
+      run: |
+        patchelf --set-rpath '$ORIGIN' *.so*
 
     - name: Build wheels
       shell: bash

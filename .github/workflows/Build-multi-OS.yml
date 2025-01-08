@@ -149,9 +149,12 @@ jobs:
 
     - name: Ammend shared libraries runpaths
       if: ${{ runner.os == 'Linux' }}
-      working-directory: build-imagingsuite/Release/lib
+      working-directory: build-imagingsuite/Release
       shell: bash
-      run: patchelf --set-rpath '$ORIGIN' *.so*
+      run: |
+        patchelf --set-rpath '$ORIGIN' lib/*.so*
+        patchelf --set-rpath '$ORIGIN:$ORIGIN/../../lib' PlugIns/BackProjectors/*.so*
+        patchelf --set-rpath '$ORIGIN:$ORIGIN/../../lib' PlugIns/Preprocessors/*.so*
 
     - name: Test
       id: tests
