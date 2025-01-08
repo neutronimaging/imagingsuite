@@ -33,7 +33,7 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix: # Qt requires py7zr==0.20.x which requires python 3.7^
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-        os: [windows-2022, ubuntu-latest, macos-13, macos-14]
+        os: [windows-2022, ubuntu-22.04, macos-13, macos-14]
         include:
           - os: windows-2022
             c_compiler: cl
@@ -41,7 +41,7 @@ jobs:
             cl: 17
             build_type: Release
             build_root: build-imagingsuite
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             c_compiler: gcc
             cpp_compiler: g++
             gcc: 11

@@ -38,7 +38,7 @@ jobs:
             cl: 17
             build_type: Release
             build_root: build-imagingsuite
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             c_compiler: gcc
             cpp_compiler: g++
             gcc: 11
@@ -186,20 +186,6 @@ jobs:
       with:
         name: ${{runner.os}}-${{runner.arch}}-test-results
         path: ${{ matrix.build_root }}/Testing
-
-    # - name: Compress artifact
-    #   shell: bash
-    #   working-directory: ${{ matrix.build_root }}
-    #   run: |
-    #     if [ "${RUNNER_OS}" == "Windows" ]; then
-    #       7z a ../MuhRec-${{runner.os}}-${{runner.arch}}.zip "bin/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe
-    #     elif [ "${RUNNER_OS}" == "Linux" ]; then
-    #       zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip bin/* lib/* -x "bin/t*" -x "bin/verticalslicer" 
-    #     elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
-    #       zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib"
-    #     elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
-    #       zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib" -x "lib/*.h"
-    #     fi
 
     - name: Save build artifact Windows
       if: ${{ runner.os == 'Windows' }}
