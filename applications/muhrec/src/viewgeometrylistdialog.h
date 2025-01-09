@@ -35,6 +35,7 @@ public:
     int changedConfigFields();
     void getTilt(float &center, float &tilt, float &pivot);
     void getROI(std::vector<size_t> &roi);
+    void getROIi(std::vector<int> &roi);
     
     // Collection of call-backs
 protected slots:

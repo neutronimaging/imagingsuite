@@ -308,7 +308,7 @@ void SingleModuleSettingsDialog::on_buttonBox_clicked(QAbstractButton *button)
             break;
 
         // Non-standard buttons:
-        case QDialogButtonBox::NoButton:
+        case QDialogButtonBox::NoButton: {
            int actionRole = button->property("ActionRole").toInt();
            QString s_Value=button->text();
            msg<<"Got NoButton: "<<actionRole<<", text:"<<button->text().toStdString();
@@ -324,7 +324,25 @@ void SingleModuleSettingsDialog::on_buttonBox_clicked(QAbstractButton *button)
            {
                logger(kipl::logging::Logger::LogMessage,"Delete parameter");
            }
-           break;
-        }
+           break;}
+
+
+        case QDialogButtonBox::Apply: break;
+        case QDialogButtonBox::Reset: break;
+        case QDialogButtonBox::Save: break;
+        case QDialogButtonBox::SaveAll: break;
+        case QDialogButtonBox::Open: break;
+        case QDialogButtonBox::Close: break;
+        case QDialogButtonBox::Discard: break;
+        case QDialogButtonBox::Ignore: break;
+        case QDialogButtonBox::No: break;
+        case QDialogButtonBox::Yes: break;
+        case QDialogButtonBox::Retry: break;
+        case QDialogButtonBox::Abort: break;
+        case QDialogButtonBox::Help: break;
+        case QDialogButtonBox::RestoreDefaults: break;
+        case QDialogButtonBox::YesToAll: break;
+        case QDialogButtonBox::NoToAll: break;
+    }
 }
 

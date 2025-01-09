@@ -561,9 +561,9 @@ void TKiplMathTest::testCovSmallData()
 
     arma::mat C=cov.compute(img.GetDataPtr(),img.dims(),2);
 
-    for (int i=0 ; i<img.Size(1); i++)
+    for (size_t i=0 ; i<img.Size(1); ++i)
     {
-        for (int j=0 ; j<img.Size(1); j++)
+        for (size_t j=0 ; j<img.Size(1); ++j)
         {
   //          std::cout<<std::setw(12)<<C[i][j];
 
@@ -607,7 +607,7 @@ void TKiplMathTest::testMinMax()
     kipl::math::minmax(img.GetDataPtr(),img.Size(),&mi,&ma);
     QCOMPARE(mi,0.0f);
     QCOMPARE(ma,img.Size()-1.0f);
-    const float infval=std::numeric_limits<float>::infinity();
+    // const float infval=std::numeric_limits<float>::infinity();
     const float nanval=std::numeric_limits<float>::quiet_NaN();
 
     img[1] =  nanval;

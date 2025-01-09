@@ -150,12 +150,12 @@ void MedianMixRingCleanDlg::UpdateParameterList(std::map<std::string, std::strin
     parameters["threshold"] =   kipl::strings::value2string(m_fLambda);
 }
 
-void MedianMixRingCleanDlg::on_entry_lambda_valueChanged(double arg1)
+void MedianMixRingCleanDlg::on_entry_lambda_valueChanged(double /*arg1*/)
 {
     DrawCursors(ui->entry_lambda->value(), ui->entry_sigma->value());
 }
 
-void MedianMixRingCleanDlg::on_entry_sigma_valueChanged(double arg1)
+void MedianMixRingCleanDlg::on_entry_sigma_valueChanged(double /*arg1*/)
 {
     DrawCursors(ui->entry_lambda->value(), ui->entry_sigma->value());
 }

@@ -88,10 +88,9 @@ BBLogNormDlg::~BBLogNormDlg()
 }
 
 
-int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img) {
-
+int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> & /*img*/) 
+{
     m_Config=dynamic_cast<ReconConfig *>(config);
-
 
     try{
         nBBFirstIndex = GetIntParameter(parameters,"BB_first_index");
@@ -745,7 +744,7 @@ void BBLogNormDlg::on_spinThresh_valueChanged(double arg1)
     thresh = arg1;
 }
 
-void BBLogNormDlg::on_checkBox_thresh_stateChanged(int arg1)
+void BBLogNormDlg::on_checkBox_thresh_stateChanged(int /*arg1*/)
 {
 
 }
@@ -769,7 +768,7 @@ void BBLogNormDlg::on_check_singleext_clicked(bool checked)
 
 }
 
-void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
+void BBLogNormDlg::on_check_singleext_stateChanged(int /*arg1*/)
 {
     if (ui->check_singleext->isChecked())
     {

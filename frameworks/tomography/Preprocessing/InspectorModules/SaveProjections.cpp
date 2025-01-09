@@ -44,7 +44,7 @@ int SaveProjections::Configure(ReconConfig config, std::map<std::basic_string<ch
 	return 0;
 }
 
-int SaveProjections::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters)
+int SaveProjections::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &/*parameters*/)
 {
     std::string filemask=m_sPath+m_sFileMask;
 

@@ -21,7 +21,7 @@ ProjectionFilterDlg::~ProjectionFilterDlg()
     delete ui;
 }
 
-int ProjectionFilterDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img)
+int ProjectionFilterDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & /*img*/)
 {
     m_ReconConfig=dynamic_cast<ReconConfig *>(config);
 

@@ -49,7 +49,7 @@ void TImageOperatorsTest::testMax()
     img2.Clone();
 
     float val=kipl::base::max(img2);
-    QCOMPARE(val,(float)(img.Size(0)*img.Size(1)));
+    QCOMPARE(val,static_cast<float>(img.Size(0)*img.Size(1)));
 
     for (size_t i=0; i<img.Size(); ++i)
         QCOMPARE(img2[i],img[i]);
