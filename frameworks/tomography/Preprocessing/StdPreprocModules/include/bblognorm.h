@@ -24,7 +24,7 @@ public:
     BBLogNorm(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~BBLogNorm();
 
-    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
+    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override; /// Configure all parameters and calls PrepareBBData
     virtual int ConfigureDLG(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and does not call PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
     virtual void LoadReferenceImages(const std::vector<size_t> &roi); /// load all images that are needed for referencing in the current roi
@@ -39,6 +39,7 @@ public:
     virtual void LoadExternalBBData(const std::vector<size_t> &roi); /// load BB images pre-processed elsewhere
 
 protected:
+    using ProcessModuleBase::Configure;
     ReconConfig m_Config;
     std::string path; /// path, maybe not used
     std::string flatname; /// name mask for OB image

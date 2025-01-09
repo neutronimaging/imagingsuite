@@ -36,6 +36,8 @@ private slots:
     void on_button_apply_clicked();
 
 private:
+    using ConfiguratorDialogBase::exec;
+    
     Ui::MedianMixRingClean *ui;
 
     virtual void ApplyParameters();
