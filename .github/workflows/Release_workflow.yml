@@ -19,6 +19,14 @@ jobs:
             workflow_conclusion: success
             branch: master
 
+        - name: Recompress applications
+          shell: bash
+          run: |
+            zip -r MuhRec-Linux-X64.zip MuhRec-Linux-X64/*
+            zip -r MuhRec-Windows-X64.zip MuhRec-Windows-X64/*
+            zip -r MuhRec-macOS-ARM64.zip MuhRec-macOS-ARM64/*
+            zip -r MuhRec-macOS-X64.zip MuhRec-macOS-X64/*
+
         - name: Download pymuhrec wheels
           uses: dawidd6/action-download-artifact@v6
           with:
