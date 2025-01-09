@@ -1,0 +1,35 @@
+# This workflow creates a release and uploads pymuhrec to pypi whenever a new tag is pushed to the repository.
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  Create_release:
+    runs-on: ubuntu-latest
+        
+    steps:
+        - name: Download MuhRec application artifacts
+          uses: dawidd6/action-download-artifact@v6
+          with:
+            github_token: ${{secrets.GITHUB_TOKEN}}
+            workflow: Build-multi-OS.yml
+            workflow_conclusion: success
+            branch: master
+
+        - name: Download pymuhrec wheels
+          uses: dawidd6/action-download-artifact@v6
+          with:
+            github_token: ${{secrets.GITHUB_TOKEN}}
+            workflow: Build-wheels.yml
+            workflow_conclusion: success
+            branch: master
+
+        - name: Create Release and upload artifacts
+          uses: softprops/action-gh-release@v2
+          with:
+            files: |
+              pymuhrec-*/*.whl
+              MuhRec-*
