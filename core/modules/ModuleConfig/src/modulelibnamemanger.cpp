@@ -109,8 +109,8 @@ std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
 std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
 {
     std::ostringstream msg;
-    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/Frameworks") &&
-        !libInAppPath(path,m_sApplicationPath+"../Frameworks")   )
+    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/Plugins/"+m_sCategoryName) &&
+        !libInAppPath(path,m_sApplicationPath+"../Plugins/"+m_sCategoryName)   )
     {
         msg << path.c_str()<<" is not in lib path";
         logger.verbose(msg.str());
