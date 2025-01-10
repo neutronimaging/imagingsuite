@@ -16,12 +16,7 @@ jobs:
         
     steps:
         - name: Download MuhRec application artifacts
-          uses: dawidd6/action-download-artifact@v6
-          with:
-            github_token: ${{secrets.GITHUB_TOKEN}}
-            workflow: Build-multi-OS.yml
-            workflow_conclusion: success
-            branch: master
+          uses: actions/download-artifact@v4
 
         - name: Recompress applications
           shell: bash
