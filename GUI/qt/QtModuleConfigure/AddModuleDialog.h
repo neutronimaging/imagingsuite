@@ -30,7 +30,10 @@ public:
     explicit AddModuleDialog(QWidget *parent = nullptr);
     virtual ~AddModuleDialog() {}
 
-    int configure(std::string application, std::string defaultsource="", std::string application_path="");
+    int configure(const std::string &application, 
+                  const std::string &defaultsource, 
+                  const std::string &application_path,
+                  const std::string &sCategory);
     virtual int exec();
     ModuleConfig GetModuleConfig() {return m_ModuleConfig;}
 

@@ -21,6 +21,7 @@ ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     m_pCurrentModule(nullptr),
     m_sApplication("muhrec"),
     m_sApplicationPath(""),
+    m_sCategory(""),
     m_pApplication(nullptr),
     m_pConfigurator(nullptr)
 {
@@ -42,10 +43,14 @@ ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
     show();
 }
 
-void ModuleChainConfiguratorWidget::configure(std::string application, std::string applicationpath, ModuleConfigurator *pConfigurator)
+void ModuleChainConfiguratorWidget::configure(const std::string &application, 
+                                              const std::string &applicationpath, 
+                                              const std::string &category,
+                                              ModuleConfigurator *pConfigurator)
 {
     m_sApplication     = application;
     m_sApplicationPath = applicationpath;
+    m_sCategory        = category;
     m_pConfigurator    = pConfigurator;
 }
 
@@ -65,7 +70,7 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 
     AddModuleDialog dlg(this);
 
-    dlg.configure(m_sApplication,m_sDefaultModuleSource,m_sApplicationPath);
+    dlg.configure(m_sApplication,m_sDefaultModuleSource,m_sApplicationPath,m_sCategory);
     if (dlg.exec()==QDialog::Accepted)
     {
         auto mcfg=dlg.GetModuleConfig();

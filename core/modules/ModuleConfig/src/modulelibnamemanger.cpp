@@ -4,14 +4,16 @@
 #include <base/KiplException.h>
 #include <strings/filenames.h>
 
-ModuleLibNameManger::ModuleLibNameManger(const std::string &path) :
+ModuleLibNameManger::ModuleLibNameManger(const std::string &path, const std::string &category) :
     logger("ModuleLibNameManger"),
-    m_sApplicationPath(path)
+    m_sApplicationPath(path),
+    m_sCategoryName(category)
 {
-//   kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
+    kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
+    kipl::strings::filenames::CheckPathSlashes(m_sCategoryName,true);
 }
 
-std::string ModuleLibNameManger::generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os)
+std::string ModuleLibNameManger::generateLibName(const std::string &name,const kipl::base::eOperatingSystem &os)
 {
     if (name.find_first_of("/\\")!=std::string::npos)
         return name;
@@ -55,17 +57,20 @@ std::string ModuleLibNameManger::stripLibName(const std::string &libPath)
     return stripLibName(libPath,kipl::base::getOperatingSystem());
 }
 
-void ModuleLibNameManger::setAppPath(const std::string &path)
+void ModuleLibNameManger::setAppPath(const std::string &path, const std::string &category)
 {
     m_sApplicationPath = path;
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
-}
+    
+    m_sCategoryName = category;
+    kipl::strings::filenames::CheckPathSlashes(m_sCategoryName,true);
+}   
 
 std::string ModuleLibNameManger::generateWindowsLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath;
 
-    fullName = fullName+name+".dll";
+    fullName = fullName+"Plugins\\"+m_sCategoryName+name+".dll";
 
     return fullName;
 }
@@ -74,7 +79,7 @@ std::string ModuleLibNameManger::generateMacOSLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 6 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
 
-    fullName = fullName+"/Frameworks/lib"+name+".dylib";
+    fullName = fullName+"/Plugins/"+m_sCategoryName+"/lib"+name+".dylib";
 
     return fullName;
 }
@@ -83,7 +88,7 @@ std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 3 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
 
-    fullName = fullName+"lib/lib"+name+".so";
+    fullName = fullName+"/Plugins/"+m_sCategoryName+"/lib"+name+".so";
 
     return fullName;
 }

@@ -128,8 +128,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
       <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
     logger.message(msg.str());
 
-    ui->ConfiguratorBackProj->Configure("muhrecbp",defaultprojectors,m_sApplicationPath);
-    ui->moduleconfigurator->configure("muhrec",m_sApplicationPath,&m_ModuleConfigurator);
+    ui->ConfiguratorBackProj->Configure("muhrecbp", defaultprojectors, "BackProjectors",m_sApplicationPath);
+    ui->moduleconfigurator->configure("muhrec", m_sApplicationPath, "Preprocessors", &m_ModuleConfigurator);
     ui->moduleconfigurator->SetDefaultModuleSource(defaultpreprocessors);
     ui->moduleconfigurator->SetApplicationObject(this);
 

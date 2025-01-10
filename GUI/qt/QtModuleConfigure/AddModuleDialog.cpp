@@ -35,7 +35,7 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
     m_sApplication("muhrec"),
     m_sApplicationPath(""),
     m_sPreprocessorsPath(""),
-    m_ModuleConfig("")
+    m_ModuleConfig("","")
 {
     setWindowTitle(tr("Add a module"));
     setLayout(&m_Dlg_layout);
@@ -77,7 +77,10 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
 
 }
 
-int AddModuleDialog::configure(std::string application, std::string defaultsource, std::string application_path)
+int AddModuleDialog::configure( const std::string &application, 
+                                const std::string &defaultsource, 
+                                const std::string &application_path, 
+                                const std::string &sCategory)
 {
     m_sApplication         = application;
     m_sApplicationPath     = application_path;

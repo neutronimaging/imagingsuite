@@ -24,6 +24,7 @@ typedef  void * HINSTANCE;
 
 SingleModuleSettingsDialog::SingleModuleSettingsDialog(const std::string &sApplicationName,
                                                        const std::string &sApplicationPath,
+                                                       const std::string &sCategory,
                                                        const std::string & sDefaultModuleSource,
                                                        QWidget *parent) :
     QDialog(parent),
@@ -31,8 +32,9 @@ SingleModuleSettingsDialog::SingleModuleSettingsDialog(const std::string &sAppli
     ui(new Ui::SingleModuleSettingsDialog),
     m_sApplication(sApplicationName),
     m_sApplicationPath(sApplicationPath),
+    m_sCategory(sCategory),
     m_sDefaultModuleSource(sDefaultModuleSource),
-    m_ModuleConfig("")
+    m_ModuleConfig("","")
 {
     ui->setupUi(this);
 }
@@ -46,7 +48,7 @@ int SingleModuleSettingsDialog::exec(ModuleConfig &config)
 {
     std::ostringstream msg;
     m_ModuleConfig=config;
-    m_ModuleConfig.setAppPath(QCoreApplication::applicationDirPath().toStdString());
+    m_ModuleConfig.setAppPath(QCoreApplication::applicationDirPath().toStdString(),m_sCategory);
 
     QDir dir;
     if (dir.exists(QString::fromStdString(m_ModuleConfig.m_sSharedObject)))
