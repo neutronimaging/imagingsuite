@@ -709,18 +709,13 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         logger(logger.LogMessage,"Updating path of preprocessing modules");
         for (auto &module : m_Config.modules)
         {
-            pos=module.m_sSharedObject.find(sSearchStr);
-
-            if (pos!=std::string::npos)
-                module.m_sSharedObject.replace(pos,sSearchStr.length(),m_sPreprocessorsPath);
+            module.setAppPath(m_sApplicationPath,"Preprocessors");
 
             logger.message(module.m_sSharedObject);
         }
 
         logger(logger.LogMessage,"Updating path of back projector");
-        pos=m_Config.backprojector.m_sSharedObject.find(sSearchStr);
-        if (pos!=std::string::npos)
-            m_Config.backprojector.m_sSharedObject.replace(pos,sSearchStr.size(),m_sBackProjectorsPath);
+        m_Config.backprojector.setAppPath(m_sApplicationPath,"BackProjectors");
 
         logger.message(m_Config.backprojector.m_sSharedObject);
 
