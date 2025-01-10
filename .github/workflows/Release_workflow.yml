@@ -7,7 +7,11 @@ on:
       - 'v*.*.*'
 
 jobs:
+  Run_build_workflow:
+    uses: ./.github/workflows/Build-multi-OS.yml
+
   Create_release:
+    needs: Run_build_workflow
     runs-on: ubuntu-latest
         
     steps:

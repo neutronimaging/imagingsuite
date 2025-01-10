@@ -9,6 +9,7 @@ env:
 #  MACOSX_DEPLOYMENT_TARGET: 10.15 # Can be set to build for older version of MacOS, ignored by other OSs. Currently does not work.
 
 on:
+  workflow_call:
   workflow_dispatch:
   pull_request:
     branches:
