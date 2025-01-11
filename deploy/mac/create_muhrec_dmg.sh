@@ -26,7 +26,7 @@ mkdir -p "$BUILD_DIR/.background"
 cp -R "$SOURCE_DIR/$APP_BUNDLE" "$BUILD_DIR"
 
 # Copy the background image
-cp "$BACKGROUND_IMG" "$BUILD_DIR/.background/"
+cp "$BACKGROUND_IMG" "$BUILD_DIR/.background/background.png"
 
 # Create a symbolic link to /Applications
 ln -s /Applications "$BUILD_DIR/Applications"
@@ -54,7 +54,7 @@ tell application "Finder"
         set theViewOptions to the icon view options of container window
         set arrangement of theViewOptions to not arranged
         set icon size of theViewOptions to 128
-        set background picture of theViewOptions to file ".background:'$(basename "$BACKGROUND_IMG")'"
+        set background picture of theViewOptions to file ".background:background.png"
         make new alias file at container window to POSIX file "/Applications" with properties {name:"Applications"}
         set position of item "'$APP_BUNDLE'" of container window to {150, 200}
         set position of item "Applications" of container window to {450, 200}
@@ -70,8 +70,9 @@ hdiutil detach "$MOUNT_DIR"
 
 # Add the custom icon to the DMG
 if [ -f "$ICON_FILE" ]; then
-  cp "$ICON_FILE" "$DEST_DIR/.VolumeIcon.icns"
-  SetFile -a C "$DEST_DIR/$DMG_NAME"  # Enable the custom icon for the DMG
+  cp "$ICON_FILE" "$BUILD_DIR/.VolumeIcon.icns"
+  SetFile -a C "$BUILD_DIR/.VolumeIcon.icns"  # Enable the custom icon for the DMG
+  hdiutil create -ov -srcfolder "$BUILD_DIR" -volname "$DMG_VOLUME_NAME" -format UDZO "$DEST_DIR/$DMG_NAME"
 else
   echo "Icon file not found: $ICON_FILE"
 fi
