@@ -53,9 +53,9 @@ private slots:
 
 private:
     using ConfiguratorDialogBase::exec;
-    virtual void ApplyParameters();
-    virtual void UpdateDialog();
-    virtual void UpdateParameters();
+    virtual void ApplyParameters() override;
+    virtual void UpdateDialog() override;
+    virtual void UpdateParameters() override;
     virtual void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
 
