@@ -136,9 +136,9 @@ namespace kipl {namespace morphology {
 		ImgType *pImg=img.GetDataPtr();
 		ImgType *pTmp=tmp.GetDataPtr();
 		
-		deque<long> remove_queue;
-		
-        copy(remove_list.begin(),remove_list.end(),back_inserter(remove_queue));
+		deque<long> remove_queue(remove_list.size());
+		std::transform(remove_list.begin(),remove_list.end(),remove_queue.begin(),[](size_t x){return static_cast<long>(x);});
+        // copy(remove_list.begin(),remove_list.end(),back_inserter(remove_queue));
 
 
         for (const auto & pix : remove_queue) 

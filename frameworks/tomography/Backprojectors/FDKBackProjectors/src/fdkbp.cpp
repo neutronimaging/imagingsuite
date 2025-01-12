@@ -13,7 +13,7 @@
 	#pragma clang diagnostic ignored "-Wcast-align"
 	#pragma clang diagnostic ignored "-Wpedantic"
 	#pragma clang diagnostic ignored "-W#warnings"
-		#include <sse2neon.h>
+		#include <sse2neon/sse2neon.h>
 	#pragma clang diagnostic pop
 #else
     #include <xmmintrin.h>
@@ -30,15 +30,15 @@
 
 #include "fdkbp.h"
 
-#ifndef DEGTORAD
-static const double DEGTORAD = dPi/ 180.0;
-#endif
+// #ifndef DEGTORAD
+// static const double DEGTORAD = dPi/ 180.0;
+// #endif
 
-#ifndef MARGIN
-static const unsigned int MARGIN = 5;
-#else
-#error "MARGIN IS DEFINED"
-#endif
+// #ifndef MARGIN
+// static const unsigned int MARGIN = 5;
+// #else
+// #error "MARGIN IS DEFINED"
+// #endif
 
 
 // Matrix element m[i,j] for matrix with c columns
@@ -310,11 +310,9 @@ size_t FDKbp::reconstruct(kipl::base::TImage<float,2> &proj, float angles, size_
 
 
 void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
-    double *proj_matrix, size_t nProj)
+    double *proj_matrix, size_t /*nProj*/)
 {
         logger(logger.LogDebug,"Started FDK back-projector");
-
-        long int i, j, k;
 
         float* img = cbct_volume.GetDataPtr();
         double *xip, *yip, *zip;
@@ -399,30 +397,28 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 
 
         #pragma omp parallel for
-        for (i=0; i<cbi.Size(0)*cbi.Size(1); ++i) {
+        for (ptrdiff_t i=0L; i<static_cast<ptrdiff_t>(cbi.Size(0)*cbi.Size(1)); ++i) {
             cbi[i] *=sad_sid_2; 	// Speedup trick re: Kachelsreiss
             cbi[i] *=scale;         // User scaling
         }
 
-
-
-        xip = (double*) malloc (3*volume.Size(0)*sizeof(double));
-        yip = (double*) malloc (3*volume.Size(1)*sizeof(double));
-        zip = (double*) malloc (3*volume.Size(2)*sizeof(double));
+        xip = static_cast<double*>(malloc(3*volume.Size(0)*sizeof(double)));
+        yip = static_cast<double*>(malloc(3*volume.Size(1)*sizeof(double)));
+        zip = static_cast<double*>(malloc(3*volume.Size(2)*sizeof(double)));
 
 
         // Precompute partial projections here
         #pragma omp parallel for
-        for (i = 0; i < volume.Size(0); i++) {
-            double x = (double) (origin[0] + i * spacing[0]);
+        for (ptrdiff_t i = 0; i < static_cast<ptrdiff_t>(volume.Size(0)); ++i) {
+            double x = static_cast<double> (origin[0] + i * spacing[0]);
             xip[i*3+0] = x * (proj_matrix[0] + ic[0] * proj_matrix[8]);
             xip[i*3+1] = x * (proj_matrix[4] + ic[1] * proj_matrix[8]);
             xip[i*3+2] = x * proj_matrix[8];
         }
 
         #pragma omp parallel for
-        for (j = 0; j < volume.Size(1); j++) {
-            double y = (double) (origin[1] + j * spacing[1]);
+        for (ptrdiff_t j = 0; j < static_cast<ptrdiff_t>(volume.Size(1)); ++j) {
+            double y = static_cast<double> (origin[1] + j * spacing[1]);
             yip[j*3+0] = y * (proj_matrix[1] + ic[0] * proj_matrix[9]);
             yip[j*3+1] = y * (proj_matrix[5] + ic[1] * proj_matrix[9]);
             yip[j*3+2] = y * proj_matrix[9];
@@ -431,8 +427,8 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
         double cor_tilted;
 
         #pragma omp parallel for
-        for (k = 0; k < volume.Size(2); k++) {
-            double z = (double) (origin[2] + k * spacing[2]);
+        for (ptrdiff_t k = 0; k < static_cast<ptrdiff_t>(volume.Size(2)); ++k) {
+            double z = static_cast<double> (origin[2] + k * spacing[2]);
 
             // not so elegant solution but it seems to work
                 if (mConfig.ProjectionInfo.bCorrectTilt){
@@ -453,12 +449,11 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 //        int long p;
 
         #pragma omp parallel for
-        for (k = 0; k < volume.Size(2); k++) {
+        for (ptrdiff_t k = 0; k < static_cast<ptrdiff_t>(volume.Size(2)); ++k) {
 //             p = k * volume.Size(1) * volume.Size(0);
 //            int long p;
-            int long j;
-            for (j = 0; j < volume.Size(1); j++) {
-                int long i;
+            
+            for (ptrdiff_t j = 0; j < static_cast<ptrdiff_t>(volume.Size(1)); ++j) {
                 double acc2[3];
     //            static inline void vec3_add3 (double* v1, const double* v2, const double* v3) {
     //                v1[0] = v2[0] + v3[0]; v1[1] = v2[1] + v3[1]; v1[2] = v2[2] + v3[2];
@@ -470,7 +465,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
 //                int long p = k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
 //                for (i = 0; i < volume.Size(0); i++) {
                 int long p=k * volume.Size(1) * volume.Size(0)+j *volume.Size(0);
-                for (i = mask[j].first+1; i <= mask[j].second; i++) {
+                for (ptrdiff_t i = static_cast<ptrdiff_t>(mask[j].first+1); i <= static_cast<ptrdiff_t>(mask[j].second); ++i) {
                         double dw;
                         double acc3[3];
                         acc3[0] = acc2[0]+xip[3*i];
@@ -500,19 +495,19 @@ void FDKbp::project_volume_onto_image_reference (
     double *nrm
 )
 {
-    int i, j, k, p;
+    // int i, j, k, p;
     double vp[4];   /* vp = voxel position */
 //    float* img = (float*) vol->img; // voxel data of the reconstructed volume -> è il mio volume.
     float *img = volume.GetDataPtr(); // do i need this?
 
 
 
-    const size_t SizeZ  = volume.Size(0)>>2;
-    __m128 column[2048]; // not used for now..
+    // const size_t SizeZ  = volume.Size(0)>>2;
+    // __m128 column[2048]; // not used for now..
 
 //    Proj_matrix *pmat = cbi->pmat; // projection matrix 3D -> 2D in homogenous coordinates
 
-    p = 0;
+    ptrdiff_t p = 0;
     vp[3] = 1.0;
     // Loop k (slices), j (rows), i (cols)
 
@@ -535,19 +530,19 @@ void FDKbp::project_volume_onto_image_reference (
     origin[2] = -(V-(mConfig.ProjectionInfo.fpPoint[1]-mConfig.ProjectionInfo.roi[1]))*spacing[2]-spacing[2]/2;
 
 
-    for (k = 0; k < volume.Size(2); k++) {
+    for (ptrdiff_t k = 0; k < static_cast<ptrdiff_t>(volume.Size(2)); k++) {
 
 //        vp[2] = (double) (vol->origin[2] + k * vol->spacing[2]);
-        vp[2] = (double) (origin[2] + k * spacing[2]);
+        vp[2] = static_cast<double> (origin[2] + k * spacing[2]);
 
-    for (j = 0; j < volume.Size(1); j++) {
-        vp[1] = (double) (origin[1] + j * spacing[1]);
+    for (ptrdiff_t j = 0; j < static_cast<ptrdiff_t>(volume.Size(1)); j++) {
+        vp[1] = static_cast<double> (origin[1] + j * spacing[1]);
 
-        for (i = mask[j].first+1; i <= mask[j].second; i++) {
+        for (ptrdiff_t i = static_cast<ptrdiff_t>(mask[j].first+1); i <= static_cast<ptrdiff_t>(mask[j].second); ++i) {
 
             double ip[3];        // ip = image position
             double s;            // s = projection of vp onto s axis
-            vp[0] = (double) (origin[0] + i * spacing[0]);
+            vp[0] = static_cast<double> (origin[0] + i * spacing[0]);
 //            mat43_mult_vec3 (ip, pmat->matrix, vp);
             // ip = matrix * vp
             ip[0] = proj_matrix[0]*vp[0]+proj_matrix[1]*vp[1]+proj_matrix[2]*vp[2]+proj_matrix[3]*vp[3];
@@ -585,14 +580,12 @@ void FDKbp::project_volume_onto_image_reference (
 // Nearest neighbor interpolation of intensity value on image
  float FDKbp::get_pixel_value_b (kipl::base::TImage<float, 2> &cbi, double r, double c)
 {
-    int rr, cc;
+    if (r < 0.0 || r >= static_cast<double>(cbi.Size(1))) return 0.0;
+    if (c < 0.0 || c >= static_cast<double>(cbi.Size(0))) return 0.0;
+    
+    ptrdiff_t rr = static_cast<ptrdiff_t>(r);
+    ptrdiff_t cc = static_cast<ptrdiff_t>(c);
 
-    rr = (int)(r);
-//    if (rr < 0 || rr >= cbi->dim[1]) return 0.0;
-    if (rr < 0 || rr >= cbi.Size(1)) return 0.0;
-    cc = (int)(c);
-//    if (cc < 0 || cc >= cbi->dim[0]) return 0.0;
-    if (cc < 0 || cc >= cbi.Size(0)) return 0.0;
     return cbi[rr*cbi.Size(0) + cc];
 }
 
@@ -602,41 +595,15 @@ float FDKbp::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, double r, doub
  {
      int rr, cc;
 
-// #if defined (commentout)
-//     r += 0.5;
-//     if (r < 0) return 0.0;
-//     rr = (int) r;
-//     if (rr >= cbi->dim[1]) return 0.0;
-
-//     c += 0.5;
-//     if (c < 0) return 0.0;
-//     cc = (int) c;
-//     if (cc >= cbi->dim[0]) return 0.0;
-// #endif
-
-//     r += 0.5;
-//     if (r < 0) return 0.0;
-//     if (r >= (double) cbi->dim[1]) return 0.0;
-//     rr = (int) r;
-
-//     c += 0.5;
-//     if (c < 0) return 0.0;
-//     if (c >= (double) cbi->dim[0]) return 0.0;
-//     cc = (int) c;
-
-//     return cbi->img[rr*cbi->dim[0] + cc];
-
      r += 0.5;
      if (r < 0) return 0.0;
-     if (r >= (double) cbi.Size(1)) return 0.0;
-     rr = (int) r;
+     if (r >= static_cast<double>(cbi.Size(1))) return 0.0;
+     rr = static_cast<int>(r);
 
      c += 0.5;
      if (c < 0) return 0.0;
-     if (c >= (double) cbi.Size(0)) return 0.0;
-     cc = (int) c;
-
-//     std::cout << cbi[rr*cbi.Size(0) + cc] << std::endl;
+     if (c >= static_cast<double>(cbi.Size(0))) return 0.0;
+     cc = static_cast<int>(c);
 
      return cbi[rr*cbi.Size(0) + cc];
 

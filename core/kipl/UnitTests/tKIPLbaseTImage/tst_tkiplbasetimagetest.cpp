@@ -343,6 +343,15 @@ void TKIPLbaseTImageTest::testDataAccess()
     // indexing outside buffer
 
 }
-QTEST_APPLESS_MAIN(TKIPLbaseTImageTest)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TKIPLbaseTImageTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TKIPLbaseTImageTest)
+#endif
+
 
 #include "tst_tkiplbasetimagetest.moc"

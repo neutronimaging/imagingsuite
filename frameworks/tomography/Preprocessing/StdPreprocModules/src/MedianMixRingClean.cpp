@@ -24,7 +24,7 @@ PreprocModuleBase("MedianMixRingClean"),
 MedianMixRingClean::~MedianMixRingClean() {
 }
 
-int MedianMixRingClean::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int MedianMixRingClean::Configure(ReconConfig /*config*/, std::map<std::string, std::string> parameters)
 {
 	m_fSigma=GetFloatParameter(parameters,"width");
 	m_fLambda=GetFloatParameter(parameters,"threshold");
@@ -43,12 +43,12 @@ std::map<std::string, std::string> MedianMixRingClean::GetParameters()
 	return parameters;
 }
 
-bool MedianMixRingClean::SetROI(const std::vector<size_t> &roi)
+bool MedianMixRingClean::SetROI(const std::vector<size_t> &/*roi*/)
 {
 	return false;
 }
 
-int MedianMixRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int MedianMixRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & /*coeff*/)
 {
 	std::ostringstream msg;
 

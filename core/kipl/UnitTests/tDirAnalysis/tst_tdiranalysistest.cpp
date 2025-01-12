@@ -310,6 +310,13 @@ void  TDirAnalysisTest::testCountLinesInFile()
 
     QVERIFY(N==cnt);
 }
-QTEST_APPLESS_MAIN(TDirAnalysisTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TDirAnalysisTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TDirAnalysisTest)
+#endif
 
 #include "tst_tdiranalysistest.moc"
