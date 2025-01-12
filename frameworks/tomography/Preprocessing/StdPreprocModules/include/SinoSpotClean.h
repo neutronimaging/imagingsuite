@@ -10,7 +10,7 @@ public:
 	SinoSpotClean();
 	virtual ~SinoSpotClean();
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-    virtual bool SetROI(const std::vector<size_t> &roi) {return false;}
+    virtual bool SetROI(const std::vector<size_t> &/*roi*/) {return false;}
 	virtual std::map<std::string, std::string> GetParameters();
 
 	virtual std::string Version() {

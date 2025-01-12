@@ -47,7 +47,7 @@ TImage<T,N>::TImage(const std::vector<size_t> & dims) :
     m_NData(_ComputeNElements(m_Dims)),
     m_buffer(m_NData)
 {
-    std::fill_n(m_buffer.GetDataPtr(), m_NData,0);
+    std::fill_n(m_buffer.GetDataPtr(), m_NData,static_cast<T>(0));
 }
 
 // template<typename T, size_t N>

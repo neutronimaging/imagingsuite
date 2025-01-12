@@ -95,7 +95,7 @@ std::map<float, float> ProfileExtractor::getProfile(kipl::base::TImage<float, 2>
 void ProfileExtractor::computeEdgeEquation(kipl::base::TImage<float, 2> &img)
 {
     float x=0.0f;
-    float x2=0.0f;
+    // float x2=0.0f;
     float y=0.0f;
     float y2=0.0f;
     float xy=0.0f;
@@ -109,7 +109,7 @@ void ProfileExtractor::computeEdgeEquation(kipl::base::TImage<float, 2> &img)
 
         float maxpos=kipl::math::findPeakCOG(pLine,Nx,true,false);
         x  += maxpos;
-        x2 += maxpos*maxpos;
+        // x2 += maxpos*maxpos;
         y  += yy;
         y2 += yy*yy;
         xy += maxpos*yy;

@@ -12,6 +12,15 @@ def load_batch(batch_file):
 def run_batch(batch_file,muhrec_path):
 
     for task in load_batch(batch_file):
+
+        if 'active' not in task :
+            task['active'] = True
+            
+                    
+        if not task['active']:
+            print("Skipping project {0}".format(task['name']))
+            continue
+        
         print("Processing project {0}".format(task['name']))
 
         call_info = [muhrec_path, "-f", task['config']]

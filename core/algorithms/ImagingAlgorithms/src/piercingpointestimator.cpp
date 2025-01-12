@@ -10,8 +10,8 @@
 #include <math/statistics.h>
 #include <filters/filter.h>
 
-#include <io/io_serializecontainers.h>
-#include <io/io_tiff.h>
+// #include <io/io_serializecontainers.h>
+// #include <io/io_tiff.h>
 
 namespace ImagingAlgorithms {
 
@@ -189,7 +189,7 @@ pair<float,float> PiercingPointEstimator::LocateMax()
     arma::vec pos = arma::solve(H,I);
 
     logger(logger.LogMessage,"Equation solved");
-    position = make_pair(pos(0), pos(1));
+    position = std::make_pair(static_cast<float>(pos(0)), static_cast<float>(pos(1)));
 
     msg.str("");
     msg<<"Got pair "<<position.first<<", "<<position.second<<", ";

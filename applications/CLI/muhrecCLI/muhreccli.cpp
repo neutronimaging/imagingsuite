@@ -43,6 +43,7 @@ MuhRecCLI::MuhRecCLI(int argc, char ** argv) :
 
     applicationPath = args[0];
     applicationPath = applicationPath.substr(0,applicationPath.find_last_of(kipl::strings::filenames::slash));
+    kipl::strings::filenames::CheckPathSlashes(applicationPath,true);
 
 }
 

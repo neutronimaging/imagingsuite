@@ -49,7 +49,7 @@ void MultiProjectionBP::BackProject()
 	const size_t SizeZ         = volume.Size(0)/4; // Already adjusted by a factor 4
 	const size_t SizeV4		   = SizeV/4;
 	const int SizeUm2	   	   = static_cast<int>(SizeU-2);
-	const size_t NProjections  = nProjectionBufferSize;
+	// const size_t NProjections  = nProjectionBufferSize;
 
 	__m128 column[2048];
 	

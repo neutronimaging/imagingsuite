@@ -72,8 +72,11 @@ NNForwardProjector::~NNForwardProjector()
 int NNForwardProjector::project(kipl::base::TImage<float,2> &slice, std::list<float> & angles, kipl::base::TImage<float,2> &proj)
 {
     int t,r,m,n,mmin,mmax,nmin,nmax;
-    int T,R,M,N;
-    float sum,x_min,rhooffset,Delta_theta,Delta_rho,costheta,sintheta;
+    //int T;
+    int R,M,N;
+    float sum,x_min,rhooffset;
+    //float Delta_theta,
+    float Delta_rho,costheta,sintheta;
     float rho_min,theta,alpha,beta,nfloat,mfloat,rho;
     float Delta_x,betap,eps;
     double dXsinT, dXdsinT, dXcosT, dXdcosT;
@@ -83,7 +86,7 @@ int NNForwardProjector::project(kipl::base::TImage<float,2> &slice, std::list<fl
                   angles.size()});
     proj=0.0f;
     eps=1e-4;
-    T=proj.Size(1);
+    // T=proj.Size(1);
     R=proj.Size(0);
     M=N=slice.Size(0);
 
@@ -116,14 +119,14 @@ int NNForwardProjector::project(kipl::base::TImage<float,2> &slice, std::list<fl
                 sum=0.0;
                 if (alpha>1e-6)
                 {
-                    mmin=(int)ceil(-(betap-eps)/alpha);
-                    mmax=1+(int)floor((N-betap-eps)/alpha);
+                    mmin=static_cast<int>(ceil(-(betap-eps)/alpha));
+                    mmax=1+static_cast<int>(floor((N-betap-eps)/alpha));
                 }
                 else { // AK
                     if (alpha<-1e-6)
                     {
-                        mmin=(int)ceil((N-betap-eps)/alpha);
-                        mmax=1+(int)floor(-(betap-eps)/alpha);
+                        mmin=static_cast<int>(ceil((N-betap-eps)/alpha));
+                        mmax=1+static_cast<int>(floor(-(betap-eps)/alpha));
                     }
                     else
                     {
@@ -158,14 +161,14 @@ int NNForwardProjector::project(kipl::base::TImage<float,2> &slice, std::list<fl
                 sum=0.0;
                 if (alpha>1e-6)
                 {
-                    nmin=(int)ceil(-(betap-eps)/alpha);
-                    nmax=1+(int)floor((M-betap-eps)/alpha);
+                    nmin=static_cast<int>(ceil(-(betap-eps)/alpha));
+                    nmax=1+static_cast<int>(floor((M-betap-eps)/alpha));
                 }
                 else {
                     if (alpha<-1e-6)
                     {
-                        nmin=(int)ceil((M-betap-eps)/alpha);
-                        nmax=1+(int)floor(-(betap-eps)/alpha);
+                        nmin=static_cast<int>(ceil((M-betap-eps)/alpha));
+                        nmax=1+static_cast<int>(floor(-(betap-eps)/alpha));
                     }
                     else
                     {
@@ -192,7 +195,9 @@ int NNForwardProjector::project(kipl::base::TImage<float,2> &slice, std::list<fl
     return 0;
 }
 
-int NNForwardProjector::project(kipl::base::TImage<float,3> &slice, std::list<float> & angles, kipl::base::TImage<float,3> &proj)
+int NNForwardProjector::project(kipl::base::TImage<float,3> & /*slice*/, 
+                                std::list<float> & /*angles*/, 
+                                kipl::base::TImage<float,3> & /*proj*/)
 {
     throw ReconAlgorithmException("NN Forward projection for multiple slices is not implemented",__FILE__,__LINE__);
 
