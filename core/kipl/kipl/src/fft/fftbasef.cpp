@@ -37,7 +37,7 @@ FFTBaseFloat::FFTBaseFloat(const std::vector<size_t> _dims) :
     cBufferA(nullptr),
     cBufferB(nullptr),
     rBuffer(nullptr),
-    Ndata(std::accumulate(_dims.begin(), _dims.end(), 1, std::multiplies<size_t>())),
+    Ndata(std::accumulate(_dims.begin(), _dims.end(), static_cast<size_t>(1), std::multiplies<size_t>())),
     dims(_dims)
 {
     ndim=dims.size();
@@ -75,8 +75,8 @@ int FFTBaseFloat::operator() ( std::complex<float> *inCdata,  std::complex<float
 	if (!cBufferB)
         cBufferB = new std::complex<float>[Ndata];
 
-    std::fill_n(cBufferA,0,Ndata);
-    std::fill_n(cBufferB,0,Ndata);
+    std::fill_n(cBufferA,Ndata, std::complex<float>(0.0f));
+    std::fill_n(cBufferB,Ndata, std::complex<float>(0.0f));
 
     if (sign<0)
     {
@@ -167,8 +167,8 @@ int FFTBaseFloat::operator() (float *inRdata,  std::complex<float> *outCdata)
 	if (!rBuffer)
         rBuffer = new float[2*Ndata];
 
-    std::fill_n(cBufferA,0,Ndata);
-    std::fill_n(rBuffer,0,2*Ndata);
+    std::fill_n(cBufferA,Ndata, std::complex<float>(0.0));
+    std::fill_n(rBuffer,2*Ndata,0.0f);
 		
     if (!have_r2cPlan)
     {
@@ -220,8 +220,8 @@ int FFTBaseFloat::operator() ( std::complex<float> *inCdata, float *outRdata)
 	if (!rBuffer)
 		rBuffer=new float[2*Ndata];
 
-    std::fill_n(cBufferA, 0,   Ndata);
-    std::fill_n(rBuffer,  0, 2*Ndata);
+    std::fill_n(cBufferA,  Ndata, std::complex<float>(0.0f));
+    std::fill_n(rBuffer, 2*Ndata, 0.0f);
 
     if (!have_c2rPlan)
     {

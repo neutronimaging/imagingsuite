@@ -18,7 +18,7 @@ include_directories(
 # )
 # endif()
 
-link_directories( ../../../../lib )
+# link_directories( ../../../../lib )
 
 set(INC_FILES
   include/ModuleConfig_global.h 
@@ -35,7 +35,6 @@ set(INC_FILES
 
 set(SRC_FILES
   src/publication.cpp 
-  # src/stdafx.cpp 
   src/ProcessModuleBase.cpp 
   src/ParameterHandling.cpp 
   src/ModuleItemBase.cpp 

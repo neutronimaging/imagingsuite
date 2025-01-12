@@ -14,7 +14,7 @@ namespace base {
 
 PixelIterator::PixelIterator(const std::vector<size_t> &dims, kipl::base::eConnectivity conn) :
     logger("PixelIterator"),
-    m_imageSize(std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<int>())),
+    m_imageSize(static_cast<ptrdiff_t>(std::accumulate(dims.begin(), dims.end(), static_cast<size_t>(1), std::multiplies<size_t>()))),
     m_ndims(kipl::base::getConnectivityDims(conn)),
     m_sx(static_cast<ptrdiff_t>(dims[0])),
     m_sxy(static_cast<ptrdiff_t>(dims[0]*dims[1])),

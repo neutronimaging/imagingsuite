@@ -18,12 +18,12 @@ std::map<std::basic_string<char>, std::basic_string<char> > CountNANs::GetParame
 	return parameters;
 }
 
-int CountNANs::Configure(ReconConfig config, std::map<std::basic_string<char>, std::basic_string<char> > parameters)
+int CountNANs::Configure(ReconConfig /*config*/, std::map<std::basic_string<char>, std::basic_string<char> > /*parameters*/)
 {
 	return 0;
 }
 
-int CountNANs::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters)
+int CountNANs::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &/*parameters*/)
 {
 	size_t cnt=0;
     float *pImg=nullptr;
@@ -53,5 +53,7 @@ int CountNANs::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::strin
 }
 
 
-int CountNANs::ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters)
-{return 0;}
+int CountNANs::ProcessCore(kipl::base::TImage<float,2> &/*img*/, std::map<std::string,std::string> &/*parameters*/)
+{
+	return 0;
+}

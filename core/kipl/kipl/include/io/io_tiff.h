@@ -150,30 +150,66 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
             case kipl::base::UInt4 : break;
             case kipl::base::UInt8 :
             {
-                kipl::base::TImage<unsigned char,2> tmp(sliceDims);
-                copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+                kipl::base::TImage<unsigned char, 2> tmp(sliceDims);
+                std::transform(pSlice, pSlice + sliceSize, tmp.GetDataPtr(), [](auto val) {
+                    return static_cast<unsigned char>(val);
+                });
 
-                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned char));
+                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize * sizeof(unsigned char));
                 break;
             }
             case kipl::base::UInt12 : break;
             case kipl::base::UInt16 :
             {
-                kipl::base::TImage<unsigned short,2> tmp(sliceDims);
-                copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+                kipl::base::TImage<unsigned short, 2> tmp(sliceDims);
+                std::transform(pSlice, pSlice + sliceSize, tmp.GetDataPtr(), [](auto val) {
+                    return static_cast<unsigned short>(val);
+                });
 
-                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned short));
+                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize * sizeof(unsigned short));
                 break;
             }
             case kipl::base::Float32 :
             {
-                kipl::base::TImage<float,2> tmp(sliceDims);
-                copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+                kipl::base::TImage<float, 2> tmp(sliceDims);
+                std::transform(pSlice, pSlice + sliceSize, tmp.GetDataPtr(), [](auto val) {
+                    return static_cast<float>(val);
+                });
 
-                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(float));
+                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize * sizeof(float));
                 break;
             }
         }
+
+        // switch (dt)
+        // {
+        //     case kipl::base::UInt4 : break;
+        //     case kipl::base::UInt8 :
+        //     {
+        //         kipl::base::TImage<unsigned char,2> tmp(sliceDims);
+        //         copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+
+        //         TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned char));
+        //         break;
+        //     }
+        //     case kipl::base::UInt12 : break;
+        //     case kipl::base::UInt16 :
+        //     {
+        //         kipl::base::TImage<unsigned short,2> tmp(sliceDims);
+        //         copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+
+        //         TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned short));
+        //         break;
+        //     }
+        //     case kipl::base::Float32 :
+        //     {
+        //         kipl::base::TImage<float,2> tmp(sliceDims);
+        //         copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+
+        //         TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(float));
+        //         break;
+        //     }
+        // }
 
 
         if (N!=2)

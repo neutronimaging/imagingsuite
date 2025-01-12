@@ -883,15 +883,16 @@ void ReferenceImageCorrection::ComputeBlackBodyCentroids(kipl::base::TImage<floa
             y_com /=sum_roi;
 
             std::pair<int,int> temp;
-            temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
+            temp = std::make_pair(static_cast<int>(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0]), 
+                                  static_cast<int>(floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]));
 
             float value = 0.0f;
             std::vector<float> grayvalues;
             // float mean_value =0.0f;
 
-            for (size_t y=0; y<roi.Size(1); y++) 
+            for (size_t y=0; y<roi.Size(1); ++y) 
             {
-                for (size_t x=0; x<roi.Size(0); x++) 
+                for (size_t x=0; x<roi.Size(0); ++x) 
                 {
                     if ((sqrt(int(x-x_com+0.5)*int(x-x_com+0.5)+int(y-y_com+0.5)*int(y-y_com+0.5)))<=radius && roi(x,y)==0) 
                     { // and also this one is useless
@@ -1198,7 +1199,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
                       y_com /=sum_roi;
 
                       std::pair<int,int> temp;
-                      temp = std::make_pair(floor(x_com+0.5)+left_edges.at(bb_index).second+m_diffBBroi[0], floor(y_com+0.5)+left_edges.at(bb_index).first+m_diffBBroi[1]);
+                      temp = std::make_pair(static_cast<int>(floor(x_com+0.5))+left_edges.at(bb_index).second+m_diffBBroi[0], 
+                                            static_cast<int>(floor(y_com+0.5))+left_edges.at(bb_index).first+m_diffBBroi[1]);
 
                       float value = 0.0f;
                       std::vector<float> grayvalues;
@@ -1266,7 +1268,7 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
         {
             if (mask(x,y)==1){
                 std::pair<int, int> temp;
-                temp = std::make_pair(x+m_diffBBroi[0],y+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images 
+                temp = std::make_pair(static_cast<int>(x)+m_diffBBroi[0],static_cast<int>(y)+m_diffBBroi[1]);// m_diffBBroi compensates for the relative position of BBroi in the images 
 //                if (img(x,y)!=0)
 //                {
                     values.insert(std::make_pair(temp,img(x,y)));
@@ -1324,9 +1326,9 @@ float* ReferenceImageCorrection::ComputeInterpolationParameters(kipl::base::TIma
     std::map<std::pair<int,int>, float> values;
     float mean_value = 0.0f;
 
-    for (size_t y=0; y<mask.Size(1); ++y)
+    for (int y=0; y<static_cast<int>(mask.Size(1)); ++y)
     {
-        for (size_t x=0; x<mask.Size(0); ++x)
+        for (int x=0; x<static_cast<int>(mask.Size(0)); ++x)
         {
             if (mask(x,y)==1.0f)
             {

@@ -49,6 +49,15 @@ void TNoiseImageTest::testPoisson()
 
 }
 
-QTEST_APPLESS_MAIN(TNoiseImageTest)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TNoiseImageTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TNoiseImageTest)
+#endif
+
 
 #include "tst_noiseimage.moc"
