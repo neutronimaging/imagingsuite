@@ -95,6 +95,7 @@ void ImageReader::UpdateCrop(kipl::base::eImageFlip flip,
     {
         switch (flip)
         {
+        case kipl::base::ImageFlipDefault : break;
         case kipl::base::ImageFlipNone : break;
         case kipl::base::ImageFlipHorizontal :
             nCrop[0]=dims[0]-1-nCrop[0];
@@ -114,7 +115,9 @@ void ImageReader::UpdateCrop(kipl::base::eImageFlip flip,
 
         std::vector<size_t> nCropOrig = nCrop;
 
-        switch (rotate) {
+        switch (rotate) 
+        {
+        case kipl::base::ImageRotateDefault : break;
         case kipl::base::ImageRotateNone : break;
         case kipl::base::ImageRotate90   :
             nCrop[0]=nCropOrig[3];
@@ -157,6 +160,7 @@ kipl::base::TImage<float,2> ImageReader::RotateProjection(kipl::base::TImage<flo
     kipl::base::TRotate<float> r;
 
     switch (flip) {
+    case kipl::base::ImageFlipDefault             : res=img; break;
     case kipl::base::ImageFlipNone                : res=img; break;
     case kipl::base::ImageFlipHorizontal          : res=r.MirrorHorizontal(img); break;
     case kipl::base::ImageFlipVertical            : res=r.MirrorVertical(img); break;
@@ -164,6 +168,7 @@ kipl::base::TImage<float,2> ImageReader::RotateProjection(kipl::base::TImage<flo
     }
 
     switch (rotate) {
+    case kipl::base::ImageRotateDefault : break;
     case kipl::base::ImageRotateNone : break;
     case kipl::base::ImageRotate90   : res=r.Rotate90(res);break;
     case kipl::base::ImageRotate180  : res=r.Rotate180(res);break;
@@ -243,7 +248,7 @@ kipl::base::TImage<float,2> ImageReader::Read(std::string filename,
         throw ReaderException(msg.str(),__FILE__,__LINE__);
     }
 
-    size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
+    // size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
     kipl::base::TImage<float,2> binned;
     msg.str("");
     msg<<"Failed to resample or rotate the projection with a ";
@@ -438,8 +443,9 @@ kipl::base::TImage<float,2> ImageReader::ReadTIFF(std::string filename, const st
     return img;
 }
 
-kipl::base::TImage<float,2> ImageReader::ReadHDF(std::string filename, const std::vector<size_t> &nCrop, size_t idx)
+kipl::base::TImage<float,2> ImageReader::ReadHDF(std::string /*filename*/, const std::vector<size_t> &/*nCrop*/, size_t /*idx*/)
 {
+    throw ReaderException("ReadHDF is not implemented",__FILE__, __LINE__);
     kipl::base::TImage<float,2> img;
 
     return img;
@@ -474,7 +480,7 @@ bool ImageReader::Aborted()
     return res;
 }
 
-kipl::base::TImage<float,2> ImageReader::ReadPNG(std::string filename, const std::vector<size_t> & nCrop, size_t idx)
+kipl::base::TImage<float,2> ImageReader::ReadPNG(std::string /*filename*/, const std::vector<size_t> & /*nCrop*/, size_t /*idx*/)
 {
     throw ReaderException("ReadPNG is not implemented",__FILE__, __LINE__);
     return kipl::base::TImage<float,2>();

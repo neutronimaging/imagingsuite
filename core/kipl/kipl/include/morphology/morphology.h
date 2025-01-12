@@ -104,6 +104,7 @@ namespace kipl { namespace morphology {
 		/// \retval non-negative valid pixel index
 		/// \retval -1 out of bounds
 		ptrdiff_t neighbor2D(size_t pos, size_t index);
+		
 		/// \brief Forward looking neighborhood for 2D images
 		/// \param pos pixel index
 		/// \param index neighborhood index

@@ -90,7 +90,7 @@ void TKIPLbaseTImageTest::testSharedBuffer()
     QVERIFY(b.Size()==10);
 
     // Ridiculusly huge allocation
-    QVERIFY_EXCEPTION_THROWN(kipl::base::core::buffer<float> c(100000000000000UL),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,kipl::base::core::buffer<float> c(100000000000000UL));
 }
 
 void TKIPLbaseTImageTest::testConstructors()
@@ -112,14 +112,14 @@ void TKIPLbaseTImageTest::testConstructors()
     kipl::base::TImage<float,1> img1D(dims1);
     QVERIFY(img1D.Size()==dims1[0]);
     QVERIFY(img1D.Size(0)==dims1[0]);
-    QVERIFY_EXCEPTION_THROWN(img1D.Size(1),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,img1D.Size(1));
 
     std::vector<size_t> dims2={3,4};
     kipl::base::TImage<float,2> img2D(dims2);
     QVERIFY(img2D.Size()==dims2[0]*dims2[1]);
     QVERIFY(img2D.Size(0)==dims2[0]);
     QVERIFY(img2D.Size(1)==dims2[1]);
-    QVERIFY_EXCEPTION_THROWN(img2D.Size(2),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,img2D.Size(2));
 
     std::vector<size_t> dims3={3,4,5};
     kipl::base::TImage<float,3> img3D(dims3);
@@ -127,8 +127,7 @@ void TKIPLbaseTImageTest::testConstructors()
     QVERIFY(img3D.Size(0)==dims3[0]);
     QVERIFY(img3D.Size(1)==dims3[1]);
     QVERIFY(img3D.Size(2)==dims3[2]);
-    QVERIFY_EXCEPTION_THROWN(img2D.Size(3),kipl::base::KiplException);
-
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,img3D.Size(3));
 
     // Copy constructor
     kipl::base::TImage<float,2> img2Db(img2D);
@@ -344,6 +343,15 @@ void TKIPLbaseTImageTest::testDataAccess()
     // indexing outside buffer
 
 }
-QTEST_APPLESS_MAIN(TKIPLbaseTImageTest)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TKIPLbaseTImageTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TKIPLbaseTImageTest)
+#endif
+
 
 #include "tst_tkiplbasetimagetest.moc"

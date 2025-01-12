@@ -18,7 +18,7 @@ DataScalerDlg::~DataScalerDlg()
     delete ui;
 }
 
-int DataScalerDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> & UNUSED(img))
+int DataScalerDlg::exec(ConfigBase * /*config*/, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> & /*img*/)
 {
     m_fOffset = GetFloatParameter(parameters,"offset");
     m_fSlope     = GetFloatParameter(parameters,"slope");
@@ -53,7 +53,7 @@ void DataScalerDlg::UpdateDialog()
 void DataScalerDlg::UpdateParameters()
 {
     m_fOffset = ui->spinOffset->value();
-    m_fSlope     = ui->spinSlope->value();
+    m_fSlope  = ui->spinSlope->value();
 }
 
 void DataScalerDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)

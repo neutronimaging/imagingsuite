@@ -175,14 +175,14 @@ size_t KIPLSHARED_EXPORT nexusTypeSize(NeXus::NXnumtype nt)
 #else
 
 
-int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles)
+int KIPLSHARED_EXPORT GetNexusInfo(const char * /*fname*/, size_t * /*NofImg*/, double * /*ScanAngles*/)
 {
     throw kipl::base::KiplException("NEXUS is not supported",__FILE__,__LINE__);
 
     return 1;
 }
 
-std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string &fname)
+std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string & /*fname*/)
 {
     throw kipl::base::KiplException("NEXUS is not supported",__FILE__,__LINE__);
 

@@ -75,7 +75,17 @@ void HistogramTest::benchmarkOpt()
     }
 }
 
-QTEST_APPLESS_MAIN(HistogramTest)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(HistogramTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(HistogramTest)
+#endif
+
+
 
 #include "tst_histogram.moc"
 

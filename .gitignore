@@ -28,6 +28,14 @@ cmake_install.cmake
 *.toc
 *.pdf
 *.synctex.gz
+.vscode*
+package/pymuhrec/*.dll
+package/pymuhrec/*.so
+package/pymuhrec/*.dylib
+package/pymuhrec/*.pyd
+package/pymuhrec.egg-info
+package/dist
+*__pycache__*
 CMakeCache.txt
 CMakeFiles
 CMakeLists.txt

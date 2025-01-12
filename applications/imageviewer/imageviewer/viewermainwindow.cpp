@@ -95,6 +95,8 @@ void ViewerMainWindow::LoadImage(std::string fname,kipl::base::TImage<float,2> &
             case readers::ExtensionXML  : logger.message("Image format not supported"); break;
             case readers::ExtensionRAW  : logger.message("Image format not supported"); break;
             case readers::ExtensionJPG  : logger.message("Image format not supported"); break;
+            case readers::ExtensionCSV  : logger.message("CSV is not supported"); break;
+            case readers::ExtensionLST  : logger.message("LST files are not supported"); break;
             case readers::ExtensionFITS : kipl::io::ReadFITS(img,fname); break;
             case readers::ExtensionTIFF : kipl::io::ReadTIFF(img,fname); break;
             case readers::ExtensionPNG  : logger.message("Image format not supported"); break;
@@ -155,7 +157,7 @@ void ViewerMainWindow::updateView(const std::string &fname)
 {
     LoadImage(fname,currentImage);
     float low,high;
-    auto roi = ui->viewer->get_marked_roi();
+    // auto roi = ui->viewer->get_marked_roi();
     ui->viewer->get_levels(&low,&high);
     ui->viewer->set_image(currentImage.GetDataPtr(),currentImage.dims(),low,high,true);
     QString statusText;

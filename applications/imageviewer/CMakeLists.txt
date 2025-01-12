@@ -121,13 +121,13 @@ message(App Qt${QT_VERSION_MAJOR})
 #endif()
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-link_directories(../../../lib /opt/local/lib )
+link_directories(../../../lib) # /opt/local/lib )
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    # ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    # ../../external/mac/lib/
-    )
+# target_link_directories(${TARGET_NAME} PRIVATE
+#     #/opt/local/lib
+#     # ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+#     # ../../external/mac/lib/
+#     )
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core

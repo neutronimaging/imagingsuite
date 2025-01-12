@@ -51,7 +51,7 @@ std::map<std::string, std::string> TranslatedProjectionWeighting::GetParameters(
 	return parameters;
 }
 
-bool TranslatedProjectionWeighting::SetROI(size_t *roi)
+bool TranslatedProjectionWeighting::SetROI(const std::vector<size_t> &roi)
 {
 	mROI[0]=roi[0];
 	mROI[1]=roi[1];
