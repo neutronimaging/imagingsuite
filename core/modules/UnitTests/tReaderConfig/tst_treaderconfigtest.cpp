@@ -358,8 +358,16 @@ void TReaderConfigTest::testCreateDirectories()
 {
     // void CheckFolders(const std::string &path, bool create);
 
+
     std::string path1 = "a/b/c";
     kipl::strings::filenames::CheckPathSlashes(path1,false);
+    try {
+        std::filesystem::remove_all(path1);
+    }
+    catch (std::filesystem::filesystem_error &e)
+    {
+        qDebug() << e.what();
+    }
 
     QVERIFY_THROWS_EXCEPTION(ReaderException,{ CheckFolders(path1,true); });
     CheckFolders(path1,true);
@@ -370,13 +378,20 @@ void TReaderConfigTest::testCreateDirectories()
     fs::remove_all("a");
 
     std::string path2 = "a2/b/c/";
-    kipl::strings::filenames::CheckPathSlashes(path2,false);
+    kipl::strings::filenames::CheckPathSlashes(path2,true);
     CheckFolders(path2,true);
     QVERIFY(fs::is_directory(path2));
     fs::remove_all("a2");
 }
 
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TReaderConfigTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TReaderConfigTest)
+#endif
 
-QTEST_APPLESS_MAIN(TReaderConfigTest)
 
 #include "tst_treaderconfigtest.moc"

@@ -75,13 +75,14 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, std::vector<float
     if (m_bClampData)
          kipl::segmentation::LimitDynamics(img.GetDataPtr(),img.Size(),m_fMinLevel,m_fMaxLevel,false);
 
+    // TODO: These assignments are not thread safe
     m_fThreshold = th;
     m_fSigma     = sigma;
 
     switch (m_eMorphClean)
     {
         case MorphCleanReplace  : ProcessReplace(img); break;
-        case MorphCleanFill     : ProcessFill(img); break;
+        case MorphCleanFill     : ProcessFill(img);    break;
     default : throw ImagingException("Unkown cleaning method selected", __FILE__,__LINE__);
     }
 
@@ -140,15 +141,16 @@ void MorphSpotClean::process(kipl::base::TImage<float, 3> *pImg, size_t first, s
         process(slice,th,sigma);
 
         std::copy_n(slice.GetDataPtr(), slice.Size(),pImg->GetLinePtr(0,i));
-        size_t cnt=0UL;
-        float *pRes=pImg->GetLinePtr(i);
-        for (size_t j=0; j<slice.Size(); ++j)
-        {
-            if (orig[j]!=pRes[j])
-                ++cnt;
-        }
-
-        msg<<i<<": "<<cnt<<", ";
+        // Debugging code
+        // size_t cnt=0UL;
+        // float *pRes=pImg->GetLinePtr(i);
+        // for (size_t j=0; j<slice.Size(); ++j)
+        // {
+        //     if (orig[j]!=pRes[j])
+        //         ++cnt;
+        // }
+        // msg.str("");
+        // msg<<i<<": "<<cnt<<", ";
         ++m_nCounter;
         UpdateStatus(static_cast<float>(m_nCounter.load())/static_cast<float>(pImg->Size(2)),"Morph spot clean");
     }
@@ -411,6 +413,9 @@ void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
 
 
             break;
+        case MorphDetectDarkSpots:   throw ImagingException("Dark spots not supported in mixed mode",__FILE__,__LINE__); break;
+        case MorphDetectBrightSpots: throw ImagingException("Bright spots not supported in mixed mode",__FILE__,__LINE__); break;
+        case MorphDetectAllSpots:    throw ImagingException("All spots not supported in mixed mode",__FILE__,__LINE__); break;
         }
     }
 
@@ -809,13 +814,20 @@ void MorphSpotClean::ExcludeLargeRegions(kipl::base::TImage<float,2> &img)
     vector<size_t> removelist;
 
     kipl::morphology::LabelArea(lbl,N,area);
-    vector<pair<size_t,size_t> >::iterator it;
+    // vector<pair<size_t,size_t> >::iterator it;
 
-    for (it=area.begin(); it!=area.end(); it++)
+    // for (it=area.begin(); it!=area.end(); it++)
+    // {
+    //     if (m_nMaxArea<(it->first))
+    //         removelist.push_back(it->second);
+    // }
+    size_t nMaxArea = m_nMaxArea;
+    for (const auto &x : area)
     {
-        if (m_nMaxArea<(it->first))
-            removelist.push_back(it->second);
+        if (nMaxArea<x.first)
+            removelist.push_back(x.second);
     }
+
     msg<<"Found "<<N<<" regions, "<<removelist.size()<<" are larger than "<<m_nMaxArea;
     logger.message(msg.str());
 

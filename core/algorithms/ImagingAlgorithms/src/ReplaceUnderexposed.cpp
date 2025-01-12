@@ -9,17 +9,17 @@ namespace ImagingAlgorithms
 
 ReplaceUnderexposed::ReplaceUnderexposed() :
     logger("ReplaceUnderexposed"),
-    detectionMethod(ReplaceUnderexposed::FixedThreshold),
+    // detectionMethod(ReplaceUnderexposed::FixedThreshold),
     replacementMethod(ReplaceUnderexposed::NeighborAverage)
 {
 
 }
 
-ReplaceUnderexposed::ReplaceUnderexposed(float th,
-                                                       ReplaceUnderexposed::eDoseOutlierDetection  dmethod,
+ReplaceUnderexposed::ReplaceUnderexposed(float /*th*/,
+                                                       ReplaceUnderexposed::eDoseOutlierDetection  /*dmethod*/,
                                                        ReplaceUnderexposed::eDoseOutlierReplacement rmethod) :
     logger("ReplaceUnderexposed"),
-    detectionMethod(dmethod),
+    // detectionMethod(dmethod),
     replacementMethod(rmethod)
 {
 
@@ -86,7 +86,7 @@ void ReplaceUnderexposed::processNeighborAverage(kipl::base::TImage<float, 3> &i
 
 }
 
-void ReplaceUnderexposed::processWeightedAverage(kipl::base::TImage<float, 3> &img, vector<float> &dose, float threshold)
+void ReplaceUnderexposed::processWeightedAverage(kipl::base::TImage<float, 3> &/*img*/, vector<float> &/*dose*/, float /*threshold*/)
 {
     throw ImagingException("processWeightedAverage is not implemented",__FILE__,__LINE__);
 }

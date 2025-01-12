@@ -24,7 +24,7 @@
 	#pragma clang diagnostic ignored "-Wcast-align"
 	#pragma clang diagnostic ignored "-Wpedantic"
 	#pragma clang diagnostic ignored "-W#warnings"
-		#include <sse2neon.h>
+		#include <sse2neon/sse2neon.h>
 	#pragma clang diagnostic pop
 #else
     #include <xmmintrin.h>
@@ -68,8 +68,6 @@ void MultiProjectionBPparallel::BackProjectOpenMP()
     std::stringstream msg;
     const ptrdiff_t SizeY      = mask.size();	   // The mask size is used since there may be less elements per row than the matrix size.
     const size_t SizeZ         = volume.Size(0)/4; // Already adjusted to be a multiple of 4
-    const size_t SizeV4		   = projections.Size(0)/4;
-    const int SizeUm2	   	   = static_cast<int>(SizeU-2);
 
 #if defined (OMP)
     omp_set_dynamic(0);
@@ -168,6 +166,9 @@ void MultiProjectionBPparallel::BackProjectOpenMP()
         ptrdiff_t y=0;
         #pragma omp parallel
         {
+            const size_t SizeV4		   = projections.Size(0)/4;
+            const int SizeUm2	   	   = static_cast<int>(SizeU-2);
+
             __m128 column[2048];
             __m128 a,b;
             float fPosU=0.0f;

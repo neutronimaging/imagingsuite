@@ -31,7 +31,14 @@ private:
 tKIPL_IOTest::tKIPL_IOTest()
 {
     data_path = QT_TESTCASE_BUILDDIR;
-    data_path = data_path + "/../../../../../TestData/";
+    #ifdef __APPLE__
+        data_path = data_path + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        data_path = data_path + "/../../../../../../TestData/";
+    #else
+        data_path = data_path + "/../../../../../TestData/";
+    #endif
+    
     kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
 
@@ -160,6 +167,14 @@ void tKIPL_IOTest::testReadNexus()
 
 }
 
-QTEST_APPLESS_MAIN(tKIPL_IOTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(tKIPL_IOTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(tKIPL_IOTest)
+#endif
+
 
 #include "tst_kipl_io.moc"

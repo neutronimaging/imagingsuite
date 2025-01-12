@@ -78,7 +78,14 @@ private:
 Tkiplbase::Tkiplbase()
 {
     data_path = QT_TESTCASE_BUILDDIR;
-    data_path = data_path + "/../../../../../TestData/";
+
+    #ifdef __APPLE__
+        data_path = data_path + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        data_path = data_path + "/../../../../../../TestData/";
+    #else
+        data_path = data_path + "/../../../../../TestData/";
+    #endif
     kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
 
@@ -251,7 +258,7 @@ void Tkiplbase::testHistogram()
     
     size_t cnt = 0UL;
 
-    cnt = std::accumulate(hist.begin(),hist.end(),0UL); 
+    cnt = std::accumulate(hist.begin(),hist.end(),static_cast<size_t>(0)); 
     
     QCOMPARE(cnt,img.Size());
 }
@@ -783,6 +790,15 @@ void Tkiplbase::testRotationDirection()
     
 }
 
-QTEST_APPLESS_MAIN(Tkiplbase)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(Tkiplbase)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(Tkiplbase)
+#endif
+
 
 #include "tst_kiplbase.moc"

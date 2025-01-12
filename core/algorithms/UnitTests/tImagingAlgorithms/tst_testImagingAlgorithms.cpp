@@ -69,8 +69,8 @@ private:
     std::string dataPath;
     kipl::base::TImage<float,2> holes;
     std::map<size_t,float> points;
-    size_t pos1;
-    size_t pos2;
+    // size_t pos1;
+    // size_t pos2;
 
 
 };
@@ -78,7 +78,14 @@ private:
 TestImagingAlgorithms::TestImagingAlgorithms() 
 {
     dataPath = QT_TESTCASE_BUILDDIR;
-    dataPath = dataPath + "/../../../../../TestData/";
+    #ifdef __APPLE__
+        dataPath = dataPath + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        dataPath = dataPath + "/../../../../../../TestData/";
+    #else
+        dataPath = dataPath + "/../../../../../TestData/";
+    #endif
+    
     kipl::strings::filenames::CheckPathSlashes(dataPath,true);
 
     std::string fname = dataPath+"2D/tiff/spots/balls.tif";
@@ -363,6 +370,8 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
 
 void TestImagingAlgorithms::PiercingPoint_Processing()
 {
+    QSKIP("Test is not implemented",__FILE__,__LINE__);
+
     std::vector<size_t> dims={386,256};
     kipl::base::TImage<float,2> img(dims);
 
@@ -382,9 +391,9 @@ void TestImagingAlgorithms::PiercingPoint_Processing()
 
 //    kipl::io::WriteTIFF(img,"/Users/kaestner/repos/lib/sq.tif",kipl::base::Float32);
 
-    ImagingAlgorithms::PiercingPointEstimator pe;
+    // ImagingAlgorithms::PiercingPointEstimator pe;
 
-    pair<float,float> pos=pe(img);
+    // pair<float,float> pos=pe(img);
 
 //    std::ostringstream msg;
 //    msg<<"pos=("<<pos.first<<", "<<pos.second<<")";
@@ -691,6 +700,13 @@ void TestImagingAlgorithms::ProjSeriesCorr_Correction()
 
 }
 
-QTEST_APPLESS_MAIN(TestImagingAlgorithms)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TestImagingAlgorithms)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TestImagingAlgorithms)
+#endif
 
 #include "tst_testImagingAlgorithms.moc"

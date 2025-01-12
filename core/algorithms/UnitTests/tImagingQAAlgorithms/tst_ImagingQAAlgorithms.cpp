@@ -40,7 +40,13 @@ private:
 TImagingQAAlgorithmsTest::TImagingQAAlgorithmsTest()
 {
     data_path = QT_TESTCASE_BUILDDIR;
-    data_path = data_path + "/../../../../../TestData/";
+    #ifdef __APPLE__
+        data_path = data_path + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        data_path = data_path + "/../../../../../../TestData/";
+    #else
+        data_path = data_path + "/../../../../../TestData/";
+    #endif
     kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
 
@@ -223,6 +229,14 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
 
 }
 
-QTEST_APPLESS_MAIN(TImagingQAAlgorithmsTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TImagingQAAlgorithmsTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TImagingQAAlgorithmsTest)
+#endif
+
 
 #include "tst_ImagingQAAlgorithms.moc"

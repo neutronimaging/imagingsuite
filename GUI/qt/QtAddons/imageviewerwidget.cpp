@@ -403,7 +403,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
 void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    QPoint origin = event->pos();
+    // QPoint origin = event->pos();
     std::ostringstream msg;
     if ((event->button() == Qt::LeftButton))
     {

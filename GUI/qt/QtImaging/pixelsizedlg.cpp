@@ -233,12 +233,12 @@ void PixelSizeDlg::on_pushButton_Browse_clicked()
     }
 
 
-    QString fname=QFileDialog::getOpenFileName(this,
+    QString img_fname=QFileDialog::getOpenFileName(this,
                                       tr("Select an image to measure the pixel size"),
                                       dlgpath);
-    ui->lineEdit_FileName->setText(fname);
+    ui->lineEdit_FileName->setText(img_fname);
 
-    loadImage(fname);
+    loadImage(img_fname);
 }
 
 void PixelSizeDlg::on_pushButton_Analyze_clicked()

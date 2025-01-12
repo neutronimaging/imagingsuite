@@ -11,7 +11,10 @@ BasicBackProjector::~BasicBackProjector()
 
 }
 
-int BasicBackProjector::backproject(kipl::base::TImage<float,2> &proj, float center, std::list<float> & angles, kipl::base::TImage<float,2> &slice)
+int BasicBackProjector::backproject(kipl::base::TImage<float,2> &/*proj*/, 
+                                    float /*center*/, 
+                                    std::list<float> & /*angles*/, 
+                                    kipl::base::TImage<float,2> &/*slice*/)
 {
 
 

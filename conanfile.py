@@ -80,7 +80,7 @@ class MuhrecRecipe(ConanFile):
                 sse2neon_dir = StringIO()
                 self.run("brew --prefix sse2neon", stdout=sse2neon_dir)
                 sse2neon = sse2neon_dir.getvalue().strip()
-                copy(self, 'sse2neon.h', os.path.join(sse2neon, "include"), self.lib_folder)
+                copy(self, 'sse2neon/sse2neon.h', os.path.join(sse2neon, "include"), self.lib_folder)
         # dirs_exist_ok was only added in python 3.9
         if sys.version_info[1] > 9:
             shutil.copytree(

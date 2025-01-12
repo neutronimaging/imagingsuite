@@ -694,8 +694,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
 {
     std::ostringstream msg;
     size_t N=10;
-    size_t i=0;
-
+    
     ReconConfig config("");
 // Test even number
     config.ProjectionInfo.sFileMask       = "test_####.fits";
@@ -798,7 +797,6 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
 {
     std::ostringstream msg;
     size_t N=10;
-    size_t i=0;
 
     ReconConfig config("");
 // Test even number
@@ -924,7 +922,6 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_delay()
 
     std::ostringstream msg;
     size_t N=10;
-    size_t i=0;
 
     ReconConfig config("");
 // Test even number
@@ -1219,6 +1216,14 @@ void FrameWorkTest::testBuildFileList_skipGolden()
 
 }
 
-QTEST_APPLESS_MAIN(FrameWorkTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(FrameWorkTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(FrameWorkTest)
+#endif
+
 
 #include "tst_frameworktest.moc"
