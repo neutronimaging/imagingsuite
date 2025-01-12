@@ -24,7 +24,7 @@ void ReportGeneratorBase::OpenDestination(QString fname)
    m_fHeight = m_Printer.width();
 }
 
-int ReportGeneratorBase::DrawImage(float *pImg, int *srcdims, int *dstdims, int x,int y, bool drawframe)
+int ReportGeneratorBase::DrawImage(float * /*pImg*/, int * /*srcdims*/, int * /*dstdims*/, int /*x*/,int /*y*/, bool /*drawframe*/)
 {
 //    size_t imgdims[4]={size_t(srcdims[0]),size_t(srcdims[1]),size_t(srcdims[2]),size_t(srcdims[3])};
 

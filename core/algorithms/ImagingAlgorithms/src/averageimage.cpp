@@ -132,7 +132,7 @@ kipl::base::TImage<float,2> AverageImage::ComputeWeightedAverage(kipl::base::TIm
     kipl::filters::StdDevFilter stddev;
 
     float *pRes=nullptr;
-    float *pImg=nullptr;
+    // float *pImg=nullptr;
 
     const size_t N=res.Size();
     const size_t M=img.Size(2);
@@ -143,7 +143,7 @@ kipl::base::TImage<float,2> AverageImage::ComputeWeightedAverage(kipl::base::TIm
         memcpy(weights.GetLinePtr(0,i),res.GetDataPtr(),N*sizeof(float));
     }
 
-    pImg=img.GetDataPtr();
+    // pImg=img.GetDataPtr();
     pRes=res.GetDataPtr();
     float weight=0.0f;
     float weight_sum=0.0f;

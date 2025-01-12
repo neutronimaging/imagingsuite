@@ -181,7 +181,7 @@ int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetr
     int CMetricBase::initialize(const std::vector<size_t> & d)
 	{
         dims=d;
-        ndata=std::accumulate(dims.begin(),dims.end(),1UL,std::multiplies<size_t>());
+        ndata=std::accumulate(dims.begin(),dims.end(),static_cast<size_t>(1),std::multiplies<size_t>());
 
 		return 0;
 	}

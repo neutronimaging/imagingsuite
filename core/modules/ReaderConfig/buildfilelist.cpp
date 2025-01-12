@@ -85,9 +85,9 @@ std::map<float,std::string> BuildProjectionFileList(std::vector<FileSet> &il, st
 
             kipl::strings::filenames::MakeFileName(loader.m_sFilemask,i,fname,ext,'#','0');
             if (sequence==0)
-                flist.insert(make_pair(j,fname));
+                flist.insert(make_pair(static_cast<float>(j),fname));
             else
-                flist.insert(make_pair(fmod(j*phi*arc,arc),fname));
+                flist.insert(make_pair(static_cast<float>(fmod(j*phi*arc,arc)),fname));
 
             ++j;
         }

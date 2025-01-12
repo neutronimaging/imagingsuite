@@ -29,7 +29,7 @@ include_directories(
     #Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 
-    link_directories(../../../../../lib /opt/local/lib )
+    # link_directories(../../../../../lib)
 endif()
 
 if (WIN32)

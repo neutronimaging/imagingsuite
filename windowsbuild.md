@@ -2,8 +2,7 @@
 
 ```bash
 pip install --upgrade conan
-conan install . --profile:host profiles\windows_msvc_17_release --profile:build profiles\windows_msvc_17_release
-conan build .
+conan build . --profile:all profiles\windows_msvc_17_release 
 cd ../build-imagingsuite/bin/Release
 %QTPATH%/bin/windeployqt muhrec.exe
 %QTPATH%/bin/windeployqt imageviewer.exe
