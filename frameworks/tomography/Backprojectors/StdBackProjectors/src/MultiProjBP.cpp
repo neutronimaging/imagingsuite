@@ -1,6 +1,5 @@
 //<LICENSE>
 
-//#include "stdafx.h"
 #include "../include/MultiProjBP.h"
 #include "../include/ReconException.h"
 #include <base/timage.h>
@@ -13,7 +12,13 @@
 #include <cmath>
 
 #ifdef __aarch64__
-    #include <sse2neon.h>
+    #pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wold-style-cast"
+	#pragma clang diagnostic ignored "-Wcast-align"
+	#pragma clang diagnostic ignored "-Wpedantic"
+	#pragma clang diagnostic ignored "-W#warnings"
+		#include <sse2neon/sse2neon.h>
+	#pragma clang diagnostic pop
 #else
     #include <xmmintrin.h>
     #include <emmintrin.h>
@@ -44,7 +49,7 @@ void MultiProjectionBP::BackProject()
 	const size_t SizeZ         = volume.Size(0)/4; // Already adjusted by a factor 4
 	const size_t SizeV4		   = SizeV/4;
 	const int SizeUm2	   	   = static_cast<int>(SizeU-2);
-	const size_t NProjections  = nProjectionBufferSize;
+	// const size_t NProjections  = nProjectionBufferSize;
 
 	__m128 column[2048];
 	
@@ -85,16 +90,30 @@ void MultiProjectionBP::BackProject()
 					__m128 sum;
 					for (size_t z=0; z<SizeZ; z++)	// Back-project on z 
 					{
-						const float interpB = abs(fPosU-nPosU-z*centerinc);			// Interpolation weight right
-						const float interpA = 1.0f-interpB;				// Interpolation weight left
+						float fpz=fPosU-z*centerinc;
+                        nPosU = static_cast<int>(fpz);	
+                        const float interpB = abs(fpz-nPosU);			// Interpolation weight right
+                        const float interpA = 1.0f-interpB;				// Interpolation weight left
 
-						__m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
-						__m128 w1_128=_mm_set_ps1(interpB);				// Interpolation weight left
+                        __m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
+                        __m128 w1_128=_mm_set_ps1(interpB);				// Interpolation weight left
 
-						a=_mm_mul_ps(ProjColumnA[z],w0_128);
-						b=_mm_mul_ps(ProjColumnB[z],w1_128);
-						sum=_mm_add_ps(a,b);
-						column[z]=_mm_add_ps(column[z],sum);
+                        a   = _mm_mul_ps(ProjColumnA[z],w0_128);
+                        b   = _mm_mul_ps(ProjColumnB[z],w1_128);
+                        sum = _mm_add_ps(a,b);
+                        column[z]=_mm_add_ps(column[z],sum);
+
+                        fPosU-=centerinc; // <<<<< Is this needed?
+						// const float interpB = abs(fPosU-nPosU-z*centerinc);			// Interpolation weight right
+						// const float interpA = 1.0f-interpB;				// Interpolation weight left
+
+						// __m128 w0_128=_mm_set_ps1(interpA);				// Interpolation weight right
+						// __m128 w1_128=_mm_set_ps1(interpB);				// Interpolation weight left
+
+						// a=_mm_mul_ps(ProjColumnA[z],w0_128);
+						// b=_mm_mul_ps(ProjColumnB[z],w1_128);
+						// sum=_mm_add_ps(a,b);
+						// column[z]=_mm_add_ps(column[z],sum);
 					}
 				}
 				memcpy(volume.GetLinePtr(x-1,y-1),column,SizeZ*sizeof(__m128));

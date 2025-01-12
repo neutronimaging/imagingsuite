@@ -18,7 +18,7 @@ DetectorLagModule::~DetectorLagModule() {
 }
 
 
-int DetectorLagModule::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int DetectorLagModule::Configure(ReconConfig /*config*/, std::map<std::string, std::string> parameters)
 {
     std::ostringstream msg;
 
@@ -58,19 +58,19 @@ std::map<std::string, std::string> DetectorLagModule::GetParameters()
 	return parameters;
 }
 
-bool DetectorLagModule::SetROI(size_t *roi)
+bool DetectorLagModule::SetROI(const std::vector <size_t> & /*roi*/)
 {
 	return false;
 }
 
-int DetectorLagModule::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int DetectorLagModule::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & /*coeff*/)
 {
     dl_correction.process(img);
 
 	return 0;
 }
 
-int DetectorLagModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int DetectorLagModule::ProcessCore(kipl::base::TImage<float,3> & /*img*/, std::map<std::string, std::string> & /*coeff*/)
 {
 	return 0;
 }

@@ -26,7 +26,7 @@ include_directories(
     ../../../../GUI/qt/QtModuleConfigure/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
     )
 endif()
 
@@ -38,8 +38,8 @@ include_directories(
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
     ../../../../core/modules/ModuleConfig/include
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../../ExternalDependencies/windows/include
+    # ../../../../../ExternalDependencies/windows/include/libxml2
     )
 endif()
 
@@ -78,19 +78,20 @@ add_library(${TARGET_NAME} SHARED
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULESGUI_LIBRARY HAVE_NEXUS)
+# target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULESGUI_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULESGUI_LIBRARY )
 
-add_definitions(-DHAVE_NEXUS)
+# add_definitions(-DHAVE_NEXUS)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
 
-    target_link_directories(${TARGET_NAME} PRIVATE
-        ../../../../../ExternalDependencies/windows/lib
-        ../../../../../imagingsuite/external/lib64
-        ../../../../../imagingsuite/external/lib64/nexus
-        )
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    #     ../../../../../ExternalDependencies/windows/lib
+    #     ../../../../../imagingsuite/external/lib64
+    #     ../../../../../imagingsuite/external/lib64/nexus
+    #     )
     target_link_libraries(${TARGET_NAME}
         PRIVATE
         Qt${QT_VERSION_MAJOR}::Core

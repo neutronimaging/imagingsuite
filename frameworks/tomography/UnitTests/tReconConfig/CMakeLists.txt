@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(TARGET_NAME "tReconConfig")
-project(tReconConfig LANGUAGES CXX)
+project(${TARGET_NAME} LANGUAGES CXX)
 
 enable_testing()
 
@@ -22,7 +22,7 @@ include_directories(
      ../../../../core/modules/ModuleConfig/include
     ../../../../core/kipl/kipl/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
 )
 
 set(SRC_FILES

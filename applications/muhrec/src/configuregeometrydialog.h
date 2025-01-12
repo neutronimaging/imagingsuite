@@ -21,6 +21,7 @@ public:
     
     void SetConfig(ReconConfig * config);
     void GetConfig(ReconConfig &config);
+    using QDialog::exec; 
     virtual int exec(ReconConfig &config);
 
 
@@ -51,15 +52,15 @@ private slots:
 
 private:
     kipl::base::TImage<float,2> ThresholdProjection(const kipl::base::TImage<float,2> img, float level);
-    float CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
-                                kipl::base::TImage<float,2> proj_180,
-                                size_t *roi);
+    // float CorrelationCenter(	kipl::base::TImage<float,2> proj_0,
+    //                             kipl::base::TImage<float,2> proj_180,
+    //                             size_t *roi);
 
-    float LeastSquareCenter(kipl::base::TImage<float,2> proj_0,
-                            kipl::base::TImage<float,2> proj_180,
-                            size_t *roi);
+    // float LeastSquareCenter(kipl::base::TImage<float,2> proj_0,
+    //                         kipl::base::TImage<float,2> proj_180,
+    //                         size_t *roi);
 
-    float CenterOfGravity(const kipl::base::TImage<float,2> img, size_t start, size_t end);
+    // float CenterOfGravity(const kipl::base::TImage<float,2> img, size_t start, size_t end);
     void CumulateProjection(const kipl::base::TImage<float,2> img, const kipl::base::TImage<float,2> biimg);
     pair<size_t, size_t> FindBoundary(const kipl::base::TImage<float,2> img, float level);
     pair<size_t, size_t> FindMaxBoundary();

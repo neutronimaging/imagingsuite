@@ -23,7 +23,7 @@ private slots:
 
 tedgefunction::tedgefunction()
 {
-    QSKIP("Testing non-supported features");
+    // QSKIP("Testing non-supported features");
     // here I should create the data that I want to use for testing, or something like this,  so for example a vector t of lambda values
 //     double *t = new double[30];
 
@@ -161,6 +161,14 @@ void tedgefunction::test_case1()
     std::cout << "testing case 1 empty" << std::endl;
 }
 
-QTEST_APPLESS_MAIN(tedgefunction)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(tedgefunction)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(tedgefunction)
+#endif
+
 
 #include "tst_tedgefunction.moc"

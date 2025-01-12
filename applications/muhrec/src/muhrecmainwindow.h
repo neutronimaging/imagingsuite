@@ -87,6 +87,7 @@ protected:
     void ComputeVolumeSizeSpacing();
     void ComputeVolumeSize();
     void ComputeVoxelSpacing();
+    void set_slicelevels(float level);
 
 private slots:
     void on_buttonBrowseReference_clicked();
@@ -118,12 +119,6 @@ private slots:
     void on_buttonGetPP_clicked();
 
     void on_dspinResolution_valueChanged(double arg1);
-
-//    void on_comboDirRotation_currentIndexChanged(int);
-
-//    void on_spinSubVolumeSizeZ0_valueChanged(int arg1);
-
-//    void on_spinSubVolumeSizeZ1_valueChanged(int arg1);
 
     void on_actionRegister_for_news_letter_triggered();
 
@@ -189,8 +184,8 @@ private slots:
 
     void on_pushButton_levels99p_clicked();
 
-    void on_checkBoxUseSkipList_toggled(bool checked);
-
+    void on_pushButton_levels999p_clicked();
+    
     void on_pushButtonGetSliceROI_clicked();
 
     void on_comboDataSequence_currentIndexChanged(int index);
@@ -240,6 +235,8 @@ private slots:
     void on_spinDarkCount_valueChanged(int arg1);
 
     void on_actionConvert_files_triggered();
+
+    void on_comboBox_skiplist_currentIndexChanged(int index);
 
 private:
     // Data members

@@ -8,7 +8,6 @@
 #include <math/image_statistics.h>
 #include <math/median.h>
 #include <strings/filenames.h>
-#include <analyzefileext.h>
 
 #include <ParameterHandling.h>
 
@@ -455,6 +454,7 @@ void BBLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
                              1.0f,0.0f,
                              m_Config,fFlatDose); // i don't use the bias.. beacuse i think i use it later on
 
+    logger.message("Loaded references");
     SetReferenceImages(mydark,myflat);
 
 
@@ -469,7 +469,8 @@ void BBLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
 
     }
 
-     m_corrector.SetReferenceImages(&mflat,
+    logger.message("Setting references in the corrector");
+    m_corrector.SetReferenceImages(&mflat,
                                     &mdark,
                                     (bUseBB && nBBCount!=0 && nBBSampleCount!=0),
                                     (bUseExternalBB && nBBextCount!=0),
@@ -479,7 +480,7 @@ void BBLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
                                     (bUseNormROIBB && bUseNormROI),
                                     roi,
                                     m_Config.ProjectionInfo.dose_roi);
-
+    logger.message("Setting references in the corrector - Done.");
 }
 
 void BBLogNorm::LoadExternalBBData(const std::vector<size_t> &roi){
@@ -533,9 +534,10 @@ void BBLogNorm::PrepareBBData(){
     if (blackbodysamplename.empty() && nBBSampleCount!=0)
         throw ReconException("The sample image with BBs image mask is empty", __FILE__,__LINE__);
 
-
-
-    std::vector<int> diffroi(BBroi.begin(),BBroi.end());
+    std::vector<int> diffroi(BBroi.size());
+    std::transform(BBroi.begin(), BBroi.end(), diffroi.begin(), [](size_t val) {
+        return static_cast<int>(val);
+    });
 
     m_corrector.setDiffRoi(diffroi);
     m_corrector.SetRadius(radius);
@@ -657,7 +659,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 
     float *temp_parameters;
     size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
-    size_t step = (nProj)/(nBBSampleCount);
+    // size_t step = (nProj)/(nBBSampleCount);
 
     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
@@ -1010,7 +1012,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 
      float *temp_parameters;
      size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
-     size_t step = (nProj)/(nBBSampleCount);
+    //  size_t step = (nProj)/(nBBSampleCount);
 
      float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
      m_corrector.SetAngles(angles, nProj, nBBSampleCount);
@@ -1299,7 +1301,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 
                          }
 
-                         float dose = dosesample/(current_dose*tau);
+                        //  float dose = dosesample/(current_dose*tau);
                      }
 
                      memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*(values.size()+3)*nBBSampleCount);
@@ -1327,7 +1329,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 int BBLogNorm::GetnProjwithAngle(float angle){
 
     // range of projection angles
-    double nProj=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
+    double nProj=(static_cast<double>(m_Config.ProjectionInfo.nLastIndex)-static_cast<double>(m_Config.ProjectionInfo.nFirstIndex+1))/static_cast<double>(m_Config.ProjectionInfo.nProjectionStep);
 
     int index =0;
     float curr_angle;
@@ -1382,8 +1384,8 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,0.0f,m_Config,blackdose);
 
 
-    std::vector<int> diffroi(BBroi.begin(),BBroi.end()); // it is now just the BBroi position, makes more sense
-
+    std::vector<int> diffroi(BBroi.size()); // it is now just the BBroi position, makes more sense
+    std::transform(BBroi.begin(), BBroi.end(), diffroi.begin(), [](size_t val){return static_cast<int>(val);}); // now it is the difference between the BBroi and the absolute image coordinates
 
     m_corrector.SetRadius(radius);
     m_corrector.SetMinArea(min_area);
@@ -1458,7 +1460,7 @@ float BBLogNorm::computedose(kipl::base::TImage<float,2>&img){
 
 }
 
-int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & /*img*/, std::map<std::string, std::string> & /*coeff*/)
 {
 
     return 0;
@@ -1478,9 +1480,11 @@ int BBLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::stri
             doselist[i] = doselist[i]-fDarkDose;
         }
     }
+    logger.message("Starting processing.");
         m_corrector.SetInteractor(m_Interactor);
         m_corrector.Process(img,doselist);
 
+    logger.message("Processing done.");
     if (doselist!=nullptr)
         delete [] doselist;
 
@@ -1529,6 +1533,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -1536,9 +1541,8 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        auto exttype = readers::GetFileExtensionType(fmask);
-         if (exttype != readers::ExtensionHDF5 )
-         {
+        found = fmask.find("hdf");
+         if (found==std::string::npos ) {
 
             kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
             img = reader.Read(filename,
@@ -1581,8 +1585,7 @@ kipl::base::TImage<float,2> BBLogNorm::ReferenceLoader(std::string fname,
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            if (exttype != readers::ExtensionHDF5 )
-            {
+            if (found==std::string::npos ) {
 
                 img=reader.Read(filename,
                         m_Config.ProjectionInfo.eFlip,
@@ -1669,6 +1672,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
@@ -1676,9 +1680,9 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
         msg.str(""); msg<<"Loading "<<N<<" reference images";
         logger(kipl::logging::Logger::LogMessage,msg.str());
 
-        auto exttype = readers::GetFileExtensionType(fmask);
-        if (exttype != readers::ExtensionHDF5 )
-        {
+        found = fmask.find("hdf");
+
+        if (found==std::string::npos ) {
             kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
             img = reader.Read(filename,
                     config.ProjectionInfo.eFlip,
@@ -1717,8 +1721,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
         for (int i=1; i<N; ++i) {
 
-            if (exttype != readers::ExtensionHDF5 )
-            {
+            if (found==std::string::npos ) {
                 kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
                 img=reader.Read(filename,
@@ -1734,8 +1737,7 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
                             config.ProjectionInfo.fBinning,
                             doseBBroi) : initialDose;
             }
-            else
-            {
+            else{
                         img=reader.ReadNexus(fmask,i+firstIndex,
                                 m_Config.ProjectionInfo.eFlip,
                                 m_Config.ProjectionInfo.eRotate,
@@ -1768,10 +1770,10 @@ kipl::base::TImage<float,2> BBLogNorm::BBLoader(std::string fname,
 
 
         if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-            float *pFlat=refimg.GetDataPtr();
-            for (size_t i=1; i<refimg.Size(1); i++)
-            {
+             float *pFlat=refimg.GetDataPtr();
+            for (size_t i=1; i<refimg.Size(1); i++) {
                 memcpy(refimg.GetLinePtr(i), pFlat, sizeof(float)*refimg.Size(0));
+
             }
         }
     }
@@ -1795,9 +1797,11 @@ float BBLogNorm::DoseBBLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
+    size_t found;
 
-    auto exttype = readers::GetFileExtensionType(fname);
-    if (exttype == readers::ExtensionHDF5)
+    found=fname.find("hdf");
+
+    if (found!=std::string::npos)
     {
         tmpdose=bUseNormROIBB ? reader.GetProjectionDoseNexus(fmask,firstIndex,
                     config.ProjectionInfo.eFlip,

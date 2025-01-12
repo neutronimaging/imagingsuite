@@ -12,7 +12,7 @@ include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../core/modules/ModuleConfig/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
     ../../Framework/ReconFramework/include
     )
 endif()
@@ -24,11 +24,11 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../Framework/ReconFramework/include
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/nexus
-    ../../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../external/include/
+    # ../../../../../ExternalDependencies/windows/include
+    # ../../../../../ExternalDependencies/windows/include/nexus
+    # ../../../../../ExternalDependencies/windows/include/cfitsio
+    # ../../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../external/include/
     )
 endif()
 
@@ -48,14 +48,14 @@ set(INC_FILES
     include/NNMultiProjBP.h
     include/MultiProjBPparallel.h
     include/MultiProjBP.h
-    src/stdafx.h
+    # src/stdafx.h
     include/StdBackProjectors_global.h
 )
 
 set(SRC_FILES
 src/StdBackProjectors.cpp
     src/StdBackProjectorBase.cpp
-    src/stdafx.cpp
+    # src/stdafx.cpp
     src/NNMultiProjBP.cpp
     src/MultiProjBPparallel.cpp
     src/MultiProjBP.cpp
@@ -71,18 +71,19 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE STDBACKPROJECTORS_LIBRARY HAVE_NEXUS)
+# target_compile_definitions(${TARGET_NAME} PRIVATE STDBACKPROJECTORS_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE STDBACKPROJECTORS_LIBRARY)
 
-add_definitions(-DHAVE_NEXUS)
+#add_definitions(-DHAVE_NEXUS)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-    ../../../../../ExternalDependencies/windows/lib
-    ../../../../../imagingsuite/external/lib64
-    ../../../../../imagingsuite/external/lib64/nexus
-    )
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    # ../../../../../ExternalDependencies/windows/lib
+    # ../../../../../imagingsuite/external/lib64
+    # ../../../../../imagingsuite/external/lib64/nexus
+    # )
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC
@@ -90,15 +91,13 @@ if (WIN32)
         ImagingAlgorithms
         ModuleConfig
         ReconFramework
-        libxml2
-        cfitsio
-        libtiff
-        liblapack
-        libopenblas
-        libfftw3-3
-        libfftw3f-3
-        NeXus
-        NeXusCPP
+        LibXml2::LibXml2
+        cfitsio::cfitsio
+        TIFF::TIFF
+        #libfftw3-3
+        #libfftw3f-3
+        OpenBLAS::OpenBLAS
+        fftw::fftw
         Iphlpapi
 
         )
@@ -121,42 +120,44 @@ if (UNIX AND NOT APPLE)
             OpenMP::OpenMP_CXX
             # pybind11::module
 
-        #   PRIVATE
             kipl
             ImagingAlgorithms
             ModuleConfig
             ReconFramework
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
-            NeXus
-            NeXusCPP
+            LibXml2::LibXml2 
+            #fftw3
+            #fftw3f
+            fftw::fftw
+            cfitsio::cfitsio
+            TIFF::TIFF
+            armadillo::armadillo
+            OpenBLAS::OpenBLAS
+            #lapack
+            #blas
+            # NeXus
+            # NeXusCPP
             )
     else()
         target_link_libraries(${TARGET_NAME}
           PUBLIC
             # pybind11::module
 
-        #   PRIVATE
             kipl
             ImagingAlgorithms
             ModuleConfig
             ReconFramework
-            xml2
-            fftw3
-            fftw3f
-            cfitsio
-            tiff
-            armadillo
-            lapack
-            blas
-            NeXus
-            NeXusCPP
+            LibXml2::LibXml2 
+            #fftw3
+            #fftw3f
+            fftw::fftw
+            cfitsio::cfitsio
+            TIFF::TIFF
+            armadillo::armadillo
+            OpenBLAS::OpenBLAS
+            #lapack
+            #blas
+            # NeXus
+            # NeXusCPP
           )
     endif()
 endif()

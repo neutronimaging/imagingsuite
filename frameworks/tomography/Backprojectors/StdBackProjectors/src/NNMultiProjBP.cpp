@@ -1,6 +1,5 @@
 //<LICENSE>
 
-//#include "stdafx.h"
 #include "../include/NNMultiProjBP.h"
 #include "../include/ReconException.h"
 #include <base/timage.h>
@@ -13,7 +12,13 @@
 #include <cmath>
 
 #ifdef __aarch64__
-    #include <sse2neon.h>
+    #pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wold-style-cast"
+	#pragma clang diagnostic ignored "-Wcast-align"
+	#pragma clang diagnostic ignored "-Wpedantic"
+	#pragma clang diagnostic ignored "-W#warnings"
+		#include <sse2neon/sse2neon.h>
+	#pragma clang diagnostic pop
 #else
     #include <xmmintrin.h>
     #include <emmintrin.h>
@@ -42,7 +47,7 @@ void NearestNeighborBP::BackProject()
 	std::stringstream msg;
 	const size_t SizeY         = mask.size();		 // The mask size is used since there may be less elements than the matrix size.
 	const size_t SizeZ         = volume.Size(0)>>2; // Already adjusted by a factor 4
-	const size_t SizeV4		   = SizeV>>2;
+	// const size_t SizeV4		   = SizeV>>2;
 	const int SizeUm2	   	   = static_cast<int>(SizeU-2);
 	const size_t NProjections=nProjectionBufferSize;
 	__m128 column[2048];
@@ -63,7 +68,7 @@ void NearestNeighborBP::BackProject()
 			}
 			
 			const float centeroffset = (mConfig.ProjectionInfo.roi[1]-mConfig.ProjectionInfo.fTiltPivotPosition)*tan(mConfig.ProjectionInfo.fTiltAngle*fPi/180);
-			const float centerinc    = 4*tan(mConfig.ProjectionInfo.fTiltAngle*fPi/180); // The SSE requires increments of 4
+			// const float centerinc    = 4*tan(mConfig.ProjectionInfo.fTiltAngle*fPi/180); // The SSE requires increments of 4
 			for (size_t x=cfStartX+1; x<=cfStopX; x++)					
 			{
 				memcpy(column,volume.GetLinePtr(x-1,y-1),SizeZ*sizeof(__m128));

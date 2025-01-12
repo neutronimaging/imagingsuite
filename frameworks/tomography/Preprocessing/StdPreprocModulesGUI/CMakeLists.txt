@@ -25,16 +25,15 @@ include_directories(
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
     ../StdPreprocModules/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
     #Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 
-    link_directories(../../../../../lib /opt/local/lib )
+    # link_directories(../../../../../lib)
 endif()
 
 if (WIN32)
 include_directories(
-
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
@@ -43,9 +42,9 @@ include_directories(
     ../../../../GUI/qt/QtAddons/
     ../../../../GUI/qt/QtModuleConfigure/
     ../StdPreprocModules/include
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../../imagingsuite/external/include
+    # ../../../../../ExternalDependencies/windows/include
+    # ../../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../../imagingsuite/external/include
     )
 
 endif()
@@ -130,30 +129,29 @@ add_library(${TARGET_NAME} SHARED
   )
 
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
-  if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-        ../../../../../ExternalDependencies/windows/lib
-        ../../../../../imagingsuite/external/lib64
-    )
+if (WIN32)
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    #      ../../../../../ExternalDependencies/windows/lib
+    # #     ../../../../../imagingsuite/external/lib64
+    # )
 
   target_link_libraries(${TARGET_NAME} 
   PUBLIC
-      Qt${QT_VERSION_MAJOR}::Core
-      Qt${QT_VERSION_MAJOR}::Widgets
-      Qt${QT_VERSION_MAJOR}::Charts
-      kipl
-      ImagingAlgorithms
-      ModuleConfig
-      ReaderConfig
-      ReconFramework
-      QtAddons
-      QtModuleConfigure
-      StdPreprocModules
-    #   libxml2
-    #   libfftw3-3
-    #   libfftw3f-3
-    #   cfitsio
-    #   libtiff
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Charts
+    kipl
+    ImagingAlgorithms
+    ModuleConfig
+    ReaderConfig
+    ReconFramework
+    QtAddons
+    QtModuleConfigure
+    StdPreprocModules
+
+    #libopenblas
+    OpenBLAS::OpenBLAS
+    #liblapack #Supplies by OpenBLAS
   )
 endif()
 
@@ -186,14 +184,16 @@ endif()
         QtAddons
         QtModuleConfigure
         StdPreprocModules
-        xml2
-        fftw3
-        fftw3f
-        cfitsio
-        tiff
-        armadillo
-        lapack
-        blas
+        LibXml2::LibXml2 
+        #fftw3
+        #fftw3f
+        fftw::fftw
+        TIFF::TIFF
+        cfitsio::cfitsio
+        armadillo::armadillo
+        OpenBLAS::OpenBLAS
+        #lapack
+        #blas
     )
   endif()
 

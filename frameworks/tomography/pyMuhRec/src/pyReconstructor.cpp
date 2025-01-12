@@ -68,53 +68,53 @@ void bindReconstructor(py::module &m)
                             auto key = py::cast<std::string>(item.first);
                             switch (parMap.at(key))
                             {
-                            case 0 :
+                            case 0 : // center
                                 config.ProjectionInfo.fCenter = py::cast<float>(item.second);
                                 break;
-                            case 1 :
+                            case 1 : // tiltangle
                                 config.ProjectionInfo.fTiltAngle = py::cast<float>(item.second);
                                 break;
-                            case 2 :
+                            case 2 : // tiltpivot 
                                 config.ProjectionInfo.fTiltPivotPosition = py::cast<float>(item.second);
                                 break;
-                            case 3 :
+                            case 3 : // usetilt
                                 config.ProjectionInfo.bCorrectTilt = py::cast<bool>(item.second);
                                 break;
-                            case 4 :
+                            case 4 : // roi
                                 config.ProjectionInfo.roi = py::cast<std::vector<size_t>>(item.second);
                                 if (config.ProjectionInfo.roi.size() != 4)
                                     throw std::runtime_error("The projection ROI vector has the wrong size");
                                 break;
-                            case 5 :
-                                config.ProjectionInfo.fTiltPivotPosition = py::cast<float>(item.second);
+                            case 5 : // direction
+                                {
+                                    std::string str = py::cast<std::string>(item.second);
+                                    string2enum(str, config.ProjectionInfo.eDirection);
+                                }
                                 break;
-                            case 6 :
+                            case 6 : // resolution
                                 config.ProjectionInfo.fResolution[0] = py::cast<float>(item.second);
                                 config.ProjectionInfo.fResolution[1] = config.ProjectionInfo.fResolution[0];
 
                                 break;
-                            case 7 :
+                            case 7 : // usematrixroi    
                                 config.MatrixInfo.bUseROI = py::cast<bool>(item.second);
                                 break;
-                            case 8 :
+                            case 8 : // matrixroi
                                 config.MatrixInfo.roi = py::cast<std::vector<size_t>>(item.second);
                                 if (config.ProjectionInfo.roi.size() != 4)
                                     throw std::runtime_error("The matrix ROI vector has the wrong size");
                                 break;
-                            case 9 :
+                            case 9 : // rotate
                                 config.MatrixInfo.fRotation = py::cast<float>(item.second);
                                 break;
                             case 10 : // sod
                                 config.ProjectionInfo.fSOD = py::cast<float>(item.second);
                                 break;
-                            case 11: // sdd
+                            case 11 : // sdd
                                 config.ProjectionInfo.fSOD = py::cast<float>(item.second);
                                 break;
-                            case 12: // piercing point
-                                {
-                                    std::string ppstr = py::cast<std::string>(item.second);
-                                    kipl::strings::String2Array(ppstr,config.ProjectionInfo.fpPoint,2);
-                                }
+                            case 12 : // piercing point
+                                config.ProjectionInfo.fpPoint = py::cast<std::vector<float>>(item.second);
                                 break;
                             case 13:
                                 config.ProjectionInfo.beamgeometry = py::cast<ReconConfig::cProjections::eBeamGeometry>(item.second);
@@ -248,7 +248,7 @@ void bindReconstructor(py::module &m)
             .value("bpMultiProjParallel",    bpMultiProjParallel)
             .value("bpNearestNeighbor",      bpNearestNeighbor)
             .value("bpFDKSingle",            bpFDKSingle)
-            .value("bpbpFDKDouble",          bpFDKDouble)
+            .value("bpFDKDouble",            bpFDKDouble)
             .export_values();
 
     py::enum_<ReconConfig::cProjections::eBeamGeometry>(m,"eBeamGeometry")

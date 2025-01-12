@@ -14,7 +14,7 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/modules/ReaderConfig
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../../ExternalDependencies/macos/include
+    # ../../../../../ExternalDependencies/macos/include
 
     )
 endif()
@@ -36,11 +36,11 @@ if (WIN32)
         ../../../../core/modules/ReaderConfig
         ../../../../core/algorithms/ImagingAlgorithms/include
         ../../Framework/ReconFramework/include
-        ../../../../../ExternalDependencies/windows/include
-        ../../../../../ExternalDependencies/windows/include/nexus
-        ../../../../../ExternalDependencies/windows/include/cfitsio
-        ../../../../../ExternalDependencies/windows/include/libxml2
-        ../../../../external/include/
+        # ../../../../../ExternalDependencies/windows/include
+        # ../../../../../ExternalDependencies/windows/include/nexus
+        # ../../../../../ExternalDependencies/windows/include/cfitsio
+        # ../../../../../ExternalDependencies/windows/include/libxml2
+        # ../../../../external/include/
         )
 endif()
 
@@ -109,35 +109,28 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY HAVE_NEXUS)
+# target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY HAVE_NEXUS )
+target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY )
 
-add_definitions(-DHAVE_NEXUS)
+#add_definitions(-DHAVE_NEXUS )
 
   message("StdPreprocModules ${CMAKE_HOST_SYSTEM_PROCESSOR}")
   if (WIN32)
-  target_link_directories(${TARGET_NAME} PRIVATE
-  ../../../../../ExternalDependencies/windows/lib
-  ../../../../../imagingsuite/external/lib64
-  ../../../../../imagingsuite/external/lib64/nexus
-  )
+    # target_link_directories(${TARGET_NAME} PUBLIC
+    # ../../../../../ExternalDependencies/windows/lib
+    # # ../../../../../imagingsuite/external/lib64
+    # # ../../../../../imagingsuite/external/lib64/nexus
+    # )
   
   target_link_libraries(${TARGET_NAME}
-  PRIVATE
+  PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
         ReaderConfig
         ReconFramework
-        # libxml2
-        # cfitsio
-        # libtiff
         # liblapack
-        # libopenblas
-        # libfftw3-3
-        # libfftw3f-3
-        # NeXus
-        # NeXusCPP
-        # Iphlpapi
+        # ${OpenBLAS_LIBRARIES}
 
       )
 endif()

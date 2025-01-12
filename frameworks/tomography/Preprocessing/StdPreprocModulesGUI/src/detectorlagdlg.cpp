@@ -19,7 +19,7 @@ DetectorLagDlg::~DetectorLagDlg()
 }
 
 
-int DetectorLagDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> & UNUSED(img))
+int DetectorLagDlg::exec(ConfigBase * /*config*/, std::map<std::string, std::string> &parameters, kipl::base::TImage<float, 3> & UNUSED(img))
 {
     m_correctionFactor = GetFloatParameter(parameters,"correctionFactor");
     m_medianKernelSize  = GetIntParameter(parameters,"medianKernelSize");

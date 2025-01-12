@@ -4,7 +4,6 @@
 #define RECONCONFIG_H
 
 #include "ReconFramework_global.h"
-
 #include <map>
 #include <list>
 #include <set>
@@ -69,6 +68,12 @@ public:
             BeamGeometry_Helix
         };
 
+        enum eSkipListMode {
+            SkipMode_None,  // no skip list
+            SkipMode_Skip, // skip the projection (use case: retakes in the sequence. Angle between projections stays the same)
+            SkipMode_Drop  // drop the projection (use case: bad projection in the sequence. Angle between projections increase with number of dropped projections)
+        }; 
+
         /// Base constructor, initialize default values.
 		cProjections();
 
@@ -90,6 +95,7 @@ public:
         size_t nProjectionStep;     ///< Increment of the projection index during read
         size_t nRepeatedView;       ///< Same view has repeated projections
         ImagingAlgorithms::AverageImage::eAverageMethod averageMethod;
+        eSkipListMode skipListMode;  ///< Indicates if the skip list is used to skip or drop projections
         std::set<size_t> nlSkipList;///< List of projection indices that are retakes and will be skipped. This is not a missing angle.
         bool bRepeatLine;           ///< Repeat line this is a part of the repeat sinogram reconstruction
         eScanType scantype;         ///< Indicates how the data was acquired
@@ -273,6 +279,9 @@ RECONFRAMEWORKSHARED_EXPORT std::ostream & operator<<(std::ostream &s, ReconConf
 /// \returns The updated stream
 /// RECONFRAMEWORKSHARED_EXPORT std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eImageType it);
 
+RECONFRAMEWORKSHARED_EXPORT void           string2enum(const std::string &str, ReconConfig::cProjections::eSkipListMode &mode);
+RECONFRAMEWORKSHARED_EXPORT std::string    enum2string(const ReconConfig::cProjections::eSkipListMode &mode);
+RECONFRAMEWORKSHARED_EXPORT std::ostream & operator<<(std::ostream &s, const ReconConfig::cProjections::eSkipListMode &mode);
 
 
 #endif

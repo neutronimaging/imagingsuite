@@ -18,6 +18,7 @@
 
 #include <base/KiplException.h>
 #include <strings/filenames.h>
+#include <folders.h>
 
 #include "muhreccli.h"
 
@@ -42,6 +43,7 @@ MuhRecCLI::MuhRecCLI(int argc, char ** argv) :
 
     applicationPath = args[0];
     applicationPath = applicationPath.substr(0,applicationPath.find_last_of(kipl::strings::filenames::slash));
+    kipl::strings::filenames::CheckPathSlashes(applicationPath,true);
 
 }
 
@@ -71,13 +73,15 @@ int MuhRecCLI::exec()
                 ReconFactory factory;
                 ReconEngine *pEngine=factory.BuildEngine(config,nullptr);
 
-                if (pEngine!=nullptr) {
+                if (pEngine!=nullptr) 
+                {
+                    std::string confname=config.MatrixInfo.sDestinationPath;
+                    kipl::strings::filenames::CheckPathSlashes(confname,true);
+                    CheckFolders(confname,true);
                     logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
                     pEngine->Run3D();
                     logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
 
-                    std::string confname=config.MatrixInfo.sDestinationPath;
-                    kipl::strings::filenames::CheckPathSlashes(confname,true);
                     std::string basename=config.MatrixInfo.sFileMask.substr(0,config.MatrixInfo.sFileMask.find_first_of('#'));
                     confname+=basename+"_recon.xml";
 

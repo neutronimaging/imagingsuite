@@ -52,8 +52,8 @@ void CircularHoughTransform::buildKernel(float radius)
         }
     }
 
-    for (size_t i=0; i<ringKernel.Size(); ++i)
-        ringKernel[i]/=sum;
+    for (size_t j=0; j<ringKernel.Size(); ++j)
+        ringKernel[j]/=sum;
 
     std::ostringstream msg;
 

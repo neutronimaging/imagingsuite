@@ -35,7 +35,13 @@ private:
 KiplFilters::KiplFilters()
 {
     dataPath = QT_TESTCASE_BUILDDIR;
-    dataPath = dataPath + "/../../../../../TestData/";
+    #ifdef __APPLE__
+        dataPath = dataPath + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        dataPath = dataPath + "/../../../../../../TestData/";
+    #else
+        dataPath = dataPath + "/../../../../../TestData/";
+    #endif
     kipl::strings::filenames::CheckPathSlashes(dataPath,true);
 
 
@@ -110,8 +116,12 @@ void KiplFilters::test_MedianFilter()
     med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedian;
     auto res_single   = med(img,kipl::filters::FilterBase::EdgeZero);
 
+    QCOMPARE(img.Size(),res_single.Size());
+
     med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedianSTL;
     auto res_parallel = med(img,kipl::filters::FilterBase::EdgeZero);
+
+    QCOMPARE(img.Size(),res_parallel.Size());
 
     for (size_t i =0; i<res_single.Size(); ++i)
         QCOMPARE(res_single[i],res_parallel[i]);
@@ -152,6 +162,14 @@ void KiplFilters::benchmark_MedianFilterParallel()
     }
 }
 
-QTEST_APPLESS_MAIN(KiplFilters)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(KiplFilters)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(KiplFilters)
+#endif
+
 
 #include "tst_kiplfilters.moc"

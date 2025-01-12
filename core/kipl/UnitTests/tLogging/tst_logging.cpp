@@ -73,7 +73,7 @@ void LoggingTests::testLogWriter()
 
 void LoggingTests::testLogStreamWriter()
 {
-    QVERIFY_EXCEPTION_THROWN(kipl::logging::LogStreamWriter badlw("sdfsdfsdfsfsg/dsfs.log"),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, kipl::logging::LogStreamWriter badlw("sdfsdfsdfsfsg/dsfs.log"));
 
    // QCOMPARE(badlw.isValid(),false);
 
@@ -91,6 +91,15 @@ void LoggingTests::testMultiTargetLogger()
 
 }
 
-QTEST_APPLESS_MAIN(LoggingTests)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(LoggingTests)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(LoggingTests)    
+#endif
+
+
 
 #include "include/tst_logging.moc"

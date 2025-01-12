@@ -2,23 +2,23 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="130mm"
    height="130mm"
    viewBox="0 0 130 130"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
    sodipodi:docname="muh4_icon.svg"
-   inkscape:export-filename="/Users/kaestner/git/imagingsuite/applications/muhrec3/doc/icon/muh_icon.png"
-   inkscape:export-xdpi="200.07384"
-   inkscape:export-ydpi="200.07384">
+   inkscape:export-filename="muh_icon2048.png"
+   inkscape:export-xdpi="400"
+   inkscape:export-ydpi="400"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2">
     <inkscape:path-effect
@@ -95,7 +95,7 @@
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
        id="filter935"
-       x="-0.074430194"
+       x="-0.074430191"
        width="1.1488604"
        y="-0.15008135"
        height="1.3001627">
@@ -108,9 +108,9 @@
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
        id="filter939"
-       x="-0.097942475"
-       width="1.195885"
-       y="-0.069723483"
+       x="-0.097942471"
+       width="1.1958849"
+       y="-0.06972348"
        height="1.139447">
       <feGaussianBlur
          inkscape:collect="always"
@@ -126,8 +126,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.6488122"
-     inkscape:cx="235.61272"
-     inkscape:cy="252.75994"
+     inkscape:cx="235.62417"
+     inkscape:cy="252.90934"
      inkscape:document-units="mm"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -135,11 +135,14 @@
      fit-margin-left="2"
      fit-margin-right="2"
      fit-margin-bottom="2"
-     inkscape:window-width="1867"
-     inkscape:window-height="1155"
-     inkscape:window-x="169"
-     inkscape:window-y="35"
-     inkscape:window-maximized="0" />
+     inkscape:window-width="1728"
+     inkscape:window-height="997"
+     inkscape:window-x="0"
+     inkscape:window-y="38"
+     inkscape:window-maximized="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata5">
     <rdf:RDF>

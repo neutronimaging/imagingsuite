@@ -13,6 +13,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
 if (APPLE)
+file(COPY ${CMAKE_BINARY_DIR}/lib/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks")
+endif()
+
+if (APPLE)
 include_directories(
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
@@ -24,7 +28,7 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../../ExternalDependencies/macos/include
+    # ../../../ExternalDependencies/macos/include
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -41,7 +45,8 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../external/include/
+    # ../../../ExternalDependencies/windows/include
+    # ../../external/include/
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()

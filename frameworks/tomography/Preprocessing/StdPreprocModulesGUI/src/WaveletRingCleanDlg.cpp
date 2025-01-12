@@ -23,9 +23,9 @@
 WaveletRingCleanDlg::WaveletRingCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("WaveletRingCleanDlg",true,true,true,parent),
     ui(new Ui::WaveletRingCleanDlg),
-    m_nLevels(3),
-    m_fSigma(0.05f),
-    m_sWaveletName("daub15"),
+    m_nLevels(4),
+    m_fSigma(0.01f),
+    m_sWaveletName("daub17"),
     m_eCleaningMethod(ImagingAlgorithms::VerticalComponentFFT)
 {
     ui->setupUi(this);
@@ -43,7 +43,8 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
 
     m_Config=dynamic_cast<ReconConfig *>(config);
 
-    try {
+    try 
+    {
         m_nLevels = GetFloatParameter(parameters,"decnum");
         m_fSigma  = GetFloatParameter(parameters,"sigma");
         m_sWaveletName = GetStringParameter(parameters, "wname");
@@ -58,17 +59,20 @@ int WaveletRingCleanDlg::exec(ConfigBase * config, std::map<std::string, std::st
 
     UpdateDialog();
 
-    try {
+    try 
+    {
         ApplyParameters();
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e) 
+    {
         logger(kipl::logging::Logger::LogError,e.what());
         return false;
     }
 
     int res=QDialog::exec();
 
-    if (res==QDialog::Accepted) {
+    if (res==QDialog::Accepted) 
+    {
         logger(kipl::logging::Logger::LogMessage,"Use settings");
         UpdateParameters();
         UpdateParameterList(parameters);
@@ -106,11 +110,13 @@ void WaveletRingCleanDlg::ApplyParameters()
 
     std::map<std::string,std::string> pars;
 
-    try {
+    try 
+    {
         m_Cleaner.Configure(*m_Config, parameters);
         m_Cleaner.Process(img, pars);
     }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e) 
+    {
         QMessageBox errdlg(this);
         errdlg.setText("Failed to process sinogram.");
 
@@ -158,7 +164,8 @@ void WaveletRingCleanDlg::UpdateDialog()
     std::list<std::string> wlist=wk.NameList();
     std::list<std::string>::iterator it;
 
-    for (idx=0, it=wlist.begin(); it!=wlist.end(); it++,idx++) {
+    for (idx=0, it=wlist.begin(); it!=wlist.end(); it++,idx++) 
+    {
         if (*it==m_sWaveletName)
             default_wavelet=idx;
     }
@@ -196,7 +203,8 @@ void WaveletRingCleanDlg::PrepareWaveletComboBox()
     ui->combo_wavelets->clear();
 
     int default_wavelet, idx;
-    for (idx=0, it=wlist.begin(); it!=wlist.end(); it++,idx++) {
+    for (idx=0, it=wlist.begin(); it!=wlist.end(); it++,idx++) 
+    {
         QString str=QString::fromStdString(*it);
         if (*it==m_sWaveletName)
             default_wavelet=idx;

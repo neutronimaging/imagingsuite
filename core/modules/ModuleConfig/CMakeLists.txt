@@ -12,13 +12,13 @@ include_directories(
     ../../../core/modules/ModuleConfig/include
 )
 
-if (APPLE)
-include_directories(
-    ../../../../ExternalDependencies/macos/include
-)
-endif()
+# if (APPLE)
+# include_directories(
+#     ../../../../ExternalDependencies/macos/include
+# )
+# endif()
 
-link_directories( ../../../../lib )
+# link_directories( ../../../../lib )
 
 set(INC_FILES
   include/ModuleConfig_global.h 
@@ -35,7 +35,6 @@ set(INC_FILES
 
 set(SRC_FILES
   src/publication.cpp 
-  src/stdafx.cpp 
   src/ProcessModuleBase.cpp 
   src/ParameterHandling.cpp 
   src/ModuleItemBase.cpp 
@@ -53,17 +52,18 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY HAVE_NEXUS)
+# target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY)
 
-add_definitions(-DHAVE_NEXUS)
+#add_definitions(-DHAVE_NEXUS)
 
-if (WIN32)
-target_link_directories(${TARGET_NAME} PRIVATE
-# ../../../../ExternalDependencies/windows/lib
-../../../../imagingsuite/external/lib64
-../../../../imagingsuite/external/lib64/nexus
-)
-endif()
+# if (WIN32)
+# target_link_directories(${TARGET_NAME} PRIVATE
+# # ../../../../ExternalDependencies/windows/lib
+# ../../../../imagingsuite/external/lib64
+# ../../../../imagingsuite/external/lib64/nexus
+# )
+# endif()
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC

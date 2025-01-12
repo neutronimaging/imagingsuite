@@ -79,8 +79,13 @@ public:
 //    const kipl::base::TImage<float> & getNoPeaks();
 
 protected:
+    /// \brief Replaces the pixels in the image with the result of the moprhological operation
+    /// \param img the image to be processed. The result is stored in the same image
     void ProcessReplace(kipl::base::TImage<float,2> &img);
     void ProcessFillMix(kipl::base::TImage<float,2> &img);
+
+    /// \brief Replaces the detected pixels in the image with an average region growing. 
+    /// \param img the image to be processed. The result is stored in the same image
     void ProcessFill(kipl::base::TImage<float,2> &img);
     void process(kipl::base::TImage<float, 3> *pImg,
                  size_t first,
@@ -88,7 +93,11 @@ protected:
                  std::vector<float> th,
                  std::vector<float> sigma,
                  size_t tid=0UL);
-
+    /// \brief Translates the percentage threshold to an absolute value if required
+    /// \param padded The padded original image
+    /// \param noholes Image cleared of dark spots
+    /// \param nopeaks Image cleared of bright spots
+    /// \return A threshold vector with the absolute values
     std::vector<float>  updateThresholds(kipl::base::TImage<float,2> &padded,
                                          kipl::base::TImage<float,2> &noholes,
                                          kipl::base::TImage<float,2> &nopeaks);

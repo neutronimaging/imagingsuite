@@ -13,7 +13,7 @@ include_directories(
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../core/modules/ModuleConfig/include
     ../../Framework/ReconFramework/include
-    ../../../../../ExternalDependencies/macos/include/
+    # ../../../../../ExternalDependencies/macos/include/
     )
 endif()
 
@@ -23,11 +23,11 @@ include_directories(
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../Framework/ReconFramework/include
-    ../../../../../ExternalDependencies/windows/include
-    ../../../../../ExternalDependencies/windows/include/nexus
-    ../../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../external/include/
+    # ../../../../../ExternalDependencies/windows/include
+    # ../../../../../ExternalDependencies/windows/include/nexus
+    # ../../../../../ExternalDependencies/windows/include/cfitsio
+    # ../../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../external/include/
     )
 endif()
 
@@ -35,7 +35,7 @@ if (UNIX)
 include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../external/src/linalg
+    # ../../../../external/src/linalg
     ../../../../core/modules/ModuleConfig/include
     ../../Framework/ReconFramework/include
     )
@@ -94,9 +94,10 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE FDKBACKPROJ_LIBRARY HAVE_NEXUS)
+# target_compile_definitions(${TARGET_NAME} PRIVATE FDKBACKPROJ_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE FDKBACKPROJ_LIBRARY)
 
-add_definitions(-DHAVE_NEXUS)
+# add_definitions(-DHAVE_NEXUS)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (WIN32)
@@ -112,17 +113,6 @@ if (WIN32)
         ImagingAlgorithms
         ModuleConfig
         ReconFramework
-        # libxml2
-        # cfitsio
-        # libtiff
-        # liblapack
-        # libopenblas
-        # libfftw3-3
-        # libfftw3f-3
-        # NeXus
-        # NeXusCPP
-        # Iphlpapi
-
         )
 endif()
 

@@ -168,7 +168,7 @@ public:
     ///
     ///	\param x The input argument
     ///	\param hes The numerical Hessian at x
-    virtual int Hessian(double x, arma::mat &hes);
+    virtual int Hessian(double x, arma::mat & hes);
 
     /// \brief Computes the numerical Jacobian
     ///

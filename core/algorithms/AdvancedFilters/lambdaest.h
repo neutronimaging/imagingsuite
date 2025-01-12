@@ -14,6 +14,7 @@
 #include <base/thistogram.h>
 #include <base/textractor.h>
 #include <math/median.h>
+#include "advancedfilterexception.h"
 
 using namespace std;
 
@@ -64,7 +65,8 @@ namespace advancedfilters {
 		virtual ~LambdaEstBase() {if (mask) delete mask;}
 
 	protected:
-		virtual float update(kipl::base::TImage<float,NDim> &img) {
+		virtual float update(kipl::base::TImage<float,NDim> & /*img*/) 
+		{
             if (call_cnt/update_frequency<static_cast<int>(lambda_vec.size()))
 				lambda=lambda_vec[call_cnt/update_frequency];
 			else
@@ -96,7 +98,7 @@ namespace advancedfilters {
 		float update(kipl::base::TImage<float, NDim> &img);
         /// Change the access, method SetLambda is obsolete for Black
 		int SetLambda(float l) {return int(l);}
-		int SetLambda(vector<float> &l) {return 1;}
+		int SetLambda(vector<float> &/*l*/) {return 1;}
 
 	};
 
@@ -121,8 +123,8 @@ namespace advancedfilters {
 		float update(kipl::base::TImage<float, NDim> &img);
 		float percentile;
         // Change the access, method SetLambda is obsolete for Perona Malik
-		int SetLambda(float l) {return 1;}
-		int SetLambda(vector<float> &l) {return 1;}
+		int SetLambda(float /*l*/) {return 1;}
+		int SetLambda(vector<float> &/*l*/) {return 1;}
 		int HistLength;
 		kipl::base::THistogram<float> histo;
 	};
@@ -162,7 +164,8 @@ namespace advancedfilters {
 	template<class ImgType, int NDim>
 	float LambdaEst_PeronaMalik<ImgType,NDim>::update(kipl::base::TImage<float,NDim> &img)
 	{
-		vector<long> hist;
+		throw AdvancedFiltersException("The estimator function doesn't work, please use a different one.",__FILE__,__LINE__);
+		// vector<long> hist;
 		vector<float> interval;
         kipl::base::TImage<float,2> tmp;
 
@@ -171,9 +174,36 @@ namespace advancedfilters {
 
 		int Npercentile=int(img.Size()*percentile);
 		int sum=0,i=0;
-		vector<long>::iterator histIt;
-		vector<float>::iterator intIt;
-		do {
+
+			// vector<long>::iterator histIt;
+// 		vector<long>::iterator histIt;
+ 		vector<float>::iterator intIt;
+// 		do {
+// 			if (i)
+// 				// reduce dynamics
+// 				histo.SetInterval(HistLength,interval[0],interval[1]);
+// 			else
+// 				histo.SetInterval(HistLength); // Reset to full dynamics
+
+// //            histo(tmp,hist,interval);
+//             auto hist=histo(tmp);
+			
+// 			sum=0;
+// 			for (intIt=interval.begin(), histIt=hist.begin(); 
+// 					histIt!=hist.end(); 
+// 					histIt++, intIt++) {
+// 				sum+=histIt->second;
+// 				if (sum>Npercentile) 
+// 					break;
+// 			}
+			
+// 			cout<<'.'<<flush;
+// 			i++;
+// 		} while ((intIt==interval.begin()) && (i<10));
+
+
+		do 
+		{
 			if (i)
 				// reduce dynamics
 				histo.SetInterval(HistLength,interval[0],interval[1]);
@@ -181,13 +211,12 @@ namespace advancedfilters {
 				histo.SetInterval(HistLength); // Reset to full dynamics
 
 //            histo(tmp,hist,interval);
-            hist=histo(tmp);
+            auto hist=histo(tmp);
 			
 			sum=0;
-			for (intIt=interval.begin(), histIt=hist.begin(); 
-					histIt!=hist.end(); 
-					histIt++, intIt++) {
-				sum+=*histIt;
+			for (const auto & histIt : hist) 
+			{
+				sum+=histIt.second;
 				if (sum>Npercentile) 
 					break;
 			}

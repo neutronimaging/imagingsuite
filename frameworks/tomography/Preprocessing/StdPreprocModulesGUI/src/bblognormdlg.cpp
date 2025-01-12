@@ -16,7 +16,6 @@
 #include <ImagingException.h>
 
 #include <ProjectionReader.h>
-#include <analyzefileext.h>
 
 #include "bblognormdlg.h"
 #include "ui_bblognormdlg.h"
@@ -89,10 +88,9 @@ BBLogNormDlg::~BBLogNormDlg()
 }
 
 
-int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img) {
-
+int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> & /*img*/) 
+{
     m_Config=dynamic_cast<ReconConfig *>(config);
-
 
     try{
         nBBFirstIndex = GetIntParameter(parameters,"BB_first_index");
@@ -372,26 +370,24 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
 
     std::string filename, ext;
     kipl::strings::filenames::MakeFileName(blackbodyname,nBBFirstIndex,filename,ext,'#','0');
-
+    size_t found=blackbodyname.find("hdf");
     ProjectionReader reader;
     if ((QFile::exists(QString::fromStdString(filename)) || QFile::exists(QString::fromStdString(blackbodyname))) && blackbodyname!="./")
-    {
-        auto ext = readers::GetFileExtensionType(blackbodyname);
-            if (ext == readers::ExtensionHDF5 )
+        {
+            if (found==std::string::npos )
             {
-                m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
-                                                m_Config->ProjectionInfo.eFlip,
-                                                m_Config->ProjectionInfo.eRotate,
-                                                m_Config->ProjectionInfo.fBinning,
-                                                {});
-
-            }
-            else {
                 m_Preview_OBBB = reader.Read(filename,
                                              m_Config->ProjectionInfo.eFlip,
                                              m_Config->ProjectionInfo.eRotate,
                                              m_Config->ProjectionInfo.fBinning,
                                              {});
+            }
+            else {
+                 m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
+                                                 m_Config->ProjectionInfo.eFlip,
+                                                 m_Config->ProjectionInfo.eRotate,
+                                                 m_Config->ProjectionInfo.fBinning,
+                                                 {});
             }
             float lo,hi;
 
@@ -748,7 +744,7 @@ void BBLogNormDlg::on_spinThresh_valueChanged(double arg1)
     thresh = arg1;
 }
 
-void BBLogNormDlg::on_checkBox_thresh_stateChanged(int arg1)
+void BBLogNormDlg::on_checkBox_thresh_stateChanged(int /*arg1*/)
 {
 
 }
@@ -772,7 +768,7 @@ void BBLogNormDlg::on_check_singleext_clicked(bool checked)
 
 }
 
-void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
+void BBLogNormDlg::on_check_singleext_stateChanged(int /*arg1*/)
 {
     if (ui->check_singleext->isChecked())
     {

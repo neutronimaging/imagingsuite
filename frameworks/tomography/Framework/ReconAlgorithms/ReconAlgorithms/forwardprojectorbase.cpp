@@ -20,7 +20,7 @@ int ForwardProjectorBase::buildMask(const size_t *dims)
     for (int i=0; i<static_cast<int>(dims[1]); i++) {
         float y=i-m_cy;
         float x=sqrt(m_cx*m_cx-y*y);
-        m_Mask.push_back(std::make_pair(ceil(m_cx-x),floor(m_cx+x)));
+        m_Mask.push_back(std::make_pair(static_cast<int>(ceil(m_cx-x)),static_cast<int>(floor(m_cx+x))));
     }
 
     return 0;

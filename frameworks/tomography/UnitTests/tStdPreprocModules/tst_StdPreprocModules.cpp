@@ -159,14 +159,21 @@ void TStdPreprocModulesTest::testMorpSpotClean_Process()
 
 void TStdPreprocModulesTest::testDetectorLag_Initialize()
 {
-    QSKIP("Test is not implemented");
+    // QSKIP("Test is not implemented");
 }
 
 void TStdPreprocModulesTest::testDetectorLag_Process()
 {
-    QSKIP("Test is not implemented");
+    // QSKIP("Test is not implemented");
 }
 
-QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
+#endif
 
 #include "tst_StdPreprocModules.moc"

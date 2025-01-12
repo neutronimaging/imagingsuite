@@ -33,7 +33,7 @@ ISSfilter::~ISSfilter() {
 
 }
 
-int ISSfilter::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int ISSfilter::Configure(ReconConfig /*config*/, std::map<std::string, std::string> parameters)
 {
 	m_fTau    = GetFloatParameter(parameters,"tau");
 	m_nN      = GetIntParameter(parameters,"N");
@@ -64,12 +64,12 @@ std::map<std::string, std::string> ISSfilter::GetParameters()
 	return parameters;
 }
 
-bool ISSfilter::SetROI(size_t *roi)
+bool ISSfilter::SetROI(const std::vector<size_t> & /*roi*/)
 {
 	return false;
 }
 
-int ISSfilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int ISSfilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & /*coeff*/)
 {
 	akipl::scalespace::ISSfilter<float> filter;
 	filter.ErrorCurve(m_bErrorCurve);
@@ -88,7 +88,7 @@ int ISSfilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::stri
 	return 0;
 }
 
-int ISSfilter::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int ISSfilter::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & /*coeff*/)
 {
     #pragma omp parallel
 	{

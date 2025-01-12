@@ -12,7 +12,7 @@ BackProjectorBase::~BackProjectorBase()
 
 }
 
-int BackProjectorBase::buildMask(float center, size_t *dims)
+int BackProjectorBase::buildMask(float /*center*/, size_t * /*dims*/)
 {
 
     return 0;

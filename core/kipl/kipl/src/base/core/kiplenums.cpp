@@ -3,6 +3,7 @@
 #include <iostream>
 #include <map>
 #include <algorithm>
+#include <sstream>
 
 #include "../../../include/base/kiplenums.h"
 #include "../../../include/base/KiplException.h"
@@ -263,6 +264,10 @@ KIPLSHARED_EXPORT std::string enum2string(kipl::base::eRotationDirection rotdir)
 KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eRotationDirection &rotdir)
 {
     std::map<std::string, kipl::base::eRotationDirection> values;
+    values["cw"]  = kipl::base::RotationDirCW;
+    values["ccw"] = kipl::base::RotationDirCCW;
+    values["CW"]  = kipl::base::RotationDirCW;
+    values["CCW"] = kipl::base::RotationDirCCW;
     values["RotationDirCW"]  = kipl::base::RotationDirCW;
     values["RotationDirCCW"] = kipl::base::RotationDirCCW;
 
@@ -271,7 +276,11 @@ KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eRotationDirect
     if (it!=values.end())
         rotdir=it->second;
     else
-        throw kipl::base::KiplException("Could not transform string to rotation dir enum", __FILE__, __LINE__);
+    {   
+        std::ostringstream msg;
+        msg<<"Could not transform string "<<str<<" to rotation dir enum";
+        throw kipl::base::KiplException(msg.str(), __FILE__, __LINE__);
+    }
 }
 
 /// \brief Stream output operator for eRotationDirection

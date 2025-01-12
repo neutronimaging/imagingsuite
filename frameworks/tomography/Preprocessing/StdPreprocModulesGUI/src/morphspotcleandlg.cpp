@@ -143,7 +143,7 @@ void MorphSpotCleanDlg::prepareDetectionPlot(kipl::base::TImage<float,2> &img,
         for (size_t i=0; i<N; i++)
         {
             thaxis[i]=axis[0]+i*(endPoint-axis[0])/N;
-            weight[i]=kipl::math::Sigmoid(thaxis[i], threshold, sigma);
+            weight[i]=kipl::math::sigmoid(thaxis[i], threshold, sigma);
         }
         ui->plotDetection->setCurveData(1+2*det,thaxis,weight,QString::fromStdString(threslabel));
     }

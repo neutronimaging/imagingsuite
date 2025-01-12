@@ -125,7 +125,7 @@ void FindSkipListDialog::LoadDoseList()
                    i++;
         }
         ui->skip_plot->setCurveData(0,m_DoseData);
-        if (m_SortedDoses.size()!=m_DoseData.size()) {
+        if (static_cast<int>(m_SortedDoses.size())!=m_DoseData.size()) {
             msg.str("");
             msg<<"Dose data size missmatch. size(DosePlot)="<<m_DoseData.size()<<", size(SortedDoses)="<<m_SortedDoses.size();
             throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
