@@ -27,7 +27,7 @@ GeneralFilterDlg::~GeneralFilterDlg()
 }
 
 
-int GeneralFilterDlg::exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img)
+int GeneralFilterDlg::exec(ConfigBase * /*config*/, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & /*img*/)
 {
     int res=0;
     std::ostringstream msg;

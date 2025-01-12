@@ -21,13 +21,13 @@ SavitzkyGolayFilter<T>::SavitzkyGolayFilter()
 }
 
 template<typename T>
-void SavitzkyGolayFilter<T>::initialize(int order, int windowSize)
+void SavitzkyGolayFilter<T>::initialize(int /*order*/, int /*windowSize*/)
 {
 
 }
 
 template<typename T>
-void SavitzkyGolayFilter<T>::operator()(T *signal, size_t N, T * result, int order, int windowSize)
+void SavitzkyGolayFilter<T>::operator()(T * /*signal*/, size_t /*N*/, T * /*result*/, int /*order*/, int /*windowSize*/)
 {
 
 }
@@ -63,7 +63,7 @@ void SavitzkyGolayFilter<T>::operator()(T *signal, size_t N, T * result, int ord
 /// y : ndarray, same shape as `x`
 ///     The filtered data.
 template <typename T>
-std::vector<T> SavitzkyGolayFilter<T>::operator()(const std::vector<T> &signal,int windowLength, int polyOrder, int deriv, double delta,eSavGolInterp mode, T cval)
+std::vector<T> SavitzkyGolayFilter<T>::operator()(const std::vector<T> &signal,int windowLength, int polyOrder, int deriv, double delta,eSavGolInterp /*mode*/, T /*cval*/)
 {
     if (polyOrder<0)
         throw kipl::base::KiplException("Negative poly orders are not valid",__FILE__,__LINE__);

@@ -21,6 +21,15 @@ void FillHoleTest::testCase1()
     QVERIFY2(true, "Failure");
 }
 
-QTEST_APPLESS_MAIN(FillHoleTest)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(FillHoleTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(FillHoleTest)
+#endif
+
 
 #include "tst_fillholetest.moc"

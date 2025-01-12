@@ -53,6 +53,14 @@ void TFDKBackProjectors::test_ftkbp_single_Initialize()
 
 }
 
-QTEST_APPLESS_MAIN(TFDKBackProjectors)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TFDKBackProjectors)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TFDKBackProjectors)
+#endif
+
 
 #include "tst_FDKBackprojectors.moc"

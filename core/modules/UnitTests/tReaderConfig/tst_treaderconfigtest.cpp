@@ -384,7 +384,14 @@ void TReaderConfigTest::testCreateDirectories()
     fs::remove_all("a2");
 }
 
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TReaderConfigTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TReaderConfigTest)
+#endif
 
-QTEST_APPLESS_MAIN(TReaderConfigTest)
 
 #include "tst_treaderconfigtest.moc"

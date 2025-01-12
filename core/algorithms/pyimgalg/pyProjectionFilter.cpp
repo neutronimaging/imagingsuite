@@ -139,11 +139,23 @@ void bindProjectionFilter(py::module &m)
                                             static_cast<size_t>(buf1.shape[1]),
                                             static_cast<size_t>(buf1.shape[0])};
             kipl::base::TImage<float,3> img(dims);
-            std::copy_n(data,img.Size(),img.GetDataPtr());
+            // std::copy_n(data,img.Size(),img.GetDataPtr());
+            std::transform( data, 
+                            data + img.Size(), 
+                            img.GetDataPtr(), 
+                            [](double val) {
+                                return static_cast<float>(val);
+                            });
 
             pf.process(img);
 
-            std::copy_n(img.GetDataPtr(),img.Size(),data);
+            // std::copy_n(img.GetDataPtr(),img.Size(),data);
+            std::transform( img.GetDataPtr(), 
+                img.GetDataPtr() + img.Size(), 
+                data, 
+                [](float val) {
+                    return static_cast<double>(val);
+                });
         }
         else if (buf1.ndim==2)
         {
@@ -152,11 +164,23 @@ void bindProjectionFilter(py::module &m)
 
 
             kipl::base::TImage<float,2> img(dims);
-            std::copy_n(data,img.Size(),img.GetDataPtr());
+            // std::copy_n(data,img.Size(),img.GetDataPtr());
+            std::transform( data, 
+                            data + img.Size(), 
+                            img.GetDataPtr(), 
+                            [](double val) {
+                                return static_cast<float>(val);
+                            });
 
             pf.process(img);
 
-            std::copy_n(img.GetDataPtr(),img.Size(),data);
+            // std::copy_n(img.GetDataPtr(),img.Size(),data);
+            std::transform( img.GetDataPtr(), 
+                img.GetDataPtr() + img.Size(), 
+                data, 
+                [](float val) {
+                    return static_cast<double>(val);
+                });
         }
     },
     "Applies the projection filter inplace on the rows in the array.",

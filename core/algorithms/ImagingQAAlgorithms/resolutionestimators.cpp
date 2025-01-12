@@ -116,9 +116,9 @@ void ResolutionEstimator::edgeDerivative(std::vector<double> &x, std::vector<dou
     }
 }
 
-void ResolutionEstimator::MTF(std::vector<double> &w, std::vector<double> &a)
+void ResolutionEstimator::MTF(std::vector<double> & /*w*/, std::vector<double> & /*a*/)
 {
-
+    // TODO Implement MTF
 }
 
 Nonlinear::SumOfGaussians ResolutionEstimator::fitFunction()
@@ -177,7 +177,7 @@ void ResolutionEstimator::analyzeLineSpread()
     arma::uword maxpos=0;
     arma::uword minpos=0;
     int idx=0;
-    for (auto i=0; i<dataY.n_elem ; ++i)
+    for (arma::uword i=0; i<dataY.n_elem ; ++i)
     {
         if (maxval<dataY[i])
         {
@@ -196,7 +196,7 @@ void ResolutionEstimator::analyzeLineSpread()
         throw kipl::base::KiplException("Min/max search out of bounds",__FILE__,__LINE__);
 
     double halfmax=(maxval-minval)/2+minval;
-    int HWHM=maxpos;
+    auto HWHM=maxpos;
 
     for (; HWHM < dataY.n_elem; ++HWHM)
     {
@@ -208,7 +208,7 @@ void ResolutionEstimator::analyzeLineSpread()
     mFitFunction[1]=dataX[maxpos];
     mFitFunction[2]=(dataX[HWHM]-dataX[maxpos])*2;
 
-    double d=dataX[1]-dataX[0];
+    // double d=dataX[1]-dataX[0];
     if (mFitFunction[2]<mPixelSize)
     {
         logger.warning("Could not find FWHM, using constant 3*dx");

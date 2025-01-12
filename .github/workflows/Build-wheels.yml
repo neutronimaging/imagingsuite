@@ -28,12 +28,12 @@ jobs:
       # Build on the following 4 configurations: 
       # 1. <Windows, Release, 2022 MSVC compiler toolchain>
       # 2. <Ubuntu latest, i.e. version 22.04, Release, GCC 11 compiler toolchain>
-      # 3. <MacOS 11 with x86-64 arch, Release, Clang 13 compiler toolchain>
+      # 3. <MacOS 13 with x86-64 arch, Release, Clang 14 compiler toolchain>
       # 4. <MacOS 14 with arm64 arch, Release, Clang 15 compiler toolchain
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix: # Qt requires py7zr==0.20.x which requires python 3.7^
         python-version: ["3.7","3.8","3.9", "3.10", "3.11", "3.12"]
-        os: [windows-2022, ubuntu-latest, macos-12, macos-14]
+        os: [windows-2022, ubuntu-latest, macos-13, macos-14]
         include:
           - os: windows-2022
             c_compiler: cl
@@ -47,7 +47,7 @@ jobs:
             gcc: 11
             build_type: Release
             build_root: build-imagingsuite/Release
-          - os: macos-12
+          - os: macos-13
             c_compiler: clang
             cpp_compiler: clang++
             clang: 14
@@ -70,6 +70,12 @@ jobs:
       with:
         path: imagingsuite
         fetch-depth: 0
+      # Checks out the test data repository for the c++ tests with ctest
+    - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
+      uses: actions/checkout@v4
+      with:
+        repository: neutronimaging/TestData
+        path: TestData
 
     # This action is an alternative to the builtin GitHub Cache action which circumvents storage size and time limits
     # It can be used in tandem with the builtin Cache but it has LFS costs

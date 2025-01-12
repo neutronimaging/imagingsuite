@@ -6,8 +6,7 @@ class TestReconstructor:
 
     @pytest.fixture(autouse=True)
     def reconstructor(self):
-        print("Setup")
-        self.reconstructor = pm.Reconstructor(pm.bpMultiProj)
+        self.reconstructor = pm.Reconstructor(pm.bpMultiProjParallel)
 
     def test_reconstructor_fixture(self):
         # When Then Expect
@@ -27,5 +26,5 @@ class TestReconstructor:
         vol = self.reconstructor.volume()
 
         # Expect
-        assert type(vol) == np.ndarray
+        assert type(vol) is np.ndarray
         assert vol.shape == (256,256,256)
