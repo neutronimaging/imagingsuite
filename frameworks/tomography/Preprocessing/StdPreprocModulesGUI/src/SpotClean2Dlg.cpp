@@ -72,7 +72,7 @@ void SpotClean2Dlg::ApplyParameters()
     kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
 
-    ui->viewer_original->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_original->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -105,7 +105,7 @@ void SpotClean2Dlg::ApplyParameters()
     float threshold[N];
 
     for (size_t i=0; i<N; i++) {
-        threshold[i]=kipl::math::Sigmoid(axis[i], m_fGamma, m_fSigma);
+        threshold[i]=kipl::math::sigmoid(axis[i], m_fGamma, m_fSigma);
     }
     ui->plot_detection->setCurveData(1,axis,threshold,N99,"Threshold weight");
 
@@ -122,7 +122,7 @@ void SpotClean2Dlg::ApplyParameters()
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewer_result->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_result->set_image(m_ProcessedImage.GetDataPtr(), m_ProcessedImage.dims(),axis[nLo],axis[nHi]);
 
     on_combo_detection_display_currentIndexChanged(ui->combo_detection_display->currentIndex());
 }
@@ -215,31 +215,49 @@ void SpotClean2Dlg::on_combo_detection_display_currentIndexChanged(int index)
     kipl::base::Histogram(dimg.GetDataPtr(), dimg.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
     logger(kipl::logging::Logger::LogMessage,"Start display");
-    ui->viewer_difference->set_image(dimg.GetDataPtr(),dimg.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_difference->set_image(dimg.GetDataPtr(),dimg.dims(),axis[nLo],axis[nHi]);
 }
 
 void SpotClean2Dlg::on_buttonBox_clicked(QAbstractButton *button)
 {
-        std::ostringstream msg;
-        QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
+    std::ostringstream msg;
+    QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
 
-        logger(kipl::logging::Logger::LogMessage,"Clicked on button box");
-        switch(standardButton) {
-            // Standard buttons:
-            case QDialogButtonBox::Ok:
-                logger(kipl::logging::Logger::LogMessage,"Ok");
-                UpdateParameters();
-                accept();
-                break;
-            case QDialogButtonBox::Cancel:
-            logger(kipl::logging::Logger::LogMessage,"Cancel");
-                reject();
-                break;
-            case QDialogButtonBox::Apply:
-            logger(kipl::logging::Logger::LogMessage,"Apply");
-                ApplyParameters();
-                break;
-            }
+    logger(kipl::logging::Logger::LogMessage,"Clicked on button box");
+    switch(standardButton) {
+        // Standard buttons:
+        case QDialogButtonBox::Ok:
+            logger(kipl::logging::Logger::LogMessage,"Ok");
+            UpdateParameters();
+            accept();
+            break;
+        case QDialogButtonBox::Cancel:
+        logger(kipl::logging::Logger::LogMessage,"Cancel");
+            reject();
+            break;
+        case QDialogButtonBox::Apply:
+        logger(kipl::logging::Logger::LogMessage,"Apply");
+            ApplyParameters();
+            break;
+
+        // Unused buttons:
+        case QDialogButtonBox::NoButton        : break;
+        case QDialogButtonBox::Save            : break;
+        case QDialogButtonBox::SaveAll         : break;
+        case QDialogButtonBox::Open            : break;
+        case QDialogButtonBox::Yes             : break;
+        case QDialogButtonBox::YesToAll        : break;
+        case QDialogButtonBox::No              : break;
+        case QDialogButtonBox::NoToAll         : break;
+        case QDialogButtonBox::Abort           : break;
+        case QDialogButtonBox::Retry           : break;
+        case QDialogButtonBox::Ignore          : break;
+        case QDialogButtonBox::Close           : break;
+        case QDialogButtonBox::Discard         : break;
+        case QDialogButtonBox::Help            : break;
+        case QDialogButtonBox::Reset           : break;
+        case QDialogButtonBox::RestoreDefaults : break;
+    }
 }
 
 

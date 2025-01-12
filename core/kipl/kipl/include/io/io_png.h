@@ -5,7 +5,7 @@
 
 namespace kipl { namespace io {
 
-int KIPLSHARED_EXPORT GetPNGDims(std::string fname, size_t *dims);
+std::vector<size_t> KIPLSHARED_EXPORT GetPNGDims(const string &fname);
 
 int KIPLSHARED_EXPORT ReadPNG(std::string fname, kipl::base::TImage<float,2> &img, int idx, size_t *roi=nullptr);
 

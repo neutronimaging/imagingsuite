@@ -9,6 +9,7 @@
 
 #include "../../base/kiplenums.h"
 #include "../../io/io_tiff.h"
+#include "../wavelets.h"
 
 using namespace std;
 
@@ -414,29 +415,29 @@ void WaveletQuad<T>::SaveQuad(std::string fname)
 	namemaker.str("");
 	namemaker<<base<<"_a"<<N<<ext;
 
-	kipl::io::WriteTIFF32(a, namemaker.str().c_str());
+    kipl::io::WriteTIFF(a, namemaker.str(),kipl::base::Float32);
 
 	namemaker.str("");
 	namemaker<<base<<"_v"<<N<<ext;
-	kipl::io::WriteTIFF32(v, namemaker.str().c_str());
+    kipl::io::WriteTIFF(v, namemaker.str(),kipl::base::Float32);
 
 	namemaker.str("");
 	namemaker<<base<<"_h"<<N<<ext;
 
-	kipl::io::WriteTIFF32(h, namemaker.str().c_str());
+    kipl::io::WriteTIFF(h, namemaker.str(),kipl::base::Float32);
 	namemaker.str("");
 	namemaker<<base<<"_d"<<N<<ext;
 
-	kipl::io::WriteTIFF32(d, namemaker.str().c_str());
+    kipl::io::WriteTIFF(d, namemaker.str(),kipl::base::Float32);
 
 }
 
 template <typename T>
 WaveletTransform<T>::WaveletTransform(std::string name) :
 	padtype(kipl::base::PadMirror),
-	kernel(name)
+    n_dims(2,0UL),
+    kernel(name)
 {
-	n_dims[0]=n_dims[1]=0;
 }
 
 template <typename T>
@@ -455,8 +456,7 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> img, int N)
 	data.clear();
 	WaveletQuad<T> quad;
 	quad.a=img;
-	n_dims[0]=img.Size(0);
-	n_dims[1]=img.Size(1);
+    n_dims=img.dims();
 
 	for (int i=0; i<N; i++) {
 		quad=transform(quad);
@@ -476,7 +476,7 @@ WaveletQuad<T> WaveletTransform<T>::transform(WaveletQuad<T> &q)
     if ((q.a.Size(0)<static_cast<size_t>(kernel.size()) || (q.a.Size(1)<static_cast<size_t>(kernel.size()))))
 		throw kipl::base::KiplException("Image smaller than wavelet kernel size",__FILE__,__LINE__);
 
-	size_t dims[2]={(q.a.Size(0)+kernel.size()-1+(q.a.Size(0) & 1))/2, (q.a.Size(1)+kernel.size()-1+(q.a.Size(1) & 1))/2};
+    std::vector<size_t> dims={(q.a.Size(0)+kernel.size()-1+(q.a.Size(0) & 1))/2, (q.a.Size(1)+kernel.size()-1+(q.a.Size(1) & 1))/2};
 	WaveletQuad<T> result(dims);
 
 	transform(q.a, result.a, kernel.transH(), kernel.transH(), kernel.begin(), kernel.end());
@@ -498,7 +498,7 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> &src,
 	T *row=new T[src.Size(0)+2*filter_width+16];
 	T *padded_row=row+filter_width;
 
-	size_t tmpdims[2]={dst.Size(0),src.Size(1)};
+    std::vector<size_t> tmpdims={dst.Size(0),src.Size(1)};
 
 	kipl::base::TImage<T,2> tmp(tmpdims);
 	tmp=T(0);
@@ -555,7 +555,7 @@ void WaveletTransform<T>::transform(kipl::base::TImage<T,2> &src,
 
      for (int x = 0; x < static_cast<int>(dst.Size(0)); x++)
      {
-    	get_col(tmp,dstcol,x,0,(int)tmp.Size(1));
+        get_col(tmp,dstcol,x,0,static_cast<int>(tmp.Size(1)));
 
 		switch (padtype) {
 			case kipl::base::PadMirror   : pad_mirror(dstcol,h,col,filter_width);   break;
@@ -617,12 +617,12 @@ kipl::base::TImage<T,2> WaveletTransform<T>::synthesize()
 		previous=current;
 	}
 
-	size_t dims[]={data.begin()->a.Size(0)*2, data.begin()->a.Size(1)*2};
+    std::vector<size_t> dims={data.begin()->a.Size(0)*2, data.begin()->a.Size(1)*2};
 	kipl::base::TImage<T,2> img(dims);
 	synthesize(*previous,img);
 	kipl::base::TImage<T,2> result(n_dims);
 
-    for (size_t y=0; y<n_dims[1]; y++)
+    for (size_t y=0; y<n_dims[1]; ++y)
 		memcpy(result.GetLinePtr(y),img.GetLinePtr(y),sizeof(T)*n_dims[0]);
 
 	return result;
@@ -631,7 +631,7 @@ kipl::base::TImage<T,2> WaveletTransform<T>::synthesize()
 template <typename T>
 void WaveletTransform<T>::synthesize(WaveletQuad<T> &src, kipl::base::TImage<T,2> &dst)
 {
-	kipl::base::TImage<T> img(dst.Dims());
+    kipl::base::TImage<T> img(dst.dims());
 	dst=static_cast<T>(0);
 
 	upsconv(src.a,dst,kernel.synthH(),kernel.synthH());
@@ -707,8 +707,9 @@ template <typename T>
 void WaveletTransform<T>::pad_sp1(T * src, int nsrc, T * dst, int insert_pos)
 {
 	memcpy(dst+insert_pos,src,nsrc*sizeof(T));
-	double k0=std::min((src[1]-src[0])/2.0,(src[3]-src[2])/2.0);
-	double k1=std::min((src[nsrc-1]-src[nsrc-2])/2.0,(src[nsrc-3]-src[nsrc-4])/2.0);
+
+    double k1=min((src[nsrc-1]-src[nsrc-2])/2.0,(src[nsrc-3]-src[nsrc-4])/2.0);
+    double k0=min((src[1]-src[0])/2.0,(src[3]-src[2])/2.0);
 
 	for (int i=0; i<insert_pos; i++) {
 		dst[i]=src[0]+static_cast<T>(k0*(i-1-insert_pos));

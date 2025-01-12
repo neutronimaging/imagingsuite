@@ -59,7 +59,7 @@ void PolynomialCorrectionDlg::ApplyParameters()
     float axis[N];
     size_t nLo, nHi;
 
-    kipl::base::TImage<float,2> origimg(m_Projections.Dims());
+    kipl::base::TImage<float,2> origimg(m_Projections.dims());
     memcpy(origimg.GetDataPtr(), m_Projections.GetLinePtr(0,m_Projections.Size(2)/2), sizeof(float)*origimg.Size());
     kipl::base::TImage<float,2> resimg=origimg; resimg.Clone();
     kipl::base::TImage<float,2> procimg=origimg; procimg.Clone();
@@ -67,7 +67,7 @@ void PolynomialCorrectionDlg::ApplyParameters()
     kipl::base::Histogram(origimg.GetDataPtr(), origimg.Size(), hist, N, 0.0f, 0.0f, axis);
 
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewerOriginal->set_image(origimg.GetDataPtr(),origimg.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerOriginal->set_image(origimg.GetDataPtr(),origimg.dims(),axis[nLo],axis[nHi]);
     std::map<std::string, std::string> parameters;
     UpdateParameters();
     UpdateParameterList(parameters);
@@ -95,7 +95,7 @@ void PolynomialCorrectionDlg::ApplyParameters()
     memset(axis,0,N*sizeof(float));
     kipl::base::Histogram(procimg.GetDataPtr(), procimg.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5, &nLo, &nHi);
-    ui->viewerProcessed->set_image(procimg.GetDataPtr(), procimg.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerProcessed->set_image(procimg.GetDataPtr(), procimg.dims(),axis[nLo],axis[nHi]);
 
     kipl::base::TImage<float,2> diff=procimg-origimg;
     memset(hist,0,N*sizeof(size_t));
@@ -103,7 +103,7 @@ void PolynomialCorrectionDlg::ApplyParameters()
     kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 95.0, &nLo, &nHi);
 
-    ui->viewerDifference->set_image(diff.GetDataPtr(), diff.Dims());
+    ui->viewerDifference->set_image(diff.GetDataPtr(), diff.dims());
 
 
 

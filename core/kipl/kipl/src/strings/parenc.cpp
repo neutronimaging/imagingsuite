@@ -343,8 +343,6 @@ int getStringPar(const string data, const string par_key, string  & str) // -ak-
 	size_t comment_pos=str.find('#');
 	str=str.substr(0,comment_pos);
 	size_t non_space_pos_front=str.find_first_not_of(' ');
-
-	string::iterator it,er;
 	
 	while ((!str.empty()) && (*str.rbegin()==' '))
 		str.erase(str.length()-1);

@@ -1,12 +1,9 @@
+//LICENSE
 #ifndef REPAIRHOLE_HPP
 #define REPAIRHOLE_HPP
 
 
 #include <list>
-
-#if !defined(NO_QT)
-#include <QDebug>
-#endif
 
 #include "../repairhole.h"
 #include "../pixeliterator.h"
@@ -19,18 +16,16 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
 {
     const T markedPixel = std::numeric_limits<T>::max();
 
-//    std::cout<< "img Size" << img.Size()<< std::endl;
-
     std::list<size_t> edgePixels;
     std::list<size_t> remainingPixels;
 
     std::list<pair<size_t,T> > processedPixels;
 
-    kipl::base::PixelIterator neighborhood(img.Dims(), connect);
-    for (auto pixIt=holelist.begin(); pixIt!=holelist.end(); ++pixIt)
+    kipl::base::PixelIterator neighborhood(img.dims(), connect);
+    for (const auto  & pixIt : holelist)
     {
-        img[*pixIt]=markedPixel;
-        edgePixels.push_back(*pixIt);
+        img[pixIt]=markedPixel;
+        edgePixels.push_back(pixIt);
     }
 
     while (!edgePixels.empty())
@@ -49,12 +44,14 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
             {
                 size_t pixel = pixPos + neighborPix;
 
-                if (pixel<img.Size()){
+                if (pixel<img.Size())
+                {
                     T value=img[pixel];
 
-                    if (value!=markedPixel) {
+                    if (value!=markedPixel)
+                    {
                         sum+=img[pixel];
-                        hitcnt++;
+                        ++hitcnt;
                         isEdge=true;
                     }
                 }
@@ -70,8 +67,8 @@ void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl
             }
         }
 
-        for (auto p=processedPixels.begin(); p!=processedPixels.end(); ++p)
-            img[p->first]=p->second;
+        for (auto & p : processedPixels)
+            img[p.first]=p.second;
 
         processedPixels.clear();
 

@@ -14,12 +14,13 @@ int ReBin(const kipl::base::TImage<ImgType,NDim> &img,
 		kipl::base::TImage<ImgType,NDim> &result, 
 		size_t const * const nbin) {
 
-	size_t const * const imgDim=img.Dims();
+    auto imgDim=img.dims();
 	int bins[8]={1,1,1,1,1,1,1,1};
-	size_t dims[8]={1,1,1,1,1,1,1,1};
+    std::vector<size_t> dims(NDim,1);
 
 	double scale=1.0;
-	for (size_t i=0; i<NDim; i++) {
+    for (size_t i=0; i<NDim; i++)
+    {
 		bins[i]=nbin[i];
 		dims[i]=imgDim[i]/nbin[i];
 		if (dims[i]==0)
@@ -33,16 +34,22 @@ int ReBin(const kipl::base::TImage<ImgType,NDim> &img,
 	ImgType *pRes=NULL;
 	double *pWs=NULL;
 
-	for (size_t z=0 ; z<dims[2]; z++) {
-		for (int zi=0; zi<bins[2]; zi++) {
-			for (size_t y=0; y<dims[1]; y++) {
+    for (size_t z=0 ; z<dims[2]; z++)
+    {
+        for (int zi=0; zi<bins[2]; zi++)
+        {
+            for (size_t y=0; y<dims[1]; y++)
+            {
 				pWs=ws.GetLinePtr(y,z);
-				for (int yi=0; yi<bins[1]; yi++) {
+                for (int yi=0; yi<bins[1]; yi++)
+                {
 					ImgType const * pImg=img.GetLinePtr(y*bins[1]+yi,z*bins[2]+zi);
-					for (size_t x=0; x<dims[0]; x++) {
+                    for (size_t x=0; x<dims[0]; x++)
+                    {
 						pWs[x]=0.0;
 						size_t bx=x*bins[0];
-						for (size_t xi=0; xi<bins[0]; xi++) {
+                        for (size_t xi=0; xi<static_cast<size_t>(bins[0]); xi++)
+                        {
 							pWs[x]+=pImg[bx++];
 						}
 					}
@@ -51,11 +58,13 @@ int ReBin(const kipl::base::TImage<ImgType,NDim> &img,
 		}
 	}
 	
-	try {
-		result.Resize(dims);
+    try
+    {
+        result.resize(dims);
 		result=static_cast<ImgType>(0);
 	}
-	catch (kipl::base::KiplException & E) {
+    catch (kipl::base::KiplException & E)
+    {
 		throw kipl::base::KiplException(E.what(),__FILE__,__LINE__);
 	}
 
@@ -63,7 +72,8 @@ int ReBin(const kipl::base::TImage<ImgType,NDim> &img,
 	pWs=ws.GetDataPtr();
 
 	scale=1.0f/scale;
-	for (size_t i=0; i<result.Size(); i++) {
+    for (size_t i=0; i<result.Size(); i++)
+    {
 		pRes[i]=static_cast<ImgType>(scale*pWs[i]);
 	}
 
@@ -76,6 +86,7 @@ int GaussianSampler(	const kipl::base::TImage<ImgType,NDim> &img,
 						int scale, 
 						double sigma) 
 {
+    std::ignore = sigma;
 	const unsigned int *imgDim=img.getDimsptr();
 	unsigned int dims[3];
 	int i;
@@ -91,7 +102,7 @@ int GaussianSampler(	const kipl::base::TImage<ImgType,NDim> &img,
 		throw kipl::base::KiplException(E.what(),__FILE__,__LINE__);
 	}
 	
-	int p,x,y,z, nx,ny,nz;
+    int x,y,z, nx,ny,nz;
 	float *pImg;
 	ImgType *pRes=result.GetDataPtr();
 	kipl::base::TImage<float,NDim> filteredImage;
@@ -100,12 +111,16 @@ int GaussianSampler(	const kipl::base::TImage<ImgType,NDim> &img,
 //	Filter::CGaussianFilter<float,NDim> G(sigma);
 //	G(filteredImage);
 	
-	for (z=0; z<imgDim[2]; z+=scale) {
+    for (z=0; z<static_cast<int>(imgDim[2]); z+=scale)
+    {
 		nz=z/scale; 
-		if (nz>=dims[2]) nz--;
-		for (y=0; y<imgDim[1]; y+=scale) {
+        if (nz>=static_cast<int>(dims[2]))
+            nz--;
+        for (y=0; y<static_cast<int>(imgDim[1]); y+=scale)
+        {
 			ny=y/scale; 
-			if (ny>=dims[1]) ny--;
+            if (ny>=static_cast<int>(dims[1]))
+                ny--;
 			
 			pImg=filteredImage.getLineptr(y,z);
 			
@@ -114,9 +129,12 @@ int GaussianSampler(	const kipl::base::TImage<ImgType,NDim> &img,
 			else 
 				pRes=result.getLineptr(ny);
 				
-			for (x=0; x<imgDim[0]; x+=scale) {
+            for (x=0; x<static_cast<int>(imgDim[0]); x+=scale)
+            {
 				nx=x/scale; 
-				if (nx>=dims[0]) nx--;
+                if (nx>=static_cast<int>(dims[0]))
+                    nx--;
+
 				pRes[nx]=ImgType(pImg[x]);
 			}
 		}

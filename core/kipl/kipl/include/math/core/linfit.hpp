@@ -6,9 +6,6 @@
 #include <iostream>
 #include <armadillo>
 
-#if !defined(NO_QT)
-#include <QDebug>
-#endif
 #include "../../base/KiplException.h"
 
 namespace kipl { namespace math {
@@ -173,7 +170,7 @@ std::vector<double> polyVal(const std::vector<T> &xx,const std::vector<S> &c)
     {
         double res=0.0;
         double xp = 1;
-        for (int i=0; i<c.size(); ++i)
+        for (size_t i=0; i<c.size(); ++i)
         {
             res += c[i]*xp;
             xp *=x;
@@ -194,7 +191,7 @@ std::vector<T> polyDeriv(const std::vector<T> &c,int deriv)
     std::vector<T> dc;
     if (deriv==1)
     {
-        for (int i=1; i<c.size(); ++i)
+        for (size_t i=1; i<c.size(); ++i)
         {
             dc.push_back(i*c[i]);
         }
@@ -202,7 +199,7 @@ std::vector<T> polyDeriv(const std::vector<T> &c,int deriv)
     else
     {
        auto cc = polyDeriv(c,deriv-1);
-       for (int i=1; i<cc.size(); ++i)
+       for (size_t i=1; i<cc.size(); ++i)
        {
            dc.push_back(i*cc[i]);
        }

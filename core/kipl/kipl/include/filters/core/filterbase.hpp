@@ -4,81 +4,72 @@
 #define __FILTERBASE_HPP_
 #include <limits>
 #include <iostream>
-
+#include <vector>
+#include <algorithm>
+#include <numeric>
 #include "../../base/KiplException.h"
+#include "../filterbase.h"
 
 namespace kipl { namespace filters {
 
 template<typename T, size_t nDims>
-TFilterBase<T,nDims>::TFilterBase(T const * const kernel, size_t const * const kDims) :
-	pKernel(NULL)
+TFilterBase<T,nDims>::TFilterBase(const std::vector<T> & kernel, const std::vector<size_t> & kDims)
 {
 	if ((nDims<1) || (3<nDims))
 		return;
 		
 	//	throw kipl::base::KiplException("TFilterBase was initialized with an unsupported number of dimension",__FILE__,__LINE__);
-	
-	nKernel=kDims[0];
-	for (size_t i=1; i<nDims; i++)
-		nKernel*=kDims[i];
+    nKernel = std::accumulate(kDims.begin(),kDims.end(),static_cast<size_t>(1),std::multiplies<size_t>());
 
 	if (nKernel==0)
 		throw kipl::base::KiplException("Zero sized kernel",__FILE__,__LINE__);
 
-	pKernel=new T[nKernel];
-    nKernelIndex = new ptrdiff_t[nKernel];
-	memcpy(nKernelDims, kDims, nDims*sizeof(size_t));
-	memcpy(pKernel,kernel,nKernel*sizeof(T));
+    pKernel = kernel;
+    nKernelIndex.resize(nKernel);
+    nKernelDims = kDims;
 
 }
 
 template<typename T, size_t nDims>
-TFilterBase<T,nDims>::TFilterBase(size_t const * const kDims) :
-	pKernel(NULL)
+TFilterBase<T,nDims>::TFilterBase(const std::vector<size_t> & kDims)
 {
 	if ((nDims<1) || (3<nDims))
 		return;
 		
 	//	throw kipl::base::KiplException("TFilterBase was initialized with an unsupported number of dimension",__FILE__,__LINE__);
-	nKernel=kDims[0];
-	for (size_t i=1; i<nDims; i++)
-		nKernel*=kDims[i];
+    nKernel = std::accumulate(kDims.begin(),kDims.end(),static_cast<size_t>(1),std::multiplies<size_t>());
 
 	if (nKernel==0)
 		throw kipl::base::KiplException("Zero sized kernel",__FILE__,__LINE__);
 
-    nKernelIndex = new ptrdiff_t[nKernel];
-	pKernel      = new T[nKernel];
-	memcpy(nKernelDims, kDims, nDims*sizeof(size_t));
+    nKernelIndex.resize(nKernel);
+    pKernel.resize(nKernel);
+    nKernelDims = kDims;
 }
 
 template<typename T, size_t nDims>
 TFilterBase<T,nDims>::~TFilterBase()
 {
-	if (pKernel!=NULL)
-		delete [] pKernel;
-
-
 }
 
 template<typename T, size_t nDims>
 kipl::base::TImage<T,nDims> TFilterBase<T,nDims>::operator() (kipl::base::TImage<T,nDims> &src, const FilterBase::EdgeProcessingStyle epStyle)
 {
 
-    kipl::base::TImage<T,nDims> dest(src.Dims());
+    kipl::base::TImage<T,nDims> dest(src.dims());
 
 	InitResultArray(src,dest);
-    ProcessCore(src.GetDataPtr(), src.Dims(), dest.GetDataPtr(), dest.Dims());
-	ProcessEdge(src.GetDataPtr(), dest.GetDataPtr(), src.Dims(), epStyle);
+    ProcessCore(src.GetDataPtr(), src.dims(), dest.GetDataPtr(), dest.dims());
+    ProcessEdge(src.GetDataPtr(), dest.GetDataPtr(), src.dims(), epStyle);
 
 	return dest;
 }
 
 template<typename T, size_t nDims>
 int TFilterBase<T,nDims>::ProcessCore(T const * const img, 
-	size_t const * const imgDims,
+    const std::vector<size_t> & imgDims,
 	T *res,   
-	size_t const * const resDims)
+    const std::vector<size_t> & resDims)
 {
 	size_t nCenter=nKernelDims[0]/2;
 	size_t nDimsProd=1;
@@ -89,7 +80,7 @@ int TFilterBase<T,nDims>::ProcessCore(T const * const img,
 
 	const size_t cnLineLength = imgDims[0]-nKernelDims[0]+1;
 
-	PrepareIndex(imgDims, nKernelDims, nDims);
+    PrepareIndex(imgDims, nKernelDims);
 
 	T *pRes=res+nCenter;
 	
@@ -143,7 +134,7 @@ int TFilterBase<T,nDims>::ProcessCore(T const * const img,
 template<typename T, size_t nDims>
 int TFilterBase<T,nDims>::ProcessEdge(T const * const img, 
 	  T *res, 
-	  size_t const * const imgDims,
+      const std::vector<size_t> &  imgDims,
 	  const FilterBase::EdgeProcessingStyle epStyle)
 {
 	switch (nDims) {
@@ -160,7 +151,7 @@ int TFilterBase<T,nDims>::ProcessEdge(T const * const img,
 template<typename T, size_t nDims>
 int TFilterBase<T,nDims>::ProcessEdge1D(T const * const img, 
 		  T * res, 
-		  size_t const * const imgDims, 
+          const std::vector<size_t> &  imgDims,
 		  const FilterBase::EdgeProcessingStyle epStyle)
 {
     const size_t cnCenter=nKernelDims[0]/2;
@@ -245,7 +236,7 @@ int TFilterBase<T,nDims>::ProcessEdge1D(T const * const img,
 template<typename T, size_t nDims>
 int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img, 
 		  T * res, 
-		  size_t const * const imgDims, 
+          const std::vector<size_t> &  imgDims,
 		  const FilterBase::EdgeProcessingStyle epStyle)
 {
     const size_t cnCenter[2]={nKernelDims[0]/2, nKernelDims[1]/2};
@@ -253,12 +244,13 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 	size_t nLen = imgDims[0]*(nKernelDims[1]-cnCenter[1]-1);
 	const ptrdiff_t nLastLine=imgDims[1]-(nKernelDims[1]-cnCenter[1]-2);
 	
-	ptrdiff_t i;
+	//ptrdiff_t i;
 	if (epStyle == EdgeValid) {
 		memset(res, 0, (imgDims[0]*cnCenter[1]+cnCenter[0])*sizeof(T));
 		nLen=imgDims[0]-nKernelDims[0]+1;
-		
-		for (i=cnCenter[1]; i< nLastLine-1; i++) {
+		ptrdiff_t i=0;
+		for (i=cnCenter[1]; i< nLastLine-1; ++i) 
+		{
 			memset(res+i*imgDims[0]+nLen+cnCenter[0],0,sizeof(T)*(nKernelDims[0]-1));
 		}
 		
@@ -268,11 +260,11 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 		
 		kipl::base::TImage<T,2> edge;
         ptrdiff_t nLeftPixels  = nKernelDims[0]/2;
-        size_t nRightPixels = (nKernelDims[0]/2) - (1-nKernelDims[0]%2);
+        size_t nRightPixels    = (nKernelDims[0]/2) - (1-nKernelDims[0]%2);
         ptrdiff_t nFrontLines  = nKernelDims[1]/2;
         ptrdiff_t nBackLines   = (nKernelDims[1]/2) - (1-nKernelDims[1]%2);
 		
-		size_t nEdgeDims[2]={0,0};
+        std::vector<size_t> nEdgeDims={0,0};
 		T *pEdge=NULL;
 		
 //		size_t nCenter=0;
@@ -284,14 +276,15 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 				nEdgeDims[0] = imgDims[0]+nKernelDims[0]-1;
 				nEdgeDims[1] = nFrontLines+nKernelDims[1]-1;
 				
-				if (0<nEdgeDims[0]*nEdgeDims[1]) {
-					edge.Resize(nEdgeDims);
+				if (0<nEdgeDims[0]*nEdgeDims[1]) 
+				{
+                    edge.resize(nEdgeDims);
 					edge=static_cast<T>(0);
 					
-					for (i=0; i<(nFrontLines+nBackLines); i++) 
+					for (ptrdiff_t i=0; i<(nFrontLines+nBackLines); i++) 
 						memcpy(edge.GetLinePtr(nFrontLines+i)+nLeftPixels,img+imgDims[0]*i,sizeof(T)*imgDims[0]);
 					
-					ptrdiff_t res_offset=nFrontLines*nEdgeDims[0]+nLeftPixels;
+					res_offset=nFrontLines*nEdgeDims[0]+nLeftPixels;
 					ProcessCore(edge.GetDataPtr(),nEdgeDims,res-res_offset,imgDims);
 				}
 				// Processing back pixels
@@ -299,11 +292,11 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 				nEdgeDims[1] = nBackLines+nKernelDims[1]-1;
 				
 				if (0<nEdgeDims[0]*nEdgeDims[1]) {
-					edge.Resize(nEdgeDims);
+                    edge.resize(nEdgeDims);
 					edge=static_cast<T>(0);
-					for (i=0; i<(nFrontLines+nBackLines); i++) 
+					for (ptrdiff_t i=0; i<(nFrontLines+nBackLines); i++) 
 						memcpy(edge.GetLinePtr(i)+nLeftPixels,img+imgDims[0]*(i+imgDims[1]-nKernelDims[1]+1),sizeof(T)*imgDims[0]);
-					ptrdiff_t res_offset=nFrontLines*nEdgeDims[0]+nLeftPixels;
+					res_offset=nFrontLines*nEdgeDims[0]+nLeftPixels;
 					ProcessCore(edge.GetDataPtr(),nEdgeDims,res-res_offset+(imgDims[1]-nBackLines)*imgDims[0],imgDims);
 				}
 				// Processing back pixels
@@ -311,9 +304,9 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 				nEdgeDims[1] = imgDims[1];
 				
 				if (0<nEdgeDims[0]*nEdgeDims[1]) {
-					edge.Resize(nEdgeDims);
+                    edge.resize(nEdgeDims);
 					edge=static_cast<T>(0);
-					for (i=0; i<static_cast<ptrdiff_t>(imgDims[1]-nKernelDims[1]+1); i++) 
+					for (ptrdiff_t i=0; i<static_cast<ptrdiff_t>(imgDims[1]-nKernelDims[1]+1); i++) 
 						memcpy(edge.GetLinePtr(nFrontLines+i)+nLeftPixels,img+imgDims[0]*i,sizeof(T)*(nKernelDims[0]+nRightPixels));
 					
 					res_offset=-static_cast<ptrdiff_t>(nKernelDims[0]);//nFrontLines*nEdgeDims[0];
@@ -330,17 +323,20 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 				// Process top and bottom
 				nEdgeDims[0]=imgDims[0]+nKernelDims[0]-1;
                 nEdgeDims[1]=2*(nKernelDims[1]/2)+(nKernelDims[1]-(nKernelDims[1]/2)-1); // ???
-				edge.Resize(nEdgeDims);
+                edge.resize(nEdgeDims);
 				edge=static_cast<T>(0);
 				// Process top edge
 				pEdge=edge.GetDataPtr();
-				for (size_t i=0; i<cnCenter[1]; i++) {
+				for (size_t i=0; i<cnCenter[1]; ++i) 
+				{
 					memcpy(pEdge+nEdgeDims[0]*i+cnCenter[0],img+(cnCenter[1]-i)*imgDims[0],sizeof(T)*imgDims[0]);
 				}
-				for (size_t i=cnCenter[1]; i<(cnCenter[1]+nKernelDims[1]-1); i++) {
+				for (size_t i=cnCenter[1]; i<(cnCenter[1]+nKernelDims[1]-1); ++i) 
+				{
 					memcpy(pEdge+nEdgeDims[0]*i+cnCenter[0],img+(i-cnCenter[1])*imgDims[0],sizeof(T)*imgDims[0]);
 				}
-				for (size_t i=0; i<(cnCenter[1]+nKernelDims[1]-1); i++) {
+				for (size_t i=0; i<(cnCenter[1]+nKernelDims[1]-1); ++i) 
+				{
 	//				T const * const pLine=img+i*imgDims[0];
 					T val=pEdge[i*nEdgeDims[0]+cnCenter[0]];
 					for (size_t j=0; j<cnCenter[0]; j++)
@@ -355,11 +351,13 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 				ProcessCore(edge.GetDataPtr(),nEdgeDims,res+res_offset,imgDims);
 				// Process bottom edge
 				edge=static_cast<T>(0);
-				for (size_t i=0; i<2*cnCenter[1]; i++) {
+				for (size_t i=0; i<2*cnCenter[1]; i++) 
+				{
 					memcpy(pEdge+nEdgeDims[0]*i+cnCenter[0],img+(nLastLine-cnCenter[1]+i-1)*imgDims[0],sizeof(T)*imgDims[0]);
 				}
 				
-				for (size_t i=2*cnCenter[1],j=imgDims[1]-2; i<nEdgeDims[1]; i++,j--) {
+				for (size_t i=2*cnCenter[1],j=imgDims[1]-2; i<nEdgeDims[1]; i++,j--) 
+				{
 				//	size_t idx=nEdgeDims[1]-2*cnCenter[1]-(i-2*cnCenter[1]);
 					memcpy(pEdge+nEdgeDims[0]*(i)+cnCenter[0],img+(j)*imgDims[0],sizeof(T)*imgDims[0]);
 				}
@@ -380,7 +378,7 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 				// Left-right processing
                 nEdgeDims[0]=2*(nKernelDims[0]/2)+(nKernelDims[0]-(nKernelDims[0]/2)-1);
 				nEdgeDims[1]=imgDims[1];
-				edge.Resize(nEdgeDims);
+                edge.resize(nEdgeDims);
 				// Left edge
 				for (size_t y=0; y<imgDims[1]; y++) {
 					pEdge=edge.GetLinePtr(y);
@@ -421,7 +419,7 @@ int TFilterBase<T,nDims>::ProcessEdge2D(T const * const img,
 template<typename T, size_t nDims>
 int TFilterBase<T,nDims>::ProcessEdge3D(T const * const img, 
 		  T * res, 
-		  size_t const * const imgDims, 
+          const std::vector<size_t> &  imgDims,
 		  const FilterBase::EdgeProcessingStyle epStyle)
 {
 	size_t nSlice=imgDims[0]*imgDims[1];

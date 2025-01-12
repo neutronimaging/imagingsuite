@@ -7,15 +7,22 @@
 
 #include <complex>
 #include <cstring>
+#include <vector>
+#include <thread>
+#include <mutex>
 #include <fftw3.h>
 
 #include "../logging/logger.h"
 
-namespace kipl {
+namespace kipl
+{
 /// \brief The math name space collects mathematical functions
-namespace math {
+namespace math
+{
 /// \brief The FFT namespace collects classes related to the fft
-namespace fft {
+namespace fft
+{
+extern std::mutex fftMutex;
 
 /// \brief Base class to provide an efficient interface to libFFTW
 ///
@@ -27,12 +34,13 @@ namespace fft {
 ///	allocate any data to external pointers.
 ///
 ///@author Anders Kaestner
-class KIPLSHARED_EXPORT FFTBase{
+class KIPLSHARED_EXPORT FFTBase
+{
 public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform
 	///	\param NDim the rank of the transform
-    FFTBase(size_t const * const Dims, size_t const NDim);
+    FFTBase(const std::vector<size_t> &_dims);
     
     /// \brief Computes a complex Fourier transform
     ///	\param inCdata pointer to the input data
@@ -74,18 +82,19 @@ protected:
 	std::complex<double> *cBufferB;
 	double *rBuffer;
 	
-	long Ndata;
-	int dims[8];
-	int ndim;
+    size_t Ndata;
+    std::vector<size_t> dims;
+    size_t ndim;
 };
 
 
-class KIPLSHARED_EXPORT FFTBaseFloat{
+class KIPLSHARED_EXPORT FFTBaseFloat
+{
 public:
 	/// \brief Constructor that defines size and rank of the transform
 	///	\param Dims array describing the size of the transform
 	///	\param NDim the rank of the transform
-    FFTBaseFloat(size_t const * const Dims, size_t const NDim);
+    FFTBaseFloat(const std::vector<size_t> _dims);
     
     /// \brief Computes a complex Fourier transform
     ///	\param inCdata pointer to the input data
@@ -129,7 +138,7 @@ protected:
 	float *rBuffer;
 	
 	size_t Ndata;
-	int dims[8];
+    std::vector<size_t> dims;
 	int ndim;
 };
 

@@ -27,13 +27,17 @@ void bindAverageImage(py::module &m)
                  ImagingAlgorithms::AverageImage::eAverageMethod method,
                  std::vector<float> weights = {})
     {
-        auto r = x.unchecked<3>(); // x must have ndim = 3; can be non-writeable
+        // auto r = x.unchecked<3>(); // x must have ndim = 3; can be non-writeable
 
         py::buffer_info buf1 = x.request();
+        if (buf1.ndim != 3) {
+            throw std::runtime_error("Input array must have 3 dimensions");
+        }
 
-        size_t dims[]={static_cast<size_t>(buf1.shape[2]),
-                       static_cast<size_t>(buf1.shape[1]),
-                       static_cast<size_t>(buf1.shape[0])};
+        std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[2]),
+                                        static_cast<size_t>(buf1.shape[1]),
+                                        static_cast<size_t>(buf1.shape[0])};
+                                        
         kipl::base::TImage<float,3> stack(static_cast<float*>(buf1.ptr),dims);
 
         kipl::base::TImage<float,2> res=a(stack,method,weights);

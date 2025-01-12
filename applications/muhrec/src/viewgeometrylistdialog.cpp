@@ -70,14 +70,14 @@ void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base
         if (it->first.ProjectionInfo.beamgeometry == it->first.ProjectionInfo.BeamGeometry_Parallel)
         {
             msg<<it->first.UserInformation.sDate<<std::endl
-               <<"Center="<<(it->first.ProjectionInfo.fCenter)<<std::endl
-              <<"Slice="<<(it->first.ProjectionInfo.roi[1])<<std::endl;
+               <<"Center="<<std::to_string(it->first.ProjectionInfo.fCenter)<<std::endl
+              <<"Slice="<<std::to_string(it->first.ProjectionInfo.roi[1])<<std::endl;
         }
         else if (it->first.ProjectionInfo.beamgeometry == it->first.ProjectionInfo.BeamGeometry_Cone)
         {
             msg<<it->first.UserInformation.sDate<<std::endl
-               <<"Center="<<(it->first.ProjectionInfo.fCenter)<<std::endl
-              <<"Slice="<<(it->first.ProjectionInfo.roi[3]-it->first.MatrixInfo.voi[5])<<std::endl;
+               <<"Center="<<std::to_string(it->first.ProjectionInfo.fCenter)<<std::endl
+              <<"Slice="<<std::to_string(it->first.ProjectionInfo.roi[3]-it->first.MatrixInfo.voi[5])<<std::endl;
         }
         ConfigListItem *item = new ConfigListItem;
 
@@ -107,28 +107,44 @@ void ViewGeometryListDialog::setList(std::list<std::pair<ReconConfig, kipl::base
 
 QPixmap ViewGeometryListDialog::CreateIconFromImage(kipl::base::TImage<float,2> &img, float lo, float hi)
 {
+    QPixmap pixmap(img.Size(0), img.Size(1));
 
-    QPixmap pixmap(img.Size(0),img.Size(1));
+    std::vector<uchar> buffer(img.Size() + 1024);
 
+    std::string header = "P5\n" + std::to_string(img.Size(0)) + "\n" + std::to_string(img.Size(1)) + "\n255\n";
+    std::copy(header.begin(), header.end(), buffer.begin());
+    int offset = header.size();
 
-    uchar * buffer=new uchar[img.Size()+1024];
+    float scale = 255.0f / (hi - lo);
+    auto pImg = img.GetDataPtr();
+    std::transform(pImg, pImg + img.Size(), buffer.begin() + offset, [lo, scale](float val) {
+        return static_cast<uchar>(std::clamp((val - lo) * scale, 0.0f, 255.0f));
+    });
 
-    sprintf((char *)buffer,"P5\n%d\n%d\n255\n",(int)img.Size(0),(int)img.Size(1));
-    int offset=strlen((char *)buffer);
-
-    float scale = 255/(hi-lo);
-    float *pImg = img.GetDataPtr();
-    for (size_t i=0; i<img.Size(); i++) {
-        if (pImg[i]<lo)
-            buffer[i+offset]=0;
-        else if (hi<pImg[i])
-            buffer[i+offset]=255;
-        else
-            buffer[i+offset]=static_cast<uchar>((pImg[i]-lo)*scale);
-    }
-    pixmap.loadFromData(buffer,img.Size()+offset);
-    delete [] buffer;
+    pixmap.loadFromData(buffer.data(), img.Size() + offset);
     return pixmap;
+
+    // QPixmap pixmap(img.Size(0),img.Size(1));
+
+
+    // uchar * buffer=new uchar[img.Size()+1024];
+
+    // sprintf((char *)buffer,"P5\n%d\n%d\n255\n",static_cast<int>(img.Size(0)),static_cast<int>(img.Size(1)));
+    // int offset=strlen((char *)buffer);
+
+    // float scale = 255/(hi-lo);
+    // float *pImg = img.GetDataPtr();
+    // for (size_t i=0; i<img.Size(); i++) {
+    //     if (pImg[i]<lo)
+    //         buffer[i+offset]=0;
+    //     else if (hi<pImg[i])
+    //         buffer[i+offset]=255;
+    //     else
+    //         buffer[i+offset]=static_cast<uchar>((pImg[i]-lo)*scale);
+    // }
+    // pixmap.loadFromData(buffer,img.Size()+offset);
+    // delete [] buffer;
+    // return pixmap;
 }
 
 int ViewGeometryListDialog::changedConfigFields()
@@ -165,7 +181,7 @@ void ViewGeometryListDialog::ShowSelected(QListWidgetItem *current)
     float hi=axis[nHi];
 
     ui->imageViewer->set_image(item->image.GetDataPtr(),
-                               item->image.Dims(),
+                               item->image.dims(),
                                lo,
                                hi);
 
@@ -223,7 +239,7 @@ void ViewGeometryListDialog::ComputeTilt()
             m_fCenter+= m_fPivot*m_fTilt;
             m_fTilt   = -180.0f / fPi *atan(m_fTilt);
 
-            m_eChangeConfigFields = m_eChangeConfigFields | (int)ConfigField_Tilt;
+            m_eChangeConfigFields = m_eChangeConfigFields | static_cast<int>(ConfigField_Tilt);
             msg.str("");
             ui->labelTilt->setText(QString("%1").arg(m_fTilt,0,'g',4));
             ui->labelCenter->setText(QString("%1").arg(m_fCenter,0,'g',4));
@@ -258,7 +274,7 @@ void ViewGeometryListDialog::getTilt(float &center, float &tilt, float &pivot)
 void ViewGeometryListDialog::MaxROI()
 {
     std::ostringstream msg;
-    std::list<size_t *> roi;
+    std::list<std::vector<size_t> > ROIs;
 
     for(int row = 0; row < ui->listWidget->count(); row++)
     {
@@ -267,22 +283,22 @@ void ViewGeometryListDialog::MaxROI()
         if (item->checkState() == Qt::Checked )
         {
             if (item->config.MatrixInfo.bUseROI) {
-                roi.push_back(item->config.MatrixInfo.roi);
+                ROIs.push_back(item->config.MatrixInfo.roi);
             }
         }
     }
-    msg<<"ROI count="<<roi.size();
+    msg<<"ROI count="<<ROIs.size();
     logger(kipl::logging::Logger::LogMessage,msg.str());
-    if (!roi.empty()) {
-        std::list<size_t *>::iterator it=roi.begin();
+    if (!ROIs.empty())
+    {
+        m_nMatrixROI = ROIs.front();
 
-        memcpy(m_nMatrixROI,(*it),4*sizeof(size_t));
-
-        for (it=roi.begin(); it!=roi.end(); it++) {
-            m_nMatrixROI[0]=min(m_nMatrixROI[0],(*it)[0]);
-            m_nMatrixROI[1]=min(m_nMatrixROI[1],(*it)[1]);
-            m_nMatrixROI[2]=max(m_nMatrixROI[2],(*it)[2]);
-            m_nMatrixROI[3]=max(m_nMatrixROI[3],(*it)[3]);
+        for (const auto & roi : ROIs)
+        {
+            m_nMatrixROI[0]=min(m_nMatrixROI[0],roi[0]);
+            m_nMatrixROI[1]=min(m_nMatrixROI[1],roi[1]);
+            m_nMatrixROI[2]=max(m_nMatrixROI[2],roi[2]);
+            m_nMatrixROI[3]=max(m_nMatrixROI[3],roi[3]);
         }
 
         m_eChangeConfigFields |= ConfigField_ROI ;
@@ -290,17 +306,24 @@ void ViewGeometryListDialog::MaxROI()
         msg.str("");
 
         msg<<"ROI=["<<m_nMatrixROI[0]<<", "
-            <<m_nMatrixROI[1]<<", "
-            <<m_nMatrixROI[2]<<", "
-            <<m_nMatrixROI[3]<<"]";
-
-  //      ui->labelROI->setText(QString::fromStdString(msg.str()));
+                    <<m_nMatrixROI[1]<<", "
+                    <<m_nMatrixROI[2]<<", "
+                    <<m_nMatrixROI[3]<<"]";
     }
 }
 
-void ViewGeometryListDialog::getROI(size_t *roi)
+void ViewGeometryListDialog::getROI(std::vector<size_t> &roi)
 {
-    memcpy(roi,m_nMatrixROI,4*sizeof(size_t));
+    roi = m_nMatrixROI;
+}
+
+void ViewGeometryListDialog::getROIi(std::vector<int> &roi)
+{
+    // std::copy(m_nMatrixROI.begin(),m_nMatrixROI.end(),roi.begin());
+    std::transform( m_nMatrixROI.begin(),
+                    m_nMatrixROI.end(),
+                    roi.begin(),
+                    [](size_t val){return static_cast<int>(val);});
 }
 
 

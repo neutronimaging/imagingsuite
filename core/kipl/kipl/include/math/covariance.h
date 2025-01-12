@@ -4,8 +4,8 @@
 #define COVARIANCE_H
 
 #include "../kipl_global.h"
-#include <tnt_array2d.h>
-
+#include <vector>
+#include <armadillo>
 #include "../logging/logger.h"
 
 namespace kipl {
@@ -31,7 +31,7 @@ public:
     /// \param nElements Number of elements in each variable
     /// \param nVars number of stochastic variables
     /// \param bCenter subtract the average value from each variable before computing the covariance matrix.
-    TNT::Array2D<double> compute(T *data, size_t nElements, size_t nVars, bool bCenter=true);
+    arma::mat compute(T *data, size_t nElements, size_t nVars, bool bCenter=true);
 
     /// \brief Compute the covariance matrix between different variables.
     ///
@@ -40,7 +40,7 @@ public:
     /// \param dims Dimensions of the entire data block. The last entry tells how many stochastic varibales the data set contains.
     /// \param nDims number of data dimensions.
     /// \param bCenter subtract the average value from each variable before computing the covariance matrix.
-    TNT::Array2D<double> compute(T *data, const size_t *dims, size_t Ndims, bool bCenter=true);
+    arma::mat compute(T *data, const std::vector<size_t> &dims, size_t Ndims, bool bCenter=true);
 
     /// \brief Setter for the covariance matrix type
     /// \param m Type value
@@ -53,12 +53,12 @@ protected:
     void AllocateData();
     void DeallocateData();
     void ComputeStatistics();
-    void NormalizeMatrix(TNT::Array2D<double> &mat);
+    void NormalizeMatrix(arma::mat &mat);
 
     T *m_pData;
     int m_nVars;
     int m_nElements;
-    double *m_fMean;
+    std::vector<double> m_fMean;
     eCovarianceType m_eResultMatrixType;
 };
 

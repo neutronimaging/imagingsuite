@@ -55,12 +55,15 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../external/src/linalg
-    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../external/include
-    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../external/include/cfitsio
+
+
+    INCLUDEPATH  += $$PWD/../../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$PWD/../../../../../ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH  += $$_PRO_FILE_PWD_/../../../../external/include
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
     DEFINES += NOMINMAX
 }
@@ -89,5 +92,5 @@ macx: {
     DEPENDPATH  += $$PWD/../../../../external/mac/include
     DEPENDPATH  += $$PWD/../../../../external/mac/include/hdf5
     DEPENDPATH  += $$PWD/../../../../external/mac/include/nexus
-    LIBS += -L$$PWD/../../../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    LIBS += -L$$PWD/../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
 }

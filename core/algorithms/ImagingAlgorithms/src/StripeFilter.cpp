@@ -16,7 +16,7 @@
 namespace ImagingAlgorithms {
 
 
-StripeFilter::StripeFilter(size_t const * const dims, const string &wname, int scale, float sigma) :
+StripeFilter::StripeFilter(const std::vector<size_t> &dims, const string &wname, int scale, float sigma) :
 	logger("StripeFilter"),
 	m_wt(wname),
     m_pLine(nullptr),
@@ -164,10 +164,15 @@ std::vector<int> StripeFilter::dims()
     return wdims;
 }
 
-bool StripeFilter::checkDims(const size_t *dims)
+bool StripeFilter::checkDims(const std::vector<size_t> &dims)
 {
-    if ((static_cast<int>(dims[0])!=wdims[0]) || (static_cast<int>(dims[1])!=wdims[1]))
-        throw ImagingException("Image size check failed",__FILE__,__LINE__);
+    if ((static_cast<int>(dims[0])!=wdims[0]) || (static_cast<int>(dims[1])!=wdims[1])) 
+    {   
+        std::ostringstream msg;
+        msg<<"Image size check failed. img["<<dims[0]<<", "<<dims[1]
+            <<"], wdims=["<<wdims[0]<<", "<<wdims[1]<<"]";
+        throw ImagingException(msg.str(),__FILE__,__LINE__);
+    }
 
     return true;
 }
@@ -213,7 +218,7 @@ void StripeFilter::configure(const std::vector<int> &dims, const string &wname, 
         if ( fft[i] != nullptr ) 
             delete fft[i];
 
-        fft[i]=new kipl::math::fft::FFTBaseFloat(&N,1);
+        fft[i]=new kipl::math::fft::FFTBaseFloat({N});
 
         if (m_pDamping[i]!= nullptr)
             delete [] m_pDamping[i];

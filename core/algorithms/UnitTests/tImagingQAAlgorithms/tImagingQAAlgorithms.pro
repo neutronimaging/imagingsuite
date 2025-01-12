@@ -32,7 +32,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 unix {
-    INCLUDEPATH += ../../../../external/src/linalg
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -46,17 +45,21 @@ unix {
         QMAKE_LIBDIR += /opt/local/lib
     }
 
-    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
+    LIBS +=  -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio -larmadillo -llapack -lblas
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
+
+    INCLUDEPATH  += $$PWD/../../../../../ExternalDependencies/windows/include
+    INCLUDEPATH  += $$PWD/../../../../../ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH  += $$PWD/../../../../external/include
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    LIBS += -llibxml2 -llibtiff -lcfitsio
 
     QMAKE_CXXFLAGS += /openmp /O2
 

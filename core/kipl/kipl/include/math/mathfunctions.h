@@ -32,24 +32,27 @@ kipl::base::TImage<T,N> sqrt(const kipl::base::TImage<T,N> img);
 /// \param level - value for center point in the sigmoid function
 /// \param width - width of the sigmoid function (for w=1, 99.9% of the sigmoid are within +/-2pi)
 template <typename T>
-T Sigmoid(const T x, const T level, const T width);
+T sigmoid(const T x, const T level, const T width);
 
 /// \brief Compute the sigmoid function of the input data
 /// \param img   - input data
 /// \param level - value for center point in the sigmoid function
 /// \param width - width of the sigmoid function (for w=1, 99.9% of the sigmoid are within +/-2pi)
 template <typename T, size_t N>
-kipl::base::TImage<T,N> SigmoidWeights(kipl::base::TImage<T,N> img, const T level, const T width);
+kipl::base::TImage<T,N> sigmoidWeights(kipl::base::TImage<T,N> img, const T level, const T width);
 
 /// \brief Compute the sigmoid function of the input data
 /// \param img   - input data
 /// \param level - value for center point in the sigmoid function
 /// \param width - width of the sigmoid function (for w=1, 99.9% of the sigmoid are within +/-2pi)
 template <typename T>
-T SigmoidWeights(T val,T a, T b, const float level, const float width);
+T sigmoidWeights(T val,T a, T b, const float level, const float width);
 
-template <typename T>
-double Entropy(T const * const data, const size_t N);
+template <typename T, typename std::enable_if<std::is_arithmetic<T>::value, int>::type = 0>
+double entropy(T const * const data, const size_t N);
+
+template <typename T, typename std::enable_if<std::is_arithmetic<T>::value, int>::type = 0>
+double entropy(const std::vector<T>& vec);
 
 /// \brief Determines the sign of the argument
 /// \param x The number to define the sign for.
@@ -69,6 +72,43 @@ T factorial(T n)
   return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
 
+template<int X, int P>
+struct Pow
+{
+    enum { result = X*Pow<X,P-1>::result };
+};
+
+template<int X>
+struct Pow<X,0>
+{
+    enum { result = 1 };
+};
+
+template<int X>
+struct Pow<X,1>
+{
+    enum { result = X };
+};
+
+
+template <int PRECISION>
+float roundP(float f)
+{
+    const int temp = Pow<10,PRECISION>::result;
+    return roundf(f*temp)/temp;
+}
+
+/// \brief Replaces pixels with inf or nan by a valid number
+/// \param img the image to check
+/// \return the number of inf pixels
+template <typename T, size_t NDims>
+void replaceInfNaN(kipl::base::TImage<T,NDims> &img, T val=static_cast<T>(0));
+
+/// \brief Factorize a number into its prime factors
+/// \param n the number to factorize
+/// \returns a vector containing the prime factors of n
+template <typename T>
+std::vector<T> factorize(T n);
 
 }}
 

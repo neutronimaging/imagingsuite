@@ -15,7 +15,7 @@ SinoSpotClean::~SinoSpotClean() {
 	// TODO Auto-generated destructor stub
 }
 
-int SinoSpotClean::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int SinoSpotClean::Configure(ReconConfig /*config*/, std::map<std::string, std::string> /*parameters*/)
 {
 
 
@@ -33,7 +33,7 @@ std::map<std::string, std::string> SinoSpotClean::GetParameters()
 	return parameters;
 }
 
-int SinoSpotClean::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters)
+int SinoSpotClean::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &/*parameters*/)
 {
 	kipl::base::TImage<float,2> sino;
 	int N=static_cast<int>(img.Size(2));
@@ -55,10 +55,9 @@ int SinoSpotClean::CleanSinogramSpots(kipl::base::TImage<float,2> &img, int leng
 {
 	int cnt=0;
 
-    size_t dims[2]={1UL, static_cast<size_t>(2*length+1)};
-	int weights[256];
-	for (int i=0; i<dims[1]; i++)
-		weights[i]=1;
+    std::vector<size_t> dims={1UL, static_cast<size_t>(2*length+1)};
+    std::vector<int> weights(dims[1],1);
+
 	weights[length]=0;
 
 	kipl::filters::TWeightedMedianFilter<float,2> medfilt(dims,weights);

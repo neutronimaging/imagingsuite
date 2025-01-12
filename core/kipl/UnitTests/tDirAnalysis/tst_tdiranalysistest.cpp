@@ -1,5 +1,6 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
+#include <QDebug>
 
 #include <io/DirAnalyzer.h>
 #include <strings/filenames.h>
@@ -67,7 +68,7 @@ void TDirAnalysisTest::testGetDirList()
 
     std::vector<std::string> flist=da.GetDirList(path);
 
-    qDebug("%d, %d",(int)flist.size(),(int)fl0.size());
+    qDebug("%d, %d",static_cast<int>(flist.size()),static_cast<int>(fl0.size()));
     QVERIFY(flist.size()==fl0.size()+2);
     int cnt=0;
     for (auto it=fl0.begin(); it!=fl0.end(); ++it,++cnt) {
@@ -219,24 +220,36 @@ void  TDirAnalysisTest::testDirAnalyzer()
 
     QVERIFY(fi4.m_nIndex==567);
     QVERIFY(fi4.m_sExt=="xyz");
-    QVERIFY(fi4.m_sMask=="/home/data/hopp_###.xyz");
+    qDebug() << fi4.m_sMask.c_str() << " vs. /home/data/hopp_###.xyz";
+    std::string ref = "/home/data/hopp_###.xyz";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(fi4.m_sMask,ref);
     std::cout<<fi4.m_sPath<<std::endl;
-    QVERIFY(fi4.m_sPath=="/home/data/");
+    ref = "/home/data/";
+    kipl::strings::filenames::CheckPathSlashes(ref,false);
+    QCOMPARE(fi4.m_sPath,ref);
 
 //    std::string path="\\P08062_wood\\raw_CCD";
 
-    std::string path="/";
+    QDir dir;
+    std::string path=dir.currentPath().toStdString();
     std::vector<std::string> dirlist=di.GetDirList(path);
 
     int cnt,first,last;
 
 
-    QDir dir("/");
+
 
     QStringList qdirlist=dir.entryList(QDir::AllEntries | QDir::Hidden);
+    std::sort(qdirlist.begin(),qdirlist.end());
     std::ostringstream msg;
     msg<<"di size="<<dirlist.size()<<", qdir size="<<qdirlist.size();
 
+//    for (auto & item : dirlist)
+//        qDebug() <<item.c_str();
+
+//    for (auto & item : qdirlist)
+//        qDebug() <<item;
     QVERIFY2(qdirlist.size()==static_cast<int>(dirlist.size()), msg.str().c_str());
 
     for (auto it=dirlist.begin(); it!=dirlist.end(); ++it)
@@ -297,6 +310,13 @@ void  TDirAnalysisTest::testCountLinesInFile()
 
     QVERIFY(N==cnt);
 }
-QTEST_APPLESS_MAIN(TDirAnalysisTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TDirAnalysisTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TDirAnalysisTest)
+#endif
 
 #include "tst_tdiranalysistest.moc"

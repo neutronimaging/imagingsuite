@@ -24,7 +24,6 @@ CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../lib/debug
 
 unix {
-    INCLUDEPATH += "../../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -37,6 +36,7 @@ unix {
 
     unix:macx {
         INCLUDEPATH += /opt/local/include
+        INCLUDEPATH += $$PWD/../../../../../ExternalDependencies/macos/include
         QMAKE_LIBDIR += /opt/local/lib
 
         exists($$PWD/../../../../external/mac/lib/*NeXus*) {
@@ -45,9 +45,10 @@ unix {
             DEFINES += HAVE_NEXUS
 
             INCLUDEPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
-            DEPENDPATH += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
+            DEPENDPATH  += $$PWD/../../../../external/mac/include $$PWD/../../../../external/mac/include/nexus $$PWD/../../../../external/mac/include/hdf5
 
-            LIBS += -L$$PWD/../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+#            LIBS += -L$$PWD/../../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+            LIBS += -L$$PWD/../../../../../ExternalDependencies/macos/arm64/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
         }
     }
 
@@ -57,7 +58,11 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
+
+    QMAKE_LIBDIR += $$PWD/../../../../../ExternalDependencies/windows/lib
+    QMAKE_LIBDIR += $$PWD/../../../../../ExternalDependencies/windows/include/cfitsio
+
+    INCLUDEPATH  += $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
     QMAKE_LIBDIR += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
 

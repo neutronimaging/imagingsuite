@@ -5,10 +5,13 @@
 #include "../include/ModuleException.h"
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 
 #include <utilities/TimeDate.h>
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
+
+std::string ConfigBase::m_sHomePath = "";
 
 ConfigBase::ConfigBase(std::string name, std::string path) :
 	logger(name),
@@ -53,20 +56,22 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
 
     modules.clear();
     reader = xmlReaderForFile(configfile.c_str(), nullptr, 0);
-    if (reader != nullptr) {
+    if (reader != nullptr)
+    {
     	ret = xmlTextReaderRead(reader);
         name = xmlTextReaderConstName(reader);
 
-
-        if (name==nullptr) {
+        if (name==nullptr)
+        {
             throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
         }
 
         sName=reinterpret_cast<const char *>(name);
         msg.str(""); msg<<"Found "<<sName<<" expect "<<ProjectName;
         logger(kipl::logging::Logger::LogMessage,msg.str());
-        if (std::string(sName)!=ProjectName) {
-            msg.str();
+        if (std::string(sName)!=ProjectName)
+        {
+            msg.str("");
             msg<<"Unexpected project contents in parameter file ("<<sName<<"!="<<ProjectName<<")";
             logger(kipl::logging::Logger::LogMessage,msg.str());
             throw ModuleException(msg.str(),__FILE__,__LINE__);
@@ -76,11 +81,14 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
     	
         ret = xmlTextReaderRead(reader);
         
-        while (ret == 1) {
-        	if (xmlTextReaderNodeType(reader)==1) {
+        while (ret == 1)
+        {
+            if (xmlTextReaderNodeType(reader)==1)
+            {
 	            name = xmlTextReaderConstName(reader);
 	            
-                if (name==nullptr) {
+                if (name==nullptr)
+                {
 	                throw ModuleException("Unexpected contents in parameter file",__FILE__,__LINE__);
 	            }
 	            sName=reinterpret_cast<const char *>(name);
@@ -96,12 +104,15 @@ void ConfigBase::LoadConfigFile(std::string configfile, std::string ProjectName)
             ret = xmlTextReaderRead(reader);
         }
         xmlFreeTextReader(reader);
-        if (ret != 0) {
+        if (ret != 0)
+        {
         	std::stringstream str;
         	str<<"Module config failed to parse "<<configfile;
         	throw ModuleException(str.str(),__FILE__,__LINE__);
         }
-    } else {
+    }
+    else
+    {
     	std::stringstream str;
     	str<<"Module config could not open "<<configfile;
     	throw ModuleException(str.str(),__FILE__,__LINE__);
@@ -215,7 +226,7 @@ std::string ConfigBase::cUserInformation::WriteXML(int indent)
 	using namespace std;
 	ostringstream str;
 
-	str<<setw(indent)  <<" "<<"<userinformation>"<<endl;
+    str<<setw(indent)  <<" "<<"<userinformation>"<<std::endl;
 		str<<setw(indent+4)  <<" "<<"<operator>"<<sOperator<<"</operator>\n";
 		str<<setw(indent+4)  <<" "<<"<instrument>"<<sInstrument<<"</instrument>\n";
 		str<<setw(indent+4)  <<" "<<"<projectnumber>"<<sProjectNumber<<"</projectnumber>\n";
@@ -223,7 +234,7 @@ std::string ConfigBase::cUserInformation::WriteXML(int indent)
 		str<<setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
         str<<setw(indent+4)  <<" "<<"<date>"<<sDate<<"</date>\n";
         str<<setw(indent+4)  <<" "<<"<version>"<<sVersion<<"</version>\n";
-	str<<setw(indent)  <<" "<<"</userinformation>"<<endl;
+    str<<setw(indent)  <<" "<<"</userinformation>"<<std::endl;
 
 	return str.str();
 }
@@ -310,6 +321,16 @@ std::string ConfigBase::appPath()
     return m_sApplicationPath;
 }
 
+void ConfigBase::setHomePath(const std::string &path)
+{
+    m_sHomePath = path;
+}
+
+std::string ConfigBase::homePath()
+{
+    return m_sHomePath;
+}
+
 void ConfigBase::ParseArgv(std::vector<std::string> &args)
 {
     std::ostringstream msg;
@@ -339,8 +360,23 @@ void ConfigBase::ParseArgv(std::vector<std::string> &args)
     }
 }
 
+std::string ConfigBase::FilterQuotes(const std::string &value, char quote)
+{
+    auto q1=value.find_first_of(quote);
+    auto q2=value.find_last_of(quote);
+
+    if ((q1!=std::string::npos) && (q2!=std::string::npos)) 
+    {
+            return value.substr(q1+1,q2-q1-1);
+    }
+    
+    return value;
+}
+
 void ConfigBase::EvalArg(std::string arg, std::string &group, std::string &var, std::string &value)
 {
+    arg=FilterQuotes(arg,'\"'); // Remove any quotes
+    arg=FilterQuotes(arg,'\'');
     size_t possep=arg.find(':');
     if (possep==std::string::npos)
         throw ModuleException("Could not find a separator",__FILE__,__LINE__);

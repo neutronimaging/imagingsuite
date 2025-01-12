@@ -3,7 +3,7 @@
 #include "imageviewerwidget.h"
 
 #include <QSignalBlocker>
-#include <QLineSeries>
+#include <QtCharts/QLineSeries>
 #include <QPen>
 #include <QDebug>
 
@@ -95,10 +95,11 @@ void SetGrayLevelsDlg::updateLevels(bool interval, double a, double b)
     double lo=0;
     double hi=0;
 
+
     if (interval)
     {
-        lo=a;
-        hi=b;
+        lo=isfinite(a) ? a : -1e6;
+        hi=isfinite(b) ? b : 1e6;
         ui->doubleSpinBox_levelCenter->setValue((b+a)/2.0);
         ui->doubleSpinBox_levelWindow->setValue(fabs(b-a));
 
@@ -116,7 +117,7 @@ void SetGrayLevelsDlg::updateLevels(bool interval, double a, double b)
 
     m_parent->set_levels(lo,hi);
 
-    QtCharts::QLineSeries *line=new QtCharts::QLineSeries();
+    QLineSeries *line=new QLineSeries();
 
     line->append(lo,histMax);
     line->append(lo,histMin);

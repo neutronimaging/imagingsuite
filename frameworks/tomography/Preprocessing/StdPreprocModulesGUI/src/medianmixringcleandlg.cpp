@@ -73,7 +73,7 @@ void MedianMixRingCleanDlg::ApplyParameters()
     kipl::base::Histogram(m_OriginalImage.GetDataPtr(), m_OriginalImage.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
 
-    ui->viewer_original->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.Dims(),axis[nLo],axis[nHi]);
+    ui->viewer_original->set_image(m_OriginalImage.GetDataPtr(),m_OriginalImage.dims(),axis[nLo],axis[nHi]);
 
     std::map<std::string, std::string> parameters;
     UpdateParameters();
@@ -82,10 +82,7 @@ void MedianMixRingCleanDlg::ApplyParameters()
 
     std::map<std::string,std::string> pars;
 
-    size_t dims[3]={m_OriginalImage.Size(0), 1,m_OriginalImage.Size(1)};
-    kipl::base::TImage<float,3> img(dims);
-
-    memcpy(img.GetDataPtr(),m_OriginalImage.GetDataPtr(),m_OriginalImage.Size()*sizeof(float));
+    kipl::base::TImage<float,2> img = m_OriginalImage;
 
     try {
         m_Cleaner.Configure(*m_Config, parameters);
@@ -101,16 +98,16 @@ void MedianMixRingCleanDlg::ApplyParameters()
         return ;
     }
 
-    m_ProcessedImage.Resize(m_OriginalImage.Dims());
+    m_ProcessedImage.resize(m_OriginalImage.dims());
     memcpy(m_ProcessedImage.GetDataPtr(),img.GetDataPtr(),m_ProcessedImage.Size()*sizeof(float));
-    ui->viewer_result->set_image(m_ProcessedImage.GetDataPtr(),m_ProcessedImage.Dims());
+    ui->viewer_result->set_image(m_ProcessedImage.GetDataPtr(),m_ProcessedImage.dims());
 
     std::ostringstream msg;
     msg.str(""); msg<<"Processed image"<<m_ProcessedImage;
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     m_DifferenceImage = m_OriginalImage - m_ProcessedImage;
-    ui->viewer_difference->set_image(m_DifferenceImage.GetDataPtr(),m_DifferenceImage.Dims());
+    ui->viewer_difference->set_image(m_DifferenceImage.GetDataPtr(),m_DifferenceImage.dims());
 
     size_t Nwidth=m_Cleaner.profile.Size(0);
     float *xaxis=new float[Nwidth];
@@ -153,12 +150,12 @@ void MedianMixRingCleanDlg::UpdateParameterList(std::map<std::string, std::strin
     parameters["threshold"] =   kipl::strings::value2string(m_fLambda);
 }
 
-void MedianMixRingCleanDlg::on_entry_lambda_valueChanged(double arg1)
+void MedianMixRingCleanDlg::on_entry_lambda_valueChanged(double /*arg1*/)
 {
     DrawCursors(ui->entry_lambda->value(), ui->entry_sigma->value());
 }
 
-void MedianMixRingCleanDlg::on_entry_sigma_valueChanged(double arg1)
+void MedianMixRingCleanDlg::on_entry_sigma_valueChanged(double /*arg1*/)
 {
     DrawCursors(ui->entry_lambda->value(), ui->entry_sigma->value());
 }

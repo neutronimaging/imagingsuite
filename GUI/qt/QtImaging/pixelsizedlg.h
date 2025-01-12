@@ -19,9 +19,10 @@ class QTIMAGINGSHARED_EXPORT PixelSizeDlg : public QDialog
     Q_OBJECT
     kipl::logging::Logger logger;
 public:
-    explicit PixelSizeDlg(QWidget *parent = nullptr);
+    explicit PixelSizeDlg(QWidget *parent = nullptr, const std::string &pathhint=std::string() );
     ~PixelSizeDlg();
 
+    void setImage(kipl::base::TImage<float,2> &img);
     float pixelSize();
     float getDistance(kipl::base::TImage<float,2> &im, size_t *roi);
     float getDistance2(kipl::base::TImage<float,2> &im, size_t *roi);
@@ -33,6 +34,10 @@ private slots:
     void on_pushButton_Browse_clicked();
 
     void on_pushButton_Analyze_clicked();
+
+    void on_pushButton_level95p_clicked();
+
+    void on_pushButton_level99p_clicked();
 
 private:
     void loadImage(QString fn);
@@ -52,7 +57,8 @@ private:
     std::vector<std::pair<float,float>> edgePositions1;
 
     std::string fname;
-    kipl::base::TImage<float,2> img;
+    std::string path;
+    kipl::base::TImage<float,2> currentImage;
 };
 
 #endif // PIXELSIZEDLG_H

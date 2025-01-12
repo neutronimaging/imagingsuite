@@ -29,8 +29,9 @@ float MODULECONFIGSHARED_EXPORT GetFloatParameter(std::map<std::string, std::str
 {
 	std::string str=GetStringParameter(parameters,parameter);
 
-	
-	return static_cast<float>(std::atof(str.c_str()));
+    return static_cast<float>(std::atof(str.c_str()));
+//    return static_cast<float>((QString::fromStdString(str.c_str()).toUtf8()).toFloat());
+
 }
 
 int MODULECONFIGSHARED_EXPORT GetIntParameter(std::map<std::string, std::string> parameters, std::string parameter)
@@ -63,4 +64,26 @@ int MODULECONFIGSHARED_EXPORT GetUIntParameterVector(std::map<std::string, std::
 
 	kipl::strings::String2Array(str,arr,N);
 	return N;
+}
+
+int MODULECONFIGSHARED_EXPORT GetUIntParameterVector(std::map<std::string, std::string> parameters,
+                                                     std::string parameter,
+                                                     std::vector<size_t> &arr,
+                                                     int N)
+{
+    std::string str=GetStringParameter(parameters,parameter);
+
+    kipl::strings::String2Array(str,arr,N);
+    return N;
+}
+
+int MODULECONFIGSHARED_EXPORT GetFloatParameterVector(std::map<std::string, std::string> parameters,
+                                                     std::string parameter,
+                                                     std::vector<float> &arr,
+                                                     int N)
+{
+    std::string str=GetStringParameter(parameters,parameter);
+
+    kipl::strings::String2Array(str,arr,N);
+    return N;
 }

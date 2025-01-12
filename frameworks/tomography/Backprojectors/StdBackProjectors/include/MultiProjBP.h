@@ -3,13 +3,14 @@
 #ifndef _MULTIPROJBP_H_
 #define _MULTIPROJBP_H_
 
+
 #include <interactors/interactionbase.h>
 #include "../include/StdBackProjectorBase.h"
 
 namespace reconstructor{ namespace UnitTests {
-	class testBasicReconstructor;
+    class STDBACKPROJECTORS_EXPORT testBasicReconstructor;
 }}
-class MultiProjectionBP:
+class STDBACKPROJECTORS_EXPORT MultiProjectionBP:
 	public StdBackProjectorBase
 {
 public:

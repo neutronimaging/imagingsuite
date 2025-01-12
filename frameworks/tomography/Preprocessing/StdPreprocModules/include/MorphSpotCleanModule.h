@@ -15,9 +15,9 @@ public:
 
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
     virtual std::map<std::string, std::string> GetParameters();
-    virtual bool SetROI(size_t *roi);
+    virtual bool SetROI(const std::vector<size_t> &roi);
 
-    kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm);
+    pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm, bool removeBias);
 
 protected:
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
@@ -26,18 +26,21 @@ protected:
     int ProcessParallel(kipl::base::TImage<float,3> & img);
     int ProcessParallelStd(kipl::base::TImage<float,3> & img);
     int ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSlice, size_t N);
+    int ProcessParallelByCleaner(kipl::base::TImage<float,3> & img);
     kipl::base::eConnectivity m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
     std::vector<float> m_fThreshold;
     std::vector<float> m_fSigma;
-    int m_nEdgeSmoothLength;
-    int m_nMaxArea;
-    bool m_bRemoveInfNaN;
-    bool m_bClampData;
+    bool  m_bThresholdByFraction;
+    int   m_nEdgeSmoothLength;
+    int   m_nMaxArea;
+    bool  m_bRemoveInfNaN;
+    bool  m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    bool m_bTranspose;
+    bool  m_bTranspose;
+    bool  m_bModuleThreading;
 };
 
 #endif // MORPHSPOTCLEANMODULE_H

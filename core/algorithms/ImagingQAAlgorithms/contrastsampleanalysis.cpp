@@ -1,9 +1,6 @@
 //<LICENSE>
 
-#include <tnt_array1d.h>
-#include <tnt_array2d.h>
-#include <jama_lu.h>
-#include <jama_qr.h>
+#include <armadillo>
 
 #include <base/thistogram.h>
 #include <base/tsubimage.h>
@@ -54,13 +51,13 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,2> img)
    m_Img2D.Clone(img);
    if (1UL<filterSize)
    {
-       size_t fltdims[]={filterSize,filterSize};
+       std::vector<size_t> fltdims={filterSize,filterSize};
        kipl::filters::TMedianFilter<float,2> flt(fltdims);
        m_Img2D = flt(m_Img2D);
    }
    makeHistogram();
    if (saveIntermediateImages)
-       kipl::io::WriteTIFF32(m_Img2D,"csa_2d_orig.tif");
+       kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::Float32);
 }
 
 void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
@@ -68,8 +65,8 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
     m_Img3D.Clone(img);
 
     logger(logger.LogMessage,"Average slice");
-    qDebug() << "Start avg";
-    m_Img2D.Resize(m_Img3D.Dims());
+
+    m_Img2D.resize(m_Img3D.dims());
     m_Img2D=0.0f;
     for (size_t slice=0; slice<m_Img3D.Size(2); ++slice)
     {
@@ -80,27 +77,22 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
         }
     }
 
-    qDebug()<< "Summing done";
     for (size_t pix=0; pix<m_Img2D.Size(); ++pix)
     {
         m_Img2D[pix]/=m_Img3D.Size(2);
     }
 
-    qDebug() << "Pre filter"<< filterSize;
 //    if (1UL<filterSize)
 //    {
 //        size_t fltdims[]={filterSize,filterSize};
 //        kipl::filters::TMedianFilter<float,2> flt(fltdims);
 //        m_Img2D = flt(m_Img2D);
 //    }
-    qDebug() << "Histogram";
     makeHistogram();
 
-    qDebug() << "save";
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(m_Img2D,"csa_2d_orig.tif");
+        kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::Float32);
 
-   qDebug() << "done";
 }
 
 void ContrastSampleAnalysis::analyzeContrast(float pixelSize, const std::list<kipl::base::RectROI> &ROIs)
@@ -137,7 +129,7 @@ std::vector<kipl::base::coords3Df> ContrastSampleAnalysis::getInsetCoordinates()
     logger(logger.LogMessage,"Find centers");
     kipl::math::CircularHoughTransform cht;
 
-    const float radius = 0.5f*metricInsetDiameter/pixelsize;
+    radius = 0.5f*metricInsetDiameter/pixelsize;
     logger(logger.LogMessage,"Circ Hough transform");
     return m_insetCenters;
 }
@@ -173,7 +165,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
 
         msg.str(""); msg<<"chmcrop_"<<loopidx++<<".tif";
         if (saveIntermediateImages)
-            kipl::io::WriteTIFF32(chmCrop,msg.str().c_str());
+            kipl::io::WriteTIFF(chmCrop,msg.str(),kipl::base::Float32);
 
 
         float minVal=0.0f;
@@ -181,7 +173,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
 
         kipl::math::minmax(chmCrop.GetDataPtr(),chmCrop.Size(),&minVal,&maxVal,true);
         float threshold = (maxVal-minVal)*0.8f+minVal;
-        insetpeaks.Resize(chmCrop.Dims());
+        insetpeaks.resize(chmCrop.dims());
         for (size_t i=0; i<chmCrop.Size(); ++i)
             insetpeaks[i]=threshold < chmCrop[i];
 
@@ -203,7 +195,6 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
     dotfile.close();
     timer.Toc();
     msg.str(""); msg<<"hMax timing: "<<timer;
-    qDebug() << msg.str().c_str();
 
 }
 
@@ -229,21 +220,20 @@ void ContrastSampleAnalysis::findCenters()
     kipl::morphology::hMax(chm,peaks,threshold, kipl::base::conn4);
     timer.Toc();
     msg.str(""); msg<<"hMax timing: "<<timer;
-    qDebug() << msg.str().c_str();
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(peaks,"csa_hmax.tif");
+        kipl::io::WriteTIFF(peaks,"csa_hmax.tif",kipl::base::Float32);
 
     insetpeaks=chm-peaks;
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(insetpeaks,"csa_insetpeaks.tif");
+        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks.tif",kipl::base::Float32);
 
     for (size_t i=0; i<insetpeaks.Size(); ++i)
         insetpeaks[i]=0.5f*threshold<insetpeaks[i];
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(insetpeaks,"csa_insetpeaks_bi.tif");
+        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks_bi.tif",kipl::base::Float32);
     timer.reset();
     timer.Tic();
 
@@ -272,24 +262,24 @@ void ContrastSampleAnalysis::estimateInsetRing()
     msg.str("");
     msg<<"Found "<<dots.size()<<" dots";
     logger(logger.LogMessage,msg.str());
-    qDebug() << msg.str().c_str();
     if (dots.size()<5)
         throw kipl::base::KiplException("Too few dots to estimate the ring parameters.");
-    TNT::Array2D<float> H(dots.size()-1UL,2);
-    TNT::Array1D<float> a(dots.size()-1UL);
+    arma::mat H(dots.size()-1UL,2);
+    arma::vec a(dots.size()-1UL);
+
     std::pair<float,float> xyN=dots.back();
-    for (size_t i=0; i<dots.size()-1; ++i) {
-        H[i][0]=2*(xyN.first-dots[i].first);
-        H[i][1]=2*(xyN.second-dots[i].second);
-        a[i]=xyN.first*xyN.first
+
+    for (size_t i=0; i<dots.size()-1; ++i)
+    {
+        H(i,0) = 2*(xyN.first-dots[i].first);
+        H(i,1) = 2*(xyN.second-dots[i].second);
+        a(i)   = xyN.first*xyN.first
                 +xyN.second*xyN.second
                 -dots[i].first*dots[i].first
                 -dots[i].second*dots[i].second;
     }
 
-    JAMA::QR<float> qr(H);
-    TNT::Array1D<float> parameters;
-    parameters = qr.solve(a);
+    arma::vec parameters = arma::solve(H,a);
     m_ringCenter.x=parameters[0];
     m_ringCenter.y=parameters[1];
 
@@ -297,7 +287,6 @@ void ContrastSampleAnalysis::estimateInsetRing()
     timer.Toc();
 
     msg.str(""); msg<<"Circle fitting timing: "<<timer;
-    qDebug() << msg.str().c_str();
 
     msg.str("");
     msg<<"Ring center at ["<<parameters[0]<<", "<<parameters[1]<<"]";
@@ -311,8 +300,10 @@ void ContrastSampleAnalysis::estimateInsetRing()
     msg.str("");
     msg<<"Dot centers at:\n";
     float r=hypotf(m_maxInsetCenter.x-m_ringCenter.x,m_maxInsetCenter.y-m_ringCenter.y);
+
     m_insetCenters.clear();
-    for (int i=0 ; i<6 ; i++) {
+    for (int i=0 ; i<6 ; i++)
+    {
         kipl::base::coords3Df coord;
 
         coord.y=r*cos(phi+i*fPi/3)+m_ringCenter.y;
@@ -322,6 +313,7 @@ void ContrastSampleAnalysis::estimateInsetRing()
 
         msg<<"Inset "<<i<<" at "<<coord.x<<", "<<coord.y<<"\n";
     }
+
     logger.message(msg.str());
 }
 
@@ -364,9 +356,8 @@ void ContrastSampleAnalysis::makeHistogram()
 {
     std::ostringstream msg;
     msg<<"Compute histogram (size="<<m_Img2D.Size()<<", #bins="<<hist_size;
-    qDebug() << msg.str().c_str();
     logger(logger.LogMessage,msg.str());
-    kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_size,hist_bins,hist_axis,0.0f,0.0f,false);
+    kipl::base::Histogram(m_Img2D.GetDataPtr(),m_Img2D.Size(),hist_size,hist_bins,hist_axis,0.0f,0.0f,true);
 
     hist_bins = medianFilter(hist_bins,5UL);
 
@@ -387,10 +378,9 @@ void ContrastSampleAnalysis::circleTransform(float pixelSize)
     chm=cht(m_Img2D,radius,true);
     timer.Toc();
     msg.str(""); msg<<"Circular Hough timing: "<<timer;
-    qDebug() << msg.str().c_str();
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF32(chm,"csa_cht.tif");
+        kipl::io::WriteTIFF(chm,"csa_cht.tif",kipl::base::Float32);
 }
 
 }

@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef __IMAGEINFO_H
-#define __IMAGEINFO_H
+#ifndef IMAGEINFO_H
+#define IMAGEINFO_H
 #include "../kipl_global.h"
 #include <string>
 #include <iostream>
@@ -61,7 +61,7 @@ namespace kipl { namespace base {
 
         /// \brief Getter for the metric resolution in the X-direction
         /// \return the pixel size in mm
-		float GetMetricX() {return fResolutionX;}
+        float GetMetricX() const {return fResolutionX;}
 
         /// \brief Sets the metric pixel size in the Y-direction
         /// \param res pixel size in mm
@@ -69,7 +69,7 @@ namespace kipl { namespace base {
 
         /// \brief Getter for the metric resolution in the Y-direction
         /// \return the pixel size in mm
-		float GetMetricY() {return fResolutionY;}
+        float GetMetricY() const {return fResolutionY;}
 
         /// \brief Set the metric resolution as pixels per cm in the X-direction
         /// \param the pixel size in mm
@@ -77,7 +77,7 @@ namespace kipl { namespace base {
 
         /// \brief Getter for the metric resolution in the X-direction
         /// \return the resolution in pixels per cm
-		float GetDPCMX() {return 10.0f/fResolutionX;}
+        float GetDPCMX() const {return 10.0f/fResolutionX;}
 		
         /// \brief Getter for the metric resolution in the Y-direction
         /// \return the resolution in pixels per cm
@@ -85,7 +85,7 @@ namespace kipl { namespace base {
 
         /// \brief Getter for the metric resolution in the Y-direction
         /// \return the number of pixels per cm
-        float GetDPCMY() {return 10.f/fResolutionY;}
+        float GetDPCMY() const {return 10.f/fResolutionY;}
 
         /// \brief Set for the metric resolution as pixels per cm in the X-direction
         /// \param The number of pixels per cm
@@ -93,7 +93,7 @@ namespace kipl { namespace base {
 
         /// \brief Getter for the imperial resolution in the X-direction
         /// \return the number of pixels per inch
-		float GetDPIX() {return 25.4f/fResolutionX;}
+        float GetDPIX() const {return 25.4f/fResolutionX;}
 
         /// \brief Set for the metric resolution as pixels per cm in the X-direction
         /// \param The number of pixels per cm
@@ -101,7 +101,7 @@ namespace kipl { namespace base {
 
         /// \brief Getter for the imperial resolution in the Y-direction
         /// \return the number of pixels per inch
-		float GetDPIY() {return 25.4f/fResolutionY;}
+        float GetDPIY() const {return 25.4f/fResolutionY;}
 		
         std::string    sSoftware;        ///< TIFF tag 305
         std::string    sArtist;	         ///< TIFF tag 315

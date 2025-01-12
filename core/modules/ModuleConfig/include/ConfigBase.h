@@ -28,6 +28,7 @@ protected:
     std::string m_sName;            ///< Name of the application
     std::string m_sApplicationPath; ///< Path to the application binary
                                     ///< Can be used to set default paths
+    static std::string m_sHomePath;        ///< Home path of the user
 
 public:
     /// Configuration containing basic project information.
@@ -101,6 +102,9 @@ public:
 
     void setAppPath(const std::string & path);
     std::string appPath();
+
+    static void setHomePath(const std::string & path);
+    static std::string homePath();
 protected:
     /// Parser for an opened XML formatted input file.
     /// \param reader Reference to an xml reader struct for the opened configuration file.
@@ -115,6 +119,7 @@ protected:
     /// \param args The argument list
     virtual void ParseArgv(std::vector<std::string> &args);
 
+    std::string FilterQuotes(const std::string &value, char quote);
     void EvalArg(std::string arg, std::string &group, std::string &var, std::string &value);
 
     /// Parse the User information config block.

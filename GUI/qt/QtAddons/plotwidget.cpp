@@ -7,6 +7,11 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QMenu>
+#include <QClipboard>
+#include <QMargins>
+#include <QBoxPlotSeries>
+#include <QLegendMarker>
 
 #include <strings/filenames.h>
 
@@ -29,7 +34,8 @@ PlotWidget::PlotWidget(QWidget *parent) :
 
     QChart *chart = new QChart();
     ui->chart->setChart(chart);
-    chart->layout()->setContentsMargins(2,2,2,2);
+    chart->setMargins(QMargins(2,2,2,2));
+    //chart->layout()->setContentsMargins(2,2,2,2);
     ui->chart->chart()->setAcceptHoverEvents(true);
     setupActions();
 }
@@ -42,7 +48,7 @@ PlotWidget::~PlotWidget()
 
 void PlotWidget::setCurveData(int id, const QVector<QPointF> &data, QString name)
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
     int i=0;
     for (auto it=data.begin(); it!=data.end(); ++it, ++i)
         series->append(it->x(),it->y());
@@ -53,9 +59,71 @@ void PlotWidget::setCurveData(int id, const QVector<QPointF> &data, QString name
     setCurveData(id,series);
 }
 
+void PlotWidget::setCurveData(int id, const std::vector<float> &data, QString name)
+{
+    QLineSeries *series=new QLineSeries();
+    int i=0;
+    for (auto &item : data)
+        series->append(i++,item);
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
+}
+
+void PlotWidget::setCurveData(int id, const std::vector<float> &x, const std::vector<float> &y, QString name)
+{
+    QLineSeries *series=new QLineSeries();
+
+    if (x.size() != y.size())
+        throw kipl::base::DimsException("PlotWidget got size mismatch in the vector lengths",__FILE__,__LINE__);
+
+    auto itX = x.begin();
+    auto itY = y.begin();
+    for (; itX != x.end() ; ++itX, ++itY)
+        series->append(*itX,*itY);
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
+}
+
+void PlotWidget::setCurveData(int id, const std::vector<float> &x, const std::vector<size_t> &y, QString name)
+{
+    QLineSeries *series=new QLineSeries();
+
+    if (x.size() != y.size())
+        throw kipl::base::DimsException("PlotWidget got size mismatch in the vector lengths",__FILE__,__LINE__);
+
+    auto itX = x.begin();
+    auto itY = y.begin();
+    for (; itX != x.end() ; ++itX, ++itY)
+        series->append(*itX,*itY);
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
+}
+
+void PlotWidget::setCurveData(int id, const std::map<float, float> &data, QString name)
+{
+    QLineSeries *series=new QLineSeries();
+
+    for (auto const &item : data)
+        series->append(item.first,item.second);
+
+    if (name.isEmpty() ==false)
+        series->setName(name);
+
+    setCurveData(id,series);
+}
+
 void PlotWidget::setCurveData(int id, const float * const x, const float * const y, const int N, QString name)
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
 
     for (int i=0; i<N ; ++i)
         series->append(qreal(x[i]),qreal(y[i]));
@@ -68,7 +136,7 @@ void PlotWidget::setCurveData(int id, const float * const x, const float * const
 
 void PlotWidget::setCurveData(int id, const float * const x, const size_t * const y, const int N, QString name)
 {
-    QtCharts::QLineSeries *series=new QtCharts::QLineSeries();
+    QLineSeries *series=new QLineSeries();
 
     for (int i=0; i<N ; ++i)
         series->append(qreal(x[i]),qreal(y[i]));
@@ -133,6 +201,8 @@ void PlotWidget::setCurveData(int id, QLineSeries *series, bool deleteData)
 
 void PlotWidget::setDataSeries(int id, QAbstractSeries *series, bool deleteData)
 {
+    std::ignore = deleteData;
+
     auto it=seriesmap.find(id);
     if ( it != seriesmap.end())
     {
@@ -221,39 +291,47 @@ void PlotWidget::updateAxes()
 { 
     findMinMax();
 
+    auto axes = ui->chart->chart()->axes();
+
     if (minX!=std::numeric_limits<double>::max())
-        ui->chart->chart()->axisX()->setMin(minX);
+        axes[0]->setMin(minX);
 
     if (maxX!=-std::numeric_limits<double>::max())
-        ui->chart->chart()->axisX()->setMax(maxX);
+        axes[0]->setMax(maxX);
 
     if (minY!=std::numeric_limits<double>::max())
-        ui->chart->chart()->axisY()->setMin(minY);
+        axes[1]->setMin(minY);
 
     if (maxY!=-std::numeric_limits<double>::max())
-        ui->chart->chart()->axisY()->setMax(maxY);
+        axes[1]->setMax(maxY);
+
 }
 
 void PlotWidget::setXLabel(const QString &lbl)
 {
+    auto axes = ui->chart->chart()->axes();
+
     if (lbl.isEmpty())
-        ui->chart->chart()->axisX()->setTitleVisible(false);
+        axes[0]->setTitleVisible(false);
     else
     {
-        ui->chart->chart()->axisX()->setTitleText(lbl);
-        ui->chart->chart()->axisX()->setTitleVisible(true);
+        axes[0]->setTitleText(lbl);
+        axes[0]->setTitleVisible(true);
     }
 }
 
 void PlotWidget::setYLabel(const QString &lbl)
 {
+    auto axes = ui->chart->chart()->axes();
+
     if (lbl.isEmpty())
-        ui->chart->chart()->axisY()->setTitleVisible(false);
+        axes[1]->setTitleVisible(false);
     else
     {
-        ui->chart->chart()->axisY()->setTitleText(lbl);
-        ui->chart->chart()->axisY()->setTitleVisible(true);
+        axes[1]->setTitleText(lbl);
+        axes[1]->setTitleVisible(true);
     }
+
 }
 
 void PlotWidget::findMinMax()
@@ -274,7 +352,7 @@ void PlotWidget::findMinMax()
             {
                 QLineSeries *series=dynamic_cast<QLineSeries *>(seriesItem.second);
 
-                QVector<QPointF> points=series->pointsVector();
+                auto points=series->points();
                 for (const auto &point: points)
                 {
                     minX = std::min(minX,point.x());
@@ -284,7 +362,18 @@ void PlotWidget::findMinMax()
                 }
             }
             break;
-            case QAbstractSeries::SeriesTypeBoxPlot :
+            case QAbstractSeries::SeriesTypeArea:
+            case QAbstractSeries::SeriesTypeBar:
+            case QAbstractSeries::SeriesTypeStackedBar:
+            case QAbstractSeries::SeriesTypePercentBar:
+            case QAbstractSeries::SeriesTypePie:
+            case QAbstractSeries::SeriesTypeScatter:
+            case QAbstractSeries::SeriesTypeSpline:
+            case QAbstractSeries::SeriesTypeHorizontalBar:
+            case QAbstractSeries::SeriesTypeHorizontalStackedBar:
+            case QAbstractSeries::SeriesTypeHorizontalPercentBar:
+            case QAbstractSeries::SeriesTypeBoxPlot:
+            case QAbstractSeries::SeriesTypeCandlestick:
             break;
         }
     }
@@ -449,7 +538,7 @@ void PlotWidget::saveCurveData()
                     case QAbstractSeries::SeriesTypeLine :
                     {
                         QLineSeries *series = dynamic_cast<QLineSeries *>(s.second);
-                        auto data = series->pointsVector();
+                        auto data = series->points();
                         for (auto p : data)
                         {
                             datastream<<p.x()<<", "<<p.y()<<std::endl;
@@ -512,14 +601,12 @@ void PlotWidget::updateCursors()
 
     for (const auto &c : cursors)
     {
-        QtCharts::QLineSeries *line=nullptr;
+        QLineSeries *line=nullptr;
         auto it=cursormap.find(c.first);
         if (it==cursormap.end())
         {
-            line=new QtCharts::QLineSeries();
+            line=new QLineSeries();
             cursormap.insert(std::make_pair(c.first,line));
-
-
 
             line->setPointsVisible(false);
 

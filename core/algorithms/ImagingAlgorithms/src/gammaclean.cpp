@@ -37,11 +37,11 @@ kipl::base::TImage<float,2> GammaClean::Process(kipl::base::TImage<float,2> & im
     std::stringstream msg;
     kipl::base::TImage<float,2> LoG=kipl::filters::LaplacianOfGaussian(img,m_fSigma);
 
-    size_t meddims[2]={m_nMedianSize,m_nMedianSize};
+    std::vector<size_t> meddims={m_nMedianSize,m_nMedianSize};
     kipl::filters::TMedianFilter<float,2> med3(meddims);
     kipl::base::TImage<float,2> LoGm3=med3(LoG);
 
-    kipl::base::TImage<int,2> mask(img.Dims()); mask=0;
+    kipl::base::TImage<int,2> mask(img.dims()); mask=0;
     float *pLoG=LoG.GetDataPtr();
     float *pLoGm3=LoGm3.GetDataPtr();
     int *pMask=mask.GetDataPtr();

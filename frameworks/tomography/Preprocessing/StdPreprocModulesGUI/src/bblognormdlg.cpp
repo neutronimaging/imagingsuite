@@ -27,33 +27,36 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     nBBFirstIndex(1),
     nBBSampleCount(0),
     nBBSampleFirstIndex(1),
+    BBroi(4,0UL),
+    doseBBroi(4,0UL),
     radius(2),
+    min_area(20),
+    ffirstAngle(0.0f),
+    flastAngle(360.0f),
 //    bUseNormROI(true),
 //    bUseNormROIBB(false),
+    blackbodyexternalname("none"),
+    blackbodysampleexternalname("none"),
+    blackbodyexternalmaskname("none"),
+    nBBextCount(1),
+    nBBextFirstIndex(0),
     tau(0.99f),
+    thresh(0),
     bPBvariante(true),
     bSameMask(true),
     bUseManualThresh(false),
-    m_nWindow(5),
+    bExtSingleFile(true),
     m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
     m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
     m_yInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_y),
     m_InterpMethod(ImagingAlgorithms::ReferenceImageCorrection::Polynomial),
-    ffirstAngle(0.0f),
-    flastAngle(360.0f),
-    nBBextCount(1),
-    nBBextFirstIndex(0),
-    min_area(20),
-    thresh(0),
-    bExtSingleFile(true)
+    m_nWindow(5)
 {
 
     blackbodyname = "somename";
     blackbodysamplename = "somename";
-    doseBBroi[0] = doseBBroi[1] = doseBBroi[2] = doseBBroi[3] = 0;
-    BBroi[0] = BBroi[1] = BBroi[2] = BBroi[3] = 0;
 
     blackbodyexternalname = "./";
     blackbodysampleexternalname = "./";
@@ -85,10 +88,9 @@ BBLogNormDlg::~BBLogNormDlg()
 }
 
 
-int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> &img) {
-
+int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters, kipl::base::TImage<float, 3> & /*img*/) 
+{
     m_Config=dynamic_cast<ReconConfig *>(config);
-
 
     try{
         nBBFirstIndex = GetIntParameter(parameters,"BB_first_index");
@@ -113,15 +115,16 @@ int BBLogNormDlg::exec(ConfigBase *config, std::map<string, string> &parameters,
         string2enum(GetStringParameter(parameters,"Y_InterpOrder"), m_yInterpOrder);
         string2enum(GetStringParameter(parameters,"InterpolationMethod"), m_InterpMethod);
 
-        blackbodyexternalname = GetStringParameter(parameters,"BB_OB_ext_name");
-        blackbodysampleexternalname = GetStringParameter(parameters,"BB_sample_ext_name");
-        nBBextCount = GetIntParameter(parameters,"BB_ext_samplecounts");
-        nBBextFirstIndex = GetIntParameter(parameters,"BB_ext_firstindex");
-        bSameMask = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
-        bExtSingleFile = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
-        bUseManualThresh = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
-        thresh = GetFloatParameter(parameters,"thresh");
-        min_area = GetIntParameter(parameters, "min_area");
+        blackbodyexternalname       = GetStringParameter(parameters, "BB_OB_ext_name");
+        blackbodysampleexternalname = GetStringParameter(parameters, "BB_sample_ext_name");
+        blackbodyexternalmaskname   = GetStringParameter(parameters, "BB_mask_ext_name");
+        nBBextCount                 = GetIntParameter(parameters,    "BB_ext_samplecounts");
+        nBBextFirstIndex            = GetIntParameter(parameters,    "BB_ext_firstindex");
+        bSameMask                   = kipl::strings::string2bool(GetStringParameter(parameters,"SameMask"));
+        bExtSingleFile              = kipl::strings::string2bool(GetStringParameter(parameters, "singleBBext"));
+        bUseManualThresh            = kipl::strings::string2bool(GetStringParameter(parameters,"ManualThreshold"));
+        thresh                      = GetFloatParameter(parameters,"thresh");
+        min_area                    = GetIntParameter(parameters, "min_area");
 
 //        bUseExternalBB = kipl::strings::string2bool(GetStringParameter(parameters,"useExternalBB")); // not sure I need those here
 //        bUseBB = kipl::strings::string2bool(GetStringParameter(parameters, "useBB"));
@@ -295,17 +298,17 @@ void BBLogNormDlg::UpdateParameterList(std::map<string, string> &parameters){
     parameters["X_InterpOrder"] = enum2string(m_xInterpOrder);
     parameters["Y_InterpOrder"] = enum2string(m_yInterpOrder);
 
-    parameters["BB_OB_ext_name"] = blackbodyexternalname;
-    parameters["BB_sample_ext_name"] = blackbodysampleexternalname;
+    parameters["BB_OB_ext_name"]      = blackbodyexternalname;
+    parameters["BB_sample_ext_name"]  = blackbodysampleexternalname;
+    parameters["BB_mask_ext_name"]    = blackbodyexternalmaskname ;
     parameters["BB_ext_samplecounts"] = kipl::strings::value2string(nBBextCount);
-    parameters["BB_ext_firstindex"] = kipl::strings::value2string(nBBextFirstIndex);
+    parameters["BB_ext_firstindex"]   = kipl::strings::value2string(nBBextFirstIndex);
+
     parameters["SameMask"] = kipl::strings::bool2string(bSameMask);
     parameters["ManualThreshold"] = kipl::strings::bool2string(bUseManualThresh);
     parameters["min_area"] = kipl::strings::value2string(min_area);
     parameters["thresh"]= kipl::strings::value2string(thresh);
     parameters["singleBBext"] = kipl::strings::bool2string(bExtSingleFile);
-
-
 }
 
 void BBLogNormDlg::on_button_OBBBpath_clicked()
@@ -369,7 +372,7 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
     kipl::strings::filenames::MakeFileName(blackbodyname,nBBFirstIndex,filename,ext,'#','0');
     size_t found=blackbodyname.find("hdf");
     ProjectionReader reader;
-    if (QFile::exists(QString::fromStdString(filename)) || QFile::exists(QString::fromStdString(blackbodyname)) && blackbodyname!="./")
+    if ((QFile::exists(QString::fromStdString(filename)) || QFile::exists(QString::fromStdString(blackbodyname))) && blackbodyname!="./")
         {
             if (found==std::string::npos )
             {
@@ -377,14 +380,14 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
                                              m_Config->ProjectionInfo.eFlip,
                                              m_Config->ProjectionInfo.eRotate,
                                              m_Config->ProjectionInfo.fBinning,
-                                             nullptr);
+                                             {});
             }
             else {
                  m_Preview_OBBB = reader.ReadNexus(blackbodyname, 0,
                                                  m_Config->ProjectionInfo.eFlip,
                                                  m_Config->ProjectionInfo.eRotate,
                                                  m_Config->ProjectionInfo.fBinning,
-                                                 nullptr);
+                                                 {});
             }
             float lo,hi;
 
@@ -399,7 +402,7 @@ void BBLogNormDlg::on_buttonPreviewOBBB_clicked()
                 lo=axis[nLo];
                 hi=axis[nHi];
 
-                ui->ob_bb_Viewer->set_image(m_Preview_OBBB.GetDataPtr(), m_Preview_OBBB.Dims(), lo,hi);
+                ui->ob_bb_Viewer->set_image(m_Preview_OBBB.GetDataPtr(), m_Preview_OBBB.dims(), lo,hi);
     }
 
 
@@ -474,7 +477,7 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
                                      m_Config->ProjectionInfo.eFlip,
                                      m_Config->ProjectionInfo.eRotate,
                                      m_Config->ProjectionInfo.fBinning,
-                                     nullptr);
+                                     {});
 
 
         float lo,hi;
@@ -490,7 +493,7 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
             lo=axis[nLo];
             hi=axis[nHi];
 
-            ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.Dims(), lo,hi);
+            ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.dims(), lo,hi);
 
     //    }
     //    else {
@@ -505,7 +508,7 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
                                               m_Config->ProjectionInfo.eFlip,
                                               m_Config->ProjectionInfo.eRotate,
                                               m_Config->ProjectionInfo.fBinning,
-                                              nullptr);
+                                              {});
         float lo,hi;
 
     //    if (x < 0) {
@@ -519,7 +522,7 @@ void BBLogNormDlg::on_buttonPreviewsampleBB_clicked()
             lo=axis[nLo];
             hi=axis[nHi];
 
-            ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.Dims(), lo,hi);
+            ui->sample_bb_Viewer->set_image(m_Preview_sampleBB.GetDataPtr(), m_Preview_sampleBB.dims(), lo,hi);
 
     //    }
     //    else {
@@ -559,7 +562,7 @@ void BBLogNormDlg::on_errorButton_clicked()
             module.ConfigureDLG(*(dynamic_cast<ReconConfig *>(m_Config)),parameters);
 
         }
-        catch(kipl::base::KiplException &e) {
+        catch(ModuleException &e){
             QMessageBox errdlg(this);
             errdlg.setText("Failed to configure the module dialog, check the parameters");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
@@ -567,7 +570,7 @@ void BBLogNormDlg::on_errorButton_clicked()
             errdlg.exec();
             return ;
         }
-        catch(ModuleException &e){
+        catch(kipl::base::KiplException &e) {
             QMessageBox errdlg(this);
             errdlg.setText("Failed to configure the module dialog, check the parameters");
             errdlg.setDetailedText(QString::fromStdString(e.what()));
@@ -624,7 +627,7 @@ void BBLogNormDlg::on_errorButton_clicked()
         kipl::base::FindLimits(hist, NHist, 99.0f, &nLo, &nHi);
         lo=axis[nLo];
         hi=axis[nHi];
-        ui->mask_Viewer->set_image(mymask.GetDataPtr(), mymask.Dims(), lo,hi);
+        ui->mask_Viewer->set_image(mymask.GetDataPtr(), mymask.dims(), lo,hi);
     }
 
 }
@@ -741,7 +744,7 @@ void BBLogNormDlg::on_spinThresh_valueChanged(double arg1)
     thresh = arg1;
 }
 
-void BBLogNormDlg::on_checkBox_thresh_stateChanged(int arg1)
+void BBLogNormDlg::on_checkBox_thresh_stateChanged(int /*arg1*/)
 {
 
 }
@@ -765,7 +768,7 @@ void BBLogNormDlg::on_check_singleext_clicked(bool checked)
 
 }
 
-void BBLogNormDlg::on_check_singleext_stateChanged(int arg1)
+void BBLogNormDlg::on_check_singleext_stateChanged(int /*arg1*/)
 {
     if (ui->check_singleext->isChecked())
     {

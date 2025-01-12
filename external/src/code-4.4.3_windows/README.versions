@@ -1,4 +1,0 @@
-To increment the NeXus version you need to:
-- change the argument to AC_INIT in configure.ac
-- update NEXUS_VERSION in include/napi.h
-- change version number printed in test output contained in test/testsuite.at

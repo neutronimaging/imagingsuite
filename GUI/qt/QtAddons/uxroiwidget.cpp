@@ -70,7 +70,7 @@ void uxROIWidget::updateBounds()
 {
     if ((allowUpdateImageDims==true) && (hViewer!=nullptr)) {
         int x,y;
-        hViewer->getImageDims(x,y);
+        hViewer->image_dims(x,y);
         setBoundingBox(0,0,x-1,y-1);
     }
 }
@@ -160,12 +160,12 @@ void uxROIWidget::setSelectionImage(kipl::base::TImage<float, 2> &img)
     selectionImage.Clone(img);
 }
 
-void uxROIWidget::setROI(size_t *roi, bool ignoreBoundingBox)
+void uxROIWidget::setROI(const std::vector<size_t> &roi, bool ignoreBoundingBox)
 {
     setROI(static_cast<int>(roi[0]),
            static_cast<int>(roi[1]),
-            static_cast<int>(roi[2]),
-            static_cast<int>(roi[3]),ignoreBoundingBox);
+           static_cast<int>(roi[2]),
+           static_cast<int>(roi[3]),ignoreBoundingBox);
 }
 
 void uxROIWidget::setROI(int *roi, bool ignoreBoundingBox)
@@ -180,13 +180,11 @@ void uxROIWidget::setROI(QRect rect, bool ignoreBoundingBox)
 
 void uxROIWidget::setROI(kipl::base::RectROI roi, bool ignoreBoundingBox)
 {
-    size_t iroi[4];
 
-   roi.getBox(iroi);
-   setROI(static_cast<int>(iroi[0]),
-          static_cast<int>(iroi[1]),
-           static_cast<int>(iroi[2]),
-           static_cast<int>(iroi[3]),ignoreBoundingBox);
+   setROI(static_cast<int>(roi.box()[0]),
+          static_cast<int>(roi.box()[1]),
+          static_cast<int>(roi.box()[2]),
+          static_cast<int>(roi.box()[3]),ignoreBoundingBox);
 }
 
 void uxROIWidget::getROI(QRect &rect)
@@ -211,6 +209,22 @@ void uxROIWidget::getROI(int *roi)
     getROI(roi[0],roi[1],roi[2],roi[3]);
 }
 
+void uxROIWidget::getROI(std::vector<int> &roi)
+{
+    roi = {0,0,0,0};
+
+    getROI(roi[0],roi[1],roi[2],roi[3]);
+}
+
+void uxROIWidget::getROI(std::vector<size_t> &roi)
+{
+    std::vector<int> iroi(4,0);
+
+    getROI(iroi[0],iroi[1],iroi[2],iroi[3]);
+
+    roi = std::vector<size_t>(iroi.begin(),iroi.end());
+}
+
 void uxROIWidget::getROI(size_t *roi)
 {
     int iroi[4];
@@ -220,7 +234,7 @@ void uxROIWidget::getROI(size_t *roi)
 
 void uxROIWidget::getROI(kipl::base::RectROI & roi)
 {
-    size_t iroi[4];
+    std::vector<size_t> iroi;
     getROI(iroi);
     roi = kipl::base::RectROI(iroi);
 }

@@ -39,7 +39,7 @@ size_t GenericBP::Process(kipl::base::TImage<float,3> proj, std::map<std::string
 int GenericBP::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
     mConfig = config;
-
+    BackProjectorModuleBase::Configure(config, parameters);
     m_sStringParameter  = GetStringParameter(parameters,"par1");
     m_fFloatParameter   = GetIntParameter(parameters,"par2");
     m_bBooleanParameter = kipl::strings::string2bool(GetStringParameter(parameters,"par3"));
@@ -51,6 +51,7 @@ std::map<std::string, std::string> GenericBP::GetParameters()
 {
     std::map<std::string, std::string> parameters;
 
+    parameters = BackProjectorModuleBase::GetParameters();
     // The default values for the back projector are defined by initialization of the c'tor.
     parameters["par1"] = m_sStringParameter;
     parameters["par2"] = kipl::strings::value2string(m_fFloatParameter);
@@ -59,13 +60,9 @@ std::map<std::string, std::string> GenericBP::GetParameters()
     return parameters;
 }
 
-void GenericBP::SetROI(size_t *roi)
+void GenericBP::SetROI(const std::vector<size_t> &roi)
 {
-    mConfig.ProjectionInfo.roi[0]=roi[0];
-    mConfig.ProjectionInfo.roi[1]=roi[1];
-    mConfig.ProjectionInfo.roi[2]=roi[2];
-    mConfig.ProjectionInfo.roi[3]=roi[3];
-
+    mConfig.ProjectionInfo.roi = roi;
     // Initialize region to reconstruct
 }
 

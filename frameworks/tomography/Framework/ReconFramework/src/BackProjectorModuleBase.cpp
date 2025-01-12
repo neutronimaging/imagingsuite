@@ -1,6 +1,12 @@
 //<LICENSE>
 
+#include <thread>
+#include <tuple>
+
 #include <math/mathconstants.h>
+#include <strings/miscstring.h>
+#include <ParameterHandling.h>
+#include <ModuleException.h>
 
 #include "../include/BackProjectorModuleBase.h"
 #include "../include/ReconException.h"
@@ -10,8 +16,12 @@ BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::s
 	MatrixAlignment(align),
     mConfig(""),
     m_sModuleName(name),
-	m_sApplication(application),
-	m_Interactor(interactor)
+    m_bBuildCircleMask(true),
+    maskArea(0UL),
+    m_sApplication(application),
+    m_Interactor(interactor),
+    nMaxThreads(-1)
+
 {
 	logger(kipl::logging::Logger::LogMessage,"C'tor BackProjBase");
     if (m_Interactor!=nullptr) {
@@ -21,10 +31,16 @@ BackProjectorModuleBase::BackProjectorModuleBase(std::string application, std::s
 		logger(kipl::logging::Logger::LogVerbose,"An interactor was not provided");
 
 	}
+    setNumberOfThreads(-1);
 }
 
 BackProjectorModuleBase::~BackProjectorModuleBase(void)
 {
+}
+
+void BackProjectorModuleBase::resetTimer()
+{
+    timer.reset();
 }
 
 const std::vector<Publication> &BackProjectorModuleBase::publicationList()
@@ -34,6 +50,11 @@ const std::vector<Publication> &BackProjectorModuleBase::publicationList()
 
 size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,2> proj, float angle, float weight, bool bLastProjection)
 {
+    std::ignore = proj;
+    std::ignore = angle;
+    std::ignore = weight;
+    std::ignore = bLastProjection;
+
 	std::ostringstream msg;
 
 	msg<<"Backprojector module "<<m_sModuleName<<" does not support 2D processing.";
@@ -44,21 +65,66 @@ size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,2> proj, float 
 
 size_t BackProjectorModuleBase::Process(kipl::base::TImage<float,3> proj, std::map<std::string, std::string> parameters)
 {
+    std::ignore = proj;
+    std::ignore = parameters;
+
 	std::ostringstream msg;
 
 	msg<<"Backprojector module "<<m_sModuleName<<" does not support 3D processing.";
 	throw ReconException(msg.str(),__FILE__,__LINE__);
 
-	return 0;
+    return 0;
+}
+
+int BackProjectorModuleBase::Configure(ReconConfig config, std::map<string, string> parameters)
+{
+    setNumberOfThreads(config.System.nMaxThreads);
+
+    try {
+        m_bBuildCircleMask = kipl::strings::string2bool(GetStringParameter(parameters,"usecircularmask"));
+    }
+    catch (ModuleException &e)
+    {
+        m_bBuildCircleMask = true;
+    }
+
+    return 0;
+}
+
+std::map<string, string> BackProjectorModuleBase::GetParameters()
+{
+   std::map<string, string> params;
+
+   params["usecircularmask"] = m_bBuildCircleMask ? "true" : "false" ;
+
+   return params;
+}
+
+void BackProjectorModuleBase::setNumberOfThreads(int N)
+{
+    int hwMaxThreads = std::thread::hardware_concurrency();
+
+    if ((N<1) || (hwMaxThreads<N))
+    {
+        nMaxThreads = hwMaxThreads ;
+    }
+    else
+    {
+        nMaxThreads = N;
+    }
+}
+
+int BackProjectorModuleBase::numberOfThreads()
+{
+    return nMaxThreads;
 }
 
 
 kipl::base::TImage<float,2> BackProjectorModuleBase::GetSlice(size_t idx)
 {
-
     std::ostringstream msg;
 	size_t origin[2]={0,0};
-	size_t dims[2]={0,0};
+    std::vector<size_t> dims(2,0UL);
 	if (mConfig.MatrixInfo.bUseROI) {
 		dims[0]=mConfig.MatrixInfo.roi[2]-mConfig.MatrixInfo.roi[0]+1;
 		dims[1]=mConfig.MatrixInfo.roi[3]-mConfig.MatrixInfo.roi[1]+1;
@@ -131,7 +197,8 @@ size_t BackProjectorModuleBase::GetNSlices()
 
 bool BackProjectorModuleBase::UpdateStatus(float val, std::string msg)
 {
-    if (m_Interactor!=nullptr) {
+    if (m_Interactor!=nullptr)
+    {
 		return m_Interactor->SetProgress(val,msg);
 	}
 
@@ -141,20 +208,23 @@ bool BackProjectorModuleBase::UpdateStatus(float val, std::string msg)
 void BackProjectorModuleBase::ClearAll()
 {
     mask.clear();
-    memset(MatrixDims,0,3*sizeof(size_t));
 }
 
 void BackProjectorModuleBase::BuildCircleMask()
 {
     size_t nSizeX=0;
     size_t nSizeY=0;
-    if (MatrixAlignment==BackProjectorModuleBase::MatrixXYZ) {
-        nSizeX=MatrixDims[0];
-        nSizeY=MatrixDims[1];
+    auto matrixDims = volume.dims();
+
+    if (MatrixAlignment==BackProjectorModuleBase::MatrixXYZ)
+    {
+        nSizeX=matrixDims[0];
+        nSizeY=matrixDims[1];
     }
-    else {
-        nSizeX=MatrixDims[1];
-        nSizeY=MatrixDims[2];
+    else
+    {
+        nSizeX=matrixDims[1];
+        nSizeY=matrixDims[2];
     }
 
     const float matrixCenterX=static_cast<float>(nSizeX>>1);
@@ -162,33 +232,51 @@ void BackProjectorModuleBase::BuildCircleMask()
     mask.resize(nSizeY);
 
     float R=matrixCenterX-1;
-    if (mConfig.ProjectionInfo.bCorrectTilt) {
+    if (mConfig.ProjectionInfo.bCorrectTilt)
+    {
         float slices=0;
-        if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
+        if (mConfig.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
+        {
             slices=mConfig.ProjectionInfo.roi[3];
         }
-        else {
+        else
+        {
             slices=mConfig.ProjectionInfo.nDims[1];
         }
         R-=floor(tan(fabs(mConfig.ProjectionInfo.fTiltAngle)*fPi/180.0f)*slices);
     }
 
+    maskArea = 0UL;
     const float R2=R*R;
-    for (size_t i=0; i<nSizeY; i++) {
-        float y=static_cast<float>(i)-matrixCenterY;
-        float y2=y*y;
+    for (size_t i=0; i<nSizeY; i++)
+    {
+        if (m_bBuildCircleMask)
+        {
+            float y=static_cast<float>(i)-matrixCenterY;
+            float y2=y*y;
 
-        if (y2<=R2) {
-            float x=sqrt(R2-y2);
-            mask[i].first=static_cast<size_t>(ceil(matrixCenterX-x));
-            mask[i].second=min(nSizeX-1u,static_cast<size_t>(floor(matrixCenterX+x)));
+            if (y2<=R2)
+            {
+                float x=sqrt(R2-y2);
+                mask[i].first=static_cast<size_t>(ceil(matrixCenterX-x));
+                mask[i].second=min(nSizeX-1u,static_cast<size_t>(floor(matrixCenterX+x)));
+            }
+            else
+            {
+                mask[i].first  = 0UL;
+                mask[i].second = 0UL;
+            }
         }
-        else {
-            mask[i].first  = 0u;
-            mask[i].second = 0u;
+        else
+        {
+            mask[i].first  = 0UL;
+            mask[i].second = nSizeX;
         }
-        if (mConfig.MatrixInfo.bUseROI) {
-            if ((mConfig.MatrixInfo.roi[1]<=i) && (i<=mConfig.MatrixInfo.roi[3])) {
+
+        if (mConfig.MatrixInfo.bUseROI)
+        {
+            if ((mConfig.MatrixInfo.roi[1]<=i) && (i<=mConfig.MatrixInfo.roi[3]))
+            {
                 switch (mConfig.ProjectionInfo.beamgeometry)
                 {
                 case ReconConfig::cProjections::BeamGeometry_Parallel:
@@ -199,14 +287,38 @@ void BackProjectorModuleBase::BuildCircleMask()
                      mask[i].first=max(mask[i].first,nSizeX-mConfig.MatrixInfo.roi[2]);
                      mask[i].second=min(mask[i].second,nSizeX-mConfig.MatrixInfo.roi[0]);
                     break;
+                case ReconConfig::cProjections::BeamGeometry_Helix:
+                    throw ReconException("Helix geometry is not implemented",__FILE__,__LINE__);
+                    break;
                 }
             }
-            else {
+            else
+            {
                 mask[i].first=0u;
                 mask[i].second=0u;
             }
         }
-
+        maskArea += mask[i].second - mask[i].first;
     }
+
+    lineBlocks.resize(nMaxThreads);
+    size_t blockSize = maskArea / nMaxThreads;
+    size_t line = 0UL;
+
+    auto it = mask.begin();
+    for (auto &block : lineBlocks)
+    {
+        block.first = line;
+        size_t cumsum = 0UL;
+        for ( ; (cumsum<blockSize) && (it != mask.end()) ; ++it, ++line)
+        {
+            cumsum += it->second - it->first;
+        }
+        if (line<mask.size())
+            block.second = line;
+        else
+            block.second = mask.size() - 1;
+    }
+
 
 }

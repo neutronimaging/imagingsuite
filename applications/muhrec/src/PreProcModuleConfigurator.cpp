@@ -52,8 +52,8 @@ int PreProcModuleConfigurator::GetImage(std::string sSelectedModule, kipl::inter
 	}
 
 	logger(kipl::logging::Logger::LogMessage,"Engine successfully built");
-    size_t *r=config->ProjectionInfo.roi;
-    size_t roi[4]={r[0],r[1],r[2],r[3]};
+
+    auto roi = config->ProjectionInfo.roi;
     bool bRunFailure=false;
     try {
         if (interactor==nullptr)

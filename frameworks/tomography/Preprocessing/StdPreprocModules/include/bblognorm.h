@@ -27,8 +27,8 @@ public:
     virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
     virtual int ConfigureDLG(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and does not call PrepareBBData
     virtual std::map<std::string, std::string> GetParameters();
-    virtual void LoadReferenceImages(size_t *roi); /// load all images that are needed for referencing in the current roi
-    virtual bool SetROI(size_t *roi); /// set the current roi to be processed
+    virtual void LoadReferenceImages(const std::vector<size_t> &roi); /// load all images that are needed for referencing in the current roi
+    virtual bool SetROI(const std::vector<size_t> &roi); /// set the current roi to be processed
 
     virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
@@ -36,7 +36,7 @@ public:
     virtual float GetInterpolationError(kipl::base::TImage<float,2> &mask); /// computes and returns interpolation error and mask on OB image with BBs
     virtual kipl::base::TImage<float, 2> GetMaskImage();
     virtual void PrepareBBData(); /// read all data (entire projection) that I need and prepare them for the BB correction, it is now called in LoadReferenceImages
-    virtual void LoadExternalBBData(size_t *roi); /// load BB images pre-processed elsewhere
+    virtual void LoadExternalBBData(const std::vector<size_t> &roi); /// load BB images pre-processed elsewhere
 
 protected:
     ReconConfig m_Config;
@@ -48,6 +48,7 @@ protected:
 
     std::string blackbodyexternalname;
     std::string blackbodysampleexternalname;
+    std::string blackbodyexternalmaskname; /// name of user provided mask
 
     size_t nBBextCount; /// number of preprocessed BB images;
     size_t nBBextFirstIndex; /// first index in filneame for preprocessed BB images
@@ -82,10 +83,10 @@ protected:
     bool bPBvariante;
     bool bExtSingleFile; /// boolean value on the use of a single file for sample background correction
 
-    size_t nNormRegion[4];
-    size_t nOriginalNormRegion[4];
-    size_t BBroi[4]; /// region of interest to be set for BB segmentation
-    size_t doseBBroi[4]; /// region of interest for dose computation in BB images
+    std::vector<size_t> nNormRegion;
+    std::vector<size_t> nOriginalNormRegion;
+    std::vector<size_t> BBroi; /// region of interest to be set for BB segmentation
+    std::vector<size_t> doseBBroi; /// region of interest for dose computation in BB images
 
     size_t radius; /// radius used to select circular region within the BBs to be used for interpolation
     size_t min_area; /// minimal area to be used for BB segmentation: if smaller, segmented BB is considered as noise and not considered for background computation
@@ -106,7 +107,7 @@ protected:
     virtual kipl::base::TImage<float,2> ReferenceLoader(std::string fname,
                                                         int firstIndex,
                                                         int N,
-                                                        size_t *roi,
+                                                        const std::vector<size_t> &roi,
                                                         float initialDose,
                                                         float doseBias,
                                                         ReconConfig &config, float &dose); /// Loader function and dose computation for standard reference images (OB and DC)
@@ -127,13 +128,13 @@ protected:
 
     virtual kipl::base::TImage<float,2> BBExternalLoader(std::string fname,
                                                          ReconConfig &config,
-                                                         size_t *roi,
+                                                         const std::vector<size_t> &roi,
                                                          float &dose); /// Loader function for externally created BB, open beam case (only 1 image)
     virtual kipl::base::TImage<float,3> BBExternalLoader(std::string fname,
                                                          int N,
-                                                         size_t *roi,
+                                                         const std::vector<size_t> &roi,
                                                        int firstIndex,
-                                                       ReconConfig &config, float *doselist); /// Loader function for externally created BB, sample image case (nProj images with filemask)
+                                                       ReconConfig &config, std::vector<float> &doselist); /// Loader function for externally created BB, sample image case (nProj images with filemask)
 
 
     float computedose(kipl::base::TImage<float,2>&img);
@@ -143,7 +144,6 @@ protected:
 
 private:
     int m_nWindow; /// apparentely not used
-    kipl::interactors::InteractionBase *m_Interactor;
     ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod; /// method chosen for averaging Referencing images
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;/// method chosen for Referencing (BBLogNorm or LogNorm, only BBLogNorm is implemented at the moment)
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions; /// options for BB image reference correction (Interpolate, Average, OneToOne)
@@ -151,6 +151,7 @@ private:
     ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX m_xInterpOrder; /// order chosen for interpolation along the X direction
     ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderY m_yInterpOrder; /// order chosen for interpolation along the Y direction
     ImagingAlgorithms::ReferenceImageCorrection::eInterpMethod m_InterpMethod; /// interpolation method
+    ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod m_maskCreationMethod;
     bool updateStatus(float val, std::string msg);
 
 };

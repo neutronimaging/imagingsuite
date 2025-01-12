@@ -19,7 +19,7 @@ IterativeReconBase::~IterativeReconBase()
 /// \param parameters Additional set of configuration parameters
 int IterativeReconBase::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
 {
-
+    BackProjectorModuleBase::Configure(config,parameters);
     return 0;
 }
 
@@ -36,12 +36,14 @@ std::map<std::string, std::string> IterativeReconBase::GetParameters()
 {
    std::map<std::string, std::string> params;
 
+   params = BackProjectorModuleBase::GetParameters();
+
    return params;
 }
 
 /// Sets the region of interest on the projections.
 /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-void IterativeReconBase::SetROI(size_t *roi)
+void IterativeReconBase::SetROI(const std::vector<size_t> &roi)
 {
 
 }

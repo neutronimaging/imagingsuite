@@ -48,12 +48,16 @@ unix:macx {
 
     DEPENDPATH += $$PWD/../../../external/mac/include
     LIBS += -L$$PWD/../../../external/mac/lib/ -lNeXus.1.0.0 -lNeXusCPP.1.0.0
+    LIBS += -larmadillo
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
+
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/libxml2
+
     INCLUDEPATH += ../../../external/include .
     LIBPATH += ../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
@@ -76,13 +80,15 @@ unix {
 FORMS += \
     pixelsizedlg.ui
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl -lQtAddons -lReaderConfig
-else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl -lQtAddons -lReaderConfig
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib
+else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug
 
-INCLUDEPATH += $$PWD/../../../external/src/linalg
+LIBS += -lkipl -lQtAddons -lReaderConfig -lImagingAlgorithms
 
 INCLUDEPATH += $$PWD/../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../core/kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../../core/algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../core/modules/ReaderConfig/
 DEPENDPATH += $$PWD/../../../core/modules/ReaderConfig/

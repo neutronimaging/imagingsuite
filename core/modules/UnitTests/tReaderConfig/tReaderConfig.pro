@@ -69,18 +69,27 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
         QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../external/src/linalg $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio $$PWD/../../../../external/include/libxml2
+    INCLUDEPATH += $$PWD/../../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH += $$PWD/../../../../../ExternalDependencies/windows/include/cfitsio
+    LIBPATH     += $$PWD/../../../../../ExternalDependencies/windows/lib
+
+    INCLUDEPATH += $$PWD/../../../../external/include
     QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../external/lib64
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    LIBS += -llibxml2
+    LIBS += -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
 }
 
-CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib -lkipl -lReaderConfig
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug -lkipl -lReaderConfig
+CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../../../lib
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug
 
+LIBS += -lkipl -lReaderConfig -lImagingAlgorithms
 INCLUDEPATH += $$PWD/../../../kipl/kipl/include
-DEPENDPATH += $$PWD/../../../kipl/kipl/include
+DEPENDPATH  += $$PWD/../../../kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../../algorithms/ImagingAlgorithms/include
+DEPENDPATH  += $$PWD/../../../algorithms/ImagingAlgorithms/include
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../lib/release/ -lImagingAlgorithms.1.0.0
 #else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../lib/debug/ -lImagingAlgorithms.1.0.0

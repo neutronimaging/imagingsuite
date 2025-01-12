@@ -10,25 +10,29 @@ using namespace std;
 namespace kipl { namespace morphology {
 kipl::base::TImage<int,2> ExtractLabelledRegions(kipl::base::TImage<int,2> &img, vector<int> &lbl, bool keeplabel)
 {
-	kipl::base::TImage<int,2> tmp(img.Dims());
+    kipl::base::TImage<int,2> tmp(img.dims());
 	
 	deque<int> stack;
 	int *pImg=img.GetDataPtr();
 	int *pTmp=tmp.GetDataPtr();
 	
-	int sx=img.Size(0);
+	// int sx=img.Size(0);
 	
-	int NG[]={1,-1,-sx-1,-sx,-sx+1,sx-1,sx,sx+1};
+	// int NG[]={1,-1,-sx-1,-sx,-sx+1,sx-1,sx,sx+1};
 	
-	size_t nLbl=lbl.size();
+	// size_t nLbl=lbl.size();
 	
 	size_t N=img.Size();
 	
-	vector<int>::iterator lblIT;
+	// vector<int>::iterator lblIT;
 	
-	for (size_t i=0; i<N; i++) {
-		for (lblIT = lbl.begin(); lblIT != lbl.end(); lblIT++) {
-			if (pImg[i]==*lblIT) {
+	for (size_t i=0; i<N; i++) 
+	{
+		// for (lblIT = lbl.begin(); lblIT != lbl.end(); lblIT++) 
+		for (const auto &lblitem : lbl) 
+		{
+			if (pImg[i]==lblitem) 
+			{
 				if (keeplabel)
 					pTmp[i]=pImg[i];
 				else

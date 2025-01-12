@@ -1,15 +1,6 @@
 #ifndef IO_NEXUS_H
 #define IO_NEXUS_H
 
-#include "../kipl_global.h"
-#include "../base/imagecast.h"
-#include "../base/timage.h"
-#include "../base/imageinfo.h"
-#include "../base/tpermuteimage.h"
-#include "../base/textractor.h"
-#include "../strings/filenames.h"
-#include "../base/kiplenums.h"
-
 #include <iostream>
 #include <iomanip>
 #include <cstdio>
@@ -18,14 +9,28 @@
 #include <vector>
 #include <map>
 
+#include "../kipl_global.h"
+#include "../base/imagecast.h"
+#include "../base/timage.h"
+#include "../base/imageinfo.h"
+#include "../base/tpermuteimage.h"
+#include "../base/textractor.h"
+#include "../strings/filenames.h"
+#include "../base/kiplenums.h"
+#include "../math/sums.h"
+#include "../logging/logger.h"
+
+#ifdef HAVE_NEXUS
 #include <nexus/napi.h>
 #include <nexus/NeXusFile.hpp>
-
-#ifdef _MSC_VER
-#include <io.h>
-#else
-#include <unistd.h>
+#include <nexus/NeXusException.hpp>
 #endif
+
+// #ifdef _MSC_VER
+// #include <io.h>
+// #else
+// #include <unistd.h>
+// #endif
 
 
 using std::cout;
@@ -41,14 +46,27 @@ using namespace std;
 
 namespace kipl { namespace io {
 
+/// \brief Gets the dimensions of a Nexus image without reading the image
+/// \param fname file name of the image file
+/// \param dims array with the dimensions
+std::vector<size_t> KIPLSHARED_EXPORT GetNexusDims(const std::string & fname);
+
+/// \brief Gets some infos of a Nexus image without reading the image
+/// \param fname file name of the image file
+/// \param dims array with the dimensions
+int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles);
+
+#ifdef HAVE_NEXUS
+size_t KIPLSHARED_EXPORT nexusTypeSize(NeXus::NXnumtype nt);
+
 /// \brief Read the image data content from Nexus file and stores it in the data type specified by the image
 ///	\param src the image to be stored
 ///	\param fname file name of the destination file (including extension .hdf)
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t number, size_t const * const nCrop) {
-
-
+int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, size_t number, const std::vector<size_t> & nCrop)
+{
+    kipl::logging::Logger logger("ReadNexus (full)");
     std::stringstream msg;
 
     NeXus::File file(fname);
@@ -59,36 +77,30 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t n
     attr_infos = file.getAttrInfos(); // check how many or assuming that there is only one?
     map<string, string> entries = file.getEntries();
 
+    msg.str("");
+    msg<<"# file entries = "<< entries.size(); logger.verbose(msg.str());
 
-    for (map<string,string>::const_iterator it = entries.begin();it != entries.end(); ++it) {
-        if(it->second=="NXdata") {
-//            std::cout << " found data!"<< std::endl;
-            file.openGroup(it->first, it->second);
+    for (const auto & entry : entries)
+    {
+        logger.verbose(entry.second);
+        if ((entry.second=="NXdata") || (entry.second=="Nxdata"))
+        {
+            file.openGroup(entry.first, entry.second);
             attr_infos = file.getAttrInfos();
-//            cout << "Number of group attributes for "<< it->second <<": " << attr_infos.size() << endl;
-
             map<string, string> entries_data = file.getEntries();
-//            cout << "Group contains " << entries_data.size() << " items" << endl;
 
-            for (map<string,string>::const_iterator it_data = entries_data.begin();
-                 it_data != entries_data.end(); it_data++) {
-//                std::cout << it_data->first << ": " << it_data->second << std::endl;
-                file.openData(it_data->first);
+            for (const auto & data_entry: entries_data)
+            {
+                file.openData(data_entry.first);
                 attr_infos = file.getAttrInfos();
-//                cout << "Number of data attributes for " << it_data->first <<  ": "<< attr_infos.size() <<std::endl;
-                for (vector<NeXus::AttrInfo>::iterator it_att = attr_infos.begin(); it_att != attr_infos.end(); it_att++) {
-//                  cout << "   " << it_att->name << " = ";
-//                  if (it_att->type == NeXus::CHAR) {
-//                    cout << file.getStrAttr(*it_att);
-//                  }
-//                  cout << endl;
+                for (const auto & attribute : attr_infos)
+                {
 
-                  if (it_att->name=="signal"){
-//                      std::cout << "found plottable data!!" << std::endl;
-
+                  if (attribute.name=="signal")
+                  {
                       size_t img_size[3];
 
-                      if (nCrop==nullptr)
+                      if (nCrop.empty())
                       {
                           img_size[0] = file.getInfo().dims[2];
                           img_size[1] = file.getInfo().dims[1];
@@ -100,63 +112,67 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t n
                           img_size[1] = nCrop[3]-nCrop[1];
                           img_size[2] = file.getInfo().dims[0];
                       }
+                      int8_t *slab=new int8_t[img_size[0]*img_size[1]*nexusTypeSize(file.getInfo().type)];
 
-                      int16_t *slab=new int16_t[img_size[0]*img_size[1]]; // assuming images are all int_16.. but possibly this can be read from nexus info..
-
-                      vector<int> slab_start;
-                      slab_start.push_back(number);
-                      if (nCrop==nullptr)
+                      vector<int> slab_start{static_cast<int>(number),0,0};
+                      if ( !nCrop.empty() )
                       {
-                          slab_start.push_back(0);
-                          slab_start.push_back(0);
+                          slab_start[1] = nCrop[1];
+                          slab_start[2] = nCrop[0];
                       }
-                      else
+
+                      vector<int> slab_size{1,static_cast<int>(img_size[1]),static_cast<int>(img_size[0])};
+
+                      try
                       {
-                          slab_start.push_back(nCrop[1]);
-                          slab_start.push_back(nCrop[0]);
-
-                      }
-                      vector<int> slab_size;
-                      slab_size.push_back(1);
-                      slab_size.push_back(img_size[1]);
-                      slab_size.push_back(img_size[0]);
-
-
-                      try{
                         file.getSlab(slab, slab_start, slab_size);
                       }
-                      catch (const std::bad_alloc & E) {
+                      catch (const std::bad_alloc & E)
+                      {
                               msg.str("");
                               msg<<"ReadNexus file.getSlab caused an STL exception: "<<E.what();
                               throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
-                      catch (...){
+                      catch (NeXus::Exception &e)
+                      {
+                          msg.str("");
+                          msg<<"ReadNexus file.getSlab caused an NeXus exception: "<<e.what();
+                          throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+                      }
+                      catch (...)
+                      {
                           msg.str("");
                           msg<<"ReadNexus file.getSlab caused an unknown exception: ";
                           throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
 
-
-
-
-                      size_t size2D[2] = {img_size[0], img_size[1]};
-                      img.Resize(size2D);
+                      std::vector<size_t> size2D = { img_size[0],
+                                                     img_size[1],
+                                                     1};
+                      img.resize(size2D);
                       ImgType *pslice = img.GetDataPtr();
 
-                      // casting to ImgType
-                      for (size_t i=0; i<img.Size();++i){
-                          pslice[i] = static_cast<ImgType>(slab[i]);
+                      switch (file.getInfo().type)
+                      {
+                          case NeXus::FLOAT32 : copy_n(reinterpret_cast<float*>(slab),    img.Size(),pslice); break;
+                          case NeXus::FLOAT64 : copy_n(reinterpret_cast<double*>(slab),   img.Size(),pslice); break;
+                          case NeXus::INT8    : copy_n(reinterpret_cast<int8_t*>(slab),   img.Size(),pslice); break;
+                          case NeXus::UINT8   : copy_n(reinterpret_cast<uint8_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::INT16   : copy_n(reinterpret_cast<int16_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::UINT16  : copy_n(reinterpret_cast<uint16_t*>(slab), img.Size(),pslice); break;
+                          case NeXus::INT32   : copy_n(reinterpret_cast<int32_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::UINT32  : copy_n(reinterpret_cast<uint32_t*>(slab), img.Size(),pslice); break;
+                          case NeXus::INT64   : copy_n(reinterpret_cast<int64_t*>(slab),  img.Size(),pslice); break;
+                          case NeXus::UINT64  : copy_n(reinterpret_cast<uint64_t*>(slab), img.Size(),pslice); break;
+                          case NeXus::CHAR    : copy_n(reinterpret_cast<char*>(slab),     img.Size(),pslice); break;
+                          default:
+                              throw kipl::base::KiplException("Unknown NeXus type in nexusTypeSize()",__FILE__,__LINE__);
                       }
 
-
-//                      kipl::io::WriteTIFF(img, "cropped_img.tif");
-
-
-//                      break;
-                      }
                   }
-                file.closeData();
-                }
+              }
+              file.closeData();
+            }
 
             file.closeGroup();
             }
@@ -174,12 +190,11 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t n
 ///	\param fname file name of the destination file (including extension .hdf)
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t end, size_t const * const nCrop) {
-
-
+int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const std::string &fname, size_t start, size_t end, const std::vector<size_t> & nCrop = {})
+{
     std::stringstream msg;
 
-    NeXus::File file(fname);
+    NeXus::File file(fname.c_str());
     vector<NeXus::AttrInfo> attr_infos = file.getAttrInfos();
 
 
@@ -214,9 +229,9 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
                   if (it_att->name=="signal"){
 //                      std::cout << "found plottable data!!" << std::endl;
 
-                      size_t img_size[3];
+                      std::vector<size_t> img_size(3,0UL);
 
-                      if (nCrop==nullptr)
+                      if ( nCrop.empty() )
                       {
                           img_size[0] = file.getInfo().dims[2];
                           img_size[1] = file.getInfo().dims[1];
@@ -233,7 +248,7 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
 
                       vector<int> slab_start;
                       slab_start.push_back(start);
-                      if (nCrop==nullptr)
+                      if (nCrop.empty())
                       {
                           slab_start.push_back(0);
                           slab_start.push_back(0);
@@ -250,38 +265,36 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
                       slab_size.push_back(img_size[0]);
 
 
-                      try{
+                      try
+                      {
                         file.getSlab(slab, slab_start, slab_size);
                       }
-                      catch (const std::bad_alloc & E) {
+                      catch (const std::bad_alloc & E)
+                      {
                               msg.str("");
                               msg<<"ReadNexus file.getSlab caused an STL exception: "<<E.what();
                               throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
-                      catch (...){
+                      catch (...)
+                      {
                           msg.str("");
                           msg<<"ReadNexus file.getSlab caused an unknown exception: ";
                           throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
                       }
 
-
-
-
-                      size_t size3D[3] = {img_size[0], img_size[1], end-start};
-                      img.Resize(size3D);
+                      std::vector<size_t> size3D = {img_size[0],
+                                                    img_size[1],
+                                                    end-start};
+                      img.resize(size3D);
                       ImgType *pslice = img.GetDataPtr();
 
                       // casting to ImgType
-                      for (size_t i=0; i<img.Size();++i){
+                      for (size_t i=0; i<img.Size();++i)
+                      {
                           pslice[i] = static_cast<ImgType>(slab[i]);
                       }
 
-
-//                      kipl::io::WriteTIFF(img, "cropped_img.tif");
-
-
-//                      break;
-                      }
+                    }
                   }
                 file.closeData();
                 }
@@ -298,15 +311,12 @@ int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, siz
 }
 
 template <class ImgType, size_t NDim>
-int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
-
+int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const std::string &fname)
+{
 
 
     std::stringstream msg;
-
-
-
-    NeXus::File file(fname);
+    NeXus::File file(fname.c_str());
 
     vector<NeXus::AttrInfo> attr_infos = file.getAttrInfos();
 
@@ -317,7 +327,8 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
     attr_infos = file.getAttrInfos(); // check how many or assuming that there is only one?
     map<string, string> entries = file.getEntries();
 
-    for (map<string,string>::const_iterator it = entries.begin();        it != entries.end(); ++it) {
+    for (map<string,string>::const_iterator it = entries.begin();
+         it != entries.end(); ++it) {
         if(it->second=="NXdata") {
             std::cout << " found data!"<< std::endl;
             file.openGroup(it->first, it->second);
@@ -350,7 +361,10 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
                       int16_t * result;
 
 
-                      size_t img_size[3] = {static_cast<size_t>(file.getInfo().dims[2]), static_cast<size_t>(file.getInfo().dims[1]),static_cast<size_t>(file.getInfo().dims[0])};
+                      std::vector<size_t> img_size = { static_cast<size_t>(file.getInfo().dims[2]),
+                                                       static_cast<size_t>(file.getInfo().dims[1]),
+                                                       static_cast<size_t>(file.getInfo().dims[0])};
+
                       result = new int16_t[img_size[0]*img_size[1]*img_size[2]];
 
                       try {
@@ -373,7 +387,7 @@ int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const char *fname) {
 
                       }
 
-                      img.Resize(img_size);
+                      img.resize(img_size);
                       ImgType * ptmp = img.GetDataPtr();
 
                       for (size_t i=0; i<img.Size(); ++i){
@@ -461,7 +475,10 @@ int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, fl
 ///	\param fname file name of the destination file (including extension .hdf)
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size, size_t first_slice, size_t last_slice) {
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size, size_t first_slice, size_t last_slice)
+{
+    std::ignore = first_slice;
+    std::ignore = last_slice;
 
 //    int counts[50][1000], n_t=1000, n_p=50, dims[2], i;
 //    float t[1000], phi[50];
@@ -619,8 +636,9 @@ int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> img, const char *fname, Im
 /// \param p_size pixel size of the reconstructed datas
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img) {
-
+int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
+    std::ignore = img;
 
     float *mysize = &p_size;
     int  i = 1;
@@ -672,8 +690,9 @@ int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::b
 /// \param p_size pixel size of the reconstructed datas
 /// \return 1 if successful, 0 if fail
 template <class ImgType, size_t NDim>
-int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img) {
-
+int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
+    std::ignore = img;
 
     float *mysize = &p_size;
     int  i = 1;
@@ -685,13 +704,13 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
 
     NXhandle file_id;
 
-/* Open output file and output global attributes */
+// Open output file and output global attributes
     NXopen (fname, NXACC_CREATE5, &file_id);
       NXputattr (file_id, "user_name", "Jane Doe", 10, NX_CHAR);
-/* Open top-level NXentry group */
+// Open top-level NXentry group
       NXmakegroup (file_id, "entry", "NXentry");
       NXopengroup (file_id, "entry", "NXentry");
-/* Open NXdata group within NXentry group */
+// Open NXdata group within NXentry group
         NXmakegroup (file_id, "Data1", "NXdata");
         NXopengroup (file_id, "Data1", "NXdata");
 
@@ -702,7 +721,7 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
             NXputattr (file_id, "signal", &i, 1, NX_INT32);
           NXclosedata (file_id);
 
-/*      Pixel spacing */
+//     Pixel spacing
        NXmakedata (file_id, "x_pixel_size", NX_FLOAT32, 1, &i);
        NXopendata (file_id, "x_pixel_size");
           NXputdata(file_id, mysize);
@@ -710,7 +729,7 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
       NXclosedata(file_id);
 
 
-/* Close NXentry and NXdata groups and close file */
+// Close NXentry and NXdata groups and close file
         NXclosegroup (file_id);
       NXclosegroup (file_id);
     NXclose (&file_id); // this should close the file
@@ -721,7 +740,12 @@ int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::b
 
 /// todo: Add Doxygen information
 template <class ImgType, size_t NDim>
-int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=nullptr) {
+int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img,
+                    const std::string &fname, size_t start,
+                    size_t size,
+                    const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
+                    const std::vector<size_t> &roi={})
+{
 
 
     kipl::base::PermuteAxes<ImgType> permute;
@@ -738,11 +762,9 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
     if (imageplane==kipl::base::ImagePlaneYZ) {
 
 
-        size_t dims[3];
-        if (roi==nullptr) {
-            dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
-        }
-        else{
+        auto dims = img.dims();
+        if ( !roi.empty())
+        {
             dims[0]=img.Size(0);
             dims[1]=roi[3]-roi[1]+1;
             dims[2]=roi[2]-roi[0]+1;
@@ -751,7 +773,7 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
         kipl::base::TImage<ImgType, NDim> tmp(dims);
 
 
-        if (roi==nullptr) {
+        if (roi.empty()) {
             tmp = img;
             slabsize[1] = static_cast<int>(tmp.Size(1));
             slabsize[2] = static_cast<int>(tmp.Size(2));
@@ -763,8 +785,10 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
         }
         else {
 
-            size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img.Size(0)};
-            tmp_vol.Resize(dim_vol);
+            std::vector<size_t> dim_vol = { roi[2]-roi[0]+1,
+                                            roi[3]-roi[1]+1,
+                                            img.Size(0) };
+            tmp_vol.resize(dim_vol);
 
             img =  permute(img,kipl::base::PermuteZYX);
             img  = permute(img, kipl::base::PermuteYXZ);
@@ -786,11 +810,9 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
 
     if (imageplane==kipl::base::ImagePlaneXY){
 
-        size_t dims[3];
-        if (roi==nullptr) {
-            dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
-        }
-        else{
+        auto dims = img.dims();
+        if (!roi.empty())
+        {
             dims[0]= roi[2]-roi[0]+1;
             dims[1]= roi[3]-roi[1]+1;
             dims[2]= img.Size(2);
@@ -799,20 +821,19 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
         kipl::base::TImage<ImgType, NDim> tmp(dims);
 
 
-        if (roi==nullptr) {
+        if (roi.empty()) {
             tmp = img;
             slabsize[1] = static_cast<int>(tmp.Size(1));
             slabsize[2] = static_cast<int>(tmp.Size(0));
 
             tmp_vol = img;
-//           permuted = permute(tmp,kipl::base::PermuteZYX);
-//           tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
-
         }
         else {
 
-            size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img.Size(0)};
-            tmp_vol.Resize(dim_vol);
+            std::vector<size_t> dim_vol = { roi[2]-roi[0]+1,
+                                            roi[3]-roi[1]+1,
+                                            img.Size(0)};
+            tmp_vol.resize(dim_vol);
 
             // no need to permute in this case then  because it is already x y z
 //            img =  permute(img,kipl::base::PermuteZYX);
@@ -835,23 +856,30 @@ int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img, const char *fname, si
 
 
      NXhandle file_id;
-     NXopen (fname, NXACC_RDWR, &file_id);
-      NXopengroup (file_id, "entry", "NXentry");
-      NXopengroup (file_id, "Data1", "NXdata");
-       NXopendata (file_id, "signal");
-               NXputslab(file_id, tmp_vol.GetDataPtr(), slabstart, slabsize);
-       NXclosedata(file_id);
-       NXclosegroup(file_id);
-       NXclosegroup(file_id);
-       NXclose(&file_id);
-
+     NXopen (fname.c_str(), NXACC_RDWR, &file_id);
+        NXopengroup (file_id, "entry", "NXentry");
+            NXopengroup (file_id, "Data1", "NXdata");
+                NXopendata (file_id, "signal");
+                   NXputslab(file_id, tmp_vol.GetDataPtr(), slabstart, slabsize);
+                NXclosedata(file_id);
+            NXclosegroup(file_id);
+        NXclosegroup(file_id);
+     NXclose(&file_id);
 
     return 1;
 }
 
 /// todo: Add Doxygen information
 template <class ImgType, size_t NDim>
-int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fname, size_t start, size_t size,  ImgType lo, ImgType hi, const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ, size_t *roi=nullptr) {
+int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img,
+                         const std::string &fname,
+                         size_t start,
+                         size_t size,
+                         ImgType lo,
+                         ImgType hi,
+                         const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
+                         const std::vector<size_t> &roi={})
+{
 
 
     kipl::base::TImage<unsigned short, NDim> img_int;
@@ -876,11 +904,9 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
     if (imageplane==kipl::base::ImagePlaneYZ) {
 
 
-        size_t dims[3];
-        if (roi==nullptr) {
-            dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
-        }
-        else{
+        auto dims = img.dims();
+        if ( !roi.empty() ) {
+
             dims[0]=img.Size(0);
             dims[1]=roi[3]-roi[1]+1;
             dims[2]=roi[2]-roi[0]+1;
@@ -889,7 +915,7 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
         kipl::base::TImage<unsigned short, NDim> tmp(dims);
 
 
-        if (roi==nullptr) {
+        if (roi.empty()) {
             tmp = img_int;
             slabsize[1] = static_cast<int>(tmp.Size(1));
             slabsize[2] = static_cast<int>(tmp.Size(2));
@@ -901,8 +927,10 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
         }
         else {
 
-            size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img.Size(0)};
-            tmp_vol.Resize(dim_vol);
+            std::vector<size_t> dim_vol = { roi[2]-roi[0]+1,
+                                            roi[3]-roi[1]+1,
+                                            img.Size(0)};
+            tmp_vol.resize(dim_vol);
 
             img_int =  permute(img_int,kipl::base::PermuteZYX);
             img_int  = permute(img_int, kipl::base::PermuteYXZ);
@@ -922,13 +950,12 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
         }
     }
 
-    if (imageplane==kipl::base::ImagePlaneXY){
+    if (imageplane==kipl::base::ImagePlaneXY)
+    {
 
-        size_t dims[3];
-        if (roi==nullptr) {
-            dims[0]=img_int.Size(0); dims[1]=img_int.Size(1); dims[2] = img_int.Size(2);
-        }
-        else{
+        auto dims = img_int.dims();
+        if ( ! roi.empty())
+        {
             dims[0]= roi[2]-roi[0]+1;
             dims[1]= roi[3]-roi[1]+1;
             dims[2]= img_int.Size(2);
@@ -936,37 +963,32 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
 
         kipl::base::TImage<unsigned short, NDim> tmp(dims);
 
-
-        if (roi==nullptr) {
+        if (roi.empty())
+        {
             tmp = img_int;
             slabsize[1] = static_cast<int>(tmp.Size(1));
             slabsize[2] = static_cast<int>(tmp.Size(0));
 
             tmp_vol = img_int;
-//           permuted = permute(tmp,kipl::base::PermuteZYX);
-//           tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
-
         }
-        else {
-
-            size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img.Size(0)};
-            tmp_vol.Resize(dim_vol);
+        else
+        {
+            std::vector<size_t> dim_vol = { roi[2]-roi[0]+1,
+                                            roi[3]-roi[1]+1,
+                                            img.Size(0)};
+            tmp_vol.resize(dim_vol);
 
             // no need to permute in this case then  because it is already x y z
-//            img =  permute(img,kipl::base::PermuteZYX);
-//            img  = permute(img, kipl::base::PermuteYXZ);
 
-        kipl::base::TImage<unsigned short, 2> tmp_slice;
-        for (size_t i=0; i<size; i++){
-
-            tmp_slice = kipl::base::ExtractSlice(img_int,i,kipl::base::ImagePlaneXY,roi);
-            kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
-
-        }
+            kipl::base::TImage<unsigned short, 2> tmp_slice;
+            for (size_t i=0; i<size; i++){
+                tmp_slice = kipl::base::ExtractSlice(img_int,i,kipl::base::ImagePlaneXY,roi);
+                kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
+            }
 
 
-        slabsize[1] = static_cast<int>(tmp_vol.Size(1));
-        slabsize[2] = static_cast<int>(tmp_vol.Size(0));
+            slabsize[1] = static_cast<int>(tmp_vol.Size(1));
+            slabsize[2] = static_cast<int>(tmp_vol.Size(0));
 
         }
     }
@@ -974,62 +996,8 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
 
 
 
-//    kipl::base::PermuteAxes<unsigned short> permute;
-//    kipl::base::TImage<unsigned short, NDim> permuted;
-
-//    int slabstart[3] = {static_cast<int>(start), 0, 0};
-//    int slabsize[3];
-
-//    slabsize[0] = size;
-
-//    size_t dims[3];
-//    if (roi==nullptr) {
-//        dims[0]=img.Size(0); dims[1]=img.Size(1); dims[2] = img.Size(2);
-//    }
-//    else{
-//        dims[0]=img.Size(0);
-//        dims[1]=roi[3]-roi[1]+1;
-//        dims[2]=roi[2]-roi[0]+1;
-//    }
-
-//    kipl::base::TImage<unsigned short, NDim> tmp(dims);
-//    kipl::base::TImage<unsigned short, NDim> tmp_vol;
-
-//    if (roi==nullptr) {
-//        tmp = img_int;
-//        slabsize[1] = static_cast<int>(tmp.Size(1));
-//        slabsize[2] = static_cast<int>(tmp.Size(2));
-
-
-//       permuted = permute(tmp,kipl::base::PermuteZYX);
-//       tmp_vol  = permute(permuted, kipl::base::PermuteYXZ);
-
-//    }
-//    else {
-
-//        size_t dim_vol[3]={roi[2]-roi[0]+1, roi[3]-roi[1]+1, img_int.Size(0)};
-//        tmp_vol.Resize(dim_vol);
-
-//        img_int =  permute(img_int,kipl::base::PermuteZYX);
-//        img_int  = permute(img_int, kipl::base::PermuteYXZ);
-
-//    kipl::base::TImage<unsigned short, 2> tmp_slice;
-//    for (size_t i=0; i<size; i++){
-
-//        tmp_slice = kipl::base::ExtractSlice(img_int,i,kipl::base::ImagePlaneXY,roi);
-//        kipl::base::InsertSlice(tmp_slice, tmp_vol, i, kipl::base::ImagePlaneXY);
-
-//    }
-
-
-//    slabsize[1] = static_cast<int>(tmp_vol.Size(1));
-//    slabsize[2] = static_cast<int>(tmp_vol.Size(0));
-
-//    }
-
-
      NXhandle file_id;
-     NXopen (fname, NXACC_RDWR, &file_id);
+     NXopen (fname.c_str(), NXACC_RDWR, &file_id);
       NXopengroup (file_id, "entry", "NXentry");
       NXopengroup (file_id, "Data1", "NXdata");
        NXopendata (file_id, "signal");
@@ -1044,15 +1012,188 @@ int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img, const char *fnam
 }
 
 
-/// \brief Gets the dimensions of a Nexus image without reading the image
-/// \param fname file name of the image file
-/// \param dims array with the dimensions
-int KIPLSHARED_EXPORT GetNexusDims(const char *fname, size_t *dims);
 
-/// \brief Gets some infos of a Nexus image without reading the image
-/// \param fname file name of the image file
-/// \param dims array with the dimensions
-int KIPLSHARED_EXPORT GetNexusInfo(const char *fname, size_t *NofImg, double *ScanAngles);
+#else
+
+//size_t KIPLSHARED_EXPORT nexusTypeSize(NeXus::NXnumtype nt);
+
+/// \brief Read the image data content from Nexus file and stores it in the data type specified by the image
+///	\param src the image to be stored
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int ReadNexus(kipl::base::TImage<ImgType,NDim> &img, const std::string & fname, size_t number, const std::vector<size_t> & nCrop)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = number;
+    std::ignore = nCrop;
+
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Read the image data content from Nexus file and stores it in the data type specified by the image
+///	\param src the image to be stored
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int ReadNexusStack(kipl::base::TImage<ImgType,NDim> &img, const std::string &fname, size_t start, size_t end, const std::vector<size_t> & nCrop = {})
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = start;
+    std::ignore = end;
+    std::ignore = nCrop;
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+template <class ImgType, size_t NDim>
+int ReadNexus(kipl::base::TImage<ImgType,NDim> img, const std::string &fname)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Write the reconstructed data as NeXus file in float format
+///	\param img the dataset to be written
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size) {
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = p_size;
+
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Write the reconstructed data as NeXus file in float format
+///	\param img the dataset to be written
+///	\param fname file name of the destination file (including extension .hdf)
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int WriteNexusFloat(kipl::base::TImage<ImgType,NDim> &img, const char *fname, float p_size, size_t first_slice, size_t last_slice)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = first_slice;
+    std::ignore = last_slice;
+    std::ignore = p_size;
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Write the reconstructed data as NeXus file in16 bit format
+///	\param img the dataset to be written
+///	\param fname file name of the destination file (including extension .hdf)
+/// \param p_size pixel size of the reconstructed datas
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int WriteNexus16bits(kipl::base::TImage<ImgType,NDim> img, const char *fname, ImgType lo, ImgType hi, float p_size) 
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = hi;
+    std::ignore = lo;
+    std::ignore = p_size;
+
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+    return 0;
+}
+
+/// \brief Prepare the file to be used for NeXus saving reconstructed data
+///	\param fname file name of the destination file (including extension .hdf)
+/// \param dims dimensions of the 3D image to be saved
+/// \param img it is at the moment useless except for passing the template type
+/// \param p_size pixel size of the reconstructed datas
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int PrepareNeXusFileFloat(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = dims;
+    std::ignore = p_size;
+
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// \brief Prepare the file to be used for NeXus saving reconstructed data
+///	\param fname file name of the destination file (including extension .hdf)
+/// \param dims dimensions of the 3D image to be saved
+/// \param img it is at the moment useless except for passing the template type
+/// \param p_size pixel size of the reconstructed datas
+/// \return 1 if successful, 0 if fail
+template <class ImgType, size_t NDim>
+int PrepareNeXusFile16bit(const char *fname, size_t *dims, float p_size, kipl::base::TImage<ImgType,NDim> img)
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = dims;
+    std::ignore = p_size;
+    
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+
+/// todo: Add Doxygen information
+template <class ImgType, size_t NDim>
+int WriteNeXusStack(kipl::base::TImage<ImgType,NDim> &img,
+                    const std::string &fname, size_t start,
+                    size_t size,
+                    const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
+                    const std::vector<size_t> &roi={})
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = start;
+    std::ignore = size;
+    std::ignore = imageplane;
+    std::ignore = roi;
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+
+/// todo: Add Doxygen information
+template <class ImgType, size_t NDim>
+int WriteNeXusStack16bit(kipl::base::TImage<ImgType,NDim> &img,
+                         const std::string &fname,
+                         size_t start,
+                         size_t size,
+                         ImgType lo,
+                         ImgType hi,
+                         const kipl::base::eImagePlanes imageplane=kipl::base::ImagePlaneYZ,
+                         const std::vector<size_t> &roi={})
+{
+    std::ignore = img;
+    std::ignore = fname;
+    std::ignore = start;
+    std::ignore = size;
+    std::ignore = lo;
+    std::ignore = hi;
+    std::ignore = imageplane;
+    std::ignore = roi;
+    throw base::KiplException("NEXUS is not supported", __FILE__,__LINE__);
+
+    return 0;
+}
+#endif
 
 }} // end namespaces
 

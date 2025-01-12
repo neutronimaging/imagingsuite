@@ -2,11 +2,11 @@
 
 #include "moduleconfigprogressdialog.h"
 #include "ui_moduleconfigprogressdialog.h"
-#include <QtConcurrent>
-#include <QFuture>
 #include <QMessageBox>
 
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include <ReconException.h>
 #include <ModuleException.h>
 #include <base/KiplException.h>
@@ -23,6 +23,7 @@ ModuleConfigProgressDialog::ModuleConfigProgressDialog(kipl::interactors::Intera
     ui->setupUi(this);
     connect(this,&ModuleConfigProgressDialog::updateProgress,this,&ModuleConfigProgressDialog::changedProgress);
     connect(this,&ModuleConfigProgressDialog::processFailure,this,&ModuleConfigProgressDialog::on_processFailure);
+    connect(this,&ModuleConfigProgressDialog::processDone,this,&ModuleConfigProgressDialog::on_processDone);
 
 }
 
@@ -36,20 +37,20 @@ void ModuleConfigProgressDialog::on_buttonBox_rejected()
     this->reject();
 }
 
-int ModuleConfigProgressDialog::exec(ReconEngine * engine,size_t *roi, std::string lastModule)
+int ModuleConfigProgressDialog::exec(ReconEngine * engine,const std::vector<size_t> &roi, std::string lastModule)
 {
     if (engine==nullptr)
     {
-        logger(logger.LogError,"Called recon dialog with unallocated engine");
+        logger.error("Called recon dialog with unallocated engine");
         return Rejected;
     }
 
     m_Engine=engine;
-    std::copy_n(roi,4,mROI);
+    mROI = roi;
     mLastModule = lastModule;
 
     finish=false;
-    logger(kipl::logging::Logger::LogMessage,"Start");
+    logger.message("Start");
 
     m_Interactor->Reset();
 
@@ -57,8 +58,8 @@ int ModuleConfigProgressDialog::exec(ReconEngine * engine,size_t *roi, std::stri
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
 
-    QFuture<int> proc_thread=QtConcurrent::run(this,&ModuleConfigProgressDialog::process);
-    QFuture<int> progress_thread=QtConcurrent::run(this,&ModuleConfigProgressDialog::progress);
+    auto process_thread  = std::thread([=]{ process(); } );
+    auto progress_thread = std::thread([=]{ progress(); } );
 
     int res=exec();
 
@@ -69,9 +70,9 @@ int ModuleConfigProgressDialog::exec(ReconEngine * engine,size_t *roi, std::stri
         Abort();
     }
 
-    proc_thread.waitForFinished();
-    progress_thread.waitForFinished();
-    logger(kipl::logging::Logger::LogVerbose,"Threads are joined");
+    process_thread.join();
+    progress_thread.join();
+    logger.verbose("Threads are joined");
     return res;
 
 }
@@ -83,16 +84,17 @@ kipl::base::TImage<float, 3> ModuleConfigProgressDialog::getImage()
 
 int ModuleConfigProgressDialog::progress()
 {
-    logger(kipl::logging::Logger::LogMessage,"Progress thread is started");
-    QThread::msleep(250);
-    while (!m_Interactor->Finished() && !m_Interactor->Aborted() ){
+    logger.message("Progress thread is started");
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    while (!m_Interactor->Finished() && !m_Interactor->Aborted() )
+    {
         emit updateProgress(m_Interactor->CurrentProgress(),
                             m_Interactor->CurrentOverallProgress(),
                             QString::fromStdString(m_Interactor->CurrentMessage()));
 
-        QThread::msleep(50);
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
-    logger(kipl::logging::Logger::LogMessage,"Progress thread end");
+    logger.message("Progress thread end");
 
     return 0;
 }
@@ -107,14 +109,16 @@ void ModuleConfigProgressDialog::changedProgress(float progress, float overallPr
 
 int ModuleConfigProgressDialog::process()
 {
-    logger(kipl::logging::Logger::LogMessage,"Process thread is started");
+    logger.message("Process thread is started");
     std::ostringstream msg;
 
     bool failed=false;
-    try {
+    try 
+    {
         if (m_Engine!=nullptr)
             m_Image=m_Engine->RunPreproc(mROI,mLastModule);
-        else {
+        else 
+        {
             logger(logger.LogError,"Trying to start an unallocated engine.");
             failed=true;
         }
@@ -151,11 +155,11 @@ int ModuleConfigProgressDialog::process()
         emit processFailure(QString::fromStdString(msg.str()));
         return 0;
     }
-    logger(kipl::logging::Logger::LogMessage,"Reconstruction done");
+    logger.message("Config preparation done");
 
     finish=true;
     m_Interactor->Done();
-    this->accept();
+    emit processDone();
 
     return 0;
 }
@@ -187,5 +191,11 @@ void ModuleConfigProgressDialog::on_processFailure(QString msg)
     dlg.exec();
     Abort();
 }
+
+void ModuleConfigProgressDialog::on_processDone()
+{
+    accept();
+}
+
 
 

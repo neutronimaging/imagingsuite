@@ -1,17 +1,22 @@
 //<LICENSE>
 
-//#include "stdafx.h"
 #include "../include/ReconFramework_global.h"
-#include "../include/ReconConfig.h"
-#include "../include/ReconException.h"
-#include <ModuleException.h>
+
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <thread>
 
 #include <strings/miscstring.h>
 #include <strings/string2array.h>
 #include <strings/filenames.h>
+
+#include <ModuleException.h>
+#include <averageimage.h>
+
+#include "../include/ReconConfig.h"
+#include "../include/ReconException.h"
+
 
 ReconConfig::ReconConfig(const std::string &appPath) :
     ConfigBase("ReconConfig",appPath),
@@ -69,7 +74,8 @@ bool ReconConfig::SanityAnglesCheck()
 {
     std::ostringstream msg;
 
-    if (ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan && (ProjectionInfo.fScanArc[1]!=180.0f && ProjectionInfo.fScanArc[1]!=360.0f))
+    if ( ((ProjectionInfo.scantype==ProjectionInfo.GoldenSectionScan) || (ProjectionInfo.scantype==ProjectionInfo.InvGoldenSectionScan))
+            && (ProjectionInfo.fScanArc[1]!=180.0f && ProjectionInfo.fScanArc[1]!=360.0f))
     {
         msg<<"Incorrect angles configuration " ;
         throw ReconException(msg.str(),__FILE__,__LINE__);
@@ -139,17 +145,29 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
     for (it=args.begin()+3 ; it!=args.end(); it++) {
         try {
             EvalArg(*it,group,var,value);
+            msg.str("");
+            msg<<"group: "<<group<<", var: "<<var<<", value: "<<value;
+            logger.message(msg.str());
         }
         catch (ModuleException &e) {
             msg<<"Failed to parse argument "<<e.what();
             logger(kipl::logging::Logger::LogWarning,msg.str());
         }
-        if (group=="projections") {
+        if (group=="userinformation") {
             if (var=="operator")      UserInformation.sOperator      = value;
             if (var=="instrument")    UserInformation.sInstrument    = value;
             if (var=="projectnumber") UserInformation.sProjectNumber = value;
             if (var=="sample")        UserInformation.sSample        = value;
             if (var=="comment")       UserInformation.sComment       = value;
+        }
+
+        if (group=="system")
+        {
+            if (var=="memory")       System.nMemory = std::stoul(value);
+            if (var=="loglevel")     string2enum(value,System.eLogLevel);
+            if (var=="validate")     System.bValidateData = kipl::strings::string2bool(value);
+            if (var=="maxthreads")   System.nMaxThreads = std::stoi(value);
+            if (var=="threadmethod") string2enum(value,System.eThreadMethod);
         }
 
         if (group=="projections") {
@@ -168,8 +186,14 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="tiltangle")      ProjectionInfo.fTiltAngle         = std::stof(value);
             if (var=="tiltpivot")      ProjectionInfo.fTiltPivotPosition = std::stof(value);
             if (var=="correcttilt")    ProjectionInfo.bCorrectTilt=kipl::strings::string2bool(value);
-            if (var=="filemask")       ProjectionInfo.sFileMask          = value;
-            if (var=="path") {
+            if (var=="filemask") 
+            {     
+                ProjectionInfo.sFileMask = value;
+                kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sFileMask,false); 
+                
+            }
+            if (var=="path") 
+            {
                 ProjectionInfo.sPath=value;
                 kipl::strings::filenames::CheckPathSlashes(ProjectionInfo.sPath,true);
             }
@@ -196,6 +220,7 @@ void ReconConfig::ParseArgv(std::vector<std::string> &args)
             if (var=="sod")          ProjectionInfo.fSOD          = std::stof(value);
             if (var=="sdd")          ProjectionInfo.fSDD          = std::stof(value);
             if (var=="pPoint")       kipl::strings::String2Array(value,ProjectionInfo.fpPoint,2);
+            if (var=="skiplistmode") string2enum(value,ProjectionInfo.skipListMode);
         }
 
         if (group=="matrix")
@@ -255,6 +280,12 @@ void ReconConfig::ParseSystem(xmlTextReaderPtr reader)
 
             if (sName=="validate")
                 System.bValidateData=kipl::strings::string2bool(sValue);
+
+            if (sName=="maxthreads")
+                System.nMaxThreads=std::stoi(sValue);
+
+            if (sName=="threadmethod")
+                string2enum(sValue,System.eThreadMethod);
 		}
         ret = xmlTextReaderRead(reader);
         if (xmlTextReaderDepth(reader)<depth)
@@ -293,9 +324,12 @@ void ReconConfig::ParseProjections(xmlTextReaderPtr reader)
             if (sName=="resolution")      kipl::strings::String2Array(sValue,ProjectionInfo.fResolution,2);
             if (sName=="binning")         ProjectionInfo.fBinning        = std::stof(sValue);
 
-            if (sName=="firstindex")      ProjectionInfo.nFirstIndex     = std::stoul(sValue);
-            if (sName=="lastindex")       ProjectionInfo.nLastIndex      = std::stoul(sValue);
-            if (sName=="projectionstep")  ProjectionInfo.nProjectionStep = std::stoul(sValue);
+	        if (sName=="firstindex")      ProjectionInfo.nFirstIndex     = atoi(sValue.c_str());
+	        if (sName=="lastindex")       ProjectionInfo.nLastIndex          = atoi(sValue.c_str());
+	        if (sName=="projectionstep")  ProjectionInfo.nProjectionStep = atoi(sValue.c_str());
+            if (sName=="repeatedview")    ProjectionInfo.nRepeatedView   = std::stoul(sValue);
+            if (sName=="averagemethod")   string2enum(sValue,ProjectionInfo.averageMethod);
+            if (sName=="skiplistmode")    string2enum(sValue,ProjectionInfo.skipListMode);
 			if (sName=="skipprojections") {
 				kipl::strings::String2Set(sValue,ProjectionInfo.nlSkipList);
 				msg<<"Skip list: "<<kipl::strings::Set2String(ProjectionInfo.nlSkipList);
@@ -505,70 +539,83 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 
 
 //----------------------
-ReconConfig::cUserInformation::cUserInformation() :
-	sOperator("Anders Kaestner"),
-	sInstrument("ICON"),
-	sProjectNumber("P11001"),
-	sSample("Unknown item"),
-	sComment("No comment")
-{
-}
+// ReconConfig::cUserInformation::cUserInformation() :
+// 	sOperator("Anders Kaestner"),
+// 	sInstrument("ICON"),
+// 	sProjectNumber("P11001"),
+// 	sSample("Unknown item"),
+// 	sComment("No comment")
+// {
+// }
 
-ReconConfig::cUserInformation::cUserInformation(const cUserInformation &info) :
-	sOperator(info.sOperator),
-	sInstrument(info.sInstrument),
-	sProjectNumber(info.sProjectNumber),
-	sSample(info.sSample),
-    sComment(info.sComment)
-{
-}
+// ReconConfig::cUserInformation::cUserInformation(const cUserInformation &info) :
+// 	sOperator(info.sOperator),
+// 	sInstrument(info.sInstrument),
+// 	sProjectNumber(info.sProjectNumber),
+// 	sSample(info.sSample),
+//     sComment(info.sComment)
+// {
+// }
 
-ReconConfig::cUserInformation & ReconConfig::cUserInformation::operator = (const cUserInformation &info)
-{
-	sOperator      = info.sOperator;
-	sInstrument    = info.sInstrument;
-	sProjectNumber = info.sProjectNumber;
-	sSample        = info.sSample;
-	sComment       = info.sComment;
+// ReconConfig::cUserInformation & ReconConfig::cUserInformation::operator = (const cUserInformation &info)
+// {
+// 	sOperator      = info.sOperator;
+// 	sInstrument    = info.sInstrument;
+// 	sProjectNumber = info.sProjectNumber;
+// 	sSample        = info.sSample;
+// 	sComment       = info.sComment;
 
-	return * this;
-}
+// 	return * this;
+// }
 
-std::string ReconConfig::cUserInformation::WriteXML(int indent)
-{
-	using namespace std;
-	ostringstream str;
+// std::string ReconConfig::cUserInformation::WriteXML(int indent)
+// {
+// 	using namespace std;
+// 	ostringstream str;
 
-    str<<std::setw(indent)  <<" "<<"<userinformation>"<<std::endl;
-        str<<std::setw(indent+4)  <<" "<<"<operator>"<<sOperator<<"</operator>\n";
-        str<<std::setw(indent+4)  <<" "<<"<instrument>"<<sInstrument<<"</instrument>\n";
-        str<<std::setw(indent+4)  <<" "<<"<projectnumber>"<<sProjectNumber<<"</projectnumber>\n";
-        str<<std::setw(indent+4)  <<" "<<"<sample>"<<sSample<<"</sample>\n";
-        str<<std::setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
-    str<<std::setw(indent)  <<" "<<"</userinformation>"<<std::endl;
+//     str<<std::setw(indent)  <<" "<<"<userinformation>"<<std::endl;
+//         str<<std::setw(indent+4)  <<" "<<"<operator>"<<sOperator<<"</operator>\n";
+//         str<<std::setw(indent+4)  <<" "<<"<instrument>"<<sInstrument<<"</instrument>\n";
+//         str<<std::setw(indent+4)  <<" "<<"<projectnumber>"<<sProjectNumber<<"</projectnumber>\n";
+//         str<<std::setw(indent+4)  <<" "<<"<sample>"<<sSample<<"</sample>\n";
+//         str<<std::setw(indent+4)  <<" "<<"<comment>"<<sComment<<"</comment>\n";
+//     str<<std::setw(indent)  <<" "<<"</userinformation>"<<std::endl;
 
-	return str.str();
-}
+// 	return str.str();
+// }
 
 
 //----------------
 ReconConfig::cSystem::cSystem(): 
 	nMemory(1500ul),
     eLogLevel(kipl::logging::Logger::LogMessage),
-    bValidateData(false)
-{}
+    bValidateData(false),
+    nMaxThreads(-1),
+    eThreadMethod(kipl::base::threadingSTL)
+{
+    setNumberOfThreads(nMaxThreads);
+}
 
 ReconConfig::cSystem::cSystem(const cSystem &a) : 
 	nMemory(a.nMemory), 
     eLogLevel(a.eLogLevel),
-    bValidateData(a.bValidateData)
-{}
+    bValidateData(a.bValidateData),
+    nMaxThreads(a.nMaxThreads),
+    eThreadMethod(a.eThreadMethod)
+{
+    setNumberOfThreads(nMaxThreads);
+}
 
 ReconConfig::cSystem & ReconConfig::cSystem::operator=(const cSystem &a) 
 {
     nMemory       = a.nMemory;
     eLogLevel     = a.eLogLevel;
     bValidateData = a.bValidateData;
+    nMaxThreads   = a.nMaxThreads;
+    eThreadMethod = a.eThreadMethod;
+
+    setNumberOfThreads(a.nMaxThreads);
+
 	return *this;
 }
 
@@ -581,19 +628,40 @@ std::string ReconConfig::cSystem::WriteXML(int indent)
 	str<<setw(indent+4)<<" "<<"<memory>"<<nMemory<<"</memory>"<<std::endl;
 	str<<setw(indent+4)<<"  "<<"<loglevel>"<<eLogLevel<<"</loglevel>"<<std::endl;
     str<<setw(indent+4)<<"  "<<"<validate>"<<kipl::strings::bool2string(bValidateData)<<"</validate>"<<std::endl;
-	str<<setw(indent)  <<"  "<<"</system>"<<std::endl;
+    str<<setw(indent+4)<<" "<<"<maxthreads>"<<nMaxThreads<<"</maxthreads>"<<std::endl;
+    str<<setw(indent+4)<<" "<<"<threadmethod>"<<eThreadMethod<<"</threadmethod>"<<std::endl;
+    str<<setw(indent)  <<"  "<<"</system>"<<std::endl;
 
 	return str.str();
 }		
 
+void ReconConfig::cSystem::setNumberOfThreads(int N)
+{
+    int hwMaxThreads = std::thread::hardware_concurrency();
+
+    if ((N<1) || (hwMaxThreads<N))
+    {
+        nMaxThreads = hwMaxThreads;
+    }
+    else
+    {
+        nMaxThreads = N;
+    }
+}
+
 //---------
 ReconConfig::cProjections::cProjections() :
+    nDims(2,2048),
     beamgeometry(BeamGeometry_Parallel),
+    fResolution(2,0.01f),
     fBinning(1),
     nMargin(2), // modify to 0
     nFirstIndex(1),
     nLastIndex(625),
     nProjectionStep(1),
+    nRepeatedView(1),
+    averageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    skipListMode(SkipMode_None),
     bRepeatLine(false),
     scantype(SequentialScan),
     nGoldenStartIdx(0),
@@ -601,6 +669,7 @@ ReconConfig::cProjections::cProjections() :
     fCenter(1024.0f),
     fSOD(100.0f),
     fSDD(100.0f),
+    fpPoint(2,500.0f),
     bTranslate(false),
 
     fTiltAngle(0.0f),
@@ -615,35 +684,28 @@ ReconConfig::cProjections::cProjections() :
     sDCFileMask("dc_####.fits"),
     nDCFirstIndex(1),
     nDCCount(5),
+    roi({0,0,2047,2047}),
+    projection_roi({0,0,2047,2047}),
+    dose_roi({0,0,10,10}),
+    fScanArc({0.0f,360.0f}),
     eFlip(kipl::base::ImageFlipNone),
     eRotate(kipl::base::ImageRotateNone),
     eDirection(kipl::base::RotationDirCW) // default clockwise
 {
-nDims[0]=2048; nDims[1]=2048;
-fpPoint[0]= 500.0f; fpPoint[1]= 500.0f; // initialize pPoint
-fResolution[0]=0.01f; fResolution[1]=0.01f;
-roi[0]=0; roi[2]=2047;
-roi[1]=0; roi[3]=2047;
-fScanArc[0]=0; fScanArc[1]=360;
-	dose_roi[0] = 0;
-	dose_roi[1] = 0;
-	dose_roi[2] = 10;
-	dose_roi[3] = 10;
-
-    projection_roi[0] = 0;
-    projection_roi[1] = 2047;
-    projection_roi[2] = 0;
-    projection_roi[3] = 2047;
-
 }
 
 ReconConfig::cProjections::cProjections(const cProjections & a) :
+    nDims(a.nDims),
     beamgeometry(a.beamgeometry),
+    fResolution(a.fResolution),
 	fBinning(a.fBinning),
     nMargin(a.nMargin),
 	nFirstIndex(a.nFirstIndex),
 	nLastIndex(a.nLastIndex),
 	nProjectionStep(a.nProjectionStep),
+    nRepeatedView(a.nRepeatedView),
+    averageMethod(a.averageMethod),
+    skipListMode(a.skipListMode),
 	nlSkipList(a.nlSkipList),
 	bRepeatLine(a.bRepeatLine),
 	scantype(a.scantype),
@@ -652,6 +714,7 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	fCenter(a.fCenter),
     fSOD(a.fSOD),
     fSDD(a.fSDD),
+    fpPoint(a.fpPoint),
 	bTranslate(a.bTranslate),
 	fTiltAngle(a.fTiltAngle),
 	fTiltPivotPosition(a.fTiltPivotPosition),
@@ -665,27 +728,15 @@ ReconConfig::cProjections::cProjections(const cProjections & a) :
 	sDCFileMask(a.sDCFileMask),
 	nDCFirstIndex(a.nDCFirstIndex),
 	nDCCount(a.nDCCount),
+    roi(a.roi),
+    projection_roi(a.projection_roi),
+    dose_roi(a.dose_roi),
+    fScanArc(a.fScanArc),
 	eFlip(a.eFlip),
     eRotate(a.eRotate),
     eDirection(a.eDirection)
-{
-	nDims[0]=a.nDims[0]; nDims[1]=a.nDims[1];
-	fResolution[0]=a.fResolution[0]; fResolution[1]=a.fResolution[1];
-    std::copy_n(a.roi,4,roi);
-
-	fScanArc[0]=a.fScanArc[0]; fScanArc[1]=a.fScanArc[1];
-
-    fpPoint[0]=a.fpPoint[0]; fpPoint[1]=a.fpPoint[1];
-
-    projection_roi[0] = a.projection_roi[0];
-    projection_roi[1] = a.projection_roi[1];
-    projection_roi[2] = a.projection_roi[2];
-    projection_roi[3] = a.projection_roi[3];
+{	
 	
-	dose_roi[0] = a.dose_roi[0];
-	dose_roi[1] = a.dose_roi[1];
-	dose_roi[2] = a.dose_roi[2];
-	dose_roi[3] = a.dose_roi[3];
 }
 
 ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjections &a)
@@ -695,6 +746,9 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
     nMargin         = a.nMargin;
 	nFirstIndex     = a.nFirstIndex;
 	nProjectionStep = a.nProjectionStep;
+    nRepeatedView   = a.nRepeatedView;
+    averageMethod   = a.averageMethod;
+    skipListMode    = a.skipListMode;
 	bRepeatLine     = a.bRepeatLine;
 	scantype		= a.scantype;
     nGoldenStartIdx = a.nGoldenStartIdx;
@@ -719,30 +773,20 @@ ReconConfig::cProjections & ReconConfig::cProjections::operator=(const cProjecti
 	nDCFirstIndex   = a.nDCFirstIndex;
     nDCCount        = a.nDCCount;
 
-	nDims[0]=a.nDims[0]; nDims[1]=a.nDims[1];
-	fResolution[0]  = a.fResolution[0];
-	fResolution[1]  = a.fResolution[1];
+    nDims = a.nDims;
 
-    std::copy_n(a.roi,4,roi);
+    fResolution = a.fResolution;
 
-    fScanArc[0]     = a.fScanArc[0];
-	fScanArc[1]     = a.fScanArc[1];
+    roi         = a.roi;
+    fScanArc    = a.fScanArc;
 
-    fpPoint[0]=a.fpPoint[0]; fpPoint[1]=a.fpPoint[1];
+    fpPoint     = a.fpPoint;
+    projection_roi = a.projection_roi;
+    dose_roi    = a.dose_roi;
 
-    projection_roi[0] = a.projection_roi[0];
-    projection_roi[1] = a.projection_roi[1];
-    projection_roi[2] = a.projection_roi[2];
-    projection_roi[3] = a.projection_roi[3];
-
-	dose_roi[0] = a.dose_roi[0];
-	dose_roi[1] = a.dose_roi[1];
-	dose_roi[2] = a.dose_roi[2];
-	dose_roi[3] = a.dose_roi[3];
-
-	eFlip = a.eFlip;
-	eRotate = a.eRotate;
-    eDirection = a.eDirection;
+    eFlip       = a.eFlip;
+    eRotate     = a.eRotate;
+    eDirection  = a.eDirection;
 
 	return *this;
 }
@@ -760,6 +804,9 @@ std::string ReconConfig::cProjections::WriteXML(int indent)
 	str<<setw(indent+4)  <<" "<<"<firstindex>"<<nFirstIndex<<"</firstindex>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<lastindex>"<<nLastIndex<<"</lastindex>"<<std::endl;
 	str<<setw(indent+4)  <<" "<<"<projectionstep>"<<nProjectionStep<<"</projectionstep>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<repeatedview>"<<nRepeatedView<<"</repeatedview>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<averagemethod>"<<averageMethod<<"</averagemethod>"<<std::endl;
+    str<<setw(indent+4)  <<" "<<"<skiplistmode>"<<skipListMode<<"</skiplistmode>"<<std::endl;
 	if (!nlSkipList.empty()) {
 		str<<setw(indent+4)  <<" "<<"<skipprojections>"<<kipl::strings::Set2String(nlSkipList)<<"</skipprojections>"<<std::endl;
 	}
@@ -804,6 +851,8 @@ void string2enum(const std::string str, ReconConfig::cProjections::eScanType &st
 		st=ReconConfig::cProjections::SequentialScan;
 	else if (str=="goldensection")
 		st=ReconConfig::cProjections::GoldenSectionScan;
+    else if (str=="invgoldensection")
+        st=ReconConfig::cProjections::InvGoldenSectionScan;
 	else
 		throw ReconException("Undefined enum in string2enum (scantype)", __FILE__,__LINE__);
 }
@@ -827,13 +876,9 @@ void string2enum(const std::string str, ReconConfig::cProjections::eImageType &i
 
 std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eScanType st)
 {
-	switch (st) {
-		case ReconConfig::cProjections::SequentialScan    : s<<"sequential"; break;
-		case ReconConfig::cProjections::GoldenSectionScan : s<<"goldensection"; break;
-		default : throw ReconException("Unknown scan type encountered in operator<<", __FILE__,__LINE__);
-	};
+    s<<enum2string(st);
 
-	return s;
+    return s;
 }
 
 
@@ -847,58 +892,38 @@ std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eImageType
 //-----------------------------------------------
 
 ReconConfig::cMatrix::cMatrix() :
+    nDims(3,0UL),
 	fRotation(0.0f),
 	sDestinationPath(""),
 	bAutomaticSerialize(false),
 	sFileMask("slice_####.tif"),
 	nFirstIndex(0),
+    fGrayInterval({0.0f,5.0f}),
 	bUseROI(false),
+    roi(4,0UL),
+    voi(6,0UL),
 //    bUseVOI(false),
-	FileType(kipl::io::TIFF16bits)
+    FileType(kipl::io::TIFF16bits),
+    fVoxelSize(3,0.0f)
 {
-	nDims[2]=nDims[1]=nDims[0]=0;
-    fVoxelSize[2]=fVoxelSize[1]=fVoxelSize[0]=0.0f;
-	fGrayInterval[0]=0;
-	fGrayInterval[1]=5;
-
-    std::fill_n(roi,4,0UL);
-    std::fill_n(voi,6,0UL);
-
 	bAutomaticSerialize=true;
 }
 
 ReconConfig::cMatrix::cMatrix(const cMatrix &a) :
+    nDims(a.nDims),
 	fRotation(a.fRotation),
 	sDestinationPath(a.sDestinationPath),
 	bAutomaticSerialize(a.bAutomaticSerialize),
 	sFileMask(a.sFileMask),
 	nFirstIndex(a.nFirstIndex),
+    fGrayInterval(a.fGrayInterval),
 	bUseROI(a.bUseROI),
+    roi(a.roi),
+    voi(a.voi),
 //    bUseVOI(a.bUseVOI),
-	FileType(a.FileType)
+    FileType(a.FileType),
+    fVoxelSize(a.fVoxelSize)
 {
-	nDims[2] = a.nDims[2];
-	nDims[1] = a.nDims[1];
-	nDims[0] = a.nDims[0];
-
-	roi[0]= a.roi[0];
-	roi[1]= a.roi[1];
-	roi[2]= a.roi[2];
-	roi[3]= a.roi[3];
-
-    voi[0] = a.voi[0];
-    voi[1] = a.voi[1];
-    voi[2] = a.voi[2];
-    voi[3] = a.voi[3];
-    voi[4] = a.voi[4];
-    voi[5] = a.voi[5];
-
-	fGrayInterval[0]    = a.fGrayInterval[0];
-	fGrayInterval[1]    = a.fGrayInterval[1];
-
-    fVoxelSize[0] = a.fVoxelSize[0];
-    fVoxelSize[1] = a.fVoxelSize[1];
-    fVoxelSize[2] = a.fVoxelSize[2];
 }
 
 ReconConfig::cMatrix & ReconConfig::cMatrix::operator=(const cMatrix &a) 
@@ -907,32 +932,17 @@ ReconConfig::cMatrix & ReconConfig::cMatrix::operator=(const cMatrix &a)
 	sFileMask        = a.sFileMask;
 	nFirstIndex      = a.nFirstIndex;
 
-	nDims[2] = a.nDims[2];
-	nDims[1] = a.nDims[1];
-	nDims[0] = a.nDims[0];
-	fRotation = a.fRotation;
-	fGrayInterval[0]    = a.fGrayInterval[0];
-	fGrayInterval[1]    = a.fGrayInterval[1];
+    nDims     = a.nDims;
+    fRotation = a.fRotation;
+    fGrayInterval = a.fGrayInterval;
 	FileType = a.FileType;
 	bAutomaticSerialize = a.bAutomaticSerialize;
 
 	bUseROI=a.bUseROI;
-	roi[0]= a.roi[0];
-	roi[1]= a.roi[1];
-	roi[2]= a.roi[2];
-	roi[3]= a.roi[3];
+    roi = a.roi;
+    voi = a.voi;
 
-//    bUseVOI = a.bUseVOI;
-    voi[0] = a.voi[0];
-    voi[1] = a.voi[1];
-    voi[2] = a.voi[2];
-    voi[3] = a.voi[3];
-    voi[4] = a.voi[4];
-    voi[5] = a.voi[5];
-
-    fVoxelSize[0] = a.fVoxelSize[0];
-    fVoxelSize[1] = a.fVoxelSize[1];
-    fVoxelSize[2] = a.fVoxelSize[2];
+    fVoxelSize = a.fVoxelSize;
 
 	return *this;
 }
@@ -1023,5 +1033,56 @@ std::ostream & operator<<(std::ostream &s, ReconConfig::cProjections::eBeamGeome
 {
     s<<enum2string(bg);
 
+    return s;
+}
+
+std::string enum2string(const ReconConfig::cProjections::eScanType &st)
+{
+    std::string s;
+    switch (st) {
+        case ReconConfig::cProjections::SequentialScan    :    s="sequential"; break;
+        case ReconConfig::cProjections::GoldenSectionScan :    s="goldensection"; break;
+        case ReconConfig::cProjections::InvGoldenSectionScan : s="invgoldensection"; break;
+        default : throw ReconException("Unknown scan type encountered in operator<<", __FILE__,__LINE__);
+    };
+
+    return s;
+}
+
+void string2enum(const std::string &str, ReconConfig::cProjections::eSkipListMode &mode)
+{
+    std::map<std::string,ReconConfig::cProjections::eSkipListMode> modes;
+
+    modes["none"] = ReconConfig::cProjections::SkipMode_None;
+    modes["skip"] = ReconConfig::cProjections::SkipMode_Skip;
+    modes["drop"] = ReconConfig::cProjections::SkipMode_Drop;
+
+    std::string tmpstr=kipl::strings::toLower(str);
+
+    if (modes.count(tmpstr)==0)
+        throw ReconException("The key string does not exist for eSkipMode",__FILE__,__LINE__);
+
+    mode=modes[tmpstr];
+
+}
+
+std::string enum2string(const ReconConfig::cProjections::eSkipListMode &mode)
+{
+   std::string s;
+    switch (mode)
+    {
+        case ReconConfig::cProjections::SkipMode_None: s="none"; break;
+        case ReconConfig::cProjections::SkipMode_Skip: s="skip"; break;
+        case ReconConfig::cProjections::SkipMode_Drop: s="drop"; break;
+        default : throw ReconException("Unknown skip mode encountered in enum2string", __FILE__,__LINE__);
+    }
+
+    return s;
+}
+
+std::ostream & operator<<(std::ostream &s, const ReconConfig::cProjections::eSkipListMode &mode)
+{
+    s<<enum2string(mode);
+ 
     return s;
 }

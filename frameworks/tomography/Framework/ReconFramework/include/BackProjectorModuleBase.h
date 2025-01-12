@@ -50,18 +50,22 @@ public:
     /// Sets up the back-projector with new parameters
     /// \param config Reconstruction parameter set
     /// \param parameters Additional set of configuration parameters
-	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters)=0;
+    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
 
     /// Initializing the back-projector
 	virtual int Initialize()=0;
 
     /// Gets a list parameters required by the module.
     /// \returns The parameter list
-	virtual std::map<std::string, std::string> GetParameters()=0;
+    virtual std::map<std::string, std::string> GetParameters();
 
     /// Sets the region of interest on the projections.
     /// \param roi A four-entry array of ROI coordinates (x0,y0,x1,y1)
-	virtual void SetROI(size_t *roi)=0;
+    virtual void SetROI(const std::vector<size_t> &roi)=0;
+
+    void setNumberOfThreads(int N);
+
+    int numberOfThreads();
 
     /// Get the reconstructed matrix
     /// \returns The matrix as TImage object
@@ -82,7 +86,7 @@ public:
 
     /// Get the size of the matrix
     /// \param dims a three-element array to store the size of the matrix
-	virtual void GetMatrixDims(size_t *dims) {dims[0]=volume.Size(0); dims[1]=volume.Size(1); dims[2]=volume.Size(2);}
+    virtual vector<size_t> GetMatrixDims() {return volume.dims();}
 
     /// Get the histogram of the reconstructed matrix. This should be calculated in the masked region only to avoid unnescessary zero counts.
     /// \param x the bin values of the x axis
@@ -98,7 +102,8 @@ public:
 
     /// Execution time of the latest back-projection run.
     /// \returns The execution time in seconds.
-    double ExecTime() {return timer.elapsedTime(kipl::profile::Timer::seconds); }
+    double execTime() {return timer.cumulativeTime(); }
+    void resetTimer();
 
     const std::vector<Publication> & publicationList();
 
@@ -119,13 +124,17 @@ protected:
 
     std::string m_sModuleName;                   ///< The name of the back-projection module.
     kipl::base::TImage<float,3> volume;          ///< The matrix where the back-projection is stored during the process.
+    bool m_bBuildCircleMask;
     std::vector<std::pair<size_t,size_t> > mask; ///< List of start and stop positions forming a masked area where the data is reconstructed.
+    size_t maskArea;
+    std::vector<std::pair<size_t,size_t> > lineBlocks; ///< List of start and stop positions forming a masked area where the data is reconstructed.
     kipl::profile::Timer timer;                  ///< A timer used to measure the exectution time of the back-projctor.
-    size_t MatrixDims[3];
+//    std::vector<size_t> MatrixDims;
 
     std::string m_sApplication;                  ///< The name of the application calling the module
     kipl::interactors::InteractionBase *m_Interactor;               ///< Interface to a progress bar in the GUI.
     std::vector<Publication> publications;
+    int nMaxThreads;
 };
 
 #endif

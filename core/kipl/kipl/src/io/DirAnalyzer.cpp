@@ -72,6 +72,8 @@ std::vector<std::string> DirAnalyzer::GetDirList(std::string path)
         throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
     }
 
+    std::sort(m_vDirContents.begin(),m_vDirContents.end());
+
     return m_vDirContents;
 }
 

@@ -4,13 +4,13 @@
 #define PREPROCMODULEBASE_H
 #include "ReconFramework_global.h"
 
+#include <map>
+#include <string>
+
 #include <logging/logger.h>
 #include <base/timage.h>
 #include <profile/Timer.h>
-#include <string>
 #include <strings/miscstring.h>
-#include <map>
-
 #include <ProcessModuleBase.h>
 #include <interactors/interactionbase.h>
 
@@ -32,7 +32,7 @@ public:
     /// Sets the region of interest for the current processing block
     /// \param roi vector with the roi coordinates (x0,y0,x1,y1)
     /// \returns True if the roi information was used.
-    virtual bool SetROI(size_t * roi);
+    virtual bool SetROI(const std::vector<size_t> &roi);
 
     /// Destructor to clean up
 	virtual ~PreprocModuleBase(void);

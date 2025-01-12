@@ -288,18 +288,18 @@ void Plotter::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void Plotter::wheelEvent(QWheelEvent *event)
-{
-    int numDegrees = event->delta() / 8;
-    int numTicks = numDegrees / 15;
+//void Plotter::wheelEvent(QWheelEvent *event)
+//{
+//    auto numDegrees = event->angleDelta() / 8;
+//    auto numTicks = numDegrees / 15;
 
-    if (event->orientation() == Qt::Horizontal) {
-        zoomStack[curZoom].scroll(numTicks, 0);
-    } else {
-        zoomStack[curZoom].scroll(0, numTicks);
-    }
-    refreshPixmap();
-}
+//    if (event->orientation() == Qt::Horizontal) {
+//        zoomStack[curZoom].scroll(numTicks, 0);
+//    } else {
+//        zoomStack[curZoom].scroll(0, numTicks);
+//    }
+//    refreshPixmap();
+//}
 
 void Plotter::savePlotData()
 {
@@ -362,11 +362,15 @@ void Plotter::refreshPixmap()
 
     QPainter painter(&pixmap);
 
-    painter.initFrom(this);
+    painter.begin(this);
 
-    QFontMetrics fm = painter.fontMetrics();
+    auto fm = painter.fontMetrics();
+    auto br=fm.boundingRect("-0.0000");
+    leftMargin = br.width();
+//    leftMargin = fm.horizontalAdvance("-0.0000",-1);
+//    leftMargin = fm.horizontalAdvance('-');
 
-    leftMargin = fm.width("-0.0000")+Margin-10;
+    leftMargin += Margin-10;
 
     drawGrid(&painter);
     drawCurves(&painter);
@@ -383,7 +387,7 @@ void Plotter::drawGrid(QPainter *painter)
         return;
 
     PlotSettings settings = zoomStack[curZoom];
-    QPen quiteDark = palette().dark().color().light();
+    QPen quiteDark = palette().dark().color().lighter();
     QPen light = palette().light().color();
     QString labelstr;
     // Draw the x-ticks

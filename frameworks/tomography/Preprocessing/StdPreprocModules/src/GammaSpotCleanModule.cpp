@@ -1,4 +1,5 @@
-//#include "stdafx.h"
+//<LICENSE>
+
 #include "../include/StdPreprocModules_global.h"
 #include "../include/GammaSpotCleanModule.h"
 #include <ParameterHandling.h>
@@ -48,14 +49,14 @@ std::map<std::string, std::string> GammaSpotCleanModule::GetParameters()
     return parameters;
 }
 
-bool GammaSpotCleanModule::SetROI(size_t * UNUSED(roi))
+bool GammaSpotCleanModule::SetROI(const std::vector<size_t> &/*UNUSED*/)
 {
     return false;
 }
 
-int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
+int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & /*coeff*/)
 {
-//    clog<<"ProcessCore"<<endl;
+//    std::clog<<"ProcessCore"<<std::endl;
 #ifdef __APPLE__
     return ProcessSingle(img);
 #else
@@ -67,7 +68,7 @@ int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::ma
 }
 
 
-int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & UNUSED(coeff))
+int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & /*img*/, std::map<std::string, std::string> & /*coeff*/)
 {
 //    std::ostringstream msg;
 //    ImagingAlgorithms::GammaClean cleaner;
@@ -77,17 +78,17 @@ int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
 //        cleaner.Process(img);
 //    }
 //    catch (ImagingException & e) {
-//        msg.str();
+//        msg.str("");
 //        msg<<"Failed to process data with ImagingException : "<<std::endl<<e.what();
 //        throw ReconException(msg.str(),__FILE__,__LINE__);
 //    }
 //    catch (kipl::base::KiplException & e) {
-//        msg.str();
+//        msg.str("");
 //        msg<<"Failed to process data with KiplException : "<<std::endl<<e.what();
 //        throw ReconException(msg.str(),__FILE__,__LINE__);
 //    }
 //    catch (std::exception & e) {
-//        msg.str();
+//        msg.str("");
 //        msg<<"Failed to process data with STL exception : "<<std::endl<<e.what();
 //        throw ReconException(msg.str(),__FILE__,__LINE__);
 //    }
@@ -101,7 +102,7 @@ int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
     return 0;
 }
 
-int GammaSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
+int GammaSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & /*img*/)
 {
 //    const int N = static_cast<int>(img.Size(2));
 
@@ -120,7 +121,7 @@ int GammaSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
     return 0;
 }
 
-int GammaSpotCleanModule::ProcessParallel(kipl::base::TImage<float,3> & img)
+int GammaSpotCleanModule::ProcessParallel(kipl::base::TImage<float,3> & /*img*/)
 {
 //    const int N = static_cast<int>(img.Size(2));
 

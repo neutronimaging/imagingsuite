@@ -1,5 +1,6 @@
 #include <QString>
 #include <QtTest>
+#include <QDebug>
 
 #include <sstream>
 #include <list>
@@ -8,11 +9,19 @@
 #include <string>
 #include <cmath>
 #include <algorithm>
+#include <filesystem> 
+namespace fs = std::filesystem;
 
 #include <base/KiplException.h>
+#include <math/median.h>
 #include <analyzefileext.h>
-#include <datasetbase.h>
+#include <fileset.h>
 #include <buildfilelist.h>
+#include <imagereader.h>
+#include <imagewriter.h>
+#include <readerexception.h>
+#include <strings/filenames.h>
+#include <folders.h>
 
 class TReaderConfigTest : public QObject
 {
@@ -27,10 +36,27 @@ private Q_SLOTS:
     void testAnalyzeFileExt();
     void testDataSetBase();
     void testBuildFileListAngles();
+    void testImageSize();
+    void testRead();
+    void testCroppedRead();
+    void testGetDose();
+    void testCreateDirectories();
+
+private:
+    kipl::base::TImage<float> gradimg;
 };
 
-TReaderConfigTest::TReaderConfigTest()
+TReaderConfigTest::TReaderConfigTest() :
+    gradimg({100,120})
 {
+
+    std::iota(gradimg.GetDataPtr(),gradimg.GetDataPtr()+gradimg.Size(),0);
+
+    ImageWriter writer;
+
+    writer.write(gradimg,"testread.tif");
+    writer.write(gradimg,"testread.fits");
+    
 }
 
 std::vector<float> TReaderConfigTest::goldenAngles(int n, int start, float arc)
@@ -64,16 +90,14 @@ void TReaderConfigTest::testAnalyzeFileExt()
     string2enum("jpeg", et); QCOMPARE(et,readers::ExtensionJPG);
     string2enum("tif", et);  QCOMPARE(et,readers::ExtensionTIFF);
     string2enum("tiff", et); QCOMPARE(et,readers::ExtensionTIFF);
-    string2enum("mat", et);  QCOMPARE(et,readers::ExtensionMAT);
-    string2enum("hdf", et);  QCOMPARE(et,readers::ExtensionHDF);
+    string2enum("hdf", et);  QCOMPARE(et,readers::ExtensionHDF5);
     string2enum("hdf4", et); QCOMPARE(et,readers::ExtensionHDF4);
     string2enum("hd4", et);  QCOMPARE(et,readers::ExtensionHDF4);
     string2enum("hdf5", et); QCOMPARE(et,readers::ExtensionHDF5);
     string2enum("hd5", et);  QCOMPARE(et,readers::ExtensionHDF5);
     string2enum("seq", et); QCOMPARE(et,readers::ExtensionSEQ);
 
-    QVERIFY_EXCEPTION_THROWN({string2enum("xyz",et);},kipl::base::KiplException);
-
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,{string2enum("xyz",et);});
     QCOMPARE(enum2string(readers::ExtensionTXT),std::string("txt"));
     QCOMPARE(enum2string(readers::ExtensionDMP),std::string("dmp"));
     QCOMPARE(enum2string(readers::ExtensionDAT),std::string("dat"));
@@ -83,14 +107,12 @@ void TReaderConfigTest::testAnalyzeFileExt()
     QCOMPARE(enum2string(readers::ExtensionPNG),std::string("png"));
     QCOMPARE(enum2string(readers::ExtensionJPG),std::string("jpg"));
     QCOMPARE(enum2string(readers::ExtensionTIFF),std::string("tif"));
-    QCOMPARE(enum2string(readers::ExtensionMAT),std::string("mat"));
     QCOMPARE(enum2string(readers::ExtensionHDF),std::string("hdf"));
     QCOMPARE(enum2string(readers::ExtensionHDF4),std::string("hd4"));
     QCOMPARE(enum2string(readers::ExtensionHDF5),std::string("hd5"));
     QCOMPARE(enum2string(readers::ExtensionSEQ),std::string("seq"));
 
-    QVERIFY_EXCEPTION_THROWN({enum2string(static_cast<readers::eExtensionTypes>(999));},kipl::base::KiplException);
-
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,{enum2string(static_cast<readers::eExtensionTypes>(999));});
     QCOMPARE(readers::GetFileExtensionType("test.fits"),readers::ExtensionFITS);
     QCOMPARE(readers::GetFileExtensionType("test000.tif"),readers::ExtensionTIFF);
     QCOMPARE(readers::GetFileExtensionType("test.tif.fits"),readers::ExtensionFITS);
@@ -157,14 +179,14 @@ void TReaderConfigTest::testDataSetBase()
 
 void TReaderConfigTest::testBuildFileListAngles()
 {
-    std::list<FileSet> il;
+    std::vector<FileSet> il;
     FileSet fs;
     fs.m_nFirst=0;
     fs.m_nLast=10;
     il.push_back(fs);
 
     std::map<float,std::string> list1=BuildProjectionFileList(il, 0, 0, 180);
-    QCOMPARE(list1.size(),fs.m_nLast-fs.m_nFirst+1);
+    QCOMPARE(list1.size(),static_cast<size_t>(fs.m_nLast-fs.m_nFirst+1));
     float angle=0.0f;
     for (auto & item : list1)
     {
@@ -174,7 +196,7 @@ void TReaderConfigTest::testBuildFileListAngles()
 
     // Starting from zero index
     std::map<float,std::string> list2=BuildProjectionFileList(il, 1, 0, 180);
-    QCOMPARE(list2.size(),fs.m_nLast-fs.m_nFirst+1);
+    QCOMPARE(list2.size(),static_cast<size_t>(fs.m_nLast-fs.m_nFirst+1));
     auto gv=goldenAngles(11,0,180.0f);
     std::sort(gv.begin(),gv.end());
     auto git=gv.begin();
@@ -186,13 +208,13 @@ void TReaderConfigTest::testBuildFileListAngles()
 
     // Pick sequence from 10 to 20 with start index 0
 
-    std::list<FileSet> il3;
+    std::vector<FileSet> il3;
     FileSet fs3;
     fs3.m_nFirst=10;
     fs3.m_nLast=20;
     il3.push_back(fs3);
     std::map<float,std::string> list4=BuildProjectionFileList(il3, 1, 0, 180);
-    QCOMPARE(list4.size(),fs.m_nLast-fs.m_nFirst+1);
+    QCOMPARE(list4.size(),static_cast<size_t>(fs.m_nLast-fs.m_nFirst+1));
     auto gv2=goldenAngles(11,10,180.0f);
     std::sort(gv2.begin(),gv2.end());
     git=gv2.begin();
@@ -204,13 +226,13 @@ void TReaderConfigTest::testBuildFileListAngles()
 
     // Starting from index 10
 
-    std::list<FileSet> il2;
+    std::vector<FileSet> il2;
     FileSet fs2;
     fs2.m_nFirst=10;
     fs2.m_nLast=20;
     il2.push_back(fs2);
     std::map<float,std::string> list3=BuildProjectionFileList(il2, 1, 10, 180);
-    QCOMPARE(list3.size(),fs.m_nLast-fs.m_nFirst+1);
+    QCOMPARE(list3.size(),static_cast<size_t>(fs.m_nLast-fs.m_nFirst+1));
     git=gv.begin();
     for (auto & item : list3)
     {
@@ -220,13 +242,13 @@ void TReaderConfigTest::testBuildFileListAngles()
 
     // Pick sequence from 20 to 30 with start index 10
 
-    std::list<FileSet> il4;
+    std::vector<FileSet> il4;
     FileSet fs4;
     fs4.m_nFirst=20;
     fs4.m_nLast=30;
     il4.push_back(fs4);
     std::map<float,std::string> list5=BuildProjectionFileList(il4, 1, 10, 180);
-    QCOMPARE(list5.size(),fs4.m_nLast-fs4.m_nFirst+1);
+    QCOMPARE(list5.size(),static_cast<size_t>(fs4.m_nLast-fs4.m_nFirst+1));
 
     git=gv2.begin();
     for (auto & item : list5)
@@ -236,6 +258,140 @@ void TReaderConfigTest::testBuildFileListAngles()
     }
 }
 
-QTEST_APPLESS_MAIN(TReaderConfigTest)
+void TReaderConfigTest::testImageSize()
+{
+    ImageReader reader;
+
+    auto dimstiff = reader.imageSize("testread.tif");
+    qDebug() << dimstiff[0] << dimstiff[1] << dimstiff[2];
+    QCOMPARE(dimstiff[0],gradimg.Size(0));
+    QCOMPARE(dimstiff[1],gradimg.Size(1));
+    QCOMPARE(dimstiff[2],1UL);
+    QCOMPARE(dimstiff.size(),3UL);
+
+    auto dimsfits = reader.imageSize("testread.fits");
+    qDebug() << dimsfits[0] << dimsfits[1] << dimsfits[2];
+    QCOMPARE(dimsfits[0],gradimg.Size(0));
+    QCOMPARE(dimsfits[1],gradimg.Size(1));
+    QCOMPARE(dimsfits[2],1UL);
+    QCOMPARE(dimsfits.size(),3UL);
+
+     QVERIFY_THROWS_EXCEPTION(ReaderException,reader.imageSize("dfgdgdfbvxssrgsxdf.fits"));
+}
+
+void TReaderConfigTest::testRead()
+{
+
+    ImageReader reader;
+
+    auto tmp = reader.Read("testread.tif");
+
+    QCOMPARE(tmp.Size(0),gradimg.Size(0));
+    QCOMPARE(tmp.Size(1),gradimg.Size(1));
+
+    for (size_t i=0; i<gradimg.Size(); ++i)
+        QCOMPARE(tmp[i],gradimg[i]);
+
+    auto tmpfits = reader.Read("testread.fits");
+
+    QCOMPARE(tmpfits.Size(0),gradimg.Size(0));
+    QCOMPARE(tmpfits.Size(1),gradimg.Size(1));
+
+    for (size_t i=0; i<gradimg.Size(); ++i)
+        QCOMPARE(tmpfits[i],gradimg[i]);
+}
+
+void TReaderConfigTest::testCroppedRead()
+{ 
+    ImageReader reader;
+
+    std::vector<size_t> roi={20,20,30,30};
+
+    auto tmp = reader.Read("testread.tif", kipl::base::ImageFlipNone, kipl::base::ImageRotateNone,1.0f,roi);
+
+    QCOMPARE(tmp.Size(0),roi[2]-roi[0]);
+    QCOMPARE(tmp.Size(1),roi[3]-roi[1]);
+
+    size_t idx=0UL;
+    for (size_t  y = roi[1]; y < roi[3]; ++y)
+        for (size_t x = roi[0]; x < roi[2]; ++x, ++idx)
+            QCOMPARE(tmp[idx],gradimg(x,y));
+
+    std::vector<size_t> roi2={200,20,30,30};
+
+    QVERIFY_THROWS_EXCEPTION(ReaderException,{
+                                 auto t=reader.Read("testread.tif", kipl::base::ImageFlipNone, kipl::base::ImageRotateNone,1.0f,roi2);
+                             });
+
+    auto tmpfits = reader.Read("testread.fits", kipl::base::ImageFlipNone, kipl::base::ImageRotateNone,1.0f,roi);
+
+    QCOMPARE(tmpfits.Size(0),roi[2]-roi[0]);
+    QCOMPARE(tmpfits.Size(1),roi[3]-roi[1]);
+
+    idx=0UL;
+    for (size_t  y = roi[1]; y < roi[3]; ++y)
+        for (size_t x = roi[0]; x < roi[2]; ++x, ++idx)
+            QCOMPARE(tmpfits[idx],gradimg(x,y));
+}
+
+void TReaderConfigTest::testGetDose()
+{
+    ImageReader reader;
+    std::vector<size_t> doseROI={20,20,30,30};
+    float dose=reader.projectionDose("testread.tif",doseROI);
+    std::vector<float> means(doseROI[3]-doseROI[1],0.0f);
+
+    for (size_t y=doseROI[1]; y<doseROI[3]; ++y)
+    {
+        for (size_t x=doseROI[0]; x<doseROI[2]; ++x)
+            means[y-doseROI[1]] += gradimg(x,y);
+        means[y-doseROI[1]]/=doseROI[2]-doseROI[0];
+    }
+    float refDose = 0.0f;
+    kipl::math::median(means,&refDose);
+
+    QCOMPARE(dose,refDose);
+
+}
+
+void TReaderConfigTest::testCreateDirectories()
+{
+    // void CheckFolders(const std::string &path, bool create);
+
+
+    std::string path1 = "a/b/c";
+    kipl::strings::filenames::CheckPathSlashes(path1,false);
+    try {
+        std::filesystem::remove_all(path1);
+    }
+    catch (std::filesystem::filesystem_error &e)
+    {
+        qDebug() << e.what();
+    }
+
+    QVERIFY_THROWS_EXCEPTION(ReaderException,{ CheckFolders(path1,false); });
+    CheckFolders(path1,true);
+    QVERIFY(fs::is_directory(path1));
+
+    CheckFolders(path1,true);
+
+    fs::remove_all("a");
+
+    std::string path2 = "a2/b/c/";
+    kipl::strings::filenames::CheckPathSlashes(path2,true);
+    CheckFolders(path2,true);
+    QVERIFY(fs::is_directory(path2));
+    fs::remove_all("a2");
+}
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TReaderConfigTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TReaderConfigTest)
+#endif
+
 
 #include "tst_treaderconfigtest.moc"

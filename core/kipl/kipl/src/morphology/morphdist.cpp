@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 #include <cfloat>
-
+#include <numeric>
 #include "../../include/base/timage.h"
 //#include "image/imagemath.h"
 #include "../../include/morphology/morphdist.h"
@@ -10,6 +10,124 @@
 using namespace std;
 
 namespace kipl { namespace morphology {
+
+/*
+int DistanceTransform3D(CImage<float,3> &img, CImage<float,3> &dist, CMetricBase &metric)
+{
+	if (metric.dim()!=3) {
+        std::cerr<<metric<<" is not a 3D metric"<<std::endl;
+		return 0;
+	}
+    int x,y,z;
+    const int *dims=img.getDimsptr();
+
+	dist.resize(dims);
+
+    float *pImg;
+    float *pDist;
+
+
+    metric.initialize(dims);
+    int start=metric.start();
+
+    dist=FLT_MAX;
+
+    for (z=start; z<dims[2]-start; z++)   {
+         for (y=start; y<dims[1]-start; y++) {
+             pDist=dist.getLineptr(y,z)+start;
+             pImg=img.getLineptr(y,z)+start;
+             for (x=start; x<dims[0]-start; x++,pDist++, pImg++) {
+                 *pDist= *pImg==0 ? 0: FLT_MAX;
+             }
+         }
+    }
+
+    for (z=start; z<dims[2]-start; z++)   {
+         for (y=start; y<dims[1]-start; y++) {
+             pDist=dist.getLineptr(y,z)+start;
+             for (x=start; x<dims[0]-start; x++,pDist++) {
+                 if (*pDist)
+                     *pDist=metric.forward(pDist);
+             }
+         }
+    }
+
+    for (z=dims[2]-1-start; z>=start; z--)   {
+         for (y=dims[1]-1-start; y>=start; y--) {
+             pDist=dist.getLineptr(y,z)+dims[0]-1-start;
+             for (x=dims[0]-1-start; x>=start; x--,pDist--) {
+                 if (*pDist)
+                     *pDist=metric.backward(pDist);
+             }
+         }
+    }
+
+    pDist=dist.getDataptr();
+	int cnt=0;
+    for (x=0; x<dist.N(); x++, pDist++)
+        if (*pDist==FLT_MAX) {
+			*pDist=0;
+		}
+
+
+    return 1;
+
+}
+*/
+
+/*
+int DistanceTransform2D(const CImage<float,2> &img, CImage<float,2> &dist, CMetricBase &metric)
+{
+    //std::cout<<"enter"<<std::endl;
+	int x,y;
+    const int *dims=img.getDimsptr();
+    dist.resize(dims);
+
+	float *pImg;
+	float *pDist;
+
+
+    metric.initialize(dims);
+    int start=metric.start();
+	dist=FLT_MAX;
+
+    //std::cout<<"init"<<std::endl;
+	for (y=start; y<dims[1]-start; y++) {
+		pDist=dist.getLineptr(y)+start;
+		pImg=img.getLineptr(y)+start;
+		for (x=start; x<dims[0]-start; x++,pDist++, pImg++) {
+			*pDist= *pImg==0 ? 0: FLT_MAX;
+		}
+ 	}
+
+
+    //std::cout<<"forward"<<std::endl;
+	for (y=start; y<dims[1]-start; y++) {
+		pDist=dist.getLineptr(y)+start;
+		for (x=start; x<dims[0]-start; x++,pDist++) {
+			if (*pDist)
+				*pDist=metric.forward(pDist);
+		}
+	}
+
+    //std::cout<<"backward"<<std::endl;
+	for (y=dims[1]-1-start; y>=start; y--) {
+		pDist=dist.getLineptr(y)+dims[0]-1-start;
+		for (x=dims[0]-1-start; x>=start; x--,pDist--) {
+			if (*pDist)
+				*pDist=metric.backward(pDist);
+		}
+	}
+
+    std::cout<<"finish"<<std::endl;
+    pDist=dist.getDataptr();
+    for (x=0; x<dist.N(); x++, pDist++)
+        if (*pDist==FLT_MAX) *pDist=1;
+
+    return 1;
+
+}
+*/
 
     CMetricBase::CMetricBase(string _name) :
     		ndata(0),
@@ -60,11 +178,10 @@ namespace kipl { namespace morphology {
 		return index_start;
 	}
 
-	int CMetricBase::initialize(size_t const * const d)
+    int CMetricBase::initialize(const std::vector<size_t> & d)
 	{
-		memcpy(dims,d,sizeof(int)*3);
-		ndata=d[0];
-		for (int i=1; i<NDim; i++) ndata*=d[i];
+        dims=d;
+        ndata=std::accumulate(dims.begin(),dims.end(),static_cast<size_t>(1),std::multiplies<size_t>());
 
 		return 0;
 	}
@@ -102,7 +219,7 @@ namespace kipl { namespace morphology {
 
 
       }
-      int CMetric26conn::initialize(size_t const * const dim)
+      int CMetric26conn::initialize(const std::vector<size_t> & dim)
       {
           CMetricBase::initialize(dim);
 
@@ -140,7 +257,7 @@ namespace kipl { namespace morphology {
 
       }
 
-      int CMetricSvensson::initialize(size_t const * const dim)
+      int CMetricSvensson::initialize(const std::vector<size_t> &dim)
       {
           CMetricBase::initialize(dim);
 
@@ -202,7 +319,7 @@ namespace kipl { namespace morphology {
 
 	}
 
-	int CMetric4connect::initialize(size_t const * const d)
+    int CMetric4connect::initialize(const std::vector<size_t> & d)
 	{
 		CMetricBase::initialize(d);
 		float w[3]={0.0f,1.0f,1.0f};
@@ -226,7 +343,7 @@ namespace kipl { namespace morphology {
 
 	}
 
-	int CMetric8connect::initialize(size_t const * const d)
+    int CMetric8connect::initialize(const std::vector<size_t> & d)
 	{
 		CMetricBase::initialize(d);
 		float w[5]={0.0f,1.0f,1.0f,1.0f,1.0f};
@@ -250,7 +367,7 @@ namespace kipl { namespace morphology {
 
 	}
 
-	int CMetric3x3w::initialize(size_t const * const d)
+    int CMetric3x3w::initialize(const std::vector<size_t> & d)
 	{
 		CMetricBase::initialize(d);
 		float w[5]={0.0f,1.0f,1.0f,sqrt(2.0f),sqrt(2.0f)};
@@ -364,7 +481,7 @@ int CMetricBase::initialize(size_t const * const d)
 
 
   }
-  int CMetric26conn::initialize(size_t const * const dim)
+  int CMetric26conn::initialize(const std::vector<size_t> & dim)
   {
       CMetricBase::initialize(dim);
 
@@ -402,7 +519,7 @@ int CMetricBase::initialize(size_t const * const d)
 
   }
 
-  int CMetricSvensson::initialize(size_t const * const dim)
+  int CMetricSvensson::initialize(const std::vector<size_t> & dim)
   {
       CMetricBase::initialize(dim);
 
@@ -464,7 +581,7 @@ CMetric4connect::CMetric4connect() :
 
 }
 
-int CMetric4connect::initialize(size_t const * const d)
+int CMetric4connect::initialize(const std::vector<size_t> & d)
 {
     CMetricBase::initialize(d);
     float w[3]={0.0f,1.0f,1.0f};
@@ -488,7 +605,7 @@ CMetric8connect::CMetric8connect() :
 
 }
 
-int CMetric8connect::initialize(size_t const * const d)
+int CMetric8connect::initialize(const std::vector<size_t> & d)
 {
     CMetricBase::initialize(d);
     float w[5]={0.0f,1.0f,1.0f,1.0f,1.0f};
@@ -512,7 +629,7 @@ CMetric3x3w::CMetric3x3w() :
 
 }
 
-int CMetric3x3w::initialize(size_t const * const d)
+int CMetric3x3w::initialize(const std::vector<size_t> & d)
 {
     CMetricBase::initialize(d);
     float w[5]={0.0f,1.0f,1.0f,sqrt(2.0f),sqrt(2.0f)};

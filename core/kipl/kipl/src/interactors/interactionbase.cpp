@@ -1,8 +1,7 @@
 //<LICENCE>
 
-#include <QDebug>
 #include "../../include/kipl_global.h"
-#include "../include/interactors/interactionbase.h"
+#include "../../include/interactors/interactionbase.h"
 
 namespace kipl { namespace interactors {
 InteractionBase::InteractionBase(std::string name) : 
@@ -39,8 +38,8 @@ bool InteractionBase::SetProgress(float progress, std::string msg)
 {
     std::lock_guard<std::mutex> guard(m_Mutex);
 
-	m_fProgress=progress;
-	m_sMessage=msg;
+    m_fProgress = progress;
+    m_sMessage  = msg;
 
     return m_Status == interactorAborted;
 }
@@ -49,7 +48,7 @@ bool InteractionBase::SetOverallProgress(float progress)
 {
     std::lock_guard<std::mutex> guard(m_Mutex);
 
-    m_fOverallProgress=progress;
+    m_fOverallProgress = progress;
 
     return m_Status == interactorAborted;
 }

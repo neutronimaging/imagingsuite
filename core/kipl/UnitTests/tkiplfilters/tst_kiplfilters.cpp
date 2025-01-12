@@ -1,8 +1,16 @@
+//<LICENSE>
+
 #include <QtTest>
 
 #include <vector>
+#include <string>
 #include <filters/savitzkygolayfilter.h>
+#include <base/timage.h>
+#include <base/kiplenums.h>
+#include <io/io_tiff.h>
+#include <strings/filenames.h>
 
+#include <filters/medianfilter.h>
 
 class KiplFilters : public QObject
 {
@@ -15,11 +23,27 @@ public:
 private slots:
     void test_SavGolCoeffs();
     void test_SavGolFilter();
+    void test_MedianFilter();
+    void benchmark_MedianFilterSingle();
+    void benchmark_MedianFilterParallel();
+
+private:
+    std::string dataPath;
 
 };
 
 KiplFilters::KiplFilters()
 {
+    dataPath = QT_TESTCASE_BUILDDIR;
+    #ifdef __APPLE__
+        dataPath = dataPath + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        dataPath = dataPath + "/../../../../../../TestData/";
+    #else
+        dataPath = dataPath + "/../../../../../TestData/";
+    #endif
+    kipl::strings::filenames::CheckPathSlashes(dataPath,true);
+
 
 }
 
@@ -57,16 +81,18 @@ void KiplFilters::test_SavGolFilter()
     kipl::filters::SavitzkyGolayFilter<double> sg;
     std::vector<double> res;
 
-    try {
+    try
+    {
         res = sg(x, 5, 2);
     }
-    catch (std::exception &e) {
-        QFAIL(e.what()) ;
-    }
-    catch (kipl::base::KiplException &e) {
+    catch (kipl::base::KiplException &e)
+    {
         QFAIL(e.what());
     }
-
+    catch (std::exception &e)
+    {
+        QFAIL(e.what()) ;
+    }
     std::vector<double> expres= {1.65714285714, 3.17143, 3.54286, 2.85714, 0.657143, 0.171429, 1.  , 4.  , 9.};
 
     QCOMPARE(res.size(),expres.size());
@@ -77,6 +103,73 @@ void KiplFilters::test_SavGolFilter()
     }
 }
 
-QTEST_APPLESS_MAIN(KiplFilters)
+void KiplFilters::test_MedianFilter()
+{
+    kipl::base::TImage<float,2> img;
+
+    std::string fname = dataPath+"2D/tiff/scroll_256.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
+
+    kipl::filters::TMedianFilter<float,2> med({5,5});
+
+    med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedian;
+    auto res_single   = med(img,kipl::filters::FilterBase::EdgeZero);
+
+    QCOMPARE(img.Size(),res_single.Size());
+
+    med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedianSTL;
+    auto res_parallel = med(img,kipl::filters::FilterBase::EdgeZero);
+
+    QCOMPARE(img.Size(),res_parallel.Size());
+
+    for (size_t i =0; i<res_single.Size(); ++i)
+        QCOMPARE(res_single[i],res_parallel[i]);
+
+}
+
+void KiplFilters::benchmark_MedianFilterSingle()
+{
+    kipl::base::TImage<float,2> img;
+
+    std::string fname = dataPath+"2D/tiff/scroll_1024.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
+
+    kipl::filters::TMedianFilter<float,2> med({51,1});
+
+    med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedian;
+    QBENCHMARK
+    {
+        auto res_single   = med(img,kipl::filters::FilterBase::EdgeZero);
+    }
+}
+
+void KiplFilters::benchmark_MedianFilterParallel()
+{
+    kipl::base::TImage<float,2> img;
+
+    std::string fname = dataPath+"2D/tiff/scroll_1024.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
+
+    kipl::filters::TMedianFilter<float,2> med({51,1});
+
+    med.medianAlgorithm = kipl::filters::MedianAlg_HeapSortMedianSTL;
+    QBENCHMARK
+    {
+        auto res_parallel = med(img,kipl::filters::FilterBase::EdgeZero);
+    }
+}
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(KiplFilters)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(KiplFilters)
+#endif
+
 
 #include "tst_kiplfilters.moc"

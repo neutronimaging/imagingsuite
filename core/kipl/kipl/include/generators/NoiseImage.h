@@ -33,8 +33,8 @@ public:
     kipl::base::TImage<T,N> MakeNoise();
     void AddNoise(kipl::base::TImage<T,N> &img);
 
-private: 
     void Gauss(kipl::base::TImage<T,N> &img, float m, float s);
+private: 
     void Poisson(kipl::base::TImage<T,N> &img, float lambda);
     /// \brief Adds textured noise to a 2D image
     /// \param img the image to corrupt by noise

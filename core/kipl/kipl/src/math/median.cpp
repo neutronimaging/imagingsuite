@@ -3,8 +3,19 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
-#include <xmmintrin.h>
-#include <emmintrin.h>
+#ifdef __aarch64__
+    #pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wold-style-cast"
+	#pragma clang diagnostic ignored "-Wcast-align"
+	#pragma clang diagnostic ignored "-Wpedantic"
+	#pragma clang diagnostic ignored "-W#warnings"
+		#include <sse2neon/sse2neon.h>
+	#pragma clang diagnostic pop
+#else
+   	#include <xmmintrin.h>
+	#include <emmintrin.h>
+#endif
+
 
 #include "../../include/math/median.h"
 #include "../../include/base/core/quad.h"
@@ -74,15 +85,15 @@ inline __m128 SortQuad2(__m128 data)
 //data[1]=_mm_shuffle(a,b,_MM_SHUFFLE(3,1,3,1));
 //a=_mm_min_ps(data[0],data[1]);
 //b=_mm_max_ps(data[0],data[1]);
-//cout<<a<<", "<<b<<endl;
+//std::cout<<a<<", "<<b<<std::endl;
 //}
 
 
 void median_quick_select_sse(float *arr, const size_t n, float *med)
 {
-	kipl::base::uFQuad data;
+	//kipl::base::uFQuad data;
 	kipl::base::uFQuad sorted;
-	data.q.d=std::numeric_limits<float>::max();
+	//data.q.d=std::numeric_limits<float>::max();
 	__m128 d;
 	int low=0;
 	int high=n-1 ;

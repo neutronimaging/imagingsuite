@@ -1,12 +1,15 @@
 //<LICENSE>
-#include "stdafx.h"
-#include "../include/ReconConfig.h"
-#include "../include/PreprocModuleBase.h"
-#include "../include/ReconException.h"
+
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
-#include <string.h>
+// #include <string.h>
+
+
+#include "../include/ReconConfig.h"
+#include "../include/PreprocModuleBase.h"
+#include "../include/ReconException.h"
+
 
 
 PreprocModuleBase::PreprocModuleBase(std::string name, kipl::interactors::InteractionBase *interactor) :
@@ -20,7 +23,7 @@ PreprocModuleBase::~PreprocModuleBase(void)
 }
 
 
-bool PreprocModuleBase::SetROI(size_t * roi)
+bool PreprocModuleBase::SetROI(const std::vector<size_t> & /*roi*/)
 {
     return false;
 }
@@ -40,9 +43,10 @@ int PreprocModuleBase::Configure(std::map<std::string, std::string> parameters)
 
 int PreprocModuleBase::ExtractSinogram(kipl::base::TImage<float,3> &projections, kipl::base::TImage<float,2> &sinogram, size_t idx)
 {
-	size_t dims[2]={projections.Size(0), projections.Size(2)};
+    std::vector<size_t> dims = { projections.Size(0),
+                                 projections.Size(2)};
 
-	sinogram.Resize(dims);
+    sinogram.resize(dims);
 
 	for (size_t i=0; i<dims[1]; i++)
 	{
@@ -54,7 +58,7 @@ int PreprocModuleBase::ExtractSinogram(kipl::base::TImage<float,3> &projections,
 
 int PreprocModuleBase::InsertSinogram(kipl::base::TImage<float,2> &sinogram, kipl::base::TImage<float,3> &projections, size_t idx)
 {
-	size_t const * const dims=sinogram.Dims();
+    auto dims=sinogram.dims();
 
 	for (size_t i=0; i<dims[1]; i++)
 	{

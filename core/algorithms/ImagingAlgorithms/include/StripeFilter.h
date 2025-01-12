@@ -32,7 +32,7 @@ public:
     /// \param wname Name of the wavelet base
     /// \param scale number of decomosition levels
     /// \param sigma High pass cut-off frequency
-    StripeFilter(size_t const * const dims, const std::string &wname, int scale, float sigma);
+    StripeFilter(const std::vector<size_t> & dims, const std::string &wname, int scale, float sigma);
 
     /// \brief The constructor initializes the filter
     /// \note The filter is initialized for one image size only.
@@ -45,14 +45,15 @@ public:
     virtual ~StripeFilter();
 
     std::vector<int> dims();
-    bool checkDims(const size_t *dims);
+    bool checkDims(const std::vector<size_t> &dims);
     std::string waveletName();
     int decompositionLevels();
     float sigma();
     std::vector<float> filterWindow(int level);
     
     void configure(const std::vector<int> &dims, const std::string &wname, int scale, float sigma);
-
+    void setNumberOfThreads(int N);
+    int numberOfThreads();
 
     /// \brief Applies the stripe filter to an image.
     /// \param img the image to process. The result will be stored into the same image
@@ -87,6 +88,9 @@ private:
     /// \param stride number of pixels between two horizontal lines
     /// \param len length of a line
 	void SetVerticalLine(float *pLine, float *pDest, size_t pos, size_t stride, size_t len);
+
+    bool m_bUseThreading;
+    int m_nNumberOfThreads;
 
     kipl::wavelets::WaveletTransform<float> m_wt; ///< Instance of the wavelete transform
     int m_nScale;                              ///< Number of decomposition levels

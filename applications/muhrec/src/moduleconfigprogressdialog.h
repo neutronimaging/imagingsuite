@@ -19,7 +19,7 @@ public:
     ~ModuleConfigProgressDialog();
     int progress();
     int process();
-    int exec(ReconEngine *engine, size_t *roi, string lastModule);
+    int exec(ReconEngine *engine, const std::vector<size_t> &roi, string lastModule);
     kipl::base::TImage<float,3> getImage();
 
 private:
@@ -32,7 +32,7 @@ protected:
 
     float fraction;
     bool finish;
-    size_t mROI[4];
+    std::vector<size_t> mROI;
     std::string mLastModule;
     ReconEngine * m_Engine;
     kipl::interactors::InteractionBase * m_Interactor;
@@ -41,6 +41,7 @@ protected:
 
 private slots:
     void on_processFailure(QString msg);
+    void on_processDone();
     void changedProgress(float progress, float overallProgress, QString msg);
 
     void on_buttonBox_rejected();
@@ -48,6 +49,7 @@ private slots:
 signals:
     void updateProgress(float progress, float overallProgress, QString msg);
     void processFailure(QString msg);
+    void processDone();
 };
 
 #endif // MODULECONFIGPROGRESSDIALOG_H

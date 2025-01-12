@@ -25,11 +25,11 @@ ImagePainter::ImagePainter(QWidget * parent) :
     m_cdata(nullptr),
     m_currentROI(0,0,0,0)
 {
-      const int N=16;
-      size_t dims[2]={N,N};
+      const size_t N=16;
+      std::vector<size_t> dims={N,N};
       float data[N*N];
 
-      for (int i=0; i<N*N; i++)
+      for (size_t i=0; i<N*N; i++)
           data[i]=static_cast<float>(i);
 
       setImage(data,dims);
@@ -124,7 +124,7 @@ void ImagePainter::Render(QPainter &painter, int x, int y, int w, int h)
 
 void ImagePainter::setImage(kipl::base::TImage<float, 2> &img)
 {
-    setImage(img.GetDataPtr(),img.Dims());
+    setImage(img.GetDataPtr(),img.dims());
 }
 
 kipl::base::TImage<float,2> ImagePainter::getImage()
@@ -132,18 +132,17 @@ kipl::base::TImage<float,2> ImagePainter::getImage()
     return m_OriginalImage;
 }
 
-void ImagePainter::setImage(float const * const data, size_t const * const dims)
+void ImagePainter::setImage(float const * const data, const std::vector<size_t> & dims)
 {
     setImage(data,dims,0.0f,0.0f);
 }
 
-void ImagePainter::setImage(float const * const data, size_t const * const dims, const float low, const float high)
+void ImagePainter::setImage(float const * const data, const std::vector<size_t> &dims, const float low, const float high)
 {
-    m_dims[0]=static_cast<int>(dims[0]);
-    m_dims[1]=static_cast<int>(dims[1]);
+    m_dims = dims;
     m_globalROI.setRect(0,0,dims[0],dims[1]);
 
-    m_OriginalImage.Resize(dims);
+    m_OriginalImage.resize(dims);
     std::copy_n(data,m_OriginalImage.Size(),m_OriginalImage.GetDataPtr());
 
     kipl::math::minmax(data,dims[0]*dims[1],&m_ImageMin, &m_ImageMax,true);
@@ -191,13 +190,13 @@ void ImagePainter::setImage(float const * const data, size_t const * const dims,
 
 void ImagePainter::setPlot(QVector<QPointF> data, QColor color, int idx)
 {
-    m_PlotList[idx]=qMakePair<QVector<QPointF>, QColor>(data,color);
+    m_PlotList[idx]=std::make_pair(data,color);
     m_pParent->update();
 }
 
 void ImagePainter::setRectangle(QRect rect, QColor color, int idx)
 {
-    m_BoxList[idx]=qMakePair<QRect,QColor>(rect,color);
+    m_BoxList[idx]=std::make_pair(rect,color);
     m_pParent->update();
 }
 
@@ -208,7 +207,7 @@ void ImagePainter::holdAnnotations(bool hold)
 
 int ImagePainter::clearPlot(int idx)
 {
-    QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
+    //QMap<int,QPair<QVector<QPointF>, QColor> >::iterator it;
 
     if (!m_PlotList.empty())
     {
@@ -218,7 +217,7 @@ int ImagePainter::clearPlot(int idx)
         }
         else
         {
-            it=m_PlotList.find(idx);
+            auto it=m_PlotList.find(idx);
             if (it!=m_PlotList.end())
             {
                 m_PlotList.erase (it);
@@ -232,8 +231,6 @@ int ImagePainter::clearPlot(int idx)
 
 int ImagePainter::clearRectangle(int idx)
 {
-    QMap<int,QPair<QRect, QColor> >::iterator it;
-
     if (!m_BoxList.empty())
     {
         if (idx<0)
@@ -242,7 +239,7 @@ int ImagePainter::clearRectangle(int idx)
         }
         else
         {
-            it=m_BoxList.find(idx);
+            auto it=m_BoxList.find(idx);
 
             if (it!=m_BoxList.end())
             {
@@ -303,6 +300,31 @@ void ImagePainter::setLevels(const float level_low, const float level_high)
     preparePixbuf();
 }
 
+void ImagePainter::setLevels(kipl::base::eQuantiles quantile)
+{
+    auto cumHist = m_Histogram;
+
+    float cumSum = 0.0f;
+    for (auto & histBin : cumHist)
+    {
+        cumSum += histBin.y();
+        histBin.setY(cumSum);
+    }
+
+    float fraction =  (1.0f-static_cast<float>(quantile)/100.0f)/2.0f;
+    float limitA = cumSum * fraction;
+    float limitB = cumSum * (1.0-fraction);
+    for (auto & histBin : cumHist)
+    {
+        if (histBin.y()<=limitA)
+            m_MinVal = histBin.x();
+
+        if (histBin.y()<=limitB)
+            m_MaxVal = histBin.x();
+    }
+
+    preparePixbuf();
+}
 float ImagePainter::getValue(int x, int y)
 {
     return m_OriginalImage[x+m_dims[0]*y];
@@ -419,8 +441,9 @@ const QVector<QPointF> & ImagePainter::getImageHistogram()
 void ImagePainter::createZoomImage(QRect roi)
 {
     m_currentROI=roi.normalized();
-    size_t dims[2]={static_cast<size_t>(m_currentROI.width()),static_cast<size_t>(m_currentROI.height())};
-    m_ZoomedImage.Resize(dims);
+    std::vector<size_t> dims = { static_cast<size_t>(m_currentROI.width()),
+                                 static_cast<size_t>(m_currentROI.height()) };
+    m_ZoomedImage.resize(dims);
 
 
     for (size_t y=0; y<m_ZoomedImage.Size(1); y++)
@@ -429,7 +452,6 @@ void ImagePainter::createZoomImage(QRect roi)
     }
 
     preparePixbuf();
- //   qDebug() << "Create zoom image"<<getScale();
 }
 
 int ImagePainter::zoomIn(QRect *zoomROI)
@@ -504,6 +526,16 @@ int ImagePainter::zoomOut()
 QRect ImagePainter::getCurrentZoomROI()
 {
     return m_currentROI;
+}
+
+QSize ImagePainter::zoomedImageSize()
+{
+    return QSize(m_ZoomedImage.Size(0),m_ZoomedImage.Size(1));
+}
+
+QSize ImagePainter::imageSize()
+{
+    return QSize(m_OriginalImage.Size(0),m_OriginalImage.Size(1));
 }
 
 int ImagePainter::panImage(int dx, int dy)

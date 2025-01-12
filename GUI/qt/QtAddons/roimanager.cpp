@@ -25,14 +25,12 @@ public:
 
     kipl::base::RectROI roi;
     QRect rect() {
-        size_t roivec[4];
+        auto roivec=roi.box();
 
-        roi.getBox(roivec);
+        QRect rect;
+        rect.setCoords(roivec[0],roivec[1],roivec[2],roivec[3]);
 
-            QRect rect;
-            rect.setCoords(roivec[0],roivec[1],roivec[2],roivec[3]);
-
-            return rect;
+        return rect;
     }
 };
 
@@ -60,14 +58,13 @@ void ROIManager::setViewer(QtAddons::ImageViewerWidget *v)
 void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
 {
     ostringstream msg;
-    size_t roi[4];
 
     ui->listROI->clear();
-    for (auto it = rois.begin(); it!=rois.end(); ++it) {
+    for (const auto & roiItem : rois) {
         ROIListItem *item = new ROIListItem;
 
-        item->roi=*it;
-        it->getBox(roi);
+        item->roi=roiItem;
+        auto roi = roiItem.box();
         msg.str("");
         if (bVisibleLabels)
             msg<<item->roi.label()<<": ";
@@ -89,27 +86,26 @@ void ROIManager::setROIs(std::list<kipl::base::RectROI> &rois)
 std::list<kipl::base::RectROI> ROIManager::getROIs()
 {
     std::list<kipl::base::RectROI> roiList;
-//    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
     for (int i=0; i<ui->listROI->count(); ++i)
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
         roiList.push_back(roiItem->roi);
     }
-//    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+
     return roiList;
 }
 
 std::list<kipl::base::RectROI> ROIManager::getSelectedROIs()
 {
     std::list<kipl::base::RectROI> roiList;
-//    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+
     for (int i=0; i<ui->listROI->count(); ++i)
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
         if (roiItem->checkState()==Qt::Checked)
             roiList.push_back(roiItem->roi);
     }
-//    qDebug() << "Items ="<<ui->listROI->count()<<", "<<roiList.size();
+
     return roiList;
 }
 
@@ -140,13 +136,12 @@ void ROIManager::updateViewer()
         return ;
     }
     QRect rect;
-    size_t roi[4];
 
     for (int i=0; i<ui->listROI->count(); ++i)
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
 
-        roiItem->roi.getBox(roi);
+        auto roi = roiItem->roi.box();
 
         rect.setCoords(roi[0],roi[1],roi[2],roi[3]);
         viewer->set_rectangle(rect,QColor("green"),roiItem->roi.getID());
@@ -206,7 +201,7 @@ void ROIManager::on_button_deleteROI_clicked()
     {
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(item);
         viewer->clear_rectangle(roiItem->roi.getID());
-        delete ui->listROI->takeItem(ui->listROI->row(item));
+        delete ui->listROI->takeItem(ui->listROI->row(roiItem));
     }
 
 }
@@ -250,14 +245,14 @@ void QtAddons::ROIManager::on_button_save_clicked()
     // store data in f
     out<<"{\n";
     out<<"  \"rois\" : [\n";
-    size_t roi[4];
+
     for (int i=0; i<ui->listROI->count(); ++i)
     {
 
         ROIListItem * roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(i));
         out<<"    {\n";
         out<<"      \"label\" : \""<<roiItem->roi.label().c_str()<<"\",\n";
-        roiItem->roi.getBox(roi);
+        auto roi = roiItem->roi.box();
         out<<"      \"roi\" : \""<< roi[0]<<", "<<roi[1]<<", "<<roi[2]<<", "<<roi[3] <<"\"\n    }";
         if (i<ui->listROI->count()-1)
             out<<",\n";
@@ -276,6 +271,9 @@ void QtAddons::ROIManager::on_button_load_clicked()
 
 void QtAddons::ROIManager::on_listROI_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
+    if (current == nullptr)
+        return;
+
     ROIListItem *currentItem = dynamic_cast<ROIListItem *>(current);
 
     viewer->set_rectangle(currentItem->rect(),QColor("red"),currentItem->roi.getID());
@@ -286,3 +284,15 @@ void QtAddons::ROIManager::on_listROI_currentItemChanged(QListWidgetItem *curren
         viewer->set_rectangle(previousItem->rect(),QColor("green"),previousItem->roi.getID());
     }
 }
+
+void QtAddons::ROIManager::on_button_clearAll_clicked()
+{
+    while (ui->listROI->count())
+    {
+        auto roiItem = dynamic_cast<ROIListItem *>(ui->listROI->item(0));
+        viewer->clear_rectangle(roiItem->roi.getID());
+
+        delete ui->listROI->takeItem(0);
+    }
+}
+

@@ -90,7 +90,7 @@ int SpotClean::Process(kipl::base::TImage<float,3> & img)
 		{
 			kipl::base::TImage<float,2> res;
 
-			kipl::base::TImage<float,2> proj(img.Dims());
+            kipl::base::TImage<float,2> proj(img.dims());
 			kipl::containers::ArrayBuffer<PixelInfo> spots(proj.Size());
             int nSlices=static_cast<int>(img.Size(2));
 			#pragma omp for
@@ -119,8 +119,8 @@ kipl::base::TImage<float,2> SpotClean::CleanByList(kipl::base::TImage<float,2> i
 	float *pWeight=s.GetDataPtr();
 	float *pRes=result.GetDataPtr();
 
-    float mark = numeric_limits<float>::max();
-	for (size_t i=0; i<img.Size(); i++) {
+	for (size_t i=0; i<img.Size(); i++) 
+	{
 		if (pWeight[i]!=0) {
 			processList.push_back(PixelInfo(i,pRes[i],pWeight[i]));
 			pRes[i]=mark;
@@ -384,7 +384,7 @@ double SpotClean::ChangeStatistics(kipl::base::TImage<float,2> img)
 	return static_cast<double>(cnt)/static_cast<double>(N);
 }
 
-kipl::base::TImage<float,2> SpotClean::DetectionImage(kipl::base::TImage<float,2> img, DetectionMethod method, size_t dims)
+kipl::base::TImage<float,2> SpotClean::DetectionImage(kipl::base::TImage<float,2> img, DetectionMethod /*method*/, size_t /*dims*/)
 {
 	return DetectionImage(img);
 }
@@ -410,14 +410,14 @@ kipl::base::TImage<float,2> SpotClean::RingDetection(kipl::base::TImage<float,2>
 	const float c=-1.0f;
 	const float z=0.0f;
 
-	float k[25]={
+    std::vector<float> k={
 			z, w, w, w, z,
 			w, z, z, z, w,
 			w, z, c, z, w,
 			w, z, z, z, w,
 			z, w, w, w, z};
 
-	size_t kdims[2]={5,5};
+    std::vector<size_t> kdims={5,5};
 
 	kipl::filters::TFilter<float,2> ring2(k,kdims);
 
@@ -432,8 +432,8 @@ kipl::base::TImage<float,2> SpotClean::MedianDetection(kipl::base::TImage<float,
 {
 	size_t nFilterSize = 5;
 
-	size_t nFiltDimsV[]={1, nFilterSize};
-	size_t nFiltDimsH[]={nFilterSize, 1};
+    std::vector<size_t> nFiltDimsV={1, nFilterSize};
+    std::vector<size_t> nFiltDimsH={nFilterSize, 1};
 	kipl::filters::TMedianFilter<float,2> medianV(nFiltDimsV);
 	kipl::filters::TMedianFilter<float,2> medianH(nFiltDimsH);
 
@@ -448,9 +448,9 @@ kipl::base::TImage<float,2> SpotClean::MinMaxDetection(kipl::base::TImage<float,
 {
 	size_t nFilterSize = 5;
 
-	size_t nFiltDimsV[]={1, nFilterSize};
-	size_t nFiltDimsH[]={nFilterSize, 1};
-	float se[]={1.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f,1.0f};
+    std::vector<size_t> nFiltDimsV={1, nFilterSize};
+    std::vector<size_t> nFiltDimsH={nFilterSize, 1};
+    std::vector<float> se(nFilterSize,1.0f);
 	kipl::morphology::TErode<float,2> minV(se,nFiltDimsV);
 	kipl::morphology::TErode<float,2> minH(se,nFiltDimsH);
 
@@ -470,25 +470,23 @@ kipl::base::TImage<float,2> SpotClean::MinMaxDetection(kipl::base::TImage<float,
 
 kipl::base::TImage<float,2> SpotClean::BoxFilter(kipl::base::TImage<float,2> img, size_t dim)
 {
-	size_t dimsU[]={dim,1};
-	size_t dimsV[]={1,dim};
+    std::vector<size_t> dimsU={dim,1};
+    std::vector<size_t> dimsV={1,dim};
 	size_t N=dim*dim;
-	float *fKernel=new float[N];
-	for (size_t i=0; i<N; i++)
-		fKernel[i]=1.0f;
+    std::vector<float> fKernel(N,1.0f);
+
 
 	kipl::filters::TFilter<float,2> filterU(fKernel,dimsU);
 	kipl::filters::TFilter<float,2> filterV(fKernel,dimsV);
 
 	kipl::base::TImage<float,2> imgU=filterU(img, eEdgeProcessingStyle);
-	delete [] fKernel;
 
 	return filterV(imgU, eEdgeProcessingStyle);
 }
 
 kipl::base::TImage<float,2> SpotClean::TriKernel(kipl::base::TImage<float,2> img)
 {
-    kipl::base::TImage<float,2> dimg(img.Dims());
+    kipl::base::TImage<float,2> dimg(img.dims());
     dimg=0.0f;
 
     OneKernel(img,3,m_fGamma,dimg);

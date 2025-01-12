@@ -3,12 +3,17 @@
 #include "../../../include/kipl_global.h"
 
 #include <iostream>
+#include <sstream>
 #include <cstdlib>
 #include <cstddef>
 #include <cstring>
 #include <cmath>
+#include <string>
 #include <algorithm>
+#include <vector>
 #include <map>
+#include <thread>
+#include <mutex>          // std::mutex, std::lock_guard
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -16,12 +21,16 @@
 #include "../../../include/math/sums.h"
 #include "../../../include/math/image_statistics.h"
 #include "../../../include/base/thistogram.h"
+#include "../../../include/utilities/threadpool.h"
+#include "../../../include/logging/logger.h"
 #ifndef NO_TIFF
 #include "../../../include/io/io_tiff.h"
 #endif
 
 namespace kipl { namespace base {
 //int Histogram(float const * const data, size_t nData, size_t * const hist, const size_t nBins, float lo, float hi, float * const pAxis)
+
+std::mutex histmtx;
 
 int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t * hist, size_t nBins, float lo, float hi, float * pAxis, bool avoidZeros)
 {
@@ -90,8 +99,82 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t *
 	return 0;
 }
 
+// int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t nBins, std::vector<size_t> & hist, std::vector<float> &axis, float lo, float hi, bool avoidZeros)
+// {
+
+//     float start=0;
+//     float stop=1.0f;
+
+//     if (lo==hi)
+//     {
+//         kipl::math::minmax(data,nData,&start,&stop,true);
+
+//     }
+//     else
+//     {
+//         start=std::min(lo,hi);
+//         stop=std::max(lo,hi);
+//     }
+
+//     hist.resize(nBins);
+//     axis.resize(nBins);
+
+//     std::fill(hist.begin(),hist.end(),0UL);
+
+//     float scale=(nBins)/(stop-start);
+//     #pragma omp parallel firstprivate(nData,start,scale)
+//     {
+//         int index;
+//         long long int i=0;
+//         std::vector<size_t> temp_hist(nBins);
+//         std::fill(temp_hist.begin(),temp_hist.end(),0UL);
+
+//         const ptrdiff_t snData=static_cast<ptrdiff_t>(nData);
+//         const ptrdiff_t snBins=static_cast<ptrdiff_t>(nBins);
+//         if (avoidZeros)
+//         {
+//             #pragma omp for
+//             for (i=0; i<snData; i++) {
+//                 if ( (data[i]!=0.0f) && std::isfinite(data[i]))
+//                 {
+//                     index=static_cast<int>((data[i]-start)*scale);
+//                     if ((index<snBins) && (0<=index))
+//                         temp_hist[index]++;
+//                 }
+//             }
+//         }
+//         else
+//         {
+//             #pragma omp for
+//             for (i=0; i<snData; i++) {
+//                 index=static_cast<int>((data[i]-start)*scale);
+//                 if ((index<snBins) && (0<=index))
+//                     temp_hist[index]++;
+//             }
+//         }
+//         #pragma omp critical
+//         {
+//             for (i=0; i<static_cast<int>(hist.size()); i++)
+//                 hist[i]+=temp_hist[i];
+//         }
+//     }
+
+//     float binIncrement = (stop-start)/nBins;
+//     float binVal       = start+binIncrement/2;
+
+//     for (auto &bin : axis)
+//     {
+//         bin     = binVal;
+//         binVal += binIncrement;
+//     }
+
+//     return 0;
+// }
+
 int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t nBins, std::vector<size_t> & hist, std::vector<float> &axis, float lo, float hi, bool avoidZeros)
 {
+
+    kipl::logging::Logger logger("Histogram");
 
     float start=0;
     float stop=1.0f;
@@ -99,54 +182,82 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
     if (lo==hi)
     {
         kipl::math::minmax(data,nData,&start,&stop,true);
+
     }
     else
     {
         start=std::min(lo,hi);
         stop=std::max(lo,hi);
     }
+
     hist.resize(nBins);
     axis.resize(nBins);
 
     std::fill(hist.begin(),hist.end(),0UL);
 
-    float scale=(nBins)/(stop-start);
-    #pragma omp parallel firstprivate(nData,start,scale)
-    {
-        int index;
-        long long int i=0;
-        std::vector<size_t> temp_hist(nBins);
-        std::fill(temp_hist.begin(),temp_hist.end(),0UL);
+    float scale=(nBins-1)/(stop-start);
 
-        const ptrdiff_t snData=static_cast<ptrdiff_t>(nData);
-        const ptrdiff_t snBins=static_cast<ptrdiff_t>(nBins);
-        if (avoidZeros)
-        {
-            #pragma omp for
-            for (i=0; i<snData; i++) {
-                if (data[i]!=0.0f)
+    const auto nThreads = std::thread::hardware_concurrency();
+    kipl::utilities::ThreadPool pool(nThreads);
+    logger.debug("Number of threads: " + std::to_string(nThreads));
+
+    size_t nBlockSize = 8192; //nData/nThreads;
+    if (nBlockSize>nData)
+        nBlockSize=nData;
+    size_t nBlocks    = nData/nBlockSize;
+    size_t nRem       = nData % nBlockSize; //nData%nThreads;
+    auto pBlock       = data;
+
+    for (size_t j=0; j<nBlocks; ++j)
+    {
+        size_t nBlockLen = nBlockSize;
+        if (j==0)
+            nBlockLen += nRem;
+        std::ostringstream oss;
+        oss << "Block " << j << " has length " << nBlockLen ;
+        logger.debug(oss.str());
+
+        pool.enqueue([pBlock, nBlockLen, start, scale, nBins, avoidZeros, &hist] {
+            kipl::logging::Logger tlogger("Histogram thread");
+            int index;
+
+            int inBins = static_cast<int>(nBins);
+            std::vector<size_t> temp_hist(nBins,0UL);
+            
+            if (avoidZeros)
+            {
+                for (size_t i=0; i<nBlockLen; ++i)
                 {
-                    index=static_cast<int>((data[i]-start)*scale);
-                    if ((index<snBins) && (0<=index))
-                        temp_hist[index]++;
+                    if ( (pBlock[i]!=0.0f) && std::isfinite(pBlock[i]))
+                    {
+                        index=static_cast<int>((pBlock[i]-start)*scale);
+                        if ((index<inBins) && (0<=index))
+                            ++temp_hist[index];
+                    }
                 }
             }
-        }
-        else
-        {
-            #pragma omp for
-            for (i=0; i<snData; i++) {
-                index=static_cast<int>((data[i]-start)*scale);
-                if ((index<snBins) && (0<=index))
-                    temp_hist[index]++;
+            else
+            {
+                for (size_t i=0; i<nBlockLen; ++i) 
+                {
+                    index=static_cast<int>((pBlock[i]-start)*scale);
+                    if ((index<inBins) && (0<=index))
+                        ++temp_hist[index];            
+                }
             }
-        }
-        #pragma omp critical
-        {
-            for (i=0; i<hist.size(); i++)
-                hist[i]+=temp_hist[i];
-        }
+
+            std::lock_guard<std::mutex> lock(histmtx);
+            {
+                // for (auto i=0; i<static_cast<int>(hist.size()); ++i)
+                //     hist[i]+=temp_hist[i];
+                std::transform(hist.begin(), hist.end(), temp_hist.begin(), hist.begin(), std::plus<size_t>());
+            }
+        });
+
+        pBlock += nBlockLen;
     }
+
+    pool.barrier();
 
     float binIncrement = (stop-start)/nBins;
     float binVal       = start+binIncrement/2;
@@ -157,14 +268,181 @@ int KIPLSHARED_EXPORT Histogram(float const * const data, size_t nData, size_t n
         binVal += binIncrement;
     }
 
+    // std::cout << "Sum of all blocks: " << sum << std::endl;
     return 0;
+}
+
+
+int KIPLSHARED_EXPORT HistogramOpt(float const * const data, 
+                                    size_t nData, 
+                                    size_t nBins, 
+                                    std::vector<size_t> & hist, 
+                                    std::vector<float> &axis, 
+                                    float lo, 
+                                    float hi, 
+                                    bool avoidZeros,
+                                    size_t nChunkSize)
+{
+
+    kipl::logging::Logger logger("HistogramOpt");
+
+    logger.warning("This function is not yet fully implemented. Use with caution. It is currently slower than the non-optimized version.");
+    float start=0;
+    float stop=1.0f;
+
+    if (lo==hi)
+    {
+        kipl::math::minmax(data,nData,&start,&stop,true);
+
+    }
+    else
+    {
+        start=std::min(lo,hi);
+        stop=std::max(lo,hi);
+    }
+
+    hist.resize(nBins);
+    axis.resize(nBins);
+
+    std::fill(hist.begin(),hist.end(),0UL);
+
+    float scale=(nBins-1)/(stop-start);
+
+    const auto nThreads = std::thread::hardware_concurrency();
+    kipl::utilities::ThreadPool pool(nThreads);
+    logger.debug("Number of threads: " + std::to_string(nThreads));
+
+    size_t nBlockSize = 8192; //nData/nThreads;
+    if (nBlockSize>nData)
+        nBlockSize=nData;
+    size_t nBlocks    = nData/nBlockSize;
+    size_t nRem       = nData % nBlockSize; //nData%nThreads;
+    auto pBlock       = data;
+
+    //size_t sum = 0;
+
+    for (size_t j=0; j<nBlocks; ++j)
+    {
+        size_t nBlockLen = nBlockSize;
+        if (j==0)
+            nBlockLen += nRem;
+        std::ostringstream oss;
+        oss << "Block " << j << " has length " << nBlockLen ;
+        logger.debug(oss.str());
+
+        pool.enqueue([pBlock, nBlockLen, start, scale, nBins, avoidZeros, &hist, nChunkSize] {
+            kipl::logging::Logger tlogger("Histogram thread");
+            int index;
+            int inBins = static_cast<int>(nBins);
+            std::vector<size_t> temp_hist(nBins,0UL);
+            std::vector<short> buffer(nChunkSize*2,0);
+
+            size_t nChunks = nBlockLen/nChunkSize;
+            size_t nRem    = nBlockLen % nChunkSize;
+            size_t begin = 0UL;
+
+            for (size_t i=0; i<nChunks; ++i)
+            {
+                size_t cnt = 0UL;
+                size_t nChunk = nChunkSize;
+                if (i==0)
+                    nChunk += nRem;
+
+                if (avoidZeros)
+                {
+                    for (auto j=begin; j<begin+nChunk; ++j)
+                    {
+                        if ( (pBlock[j]!=0.0f) && std::isfinite(pBlock[j]))
+                        {
+                            index=static_cast<short>((pBlock[j]-start)*scale);
+                            if ((index<inBins) && (0<=index))
+                                buffer[cnt++]=index;
+                        }
+                    }
+                }
+                else
+                {
+                    for (auto j=begin; j<begin+nChunk; ++j) 
+                    {
+                        index=static_cast<int>((pBlock[j]-start)*scale);
+                        if ((index<inBins) && (0<=index) && std::isfinite(pBlock[j]))
+                            buffer[cnt++]=index;
+                    }
+                }
+
+                std::sort(buffer.begin(), buffer.begin()+cnt);
+
+                for (size_t j=0; j<cnt; ++j)
+                    temp_hist[buffer[j]]++;
+
+                begin += nChunk;
+            }            
+
+
+
+            std::lock_guard<std::mutex> lock(histmtx);
+            {
+                // for (auto i=0; i<static_cast<int>(hist.size()); ++i)
+                //     hist[i]+=temp_hist[i];
+                std::transform(hist.begin(), hist.end(), temp_hist.begin(), hist.begin(), std::plus<size_t>());
+            }
+        });
+
+        pBlock += nBlockLen;
+        // sum+=nBlockLen;
+    }
+
+    pool.barrier();
+
+    float binIncrement = (stop-start)/nBins;
+    float binVal       = start+binIncrement/2;
+
+    for (auto &bin : axis)
+    {
+        bin     = binVal;
+        binVal += binIncrement;
+    }
+
+    // std::cout << "Sum of all blocks: " << sum << std::endl;
+    return 0;
+}
+
+void highEntropyHistogram(float const * const data,
+                          size_t nData,
+                          size_t nBins,
+                          std::vector<size_t> & hist,
+                          std::vector<float> &axis,
+                          float loLevel,
+                          float hiLevel,
+                          bool avoidZeros)
+{
+   size_t lo=0;
+   size_t hi=1;
+   float ll = loLevel;
+   float hl = hiLevel;
+
+   while (2 < nBins/static_cast<float>(hi-lo))
+   {
+       Histogram(data,nData,nBins,hist,axis,ll,hl,avoidZeros);
+       FindLimits(hist, 99.0f, lo, hi);
+       if (lo==hi)
+       {
+            if (0<lo)
+                lo--;
+            else
+                hi++;
+       }
+       ll = axis[lo];
+       hl = axis[hi];
+   } ;
 }
 
 std::map<float, size_t> ExactHistogram(float const * const data, size_t Ndata)
 {
 	std::map<float, size_t> hist;
 
-	for (size_t i=0; i<Ndata; i++) {
+    for (size_t i=0; i<Ndata; i++)
+    {
 		hist[data[i]]++;
 	}
 
@@ -179,14 +457,29 @@ double  KIPLSHARED_EXPORT Entropy(size_t const * const hist, size_t N)
 
 	size_t histsum=kipl::math::sum(hist,N);
 
-	for (size_t i=0; i<N; i++) {
-		if (hist[i]!=0) {
+    for (size_t i=0; i<N; i++)
+    {
+        if (hist[i]!=0)
+        {
 			p=static_cast<double>(hist[i])/static_cast<double>(histsum);
 			entropy-=p*std::log10(p);
 		}
 	}
 
 	return entropy;
+}
+
+std::vector<size_t> cumulativeHistogram(std::vector<size_t> &hist)
+{
+    std::vector<size_t> cumulated(hist.size(),0);
+
+    cumulated[0]=hist[0];
+
+    for (size_t i=1; i<cumulated.size(); ++i)
+        cumulated[i] = cumulated[i-1]+hist[i];
+
+    return cumulated;
+
 }
 
 int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float percentage, size_t * lo, size_t * hi)
@@ -210,9 +503,9 @@ int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float per
 		ptrdiff_t lowdiff  = cumulated[N-1];
 		ptrdiff_t highdiff = cumulated[N-1];
 
-		ptrdiff_t diff=cumulated[N-1];
+        //ptrdiff_t diff=cumulated[N-1];
 		for (size_t i=0; i<N; i++){
-			diff=static_cast<ptrdiff_t>(std::abs(static_cast<double>(cumulated[i]-lowlevel)));
+            ptrdiff_t diff=static_cast<ptrdiff_t>(std::abs(static_cast<double>(cumulated[i]-lowlevel)));
 			if (diff<lowdiff) {
 				lowdiff=diff;
 				*lo=i;
@@ -227,14 +520,47 @@ int  KIPLSHARED_EXPORT FindLimits(size_t const * const hist, size_t N, float per
 	}
 	return 0;
 }
+
+int  KIPLSHARED_EXPORT FindLimits(std::vector<size_t> &hist, float percentage, size_t & lo, size_t & hi)
+{
+    std::vector<size_t> cumulated=cumulativeHistogram(hist);
+
+    lo=0;
+    hi=0;
+
+    float fraction=(100.0f-percentage)/200.0f;
+    size_t lowlevel  = static_cast<size_t>(cumulated.back()*fraction);
+    size_t highlevel = static_cast<size_t>(cumulated.back()*(1-fraction));
+
+    lo = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), lowlevel));
+    hi = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), highlevel));
+
+    return 0;
+}
+
+int  KIPLSHARED_EXPORT FindLimit(std::vector<size_t> &hist, float fraction, size_t & lo)
+{
+    if ((fraction<0.0f) && (fraction>1.0f))
+        throw kipl::base::KiplException("Fraction must be between 0 and 1 in FindLimit().",__FILE__,__LINE__);  
+
+    std::vector<size_t> cumulated=cumulativeHistogram(hist);
+
+    lo=0;
+
+    size_t lowlevel  = static_cast<ptrdiff_t>(cumulated.back()*fraction);
+    lo = std::distance(cumulated.begin(), std::lower_bound(cumulated.begin(), cumulated.end(), lowlevel));
+
+    return 0;
+}
+
 //------------------------------------------------------------------
 // Bivariate histogram class
 BivariateHistogram::BivariateHistogram() :
     logger("BivariateHistogram"),
-    m_scalingA(1.0f,0.0f),
-    m_scalingB(1.0f,0.0f),
     m_limitsA(0.0f,1.0f),
-    m_limitsB(0.0f,1.0f)
+    m_limitsB(0.0f,1.0f),
+    m_scalingA(1.0f,0.0f),
+    m_scalingB(1.0f,0.0f)
 {
 
 }
@@ -269,8 +595,8 @@ void BivariateHistogram::Initialize(float loA, float hiA, size_t binsA,
     m_scalingB.first  = static_cast<float>(m_nbins.second) / (m_limitsB.second-m_limitsB.first);
     m_scalingB.second = m_limitsB.first;
 
-    size_t dims[2]={m_nbins.first,m_nbins.second};
-    m_bins.Resize(dims);
+    std::vector<size_t> dims={m_nbins.first,m_nbins.second};
+    m_bins.resize(dims);
 }
 
 /// \brief Initialize the histogram using data
@@ -358,9 +684,9 @@ kipl::base::TImage<size_t,2> & BivariateHistogram::Bins()
     return m_bins;
 }
 
-size_t const *   BivariateHistogram::Dims()
+const std::vector<size_t> & BivariateHistogram::Dims()
 {
-    return m_bins.Dims();
+    return m_bins.dims();
 }
 
 /// \brief Compute index to a histogram bin. This is the generic version.
@@ -376,7 +702,7 @@ inline int BivariateHistogram::ComputePos(float x, std::pair<float, float> &scal
         case 0: return static_cast<int>((x-scaling.second)*scaling.first); break;
         case 1: return 0;
         case 2: return nBins-1;
-        sdefault: logger(logger.LogWarning, "Strange selector value in ComputePos"); break;
+        default: logger(logger.LogWarning, "Strange selector value in ComputePos"); break;
     }
 
     return 0;
@@ -395,14 +721,17 @@ std::pair<float,float> BivariateHistogram::GetLimits(int n)
 
 std::map<float, map<float,size_t> > BivariateHistogram::CompressedHistogram(kipl::base::eImageAxes mainaxis, size_t threshold)
 {
+    std::ignore = threshold;
+
     std::map<float, std::map<float,size_t> > hist;
 
-    size_t *pLine;
+    //size_t *pLine;
     switch (mainaxis) {
     case kipl::base::ImageAxisX:
-        for (size_t i=0; i<m_bins.Size(1); i++) {
-            pLine=m_bins.GetLinePtr(i);
-            // todo: fix the code
+        for (size_t i=0; i<m_bins.Size(1); i++)
+        {
+            //pLine=m_bins.GetLinePtr(i);
+// todo: fix the code
 //            std::map<float,size_t> listline;
 //            for (size_t j=0; j<m_Bins.Size(0); j++)
 //            {
@@ -428,15 +757,15 @@ std::map<float, map<float,size_t> > BivariateHistogram::CompressedHistogram(kipl
 void BivariateHistogram::Write(string fname)
 {
 #ifndef NO_TIFF
-    kipl::base::TImage<float,2> img(m_bins.Dims());
+    kipl::base::TImage<float,2> img(m_bins.dims());
 
-    float cnt=static_cast<float>(kipl::math::sum(m_bins.GetDataPtr(),m_bins.Size()));
+   // float cnt=static_cast<float>(kipl::math::sum(m_bins.GetDataPtr(),m_bins.Size()));
 
     for (size_t i=0; i<m_bins.Size(); i++) {
         img[i]=static_cast<float>(m_bins[i]);
     }
 
-    kipl::io::WriteTIFF32(img,fname.c_str());
+    kipl::io::WriteTIFF(img,fname,kipl::base::Float32);
 #endif
 }
 

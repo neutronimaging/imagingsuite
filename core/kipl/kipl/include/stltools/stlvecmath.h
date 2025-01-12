@@ -13,7 +13,6 @@
 #include "../math/median.h"
 #include "../kipl_global.h"
 
-#include <QDebug>
 //#include "statistics.h"
 //#include "../misc/sortalg.h"
 //#include "../image/imagethres.h"
@@ -139,9 +138,11 @@ T sum(std::vector<T> v)
 {
     T sum=static_cast<T>(0);
     for (const auto &item : v)
+    {
         sum+=item;
+    }
 
-	return sum;
+    return sum;
 }
 
 /// Convolves the vector x with the filter kernel in H
@@ -155,9 +156,11 @@ std::vector<T> filter(const std::vector<T> &x, const std::vector<S> &H)
     ptrdiff_t sx=static_cast<ptrdiff_t>(x.size());
     ptrdiff_t sH=static_cast<ptrdiff_t>(H.size());
 
-    for (ptrdiff_t i=0; i<sx; i++) {
+    for (ptrdiff_t i=0; i<sx; i++)
+    {
 		tmp[i]=0;
-        for (ptrdiff_t j=0; j<sH; j++) {
+        for (ptrdiff_t j=0; j<sH; j++)
+        {
 			if ((i-j)>=0)
 				tmp[i]+=H[j]*x[i-j];
 		}
@@ -180,7 +183,6 @@ std::vector<T> convolve1d(const std::vector<T> &x, const std::vector<S> &H)
     for (auto itX = x.begin(); itX!=x.end()-pos; ++itX, ++itY)
     {
         *itY = std::inner_product(H.begin(),H.end(),itX,0.0);
-     //   qDebug() << *itX, *itY;
     }
     return y;
 }
@@ -220,7 +222,7 @@ void medianFilter(T * x, size_t N, size_t len)
     std::copy_n(res.begin(),res.size(),x);
 }
 
-///// Computes the statistics of vector v
+// /// Computes the statistics of vector v
 //template<class T>
 //Math::Statistics vecstats(vector<T> v)
 //{
@@ -242,7 +244,8 @@ std::vector<T> FillVecSeries(T start, T stop, T step=static_cast<T>(1))
     std::vector<T> tmp(n);
 	size_t i;
 	T val;
-	for (i=0, val=start; i<n; i++, val+=step) {
+    for (i=0, val=start; i<n; i++, val+=step)
+    {
 		tmp[i]=val;
 	}
 
@@ -259,9 +262,11 @@ std::vector<T> DiffVec(std::vector<T> &v)
     ++i1;
 
     for ( ; i1!=v.begin(); ++i0,++i1)
+    {
         res.push_back(*i1-*i0);
+    }
 
-	return v;
+    return v;
 }
 
 template <class T>
@@ -301,6 +306,21 @@ double mean(std::vector<T> &v)
 	return sum/N;
 }
 
+/// \brief Computes the median absolute difference MAD
+/// \param v the vector to analyse
+/// \returns the MAD
+template <typename T>
+double MAD(std::vector<T> &v)
+{
+    double m=median(v);
+    std::vector<double> d(v.begin(),v.end());
+
+    for (auto &x : d)
+        x=abs(x-m);
+
+    return median(d);
+}
+
 template <class T>
 std::vector<T> vecabs(std::vector<T> &v)
 {
@@ -314,27 +334,28 @@ std::vector<T> vecabs(std::vector<T> &v)
 }
 
 
-/** \brief The method computes the cumulative sum of the contents of the vector
-
-	\param v Input vector with values
-	\param norm Normalize the vector if true
-
-	\retval The contents of the output vector (x) is computed as x[i]=x[i-1]+v[i].
-*/
+/// \brief The method computes the cumulative sum of the contents of the vector
+///
+///	\param v Input vector with values
+///	\param norm Normalize the vector if true
+///
+///	\retval The contents of the output vector (x) is computed as x[i]=x[i-1]+v[i].
 template <class T>
 std::vector<T> cumsum(std::vector<T> &v, bool norm=false)
 {
-	T tmp=0;
+	// T tmp=0;
     std::vector<T> tv;
 	tv.resize(v.size());
 
 	tv[0]=v[0];
 	
-	for (size_t i=1; i<v.size(); i++) {
+    for (size_t i=1; i<v.size(); i++)
+    {
 		tv[i]=v[i]+tv[i-1];
 	}
 
-	if (norm) {
+    if (norm)
+    {
         double scale=1/ tv[tv.size()-1];
         for (size_t i=0; i<tv.size(); i++)
         tv[i]=static_cast<T>(tv[i]*scale);
@@ -367,7 +388,7 @@ T cumsum(const ForwardIterator &begin,const ForwardIterator &end, std::vector<T>
 	return tv.back();
 }
 
-std::map<float,float> KIPLSHARED_EXPORT diff(std::map<float,float> data);
+std::map<float,float> KIPLSHARED_EXPORT diff(const std::map<float, float> &data);
 
 // /// \brief Find the first occurance of the test becoming true
 // ///

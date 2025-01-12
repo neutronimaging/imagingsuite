@@ -5,8 +5,20 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <emmintrin.h>
-#include <xmmintrin.h>
+
+#ifdef __aarch64__
+    #pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wold-style-cast"
+	#pragma clang diagnostic ignored "-Wcast-align"
+	#pragma clang diagnostic ignored "-Wpedantic"
+	#pragma clang diagnostic ignored "-W#warnings"
+		#include <sse2neon/sse2neon.h>
+	#pragma clang diagnostic pop
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
+
 #include <iostream>
 #include <set>
 #include <limits>
@@ -15,7 +27,6 @@
 
 
 #include <base/timage.h>
-#include <io/io_matlab.h>
 #include <filters/filter.h>
 #include <filters/medianfilter.h>
 #include <math/mathfunctions.h>
@@ -40,14 +51,14 @@ SpotClean2::SpotClean2(std::string name, kipl::interactors::InteractionBase *int
     PreprocModuleBase(name,interactor),
 	mark(std::numeric_limits<float>::max()),
     m_SpotClean(interactor),
+    m_Config(""),
 	m_fGamma(0.1f),
 	m_fSigma(0.001f),
 	m_nIterations(1),
     m_fMaxLevel(5.0f),
     m_fMinLevel(-0.1f),
     m_nMaxArea(20),
-    m_eDetectionMethod(ImagingAlgorithms::Detection_Ring),
-    m_Config("")
+    m_eDetectionMethod(ImagingAlgorithms::Detection_Ring)
 {
 	 Setup(m_nIterations,m_fGamma,m_fSigma,m_fMinLevel,m_fMaxLevel, m_nMaxArea, m_eDetectionMethod);
 }
@@ -108,7 +119,7 @@ std::map<std::string, std::string> SpotClean2::GetParameters()
 	return parameters;
 }
 
-int SpotClean2::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &coeff)
+int SpotClean2::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & /*coeff*/)
 {
 	std::ostringstream msg;
 	msg.str("");
@@ -120,7 +131,7 @@ int SpotClean2::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::str
 	return 0;
 }
 
-int SpotClean2::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> &coeff)
+int SpotClean2::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> &/*coeff*/)
 {
 	std::ostringstream msg;
 	msg.str("");

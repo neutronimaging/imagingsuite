@@ -1,8 +1,8 @@
 
 #include "stdafx.h"
 
-#include <glibmm/date.h>
-#include <glibmm/timeval.h>
+// #include <glibmm/date.h>
+// #include <glibmm/timeval.h>
 #include <cstdlib>
 #include <DrawItems.h>
 #include <ProjectionReader.h>

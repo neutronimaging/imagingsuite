@@ -1,33 +1,43 @@
-include(FetchContent)
+# ~~~
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (c) 2021 ImaginSuite contributors (https://github.com/neutronimaging/imagingsuite)
+# ~~~
 
-FetchContent_Declare(
-  pybind11_sources
-  GIT_REPOSITORY https://github.com/pybind/pybind11.git
-  GIT_TAG        v2.2
-)
+set(TARGET_NAME "imgalg") 
 
-FetchContent_GetProperties(pybind11_sources)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(NOT pybind11_sources_POPULATED)
-  FetchContent_Populate(pybind11_sources)
+find_package(OpenMP)
 
-  add_subdirectory(
-    ${pybind11_sources_SOURCE_DIR}
-    ${pybind11_sources_BINARY_DIR}
+include_directories(
+    ../../kipl/kipl/include 
+    ../ImagingAlgorithms/include 
+    # ../../../../ExternalDependencies/macos/include
     )
-    add_definitions(-DHAVEPYBIND11 -DNO_QT)
+    
+if (WIN32)
+    include_directories(
+        ../../../core/kipl/kipl/include
+        ../../../core/kipl/kipl/include
+        ../../../core/modules/ModuleConfig/include
+        # ../../../external/include/
+        # ../../../../ExternalDependencies/windows/include
+        # ../../../../ExternalDependencies/windows/include/nexus
+        # ../../../../ExternalDependencies/windows/include/cfitsio
+        )
 endif()
 
-include_directories(../../kipl/kipl/include ../ImagingAlgorithms/include /opt/local/include ../../../external/pylinalg)
-link_directories(../../../../lib /opt/local/lib )
+set(INC_FILES
+  pyBinder.h
+  utilities.h
+)
 
-# add_definitions(-DVERSION="1.6.0")
-# create python module
-add_library(pyimgalg
-  MODULE
-
+set(SRC_FILES
   pyStripeFilter.cpp  
 #  pySpotClean.cpp  
+  pyNormalizeImage.cpp
   pyPolynomialCorrection.cpp  
   pyImagingException.cpp  
 # pyTranslateProjections.cpp  
@@ -39,37 +49,97 @@ add_library(pyimgalg
 #  pypiercingpointestimator.cpp  
 #  pyReferenceImageCorrection.cpp  
 #  pytomocenter.cpp  
+  pyCenterEstimation.cpp
   pyBinder.cpp
-# pyStripeFilter.h  
-# pySpotClean.h  
-#  pyPolynomialCorrection.h  
-#  pyImagingException.h  
- # pyTranslateProjections.h  
- # pyMorphSpotClean.h  
- # pyPixelInfo.h  
- # pyProjectionFilter.h
-# pyImagingAlgorithms_global.h  
- # pygammaclean.h  
- # pyAverageImage.h  
- # pypiercingpointestimator.h  
- # pyReferenceImageCorrection.h  
- # pytomocenter.h
-  pyBinder.h
+  utilities.cpp
+
+)
+
+pybind11_add_module(${TARGET_NAME}
+  ${LINK_TYPE}
+  MODULE
+  ${SRC_FILES}  
+  ${INC_FILES}
   )
 
-target_link_libraries(pyimgalg
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
+set(LINK_TYPE "MODULE")
+
+message("PyImgAlg ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+if (APPLE)
+
+target_link_libraries(${TARGET_NAME}
   PUBLIC
     pybind11::module
-
-  PRIVATE
     kipl
     ImagingAlgorithms
-    xml2
-    tiff
   )
+endif(APPLE)
 
-set_target_properties(pyimgalg
+if (WIN32)
+    target_link_directories(${TARGET_NAME} PRIVATE
+    # ../../../../ExternalDependencies/windows/lib
+    # ../../../../imagingsuite/external/lib64
+    # ../../../../imagingsuite/external/lib64/nexus
+    )
+    
+    target_link_libraries(${TARGET_NAME}
+    PUBLIC
+      pybind11::module
+      OpenMP::OpenMP_CXX
+
+      kipl
+      ImagingAlgorithms
+    )
+endif()
+
+
+if (UNIX AND NOT APPLE)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(${TARGET_NAME} PUBLIC
+            OpenMP::OpenMP_CXX
+            # pybind11::module
+
+              kipl
+              ImagingAlgorithms
+              # xml2
+              # tiff
+              # armadillo
+              # lapack
+              # blas
+              # fftw3
+              # fftw3f
+              # cfitsio
+              # NeXus
+              # NeXusCPP
+            )
+    else()
+        target_link_libraries(${TARGET_NAME}
+          PUBLIC
+            # pybind11::module
+
+          
+              kipl
+              ImagingAlgorithms
+              # xml2
+              # tiff
+              # armadillo
+              # lapack
+              # blas
+              # fftw3
+              # fftw3f
+              # cfitsio
+              # NeXus
+              # NeXusCPP
+          )
+    endif()
+endif()
+
+set_target_properties(${TARGET_NAME}
   PROPERTIES
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
+
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

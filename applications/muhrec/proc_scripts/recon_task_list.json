@@ -1,0 +1,47 @@
+[
+    {
+        "name" : "recon1",
+        "active" : true,
+        "config" : "path/to/template/reconconfig.xml",
+        "arguments" : {
+            "projections:filemask" : "path/to/data/image_####.tif",
+            "matrix:path": "path/to/matrix/destination",
+            "matrix:matrixname": "slice_####.tif",
+            "projections:firstindex": 1,
+            "projections:lastindex" : 100,
+            "projections:direction" : "CW",
+            "projections:scanarc0" : 0.0,
+            "projections:scanarc1" : 180.0          
+        }
+    },
+    {
+        "name" : "recon2",
+        "active" : true,
+        "config" : "path/to/template/reconconfig.xml",
+        "arguments" : {
+            "projections:filemask" : "path/to/data/image_####.tif",
+            "matrix:path": "path/to/matrix/destination",
+            "matrix:matrixname": "slice_####.tif",
+            "projections:firstindex": 101,
+            "projections:lastindex" : 200,
+            "projections:direction" : "CW",
+            "projections:scanarc0" : 180.0,
+            "projections:scanarc1" : 360.0          
+        }
+    },
+    {
+        "name" : "recon3",
+        "active" : true,
+        "config" : "path/to/template/reconconfig2.xml",
+        "arguments" : {
+            "projections:filemask" : "path/to/data1/image_####.tif",
+            "matrix:path": "path/to/matrix/destination",
+            "matrix:matrixname": "slice_####.tif",
+            "projections:firstindex": 1,
+            "projections:lastindex" : 100,
+            "projections:direction" : "CCW",
+            "projections:scanarc0" : 0.0,
+            "projections:scanarc1" : 180.0          
+        }
+    }
+]

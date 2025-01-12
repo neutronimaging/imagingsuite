@@ -24,7 +24,7 @@ public:
     void estimate(kipl::base::TImage<float,2> &img0,
                   kipl::base::TImage<float,2> &img180,
                   ImagingAlgorithms::TomoCenter::eEstimator est,
-                  size_t *_roi,
+                  const std::vector<size_t> & _roi,
                   bool bTilt,
                   double &center,
                   double &tilt,
@@ -33,7 +33,7 @@ public:
     void estimate(kipl::base::TImage<float,2> &img0,
                   kipl::base::TImage<float,2> &img180,
                   ImagingAlgorithms::TomoCenter::eEstimator est,
-                  size_t *_roi,
+                  const std::vector<size_t> &_roi,
                   bool bTilt,
                   float &center,
                   float &tilt,
@@ -53,7 +53,7 @@ private:
 
     float CenterOfGravity(const kipl::base::TImage<float,2> img, size_t start, size_t end);
 
-    size_t roi[4];
+    std::vector<size_t> roi;
     double fraction;
     double tiltM;
     double tiltK;

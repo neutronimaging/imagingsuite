@@ -22,20 +22,30 @@
 
 #include <readerexception.h>
 
-PixelSizeDlg::PixelSizeDlg(QWidget *parent) :
+PixelSizeDlg::PixelSizeDlg(QWidget *parent, const std::string &pathhint) :
     QDialog(parent),
     logger("PixelSizeDlg"),
     ui(new Ui::PixelSizeDlg),
-    mPixelSize(0.1f)
+    mPixelSize(0.1f),
+    path(pathhint)
 {
     ui->setupUi(this);
     ui->roi->registerViewer(ui->viewer);
     ui->roi->setROIColor("red");
+    logger.message(path);
 }
 
 PixelSizeDlg::~PixelSizeDlg()
 {
     delete ui;
+}
+
+void PixelSizeDlg::setImage(kipl::base::TImage<float, 2> & img)
+{
+    std::vector<size_t> dims={3,3};
+    kipl::filters::TMedianFilter<float,2> medfilt(dims);
+    currentImage=medfilt(img);
+    ui->viewer->set_image(currentImage.GetDataPtr(),currentImage.dims());
 }
 
 float PixelSizeDlg::pixelSize()
@@ -135,7 +145,7 @@ float PixelSizeDlg::getDistance2(kipl::base::TImage<float, 2> &im, size_t *roi)
         qDebug() << "Vertical (N="<<N<<",w="<<w<<", h="<<h<<")";
         axis = kipl::base::ImageAxisY;
 
-        kipl::base::VerticalProjection2D(dimg.GetDataPtr(),dimg.Dims(),profile);
+        kipl::base::VerticalProjection2D(dimg.GetDataPtr(),dimg.dims(),profile);
         stat.reset();
         stat.put(profile+roi[1],roi[3]-roi[1]);
         kipl::math::findPeaks(profile+roi[1],roi[3]-roi[1],stat.E(),stat.s(),peaks);
@@ -159,7 +169,7 @@ float PixelSizeDlg::getDistance2(kipl::base::TImage<float, 2> &im, size_t *roi)
         logger(logger.LogMessage,"Using horizontal profile");
         qDebug() << "Horizontal (N="<<N<<", w="<<w<<", h="<<h<<")";
         axis = kipl::base::ImageAxisX;
-        kipl::base::HorizontalProjection2D(dimg.GetDataPtr(),dimg.Dims(),profile);
+        kipl::base::HorizontalProjection2D(dimg.GetDataPtr(),dimg.dims(),profile);
 
         kipl::io::serializeContainer(profile,profile+dimg.Size(0),"diff_profile.txt");
         stat.reset();
@@ -184,9 +194,7 @@ float PixelSizeDlg::getDistance2(kipl::base::TImage<float, 2> &im, size_t *roi)
     }
 
     delete [] profile;
-//    qDebug() << "eroi0=["<<eroi0[0]<<", "<<eroi0[1]<<", "<<eroi0[2]<<", "<<eroi0[3]<<"] ";
 //    ui->viewer->set_rectangle(QRect(eroi0[0],eroi0[1],eroi0[2]-eroi0[0],eroi0[3]-eroi0[1]),QColor("green"),0);
-//    qDebug() << "eroi1=["<<eroi1[0]<<", "<<eroi1[1]<<", "<<eroi1[2]<<", "<<eroi1[3]<<"] ";
 //    ui->viewer->set_rectangle(QRect(eroi1[0],eroi1[1],eroi1[2]-eroi1[0],eroi1[3]-eroi1[1]),QColor("yellow"),1);
 
     edgePositions0 = edgePositions(dimg, eroi0, axis);
@@ -217,12 +225,20 @@ void PixelSizeDlg::on_lineEdit_FileName_returnPressed()
 
 void PixelSizeDlg::on_pushButton_Browse_clicked()
 {
-    QString fname=QFileDialog::getOpenFileName(this,
-                                      tr("Select an image to measure the pixel size"),
-                                      ui->lineEdit_FileName->text());
-    ui->lineEdit_FileName->setText(fname);
+    QString dlgpath = ui->lineEdit_FileName->text();
 
-    loadImage(fname);
+    if (dlgpath.isEmpty() && !path.empty())
+    {
+        dlgpath = QString::fromStdString(path);
+    }
+
+
+    QString img_fname=QFileDialog::getOpenFileName(this,
+                                      tr("Select an image to measure the pixel size"),
+                                      dlgpath);
+    ui->lineEdit_FileName->setText(img_fname);
+
+    loadImage(img_fname);
 }
 
 void PixelSizeDlg::on_pushButton_Analyze_clicked()
@@ -230,7 +246,7 @@ void PixelSizeDlg::on_pushButton_Analyze_clicked()
     size_t roi[4];
 
     ui->roi->getROI(roi);
-    if (img.Size()==0) {
+    if (currentImage.Size()==0) {
         QMessageBox::warning(this,"No image","You have to load an image before you can analyse.",QMessageBox::Ok);
         logger(logger.LogMessage,"No image loaded.");
 
@@ -250,7 +266,7 @@ void PixelSizeDlg::on_pushButton_Analyze_clicked()
         return;
     }
 
-    pixelDistance=getDistance2(img,roi);
+    pixelDistance=getDistance2(currentImage,roi);
     mPixelSize=ui->doubleSpinBox_Distance->value()/pixelDistance;
     std::ostringstream msg;
     msg<<"Distance: "<<ui->doubleSpinBox_Distance->value()<<" mm/"<<pixelDistance<<" px, pixelSize: "<<mPixelSize<<" mm/pixel";
@@ -268,7 +284,7 @@ void PixelSizeDlg::loadImage(QString fn)
     ImageReader reader;
 
     try {
-        img=reader.Read(fname);
+        currentImage=reader.Read(fname);
     }
     catch (ReaderException &e) {
         QMessageBox::warning(this,"Warning","Image could not be loaded",QMessageBox::Ok);
@@ -283,10 +299,10 @@ void PixelSizeDlg::loadImage(QString fn)
         return;
     }
 
-    size_t dims[2]={3,3};
+    std::vector<size_t> dims={3,3};
     kipl::filters::TMedianFilter<float,2> medfilt(dims);
-    img=medfilt(img);
-    ui->viewer->set_image(img.GetDataPtr(),img.Dims());
+    currentImage=medfilt(currentImage);
+    ui->viewer->set_image(currentImage.GetDataPtr(),currentImage.dims());
 }
 
 void PixelSizeDlg::plotEdge(std::vector<std::pair<float, float> > &ep, QColor c, int idx)
@@ -311,13 +327,13 @@ void PixelSizeDlg::computeEdgeEquation(std::vector<std::pair<float,float>> edgeP
 kipl::base::TImage<float, 2> PixelSizeDlg::diffEdge(kipl::base::TImage<float, 2> &img)
 {
 
-    float kx[9]={-3,0,3,
+    std::vector<float> kx={-3,0,3,
                 -10,0,10,
                 -3,0,3};
-    size_t dims[2]={3,3};
+    std::vector<size_t> dims={3,3};
     kipl::filters::TFilter<float,2> dx(kx,dims);
 
-    float ky[9]={-3,-10,-3,
+    std::vector<float> ky={-3,-10,-3,
                 0,0,0,
                 3,10,3};
 
@@ -326,7 +342,7 @@ kipl::base::TImage<float, 2> PixelSizeDlg::diffEdge(kipl::base::TImage<float, 2>
     auto dximg=dx(img,kipl::filters::FilterBase::EdgeMirror);
     auto dyimg=dy(img,kipl::filters::FilterBase::EdgeMirror);
 
-    kipl::base::TImage<float,2> absgrad(img.Dims());
+    kipl::base::TImage<float,2> absgrad(img.dims());
 
     float *pA=absgrad.GetDataPtr();
     float *pX=dximg.GetDataPtr();
@@ -383,3 +399,14 @@ float PixelSizeDlg::distanceToLine(float x, float y)
 
   return d;
 }
+
+void PixelSizeDlg::on_pushButton_level95p_clicked()
+{
+    ui->viewer->set_levels(kipl::base::quantile95);
+}
+
+void PixelSizeDlg::on_pushButton_level99p_clicked()
+{
+    ui->viewer->set_levels(kipl::base::quantile99);
+}
+

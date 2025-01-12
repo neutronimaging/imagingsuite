@@ -52,6 +52,11 @@ int AdaptiveFilter::Configure(ReconConfig config, std::map<std::string, std::str
 	return 1;
 }
 
+bool AdaptiveFilter::SetROI(const std::vector<size_t> & /*roi*/) 
+{
+    return false;
+}
+
 std::map<std::string, std::string> AdaptiveFilter::GetParameters()
 {
     std::map<std::string, std::string> parameters;
@@ -87,7 +92,7 @@ int AdaptiveFilter::ProcessSingle(kipl::base::TImage<float,2> &img, std::map<std
     return SimpleFilter(img,parameters);
 }
 
-int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters)
+int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> & /*parameters*/)
 {
 
        float mymax = *std::max_element(img.GetLinePtr(0), img.GetLinePtr(0)+img.Size()); // find the max value
@@ -110,12 +115,9 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
         }
     }
 
-    float k[1024];
     float w=1.0f/static_cast<float>(m_nFilterSize);
-    for (int i=0; i<m_nFilterSize; i++)
-        k[i]=w; // it creates a mean filter with size m_nFilterSize and weights 1/m_nFilterSize
-
-    size_t dimx[2]={static_cast<size_t>(m_nFilterSize), 1UL};
+    std::vector<float> k(m_nFilterSize,w);
+    std::vector<size_t> dimx={static_cast<size_t>(m_nFilterSize), 1UL};
 
     kipl::filters::TFilter<float,2> filterx(k,dimx);
     kipl::base::TImage<float,2> smoothx;
@@ -201,7 +203,10 @@ int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std:
     // padding
 
     int win90 = floor(img.Size(1)*180/mConfig.ProjectionInfo.fScanArc[1]/2+0.5);
-    size_t pad_dims[2] = {img.Size(0),(img.Size(1)+2*win90)};
+    std::vector<size_t> pad_dims = { img.Size(0),
+                                     (img.Size(1)+2*win90)
+                                   };
+
     kipl::base::TImage<float,2> padImg(pad_dims);
     padImg = 0.0f;
 
@@ -322,9 +327,7 @@ void AdaptiveFilter::MaxProfile(kipl::base::TImage<float,3> &img, kipl::base::TI
     size_t Ny=img.Size(1);
     size_t Nz=img.Size(2);
 
-    size_t pdims[2]={Ny,Nz};
-
-    profile.Resize(pdims);
+    profile.resize({Ny,Nz});
 
     for (size_t z=0; z<Nz; z++) {
         float *pProfile=profile.GetLinePtr(z);
@@ -346,9 +349,7 @@ void AdaptiveFilter::MinProfile(kipl::base::TImage<float,3> &img, kipl::base::TI
     size_t Ny=img.Size(1);
     size_t Nz=img.Size(2);
 
-    size_t pdims[2]={Ny,Nz};
-
-    profile.Resize(pdims);
+    profile.resize({Ny,Nz});
 
     for (size_t z=0; z<Nz; z++) {
         float *pProfile=profile.GetLinePtr(z);
@@ -369,7 +370,7 @@ void AdaptiveFilter::MinMaxProfile(kipl::base::TImage<float,2> &img, std::vector
     size_t Nx=img.Size(0);
     size_t Ny=img.Size(1);
 
-    size_t pdims[1]={Ny};
+    // size_t pdims[1]={Ny};
 
     minprofile.resize(Ny);
     maxprofile.resize(Ny);

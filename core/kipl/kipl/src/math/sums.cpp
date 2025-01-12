@@ -5,7 +5,8 @@
 #include <omp.h>
 #endif
 
-#include "../include/math/sums.h"
+#include "../../include/math/sums.h"
+#include <vector>
 
 namespace kipl { namespace math {
 
@@ -76,6 +77,7 @@ int KIPLSHARED_EXPORT cumsum(size_t const * const data, size_t * cumdata, size_t
 
 	return 0;
 }
+
 
 
 

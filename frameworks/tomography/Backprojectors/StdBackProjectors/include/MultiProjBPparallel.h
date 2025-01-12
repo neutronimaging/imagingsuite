@@ -2,14 +2,15 @@
 
 #ifndef _MULTIPROJBPPARALLEL_H_
 #define _MULTIPROJBPPARALLEL_H_
+#include "StdBackProjectors_global.h"
 
 #include <interactors/interactionbase.h>
 #include "../include/StdBackProjectorBase.h"
 
 namespace reconstructor{ namespace UnitTests {
-	class testBasicReconstructor;
+    class testBasicReconstructor;
 }}
-class MultiProjectionBPparallel:
+class STDBACKPROJECTORS_EXPORT MultiProjectionBPparallel:
 	public StdBackProjectorBase
 {
 public:
@@ -17,6 +18,10 @@ public:
 	virtual ~MultiProjectionBPparallel(void);
 protected:
 	virtual void BackProject();
+    void BackProjectOpenMP();
+    void BackProjectSTL();
+    void BackProjectSTL(int first, int last);
+
 };
 
 #endif

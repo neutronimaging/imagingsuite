@@ -19,12 +19,14 @@
 #include <QMutex>
 
 #include <logging/logger.h>
-
+#include <base/kiplenums.h>
 #include "imagepainter.h"
 #include "plotter.h"
 #include "imageviewerinfodialog.h"
 #include "qglyphs.h"
 #include "qmarker.h"
+
+
 
 namespace QtAddons {
 
@@ -56,9 +58,9 @@ public:
     ImageViewerWidget(QWidget *parent = nullptr);
     ~ImageViewerWidget();
 
-    void set_image(float const * const data, size_t const * const dims);
-    void set_image(float const * const data, size_t const * const dims, const float low, const float high);
-    void getImageDims(int &x, int &y);
+    void set_image(float const * const data, const std::vector<size_t> & dims, float low, float high,bool keep_roi=false);
+    void set_image(float const * const data, const std::vector<size_t> &dims, bool keep_roi=false);
+    void image_dims(int &x, int &y);
     void set_plot(QVector<QPointF> data, QColor color, int idx);
     void clear_plot(int idx=-1);
     void set_rectangle(QRect rect, QColor color, int idx);
@@ -69,6 +71,7 @@ public:
 
     void clear_viewer();
     void set_levels(const float level_low, const float level_high, bool updatelinked=true);
+    void set_levels(kipl::base::eQuantiles quantile=kipl::base::allData, bool updatelinked=true);
     void get_levels(float *level_low, float *level_high);
     void get_minmax(float *level_low, float *level_high);
     void show_clamped(bool show);
@@ -79,8 +82,8 @@ public:
 
  //   void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp; queue_draw(); }
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+    QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
     void LinkImageViewer(QtAddons::ImageViewerWidget *w, bool connect=true);
     void ClearLinkedImageViewers(QtAddons::ImageViewerWidget *w=nullptr);
 public slots:
@@ -89,31 +92,38 @@ public slots:
     void ShowContextMenu(const QPoint& pos);
     void on_levelsChanged(float lo, float hi);
 
+private slots:
+    void saveCurrentView();
+    void copyImage();
+
 protected:
-    virtual void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent * event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void enterEvent(QEvent *);
-    virtual void keyPressEvent(QKeyEvent *event);
+    void setupActions();
+    virtual void paintEvent(QPaintEvent *event) override;
+    virtual void resizeEvent(QResizeEvent * event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    virtual void enterEvent(QEnterEvent *) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 //    void wheelEvent(QWheelEvent *event);
         
 protected:
     void UpdateFromLinkedViewer(QtAddons::ImageViewerWidget *w);
     void UpdateLinkedViewers();
+    void saveImage(const QString &fname);
 
     ImagePainter m_ImagePainter;
-    void updateRubberBandRegion();
+
     void showToolTip(QPoint position, QString message);
     void refreshPixmap();
     QRect rubberBandRect;
-    QRubberBand m_rubberBandLine;
+    QRubberBand m_rubberBandBox;
     QPoint m_rubberBandOrigin;
     eRubberBandStatus m_RubberBandStatus;
     QRect roiRect;
     eViewerMouseModes m_MouseMode;
     Qt::MouseButton m_PressedButton;
+    bool m_mouseMoved;
     QPoint m_LastMotionPosition;
     QSize widgetSize;
     QSet<ImageViewerWidget *> m_LinkedViewers;
@@ -122,6 +132,8 @@ protected:
     QMutex m_MouseMoveMutex;
     QMutex m_ImageMutex;
     double m_CurrentScale;
+    QAction *saveImageAct;
+    QAction *copyImageAct;
 
 signals:
     void newImageDims(const QRect &rect);

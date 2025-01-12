@@ -1,16 +1,30 @@
-DIRECTORY=~/Applications
-QTPATH=$QTBINPATH/..
+DIRECTORY=$WORKSPACE/deployed
+
 DEST="$DIRECTORY/MuhRec.app"
 REPOSPATH=$WORKSPACE
+QTPATH=$QTBINPATH
+
+ARCH=`uname -m`
+
+BREWPATH="`brew --prefix`"
+
+echo $BREWPATH
+
+GITVER=`git rev-parse --short HEAD`
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
 fi
 
-cp -r $REPOSPATH/Applications/MuhRec.app $DIRECTORY
+echo $DIRECTORY
+echo $QTPATH
+echo $DEST
+echo $REPOSPATH
+
+cp -r $REPOSPATH/install/applications/MuhRec.app $DIRECTORY
 
 pushd .
-CPCMD="cp"
+CPCMD="cp -f"
 
 cd $DEST/Contents
 echo "This is where it lands..."
@@ -19,39 +33,71 @@ if [ ! -d "./Frameworks" ]; then
  mkdir ./Frameworks
 fi
 
-`$CPCMD $REPOSPATH/lib/libImagingAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libModuleConfig.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libQtAddons.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libQtModuleConfigure.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libReconFramework.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libReconAlgorithms.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libStdBackProjectors.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libStdPreprocModules.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libkipl.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libStdPreprocModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libInspectorModulesGUI.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libInspectorModules.1.0.0.dylib $DEST/Contents/Frameworks`
-`$CPCMD $REPOSPATH/lib/libFDKBackProjectors.1.0.0.dylib $DEST/Contents/Frameworks`
+if [ ! -d "./MacOS" ]; then
+ mkdir ./MacOS
+fi
+
+`$CPCMD $REPOSPATH/install/lib/libImagingAlgorithms.dylib    $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libAdvancedFilters.dylib      $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libModuleConfig.dylib         $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libQtAddons.dylib             $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libQtImaging.dylib            $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libReaderConfig.dylib         $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libReaderGUI.dylib            $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libQtModuleConfigure.dylib    $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libReconFramework.dylib       $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libReconAlgorithms.dylib      $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libStdBackProjectors.dylib    $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libStdPreprocModules.dylib    $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libkipl.dylib                 $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libStdPreprocModulesGUI.dylib $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libInspectorModulesGUI.dylib  $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libInspectorModules.dylib     $DEST/Contents/Frameworks`
+`$CPCMD $REPOSPATH/install/lib/libFDKBackProjectors.dylib    $DEST/Contents/Frameworks`
+	
+# `$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
+# `$CPCMD $REPOSPATH/ExternalDependencies/macos/$ARCH/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
+# `$CPCMD /usr/local/lib/libNeXus.1.0.0.dylib $DEST/Contents/Frameworks`
+# `$CPCMD /usr/local/lib/libNeXusCPP.1.0.0.dylib $DEST/Contents/Frameworks`
+
+`$CPCMD $BREWPATH/lib/libarmadillo.12.dylib $DEST/Contents/Frameworks`
+
+`$CPCMD $BREWPATH/opt/openblas/lib/libopenblas.0.dylib $DEST/Contents/Frameworks`
+`$CPCMD $BREWPATH/opt/arpack/lib/libarpack.2.dylib $DEST/Contents/Frameworks`
+`$CPCMD $BREWPATH/opt/superlu/lib/libsuperlu.6.dylib $DEST/Contents/Frameworks`
+`$CPCMD $BREWPATH/lib/libzstd.1.dylib        $DEST/Contents/Frameworks`
+`$CPCMD $BREWPATH/lib/libsz.2.dylib $DEST/Contents/Frameworks`
+`$CPCMD $BREWPATH/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib $DEST/Contents/Frameworks`
+# `$CPCMD /Users/kaestner/anaconda3/lib/libgcc_s.1.1.dylib $DEST/Contents/Frameworks`
+
+if [ -e "$REPOSPATH/Applications/muhrecCLI" ]; then
+	`$CPCMD $REPOSPATH/Applications/muhrecCLI $DEST/Contents/MacOS`
+fi
 
 rm -f ./MacOS/*.dylib
-
 cd Frameworks
 rm -f *.1.0.dylib
 rm -f *.1.dylib
 
-for f in `ls *.1.0.0.dylib`; do
-	ln -s $f "`basename $f .1.0.0.dylib`.1.0.dylib"
-	ln -s $f "`basename $f .1.0.0.dylib`.1.dylib"
-	ln -s $f "`basename $f .1.0.0.dylib`.dylib"
-done
+if [ -e "/opt/local/lib/libzstd.1.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/MacOS`
+fi
+
+if [ -e "/opt/local/lib/libzstd.9.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.9.dylib $DEST/Contents/MacOS`
+fi
+
+
+
 cd ..
 
 if [ ! -d "./Resources" ]; then
 	mkdir ./Resources	
 fi
-cp ~/repos/tomography/trunk/src/muhrec/resources/* ./Resources
 
-sed -i.bak s+com.yourcompany+ch.imagingscience+g $DEST/Contents/Info.plist
+cp $REPOSPATH/imagingsuite/applications/muhrec/Resources/* ./Resources
+
+#sed -i.bak s+com.yourcompany+ch.psi+g $DEST/Contents/Info.plist
 echo "copy plugins"
 pwd
 if [ ! -d "./PlugIns" ]; then
@@ -63,15 +109,19 @@ if [ ! -d "./PlugIns/platforms" ]; then
 fi
 
 if [ ! -f "./PlugIns/platforms/libqcocoa.dylib" ]; then 
-	cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+	if [ -f "$QTPATH/plugins/platforms/libqcocoa.dylib" ]; then 
+		cp $QTPATH/plugins/platforms/libqcocoa.dylib $DEST/Contents/PlugIns/platforms/
+	fi
 fi
 
 if [ ! -d "./PlugIns/printsupport" ]; then
- mkdir ./PlugIns/printsupport
+	mkdir ./PlugIns/printsupport
 fi
 
 if [ ! -f "./PlugIns/printsupport/libcocoaprintersupport.dylib" ]; then 
-	cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+	if [ -f "$QTPATH/plugins/printsupport/libcocoaprintersupport.dylib" ]; then
+		cp $QTPATH/plugins/printsupport/libcocoaprintersupport.dylib $DEST/Contents/PlugIns/printsupport/
+	fi
 fi
 
 if [ ! -d "./PlugIns/accessible" ]; then
@@ -79,77 +129,63 @@ if [ ! -d "./PlugIns/accessible" ]; then
 fi
 
 if [ ! -f "./PlugIns/accessible/libqtaccessiblewidgets.dylib" ]; then 
-	cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+	if [ -f "$QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib" ] ; then
+		cp $QTPATH/plugins/accessible/libqtaccessiblewidgets.dylib $DEST/Contents/PlugIns/accessible/
+	fi
 fi
 
 pwd
 ls PlugIns
 
-cd $QTPATH/bin/
+cd $QTBINPATH
 echo "Do deploy..."
 ./macdeployqt $DEST #-dmg
 
 cd $DEST/Contents/MacOS
-# MuhRec
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib MuhRec
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib MuhRec
-install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib MuhRec
-install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib MuhRec
-install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib MuhRec
-install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib MuhRec
+
+# muhrec
+install_name_tool -add_rpath @executable_path/../Frameworks MuhRec
+
+install_name_tool -change @executable_path/../Frameworks/libxml2.2.dylib @rpath/libxml2.2.dylib MuhRec
+install_name_tool -change @executable_path/../Frameworks/libarmadillo.12.dylib @rpath/libarmadillo.12.dylib MuhRec
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib MuhRec
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib MuhRec
+
 cd ../Frameworks
 
-# ModuleConfig
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libModuleConfig.1.0.0.dylib
+chmod 666 libarmadillo.12.dylib
+# chmod 666 libhdf5_hl.dylib libhdf5_cpp.dylib
+# ln -s libNeXus.1.0.0.dylib libNeXus.1.dylib
+# ln -s libNeXusCPP.1.0.0.dylib libNeXusCPP.1.dylib
+`$CPCMD $BREWPATH/opt/gcc/lib/gcc/current/libgcc_s.1.1.dylib $DEST/Contents/Frameworks` # must be here to avoid deletion
 
-# QtAddons
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtAddons.1.0.0.dylib
+install_name_tool -change @loader_path/../../../../opt/openblas/lib/libopenblas.0.dylib @rpath/libopenblas.0.dylib libarmadillo.12.dylib
+install_name_tool -change @loader_path/../../../../opt/arpack/libexec/lib/libarpack.2.dylib @rpath/libarpack.2.dylib libarmadillo.12.dylib
+install_name_tool -change @loader_path/../../../../opt/superlu/lib/libsuperlu.6.dylib @rpath/libsuperlu.6.dylib libarmadillo.12.dylib
+# install_name_tool -change @loader_path/../../../../opt/libaec/lib/libsz.2.dylib @rpath/libsz.2.dylib libhdf5_cpp.310.dylib
+# install_name_tool -change @loader_path/../../../../opt/libaec/lib/libsz.2.dylib @rpath/libsz.2.dylib libhdf5.310.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderGUI.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderGUI.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libReaderConfig.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libReaderConfig.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libImagingAlgorithms.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libImagingAlgorithms.dylib
+# install_name_tool -change libNeXus.1.dylib @rpath/libNeXus.1.dylib libkipl.dylib
+# install_name_tool -change libNeXusCPP.1.dylib @rpath/libNeXusCPP.1.dylib libkipl.dylib
 
-# QtModuleConfigure
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libQtModuleConfigure.1.0.0.dylib
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libQtModuleConfigure.1.0.0.dylib
-install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libQtModuleConfigure.1.0.0.dylib
 
-# ReconFramework
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libReconFramework.1.0.0.dylib
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libReconFramework.1.0.0.dylib
+codesign --force --deep --sign - $DEST # needed to fix signature issue on M1
 
-# ImagingAlgorithms
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libImagingAlgorithms.1.0.0.dylib
+rm -rf /tmp/muhrec
 
-# Preprocessing
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libStdPreprocModules.1.0.0.dylib
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libStdPreprocModules.1.0.0.dylib
-install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libStdPreprocModules.1.0.0.dylib
-install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libStdPreprocModules.1.0.0.dylib
+if [ ! -d "/tmp/muhrec" ]; then
+  mkdir /tmp/muhrec
+fi
 
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
-install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
-install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
-install_name_tool -change libStdPreprocModules.1.dylib @executable_path/../Frameworks/libStdPreprocModules.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
-install_name_tool -change libQtModuleConfigure.1.dylib @executable_path/../Frameworks/libQtModuleConfigure.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
-install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib libStdPreprocModulesGUI.1.0.0.dylib
+if [ ! -e "tmp/muhrec/Applications" ]; then
+	ln -s /Applications /tmp/muhrec
+fi
 
-# stdbackprojectors
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libStdBackprojectors.1.0.0.dylib
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libStdBackprojectors.1.0.0.dylib
-install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libStdBackprojectors.1.0.0.dylib
-install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libStdBackprojectors.1.0.0.dylib
+cp -r $DEST /tmp/muhrec
 
-# FDK
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libFDKBackProjectors.1.0.0.dylib
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libFDKBackProjectors.1.0.0.dylib
-#install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libFDKBackProjectors.1.0.0.dylib
-install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libFDKBackProjectors.1.0.0.dylib
-
-# Inspectors
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libInspectorModules.1.0.0.dylib
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libInspectorModules.1.0.0.dylib
-install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libInspectorModules.1.0.0.dylib
-#install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libInspectorModules.1.0.0.dylib
-
-install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib libInspectorModulesGUI.1.0.0.dylib
-install_name_tool -change libModuleConfig.1.dylib @executable_path/../Frameworks/libModuleConfig.1.dylib libInspectorModulesGUI.1.0.0.dylib
-install_name_tool -change libReconFramework.1.dylib @executable_path/../Frameworks/libReconFramework.1.dylib libInspectorModulesGUI.1.0.0.dylib
-#install_name_tool -change libImagingAlgorithms.1.dylib @executable_path/../Frameworks/libImagingAlgorithms.1.dylib libInspectorModulesGUI.1.0.0.dylib
+hdiutil create -volname MuhRec -srcfolder /tmp/muhrec -ov -format UDZO $DIRECTORY/MuhRec-MacOS_$ARCH-build-$GITVER-`date +%Y%m%d`.dmg

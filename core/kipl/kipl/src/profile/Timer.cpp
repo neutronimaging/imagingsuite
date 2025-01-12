@@ -22,9 +22,9 @@ Timer::Timer() :
 /// \brief Starts the timer
 void Timer::Tic()
 {
-    std::chrono::high_resolution_clock::now();
-    m_nToc=m_nTic=std::chrono::high_resolution_clock::now();
-    m_fCumulative = 0.0;
+    auto now = std::chrono::high_resolution_clock::now();
+    m_nTic = now;
+    m_nToc = now;
 }
 
 /// \brief Stops the timer. Can be called multiple times, in this case the time from the most resent call to Tic() is measured.

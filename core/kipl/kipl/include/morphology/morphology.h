@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <string>
+#include <vector>
 
 namespace kipl { namespace morphology {
 	/// Enum used by the TopHat transform
@@ -34,7 +35,7 @@ namespace kipl { namespace morphology {
 		/// \param dims dimension sizes of the image
 		/// \param NDim Number of dimensions
 		/// \param conn Selects connectivity of the neighborhood
-		CNeighborhood(size_t const * const dims, size_t const NDim, kipl::morphology::MorphConnect const conn=conn4);
+        CNeighborhood(const std::vector<size_t> & dims, size_t const NDim, kipl::morphology::MorphConnect const conn=conn4);
 		
 		/// \brief Forward looking neighborhood 
 		/// \param pos one-dim index to a pixel
@@ -103,6 +104,7 @@ namespace kipl { namespace morphology {
 		/// \retval non-negative valid pixel index
 		/// \retval -1 out of bounds
 		ptrdiff_t neighbor2D(size_t pos, size_t index);
+		
 		/// \brief Forward looking neighborhood for 2D images
 		/// \param pos pixel index
 		/// \param index neighborhood index
@@ -132,7 +134,7 @@ namespace kipl { namespace morphology {
 		ptrdiff_t NGm[27];
 		size_t cNG;
 		size_t cNGpm;
-		size_t dims[8];
+        std::vector<size_t> dims;
 		int ndim;
 		size_t nimg;
 		size_t first_line;

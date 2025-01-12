@@ -1,8 +1,6 @@
 //<LICENCE>
 
-#include <../include/kipl_global.h>
-#include <QDebug>
-
+#include "../../include/kipl_global.h"
 #include <cstring>
 #include <cstdlib>
 #include <vector>
@@ -56,13 +54,17 @@ void KIPLSHARED_EXPORT StripFileName(const std::string filestr,
 int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::string &name, std::string &ext, const char cWildCardChar, const char cFillChar,bool bReversedIndex)
 {
     if (cFillChar < 32)
+    {
         throw kipl::base::KiplException("MakeFileName: Fill char ascii code < 32",__FILE__,__LINE__);
+    }
 
 	string::size_type first=filename.find_first_of(cWildCardChar);
 	string::size_type last=filename.find_first_not_of(cWildCardChar,first);
 
 	if (last==string::npos)
+    {
 		last=filename.length();
+    }
 
     ostringstream fnstr, numstr;
 
@@ -73,16 +75,19 @@ int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::stri
     numstr<<num;
 
     std::string idxstring;
-    //std::cout<<numstr.str()<<" "<<(bReversedIndex ? "true": "false")<<std::endl;
-    if (bReversedIndex) {
+
+    if (bReversedIndex)
+    {
         std::string tmp=numstr.str();
         std::string::reverse_iterator it;
         idxstring.clear();
-        for (it=tmp.rbegin(); it!=tmp.rend(); it++) {
+        for (it=tmp.rbegin(); it!=tmp.rend(); it++)
+        {
             idxstring.push_back(*it);
         }
     }
-    else {
+    else
+    {
         idxstring=numstr.str();
     }
 
@@ -105,7 +110,8 @@ int KIPLSHARED_EXPORT MakeFileName(const std::string filename,int num, std::stri
 int GetStrNum(char const * const str)
 {
 	int i=0;
-	while (!::isdigit(str[i]) && str[i]) {
+    while (!::isdigit(str[i]) && str[i])
+    {
 		i++;
 	}
 
@@ -117,7 +123,8 @@ int GetStrNum(char const * const str)
 int KIPLSHARED_EXPORT ExtractWildCard(const char *src, char *prefix, char *suffix)
 {
 	const char *pW=strpbrk(src,"*");
-	if (!pW) {
+    if (!pW)
+    {
 		strcpy(prefix,src);
 		suffix[0]=0;
 
@@ -134,10 +141,12 @@ int KIPLSHARED_EXPORT ExtractWildCard(const char *src, char *prefix, char *suffi
 int KIPLSHARED_EXPORT CheckPathSlashes(std::string &path, bool bAddSlashAtEnd)
 {
 	int cnt=0;
-	if (!path.empty()) {
+    if (!path.empty())
+    {
 		size_t idx=path.find(wrong_slash,0);
 
-		while (idx!=path.npos) {
+        while (idx!=path.npos)
+        {
 			path[idx]=slash;
 			idx=path.find(wrong_slash,idx);
 			cnt++;
@@ -146,6 +155,7 @@ int KIPLSHARED_EXPORT CheckPathSlashes(std::string &path, bool bAddSlashAtEnd)
 		if ((bAddSlashAtEnd==true) && (*path.rbegin()!=slash))
 			path=path+slash;
 	}
+
 	return cnt;
 }
 

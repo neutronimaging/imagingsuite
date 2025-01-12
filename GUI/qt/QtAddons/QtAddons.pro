@@ -4,11 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core widgets charts printsupport
+QT       += core
+QT       += widgets
+QT       += charts
+QT       += printsupport
 
-TARGET = QtAddons
-TEMPLATE = lib
-CONFIG += c++11
+TARGET    = QtAddons
+TEMPLATE  = lib
+CONFIG   += c++17
 
 CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../lib
 else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../lib/debug
@@ -102,6 +105,7 @@ unix:!symbian {
     INSTALLS += target
 }
 
+INCLUDEPATH += $$PWD/../../../../ExternalDependencies/macos/include
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib -lkipl
 else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../../../../lib/debug -lkipl
 

@@ -4,6 +4,7 @@
 #define KIPL_PLOTDATA_H
 
 #include <string>
+#include <algorithm>
 
 namespace kipl { namespace containers {
 

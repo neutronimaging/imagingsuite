@@ -36,7 +36,6 @@ unix {
 }
 
 unix {
-    INCLUDEPATH += "../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -45,6 +44,9 @@ unix {
         LIBS += -lgomp -lxml2
         INCLUDEPATH += /usr/include/libxml2
         INCLUDEPATH += /usr/include/cfitsio
+        DEFINES += HAVE_NEXUS
+        LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu
+        LIBS += -lNeXus -lNeXusCPP
     }
 
     unix:macx {
@@ -52,20 +54,24 @@ unix {
         QMAKE_LIBDIR += /opt/local/lib
         INCLUDEPATH += /opt/local/include/libxml2
     }
+
+    LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio
+
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$PWD/../../../../ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$PWD/../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH += $$PWD/../../../external/include
     QMAKE_LIBDIR += $$PWD/../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
-}
 
-win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
+    LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
+}
 
 CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../lib
 else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../lib/debug
@@ -77,6 +83,8 @@ DEPENDPATH += $$PWD/../ReaderConfig
 
 INCLUDEPATH += $$PWD/../../kipl/kipl/include
 DEPENDPATH += $$PWD/../../kipl/kipl/include
+
+INCLUDEPATH += $$PWD/../../algorithms/ImagingAlgorithms/include
 
 INCLUDEPATH += $$PWD/../../../GUI/qt/QtAddons
 DEPENDPATH += $$PWD/../../../GUI/qt/QtAddons

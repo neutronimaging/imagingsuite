@@ -5,6 +5,7 @@
 #include "../include/ProcessModuleBase.h"
 
 #include "../include/ModuleException.h"
+#include <thread>
 
 ProcessModuleBase::ProcessModuleBase(std::string name,kipl::interactors::InteractionBase *interactor) :
  logger(name),
@@ -50,6 +51,30 @@ int ProcessModuleBase::Process(kipl::base::TImage<float,3> &img, std::map<std::s
 	timer.Toc();
 
     return res;
+}
+
+void ProcessModuleBase::setNumberOfThreads(int N)
+{
+    int hwMaxThreads = std::thread::hardware_concurrency();
+
+    if ((N<1) || (hwMaxThreads < N))
+    {
+        nMaxThreads = hwMaxThreads;
+    }
+    else
+    {
+        nMaxThreads = N;
+    }
+}
+
+int ProcessModuleBase::numberOfThreads()
+{
+    return nMaxThreads;
+}
+
+void ProcessModuleBase::resetTimer()
+{
+    timer.reset();
 }
 
 const std::vector<Publication> &ProcessModuleBase::publicationList() const

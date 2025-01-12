@@ -1,14 +1,14 @@
 //<LICENSE>
-#include "stdafx.h"
+
+#include <iostream>
+#include <memory>
+
+#include <ModuleException.h>
+
 #include "../include/ReconFactory.h"
 #include "../include/PreprocModuleBase.h"
 #include "../include/ReconConfig.h"
 #include "../include/ReconException.h"
-#include "ModuleException.h"
-#include "stdafx.h"
-#include <iostream>
-#include <memory>
-#include <QDebug>
 
 ReconFactory::ReconFactory(void)
     : logger("ReconFactory")
@@ -73,15 +73,23 @@ ReconEngine* ReconFactory::BuildEngine(ReconConfig& config, kipl::interactors::I
 
 void ReconFactory::SetBackProjector(ReconConfig& config, ReconEngine* engine, kipl::interactors::InteractionBase* interactor)
 {
-    if (config.backprojector.m_bActive == true) {
+    if (config.backprojector.m_bActive == true)
+    {
         BackProjItem* module = nullptr;
         try {
             module = new BackProjItem("muhrecbp", config.backprojector.m_sSharedObject, config.backprojector.m_sModule, interactor);
-
             module->GetModule()->Configure(config, config.backprojector.parameters);
             engine->SetBackProjector(module);
-        } catch (ReconException& e) {
+        }
+        catch (ReconException& e)
+        {
             throw ReconException(e.what(), __FILE__, __LINE__);
+        }
+        catch (std::exception & e)
+        {
+            std::ostringstream msg;
+            msg << "STL exception while setting back projector: "<<e.what();
+            throw ReconException(msg.str(),__FILE__, __LINE__);
         }
     }
 }

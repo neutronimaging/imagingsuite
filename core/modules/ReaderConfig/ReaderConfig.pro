@@ -17,16 +17,16 @@ TEMPLATE = lib
 DEFINES += READERCONFIG_LIBRARY
 
 SOURCES += readerconfig.cpp \
-    datasetbase.cpp \
     buildfilelist.cpp \
+    fileset.cpp \
     imagereader.cpp \
     readerexception.cpp \
     imagewriter.cpp \
     analyzefileext.cpp
 
 HEADERS += readerconfig.h\
+    fileset.h \
         readerconfig_global.h \
-    datasetbase.h \
     buildfilelist.h \
     imagereader.h \
     readerexception.h \
@@ -39,7 +39,6 @@ unix {
 }
 
 unix {
-    INCLUDEPATH += "../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -47,6 +46,9 @@ unix {
         QMAKE_CXXFLAGS += -fopenmp
         QMAKE_LFLAGS += -lgomp
         LIBS += -lgomp
+        DEFINES += HAVE_NEXUS
+        LIBS += -L/usr/local/lib64 -L/usr/lib/x86_64-linux-gnu
+        LIBS += -lNeXus -lNeXusCPP
     }
 
     unix:macx {
@@ -97,12 +99,15 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
+    INCLUDEPATH += $$PWD/../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH += $$PWD/../../../../ExternalDependencies/windows/include/cfitsio
+    LIBPATH     += $$PWD/../../../../ExternalDependencies/windows/lib
+    LIBS += -llibxml2
 
-    INCLUDEPATH += $$PWD/../../../external/src/linalg $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio
+    INCLUDEPATH  += $$PWD/../../../external/include
+
     QMAKE_LIBDIR += $$PWD/../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
-    LIBS += -llibxml2_dll
-
 
     exists($$PWD/../../../external/lib64/nexus/*NeXus*) {
 
@@ -111,8 +116,6 @@ win32 {
         INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
         QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
 
-#        SOURCES += $$PWD/../../kipl/kipl/src/io/io_nexus.cpp
-#        HEADERS += $$PWD/../../kipl/kipl/include/io/io_nexus.h
     }
 
 }

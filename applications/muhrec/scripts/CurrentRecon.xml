@@ -1,0 +1,145 @@
+<reconstructor>
+    <userinformation>
+        <operator>unknown</operator>
+        <instrument>beamline</instrument>
+        <projectnumber>P20yyxxxx</projectnumber>
+        <sample>Unknown item</sample>
+        <comment>No comment</comment>
+        <date>20180509</date>
+        <version>0</version>
+    </userinformation>
+    <system>
+        <memory>8000</memory>
+        <loglevel>message</loglevel>
+        <validate>false</validate>
+        <maxthreads>2</maxthreads>
+        <threadmethod>threadingOpenMP</threadmethod>
+    </system>
+    <projections>
+        <dims>100 100</dims>
+        <beamgeometry>parallel</beamgeometry>
+        <resolution>0.1 0.1</resolution>
+        <binning>1</binning>
+        <margin>2</margin>
+        <firstindex>0</firstindex>
+        <lastindex>127</lastindex>
+        <projectionstep>1</projectionstep>
+        <repeatedview>1</repeatedview>
+        <averagemethod>ImageWeightedAverage</averagemethod>
+        <repeatline>false</repeatline>
+        <scantype>sequential</scantype>
+        <goldenstartidx>0</goldenstartidx>
+        <imagetype>projections</imagetype>
+        <center>64</center>
+        <sod>100</sod>
+        <sdd>321</sdd>
+        <direction>RotationDirCW</direction>
+        <pPoint>700 1400</pPoint>
+        <translation>false</translation>
+        <tiltangle>0</tiltangle>
+        <tiltpivot>0</tiltpivot>
+        <correcttilt>false</correcttilt>
+        <filemask>/home/kaestner/projections/proj_128/proj_#####.tif</filemask>
+        <path></path>
+        <referencepath></referencepath>
+        <obfilemask>/home/kaestner/projections/proj_128/ob_#####.tif</obfilemask>
+        <obfirstindex>0</obfirstindex>
+        <obcount>10</obcount>
+        <dcfilemask>/home/kaestner/projections/proj_128/dc_#####.tif</dcfilemask>
+        <dcfirstindex>0</dcfirstindex>
+        <dccount>10</dccount>
+        <roi>0 20 127 52</roi>
+        <projroi>0 0 127 127</projroi>
+        <doseroi>10 10 20 20</doseroi>
+        <scanarc>0 360</scanarc>
+        <rotate>imagerotatenone</rotate>
+        <flip>imageflipnone</flip>
+    </projections>
+    <matrix>
+        <dims>546 546 32</dims>
+        <rotation>0</rotation>
+        <serialize>false</serialize>
+        <path>/home/kaestner/</path>
+        <matrixname>slice_####.tif</matrixname>
+        <filetype>TIFF16bits</filetype>
+        <firstindex>0</firstindex>
+        <grayinterval>0 2</grayinterval>
+        <useroi>false</useroi>
+        <roi>0 0 99 99 </roi>
+        <voxelsize>0 0 0 </voxelsize>
+        <voi>0 127 0 127 0 32</voi>
+    </matrix>
+    <processchain>
+        <preprocessing>
+            <module>
+                <modulename>FullLogNorm</modulename>
+                <sharedobject>StdPreprocModules</sharedobject>
+                <active>true</active>
+                <threading>true</threading>
+                <parameters>
+                    <BS>0</BS>
+                    <referenceaverage>ImageWeightedAverage</referenceaverage>
+                    <useBS>false</useBS>
+                    <uselut>false</uselut>
+                    <usenormregion>true</usenormregion>
+                </parameters>
+            </module>
+            <module>
+                <modulename>MorphSpotClean</modulename>
+                <sharedobject>StdPreprocModules</sharedobject>
+                <active>true</active>
+                <threading>true</threading>
+                <parameters>
+                    <clampdata>false</clampdata>
+                    <cleanmethod>morphcleanreplace</cleanmethod>
+                    <connectivity>conn4</connectivity>
+                    <detectionmethod>morphdetectallspots</detectionmethod>
+                    <edgesmooth>5</edgesmooth>
+                    <maxarea>30</maxarea>
+                    <maxlevel>12</maxlevel>
+                    <minlevel>-0.1</minlevel>
+                    <removeinfnan>false</removeinfnan>
+                    <sigma>0.01 0.01</sigma>
+                    <threading>true</threading>
+                    <threshold>0.95 0.95</threshold>
+                    <thresholdbyfraction>true</thresholdbyfraction>
+                    <transpose>false</transpose>
+                </parameters>
+            </module>
+            <module>
+                <modulename>WaveletRingClean</modulename>
+                <sharedobject>StdPreprocModules</sharedobject>
+                <active>true</active>
+                <threading>true</threading>
+                <parameters>
+                    <decnum>4</decnum>
+                    <method>verticalfft</method>
+                    <sigma>0.1</sigma>
+                    <threading>true</threading>
+                    <wname>daub25</wname>
+                </parameters>
+            </module>
+        </preprocessing>
+        <backprojector>
+            <module>
+                <modulename>MultiProjBPparallel</modulename>
+                <sharedobject>StdBackProjectors</sharedobject>
+                <active>true</active>
+                <threading>true</threading>
+                <parameters>
+                    <ProjectionBufferSize>16</ProjectionBufferSize>
+                    <SliceBlock>32</SliceBlock>
+                    <SubVolume>1 1</SubVolume>
+                    <active>true</active>
+                    <biasweight>0.1</biasweight>
+                    <cutoff>0.5</cutoff>
+                    <filtertype>Hamming</filtertype>
+                    <order>1</order>
+                    <paddingdoubler>2</paddingdoubler>
+                    <usebias>false</usebias>
+                    <usecircularmask>true</usecircularmask>
+                </parameters>
+            </module>
+        </backprojector>
+    </processchain>
+</reconstructor>

@@ -120,7 +120,7 @@ int Threshold_Otsu(size_t const * const hist, const size_t N)
 	return t;
 }
 
-int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t median_filter_len) 
+int Threshold_Rosin(size_t const * const /*hist*/, const TailType tail, const size_t /*median_filter_len*/) 
 {
 //	if ((tail!=tail_left) && (tail!=tail_right))
 //		tail=tail_left;
@@ -134,14 +134,14 @@ int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t
 	vector<long>::iterator maxIt, first,last,thIt, it;
 	int max,min;
 	maxIt=max_element(h.begin(),h.end());
-	int d=distance(h.begin(),maxIt);
+	// int d=distance(h.begin(),maxIt);
 	
 	if (tail==tail_left) {
 		last=maxIt;
 		
 		first=h.begin();
 		if (maxIt==first) {
-			cerr<<"Rosin: Histogram has max at the first bin, no left tail?"<<endl;
+            std::cerr<<"Rosin: Histogram has max at the first bin, no left tail?"<<std::endl;
 			return 0;
 		}
 		while ((!*first) && (first!=last))
@@ -150,13 +150,12 @@ int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t
 		if (first==last)
 			first--;
 		min=*first;
-		d=distance(first,last);
 	}
 	else {
 		first=maxIt;
 		last=h.end(); last--;
 		if (maxIt==last) {
-			cerr<<"Rosin: Histogram has max at the last bin, no right tail?"<<endl;
+            std::cerr<<"Rosin: Histogram has max at the last bin, no right tail?"<<std::endl;
             return static_cast<int>(h.size()-1);
 		}
 		
@@ -166,8 +165,9 @@ int Threshold_Rosin(size_t const * const hist, const TailType tail, const size_t
 		if (last==first)
 			last++;
 		min=*last;
-		d=distance(first,last);
+	//	d=distance(first,last);
 	}
+    // d=distance(first,last);
 
 	max=*maxIt;
 	

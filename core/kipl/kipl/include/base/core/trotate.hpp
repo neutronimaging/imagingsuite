@@ -65,8 +65,8 @@ void TRotate<T>::VerticalSkew (T *pSrc,
 template <typename T>
 kipl::base::TImage<T,2> & TRotate<T>::Rotate90  ( kipl::base::TImage<T,2> & img)
 {
-	size_t dims[2]={img.Size(1), img.Size(0)};
-    dst.Resize(dims);
+    std::vector<size_t> dims={img.Size(1), img.Size(0)};
+    dst.resize(dims);
 
 	size_t sx=dst.Size(0);
 	T *pDst=dst.GetDataPtr();
@@ -111,8 +111,8 @@ kipl::base::TImage<T,2> & TRotate<T>::Rotate180 (kipl::base::TImage<T,2> & img)
 template <typename T>
 kipl::base::TImage<T,2> & TRotate<T>::Rotate270 (kipl::base::TImage<T,2> &img)
 {
-	size_t dims[2]={img.Size(1), img.Size(0)};
-    dst.Resize(dims);
+    std::vector<size_t> dims={img.Size(1), img.Size(0)};
+    dst.resize(dims);
 
 	size_t sx=dst.Size(0);
 	size_t sy1=(dst.Size(1)-1);
@@ -162,7 +162,7 @@ kipl::base::TImage<T,2> & TRotate<T>::MirrorHorizontal  (kipl::base::TImage<T,2>
 template <typename T>
 kipl::base::TImage<T,2> & TRotate<T>::MirrorVertical  (kipl::base::TImage<T,2> & img)
 {
-    dst.Resize(img.Dims());
+    dst.resize(img.dims());
 
 
 	size_t sy=dst.Size(1)-1;

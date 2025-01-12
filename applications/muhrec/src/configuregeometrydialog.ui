@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>977</width>
-    <height>670</height>
+    <width>995</width>
+    <height>753</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -24,6 +24,158 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Data source</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QRadioButton" name="radioButton_fromProjections">
+            <property name="text">
+             <string>From projection sequence</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_scanType">
+            <property name="title">
+             <string>Scan type</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_sequenceDecription">
+               <item>
+                <widget class="QComboBox" name="comboScanType">
+                 <property name="toolTip">
+                  <string>Scanning secquence. Needed to find opposite projection.</string>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Sequence</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Golden ratio</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Inverse golden ratio</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Start angle</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="dspinAngleFirst">
+                 <property name="minimumSize">
+                  <size>
+                   <width>80</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>First acquisition angle</string>
+                 </property>
+                 <property name="minimum">
+                  <double>-720.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>720.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Last angle</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="dspinAngleLast">
+                 <property name="minimumSize">
+                  <size>
+                   <width>80</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Last acquisition angle</string>
+                 </property>
+                 <property name="minimum">
+                  <double>-720.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>720.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButton_manualSelection">
+            <property name="text">
+             <string>Manual selection</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_fileSelection">
+            <property name="title">
+             <string>Files</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="SingleFileForm" name="widget_projection0deg" native="true"/>
+             </item>
+             <item>
+              <widget class="SingleFileForm" name="widget_projection180deg" native="true"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_loadImages">
+              <property name="text">
+               <string>Preview</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="minimumSize">
@@ -161,104 +313,6 @@
                </size>
               </property>
              </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>100</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QGroupBox {font-size:13}</string>
-         </property>
-         <property name="title">
-          <string>Scan description</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Scan type</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboScanType">
-              <property name="toolTip">
-               <string>Scanning secquence. Needed to find opposite projection.</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>Sequence</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Golden ratio</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Start angle</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="dspinAngleFirst">
-              <property name="minimumSize">
-               <size>
-                <width>80</width>
-                <height>25</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>First acquisition angle</string>
-              </property>
-              <property name="minimum">
-               <double>-720.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>720.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Last angle</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="dspinAngleLast">
-              <property name="minimumSize">
-               <size>
-                <width>80</width>
-                <height>25</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Last acquisition angle</string>
-              </property>
-              <property name="minimum">
-               <double>-720.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>720.000000000000000</double>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -556,6 +610,19 @@
         </widget>
        </item>
        <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -603,6 +670,12 @@
    <slots>
     <signal>levelsChanged(float,float)</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>SingleFileForm</class>
+   <extends>QWidget</extends>
+   <header location="global">singlefileform.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

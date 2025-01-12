@@ -18,7 +18,6 @@ else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../lib/debug
 DEFINES += RECONALGORITHMS_LIBRARY
 
 unix {
-    INCLUDEPATH += "../../../../../external/src/linalg"
     QMAKE_CXXFLAGS += -fPIC -O2
 
     unix:!macx {
@@ -31,22 +30,24 @@ unix {
         INCLUDEPATH += /opt/local/include
         QMAKE_LIBDIR += /opt/local/lib
     }
+
+    LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
 }
 
 win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
-    INCLUDEPATH += $$PWD/../../../../../external/src/linalg $$PWD/../../../../../external/include $$PWD/../../../../../external/include/cfitsio
+
+    QMAKE_LIBDIR += $$PWD/../../../../../../ExternalDependencies/windows/lib
+    INCLUDEPATH  += $$PWD/../../../../../../ExternalDependencies/windows/include/cfitsio
+    INCLUDEPATH  += $$PWD/../../../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH +=  $$PWD/../../../../../external/include
     QMAKE_LIBDIR += $$PWD/../../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
+
+    LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
 }
-
-win32:CONFIG(release, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:win32:CONFIG(debug, debug|release): LIBS += -llibtiff -lcfitsio -lzlib_a -llibfftw3-3 -llibfftw3f-3 -lIphlpapi
-else:symbian: LIBS += -lm -lz -ltiff -lfftw3 -lfftw3f -lcfitsio
-else:unix: LIBS +=  -lm -lz -L/opt/usr/lib  -ltiff -lfftw3 -lfftw3f -lcfitsio
-
 
 SOURCES += reconalgorithms.cpp \
     forwardprojectorbase.cpp \
@@ -73,8 +74,10 @@ unix {
 }
 
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/ -lkipl
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/ -lkipl
+CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../lib/debug/
+
+LIBS += -lkipl
 
 INCLUDEPATH += $$PWD/../../../../../core/kipl/kipl/include
 DEPENDPATH += $$PWD/../../../../../core/kipl/kipl/include

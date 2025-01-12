@@ -109,19 +109,19 @@ void AdaptiveFilterDlg::ApplyParameters()
     size_t nLo, nHi;
     kipl::base::Histogram(m_Sino.GetDataPtr(), m_Sino.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
-    ui->viewerOriginal->set_image(m_Sino.GetDataPtr(),m_Sino.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerOriginal->set_image(m_Sino.GetDataPtr(),m_Sino.dims(),axis[nLo],axis[nHi]);
 
     float *sinoprofile=new float[m_Sino.Size(1)];
-    kipl::base::VerticalProjection2D(m_Sino.GetDataPtr(),m_Sino.Dims(),sinoprofile,true);
-    float maxprof=*std::max_element(sinoprofile,sinoprofile+m_Sino.Size(1));
-    float minprof=*std::min_element(sinoprofile,sinoprofile+m_Sino.Size(1));
+    kipl::base::VerticalProjection2D(m_Sino.GetDataPtr(),m_Sino.dims(),sinoprofile,true);
+    // float maxprof=*std::max_element(sinoprofile,sinoprofile+m_Sino.Size(1));
+    // float minprof=*std::min_element(sinoprofile,sinoprofile+m_Sino.Size(1));
 
     float *weightprofile=new float[m_Sino.Size(1)];
     float *sinoangles=new float[m_Sino.Size(1)];
 
     ReconConfig *rc=dynamic_cast<ReconConfig *>(m_Config);
     float da=(rc->ProjectionInfo.fScanArc[1]-rc->ProjectionInfo.fScanArc[0])/(m_Sino.Size(1)-1);
-    float wscale=maxprof-minprof;
+    // float wscale=maxprof-minprof;
     for (size_t i=0; i<m_Sino.Size(1); i++) {
         sinoangles[i]=rc->ProjectionInfo.fScanArc[0]+i*da;
 //        weightprofile[i]=minprof+0.1*wscale+0.8*wscale*kipl::math::Sigmoid(static_cast<float>(i),m_fLambda,m_fSigma);
@@ -144,7 +144,7 @@ void AdaptiveFilterDlg::ApplyParameters()
 
     kipl::base::Histogram(m_ProcessedSino.GetDataPtr(), m_ProcessedSino.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
-    ui->viewerProcessed->set_image(m_ProcessedSino.GetDataPtr(),m_ProcessedSino.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerProcessed->set_image(m_ProcessedSino.GetDataPtr(),m_ProcessedSino.dims(),axis[nLo],axis[nHi]);
 
     on_comboCompare_currentIndexChanged(ui->comboCompare->currentIndex());
 
@@ -177,7 +177,7 @@ void AdaptiveFilterDlg::UpdateParameterList(std::map<std::string, std::string> &
     parameters["NegSinograms"]= kipl::strings::bool2string(bNegative);
 }
 
-void AdaptiveFilterDlg::on_buttonBox_clicked(QAbstractButton *button)
+void AdaptiveFilterDlg::on_buttonBox_clicked(QAbstractButton * /*button*/)
 {
 
 //    if (button->text().toLatin1()=="Apply"){
@@ -198,7 +198,7 @@ void AdaptiveFilterDlg::on_button_apply_clicked()
 
 void AdaptiveFilterDlg::on_comboCompare_currentIndexChanged(int index)
 {
-    kipl::base::TImage<float,2> diff(m_Sino.Dims());
+    kipl::base::TImage<float,2> diff(m_Sino.dims());
     const size_t N=512;
     size_t hist[N];
     float axis[N];
@@ -223,6 +223,6 @@ void AdaptiveFilterDlg::on_comboCompare_currentIndexChanged(int index)
     kipl::base::Histogram(diff.GetDataPtr(), diff.Size(), hist, N, 0.0f, 0.0f, axis);
     kipl::base::FindLimits(hist, N, 97.5f, &nLo, &nHi);
 
-    ui->viewerDifference->set_image(diff.GetDataPtr(),diff.Dims(),axis[nLo],axis[nHi]);
+    ui->viewerDifference->set_image(diff.GetDataPtr(),diff.dims(),axis[nLo],axis[nHi]);
 
 }

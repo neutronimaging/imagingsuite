@@ -6,6 +6,8 @@ QT_PATH="$QTPATH"
 QtV=${QT_PATH:end-11:end-7}
 QtVmain=${QT_PATH:end-11:end-9}
 
+GITVER=`git rev-parse --short HEAD`
+
 #declare -i QtV=${QT_PATH:22:2}
 
 echo $QtV
@@ -114,7 +116,7 @@ chmod +x muhrec
 
 cp $REPOSPATH/imagingsuite/applications/muhrec/Resources/*.xml resources
 
-fname=muhrec_`uname -s`_`uname -m`_`date +%Y%m%d`.tar.bz2
+fname=MuhRec-Ubuntu_`uname -s`_`uname -m`_build-$GITVER-`date +%Y%m%d`.tar.bz2
 
 echo $fname
 

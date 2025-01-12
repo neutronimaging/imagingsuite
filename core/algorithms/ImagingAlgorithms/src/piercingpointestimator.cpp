@@ -4,20 +4,14 @@
 
 #include <algorithm>
 
-#include <tnt_array1d.h>
-#include <tnt_array2d.h>
-#include <jama_lu.h>
-#include <jama_qr.h>
-
 #include <base/tprofile.h>
 #include <base/tsubimage.h>
 #include <base/textractor.h>
-#include <math/tnt_utils.h>
 #include <math/statistics.h>
 #include <filters/filter.h>
 
-#include <io/io_serializecontainers.h>
-#include <io/io_tiff.h>
+// #include <io/io_serializecontainers.h>
+// #include <io/io_tiff.h>
 
 namespace ImagingAlgorithms {
 
@@ -28,20 +22,22 @@ PiercingPointEstimator::PiercingPointEstimator() :
 
 }
 
-pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img, size_t *roi)
+pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img, const std::vector<size_t> &roi)
 {
-    size_t crop[4];
+    std::vector<size_t> crop(4,0UL);
 
-    if (roi==nullptr) {
-        logger(logger.LogMessage,"Using default crop (reduction by 10\%).");
+    if (roi.empty()) 
+    {
+        logger.message("Using default crop (reduction by 10%).");
         float marg=0.05;
         crop[0]=static_cast<size_t>(img.Size(0)*marg);
         crop[1]=static_cast<size_t>(img.Size(1)*marg);
         crop[2]=static_cast<size_t>(crop[0]+(1-2*marg)*img.Size(0));
         crop[3]=static_cast<size_t>(crop[1]+(1-2*marg)*img.Size(1));
     }
-    else {
-        std::copy(roi,roi+4,crop);
+    else 
+    {
+        crop = roi;
     }
 
     kipl::base::TImage<float,2> cimg=kipl::base::TSubImage<float,2>::Get(img,crop);
@@ -66,12 +62,13 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
 pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2> &img,
                              kipl::base::TImage<float,2> &dc,
                              bool gaincorrection,
-                             size_t *roi)
+                             const std::vector<size_t> &roi)
 {
     std::ostringstream msg;
     correctedImage=img-dc;
 
-    if (gaincorrection) {
+    if (gaincorrection) 
+    {
         int N=static_cast<int>(img.Size(0));
 
 // Too good kernel
@@ -81,9 +78,9 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
 //                 -10.0f/16.0f,0.0f,10.0f/16.0f,
 //                 -3.0f/16.0f,0,3.0f/16.0f};
 
-        size_t fdim[2]={3,1};
+        std::vector<size_t> fdim={3,1};
 
-        float diff[9]={-1.0f/2.0,0.0f,1.0f/2.0f};
+        std::vector<float> diff={-1.0f/2.0,0.0f,1.0f/2.0f};
 
         kipl::filters::TFilter<float,2> filt(diff,fdim);
 
@@ -91,30 +88,33 @@ pair<float,float> PiercingPointEstimator::operator()(kipl::base::TImage<float,2>
         float *profile=new float[N];
 
 
-        kipl::base::HorizontalProjection2D(gradImage.GetDataPtr(), gradImage.Dims(), profile, true);
+        kipl::base::HorizontalProjection2D(gradImage.GetDataPtr(), gradImage.dims(), profile, true);
 
         kipl::math::Statistics stats;
-        for (int i=0; i<N; ++i) {
+        for (int i=0; i<N; ++i) 
+        {
             stats.put(profile[i]);
         }
         profile[0]= m_gainThreshold < abs(profile[0]-stats.E())/stats.s()? 0 : profile[0];
         msg.str(""); msg<<"Piercing point stats "<<stats<<"\n";
         logger.message(msg.str());
-        for (int i=1; i<N; ++i) {
+        for (int i=1; i<N; ++i) 
+        {
             profile[i]= m_gainThreshold < abs(profile[i]-stats.E())/stats.s() ? profile[i] : 0;
             profile[i]+=profile[i-1];
         }
 
         float *pLine=nullptr;
- //        kipl::io::WriteTIFF(correctedImage,"pp_obdc.tif",0.0f,65535.0f);
-        for (int y=0; y<static_cast<int>(correctedImage.Size(1)); ++y) {
+
+        for (int y=0; y<static_cast<int>(correctedImage.Size(1)); ++y) 
+        {
             pLine=correctedImage.GetLinePtr(y);
-            for (int x=0; x<N; ++x) {
+            for (int x=0; x<N; ++x) 
+            {
                 pLine[x]-=profile[x];
             }
         }
 
- //       kipl::io::WriteTIFF(correctedImage,"pp_obdc_gain.tif",0.0f,65535.0f);
         delete [] profile;
     }
 
@@ -125,26 +125,26 @@ void PiercingPointEstimator::ComputeEstimate(kipl::base::TImage<float,2> &img)
 {
     int matrix_cols = 6;
 
-    Array2D< double > H(img.Size(),matrix_cols, 0.0);
-    Array1D< double > I(img.Size(), 0.0);
+    arma::mat H(img.Size(),matrix_cols);
+    arma::vec I(img.Size());
 
     size_t i=0;
-    for (double y=0; y<img.Size(1); ++y) {
-        for (double x=0; x<img.Size(0); ++x,++i) {
-                  H[i][0] = 1;
-                  H[i][1] = x;
-                  H[i][2] = y;
-                  H[i][3] = x*y;
-                  H[i][4] = x*x;
-                  H[i][5] = y*y;
-                  I[i]    = img[i];
-            }
+    for (double y=0; y<img.Size(1); ++y) 
+    {
+        for (double x=0; x<img.Size(0); ++x,++i) 
+        {
+            H.at(i,0) = 1;
+            H.at(i,1) = x;
+            H.at(i,2) = y;
+            H.at(i,3) = x*y;
+            H.at(i,4) = x*x;
+            H.at(i,5) = y*y;
+            I.at(i)    = img[i];
+        }
 
     }
 
-    JAMA::QR<double> qr(H);
-    parameters = qr.solve(I);
-
+    parameters = arma::solve(H,I);
     std::ostringstream msg;
     msg<<parameters[0]<<", "
        <<parameters[1]<<", "
@@ -153,7 +153,7 @@ void PiercingPointEstimator::ComputeEstimate(kipl::base::TImage<float,2> &img)
        <<parameters[4]<<", "
        <<parameters[5];
 
-    logger(logger.LogMessage,msg.str());
+    logger.message(msg.str());
 
 }
 
@@ -172,29 +172,28 @@ pair<float,float> PiercingPointEstimator::LocateMax()
     logger(logger.LogMessage,"Enter locate max");
     pair<float,float> position;
 
-    Array2D< float > H(2,2, 0.0);
+    arma::mat H(2,2);
 
-    H[0][0] = 2*parameters[4];
-    H[0][1] =   parameters[3];
-    H[1][0] =   parameters[3];
-    H[1][1] = 2*parameters[5];
+    H(0,0) = 2*parameters[4];
+    H(0,1) =   parameters[3];
+    H(1,0) =   parameters[3];
+    H(1,1) = 2*parameters[5];
 
-    Array1D< float > I(2, 0.0);
+    arma::vec I(2);
 
-    I[0]    =  -parameters[1];
-    I[1]    =  -parameters[2];
+    I(0)    =  -parameters[1];
+    I(1)    =  -parameters[2];
 
     logger(logger.LogMessage,"Initialize");
-    JAMA::QR<float> qr(H);
-    Array1D< float > pos(2, 0.0);
-    pos = qr.solve(I);
+
+    arma::vec pos = arma::solve(H,I);
 
     logger(logger.LogMessage,"Equation solved");
-    position = make_pair(pos[0], pos[1]);
+    position = std::make_pair(static_cast<float>(pos(0)), static_cast<float>(pos(1)));
 
     msg.str("");
     msg<<"Got pair "<<position.first<<", "<<position.second<<", ";
-    logger(logger.LogMessage,msg.str());
+    logger.message(msg.str());
     return position;
 }
 

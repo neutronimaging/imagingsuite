@@ -19,7 +19,7 @@ class PiercingPointDialog : public QDialog
 public:
     explicit PiercingPointDialog(QWidget *parent = nullptr);
     ~PiercingPointDialog();
-
+    using QDialog::exec;
     int exec(ReconConfig &config);
 
     std::pair<float,float> getPosition() { return position; }
@@ -35,8 +35,7 @@ private:
 
     Ui::PiercingPointDialog *ui;
 
-
-    size_t roi[4];
+    std::vector<size_t> roi;
     bool correctGain;
     bool useROI;
     std::pair<float,float> position;

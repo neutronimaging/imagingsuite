@@ -1,8 +1,10 @@
-DIRECTORY=~/Applications
+DIRECTORY=$WORKSPACE/deployed
 
 DEST="$DIRECTORY/imageviewer.app"
 REPOSPATH=$WORKSPACE
 QTPATH=$QTBINPATH
+
+GITVER=`git rev-parse --short HEAD`
 
 if [ ! -d "$DIRECTORY" ]; then
   mkdir $DIRECTORY
@@ -51,6 +53,14 @@ for f in `ls *.1.0.0.dylib`; do
 	ln -s $f "`basename $f .1.0.0.dylib`.dylib"
 done
 
+if [ -e "/opt/local/lib/libzstd.1.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.1.dylib $DEST/Contents/Frameworks`
+fi
+
+if [ -e "/opt/local/lib/libzstd.9.dylib" ]; then
+	`$CPCMD /opt/local/lib/libzstd.9.dylib $DEST/Contents/Frameworks`
+fi
+
 popd
 
 cd $QTBINPATH
@@ -62,6 +72,12 @@ echo
 echo Reassign dependencies
 echo
 pwd
+
+# kipl
+install_name_tool -change libtiff.5.dylib @executable_path/../Frameworks/libtiff.5.dylib libkipl.1.0.0.dylib
+install_name_tool -change libxml2.2.dylib @executable_path/../Frameworks/libtiff.5.dylib libkipl.1.0.0.dylib
+install_name_tool -change libarmadillo.10.dylib @executable_path/../Frameworks/libarmadillo.10.dylib libkipl.1.0.0.dylib
+
 # imageviewer
 install_name_tool -change libkipl.1.dylib @executable_path/../Frameworks/libkipl.1.dylib imageviewer
 install_name_tool -change libQtAddons.1.dylib @executable_path/../Frameworks/libQtAddons.1.dylib imageviewer
@@ -120,3 +136,18 @@ install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/l
 install_name_tool -change /usr/local/opt/hdf5/lib/libhdf5_hl.10.dylib  libhdf5_hl.10.dylib libhdf5_hl.10.dylib
 install_name_tool -change /usr/local/opt/szip/lib/libsz.2.dylib @executable_path/../Frameworks/libsz.2.dylib libhdf5_hl.10.dylib
 install_name_tool -change /usr/lib/libz.1.dylib @executable_path/../Frameworks/libz.1.dylib libhdf5_hl.10.dylib
+
+
+rm -rf /tmp/imageviewer
+
+if [ ! -d "/tmp/imageviewer" ]; then
+  mkdir /tmp/imageviewer
+fi
+
+if [ ! -e "tmp/imageviewer/Applications" ]; then
+	ln -s /Applications /tmp/imageviewer
+fi
+
+cp -r $DEST /tmp/imageviewer
+
+hdiutil create -volname ImageViewer -srcfolder /tmp/imageviewer -ov -format UDZO $DIRECTORY/ImageViewer_build-$GITVER-`date +%Y%m%d`.dmg

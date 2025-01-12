@@ -4,6 +4,7 @@
 
 #include <cstdlib>
 #include <map>
+#include <vector>
 
 #include <QPixmap>
 #include <QWidget>
@@ -14,6 +15,7 @@
 
 #include <logging/logger.h>
 #include <base/timage.h>
+#include <base/kiplenums.h>
 
 #include "qmarker.h"
 
@@ -36,8 +38,8 @@ public:
 
     void setImage(kipl::base::TImage<float,2> &img);
     kipl::base::TImage<float,2> getImage();
-    void setImage(float const * const data, size_t const * const dims);
-    void setImage(float const * const data, size_t const * const dims, const float low, const float high);
+    void setImage(float const * const data, const std::vector<size_t> &dims);
+    void setImage(float const * const data, const std::vector<size_t> &dims, const float low, const float high);
     void setPlot(QVector<QPointF> data, QColor color, int idx);
     int clearPlot(int idx=-1);
     void setRectangle(QRect rect, QColor color, int idx);
@@ -48,10 +50,11 @@ public:
 
     int  clear();
     void setLevels(const float level_low, const float level_high);
+    void setLevels(kipl::base::eQuantiles quantile);
     void getLevels(float *level_low, float *level_high);
     void getImageMinMax(float *level_low, float *level_high);
     const QVector<QPointF> &getImageHistogram();
-    int const * imageDims() {return m_dims;}
+    const std::vector<size_t> & imageDims() {return m_dims;}
     void showClamped(bool show);
     float getScale();
     int getOffsetx() {return offset_x;}
@@ -64,12 +67,15 @@ public:
     int zoomOut();
     int panImage(int dx, int dy);
     QRect getCurrentZoomROI();
+    QSize zoomedImageSize();
+    QSize imageSize();
     //void set_interpolation(Gdk::InterpType interp) {m_Interpolation=interp;}
+    QWidget * parent() {return m_pParent;}
 protected:
     void preparePixbuf();
     void createZoomImage(QRect roi);
 
-    int m_dims[2];
+    std::vector<size_t> m_dims;
     size_t m_NData;
 
     float m_ImageMin;
@@ -92,8 +98,8 @@ protected:
     uchar * m_cdata;   ///<! RGB Pixel buffer
 
     QVector<QRect> m_ZoomList; ///<! Stack of zoom ROIs
-    QMap<int,QPair<QRect, QColor> > m_BoxList; ///<! List of Rectangles to draw on the image
-    QMap<int,QPair<QVector<QPointF>, QColor> > m_PlotList; ///<! List of plot data to draw on the image
+    QMap<int,std::pair<QRect, QColor> > m_BoxList; ///<! List of Rectangles to draw on the image
+    QMap<int,std::pair<QVector<QPointF>, QColor> > m_PlotList; ///<! List of plot data to draw on the image
     QMap<int,QMarker > m_MarkerList;
     QVector<QPointF> m_Histogram; ///<! Histogram of the full image
 
