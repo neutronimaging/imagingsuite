@@ -29,9 +29,9 @@ public:
     };
 
     ReplaceUnderexposed();
-    ReplaceUnderexposed(float                  th,
-                               eDoseOutlierDetection   dmethod,
-                               eDoseOutlierReplacement rmethod);
+    ReplaceUnderexposed(float                   th,
+                        eDoseOutlierDetection   dmethod,
+                        eDoseOutlierReplacement rmethod);
 
     void process(kipl::base::TImage<float,3> &img, vector<float> &dose, float threshold);
     vector<size_t> detectUnderExposure(std::vector<float> & doses, float threshold);
@@ -40,7 +40,7 @@ private:
     void processNeighborAverage(kipl::base::TImage<float,3> &img, vector<float> &dose, float threshold);
     void processWeightedAverage(kipl::base::TImage<float,3> &img, vector<float> &dose, float threshold);
 
-    eDoseOutlierDetection   detectionMethod;
+    // eDoseOutlierDetection   detectionMethod;
     eDoseOutlierReplacement replacementMethod;
 };
 }

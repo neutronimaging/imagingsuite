@@ -1,0 +1,189 @@
+# This workflow builds, tests, deploys and uploads the MuhRec application on different configrations specified on the matrix.
+name: Build MuhRec on multiple platforms
+env:
+  CONAN_HOME: ${{ github.workspace }}/Cache/ # Used by the built-in GH cache action to cache conan dependencies
+  CACHE_GITHUB: damskii9992 # Used by turtlebrowers conan cache action, if enabled
+  CACHE_GITHUB_REPO: ConanCache # Used by turtlebrowers conan cache action, if enabled
+  CONAN_USER_HOME: ${{ github.workspace }}/Cache/ # Used by turtlebrowers conan cache action, if enabled
+  CONAN_USER_HOME_SHORT: ${{ github.workspace }}/Cache//short # Used by turtlebrowers conan cache action, if enabled
+#  MACOSX_DEPLOYMENT_TARGET: 10.15 # Can be set to build for older version of MacOS, ignored by other OSs. Currently does not work.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'master'
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+
+      # Build on the following 4 configurations: 
+      # 1. <Windows, Release, 2022 MSVC compiler toolchain>
+      # 2. <Ubuntu latest, i.e. version 22.04, Release, GCC 11 compiler toolchain>
+      # 3. <MacOS 13 with x86-64 arch, Release, Clang 14 compiler toolchain>
+      # 4. <MacOS 14 with arm64 arch, Release, Clang 15 compiler toolchain
+      # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
+      matrix:
+        include:
+          - os: windows-2022
+            c_compiler: cl
+            cpp_compiler: cl
+            cl: 17
+            build_type: Release
+            build_root: build-imagingsuite
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            gcc: 11
+            build_type: Release
+            build_root: build-imagingsuite/Release
+          - os: macos-13
+            c_compiler: clang
+            cpp_compiler: clang++
+            clang: 14
+            build_type: Release
+            build_root: build-imagingsuite/Release
+          - os: macos-14
+            c_compiler: clang
+            cpp_compiler: clang++
+            clang: 15
+            build_type: Release
+            build_root: build-imagingsuite/Release
+
+    steps:
+      # Checkouts the source code to build the project with the git history
+    - name: Checkout imagingsuite source code
+      uses: actions/checkout@v4
+      with:
+        path: imagingsuite
+        fetch-depth: 0
+      # Checks out the test data repository for the c++ tests with ctest
+    - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
+      uses: actions/checkout@v4
+      with:
+        repository: neutronimaging/TestData
+        path: TestData
+
+    # This action is an alternative to the builtin GitHub Cache action which circumvents storage size and time limits
+    # It can be used in tandem with the builtin Cache but it has LFS costs
+    # To use it, change order of actions to GH cache -> this action -> install Qt -> Conan install
+    # The current order of actions is, for some reason, neseccary to properly run Ronan to compile new libraries
+    # Requires the used environment variables to be set up properly as well as a bot account with write access and an external cache repo
+    # - name: Cache Conan modules
+    #   if: steps.github-cache-conan.outputs.cache-hit != 'true'
+    #   id: cache-conan
+    #   uses: turtlebrowser/conan-cache@master
+    #   with:
+    #       bot_name: ${{ secrets.BOT_NAME }}
+    #       bot_token: ${{ secrets.BOT_TOKEN }}
+    #       cache_name: ${{ env.CACHE_GITHUB }}/${{ env.CACHE_GITHUB_REPO }}
+    #       key: ${{ runner.os }}-${{ runner.arch }}
+    #       lfs_limit: 60
+
+    # This version of Qt only allows python versions in the range 3.6-3.11
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.5.3'
+        dir: '${{GITHUB.WORKSPACE}}'
+        install-deps: 'true'
+        modules: 'qtcharts'
+
+    - name: Conan installation
+      id: conan
+      uses: turtlebrowser/get-conan@main
+
+    - name: Using the builtin GitHub Cache Action for .conan
+      id: github-cache-conan
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-conan-modules
+      with:
+        path: ${{ env.CONAN_HOME }}
+        key: ${{ runner.os }}-${{ runner.arch }}
+
+    - name: Set QTAPTH environment variable
+      shell: bash
+      run: |
+        echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
+
+    - name: Install sse2neon
+      # Needed to compile ARM programs and not currently available on Conan
+      if: ${{ ( runner.os == 'macOS' ) &&  (runner.arch == 'ARM64') }}
+      run: brew install sse2neon
+
+    - name: Build with Conan
+      working-directory: imagingsuite
+      shell: bash
+      run: |
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          conan build . --profile:all profiles/windows_msvc_17_release --build=missing
+        elif [ "${RUNNER_OS}" == "Linux" ]; then
+          conan build . --profile:all profiles/linux_gcc_11_release --build=missing
+        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
+          conan build . --profile:all profiles/macos_x64_clang_14_release --build=missing
+        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
+          conan build . --profile:all profiles/macos_arm_clang_15_release --build=missing
+        fi
+  
+    - name: Qt Deploy
+      working-directory: build-imagingsuite
+      shell: bash
+      run: |
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          cd bin/Release
+          ${QTPATH}/bin/windeployqt muhrec.exe
+          ${QTPATH}/bin/windeployqt imageviewer.exe
+        elif [ "${RUNNER_OS}" == "macOS" ]; then
+          cd Release
+          ${QTPATH}/bin/macdeployqt muhrec.app
+          ${QTPATH}/bin/macdeployqt imageviewer.app
+        fi
+
+    - name: Ammend shared libraries runpaths
+      if: ${{ runner.os == 'Linux' }}
+      working-directory: build-imagingsuite/Release/lib
+      shell: bash
+      run: patchelf --set-rpath '$ORIGIN' *.so*
+
+    - name: Test
+      id: tests
+      working-directory: ${{ matrix.build_root }}
+      #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
+      #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest --build-config ${{ matrix.build_type }}
+      continue-on-error: true
+
+    - name: Archive test results
+      if: steps.tests.outcome == 'failure'
+      uses: actions/upload-artifact@master
+      with:
+        name: ${{runner.os}}-${{runner.arch}}-test-results
+        path: ${{ matrix.build_root }}/Testing
+
+    - name: Compress artifact
+      shell: bash
+      working-directory: ${{ matrix.build_root }}
+      run: |
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          7z a ../MuhRec-${{runner.os}}-${{runner.arch}}.zip "bin/Release/*" -xr!t*.exe -xr!muhreccli.exe -xr!verticalslicer.exe
+        elif [ "${RUNNER_OS}" == "Linux" ]; then
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip bin/* lib/* -x "bin/t*" -x "bin/verticalslicer" 
+        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "X64" ]; then
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib"
+        elif [ "${RUNNER_OS}" == "macOS" -a "${RUNNER_ARCH}" == "ARM64" ]; then
+          zip -r ../../MuhRec-${{runner.os}}-${{runner.arch}}.zip lib/* *.app/* -x "lib/*.dylib" -x "lib/*.h"
+        fi
+
+    - name: Save build artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: MuhRec-${{runner.os}}-${{runner.arch}}
+        path: "${{ github.workspace }}/MuhRec*.zip"

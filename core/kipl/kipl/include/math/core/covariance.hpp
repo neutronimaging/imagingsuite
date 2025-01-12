@@ -28,7 +28,7 @@ Covariance<T>::~Covariance()
 }
 
 template<typename T>
-arma::mat Covariance<T>::compute(T *data, size_t nElements, size_t nVars, bool bCenter)
+arma::mat Covariance<T>::compute(T *data, size_t /*nElements*/, size_t nVars, bool bCenter)
 {
     m_nVars=nVars;
     m_pData=data;

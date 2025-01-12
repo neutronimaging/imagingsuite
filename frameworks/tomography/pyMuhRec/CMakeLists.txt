@@ -13,8 +13,8 @@ include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    ../../../../ExternalDependencies/macos/include/
-    ../../../../ExternalDependencies/macos/include/nexus
+    # ../../../../ExternalDependencies/macos/include/
+    # ../../../../ExternalDependencies/macos/include/nexus
     ../Framework/ReconFramework/include
     ../Backprojectors/StdBackProjectors/include
     ../Backprojectors/FDKBackProjectors/src
@@ -27,11 +27,11 @@ if (WIN32)
       ../../../core/kipl/kipl/include
       ../../../core/kipl/kipl/include
       ../../../core/modules/ModuleConfig/include
-      ../../../external/include/
-      ../../../../ExternalDependencies/windows/include
-      ../../../../ExternalDependencies/windows/include/nexus
-      ../../../../ExternalDependencies/windows/include/cfitsio
-      ../../../../ExternalDependencies/windows/include/libxml2
+      # ../../../external/include/
+      # ../../../../ExternalDependencies/windows/include
+      # ../../../../ExternalDependencies/windows/include/nexus
+      # ../../../../ExternalDependencies/windows/include/cfitsio
+      # ../../../../ExternalDependencies/windows/include/libxml2
       ../Framework/ReconFramework/include
       ../Backprojectors/StdBackProjectors/include
       ../Backprojectors/FDKBackProjectors/src
@@ -119,11 +119,11 @@ endif()
 # endif()
 
 if (WIN32)
-    target_link_directories(${TARGET_NAME} PRIVATE
-    ../../../../ExternalDependencies/windows/lib
-    ../../../../imagingsuite/external/lib64
-    ../../../../imagingsuite/external/lib64/nexus
-    )
+    # target_link_directories(${TARGET_NAME} PRIVATE
+    # ../../../../ExternalDependencies/windows/lib
+    # ../../../../imagingsuite/external/lib64
+    # ../../../../imagingsuite/external/lib64/nexus
+    # )
     
     target_link_libraries(${TARGET_NAME}
     PUBLIC

@@ -119,6 +119,7 @@ protected:
     /// \param args The argument list
     virtual void ParseArgv(std::vector<std::string> &args);
 
+    std::string FilterQuotes(const std::string &value, char quote);
     void EvalArg(std::string arg, std::string &group, std::string &var, std::string &value);
 
     /// Parse the User information config block.

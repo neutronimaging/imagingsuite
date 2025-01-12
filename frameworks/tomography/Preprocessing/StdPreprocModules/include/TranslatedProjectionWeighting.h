@@ -27,12 +27,12 @@ public:
 	int Setup(ReconConfig *config, eWeightFunctionType wf=WeightFunction_Sigmoid, float width=0.5f);
 
 
-	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-	virtual std::map<std::string, std::string> GetParameters();
-	virtual bool SetROI(size_t *roi);
+	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
+	std::map<std::string, std::string> GetParameters() override;
+	bool SetROI(const std::vector<size_t>  & roi) override;
 
 protected:
-	virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
+ 	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
 	void ComputeSigmoidWeights();
 	void ComputeLinearWeights();
 	kipl::base::TImage<float,2> fWeights;

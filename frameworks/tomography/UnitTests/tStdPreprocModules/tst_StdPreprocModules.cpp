@@ -153,8 +153,20 @@ void TStdPreprocModulesTest::testMorpSpotClean_Process()
 
  //   msm.Process(img3,config.modules[1].parameters);
 
+
 }
 
-QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
+#endif
+
+
+// QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
 
 #include "tst_StdPreprocModules.moc"

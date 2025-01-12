@@ -534,9 +534,10 @@ void BBLogNorm::PrepareBBData(){
     if (blackbodysamplename.empty() && nBBSampleCount!=0)
         throw ReconException("The sample image with BBs image mask is empty", __FILE__,__LINE__);
 
-
-
-    std::vector<int> diffroi(BBroi.begin(),BBroi.end());
+    std::vector<int> diffroi(BBroi.size());
+    std::transform(BBroi.begin(), BBroi.end(), diffroi.begin(), [](size_t val) {
+        return static_cast<int>(val);
+    });
 
     m_corrector.setDiffRoi(diffroi);
     m_corrector.SetRadius(radius);
@@ -658,7 +659,7 @@ void BBLogNorm::PreparePolynomialInterpolationParameters()
 
     float *temp_parameters;
     size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
-    size_t step = (nProj)/(nBBSampleCount);
+    // size_t step = (nProj)/(nBBSampleCount);
 
     float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
     m_corrector.SetAngles(angles, nProj, nBBSampleCount);
@@ -1011,7 +1012,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 
      float *temp_parameters;
      size_t nProj=(m_Config.ProjectionInfo.nLastIndex-m_Config.ProjectionInfo.nFirstIndex+1)/m_Config.ProjectionInfo.nProjectionStep;
-     size_t step = (nProj)/(nBBSampleCount);
+    //  size_t step = (nProj)/(nBBSampleCount);
 
      float angles[4] = {m_Config.ProjectionInfo.fScanArc[0], m_Config.ProjectionInfo.fScanArc[1], ffirstAngle, flastAngle};
      m_corrector.SetAngles(angles, nProj, nBBSampleCount);
@@ -1300,7 +1301,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 
                          }
 
-                         float dose = dosesample/(current_dose*tau);
+                        //  float dose = dosesample/(current_dose*tau);
                      }
 
                      memcpy(sample_bb_param, bb_sample_parameters, sizeof(float)*(values.size()+3)*nBBSampleCount);
@@ -1328,7 +1329,7 @@ int BBLogNorm::PrepareSplinesInterpolationParameters() {
 int BBLogNorm::GetnProjwithAngle(float angle){
 
     // range of projection angles
-    double nProj=((double)m_Config.ProjectionInfo.nLastIndex-(double)m_Config.ProjectionInfo.nFirstIndex+1)/(double)m_Config.ProjectionInfo.nProjectionStep;
+    double nProj=(static_cast<double>(m_Config.ProjectionInfo.nLastIndex)-static_cast<double>(m_Config.ProjectionInfo.nFirstIndex+1))/static_cast<double>(m_Config.ProjectionInfo.nProjectionStep);
 
     int index =0;
     float curr_angle;
@@ -1383,8 +1384,8 @@ float BBLogNorm::GetInterpolationError(kipl::base::TImage<float,2> &mask){
     bb = BBLoader(blackbodyname,nBBFirstIndex,nBBCount,1.0f,0.0f,m_Config,blackdose);
 
 
-    std::vector<int> diffroi(BBroi.begin(),BBroi.end()); // it is now just the BBroi position, makes more sense
-
+    std::vector<int> diffroi(BBroi.size()); // it is now just the BBroi position, makes more sense
+    std::transform(BBroi.begin(), BBroi.end(), diffroi.begin(), [](size_t val){return static_cast<int>(val);}); // now it is the difference between the BBroi and the absolute image coordinates
 
     m_corrector.SetRadius(radius);
     m_corrector.SetMinArea(min_area);
@@ -1459,7 +1460,7 @@ float BBLogNorm::computedose(kipl::base::TImage<float,2>&img){
 
 }
 
-int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int BBLogNorm::ProcessCore(kipl::base::TImage<float,2> & /*img*/, std::map<std::string, std::string> & /*coeff*/)
 {
 
     return 0;

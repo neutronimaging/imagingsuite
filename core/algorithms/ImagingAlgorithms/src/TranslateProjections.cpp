@@ -28,7 +28,7 @@ void TranslateProjections::translate(kipl::base::TImage<float, 3> &img, float sl
     }
 }
 
-void TranslateProjections::translateNearestNeighbor(kipl::base::TImage<float,2> &img, float shift)
+void TranslateProjections::translateNearestNeighbor(kipl::base::TImage<float,2> &/*img*/, float /*shift*/)
 {
     throw ImagingException("Nearest neighborhood sampling is not implemented",__FILE__,__LINE__);
 
@@ -85,7 +85,7 @@ void TranslateProjections::translateLinear(kipl::base::TImage<float,2> &img, flo
     img=res;
 }
 
-void TranslateProjections::translateGaussian(kipl::base::TImage<float,2> &img, float shift, float width)
+void TranslateProjections::translateGaussian(kipl::base::TImage<float,2> & /*img*/, float /*shift*/, float /*width*/)
 {
     throw ImagingException("Gaussian sampling is not implemented",__FILE__,__LINE__);
 }

@@ -110,7 +110,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     #ifdef Q_OS_MAC
         defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.dylib";
     #else
-        defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.so";
+        //defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.so";
+	defaultmodules = m_sApplicationPath + "../lib/libStdBackProjectors.so";
     #endif
 #endif
     ui->ConfiguratorBackProj->Configure("muhrecbp",defaultmodules,m_sApplicationPath);
@@ -121,7 +122,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     #ifdef Q_OS_MAC
         defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.dylib";
     #else
-        defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.so";
+        //defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.so";
+	defaultmodules = m_sApplicationPath+"../lib/libstdPreprocModules.so";
     #endif
 #endif
 
@@ -745,7 +747,12 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
     }
 
-    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
+    // m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
+
+    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.size());
+    std::transform(m_Config.ProjectionInfo.projection_roi.begin(), m_Config.ProjectionInfo.projection_roi.end(), m_oldROI.begin(), [](size_t val) {
+        return static_cast<int>(val);
+    });
 
     ui->plotHistogram->clearAllCurves();
     ui->plotHistogram->clearAllCursors();
@@ -1389,7 +1396,13 @@ void MuhRecMainWindow::UpdateDialog()
     QSignalBlocker blockSlicesFirst(ui->spinSlicesFirst);
     QSignalBlocker blockSlicesLast(ui->spinSlicesLast);
 
-    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
+    // m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
+    m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.size());
+    std::transform( m_Config.ProjectionInfo.projection_roi.begin(), 
+                    m_Config.ProjectionInfo.projection_roi.end(), m_oldROI.begin(), [](size_t val) {
+        return static_cast<int>(val);
+    });
+
 
     ui->widgetProjectionROI->setROI(m_Config.ProjectionInfo.projection_roi,true);
 
@@ -1579,7 +1592,7 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.roi[1]             = static_cast<size_t>(ui->spinSlicesFirst->value());
     m_Config.ProjectionInfo.roi[3]             = static_cast<size_t>(ui->spinSlicesLast->value());
 
-    m_Config.ProjectionInfo.fCenter            = static_cast<size_t>(ui->dspinRotationCenter->value());
+    m_Config.ProjectionInfo.fCenter            = static_cast<float>(ui->dspinRotationCenter->value());
     m_Config.ProjectionInfo.fScanArc[0]        = static_cast<float>(ui->dspinAngleStart->value());
     m_Config.ProjectionInfo.fScanArc[1]        = static_cast<float>(ui->dspinAngleStop->value());
     m_Config.ProjectionInfo.scantype           = static_cast<ReconConfig::cProjections::eScanType>(ui->comboDataSequence->currentIndex());
@@ -2367,7 +2380,6 @@ void MuhRecMainWindow::on_buttonProjectionPath_clicked()
         if (fi.m_sExt!="hdf") {
             std::string pdir=projdir.toStdString();
 
-            kipl::io::DirAnalyzer da;
             fi=da.GetFileMask(pdir);
 
 
@@ -2721,7 +2733,7 @@ void MuhRecMainWindow::on_pushButtonGetSliceROI_clicked()
     int first=roi.top();
     int last=roi.bottom();
 
-    size_t projROI[4];
+    int projROI[4];
     ui->widgetProjectionROI->getROI(projROI);
 
     if (first<projROI[1]) {

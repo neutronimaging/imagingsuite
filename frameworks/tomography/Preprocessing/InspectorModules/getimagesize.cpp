@@ -22,13 +22,13 @@ std::map<std::basic_string<char>, std::basic_string<char> > GetImageSize::GetPar
     return parameters;
 }
 
-int GetImageSize::Configure(ReconConfig config, std::map<std::basic_string<char>, std::basic_string<char> > parameters)
+int GetImageSize::Configure(ReconConfig /*config*/, std::map<std::basic_string<char>, std::basic_string<char> > /*parameters*/)
 {
     return 0;
 }
 
 
-int GetImageSize::ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters)
+int GetImageSize::ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &/*parameters*/)
 {
     std::ostringstream msg;
 
@@ -39,7 +39,7 @@ int GetImageSize::ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::st
     return 0;
 }
 
-int GetImageSize::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters)
+int GetImageSize::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &/*parameters*/)
 {
     std::ostringstream msg;
 

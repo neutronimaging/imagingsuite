@@ -20,7 +20,7 @@ rem copy %REPOS%\lib\multiframesplitter.exe
 
 copy %REPOS%\imagingsuite\applications\muhrec\Resources resources
 
-cd %QTBINPATH%
+cd %QTPATH%/bin
 
 rem windeployqt %DEST%\verticalslicer.exe
 rem windeployqt %DEST%\multiframesplitter.exe

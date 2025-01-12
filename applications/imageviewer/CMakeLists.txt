@@ -15,6 +15,10 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
 #find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
 
 if (APPLE)
+file(COPY ${CMAKE_BINARY_DIR}/lib/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks")
+endif()
+
+if (APPLE)
 include_directories(
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
@@ -26,9 +30,9 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../../ExternalDependencies/macos/include
-    ../../../ExternalDependencies/macos/include/nexus
-    ../../external/mac/include/
+    # ../../../ExternalDependencies/macos/include
+    # ../../../ExternalDependencies/macos/include/nexus
+    # ../../external/mac/include/
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -45,11 +49,11 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    ../../../ExternalDependencies/windows/include
-    ../../../ExternalDependencies/windows/include/cfitsio
-    ../../../ExternalDependencies/windows/include/libxml2
-    ../../../ExternalDependencies/windows/include/nexus
-    ../../external/include/
+    # ../../../ExternalDependencies/windows/include
+    # ../../../ExternalDependencies/windows/include/cfitsio
+    # ../../../ExternalDependencies/windows/include/libxml2
+    # ../../../ExternalDependencies/windows/include/nexus
+    # ../../external/include/
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 endif()
@@ -117,13 +121,13 @@ message(App Qt${QT_VERSION_MAJOR})
 #endif()
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-link_directories(../../../lib /opt/local/lib )
+link_directories(../../../lib) # /opt/local/lib )
 
-target_link_directories(${TARGET_NAME} PRIVATE
-    /opt/local/lib
-    ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-    ../../external/mac/lib/
-    )
+# target_link_directories(${TARGET_NAME} PRIVATE
+#     #/opt/local/lib
+#     # ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+#     # ../../external/mac/lib/
+#     )
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
@@ -142,9 +146,9 @@ target_link_libraries(${TARGET_NAME} PUBLIC
 endif()
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-target_link_directories(${TARGET_NAME} PRIVATE
-    /usr/lib/x86_64-linux-gnu/
-    /usr/lib/x86_64-linux-gnu/hdf5/serial
+    target_link_directories(${TARGET_NAME} PRIVATE
+        /usr/lib/x86_64-linux-gnu/
+        /usr/lib/x86_64-linux-gnu/hdf5/serial
     )
     target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
@@ -158,14 +162,14 @@ target_link_directories(${TARGET_NAME} PRIVATE
     ReaderGUI
     QtModuleConfigure
     QtImaging
-    armadillo
-    lapack
-    blas
-    tiff
-    cfitsio
-    hdf5
-    xml2
-)
+    armadillo::armadillo
+    #lapack
+    OpenBLAS::OpenBLAS
+    TIFF::TIFF
+    cfitsio::cfitsio
+    HDF5::HDF5
+    LibXml2::LibXml2
+    )
 endif()
 
 
@@ -174,9 +178,9 @@ link_directories(../../../lib /opt/local/lib )
 
 target_link_directories(${TARGET_NAME} PUBLIC
     /opt/local/lib
-    ../../../ExternalDependencies/windows/lib
-    ../../external/lib64/
-    ../../external/lib64/nexus
+    # ../../../ExternalDependencies/windows/lib
+    # ../../external/lib64/
+    # ../../external/lib64/nexus
     )
 
 target_link_libraries(${TARGET_NAME} PUBLIC
@@ -191,9 +195,10 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     ReaderGUI
     QtModuleConfigure
     QtImaging
-    libopenblas
-    libtiff
-    cfitsio
+    #libopenblas
+    OpenBLAS::OpenBLAS
+    TIFF::TIFF
+    cfitsio::cfitsio
 )
 endif()
 set_target_properties(${TARGET_NAME} PROPERTIES
