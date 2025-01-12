@@ -152,8 +152,8 @@ int Threshold_Rosin(const std::vector<size_t> & hist, const TailType tail, const
 	
 	maxIt=max_element(h.begin()+1,h.end()-1);
 
-	float max = static_cast<float>(*maxIt);
-	float min = 0.0f;
+	// float max = static_cast<float>(*maxIt);
+	// float min = 0.0f;
 	ptrdiff_t d=distance(h.begin(),maxIt);
 	
 	if (tail==tail_left) 
@@ -164,16 +164,16 @@ int Threshold_Rosin(const std::vector<size_t> & hist, const TailType tail, const
 		first=h.begin();
 		if (maxIt==first) 
 		{
-			std::string msg = "Rosin: Histogram has max at the first bin, no left tail?";
-			logger.error(msg);
-			throw kipl::base::KiplException(msg,__FILE__,__LINE__);
+			msg.str(""); msg<<"Rosin: Histogram has max at the first bin, no left tail?";
+			logger.error(msg.str());
+			throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 		}
 		while ((*first != 0UL) && (first!=last))
 			++first;
 			
 		if (first==last)
 			--first;
-		min=static_cast<float>(*first);
+		// min=static_cast<float>(*first);
 		d=distance(first,last);
 	}
 	else 
@@ -190,9 +190,9 @@ int Threshold_Rosin(const std::vector<size_t> & hist, const TailType tail, const
 
 		if (d<=1) 
 		{
-			std::string msg = "Rosin: Histogram has max at the last bin, no right tail?";
-			logger.error(msg);
-			throw kipl::base::KiplException(msg,__FILE__,__LINE__);
+			msg.str(""); msg<<"Rosin: Histogram has max at the last bin, no right tail?";
+			logger.error(msg.str());
+			throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 		}
 	}
 	

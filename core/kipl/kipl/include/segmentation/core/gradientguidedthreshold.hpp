@@ -43,7 +43,7 @@ void gradientGuidedThreshold<T0,T1,N>::setDataThreshold(const std::vector<T0> &v
 }
 
 template <typename T0, typename T1,size_t N>
-void gradientGuidedThreshold<T0,T1,N>::setDataThreshold(T0 *val, size_t Nelements)
+void gradientGuidedThreshold<T0,T1,N>::setDataThreshold(T0 *val, size_t /*Nelements*/)
 {
     m_threshold.clear();
 
@@ -66,7 +66,7 @@ void gradientGuidedThreshold<T0,T1,N>::setFilterWidth(int w)
 }
 
 template <typename T0, typename T1,size_t N>
-void gradientGuidedThreshold<T0,T1,N>::setParameters(std::map<std::string,std::string> parameters)
+void gradientGuidedThreshold<T0,T1,N>::setParameters(std::map<std::string,std::string> /*parameters*/)
 {
 
 }

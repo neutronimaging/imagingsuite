@@ -1,7 +1,7 @@
 //<LICENCE>
 
-#ifndef __morphfilters_h_
-#define __morphfilters_h_
+#ifndef MORPHFILTERS_H
+#define MORPHFILTERS_H
 
 #include "../filters/filterbase.h"
 

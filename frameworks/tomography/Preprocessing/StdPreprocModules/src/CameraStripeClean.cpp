@@ -14,9 +14,8 @@ CameraStripeClean::CameraStripeClean() :
 CameraStripeClean::~CameraStripeClean()
 {}
 
-int CameraStripeClean::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int CameraStripeClean::Configure(ReconConfig /*config*/, std::map<std::string, std::string> parameters)
 {
-    std::ignore = config;
     m_fThreshold = GetFloatParameter(parameters,"threshold");
     return 0;
 }
@@ -30,15 +29,13 @@ std::map<std::string, std::string> CameraStripeClean::GetParameters()
     return parameters;
 }
 
-bool CameraStripeClean::SetROI(const std::vector<size_t> &roi)
+bool CameraStripeClean::SetROI(const std::vector<size_t> & /*roi*/)
 {
-    std::ignore = roi;
     return false;
 }
 
-int CameraStripeClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int CameraStripeClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &/*coeff*/)
 {
-    std::ignore = coeff;
     kipl::base::TImage<float,2> orig=img;
     orig.Clone();
 

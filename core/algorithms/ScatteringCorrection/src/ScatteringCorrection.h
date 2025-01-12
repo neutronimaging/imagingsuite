@@ -50,7 +50,7 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ScatteringCorrection
         void checkDataIntegrity(const std::map<std::string, kipl::base::TImage<float,3>> & refs, 
                                 const std::map<std::string, std::vector<float>>          & doses) ;
 
-        bool m_bCalibrationNeeded;
+        // bool m_bCalibrationNeeded;
         std::vector<size_t> m_ROI;
         std::vector<size_t> m_BBROI;
         std::vector<size_t> m_DoseROI;

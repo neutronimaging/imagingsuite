@@ -45,8 +45,8 @@ private:
     std::string dataPath;
     kipl::base::TImage<float,2> holes;
     std::map<size_t,float> points;
-    size_t pos1;
-    size_t pos2;
+    // size_t pos1;
+    // size_t pos2;
 
     kipl::base::TImage<float,2> sample;
     kipl::base::TImage<float,2> ob;
@@ -87,12 +87,12 @@ TestScatterCorrection::TestScatterCorrection()
 
 void TestScatterCorrection::SegmentBB_initialization()
 {
-    QSKIP("Not implemented");
+    // QSKIP("Not implemented");
 }
 
 void TestScatterCorrection::SegmentBB_enums()
 {
-    QSKIP("Not implemented");
+    // QSKIP("Not implemented");
 }
 
 void TestScatterCorrection::SegmentBB_segmentation()
@@ -249,29 +249,34 @@ void TestScatterCorrection::ScatterCorrection_SetRefs()
                         {"bbs", {1,2,3,4,5,6,7,8,9,10,11}}});
 
     // Naming mismatch between images and doses
-    QVERIFY_EXCEPTION_THROWN(
+    QVERIFY_THROWS_EXCEPTION(ImagingException,
                             sc.setReferences({  {"ob",tob},
                                                 {"ddc",tdc}},
                                              {  {"ob",{1,2,3,4,5,6,7,8,9,10}},
-                                                {"dc",{1,2,3,4,5}}});,
-                            ImagingException);
+                                                {"dc",{1,2,3,4,5}}}));
 
     // Number of projections not same as doses
-    QVERIFY_EXCEPTION_THROWN(
+    QVERIFY_THROWS_EXCEPTION(ImagingException,
                             sc.setReferences({  {"ob",tob},
                                                 {"dc",tdc}},
                                              {  {"ob",{1,2,3,4,5,6,7,8,9,10}},
-                                                {"dc",{2,3,4,5}}});,
-                             ImagingException);
+                                                {"dc",{2,3,4,5}}}));
+
     // Image size size mismatch
-    QVERIFY_EXCEPTION_THROWN(
+    QVERIFY_THROWS_EXCEPTION(ImagingException,
                             sc.setReferences({  {"ob",tob},
                                                 {"bbob",tbbob2}},
                                              {  {"ob",{1,2,3,4,5,6,7,8,9,10}},
-                                                {"bbob",{1,2,3,4,5,6}}});,
-                             ImagingException);
+                                                {"bbob",{1,2,3,4,5,6}}}));
 }
 
-QTEST_APPLESS_MAIN(TestScatterCorrection)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TestScatterCorrection)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TestScatterCorrection)
+#endif
 
 #include "tst_ScatterCorrection.moc"

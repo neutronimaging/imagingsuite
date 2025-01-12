@@ -124,7 +124,6 @@ void RegionProperties<T0,T1>::finalizeProperties()
 {
     for (auto &item : regions) 
     {
-        auto lbl  = item.first;
         auto area = item.second.area; 
         if (item.second.intensity!=0.0f)
         {

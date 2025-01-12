@@ -78,7 +78,14 @@ private:
 Tkiplbase::Tkiplbase()
 {
     data_path = QT_TESTCASE_BUILDDIR;
-    data_path = data_path + "/../../../../../TestData/";
+
+    #ifdef __APPLE__
+        data_path = data_path + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        data_path = data_path + "/../../../../../../TestData/";
+    #else
+        data_path = data_path + "/../../../../../TestData/";
+    #endif
     kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
 
@@ -251,7 +258,7 @@ void Tkiplbase::testHistogram()
     
     size_t cnt = 0UL;
 
-    cnt = std::accumulate(hist.begin(),hist.end(),0UL); 
+    cnt = std::accumulate(hist.begin(),hist.end(),static_cast<size_t>(0)); 
     
     QCOMPARE(cnt,img.Size());
 }
@@ -755,7 +762,7 @@ void Tkiplbase::testOSenums()
     string2enum("OSUnknown",oe);
     QCOMPARE(oe,kipl::base::OSUnknown);
 
-    QVERIFY_EXCEPTION_THROWN(string2enum("OSMacos",oe),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,string2enum("OSMacos",oe));
 }
 // Test conversion of rotation direction to and from string, all combinations using QTest
 void Tkiplbase::testRotationDirection()
@@ -779,9 +786,19 @@ void Tkiplbase::testRotationDirection()
     string2enum("RotationDirCCW",oe);
     QCOMPARE(oe,kipl::base::RotationDirCCW);
 
-    QVERIFY_EXCEPTION_THROWN(string2enum("RotationDirectionclockwise",oe),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,string2enum("RotationDirectionclockwise",oe));
+    
 }
 
-QTEST_APPLESS_MAIN(Tkiplbase)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(Tkiplbase)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(Tkiplbase)
+#endif
+
 
 #include "tst_kiplbase.moc"

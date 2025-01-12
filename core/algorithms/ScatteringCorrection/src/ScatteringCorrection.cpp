@@ -8,33 +8,33 @@
 
 ScatteringCorrection::ScatteringCorrection() :
     logger("ScatteringCorrection"),
-    m_bCalibrationNeeded(true),
+    // m_bCalibrationNeeded(true),
     // m_ROI(4,0UL), // These should probably be empty vectors unless they get a value
     // m_BBROI(4,0UL),
     // m_DoseROI(4,0UL),
     m_fDotRadius(4.0f),
     m_DotAreaLimits({20UL,250UL}),
-    m_dcdose(0.0f),
     m_AverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_NormalizationMethod(ImageNormalization::scatterNormalization),
     m_SegmentationMethod(SegmentBB::method_otsu),
-    m_FitMethod(ScatterEstimator::fitmethod_polynomial)
+    m_FitMethod(ScatterEstimator::fitmethod_polynomial),
+    m_dcdose(0.0f)
 { 
 
 }
 
 ScatteringCorrection::ScatteringCorrection(const std::map<std::string, std::string> &parameters) :
     logger("ScatteringCorrection"),
-    m_bCalibrationNeeded(true),
+    // m_bCalibrationNeeded(true),
     m_ROI(4,0UL),
     m_BBROI(4,0UL),
     m_DoseROI(4,0UL),
     m_fDotRadius(4.0f),
     m_DotAreaLimits({20UL,250UL}),
-    m_dcdose(0.0f),
     m_AverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
     m_NormalizationMethod(ImageNormalization::scatterNormalization),
-    m_FitMethod(ScatterEstimator::fitmethod_polynomial)
+    m_FitMethod(ScatterEstimator::fitmethod_polynomial),
+    m_dcdose(0.0f)
 { 
     setParameters(parameters);
 }
@@ -42,11 +42,15 @@ ScatteringCorrection::ScatteringCorrection(const std::map<std::string, std::stri
 ScatteringCorrection::~ScatteringCorrection() 
 { }
 
-void ScatteringCorrection::setParameters(const std::map<std::string, std::string> &parameters) 
+void ScatteringCorrection::setParameters(const std::map<std::string, std::string> & /*parameters*/) 
 { }
 
 std::map<std::string, std::string> ScatteringCorrection::parameters() 
-{ }
+{ 
+    std::map<std::string, std::string> params;
+
+    return params;
+}
 
 void ScatteringCorrection::setROI(const std::vector<size_t> &ROI) 
 { 
@@ -189,10 +193,12 @@ void ScatteringCorrection::calibrate()
     m_SegmentBB.exec(bbob,mask,m_BBROI);
 }
 
-kipl::base::TImage<float,2> ScatteringCorrection::process(kipl::base::TImage<float,2> &img, float dose) 
+kipl::base::TImage<float,2> ScatteringCorrection::process(kipl::base::TImage<float,2> &img, float /*dose*/) 
 { 
-    
+    kipl::base::TImage<float,2> corrected(img.dims());
+
+    return corrected;
 }
 
-void ScatteringCorrection::process(kipl::base::TImage<float,3> &img, std::vector<float> dose) 
+void ScatteringCorrection::process(kipl::base::TImage<float,3> & /*img*/, std::vector<float> /*dose*/) 
 { }

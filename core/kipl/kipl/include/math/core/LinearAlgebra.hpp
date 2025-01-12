@@ -216,14 +216,14 @@ T TMatrix<T>::Determinant()
 
 
 template<typename T>
-TMatrix<T> Solve(TMatrix<T> &a, TMatrix<T> &b)
+TMatrix<T> Solve(TMatrix<T> & /*a*/, TMatrix<T> & /*b*/)
 {
 	TMatrix<T> x;
 	return x;
 }
 
 template<typename T>
-void LUdecomposition(const TMatrix<T> &a, TMatrix<T> &L,TMatrix<T> &U)
+void LUdecomposition(const TMatrix<T> &a, TMatrix<T> & /*L*/,TMatrix<T> &U)
 {
 	if (a.Rows()!=a.Cols())
 		throw kipl::base::KiplException("LUdecomp: Matrix is not square",__FILE__, __LINE__);

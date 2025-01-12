@@ -8,7 +8,7 @@ ModuleLibNameManger::ModuleLibNameManger(const std::string &path) :
     logger("ModuleLibNameManger"),
     m_sApplicationPath(path)
 {
-    kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
+//   kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
 }
 
 std::string ModuleLibNameManger::generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os)
@@ -83,7 +83,7 @@ std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 3 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
 
-    fullName = fullName+"Frameworks/lib"+name+".so.1.0.0";
+    fullName = fullName+"lib/lib"+name+".so";
 
     return fullName;
 }
@@ -91,8 +91,9 @@ std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
 std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
 {
     if (!libInAppPath(path,m_sApplicationPath))
+    {
         return path;
-
+    }
     std::string libName;
 
     libName = path.substr(path.find_last_of("/\\")+1);
@@ -124,8 +125,9 @@ std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 {
     std::ostringstream msg;
 
-    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"Frameworks/") &&
-        !libInAppPath(path,m_sApplicationPath+"../Frameworks/")   )
+
+    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/lib") &&
+        !libInAppPath(path,m_sApplicationPath+"../lib/")   )
     {
         msg << path.c_str()<<" is not in lib path";
         logger.verbose(msg.str());
@@ -143,9 +145,15 @@ std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 bool ModuleLibNameManger::libInAppPath(const std::string &path, const std::string &appPath)
 {
     if (path.size()<appPath.size())
+    {
+        logger.message(path +" < "+appPath);
         return false;
+    }
 
     auto truncated = path.substr(0,appPath.size());
+
+    logger.message(truncated +" == "+appPath);
+
     if ((truncated != appPath) || path.find_first_of("/\\",appPath.size()+1)!=std::string::npos)
     {
         logger.warning(truncated +" != "+appPath);

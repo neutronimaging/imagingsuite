@@ -69,12 +69,14 @@ void TMedianFilter<T,nDims>::InnerLoop(T const * const src, T *dest, T value, si
 	std::ignore = N;
 } 
 
+
 template <class T, size_t nDims>
-int TMedianFilter<T,nDims>::ExtractNeighborhood(const kipl::base::TImage<T,nDims>   & src, 
-												const std::vector<size_t> 			& pos, 
-												      T 							* data, 
-												const FilterBase::EdgeProcessingStyle edgeStyle)
+int TMedianFilter<T,nDims>::ExtractNeighborhood(const kipl::base::TImage<T,nDims> &src, 
+												const std::vector<size_t> & pos, 
+												T * data, 
+												const FilterBase::EdgeProcessingStyle /*edgeStyle*/)
 {
+	using namespace std;
 	int sx   = src.Size(0);
 	int sy   = src.Size(1);
 	int posx = pos[0];
@@ -82,13 +84,26 @@ int TMedianFilter<T,nDims>::ExtractNeighborhood(const kipl::base::TImage<T,nDims
 	int k0   = this->nHalfKernel[0];
 	int k1   = this->nHalfKernel[1];
 
-	int edgeinfo =    (posx<k0) 
-					+ ((sx-posx)<k0) * 2
-					+ (posy<k1)      * 4
-					+ ((sy-posy)<k1) * 8;
+	// int edgeinfo =   static_cast<int>( (posx<k0) 
+	// 				+ ((sx-posx)<k0) * 2
+	// 				+ (posy<k1)      * 4
+	// 				+ ((sy-posy)<k1) * 8) ;
 
-    int startY = -k1 ;
-	int endY   = this->nKernelDims[1]-k1 ;
+    
+
+
+	int iPos0 = static_cast<int>(pos[0]);
+	int iPos1 = static_cast<int>(pos[1]);
+	int size0 = static_cast<int>(src.Size(0));
+	int size1 = static_cast<int>(src.Size(1));
+    int edgeinfo=static_cast<int> ((iPos0<nHalfKernel[0]) + (((size0-nHalfKernel[0]-1)<iPos0) * 2) +
+            ((iPos1<nHalfKernel[1]) * 4)  + (((size1-nHalfKernel[1]-1)<iPos1) * 8)) ;
+
+
+    // int startZ = 2 < nDims ? -nHalfKernel[2] : 0 ;
+    // int endZ   = 2 < nDims ? this->nKernelDims[2]-nHalfKernel[2] : 1 ;
+	int startY = 1 < nDims ? k1 : 1 ;
+	int endY   = 1 < nDims ? this->nKernelDims[1]-k1 : 1 ;
 	int startX = -k0;
 	int endX   = this->nKernelDims[0]-k0;
 
@@ -340,41 +355,35 @@ void TMedianFilter<T,nDims>::QuickMedianFilter(const kipl::base::TImage<T,nDims>
 }
 
 template <class T, size_t nDims>
-void TMedianFilter<T,nDims>::BilevelMedianFilter(const kipl::base::TImage<T,nDims> &src, 
-		kipl::base::TImage<T,nDims> &result, 
-		const FilterBase::EdgeProcessingStyle edgeStyle)
+void TMedianFilter<T,nDims>::BilevelMedianFilter(const kipl::base::TImage<T,nDims> &/*src*/, 
+		kipl::base::TImage<T,nDims> &/*result*/, 
+		const FilterBase::EdgeProcessingStyle /*edgeStyle*/)
 {
-	std::ignore = src; 
-	std::ignore = result;
-	std::ignore = edgeStyle;
 	// Convolution with uniform NxM kernel 
 	// Compare number of elements with mid kernel
 }
 
 template <class T, size_t nDims>
-void TMedianFilter<T,nDims>::RunningWindowLineInit(T const * const src, T *dest,size_t const * const dims)
+void TMedianFilter<T,nDims>::RunningWindowLineInit( T const * const /*src*/, 
+													T */*dest*/,
+													size_t const * const /*dims*/)
 {
-	std::ignore = src; 
-	std::ignore = dest;
-	std::ignore = dims;
+
 }
 
 template <class T, size_t nDims>
-void TMedianFilter<T,nDims>::RunningWindowLine(T const * const src, T *dest, size_t)
+void TMedianFilter<T,nDims>::RunningWindowLine(T const * const /*src*/, T * /*dest*/, size_t)
 {
-	std::ignore = src; 
-	std::ignore = dest;
+
 }
 
 
 template <class T, size_t nDims>
-void TMedianFilter<T,nDims>::RunningWindowMedianFilter(kipl::base::TImage<T,nDims> &src, 
-		kipl::base::TImage<T,nDims> &result, 
-		const FilterBase::EdgeProcessingStyle edgeStyle)
+void TMedianFilter<T,nDims>::RunningWindowMedianFilter(kipl::base::TImage<T,nDims> &/*src*/, 
+		kipl::base::TImage<T,nDims> &/*result*/, 
+		const FilterBase::EdgeProcessingStyle /*edgeStyle*/)
 {
-	std::ignore = src; 
-	std::ignore = result;
-	std::ignore = edgeStyle;
+
 	/*
 	const size_t Nx=nKernelDims[0];
 	const size_t Ny=nKernelDims[1];
@@ -472,8 +481,9 @@ kipl::base::TImage<T,N> TWeightedMedianFilter<T,N>::operator() (kipl::base::TIma
 template <typename T, size_t N>
 void TWeightedMedianFilter<T,N>::ExpandData(T * src, T * buffer)
 {
-	for (int i=0, j=0; i<this->nKernel; i++) {
-		for (int k=0; k<m_nWeights[i]; k++, j++)
+	for (size_t i=0, j=0; i<this->nKernel; ++i) 
+	{
+		for (int k=0; k<m_nWeights[i]; ++k, ++j)
 			buffer[j]=src[i];
 	}
 }

@@ -26,10 +26,10 @@ void BallAnalysis::setImage(kipl::base::TImage<float,3> _img)
 /// \param r0 The start radius
 /// \param r1 The end radius
 /// \param profile a map containg the average intensity for each encountered radius.
-void BallAnalysis::getEdgeProfile(float azimuth_angle,
-                    float elevation_angle,
-                    float cone_angle,
-                    float r0, float r1, std::map<float,float> &profile)
+void BallAnalysis::getEdgeProfile(float /*azimuth_angle*/,
+                    float /*elevation_angle*/,
+                    float /*cone_angle*/,
+                    float r0, float r1, std::map<float,float> & /*profile*/)
 {
     kipl::base::coords3D b0(0,0,0);
     kipl::base::coords3D b1(img.Size(0)-1,img.Size(1)-1,img.Size(2)-1);
@@ -117,7 +117,7 @@ void BallAnalysis::projectionCenter()
 
 }
 
-void BallAnalysis::profileInBoundingBox(kipl::base::coords3Df center,
+void BallAnalysis::profileInBoundingBox(kipl::base::coords3Df _center,
                           kipl::base::coords3D b0,
                           kipl::base::coords3D b1,
                           float r0,
@@ -139,11 +139,11 @@ void BallAnalysis::profileInBoundingBox(kipl::base::coords3Df center,
     float invprecision=1.0f/precision;
 
     for (int z=b0.z; z<=b1.z; ++z) {
-        z2=static_cast<float>(z)-center.z;
+        z2=static_cast<float>(z)-_center.z;
         z2=z2*z2;
         posZ=z*img.Size(0)*img.Size(1);
         for (int y=b0.y; y<=b1.y; ++y) {
-            y2=static_cast<float>(y)-center.y;
+            y2=static_cast<float>(y)-_center.y;
             y2=y2*y2;
             y2+=z2;
             posY=posZ+y*img.Size(0);

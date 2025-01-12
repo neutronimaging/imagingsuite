@@ -57,7 +57,7 @@ void ScatterEstimator::setAverageMethod(eAverageMethod method)
 }
 
 void ScatterEstimator::fit(const std::vector<float> &x, const std::vector<float> &y, 
-            const kipl::base::TImage<float,2> &bb, 
+            const kipl::base::TImage<float,2> &/*bb*/, 
             float dotRadius, 
             int polyOrderX,
             int polyOrderY

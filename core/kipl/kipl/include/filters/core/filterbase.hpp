@@ -19,7 +19,7 @@ TFilterBase<T,nDims>::TFilterBase(const std::vector<T> & kernel, const std::vect
 		return;
 		
 	//	throw kipl::base::KiplException("TFilterBase was initialized with an unsupported number of dimension",__FILE__,__LINE__);
-    nKernel = std::accumulate(kDims.begin(),kDims.end(),1,std::multiplies<size_t>());
+    nKernel = std::accumulate(kDims.begin(),kDims.end(),static_cast<size_t>(1),std::multiplies<size_t>());
 
 	if (nKernel==0)
 		throw kipl::base::KiplException("Zero sized kernel",__FILE__,__LINE__);
@@ -37,7 +37,7 @@ TFilterBase<T,nDims>::TFilterBase(const std::vector<size_t> & kDims)
 		return;
 		
 	//	throw kipl::base::KiplException("TFilterBase was initialized with an unsupported number of dimension",__FILE__,__LINE__);
-    nKernel = std::accumulate(kDims.begin(),kDims.end(),1,std::multiplies<size_t>());
+    nKernel = std::accumulate(kDims.begin(),kDims.end(),static_cast<size_t>(1),std::multiplies<size_t>());
 
 	if (nKernel==0)
 		throw kipl::base::KiplException("Zero sized kernel",__FILE__,__LINE__);

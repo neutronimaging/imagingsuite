@@ -48,7 +48,7 @@ public:
     /// Set the parameters for the segmentation
     virtual void setParameters(std::map<std::string,std::string> parameters) = 0;
     
-    void saveProgressImages(const string name); 
+    void saveProgressImages(const string & _name); 
     
     virtual bool Quiet(bool q) {quiet=q; return 0;}
 
@@ -66,16 +66,16 @@ protected:
 	std::vector<std::string> ext;
 	
 	template <class T>
-	int saveSlice(const kipl::base::TImage<T,NDim> & img, const std::string subname, int num)
+	int saveSlice(const kipl::base::TImage<T,NDim> & img, const std::string &subname, int num)
 	{
-		char tmpstr[256];
-		sprintf(tmpstr,"%s%d",subname.c_str(),num);
-		
+		// char tmpstr[256];
+		// sprintf(tmpstr,"%s%d",subname.c_str(),num);
+		std::string tmpstr=subname+std::to_string(num);
 		return saveSlice(img, tmpstr);
 	}
 	
 	template <class T>
-	int saveSlice(const kipl::base::TImage<T,NDim> & img, const std::string subname)
+	int saveSlice(const kipl::base::TImage<T,NDim> & img, const std::string &subname)
 	{
 		if (!fname.empty()) {
 			kipl::base::TImage<T,2> slice;
@@ -94,10 +94,10 @@ protected:
 };
 
 template<class ImgType, class SegType, size_t NDim>
-void SegmentationBase<ImgType,SegType,NDim>::saveProgressImages(const string name) 
+void SegmentationBase<ImgType,SegType,NDim>::saveProgressImages(const string &_name) 
 {
-	if (!name.empty())
-		kipl::strings::filenames::StripFileName(name,path,fname,ext);
+	if (!_name.empty())
+		kipl::strings::filenames::StripFileName(_name,path,fname,ext);
 	else {
 		path.clear(); 
 		fname.clear(); 

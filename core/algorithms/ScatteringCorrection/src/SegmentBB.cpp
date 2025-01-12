@@ -189,7 +189,6 @@ void SegmentBB::identifyBBs(const kipl::base::TImage<float,2> &bb,
     // 6. Label image 
     kipl::base::TImage<int,2> lbl(mask.dims());
 
-    
     size_t num_obj = 0UL;
 
     try {

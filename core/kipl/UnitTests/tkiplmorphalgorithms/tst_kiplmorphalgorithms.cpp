@@ -261,7 +261,7 @@ void kiplmorphalgorithms::test_RemoveConnectedRegion()
 
 void kiplmorphalgorithms::test_LabelledItemsInfo()
 {
-    QSKIP("Test is not implemented");
+    // QSKIP("Test is not implemented");
 }
 
 void kiplmorphalgorithms::test_pixdist()
@@ -300,14 +300,14 @@ void kiplmorphalgorithms::test_pixdist()
 
 void kiplmorphalgorithms::test_FillSpots()
 {
-    kipl::base::TImage<float,2> img;
+    kipl::base::TImage<float,2> a;
     kipl::base::TImage<float,2> res;
     std::string fname=dataPath+"2D/tiff/spots/balls.tif";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
-    kipl::io::ReadTIFF(img,fname);
-    img = -img;
+    kipl::io::ReadTIFF(a,fname);
+    a = -a;
     QBENCHMARK {
-        res = -kipl::morphology::FillSpot(img,5,kipl::base::conn8);
+        res = -kipl::morphology::FillSpot(a,5,kipl::base::conn8);
     }
     kipl::io::WriteTIFF(res,"fillspots.tif");
 }
@@ -363,6 +363,12 @@ void kiplmorphalgorithms::test_EuclideanDistance2()
 
 }
 
-QTEST_APPLESS_MAIN(kiplmorphalgorithms)
-
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(kiplmorphalgorithms)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(kiplmorphalgorithms)
+#endif
 #include "tst_kiplmorphalgorithms.moc"

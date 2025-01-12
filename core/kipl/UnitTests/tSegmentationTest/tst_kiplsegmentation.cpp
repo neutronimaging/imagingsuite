@@ -82,7 +82,7 @@ void kiplSegmentationTest::testThreshold()
 
 void kiplSegmentationTest::testDoubleThreshold()
 {
-    QWARN("This test is not implemented.");
+    // QWARN("This test is not implemented.");
 
 }
 
@@ -166,7 +166,7 @@ void kiplSegmentationTest::testCmpType()
     string2enum("cmp_equal",c);
     QCOMPARE(c,kipl::segmentation::cmp_eq);
 
-    QVERIFY_EXCEPTION_THROWN (string2enum("cmp",c), kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, string2enum("cmp",c));
 
     QCOMPARE(enum2string(kipl::segmentation::cmp_less),std::string("cmp_less"));
     QCOMPARE(enum2string(kipl::segmentation::cmp_greater),std::string("cmp_greater"));
@@ -174,7 +174,7 @@ void kiplSegmentationTest::testCmpType()
     QCOMPARE(enum2string(kipl::segmentation::cmp_lesseq),std::string("cmp_less_equal"));
     QCOMPARE(enum2string(kipl::segmentation::cmp_noteq),std::string("cmp_not_equal"));
     QCOMPARE(enum2string(kipl::segmentation::cmp_eq),std::string("cmp_equal"));
-    QVERIFY_EXCEPTION_THROWN(enum2string(static_cast<kipl::segmentation::CmpType>(20)),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, enum2string(static_cast<kipl::segmentation::CmpType>(20)));
 
     std::ostringstream s;
 
@@ -186,7 +186,7 @@ void kiplSegmentationTest::testCmpType()
 
 void kiplSegmentationTest::testRosin()
 {
-    const size_t N=100;
+    // const size_t N=100;
     std::vector<size_t> hist;
     std::string fname = dataPath + "1D/histograms/hist_right_tail_03.txt" ;
     kipl::strings::filenames::CheckPathSlashes(fname,false);
@@ -219,7 +219,13 @@ void kiplSegmentationTest::testOtsu()
     QCOMPARE(tha,thv);
 }
 
-
-QTEST_APPLESS_MAIN(kiplSegmentationTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(kiplSegmentationTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(kiplSegmentationTest)
+#endif
 
 #include "tst_kiplsegmentation.moc"

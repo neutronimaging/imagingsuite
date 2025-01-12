@@ -535,16 +535,15 @@ int ReconEngine::Process(const std::vector<size_t>  &roi)
 		msg<<"Block "<<nProcessedBlocks<<", Projection "<<i<<" (weight="<<fWeight<<", angle="<<fAngle<<")";
 		logger(kipl::logging::Logger::LogVerbose, msg.str());
 
-        float moduleCnt=0.0f;
+        // float moduleCnt=0.0f;
         //float fNumberOfModules=static_cast<float>(m_PreprocList.size());
 
         for (auto &module : m_PreprocList)
         {
-            ++moduleCnt;
+            // ++moduleCnt;
 
             module->GetModule()->Process(projection,parameters);
 		}
-
 
 		m_BackProjector->GetModule()->Process(projection, fAngle, fWeight,m_ProjectionList.size()<(i+1));
 	}
@@ -1350,13 +1349,13 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
 	std::list<ModuleItem *>::iterator it_Module;
 	// Initialize the plug-ins with the current ROI
     std::string moduleName;
-    float moduleCnt=0.0f;
+    // float moduleCnt=0.0f;
     float fNumberOfModules=static_cast<float>(m_PreprocList.size())+1;
     try
     {
         for (auto &module : m_PreprocList)
         {
-            ++moduleCnt;
+            // ++moduleCnt;
 
             moduleName = module->GetModule()->ModuleName();
 
@@ -1432,21 +1431,22 @@ kipl::base::TImage<float,3> ReconEngine::RunPreproc(const std::vector<size_t> & 
 
 	logger(kipl::logging::Logger::LogMessage,"Starting preprocessing");
 
-    float progress = CurrentOverallProgress();
+    // TODO: Check the progress bar
+    // float progress = CurrentOverallProgress();
     float progressIncrement = 1.0f/(fNumberOfModules*nTotalBlocks);
 
     try
     {
         for (auto &module : m_PreprocList)
         {
-            ++moduleCnt;
+            // ++moduleCnt;
 
             if (module->GetModule()->ModuleName()==sLastModule)
                 break;
 
 			msg.str("");
             msg<<"Processing: "<<module->GetModule()->ModuleName();
-            progress += progressIncrement;
+            // progress += progressIncrement;
 			logger(kipl::logging::Logger::LogMessage,msg.str());
             if (!(m_bCancel=UpdateProgress(progressIncrement, msg.str())))
             {

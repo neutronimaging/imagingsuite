@@ -12,7 +12,7 @@ if (UNIX)
 include_directories(
   ../../../core/kipl/kipl/include
   ../../../core/modules/ModuleConfig/include
-  ../../../../ExternalDependencies/macos/include
+  # ../../../../ExternalDependencies/macos/include
     )
 endif()
 
@@ -20,11 +20,11 @@ if (WIN32)
 include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    ../../../../ExternalDependencies/windows/include
-    ../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../../ExternalDependencies/windows/include/libxml2
-    ../../../../ExternalDependencies/windows/include/nexus
-    ../../external/include/
+    # ../../../../ExternalDependencies/windows/include
+    # ../../../../ExternalDependencies/windows/include/cfitsio
+    # ../../../../ExternalDependencies/windows/include/libxml2
+    # ../../../../ExternalDependencies/windows/include/nexus
+    # ../../external/include/
     )
 endif()
 
