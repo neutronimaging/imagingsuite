@@ -11,7 +11,7 @@
 //#include "../misc/sortimg.h"
 
 namespace kipl { namespace STLmorphology {
-
+#ifdef USE_WATERSHED 
 template <class T1, class WsType>
 int watershed(std::vector<T1> &vec, std::vector<WsType> &ws)
 {
@@ -128,7 +128,7 @@ int watershed(std::vector<T1> &vec, std::vector<WsType> &ws)
 */
 	return 0;
 }
-
+#endif
 }}
 
 #endif

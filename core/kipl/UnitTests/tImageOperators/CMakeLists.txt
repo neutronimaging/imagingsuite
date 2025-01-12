@@ -21,17 +21,17 @@ include_directories(
     ../../kipl/include
 )
 
-if (APPLE)
-    include_directories(
-        ../../../../../ExternalDependencies/macos/include
-    )
-endif()
+# if (APPLE)
+#     include_directories(
+#         ../../../../../ExternalDependencies/macos/include
+#     )
+# endif()
 
-if (WIN32)
-    include_directories(
-        ../../../external/include/
-    )
-endif()
+# if (WIN32)
+#     include_directories(
+#         ../../../external/include/
+#     )
+# endif()
 set(SRC_FILES,
     tst_timageoperatorstest.cpp)
 

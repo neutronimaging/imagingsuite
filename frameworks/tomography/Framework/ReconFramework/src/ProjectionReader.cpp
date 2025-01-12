@@ -75,6 +75,8 @@ std::vector<size_t> ProjectionReader::GetImageSizeNexus(string filename, float b
         dims[0]/=binning;
         dims[1]/=binning;
     #else
+        std::ignore = filename;
+        std::ignore = binning;
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
 
@@ -94,7 +96,11 @@ std::vector<size_t> ProjectionReader::GetImageSize(std::string filename, float b
         {
         case readers::ExtensionFITS  : dims=kipl::io::GetFITSDims(filename);  break;
         case readers::ExtensionTIFF  : dims=kipl::io::GetTIFFDims(filename);  break;
+    #ifdef HAVE_NEXUS
         case readers::ExtensionHDF5  : dims=kipl::io::GetNexusDims(filename); break;
+    #else
+        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
+    #endif
         //case 3  : return GetImageSizePNG(filename.c_str(),dims);  break;
 
         default : throw ReconException("Unknown file type",__FILE__, __LINE__); break;
@@ -126,7 +132,8 @@ void ProjectionReader::UpdateCrop(kipl::base::eImageFlip flip,
 
         std::vector<int> nCropOrig(4,0);
         std::vector<int> nTmpCrop(4,0);
-        std::vector<int> nDims(dims.begin(),dims.end());
+        std::vector<int> nDims(dims.size());
+        std::transform(dims.begin(),dims.end(),nDims.begin(),[](size_t x){return static_cast<int>(x);});
 
         nTmpCrop[0]=nCropOrig[0]=nCrop[0];
         nTmpCrop[1]=nCropOrig[1]=nCrop[1];
@@ -134,6 +141,7 @@ void ProjectionReader::UpdateCrop(kipl::base::eImageFlip flip,
         nTmpCrop[3]=nCropOrig[3]=nCrop[3];
 
         switch (flip) {
+        case kipl::base::ImageFlipDefault : doFlip=false; break;
         case kipl::base::ImageFlipNone : doFlip=false; break;
 		case kipl::base::ImageFlipHorizontal :
             nTmpCrop[0]=nDims[0]-nCropOrig[2];
@@ -152,6 +160,9 @@ void ProjectionReader::UpdateCrop(kipl::base::eImageFlip flip,
 		}
 
 		switch (rotate) {
+        case kipl::base::ImageRotateDefault :
+            doRotate = false;
+            break;
         case kipl::base::ImageRotateNone :
             doRotate = false;
             break;
@@ -318,6 +329,7 @@ kipl::base::TImage<float,3> ProjectionReader::ReadNexusTomo(string filename)
     #ifdef HAVE_NEXUS
         kipl::io::ReadNexus(tmp, filename.c_str());
     #else
+        std::ignore = filename;
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
 
@@ -366,6 +378,9 @@ int ProjectionReader::GetNexusInfo(string filename, size_t *NofImg, double *Scan
 
 
     #else
+        std::ignore = filename;
+        std::ignore = NofImg;
+        std::ignore = ScanAngles;
         throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
     #endif
 
@@ -546,6 +561,12 @@ kipl::base::TImage<float,2> ProjectionReader::ReadNexus(std::string filename,
             return img;
 
     #else
+        std::ignore = filename;
+        std::ignore = number;
+        std::ignore = flip;
+        std::ignore = rotate;
+        std::ignore = binning;
+        std::ignore = nCrop;
         logger.warning("HAVE_NEXUS not defined");
 //        throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
 //        throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
@@ -664,6 +685,14 @@ kipl::base::TImage<float, 3> ProjectionReader::ReadNexusStack(std::string filena
 //             return img;
 
      #else
+        std::ignore = filename;
+        std::ignore = start;
+        std::ignore = end;
+        std::ignore = flip;
+        std::ignore = rotate;
+        std::ignore = binning;
+        std::ignore = nCrop;
+
          logger.warning("HAVE_NEXUS not defined");
            throw kipl::base::KiplException("Nexus library is not supported",__FILE__,__LINE__);
              throw ReconException("Nexus library is not supported",__FILE__,__LINE__);
@@ -735,13 +764,15 @@ kipl::base::TImage<float,2> ProjectionReader::ReadTIFF(const std::string &filena
 	return img;
 }
 
-kipl::base::TImage<float,2> ProjectionReader::ReadPNG(const std::string &filename, const std::vector<size_t> &nCrop)
+kipl::base::TImage<float,2> ProjectionReader::ReadPNG(  const std::string & /*filename*/, 
+                                                        const std::vector<size_t> & /*nCrop*/)
 {
 	throw ReconException("ReadPNG is not implemented",__FILE__, __LINE__); 
 	return kipl::base::TImage<float,2>();
 }
 
-kipl::base::TImage<float,2> ProjectionReader::ReadHDF(const string &filename, const std::vector<size_t> &nCrop)
+kipl::base::TImage<float,2> ProjectionReader::ReadHDF(  const string & /*filename*/, 
+                                                        const std::vector<size_t> & /*nCrop*/)
 {
     kipl::base::TImage<float,2> img;
     try
@@ -889,7 +920,7 @@ float ProjectionReader::GetProjectionDose(const std::string &path,
 
     auto maskext = readers::GetFileExtensionType(filemask);
 
-    if (maskext == readers::ExtensionHDF5)
+    if (maskext != readers::ExtensionHDF5)
     {
         dose = GetProjectionDose(filename,flip,rotate,binning,nDoseROI);
     }
@@ -909,7 +940,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
 	kipl::base::TImage<float,2> proj;
 
 	std::map<float, ProjectionInfo> ProjectionList;
-	BuildFileList( &config, &ProjectionList);
+	BuildFileList( config, ProjectionList);
     msg.str(""); msg<<config.WriteXML();
     logger.message(msg.str());
 
@@ -997,9 +1028,9 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
                                                         config.ProjectionInfo.dose_roi);
 
 
-            for (size_t i=0; i<dims[2]; ++i)
+            for (size_t j=0; j<dims[2]; ++j)
             {
-                dose << doselist[i] << " ";
+                dose << doselist[j] << " ";
             }
 
             for (it=ProjectionList.begin(); (it!=ProjectionList.end()) && !UpdateStatus(static_cast<float>(i)/ProjectionList.size(),"Reading projections"); it++)

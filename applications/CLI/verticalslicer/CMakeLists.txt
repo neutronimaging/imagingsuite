@@ -19,20 +19,20 @@ include_directories(
 )
 
 
-if (APPLE)
-    include_directories(
-        ../../../../ExternalDependencies/macos/include
-    )
-endif()
+# if (APPLE)
+#     include_directories(
+#         ../../../../ExternalDependencies/macos/include
+#     )
+# endif()
 
-if (WIN32)
-    include_directories(
-        ../../../../ExternalDependencies/windows/include
-        ../../../../ExternalDependencies/windows/include/libxml2
-        ../../../../ExternalDependencies/windows/include/nexus
-        ../../../external/include/
-    )
-endif()
+# if (WIN32)
+#     include_directories(
+#         ../../../../ExternalDependencies/windows/include
+#         ../../../../ExternalDependencies/windows/include/libxml2
+#         ../../../../ExternalDependencies/windows/include/nexus
+#         ../../../external/include/
+#     )
+# endif()
 
 set(SRC_FILES
     main.cpp

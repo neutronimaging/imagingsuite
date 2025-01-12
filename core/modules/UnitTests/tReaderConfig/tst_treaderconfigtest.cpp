@@ -9,6 +9,8 @@
 #include <string>
 #include <cmath>
 #include <algorithm>
+#include <filesystem> 
+namespace fs = std::filesystem;
 
 #include <base/KiplException.h>
 #include <math/median.h>
@@ -18,6 +20,8 @@
 #include <imagereader.h>
 #include <imagewriter.h>
 #include <readerexception.h>
+#include <strings/filenames.h>
+#include <folders.h>
 
 class TReaderConfigTest : public QObject
 {
@@ -36,6 +40,7 @@ private Q_SLOTS:
     void testRead();
     void testCroppedRead();
     void testGetDose();
+    void testCreateDirectories();
 
 private:
     kipl::base::TImage<float> gradimg;
@@ -92,8 +97,7 @@ void TReaderConfigTest::testAnalyzeFileExt()
     string2enum("hd5", et);  QCOMPARE(et,readers::ExtensionHDF5);
     string2enum("seq", et); QCOMPARE(et,readers::ExtensionSEQ);
 
-    QVERIFY_EXCEPTION_THROWN({string2enum("xyz",et);},kipl::base::KiplException);
-
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,{string2enum("xyz",et);});
     QCOMPARE(enum2string(readers::ExtensionTXT),std::string("txt"));
     QCOMPARE(enum2string(readers::ExtensionDMP),std::string("dmp"));
     QCOMPARE(enum2string(readers::ExtensionDAT),std::string("dat"));
@@ -108,8 +112,7 @@ void TReaderConfigTest::testAnalyzeFileExt()
     QCOMPARE(enum2string(readers::ExtensionHDF5),std::string("hd5"));
     QCOMPARE(enum2string(readers::ExtensionSEQ),std::string("seq"));
 
-    QVERIFY_EXCEPTION_THROWN({enum2string(static_cast<readers::eExtensionTypes>(999));},kipl::base::KiplException);
-
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,{enum2string(static_cast<readers::eExtensionTypes>(999));});
     QCOMPARE(readers::GetFileExtensionType("test.fits"),readers::ExtensionFITS);
     QCOMPARE(readers::GetFileExtensionType("test000.tif"),readers::ExtensionTIFF);
     QCOMPARE(readers::GetFileExtensionType("test.tif.fits"),readers::ExtensionFITS);
@@ -273,9 +276,7 @@ void TReaderConfigTest::testImageSize()
     QCOMPARE(dimsfits[2],1UL);
     QCOMPARE(dimsfits.size(),3UL);
 
-
-    QVERIFY_EXCEPTION_THROWN(reader.imageSize("dfgdgdfbvxssrgsxdf.fits"),ReaderException);
-
+     QVERIFY_THROWS_EXCEPTION(ReaderException,reader.imageSize("dfgdgdfbvxssrgsxdf.fits"));
 }
 
 void TReaderConfigTest::testRead()
@@ -317,10 +318,10 @@ void TReaderConfigTest::testCroppedRead()
             QCOMPARE(tmp[idx],gradimg(x,y));
 
     std::vector<size_t> roi2={200,20,30,30};
-    QVERIFY_EXCEPTION_THROWN({
+
+    QVERIFY_THROWS_EXCEPTION(ReaderException,{
                                  auto t=reader.Read("testread.tif", kipl::base::ImageFlipNone, kipl::base::ImageRotateNone,1.0f,roi2);
-                             },
-                             kipl::base::KiplException);
+                             });
 
     auto tmpfits = reader.Read("testread.fits", kipl::base::ImageFlipNone, kipl::base::ImageRotateNone,1.0f,roi);
 
@@ -353,8 +354,44 @@ void TReaderConfigTest::testGetDose()
 
 }
 
+void TReaderConfigTest::testCreateDirectories()
+{
+    // void CheckFolders(const std::string &path, bool create);
 
 
-QTEST_APPLESS_MAIN(TReaderConfigTest)
+    std::string path1 = "a/b/c";
+    kipl::strings::filenames::CheckPathSlashes(path1,false);
+    try {
+        std::filesystem::remove_all(path1);
+    }
+    catch (std::filesystem::filesystem_error &e)
+    {
+        qDebug() << e.what();
+    }
+
+    QVERIFY_THROWS_EXCEPTION(ReaderException,{ CheckFolders(path1,false); });
+    CheckFolders(path1,true);
+    QVERIFY(fs::is_directory(path1));
+
+    CheckFolders(path1,true);
+
+    fs::remove_all("a");
+
+    std::string path2 = "a2/b/c/";
+    kipl::strings::filenames::CheckPathSlashes(path2,true);
+    CheckFolders(path2,true);
+    QVERIFY(fs::is_directory(path2));
+    fs::remove_all("a2");
+}
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TReaderConfigTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TReaderConfigTest)
+#endif
+
 
 #include "tst_treaderconfigtest.moc"

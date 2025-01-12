@@ -150,30 +150,66 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
             case kipl::base::UInt4 : break;
             case kipl::base::UInt8 :
             {
-                kipl::base::TImage<unsigned char,2> tmp(sliceDims);
-                copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+                kipl::base::TImage<unsigned char, 2> tmp(sliceDims);
+                std::transform(pSlice, pSlice + sliceSize, tmp.GetDataPtr(), [](auto val) {
+                    return static_cast<unsigned char>(val);
+                });
 
-                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned char));
+                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize * sizeof(unsigned char));
                 break;
             }
             case kipl::base::UInt12 : break;
             case kipl::base::UInt16 :
             {
-                kipl::base::TImage<unsigned short,2> tmp(sliceDims);
-                copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+                kipl::base::TImage<unsigned short, 2> tmp(sliceDims);
+                std::transform(pSlice, pSlice + sliceSize, tmp.GetDataPtr(), [](auto val) {
+                    return static_cast<unsigned short>(val);
+                });
 
-                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned short));
+                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize * sizeof(unsigned short));
                 break;
             }
             case kipl::base::Float32 :
             {
-                kipl::base::TImage<float,2> tmp(sliceDims);
-                copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+                kipl::base::TImage<float, 2> tmp(sliceDims);
+                std::transform(pSlice, pSlice + sliceSize, tmp.GetDataPtr(), [](auto val) {
+                    return static_cast<float>(val);
+                });
 
-                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(float));
+                TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize * sizeof(float));
                 break;
             }
         }
+
+        // switch (dt)
+        // {
+        //     case kipl::base::UInt4 : break;
+        //     case kipl::base::UInt8 :
+        //     {
+        //         kipl::base::TImage<unsigned char,2> tmp(sliceDims);
+        //         copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+
+        //         TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned char));
+        //         break;
+        //     }
+        //     case kipl::base::UInt12 : break;
+        //     case kipl::base::UInt16 :
+        //     {
+        //         kipl::base::TImage<unsigned short,2> tmp(sliceDims);
+        //         copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+
+        //         TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned short));
+        //         break;
+        //     }
+        //     case kipl::base::Float32 :
+        //     {
+        //         kipl::base::TImage<float,2> tmp(sliceDims);
+        //         copy_n(pSlice,sliceSize,tmp.GetDataPtr());
+
+        //         TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(float));
+        //         break;
+        //     }
+        // }
 
 
         if (N!=2)
@@ -281,6 +317,7 @@ void WriteTIFF(kipl::base::TImage<ImgType,N> src,
 template <class ImgType>
 int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_t idx=0UL)
 {
+    kipl::logging::Logger logger("ReadTIFF");
     std::stringstream msg;
 	TIFF *image;
     uint16_t photo, spp, fillorder,bps, sformat;
@@ -325,7 +362,13 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string & fname, size_
 		sformat=1; // Assuming unsigned integer data if unknown
 	}
 
-    if ((TIFFGetField(image, TIFFTAG_SAMPLESPERPIXEL, &spp) == 0) || (spp != 1))
+    if (TIFFGetField(image, TIFFTAG_SAMPLESPERPIXEL, &spp) == 0) 
+    {
+        logger.warning("TIFFTAG_SAMPLESPERPIXEL is not defined using default spp=1");
+        spp=1;
+    }
+    
+    if (spp != 1)
     {
 		throw kipl::base::KiplException("ReadTIFF: Either undefined or unsupported number of samples per pixel",__FILE__,__LINE__);
 	}
@@ -517,11 +560,8 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 	}
 	std::stringstream msg;
 	TIFF *image;
-    uint16_t photo, spp, fillorder,bps, sformat;
-    tsize_t stripSize;
-    unsigned long imageOffset;
-
-    int stripMax;
+    uint16_t photo, spp, fillorder,bps, sformat; 
+    
 	unsigned char *buffer, tempbyte;
 	unsigned long bufferSize, count;
 
@@ -559,15 +599,21 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 		sformat=1; // Assuming unsigned integer data if unknown
 	}
 
-    if ((TIFFGetField(image, TIFFTAG_SAMPLESPERPIXEL, &spp) == 0) || (spp != 1))
+    if (TIFFGetField(image, TIFFTAG_SAMPLESPERPIXEL, &spp) == 0) 
+    {
+        logger.warning("TIFFTAG_SAMPLESPERPIXEL is not defined using default spp=1");
+        spp=1;
+    }
+
+    if (spp != 1)
     {
 		throw kipl::base::KiplException("ReadTIFF: Either undefined or unsupported number of samples per pixel",__FILE__,__LINE__);
 	}
 
 	// Read in the possibly multiple strips
-    stripSize   = TIFFStripSize (image);
-    stripMax    = TIFFNumberOfStrips (image);
-	imageOffset = 0;
+    // tsize_t stripSize = TIFFStripSize (image);
+    // int stripMax      = TIFFNumberOfStrips (image);
+	// unsigned long imageOffset = 0;
 
 	int dimx,dimy;
 	// We need to set some values for basic tags before we can add any data
@@ -748,6 +794,7 @@ int ReadTIFF(kipl::base::TImage<ImgType,2> &src,const std::string &fname, const 
 
 	return bps;
 }
+
 
 /// \brief Reads the contents of a tiff file and stores the contents in the data type specified by the image
 ///	\param src the image to be stored

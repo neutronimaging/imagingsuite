@@ -16,8 +16,11 @@ int LinearForwardProjector::project(kipl::base::TImage<float,2> &slice, std::lis
 {
 
     int t,r,m,n,mmin,mmax,nmin,nmax;
-    int T,R,M,N;
-    float sum,x_min,rhooffset,Delta_theta,Delta_rho,costheta,sintheta,Offset_Theta;
+    // int T;
+    int R,M,N;
+    float sum,x_min,rhooffset;
+    // float Delta_theta;
+    float Delta_rho,costheta,sintheta,Offset_Theta;
     float rho_min,theta,alpha,beta,nfloat,nf,mfloat,mf,w,rho;
     float Delta_x,betap,eps;
     double dXsinT, dXdsinT, dXcosT, dXdcosT;
@@ -26,7 +29,7 @@ int LinearForwardProjector::project(kipl::base::TImage<float,2> &slice, std::lis
                   angles.size()});
     proj=0.0f;
     eps=1e-4;
-    T=proj.Size(1);
+    // T=proj.Size(1);
     R=proj.Size(0);
     M=N=slice.Size(0);
 
@@ -61,14 +64,14 @@ int LinearForwardProjector::project(kipl::base::TImage<float,2> &slice, std::lis
                 sum=0.0;
                 if (alpha>1e-6)
                 {
-                    mmin=(int)ceil(-(betap-eps)/alpha);
-                    mmax=1+(int)floor((N-betap-eps)/alpha);
+                    mmin=static_cast<int>(ceil(-(betap-eps)/alpha));
+                    mmax=1+static_cast<int>(floor((N-betap-eps)/alpha));
                 }
                 else { // AK
                     if (alpha<-1e-6)
                     {
-                        mmin=(int)ceil((N-betap-eps)/alpha);
-                        mmax=1+(int)floor(-(betap-eps)/alpha);
+                        mmin=static_cast<int>(ceil((N-betap-eps)/alpha));
+                        mmax=1+static_cast<int>(floor(-(betap-eps)/alpha));
                     }
                     else
                     {
@@ -82,7 +85,7 @@ int LinearForwardProjector::project(kipl::base::TImage<float,2> &slice, std::lis
                 nfloat=beta+mmin*alpha;
 
                 for (m=mmin;m<mmax;m++)	{
-                    nf=(int)nfloat;
+                    nf=static_cast<int>(nfloat);
                     w=nfloat-nf;
                     if ((nfloat>=0) && (nfloat<(N-1)))
                         //(1-w)*img+w*(img+1)
@@ -106,14 +109,14 @@ int LinearForwardProjector::project(kipl::base::TImage<float,2> &slice, std::lis
                 sum=0.0;
                 if (alpha>1e-6)
                 {
-                    nmin=(int)ceil(-(betap-eps)/alpha);
-                    nmax=1+(int)floor((M-betap-eps)/alpha);
+                    nmin=static_cast<int>(ceil(-(betap-eps)/alpha));
+                    nmax=1+static_cast<int>(floor((M-betap-eps)/alpha));
                 }
                 else {
                     if (alpha<-1e-6)
                     {
-                        nmin=(int)ceil((M-betap-eps)/alpha);
-                        nmax=1+(int)floor(-(betap-eps)/alpha);
+                        nmin=static_cast<int>(ceil((M-betap-eps)/alpha));
+                        nmax=1+static_cast<int>(floor(-(betap-eps)/alpha));
                     }
                     else
                     {
@@ -128,7 +131,7 @@ int LinearForwardProjector::project(kipl::base::TImage<float,2> &slice, std::lis
 
 
                 for (n=nmin;n<nmax;n++)	{
-                    mf=(int)mfloat;
+                    mf=static_cast<int>(mfloat);
                     w=mfloat-mf;
                     if ((mfloat>=0) && (mfloat<(M-1)))
                         //(1-w)*img+w*(img+1)
@@ -143,7 +146,9 @@ int LinearForwardProjector::project(kipl::base::TImage<float,2> &slice, std::lis
     return 0;
 }
 
-int LinearForwardProjector::project(kipl::base::TImage<float,3> &slice, std::list<float> & angles, kipl::base::TImage<float,3> &proj)
+int LinearForwardProjector::project(kipl::base::TImage<float,3> & /*slice*/, 
+                                    std::list<float> & /*angles*/, 
+                                    kipl::base::TImage<float,3> & /*proj*/)
 {
     throw ReconAlgorithmException("Linear forward projection for multiple slices is not implemented",__FILE__,__LINE__);
 

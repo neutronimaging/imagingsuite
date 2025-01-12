@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <QString>
 #include <QTextStream>
 #include <QtTest>
@@ -20,6 +19,7 @@
 
 class FrameWorkTest : public QObject
 {
+    
     Q_OBJECT
 
 public:
@@ -27,7 +27,7 @@ public:
     std::vector<float> goldenAngles(int n, int start, float arc);
     std::vector<float> invGoldenAngles(int n, int start, float arc);
 
-private Q_SLOTS:
+private slots:
     void testProjectionReader();
     void testBuildFileList_GeneratedSequence();
     void testBuildFileList_GeneratedGolden();
@@ -36,6 +36,9 @@ private Q_SLOTS:
     void testBuildFileList_GeneratedInvGolden();
     void testBuildFileList_GeneratedInvGolden_delay();
     void testBuildFileList();
+    void testBuildFileList_SequenceDropProjections();
+    void testBuildFileList_SequenceSkipProjections();
+    void testBuildFileList_skipGolden();
     void testProcessTimingLogger();
 
 
@@ -386,7 +389,7 @@ void FrameWorkTest::testProjectionReader()
         QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
         QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
-        QWARN("The horizontal/vertical test is currently excluded");
+        qWarning()<<"The horizontal/vertical test is currently excluded";
 //        for (size_t i=0; i<res_fits.Size(); ++i) {
 //            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
 //            QVERIFY2(res_fits[i]==crop_ref[i],msg.toStdString().c_str());
@@ -655,7 +658,7 @@ void FrameWorkTest::testBuildFileList_GeneratedSequence()
     config.ProjectionInfo.fScanArc[1]=360.0f;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
     float sum=0.0f;
@@ -674,7 +677,7 @@ void FrameWorkTest::testBuildFileList_GeneratedSequence()
     config.ProjectionInfo.nFirstIndex=1;
     config.ProjectionInfo.nLastIndex=19;
 
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
     sum=0.0f;
@@ -691,8 +694,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
 {
     std::ostringstream msg;
     size_t N=10;
-    size_t i=0;
-
+    
     ReconConfig config("");
 // Test even number
     config.ProjectionInfo.sFileMask       = "test_####.fits";
@@ -704,7 +706,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     config.ProjectionInfo.nGoldenStartIdx = 0;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -730,7 +732,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
 
     config.ProjectionInfo.fScanArc[1]=360.0f;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -766,7 +768,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     config.ProjectionInfo.nGoldenStartIdx = 1;
 
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
@@ -795,7 +797,6 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
 {
     std::ostringstream msg;
     size_t N=10;
-    size_t i=0;
 
     ReconConfig config("");
 // Test even number
@@ -808,7 +809,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
     config.ProjectionInfo.nGoldenStartIdx = 10;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -834,7 +835,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
 
     config.ProjectionInfo.fScanArc[1]=360.0f;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -870,7 +871,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
     config.ProjectionInfo.nGoldenStartIdx = 1;
 
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
@@ -921,7 +922,6 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_delay()
 
     std::ostringstream msg;
     size_t N=10;
-    size_t i=0;
 
     ReconConfig config("");
 // Test even number
@@ -934,7 +934,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_delay()
     config.ProjectionInfo.nGoldenStartIdx = 0;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -959,7 +959,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_delay()
     config.ProjectionInfo.nGoldenStartIdx = 2;
 
     ProjectionList.clear();
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -991,7 +991,7 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     config.ProjectionInfo.nGoldenStartIdx=0;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1018,7 +1018,7 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
 
     config.ProjectionInfo.fScanArc[1]=360.0f;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1054,7 +1054,7 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     config.ProjectionInfo.nGoldenStartIdx = 1;
 
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
@@ -1103,7 +1103,7 @@ void FrameWorkTest::testBuildFileList()
     config.ProjectionInfo.nLastIndex=i+1;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
 
     QVERIFY(ProjectionList.size()==i+1);
 
@@ -1137,6 +1137,93 @@ void FrameWorkTest::testProcessTimingLogger()
     ptl.addLogEntry(entryData);
 }
 
-QTEST_APPLESS_MAIN(FrameWorkTest)
+
+void FrameWorkTest::testBuildFileList_SequenceDropProjections()
+{
+    std::ostringstream msg;
+    ReconConfig config("");
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    ProjectionList.clear();
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=21;
+    config.ProjectionInfo.skipListMode = ReconConfig::cProjections::SkipMode_Drop;
+    config.ProjectionInfo.nlSkipList = {5,9};
+    config.ProjectionInfo.fScanArc={0.0f,180.0f};
+
+    BuildFileList(config,ProjectionList);
+    size_t expectedSize = config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1-config.ProjectionInfo.nlSkipList.size();
+    msg.str(""); msg<<"Expected size "
+        <<expectedSize
+        <<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==expectedSize,msg.str().c_str());
+    float sum=0.0f;
+    for (const auto & item: ProjectionList) 
+    {
+        std::cout<<(item.first)<<", "
+                <<item.second.name<<", "
+                <<item.second.angle<<", "
+                <<item.second.weight<<std::endl;
+        sum+=item.second.weight;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+
+    
+}
+
+void FrameWorkTest::testBuildFileList_SequenceSkipProjections()
+{
+    std::ostringstream msg;
+    ReconConfig config("");
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    ProjectionList.clear();
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=19;
+    config.ProjectionInfo.skipListMode = ReconConfig::cProjections::SkipMode_Skip;
+    config.ProjectionInfo.nlSkipList = {5,9};
+    config.ProjectionInfo.fScanArc={0.0f,180.0f};
+
+
+    BuildFileList(config,ProjectionList);
+    size_t expectedSize = config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1-config.ProjectionInfo.nlSkipList.size();
+    msg.str(""); msg<<"Expected size "
+        <<expectedSize
+        <<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==expectedSize,msg.str().c_str());
+    float sum=0.0f;
+    for (const auto & item: ProjectionList) 
+    {
+        std::cout<<(item.first)<<", "
+                <<item.second.name<<", "
+                <<item.second.angle<<", "
+                <<item.second.weight<<std::endl;
+        sum+=item.second.weight;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+
+    
+}
+
+void FrameWorkTest::testBuildFileList_skipGolden()
+{
+
+}
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(FrameWorkTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(FrameWorkTest)
+#endif
+
 
 #include "tst_frameworktest.moc"

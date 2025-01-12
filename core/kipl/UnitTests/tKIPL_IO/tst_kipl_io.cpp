@@ -31,7 +31,14 @@ private:
 tKIPL_IOTest::tKIPL_IOTest()
 {
     data_path = QT_TESTCASE_BUILDDIR;
-    data_path = data_path + "/../../../../../TestData/";
+    #ifdef __APPLE__
+        data_path = data_path + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        data_path = data_path + "/../../../../../../TestData/";
+    #else
+        data_path = data_path + "/../../../../../TestData/";
+    #endif
+    
     kipl::strings::filenames::CheckPathSlashes(data_path,true);
 }
 
@@ -93,10 +100,10 @@ void tKIPL_IOTest::testReadRoiTIFF()
     QCOMPARE(img.Size(1),roi2[3]-roi2[1]);
 
     std::vector<size_t> roi3={10,10,20,400}; // Vertical slab outside the image size
-    QVERIFY_EXCEPTION_THROWN( kipl::io::ReadTIFF(img,fname,roi3,0),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION( kipl::base::KiplException, kipl::io::ReadTIFF(img,fname,roi3,0));
 
     std::vector<size_t> roi4={10,300,20,200}; // Vertical slab outside the image size
-    QVERIFY_EXCEPTION_THROWN( kipl::io::ReadTIFF(img,fname,roi4,0),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,kipl::io::ReadTIFF(img,fname,roi4,0));
 }
 
 
@@ -124,7 +131,7 @@ void tKIPL_IOTest::testDataTypesWriteTIFF()
 
     for (size_t i=0; i<fimg.Size(); i++)
         fimg[i]=static_cast<float>(i)*0.5;
-
+        
     kipl::io::WriteTIFF(fimg,"basicRW8.tif",kipl::base::UInt8);
     kipl::io::WriteTIFF(fimg,"basicRW16.tif",kipl::base::UInt16);
     kipl::io::WriteTIFF(fimg,"basicRWfloat.tif",kipl::base::Float32);
@@ -145,8 +152,13 @@ void tKIPL_IOTest::testDataTypesWriteTIFF()
     kipl::io::ReadTIFF(res,"basicRW8.tif");
     QCOMPARE(res.Size(0),fimg.Size(0));
     QCOMPARE(res.Size(1),fimg.Size(1));
+
+    kipl::base::TImage<unsigned char,2> img8bit(dims);
+    std::copy_n(fimg.GetDataPtr(),fimg.Size(),img8bit.GetDataPtr());
+
     for (size_t i = 0 ; i<fimg.Size(); ++i)
-        QCOMPARE(res[i],fmod(floor(fimg[i]),256.0f));
+        QCOMPARE(res[i],img8bit[i]);
+        //QCOMPARE(res[i],fmod(floor(fimg[i]),256.0f));
 
 }
 
@@ -155,6 +167,14 @@ void tKIPL_IOTest::testReadNexus()
 
 }
 
-QTEST_APPLESS_MAIN(tKIPL_IOTest)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(tKIPL_IOTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(tKIPL_IOTest)
+#endif
+
 
 #include "tst_kipl_io.moc"

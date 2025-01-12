@@ -30,24 +30,29 @@ void NormalizeImage::setReferences(kipl::base::TImage<float, 2> &ff,
     mFlatField.Clone(ff);
     mDark.Clone(dc);
 
+    auto ptr = mFlatField.GetDataPtr();
+
     mFlatField -= mDark;
+    
+    std::transform(ptr, ptr+mFlatField.Size(), ptr, [](float val) {
+        return (val < 1.0f) ? 1.0f : val;
+        });
 
     if (bUseDose)
     {
         referenceDose = computeDose(mFlatField);
+        std::ostringstream msg;
+        // msg << "Reference dose: " << referenceDose;
+        // logger.message(msg.str());
         mFlatField /= referenceDose;
     }
 
-    for (size_t i=0 ; i< mFlatField.Size(); ++i)
+    if (bUseLog)
     {
-        if (mFlatField[i]<=0.0f)
-            mFlatField[i]=1.0f;
-
-        if (bUseLog)
-         //   mFlatField[i]=std::logf(mFlatField[i]);
-               mFlatField[i]=std::log(mFlatField[i]);
+        std::transform(ptr, ptr+mFlatField.Size(), ptr, [](float val) {
+            return std::log(val);
+        });
     }
-
 }
 
 void NormalizeImage::setDoseROI(std::vector<size_t> &roi)
@@ -63,32 +68,33 @@ void NormalizeImage::process(kipl::base::TImage<float, 2> &img)
 {
     float dose=1.0f;
 
+    img -= mDark;
+
+    auto ptr = img.GetDataPtr();
+    std::transform(ptr, ptr+img.Size(), ptr, [](float val) {
+        return (val < 1.0f) ? 1.0f : val;
+        });
+
     if (bUseDose)
     {
         dose = computeDose(img);
+        std::ostringstream msg;
+        // msg << "projection dose: " << dose;
+        // logger.message(msg.str());
         img /= dose;
     }
-
-    img -= mDark;
 
     if (bUseLog)
     {
         for (size_t i = 0; i<img.Size(); ++i)
         {
-            if (img[i]<=0)
-                img[i] = 1.0f;
-
             img[i] = mFlatField[i] - std::log(img[i]);
-//            img[i] = mFlatField[i] - std::logf(img[i]);
         }
     }
     else
     {
         for (size_t i = 0; i<img.Size(); ++i)
         {
-            if (img[i]<=0)
-                img[i] = 1.0f;
-
             img[i] /= mFlatField[i];
         }
     }
@@ -117,9 +123,35 @@ void NormalizeImage::normalizeSlices(kipl::base::TImage<float, 3> &img, size_t b
     }
 }
 
-float NormalizeImage::computeDose(kipl::base::TImage<float, 2> &img)
+float NormalizeImage::computeDose(kipl::base::TImage<float, 2> & img)
 {
-    return 1.0f;
+    std::vector<size_t> doses;
+
+    for (size_t i=mROI[1]; i<mROI[3]; ++i)
+    {
+        float dose=0.0f;
+        for (size_t j=mROI[0]; j<mROI[2]; ++j)
+        {
+            dose += img(j,i);
+        }
+        doses.push_back(dose);
+    }
+
+    size_t n=doses.size();
+    size_t mid = n / 2;
+    std::nth_element(doses.begin(), doses.begin() + mid, doses.end());
+
+    if (n % 2 == 0)
+    {
+        float median1 = doses[mid];
+        std::nth_element(doses.begin(), doses.begin() + mid - 1, doses.end());
+        float median2 = doses[mid - 1];
+        return (median1 + median2) / 2.0f;
+    }
+    else
+    {
+        return doses[mid];
+    }
 }
 
 }

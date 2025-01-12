@@ -21,12 +21,10 @@ std::map<std::basic_string<char>, std::basic_string<char> > ProjectionInspector:
 
 int ProjectionInspector::Configure(ReconConfig, std::map<std::basic_string<char>, std::basic_string<char> >)
 {
-
 	return 0;
 }
 
-int ProjectionInspector::ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters)
+int ProjectionInspector::ProcessCore(kipl::base::TImage<float,3> &/*img*/, std::map<std::string,std::string> & /*parameters*/)
 {
-
 	return 0;
 }

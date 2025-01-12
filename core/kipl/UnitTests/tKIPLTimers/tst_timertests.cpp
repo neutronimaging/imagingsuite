@@ -117,7 +117,15 @@ void TimerTests::test_ThreadedTiming()
 
 }
 
-QTEST_APPLESS_MAIN(TimerTests)
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TimerTests)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TimerTests)
+#endif
+
 
 #include "tst_timertests.moc"
 

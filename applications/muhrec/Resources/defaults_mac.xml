@@ -112,8 +112,8 @@
                     <decnum>4</decnum>
                     <method>verticalfft</method>
                     <threading>true</threading>
-                    <sigma>0.1</sigma>
-                    <wname>daub25</wname>
+                    <sigma>0.01</sigma>
+                    <wname>daub17</wname>
                 </parameters>
             </module>
         </preprocessing>

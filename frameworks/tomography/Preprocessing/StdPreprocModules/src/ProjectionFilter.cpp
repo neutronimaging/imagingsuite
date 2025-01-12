@@ -20,14 +20,14 @@
 
 #include "../include/ProjectionFilter.h"
 
-int ProjectionFilterSingle::Configure(ReconConfig config, std::map<std::string,std::string> parameters)
+int ProjectionFilterSingle::Configure(ReconConfig /*config*/, std::map<std::string,std::string> parameters)
 {
     mFilter.setParameters(parameters);
 
     return 0;
 }
 
-int ProjectionFilterSingle::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int ProjectionFilterSingle::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & /*coeff*/)
 {
 	if (img.Size()==0)
 		throw ReconException("Empty projection image",__FILE__,__LINE__);
@@ -36,7 +36,7 @@ int ProjectionFilterSingle::ProcessCore(kipl::base::TImage<float,2> & img, std::
 	return 0;
 }
 
-int ProjectionFilterSingle::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int ProjectionFilterSingle::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & /*coeff*/)
 {
 	if (img.Size()==0)
 		throw ReconException("Empty projection image",__FILE__,__LINE__);

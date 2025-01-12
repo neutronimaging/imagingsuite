@@ -86,23 +86,23 @@ float CenterOfGravity::computeCOG(float *profile,int N)
 
 void CenterOfGravity::computeProfiles(kipl::base::TImage<float,3> img, bool applythreshold, float threshold)
 {
-    auto  &dims = img.dims();
+    auto  &dims1 = img.dims();
 
     clearAllocation();
 
-    profileX=new float[dims[0]];
-    profileY=new float[dims[1]];
-    profileZ=new float[dims[2]];
+    profileX=new float[dims1[0]];
+    profileY=new float[dims1[1]];
+    profileZ=new float[dims1[2]];
 
-    std::fill(profileX,profileX+dims[0],0.0f);
-    std::fill(profileY,profileY+dims[1],0.0f);
-    std::fill(profileZ,profileZ+dims[2],0.0f);
+    std::fill(profileX,profileX+dims1[0],0.0f);
+    std::fill(profileY,profileY+dims1[1],0.0f);
+    std::fill(profileZ,profileZ+dims1[2],0.0f);
 
     if (applythreshold) {
-        for (size_t z=0; z<dims[2]; ++z) {
-            for (size_t y=0; y<dims[1]; ++y) {
+        for (size_t z=0; z<dims1[2]; ++z) {
+            for (size_t y=0; y<dims1[1]; ++y) {
                 float *pImg=img.GetLinePtr(y,z);
-                for (size_t x=0; x<dims[0]; ++x) {
+                for (size_t x=0; x<dims1[0]; ++x) {
                     float val= (threshold<=pImg[x]);
                     profileX[x]+=val;
                     profileY[y]+=val;
@@ -112,10 +112,10 @@ void CenterOfGravity::computeProfiles(kipl::base::TImage<float,3> img, bool appl
         }
     }
     else {
-        for (size_t z=0; z<dims[2]; ++z) {
-            for (size_t y=0; y<dims[1]; ++y) {
+        for (size_t z=0; z<dims1[2]; ++z) {
+            for (size_t y=0; y<dims1[1]; ++y) {
                 float *pImg=img.GetLinePtr(y,z);
-                for (size_t x=0; x<dims[0]; ++x) {
+                for (size_t x=0; x<dims1[0]; ++x) {
                     float val=pImg[x];
                     profileX[x]+=val;
                     profileY[y]+=val;

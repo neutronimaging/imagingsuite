@@ -13,21 +13,21 @@ include_directories(
 ../../../core/algorithms/ImagingAlgorithms/include
 )
 
-if (APPLE)
-include_directories(
-    ../../../../ExternalDependencies/macos/include
-    )
-endif()
+# if (APPLE)
+# include_directories(
+#     ../../../../ExternalDependencies/macos/include
+#     )
+# endif()
 
-if (WIN32)
-include_directories(
-    ../../../../ExternalDependencies/windows/include
-    ../../../../ExternalDependencies/windows/include/nexus
-    ../../../../ExternalDependencies/windows/include/cfitsio
-    ../../../../ExternalDependencies/windows/include/libxml2
-    ../../../external/include/
-    )
-endif()
+# if (WIN32)
+# include_directories(
+#     ../../../../ExternalDependencies/windows/include
+#     ../../../../ExternalDependencies/windows/include/nexus
+#     ../../../../ExternalDependencies/windows/include/cfitsio
+#     ../../../../ExternalDependencies/windows/include/libxml2
+#     ../../../external/include/
+#     )
+# endif()
 
 if (UNIX)
 include_directories(
@@ -45,6 +45,7 @@ set(INC_FILES
     readerexception.h
     imagewriter.h
     analyzefileext.h
+    folders.h
 )
 
 set(SRC_FILES
@@ -55,6 +56,7 @@ set(SRC_FILES
     readerexception.cpp
     imagewriter.cpp
     analyzefileext.cpp
+    folders.cpp
 )
 
 add_library(${TARGET_NAME} SHARED
@@ -64,9 +66,11 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-target_compile_definitions(${TARGET_NAME} PRIVATE READERCONFIG_LIBRARY HAVE_NEXUS)
+#target_compile_definitions(${TARGET_NAME} PRIVATE READERCONFIG_LIBRARY HAVE_NEXUS)
+target_compile_definitions(${TARGET_NAME} PRIVATE READERCONFIG_LIBRARY)
 
-add_definitions(-DHAVE_NEXUS)
+
+#add_definitions(-DHAVE_NEXUS)
 
 if (WIN32)
     # target_link_directories(${TARGET_NAME} PRIVATE
@@ -84,13 +88,14 @@ if (WIN32)
         )
 endif()
 
-if (APPLE)
-    target_link_libraries(${TARGET_NAME}
-    PUBLIC
-    kipl
-    ImagingAlgorithms
-  )
-endif()
+# if (APPLE)
+#     target_link_libraries(${TARGET_NAME}
+#     PUBLIC
+#     kipl
+#     ImagingAlgorithms
+#     ${NEXUS_LIBRARIES}
+#   )
+# endif()
 
 if (UNIX)
 
@@ -99,6 +104,7 @@ target_link_libraries(${TARGET_NAME}
     kipl
     ImagingAlgorithms
     LibXml2::LibXml2
+    # ${NEXUS_LIBRARIES}
   )
 endif()
 

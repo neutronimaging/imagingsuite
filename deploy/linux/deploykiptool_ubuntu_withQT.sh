@@ -57,7 +57,6 @@ rm -f *.so.1.0.0
 `$CPCMD $QT_PATH/lib/libQt5DBus.so.5.$QtV .`
 `$CPCMD $QT_PATH/lib/libQt5PrintSupport.so.5.$QtV .`
 `$CPCMD $QT_PATH/lib/libQt5XcbQpa.so.5.$QtV .`
-`$CPCMD $QT_PATH/lib/libQt5DBus.so.5.$QtV .`
 `$CPCMD $QT_PATH/lib/libQt5Charts.so.5.$QtV .`
 `$CPCMD $QT_PATH/lib/libicui18n.so.56.1 .`
 `$CPCMD $QT_PATH/lib/libicudata.so.56.1 .`

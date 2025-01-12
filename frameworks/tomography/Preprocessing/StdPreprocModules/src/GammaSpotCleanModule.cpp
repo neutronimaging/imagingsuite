@@ -49,12 +49,12 @@ std::map<std::string, std::string> GammaSpotCleanModule::GetParameters()
     return parameters;
 }
 
-bool GammaSpotCleanModule::SetROI(const std::vector<size_t> &UNUSED)
+bool GammaSpotCleanModule::SetROI(const std::vector<size_t> &/*UNUSED*/)
 {
     return false;
 }
 
-int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & UNUSED(coeff))
+int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & /*coeff*/)
 {
 //    std::clog<<"ProcessCore"<<std::endl;
 #ifdef __APPLE__
@@ -68,7 +68,7 @@ int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::ma
 }
 
 
-int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & UNUSED(coeff))
+int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & /*img*/, std::map<std::string, std::string> & /*coeff*/)
 {
 //    std::ostringstream msg;
 //    ImagingAlgorithms::GammaClean cleaner;
@@ -102,7 +102,7 @@ int GammaSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
     return 0;
 }
 
-int GammaSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
+int GammaSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & /*img*/)
 {
 //    const int N = static_cast<int>(img.Size(2));
 
@@ -121,7 +121,7 @@ int GammaSpotCleanModule::ProcessSingle(kipl::base::TImage<float,3> & img)
     return 0;
 }
 
-int GammaSpotCleanModule::ProcessParallel(kipl::base::TImage<float,3> & img)
+int GammaSpotCleanModule::ProcessParallel(kipl::base::TImage<float,3> & /*img*/)
 {
 //    const int N = static_cast<int>(img.Size(2));
 

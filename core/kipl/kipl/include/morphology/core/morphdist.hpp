@@ -1,5 +1,4 @@
 //<LICENCE>
-
 #ifndef MORPHDIST_HPP_
 #define MORPHDIST_HPP_
 
@@ -43,6 +42,7 @@ inline float eudist(float x,float y, float z=0.0f) {return std::sqrt(eudist2(x,y
 /// \returns the displacement
 inline ptrdiff_t pixdist_x(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t sxy=0)
 {
+    (void) sxy; // Avoid unused parameter warning (sxy is only used in 3D
     ptrdiff_t d=p0%sx - p1%sx;
     if (d<0) d=-d;
     return d;
@@ -75,6 +75,7 @@ inline ptrdiff_t pixdist_y(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t s
 /// \returns the displacement
 inline ptrdiff_t pixdist_z(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t sxy=0)
 {
+    (void) sx;
     ptrdiff_t d=p0/sxy - p1/sxy;
     return d<0 ? -d : d;
 }
@@ -123,7 +124,8 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
     const size_t sxy=dims[0]*dims[1];
 
     ptrdiff_t pos;
-    size_t p,j;
+    size_t p; //,j;
+
     kipl::base::PixelIterator NG(dims,conn);
 
     const unsigned short max_dist=numeric_limits<unsigned short>::max();
@@ -169,9 +171,9 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
                 pImy[i]=max_dist;
 
             NG.setPosition(i);
-            for (const auto & p : NG.neighborhood())
+            for (const auto & pp : NG.neighborhood())
             {
-                pos = p + i;
+                pos = pp + i;
                 if (pMask[pos]==static_cast<MaskType>(0))
                 {
                     fifoA.push_back(i);
@@ -186,7 +188,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 
     float dmin, dp, current_dist;
 
-    size_t itcnt=0;
+    size_t itcnt=0UL;
     ptrdiff_t pdx,pdy,pdz;
     size_t procCnt=0, maxCnt=mask.Size()-maskCnt;
 
@@ -194,29 +196,29 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
     {
         dmin=numeric_limits<float>::max();
 
-        for (const auto &p : *rFifoA)
+        for (const auto &pp : *rFifoA)
         {
-            if (pImx[p]!=max_dist)
+            if (pImx[pp]!=max_dist)
             {// Distance has already been computed
                 continue;
             }
             dp=numeric_limits<float>::max();
-            NG.setPosition(p);
+            NG.setPosition(pp);
             if (NDim==2)
             {
                 for (const auto &neighborPix : NG.neighborhood())
                 {
-                    pos = p + neighborPix;
+                    pos = pp + neighborPix;
                     if (pImx[pos]!=max_dist)
                     {
-                        pdx=pixdist_x(pos,p,sx);
-                        pdy=pixdist_y(pos,p,sx);
+                        pdx=pixdist_x(pos,pp,sx);
+                        pdy=pixdist_y(pos,pp,sx);
                         current_dist=eudist2(static_cast<float>(pImx[pos]+pdx),
                             static_cast<float>(pImy[pos]+pdy));
 
                         if (current_dist<dp) {
-                            pImx[p]=pImx[pos]+pdx;
-                            pImy[p]=pImy[pos]+pdy;
+                            pImx[pp]=pImx[pos]+pdx;
+                            pImy[pp]=pImy[pos]+pdy;
                             dp=current_dist;
                         }
                     }
@@ -250,8 +252,9 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
             }
         }
 
-        size_t propCnt=0;
-        size_t retCnt=0;
+        // size_t propCnt = 0UL;
+        // size_t retCnt  = 0UL;
+
         while (!rFifoA->empty())
         {
             p=rFifoA->front();
@@ -262,12 +265,12 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
                 // Delay the propagation for
                 // distances greater than dmin
                 rFifoB->push_back(p);
-                propCnt++;
+                // propCnt++;
             }
             else
             {
                 procCnt++;
-                retCnt++;
+                // retCnt++;
                 NG.setPosition(p);
                 for (auto const & neighborPix : NG.neighborhood())
                 {
@@ -291,10 +294,13 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
             rFifoA=&fifoA;
             rFifoB=&fifoB;
         }
-        msg.str("");
-        msg<<"Processed "<<procCnt<<" of "<<maxCnt;
-
+        
         itcnt++;
+
+        msg.str("");
+        msg<<"Processed "<<procCnt<<" of "<<maxCnt<<" using "<<itcnt<<" iterations ";
+
+        logger.verbose(msg.str());
     }
     //logger(kipl::logging::Logger::LogVerbose,"Calculating distances from coordinate fields");
 
@@ -306,6 +312,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
     else
         for (p=0; p<imx.Size(); p++)
                 pDist[p]=static_cast<DistType>(eudist(pImx[p],pImy[p],pImz[p]));
+
 
     return 0;
 }
@@ -343,31 +350,36 @@ int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
     dist.resize(dims);
 
     MaskType *pImg;
-    float *pDist;
+    float    *pDist;
 
     metric.initialize(dims);
 
-    int start=metric.start();
-    ptrdiff_t N=static_cast<size_t>(img.Size());
+    int start   = metric.start();
+    ptrdiff_t N = static_cast<size_t>(img.Size());
 
-    pDist=dist.GetDataPtr();
-    pImg=img.GetDataPtr();
+    pDist = dist.GetDataPtr();
+    pImg  = img.GetDataPtr();
 
     // Initialize
-    if (complement) {
+    if (complement)
+    {
         for (ptrdiff_t i=0; i<N; i++)
             pDist[i]= pImg[i]!=static_cast<MaskType>(0) ? 0.0f: object;
     }
-    else {
+    else 
+    {
         for (ptrdiff_t i=0; i<N; i++)
             pDist[i]= pImg[i]==static_cast<MaskType>(0) ? 0.0f: object;
     }
 
     // Forward scan
-    for (size_t z=start; z<dims[2]-start; z++) {
-        for (size_t y=start; y<dims[1]-start ; y++) {
+    for (size_t z=start; z<dims[2]-start; z++) 
+    {
+        for (size_t y=start; y<dims[1]-start ; y++) 
+        {
             pDist=dist.GetLinePtr(y,z);
-            for (size_t x=start; x<dims[0]-start; x++) {
+            for (size_t x=start; x<dims[0]-start; x++) 
+            {
                 if (pDist[x])
                     pDist[x]=metric.forward(pDist+x);
             }
@@ -375,10 +387,13 @@ int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
     }
 
     // Backward scan
-    for (size_t z=dims[2]-1-start; start<=z; z--) {
-        for (size_t y=dims[1]-1-start; start<=y ; y--) {
+    for (ptrdiff_t z=dims[2]-1-start; start<=z; z--) 
+    {
+        for (ptrdiff_t y=dims[1]-1-start; start<=y ; y--) 
+        {
             pDist=dist.GetLinePtr(y,z);
-            for (size_t x=dims[0]-1-start; start<=x;  x--) {
+            for (ptrdiff_t x=dims[0]-1-start; start<=x;  x--) 
+            {
                 if (pDist[x])
                     pDist[x]=metric.backward(pDist+x);
             }
@@ -388,7 +403,8 @@ int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
     // Cleanup
     pDist=dist.GetDataPtr();
 
-    for (ptrdiff_t i=0; i<N; i++) {
+    for (ptrdiff_t i=0; i<N; i++) 
+    {
         if (pDist[i]==object)
             pDist[i]=0.0f;
     }
@@ -428,7 +444,7 @@ int DistanceTransform2D(kipl::base::TImage<ImgType,2> &img,
         pDist=dist.GetLinePtr(y)+start;
         for (x=start; x<dims[0]-start; x++,pDist++) {
             if (*pDist)
-                *pDist=(DistType)metric.forward(pDist);
+                *pDist=static_cast<DistType>(metric.forward(pDist));
         }
     }
 
@@ -436,13 +452,14 @@ int DistanceTransform2D(kipl::base::TImage<ImgType,2> &img,
         pDist=dist.GetLinePtr(y)+dims[0]-1-start;
         for (x=dims[0]-1-start; x>=start; x--,pDist--) {
             if (*pDist)
-                *pDist=(DistType)metric.backward(pDist);
+                *pDist=static_cast<DistType>(metric.backward(pDist));
         }
     }
 
     pDist=dist.GetDataPtr();
+    const DistType one=1;
     for (x=0; x<dist.Size(); x++, pDist++)
-        if (*pDist==numeric_limits<DistType>::max()) *pDist=(DistType)1;
+        if (*pDist==numeric_limits<DistType>::max()) *pDist=one;
 
     return 1;
 }
@@ -482,6 +499,7 @@ inline float eudist(float x,float y, float z=0.0f) {return sqrt(eudist2(x,y,z));
 /// \returns the displacement
 inline ptrdiff_t pixdist_x(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t sxy=0) 
 {
+    (void) sxy; // Avoid unused parameter warning (sxy is only used in 3D
 	ptrdiff_t d=p0%sx - p1%sx;
 	if (d<0) d=-d;
 	return d;
@@ -514,6 +532,7 @@ inline ptrdiff_t pixdist_y(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t s
 /// \returns the displacement
 inline ptrdiff_t pixdist_z(ptrdiff_t p0, ptrdiff_t p1, ptrdiff_t sx, ptrdiff_t sxy=0) 
 {
+    (void) sx;
 	ptrdiff_t d=p0/sxy - p1/sxy;
 	return d<0 ? -d : d;
 }
@@ -581,10 +600,10 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 //	logger(kipl::logging::Logger::LogVerbose,"Initializing");
 	MaskType *pMask=mask.GetDataPtr();
 	if (complement)
-		for (int i=0; i<mask.Size(); i++)
+		for (size_t i=0; i<mask.Size(); i++)
 			pMask[i]=(pMask[i]==0);
 	else
-		for (int i=0; i<mask.Size(); i++)
+		for (size_t i=0; i<mask.Size(); i++)
 			pMask[i]=(pMask[i]!=0);
 
 
@@ -622,13 +641,13 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 			maskCnt++;
 	}
 
-//	logger(kipl::logging::Logger::LogVerbose,"Euclidean ordered propagation");
 	float dmin, dp, current_dist;
 
 	deque<size_t>::iterator it;
-	size_t itcnt=0;
+	// size_t itcnt   = 0UL;
 	ptrdiff_t pdx,pdy,pdz;
-	size_t procCnt=0, maxCnt=mask.Size()-maskCnt;
+	size_t procCnt = 0UL;
+    size_t maxCnt  = mask.Size()-maskCnt;
 
 	while ((!rFifoA->empty()) && (procCnt<maxCnt)) {
 		dmin=numeric_limits<float>::max();
@@ -681,8 +700,8 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 					dmin=dp;
 			}
 		}
-		size_t propCnt=0;
-		size_t retCnt=0;
+		// size_t propCnt=0;
+		// size_t retCnt=0;
 		while (!rFifoA->empty()) {
 			p=rFifoA->front();
 			rFifoA->pop_front();
@@ -691,11 +710,11 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 				// Delay the propagation for
 				// distances greater than dmin
 				rFifoB->push_back(p);
-				propCnt++;
+				// propCnt++;
 			}
 			else {
 				procCnt++;
-				retCnt++;
+				// retCnt++;
 				for (j=0; j<Nng; j++) {
 					if ((pos=NG.neighbor(p,j))!=-1) {
 						if (pMask[pos]==1) {
@@ -719,7 +738,7 @@ int EuclideanDistance(kipl::base::TImage<MaskType,NDim> &mask,
 		msg<<"Processed "<<procCnt<<" of "<<maxCnt;
 	//	logger(kipl::logging::Logger::LogDebug,msg.str());
 		
-		itcnt++;
+		// itcnt++;
 	}
 	//logger(kipl::logging::Logger::LogVerbose,"Calculating distances from coordinate fields");
 	
@@ -800,10 +819,10 @@ int DistanceTransform3D(kipl::base::TImage<MaskType,3> &img,
     }
 
     // Backward scan
-    for (size_t z=dims[2]-1-start; start<=z; z--) {
-    	for (size_t y=dims[1]-1-start; start<=y ; y--) {
+    for (ptrdiff_t z=dims[2]-1-start; start<=z; z--) {
+    	for (ptrdiff_t y=dims[1]-1-start; start<=y ; y--) {
     		pDist=dist.GetLinePtr(y,z);
-    		for (size_t x=dims[0]-1-start; start<=x;  x--) {
+    		for (ptrdiff_t x=dims[0]-1-start; start<=x;  x--) {
     			if (pDist[x])
     				pDist[x]=metric.backward(pDist+x);
     		}
@@ -829,7 +848,6 @@ template<typename ImgType, typename DistType>
 int DistanceTransform2D(kipl::base::TImage<ImgType,2> &img,
 		kipl::base::TImage<DistType,2> &dist, CMetricBase &metric)
 {
-	int x,y;
     size_t const * const dims=img.Dims();
     dist.Resize(dims);
 
@@ -841,33 +859,36 @@ int DistanceTransform2D(kipl::base::TImage<ImgType,2> &img,
     int start=metric.start();
 	dist=numeric_limits<DistType>::max();
 
-	for (y=start; y<dims[1]-start; y++) {
+    int dimy = dims[1];
+    int dimx = dims[0];
+	for (auto y=start; y<dimy-start; y++) {
 		pDist=dist.GetLinePtr(y)+start;
 		pImg=img.GetLinePtr(y)+start;
-		for (x=start; x<dims[0]-start; x++,pDist++, pImg++) {
+		for (auto x=start; x<dimx-start; x++,pDist++, pImg++) {
 			*pDist= *pImg==0 ? 0: numeric_limits<DistType>::max();
 		}
  	}
 
-	for (y=start; y<dims[1]-start; y++) {
+	for (auto y=start; y<dimy-start; y++) {
 		pDist=dist.GetLinePtr(y)+start;
-		for (x=start; x<dims[0]-start; x++,pDist++) {
+		for (auto x=start; x<dimx-start; x++,pDist++) {
 			if (*pDist)
-				*pDist=(DistType)metric.forward(pDist);
+				*pDist=static_cast<DistType>(metric.forward(pDist));
 		}
 	}
 
-	for (y=dims[1]-1-start; y>=start; y--) {
+	for (auto y=dimy-1-start; y>=start; y--) {
 		pDist=dist.GetLinePtr(y)+dims[0]-1-start;
-		for (x=dims[0]-1-start; x>=start; x--,pDist--) {
+		for (auto x=dimx-1-start; x>=start; x--,pDist--) {
 			if (*pDist)
-				*pDist=(DistType)metric.backward(pDist);
+				*pDist=static_cast<DistType>(metric.backward(pDist));
 		}
 	}
 
     pDist=dist.GetDataPtr();
-    for (x=0; x<dist.Size(); x++, pDist++)
-        if (*pDist==numeric_limits<DistType>::max()) *pDist=(DistType)1;
+    const DistType one=1;
+    for (auto x=0; x<dist.Size(); x++, pDist++)
+        if (*pDist==numeric_limits<DistType>::max()) *pDist=one;
 
     return 1;
 }
