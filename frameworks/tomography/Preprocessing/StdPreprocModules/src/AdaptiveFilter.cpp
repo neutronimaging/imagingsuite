@@ -52,6 +52,11 @@ int AdaptiveFilter::Configure(ReconConfig config, std::map<std::string, std::str
 	return 1;
 }
 
+bool AdaptiveFilter::SetROI(const std::vector<size_t> & /*roi*/) 
+{
+    return false;
+}
+
 std::map<std::string, std::string> AdaptiveFilter::GetParameters()
 {
     std::map<std::string, std::string> parameters;
@@ -87,7 +92,7 @@ int AdaptiveFilter::ProcessSingle(kipl::base::TImage<float,2> &img, std::map<std
     return SimpleFilter(img,parameters);
 }
 
-int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters)
+int AdaptiveFilter::SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> & /*parameters*/)
 {
 
        float mymax = *std::max_element(img.GetLinePtr(0), img.GetLinePtr(0)+img.Size()); // find the max value
@@ -365,7 +370,7 @@ void AdaptiveFilter::MinMaxProfile(kipl::base::TImage<float,2> &img, std::vector
     size_t Nx=img.Size(0);
     size_t Ny=img.Size(1);
 
-    size_t pdims[1]={Ny};
+    // size_t pdims[1]={Ny};
 
     minprofile.resize(Ny);
     maxprofile.resize(Ny);

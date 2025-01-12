@@ -1,63 +1,53 @@
-include(FetchContent)
+cmake_minimum_required(VERSION 3.14)
 
-FetchContent_Declare(
-  pybind11_sources
-  GIT_REPOSITORY https://github.com/pybind/pybind11.git
-  GIT_TAG        v2.2
-)
+set(TARGET_NAME "StdPreprocModules")
+project(kipl LANGUAGES CXX)
 
-FetchContent_GetProperties(pybind11_sources)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(NOT pybind11_sources_POPULATED)
-  FetchContent_Populate(pybind11_sources)
-
-  add_subdirectory(
-    ${pybind11_sources_SOURCE_DIR}
-    ${pybind11_sources_BINARY_DIR}
-    )
-    add_definitions(-DHAVEPYBIND11 -DNO_QT)
-endif()
-
-include_directories(../../../../core/kipl/kipl/include
-    /opt/local/include
-    /opt/local/include/libxml2
-    ../../../../external/src/linalg
+if (APPLE)
+include_directories(
+    ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
-    ../../../../external/mac/include/
-    ../../../../external/mac/include/nexus
-    ../../../../external/mac/include/hdf5
+    ../../../../core/modules/ReaderConfig
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    # ../../../../../ExternalDependencies/macos/include
+
     )
-link_directories(../../../../../lib /opt/local/lib )
+endif()
 
-# add_definitions(-DVERSION="1.6.0")
-# create python module
-add_library(stdpreprocmodules
-  MODULE
+if (UNIX)
+include_directories(
+    ../../Framework/ReconFramework/include/
+    ../../../../core/kipl/kipl/include
+    ../../../../core/modules/ModuleConfig/include
+    ../../../../core/modules/ReaderConfig
+    ../../../../core/algorithms/ImagingAlgorithms/include
+    )
+endif()
 
-  src/AdaptiveFilter.cpp
-  src/SinoSpotClean.cpp
-  src/BasicRingClean.cpp
-  src/SpotClean.cpp
-  src/CameraStripeClean.cpp
-  src/SpotClean2.cpp
-  src/DataScaler.cpp
-  src/SpotRingClean.cpp
-  src/GammaSpotCleanModule.cpp
-  src/StdPreprocModules.cpp
-  src/GeneralFilter.cpp
-  src/TranslateProjectionsModule.cpp
-I src/SSfilter.cpp
-  src/TranslatedProjectionWeighting.cpp
-  src/MedianMixRingClean.cpp
-  src/WaveletRingClean.cpp
-  src/MorphSpotCleanModule.cpp
-  src/bblognorm.cpp
-  src/NormPlugins.cpp
-  src/PolynomialCorrectionModule.cpp
-  src/PreprocEnums.cpp
-  src/ProjectionFilter.cpp
+if (WIN32)
+    include_directories(
+        ../../../../core/kipl/kipl/include
+        ../../../../core/modules/ModuleConfig/include
+        ../../../../core/modules/ReaderConfig
+        ../../../../core/algorithms/ImagingAlgorithms/include
+        ../../Framework/ReconFramework/include
+        # ../../../../../ExternalDependencies/windows/include
+        # ../../../../../ExternalDependencies/windows/include/nexus
+        # ../../../../../ExternalDependencies/windows/include/cfitsio
+        # ../../../../../ExternalDependencies/windows/include/libxml2
+        # ../../../../external/include/
+        )
+endif()
 
+
+
+
+set(INC_FILES
   include/AdaptiveFilter.h
   include/ISSfilter.h
   include/ProjectionFilter.h
@@ -81,22 +71,81 @@ I src/SSfilter.cpp
   include/GeneralFilter.h
   include/PreprocEnums.h
   include/StdPreprocModules.h
+  include/ReplaceUnderexposedModule.h
+)
+
+set(SRC_FILES 
+  src/AdaptiveFilter.cpp
+  src/SinoSpotClean.cpp
+  src/BasicRingClean.cpp
+  src/SpotClean.cpp
+  src/CameraStripeClean.cpp
+  src/SpotClean2.cpp
+  src/DataScaler.cpp
+  src/SpotRingClean.cpp
+  src/GammaSpotCleanModule.cpp
+  src/StdPreprocModules.cpp
+  src/GeneralFilter.cpp
+  src/TranslateProjectionsModule.cpp
+  src/ISSfilter.cpp
+  src/TranslatedProjectionWeighting.cpp
+  src/MedianMixRingClean.cpp
+  src/WaveletRingClean.cpp
+  src/MorphSpotCleanModule.cpp
+  src/bblognorm.cpp
+  src/NormPlugins.cpp
+  src/PolynomialCorrectionModule.cpp
+  src/PreprocEnums.cpp
+  src/ProjectionFilter.cpp
+  src/ReplaceUnderexposedModule.cpp
+)
+
+add_library(${TARGET_NAME} SHARED
+  ${SRC_FILES}
+  ${INC_FILES}
   )
 
-target_link_libraries(stdpreprocmodules
+set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+
+# target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY HAVE_NEXUS )
+target_compile_definitions(${TARGET_NAME} PRIVATE STDPREPROCMODULES_LIBRARY )
+
+#add_definitions(-DHAVE_NEXUS )
+
+  message("StdPreprocModules ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  if (WIN32)
+    # target_link_directories(${TARGET_NAME} PUBLIC
+    # ../../../../../ExternalDependencies/windows/lib
+    # # ../../../../../imagingsuite/external/lib64
+    # # ../../../../../imagingsuite/external/lib64/nexus
+    # )
+  
+  target_link_libraries(${TARGET_NAME}
   PUBLIC
-    pybind11::module
+        kipl
+        ImagingAlgorithms
+        ModuleConfig
+        ReaderConfig
+        ReconFramework
+        # liblapack
+        # ${OpenBLAS_LIBRARIES}
 
-  PRIVATE
-    kipl
-    xml2
-    tiff
-    ModuleConfig
-    reconframework
-  )
+      )
+endif()
 
-set_target_properties(stdpreprocmodules
-  PROPERTIES
-    PREFIX "${PYTHON_MODULE_PREFIX}"
-    SUFFIX "${PYTHON_MODULE_EXTENSION}"
-  )
+if (UNIX)
+      # target_link_directories(${TARGET_NAME} PUBLIC
+      #   ../../../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
+      # )
+  
+      target_link_libraries(${TARGET_NAME}
+          PUBLIC
+          kipl
+          ImagingAlgorithms
+          ModuleConfig
+          ReaderConfig
+          ReconFramework
+      )
+  endif()
+
+  install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

@@ -9,27 +9,23 @@
 #include "../kipl_global.h"
 
 namespace kipl { namespace base {
+    class coords3Df;
     /// \brief Struct to contain a 2D position
-    struct KIPLSHARED_EXPORT coords3D {
+    class KIPLSHARED_EXPORT coords3D {
+        public:
         /// \brief constructor to initialize the struct
         /// \param xx x coordinate
         /// \param yy y coordinate
         /// \param zz z coordinate
-        coords3D(short xx,short yy, short zz) : x(xx), y(yy), z(zz), reserved(0) {}
+        coords3D(short xx,short yy, short zz);
+        coords3D(const coords3Df &c);
+
+        coords3D(const std::vector<short> &v);
+        coords3D(const std::vector<int> &v);
+        coords3D(const std::vector<size_t> &v);
 
         /// \param C'tor to set the struct to default values (all =0)
-		coords3D() : x(0), y(0), z(0), reserved(0) {}
-
-//        /// \brief Copy c'tor
-//        /// \param c the instance to copy
-//		coords3D(const coords3D &c) : x(c.x), y(c.y), z(c.z), reserved(c.reserved) {}
-
-//        /// \brief Assignment operator
-//        /// \param c the instance to copy
-//		const coords3D & operator=(const coords3D & c) {
-//			x=c.x; y=c.y; z=c.z; reserved=c.reserved;
-//			return *this;
-//		}
+		coords3D();
 
         short x; ///< The x coordinate
         short y; ///< The y coordinate
@@ -39,38 +35,31 @@ namespace kipl { namespace base {
         /// \brief Equality test
         /// \param c the instance to compare
         /// \returns the status of the test (true if equal otherwise false)
-		bool operator==(const coords3D &c) {
-			return (c.x==x) && (c.y==y) && (c.z==z);
-		}
+		bool operator==(const coords3D &c);
 
         /// \brief Inequality test
         /// \param c the instance to compare
         /// \returns the status of the test (false if equal otherwise true)
-        bool operator!=(const coords3D &c) {
-			return !(operator==(c));
-		}
+        bool operator!=(const coords3D &c);
 	};
 
-    struct KIPLSHARED_EXPORT coords3Df {
+    class KIPLSHARED_EXPORT coords3Df {
+    public:
         /// \brief constructor to initialize the struct
         /// \param xx x coordinate
         /// \param yy y coordinate
         /// \param zz z coordinate
-        coords3Df(float xx,float yy, float zz) : x(xx), y(yy), z(zz), reserved(0.0f) {}
+        coords3Df(float xx,float yy, float zz);
+        coords3Df(const coords3D &c);
+
+        coords3Df(const std::vector<float> &v);
+        coords3Df(const std::vector<double> &v);
+        coords3Df(const std::vector<int> &v);
+        coords3Df(const std::vector<size_t> &v);
+        
 
         /// \param C'tor to set the struct to default values (all =0)
-        coords3Df() : x(0.0f), y(0.0f), z(0.0f), reserved(0.0f) {}
-
-//        /// \brief Copy c'tor
-//        /// \param c the instance to copy
-//        coords3Df(const coords3D &c) : x(c.x), y(c.y), z(c.z), reserved(c.reserved) {}
-
-//        /// \brief Assignment operator
-//        /// \param c the instance to copy
-//        const coords3Df & operator=(const coords3Df & c) {
-//            x=c.x; y=c.y; z=c.z; reserved=c.reserved;
-//            return *this;
-//        }
+        coords3Df();
 
         float x; ///< The x coordinate
         float y; ///< The y coordinate
@@ -80,16 +69,12 @@ namespace kipl { namespace base {
         /// \brief Equality test
         /// \param c the instance to compare
         /// \returns the status of the test (true if equal otherwise false)
-        bool operator==(const coords3Df &c) {
-            return (c.x==x) && (c.y==y) && (c.z==z);
-        }
+        bool operator==(const coords3Df &c);
 
         /// \brief Inequality test
         /// \param c the instance to compare
         /// \returns the status of the test (false if equal otherwise true)
-        bool operator!=(const coords3Df &c) {
-            return !(operator==(c));
-        }
+        bool operator!=(const coords3Df &c);
     };
 
     /// \brief Struct to contain a 2D position
@@ -149,6 +134,12 @@ namespace kipl { namespace base {
         /// \param c coordinate struct containing the 2D coordinates
         /// \returns always true
         bool operator () (size_t pos, coords2D &c);
+
+        size_t sx();
+        size_t sxy();
+        double invSX();
+        double invSXY();
+        
 	private:
 		size_t nSX;
 		size_t nSXY;

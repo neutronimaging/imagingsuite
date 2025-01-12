@@ -13,6 +13,7 @@
 #include <base/KiplException.h>
 #include <math/mathconstants.h>
 #include <base/tpermuteimage.h>
+#include "../include/ImagingException.h"
 
 namespace ImagingAlgorithms {
 TomoCenter::TomoCenter() :
@@ -232,10 +233,12 @@ float TomoCenter::CorrelationCenter()
     return 0.0f;
 }
 
-float TomoCenter::CenterOfGravity(const kipl::base::TImage<float, 2> img,
-                                  size_t start,
-                                  size_t end)
+float TomoCenter::CenterOfGravity(const kipl::base::TImage<float, 2> /*img*/,
+                                  size_t /*start*/,
+                                  size_t /*end*/)
 {
+    throw ImagingException("Center of gravity not implemented",__FILE__,__LINE__);
+
     return 0.0f;
 }
 

@@ -30,9 +30,8 @@ copy %REPOS%\imagingsuite\external\lib64\libjpeg-62.dll .
 copy %REPOS%\imagingsuite\external\lib64\zlib1.dll .
 copy %REPOS%\imagingsuite\external\lib64\libfftw3-3.dll .
 copy %REPOS%\imagingsuite\external\lib64\libfftw3f-3.dll .
-copy %REPOS%\imagingsuite\external\lib64\libxml2-2.dll .
-copy %REPOS%\imagingsuite\external\lib64\libiconv.dll .
-copy %REPOS%\imagingsuite\external\lib64\cfitsio.dll .
+
+
 copy %REPOS%\imagingsuite\external\lib64\nexus\NeXus.dll .
 copy %REPOS%\imagingsuite\external\lib64\nexus\NexusCPP.dll .
 copy %REPOS%\imagingsuite\external\lib64\hdf5\hdf5.dll .
@@ -46,7 +45,11 @@ copy %REPOS%\imagingsuite\external\lib64\libquadmath-0.dll .
 copy %REPOS%\imagingsuite\external\lib64\libwinpthread-1.dll .
 copy %REPOS%\imagingsuite\external\lib64\libblas.dll .
 copy %REPOS%\imagingsuite\external\lib64\liblapack.dll .
-copy %REPOS%\ExternalDependencies\windows\bin\libopenblas.dll
+
+copy %REPOS%\ExternalDependencies\windows\bin\libopenblas.dll .
+copy %REPOS%\ExternalDependencies\windows\bin\cfitsio.dll .
+copy %REPOS%\ExternalDependencies\windows\bin\libxml2.dll .
+
 
 copy %REPOS%\Applications\MuhRec.exe .
 copy %REPOS%\Applications\MuhRecCLI.exe .
@@ -62,8 +65,11 @@ windeployqt %DEST%\multiframesplitter.exe
 windeployqt %DEST%\muhrec.exe
 windeployqt %DEST%\muhrecCLI.exe
 
-copy Qt5PrintSupport.dll %DEST%
-copy Qt5Charts.dll %DEST%
+copy Qt6PrintSupport.dll %DEST%
+copy Qt6Charts.dll %DEST%
+copy Qt6OpenGLWidgets.dll %DEST%
+copy Qt6OpenGl.dll %DEST%
+
 
 popd
 for /F "usebackq tokens=1,2 delims==" %%i in (`wmic os get LocalDateTime /VALUE 2^>NUL`) do if '.%%i.'=='.LocalDateTime.' set ldt=%%j

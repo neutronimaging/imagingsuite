@@ -5,8 +5,20 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <emmintrin.h>
-#include <xmmintrin.h>
+
+#ifdef __aarch64__
+    #pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wold-style-cast"
+	#pragma clang diagnostic ignored "-Wcast-align"
+	#pragma clang diagnostic ignored "-Wpedantic"
+	#pragma clang diagnostic ignored "-W#warnings"
+		#include <sse2neon/sse2neon.h>
+	#pragma clang diagnostic pop
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
+
 #include <iostream>
 #include <set>
 #include <limits>
@@ -107,7 +119,7 @@ std::map<std::string, std::string> SpotClean2::GetParameters()
 	return parameters;
 }
 
-int SpotClean2::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &coeff)
+int SpotClean2::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & /*coeff*/)
 {
 	std::ostringstream msg;
 	msg.str("");
@@ -119,7 +131,7 @@ int SpotClean2::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::str
 	return 0;
 }
 
-int SpotClean2::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> &coeff)
+int SpotClean2::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> &/*coeff*/)
 {
 	std::ostringstream msg;
 	msg.str("");

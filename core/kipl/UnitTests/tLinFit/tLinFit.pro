@@ -41,6 +41,9 @@ unix {
 }
 
 win32 {
+    contains(QMAKE_HOST.arch, x86_64):{
+        QMAKE_LFLAGS += /MACHINE:X64
+    }
     INCLUDEPATH += $$PWD/../../../../external/include $$PWD/../../../../external/include/cfitsio
     LIBPATH += $$PWD/../../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2

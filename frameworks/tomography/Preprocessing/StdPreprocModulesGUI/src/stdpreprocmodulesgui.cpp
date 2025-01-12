@@ -16,10 +16,11 @@
 #include "adaptivefilterdlg.h"
 #include "generalfilterdlg.h"
 #include "bblognormdlg.h"
+#include "ReplaceUnderexposedDlg.h"
 
 class ConfiguratorDialogBase;
 
-STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const char *name, void *interactor)
+STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, const char *name, void * /*interactor*/)
 {
 	if (strcmp(application,"muhrec")!=0)
         return nullptr;
@@ -72,6 +73,9 @@ STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, co
 
         if (sName=="MorphSpotClean")
             return new MorphSpotCleanDlg;
+
+        if (sName=="ReplaceUnderexposed")
+            return new ReplaceUnderexposedDlg;
 
 	}	
     return nullptr;

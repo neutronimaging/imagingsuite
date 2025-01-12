@@ -2,11 +2,11 @@
 #include <armadillo>
 #include "../../include/segmentation/multivariateclassifyerbase.h"
 
-#include "../include/base/KiplException.h"
+#include "../../include/base/KiplException.h"
 namespace kipl {
 
 namespace segmentation {
-ClassDescriptor::ClassDescriptor(std::string _name)
+ClassDescriptor::ClassDescriptor(std::string /*_name*/)
 {
 
 }
@@ -71,7 +71,7 @@ double ClassDescriptor::EuclideanDistance(ClassDescriptor &cd)
     return sqrt(EuclideanDistance2(cd));
 }
 
-double ClassDescriptor::EuclideanDistance2(ClassDescriptor &cd)
+double ClassDescriptor::EuclideanDistance2(ClassDescriptor & /*cd*/)
 {
     double val=0.0;
     double sum=0.0;
@@ -84,7 +84,7 @@ double ClassDescriptor::EuclideanDistance2(ClassDescriptor &cd)
     return sum;
 }
 
-double ClassDescriptor::MahalanobisDistance(ClassDescriptor &cd)
+double ClassDescriptor::MahalanobisDistance(ClassDescriptor & /*cd*/)
 {
     throw kipl::base::KiplException("MahalanobisDistance is not implemented",__FILE__,__LINE__);
 

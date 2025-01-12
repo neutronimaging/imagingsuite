@@ -105,7 +105,7 @@ void SpotClean2Dlg::ApplyParameters()
     float threshold[N];
 
     for (size_t i=0; i<N; i++) {
-        threshold[i]=kipl::math::Sigmoid(axis[i], m_fGamma, m_fSigma);
+        threshold[i]=kipl::math::sigmoid(axis[i], m_fGamma, m_fSigma);
     }
     ui->plot_detection->setCurveData(1,axis,threshold,N99,"Threshold weight");
 
@@ -220,26 +220,44 @@ void SpotClean2Dlg::on_combo_detection_display_currentIndexChanged(int index)
 
 void SpotClean2Dlg::on_buttonBox_clicked(QAbstractButton *button)
 {
-        std::ostringstream msg;
-        QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
+    std::ostringstream msg;
+    QDialogButtonBox::StandardButton standardButton = ui->buttonBox->standardButton(button);
 
-        logger(kipl::logging::Logger::LogMessage,"Clicked on button box");
-        switch(standardButton) {
-            // Standard buttons:
-            case QDialogButtonBox::Ok:
-                logger(kipl::logging::Logger::LogMessage,"Ok");
-                UpdateParameters();
-                accept();
-                break;
-            case QDialogButtonBox::Cancel:
-            logger(kipl::logging::Logger::LogMessage,"Cancel");
-                reject();
-                break;
-            case QDialogButtonBox::Apply:
-            logger(kipl::logging::Logger::LogMessage,"Apply");
-                ApplyParameters();
-                break;
-            }
+    logger(kipl::logging::Logger::LogMessage,"Clicked on button box");
+    switch(standardButton) {
+        // Standard buttons:
+        case QDialogButtonBox::Ok:
+            logger(kipl::logging::Logger::LogMessage,"Ok");
+            UpdateParameters();
+            accept();
+            break;
+        case QDialogButtonBox::Cancel:
+        logger(kipl::logging::Logger::LogMessage,"Cancel");
+            reject();
+            break;
+        case QDialogButtonBox::Apply:
+        logger(kipl::logging::Logger::LogMessage,"Apply");
+            ApplyParameters();
+            break;
+
+        // Unused buttons:
+        case QDialogButtonBox::NoButton        : break;
+        case QDialogButtonBox::Save            : break;
+        case QDialogButtonBox::SaveAll         : break;
+        case QDialogButtonBox::Open            : break;
+        case QDialogButtonBox::Yes             : break;
+        case QDialogButtonBox::YesToAll        : break;
+        case QDialogButtonBox::No              : break;
+        case QDialogButtonBox::NoToAll         : break;
+        case QDialogButtonBox::Abort           : break;
+        case QDialogButtonBox::Retry           : break;
+        case QDialogButtonBox::Ignore          : break;
+        case QDialogButtonBox::Close           : break;
+        case QDialogButtonBox::Discard         : break;
+        case QDialogButtonBox::Help            : break;
+        case QDialogButtonBox::Reset           : break;
+        case QDialogButtonBox::RestoreDefaults : break;
+    }
 }
 
 

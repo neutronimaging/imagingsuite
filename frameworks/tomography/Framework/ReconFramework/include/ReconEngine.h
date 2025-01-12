@@ -5,16 +5,17 @@
 #include "ReconFramework_global.h"
 
 #include <list>
+#include <string>
+
+#include <interactors/interactionbase.h>
+#include <logging/logger.h>
+#include <base/kiplenums.h>
+
 #include "PreprocModuleBase.h"
 #include "BackProjectorModuleBase.h"
 #include "ProjectionReader.h"
 #include "ReconHelpers.h"
 #include "ModuleItem.h"
-
-#include <interactors/interactionbase.h>
-#include <logging/logger.h>
-#include <base/kiplenums.h>
-#include <string>
 
 class RECONFRAMEWORKSHARED_EXPORT ProjectionBlock
 {
@@ -86,6 +87,7 @@ public:
     bool Serialize(std::vector<size_t> &dims);
 
 	size_t GetHistogram(float *axis, size_t *hist,size_t nBins);
+    size_t GetHistogram(std::vector<float> &axis, std::vector<size_t> &hist, size_t nBins);
     const std::vector<size_t> & GetMatrixDims() {return m_Volume.dims();}
     kipl::base::TImage<float,2> GetSlice(size_t index, kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY);
     std::string citations();
@@ -102,6 +104,7 @@ protected:
     int ProcessExistingProjections3D(const std::vector<size_t> &roi);
     int BackProject3D(kipl::base::TImage<float,3> & projections, const std::vector<size_t> &roi, std::map<std::string, std::string> parameters);
 	bool UpdateProgress(float val, std::string msg);
+    float CurrentOverallProgress();
     size_t validateImage(float *data, size_t N, const string &description);
 	void Done();
     void resetTimers();
@@ -121,6 +124,8 @@ protected:
 	BackProjItem * m_BackProjector;
 
 	kipl::base::TImage<float,3> m_Volume;
+    std::vector<float> m_histAxis;
+    std::vector<size_t> m_histBins;
 	std::map<float,ProjectionInfo> m_ProjectionList;
 	std::map<std::string, float> m_PreprocCoefficients;
 

@@ -18,19 +18,23 @@
 #include <base/imagecast.h>
 #include <base/tpermuteimage.h>
 #include <base/kiplenums.h>
+#include <logging/logger.h>
 #include <io/io_tiff.h>
 #include <io/io_serializecontainers.h>
 
-class TkiplbasetestTest : public QObject
+class Tkiplbase : public QObject
 {
     Q_OBJECT
 
 public:
-    TkiplbasetestTest();
+    Tkiplbase();
 
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
+
+    /// Test memory alignment
+    void testMemoryAlignment();
 
     /// Tests for ImageInformation
     void testImageInfoCtor();
@@ -43,6 +47,8 @@ private Q_SLOTS:
     void testBivariateHistogramInitialize();
 
     void testBivariateHistogram();
+
+    void testHistogram();
 
     /// Tests cropping
     void testSubImage();
@@ -63,21 +69,108 @@ private Q_SLOTS:
     /// Test OS specifying enums
     void testOSenums();
 
+    void testRotationDirection();
+
+private:
+    std::string data_path;
 };
 
-TkiplbasetestTest::TkiplbasetestTest()
+Tkiplbase::Tkiplbase()
+{
+    data_path = QT_TESTCASE_BUILDDIR;
+
+    #ifdef __APPLE__
+        data_path = data_path + "/../../../../../../TestData/";
+    #elif defined(__linux__)
+        data_path = data_path + "/../../../../../../TestData/";
+    #else
+        data_path = data_path + "/../../../../../TestData/";
+    #endif
+    kipl::strings::filenames::CheckPathSlashes(data_path,true);
+}
+
+void Tkiplbase::initTestCase()
 {
 }
 
-void TkiplbasetestTest::initTestCase()
+void Tkiplbase::cleanupTestCase()
 {
 }
 
-void TkiplbasetestTest::cleanupTestCase()
+void Tkiplbase::testMemoryAlignment()
 {
+    const size_t alignment = 4UL;
+    QCOMPARE(__STDCPP_DEFAULT_NEW_ALIGNMENT__ % alignment, 0UL);
+
+    std::vector<size_t> sizes={4,8,32,64,1024};
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new char[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new short[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new float[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new double[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new int[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
+
+    for (const auto size : sizes)
+    {
+        for (size_t i=0; i<4; ++i) 
+        {
+            auto p = new size_t[size-i];
+            auto pp = reinterpret_cast<size_t>(p);
+            QCOMPARE(pp % alignment, 0UL);
+            delete [] p;
+        }
+    }
 }
 
-void TkiplbasetestTest::testImageInfoCtor()
+void Tkiplbase::testImageInfoCtor()
 {
     kipl::base::ImageInfo infoA;
 
@@ -131,7 +224,7 @@ void TkiplbasetestTest::testImageInfoCtor()
 
 
 
-void TkiplbasetestTest::testImageInfoResolutions()
+void Tkiplbase::testImageInfoResolutions()
 {
     kipl::base::ImageInfo infoA;
 
@@ -148,11 +241,34 @@ void TkiplbasetestTest::testImageInfoResolutions()
 
 }
 
-void TkiplbasetestTest::testHighEntropyHistogram()
+void Tkiplbase::testHistogram()
+{
+    kipl::logging::Logger::SetLogLevel(kipl::logging::Logger::LogMessage);
+
+    kipl::base::TImage<float,3> img({2101,1234,123});
+
+    for (size_t i=0; i<img.Size(); ++i)
+        img[i]=static_cast<float>(i);
+
+    std::vector<float> axis;
+    std::vector<size_t> hist;
+    QBENCHMARK {
+        kipl::base::Histogram(img.GetDataPtr(),img.Size(),1024UL,hist,axis,0.0f,0.0f,false);
+    }
+    
+    size_t cnt = 0UL;
+
+    cnt = std::accumulate(hist.begin(),hist.end(),static_cast<size_t>(0)); 
+    
+    QCOMPARE(cnt,img.Size());
+}
+
+void Tkiplbase::testHighEntropyHistogram()
 {
     kipl::base::TImage<float,2> img;
-
-    kipl::io::ReadTIFF(img,"../TestData/2D/tiff/spots/balls.tif");
+    std::string fname = data_path + "2D/tiff/spots/balls.tif";
+    kipl::strings::filenames::CheckPathSlashes(fname,false);
+    kipl::io::ReadTIFF(img,fname);
     std::vector<float> axis;
     std::vector<size_t> hist;
     kipl::base::Histogram(img.GetDataPtr(),img.Size(),1024UL,hist,axis,0.0f,0.0f,false);
@@ -165,7 +281,7 @@ void TkiplbasetestTest::testHighEntropyHistogram()
 
 }
 
-void TkiplbasetestTest::testBivariateHistogramInitialize()
+void Tkiplbase::testBivariateHistogramInitialize()
 {
     kipl::base::BivariateHistogram bihi;
 
@@ -198,7 +314,7 @@ void TkiplbasetestTest::testBivariateHistogramInitialize()
     QCOMPARE(dims2[1],size_t(20));
 }
 
-void TkiplbasetestTest::testBivariateHistogram()
+void Tkiplbase::testBivariateHistogram()
 {
         kipl::base::BivariateHistogram bihi;
         bihi.Initialize(0.0f,10.0f,10,0.0f,20.0f,20);
@@ -231,7 +347,7 @@ void TkiplbasetestTest::testBivariateHistogram()
 
 }
 
-void TkiplbasetestTest::testSubImage()
+void Tkiplbase::testSubImage()
 {
     std::ostringstream msg;
 
@@ -277,7 +393,7 @@ void TkiplbasetestTest::testSubImage()
     // Test get pos and sizes
 }
 
-void TkiplbasetestTest::testRotateImage()
+void Tkiplbase::testRotateImage()
 {
     std::ostringstream msg;
 
@@ -396,7 +512,7 @@ void TkiplbasetestTest::testRotateImage()
     }
 }
 
-void TkiplbasetestTest::testMarginSetter()
+void Tkiplbase::testMarginSetter()
 {
     // 1D
     std::vector<size_t> dims1={10};
@@ -486,7 +602,7 @@ void TkiplbasetestTest::testMarginSetter()
     }
 }
 
-void TkiplbasetestTest::testProfiles()
+void Tkiplbase::testProfiles()
 {
     std::vector<size_t> dims={4,3};
     kipl::base::TImage<float,2> img(dims);
@@ -501,7 +617,7 @@ void TkiplbasetestTest::testProfiles()
     delete [] hp;
 }
 
-void TkiplbasetestTest::testImageCaster()
+void Tkiplbase::testImageCaster()
 {
     std::vector<size_t> dims={50,60,1};
 
@@ -539,7 +655,7 @@ void TkiplbasetestTest::testImageCaster()
 
 }
 
-void TkiplbasetestTest::testTranspose()
+void Tkiplbase::testTranspose()
 {
     kipl::base::Transpose<float> tr;
 
@@ -629,7 +745,7 @@ void TkiplbasetestTest::testTranspose()
 }
 
 
-void TkiplbasetestTest::testOSenums()
+void Tkiplbase::testOSenums()
 {
     QCOMPARE(enum2string(kipl::base::OSLinux),std::string("OSLinux"));
     QCOMPARE(enum2string(kipl::base::OSWindows),std::string("OSWindows"));
@@ -646,9 +762,43 @@ void TkiplbasetestTest::testOSenums()
     string2enum("OSUnknown",oe);
     QCOMPARE(oe,kipl::base::OSUnknown);
 
-    QVERIFY_EXCEPTION_THROWN(string2enum("OSMacos",oe),kipl::base::KiplException);
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,string2enum("OSMacos",oe));
+}
+// Test conversion of rotation direction to and from string, all combinations using QTest
+void Tkiplbase::testRotationDirection()
+{
+    QCOMPARE(enum2string(kipl::base::RotationDirCW),std::string("RotationDirCW"));
+    QCOMPARE(enum2string(kipl::base::RotationDirCCW),std::string("RotationDirCCW"));
+
+    kipl::base::eRotationDirection oe;
+    string2enum("cw",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCW);
+    string2enum("ccw",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCCW);
+
+    string2enum("CW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCW);
+    string2enum("CCW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCCW);
+
+    string2enum("RotationDirCW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCW);
+    string2enum("RotationDirCCW",oe);
+    QCOMPARE(oe,kipl::base::RotationDirCCW);
+
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException,string2enum("RotationDirectionclockwise",oe));
+    
 }
 
-QTEST_APPLESS_MAIN(TkiplbasetestTest)
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(Tkiplbase)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(Tkiplbase)
+#endif
+
 
 #include "tst_kiplbase.moc"

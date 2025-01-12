@@ -82,9 +82,9 @@ int  ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> &img,
                 size_t stride, //< Given in bytes
                 size_t imagesperfile,
                 kipl::base::eDataType dt,
-                kipl::base::eEndians endian,
+                kipl::base::eEndians /*endian*/,
                 size_t imageindex,
-                const std::vector<size_t> & nCrop)
+                const std::vector<size_t> & /*nCrop*/)
 {
     kipl::logging::Logger logger("ReadGeneric");
     std::ostringstream msg;
@@ -102,7 +102,7 @@ int  ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> &img,
     std::vector<size_t> dims={size_x, size_y};
     img.resize(dims);
 
-    img=(unsigned short)0;
+    img=static_cast<unsigned short>(0);
     converter data[3];
 
     char * buffer = new char[stride+(32-stride % 32)];

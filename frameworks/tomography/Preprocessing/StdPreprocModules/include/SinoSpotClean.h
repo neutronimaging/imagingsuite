@@ -1,9 +1,4 @@
-/*
- * SinoSpotClean.h
- *
- *  Created on: May 21, 2013
- *      Author: kaestner
- */
+//<LICENSE>
 
 #ifndef SINOSPOTCLEAN_H_
 #define SINOSPOTCLEAN_H_
@@ -15,7 +10,7 @@ public:
 	SinoSpotClean();
 	virtual ~SinoSpotClean();
 	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-	virtual bool SetROI(size_t *roi) {return false;}
+    virtual bool SetROI(const std::vector<size_t> &/*roi*/) {return false;}
 	virtual std::map<std::string, std::string> GetParameters();
 
 	virtual std::string Version() {

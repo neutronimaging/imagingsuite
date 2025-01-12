@@ -364,9 +364,13 @@ void Plotter::refreshPixmap()
 
     painter.begin(this);
 
-    QFontMetrics fm = painter.fontMetrics();
+    auto fm = painter.fontMetrics();
+    auto br=fm.boundingRect("-0.0000");
+    leftMargin = br.width();
+//    leftMargin = fm.horizontalAdvance("-0.0000",-1);
+//    leftMargin = fm.horizontalAdvance('-');
 
-    leftMargin = fm.horizontalAdvance("-0.0000")+Margin-10;
+    leftMargin += Margin-10;
 
     drawGrid(&painter);
     drawCurves(&painter);

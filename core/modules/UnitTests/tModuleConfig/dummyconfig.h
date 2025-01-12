@@ -12,11 +12,24 @@ public:
 
     virtual std::string SanitySlicesCheck() {return "";}
 
-    virtual void ParseConfig(xmlTextReaderPtr reader, std::string sName) {}
+    virtual void ParseConfig(xmlTextReaderPtr /*reader*/, std::string /*sName*/) {}
 
-    virtual std::string SanityMessage(bool mess) {return "";}
+    virtual std::string SanityMessage(bool /*mess*/) {return "";}
 
-    virtual void ParseProcessChain(xmlTextReaderPtr reader) {}
+    virtual void ParseProcessChain(xmlTextReaderPtr /*reader*/) {}
+
+    class cProjectionInfo {
+        public:
+            cProjectionInfo();
+
+            float fCenter;
+        
+            bool bCorrectTilt;
+        
+            std::vector<int> dose_roi;
+    };
+
+    cProjectionInfo ProjectionInfo;
 };
 
 #endif // DUMMYCONFIG_H

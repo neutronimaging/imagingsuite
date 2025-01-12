@@ -5,6 +5,10 @@
 
 #include <iomanip>
 #include <numeric>
+#include <thread>
+#include <vector>
+#include <functional>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -12,19 +16,19 @@
 #include "../../base/timage.h"
 #include "../../math/median.h"
 #include "../../base/KiplException.h"
-#include "../medianfilter.h"
+//#include "../medianfilter.h"
 
 namespace kipl { namespace filters {
 
 template <class T, size_t nDims>
-TMedianFilter<T,nDims>::TMedianFilter(const std::vector<size_t> & dims) : kipl::filters::TFilterBase<T,nDims>(dims)
+TMedianFilter<T,nDims>::TMedianFilter(const std::vector<size_t> & dims) :
+    kipl::filters::TFilterBase<T,nDims>(dims),
+    logger("TMedianFilter"),
+    medianAlgorithm(MedianAlg_HeapSortMedianSTL)
 {
-//	if (nDims!=2)
-//		throw kipl::base::KiplException("Median filter is only supported for 2D", __FILE__, __LINE__);
-	bilevel=false; 
-	quick_median=true;
-	
-	for (size_t i=0; i<nDims; i++)
+    if (nDims!=2)
+        throw kipl::base::KiplException("Median filter is only supported for 2D", __FILE__, __LINE__);
+    for (size_t i=0; i<nDims; i++)
         nHalfKernel[i]=dims[i]>>1;
 }
 
@@ -34,33 +38,36 @@ kipl::base::TImage<T,nDims> TMedianFilter<T,nDims>::operator() (kipl::base::TIma
 {
     kipl::base::TImage<T,nDims> result(src.dims());
 		
-	//QuickMedianFilter(src, result, edgeStyle);
-	HeapSortMedianFilter(src, result, edgeStyle);
-	//STLSortMedianFilter(src, result, edgeStyle);
-
-//	if (bilevel) {
-//
-//	}
-//	else if (quick_median) {
-//		QuickMedianFilter(src, result, edgeStyle);
-//	}
-//	else {
-//
-//	}
+    switch (medianAlgorithm)
+    {
+//        case MedianAlg_BiLevel:           BilevelMedianFilter(src, result, edgeStyle);     break;
+//        case MedianAlg_QuickMedian:       QuickMedianFilter(src, result, edgeStyle);       break;
+        case MedianAlg_HeapSortMedian:    HeapSortMedianFilter(src, result, edgeStyle);    break;
+        case MedianAlg_HeapSortMedianSTL: HeapSortMedianFilterSTL(src, result, edgeStyle); break;
+//        case MedianAlg_STLSortMedian:     STLSortMedianFilter(src, result, edgeStyle);     break;
+    default : HeapSortMedianFilter(src, result, edgeStyle);    break;
+    }
 
 	return result;
 }
 
 template <class T, size_t nDims>
-int TMedianFilter<T,nDims>::ExtractNeighborhood(kipl::base::TImage<T,nDims> &src, size_t const * const pos, T * data, const FilterBase::EdgeProcessingStyle edgeStyle)
+int TMedianFilter<T,nDims>::ExtractNeighborhood(kipl::base::TImage<T,nDims> &src, 
+												size_t const * const pos, 
+												T * data, 
+												const FilterBase::EdgeProcessingStyle /*edgeStyle*/)
 {
 	using namespace std;
-    int edgeinfo=static_cast<int> ((pos[0]<nHalfKernel[0]) + (((src.Size(0)-nHalfKernel[0]-1)<pos[0]) * 2) +
-            ((pos[1]<nHalfKernel[1]) * 4)  + (((src.Size(1)-nHalfKernel[1]-1)<pos[1]) * 8)) ;
+	int iPos0 = static_cast<int>(pos[0]);
+	int iPos1 = static_cast<int>(pos[1]);
+	int size0 = static_cast<int>(src.Size(0));
+	int size1 = static_cast<int>(src.Size(1));
+    int edgeinfo=static_cast<int> ((iPos0<nHalfKernel[0]) + (((size0-nHalfKernel[0]-1)<iPos0) * 2) +
+            ((iPos1<nHalfKernel[1]) * 4)  + (((size1-nHalfKernel[1]-1)<iPos1) * 8)) ;
 
 
-    int startZ = 2 < nDims ? -nHalfKernel[2] : 0 ;
-    int endZ   = 2 < nDims ? this->nKernelDims[2]-nHalfKernel[2] : 1 ;
+    // int startZ = 2 < nDims ? -nHalfKernel[2] : 0 ;
+    // int endZ   = 2 < nDims ? this->nKernelDims[2]-nHalfKernel[2] : 1 ;
 	int startY = 1 < nDims ? -nHalfKernel[1] : 1 ;
 	int endY   = 1 < nDims ? this->nKernelDims[1]-nHalfKernel[1] : 1 ;
 	int startX = -nHalfKernel[0];
@@ -69,7 +76,7 @@ int TMedianFilter<T,nDims>::ExtractNeighborhood(kipl::base::TImage<T,nDims> &src
 	T * pImg=src.GetLinePtr(pos[1])+pos[0];
 
 	memset(data,0,this->nKernelDims[0]*this->nKernelDims[1]*sizeof(T));
-    const size_t paceZ  = 2 < nDims ? src.Size(1)*src.Size(0) : 0;
+    // const size_t paceZ  = 2 < nDims ? src.Size(1)*src.Size(0) : 0;
 
 	switch (edgeinfo) {
 	case 0: break;
@@ -199,6 +206,88 @@ void TMedianFilter<T,nDims>::HeapSortMedianFilter(kipl::base::TImage<T,nDims> &s
 }
 
 template <class T, size_t nDims>
+void TMedianFilter<T,nDims>::HeapSortMedianFilterSTL(kipl::base::TImage<T,nDims> &src,
+                kipl::base::TImage<T,nDims> &result,
+                const FilterBase::EdgeProcessingStyle edgeStyle)
+{
+    const int startY = 0 ;
+    const int endY   = 1 < nDims ? src.Size(1) : 1 ;
+
+    std::ostringstream msg;
+    const size_t concurentThreadsSupported = std::thread::hardware_concurrency();
+
+
+    std::vector<std::thread> threads;
+    const size_t nLines = endY-startY;
+
+    size_t M=nLines/concurentThreadsSupported;
+
+//    msg.str("");
+//    msg<<nLines<<" lines on "<<concurentThreadsSupported<<" threads, "<<M<<" lines per thread";
+//    logger(logger.LogMessage,msg.str());
+
+    size_t begin = 0;
+    size_t end   = 0;
+    ptrdiff_t rest  = nLines % concurentThreadsSupported ; // Take care of the rest slices
+
+    for(size_t i = 0; i < concurentThreadsSupported; ++i,--rest)
+    {
+        if ( 0 < rest )
+        {
+            end = begin+M+1;
+        }
+        else
+            end = begin + M;
+
+        // spawn threads
+
+        auto pSrc = &src;
+        auto pRes = &result;
+
+        threads.push_back(std::thread([=] { HeapSortInnerLoop(pSrc,
+                                                              pRes,
+                                                              begin,
+                                                              end,
+                                                              edgeStyle); }));
+        begin = end;
+    }
+
+    // call join() on each thread in turn
+    for_each(threads.begin(), threads.end(),
+        std::mem_fn(&std::thread::join));
+
+}
+
+template <class T, size_t nDims>
+void TMedianFilter<T,nDims>::HeapSortInnerLoop(kipl::base::TImage<T,nDims> *src,
+                kipl::base::TImage<T,nDims> *result,
+                size_t begin,
+                size_t end,
+                const FilterBase::EdgeProcessingStyle edgeStyle)
+{
+    using namespace std;
+    const int startX = 0 ;
+    const int endX   = src->Size(0);
+
+    T *kern=new T[this->nKernel];
+    size_t pos[2]={0,0};
+
+    for (size_t y=begin; y<end; ++y)
+    {
+        pos[1]=y;
+        T * pLine=result->GetLinePtr(y);
+        for (int x=startX; x<endX; x++)
+        {
+            pos[0]=x;
+            ExtractNeighborhood(*src,pos,kern,edgeStyle);
+            kipl::math::median(kern,this->nKernel, pLine+x);
+        }
+    }
+
+    delete [] kern;
+}
+
+template <class T, size_t nDims>
 void TMedianFilter<T,nDims>::STLSortMedianFilter(kipl::base::TImage<T,nDims> &src, 
 				kipl::base::TImage<T,nDims> &result, 
 				const FilterBase::EdgeProcessingStyle edgeStyle)
@@ -286,31 +375,33 @@ void TMedianFilter<T,nDims>::QuickMedianFilter(kipl::base::TImage<T,nDims> &src,
 }
 
 template <class T, size_t nDims>
-void TMedianFilter<T,nDims>::BilevelMedianFilter(kipl::base::TImage<T,nDims> &src, 
-		kipl::base::TImage<T,nDims> &result, 
-		const FilterBase::EdgeProcessingStyle edgeStyle)
+void TMedianFilter<T,nDims>::BilevelMedianFilter(kipl::base::TImage<T,nDims> &/*src*/, 
+		kipl::base::TImage<T,nDims> &/*result*/, 
+		const FilterBase::EdgeProcessingStyle /*edgeStyle*/)
 {
 	// Convolution with uniform NxM kernel 
 	// Compare number of elements with mid kernel
 }
 
 template <class T, size_t nDims>
-void TMedianFilter<T,nDims>::RunningWindowLineInit(T const * const src, T *dest,size_t const * const dims)
+void TMedianFilter<T,nDims>::RunningWindowLineInit( T const * const /*src*/, 
+													T */*dest*/,
+													size_t const * const /*dims*/)
 {
 
 }
 
 template <class T, size_t nDims>
-void TMedianFilter<T,nDims>::RunningWindowLine(T const * const src, T *dest, size_t)
+void TMedianFilter<T,nDims>::RunningWindowLine(T const * const /*src*/, T * /*dest*/, size_t)
 {
 
 }
 
 
 template <class T, size_t nDims>
-void TMedianFilter<T,nDims>::RunningWindowMedianFilter(kipl::base::TImage<T,nDims> &src, 
-		kipl::base::TImage<T,nDims> &result, 
-		const FilterBase::EdgeProcessingStyle edgeStyle)
+void TMedianFilter<T,nDims>::RunningWindowMedianFilter(kipl::base::TImage<T,nDims> &/*src*/, 
+		kipl::base::TImage<T,nDims> &/*result*/, 
+		const FilterBase::EdgeProcessingStyle /*edgeStyle*/)
 {
 	/*
 	const size_t Nx=nKernelDims[0];
@@ -409,8 +500,9 @@ kipl::base::TImage<T,N> TWeightedMedianFilter<T,N>::operator() (kipl::base::TIma
 template <typename T, size_t N>
 void TWeightedMedianFilter<T,N>::ExpandData(T * src, T * buffer)
 {
-	for (int i=0, j=0; i<this->nKernel; i++) {
-		for (int k=0; k<m_nWeights[i]; k++, j++)
+	for (size_t i=0, j=0; i<this->nKernel; ++i) 
+	{
+		for (int k=0; k<m_nWeights[i]; ++k, ++j)
 			buffer[j]=src[i];
 	}
 }

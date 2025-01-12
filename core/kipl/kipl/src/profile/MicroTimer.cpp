@@ -59,15 +59,19 @@ inline u_int64_t MicroTimer::_diff (u_int64_t v1, u_int64_t v2)
 
 inline u_int64_t MicroTimer::_rdtsc ()
 {
-	#ifdef _MSC_VER
+#ifdef _MSC_VER
 	return 0;
 #else
-	u_int64_t d;
-	// Instruction is volatile because we don't want it to move
-	// over an adjacent gettimeofday. That would ruin the timing
-	// calibrations.
-	__asm__ __volatile__ ("rdtsc" : "=&A" (d));
-	return d;
+    #ifdef __x86_64__
+        u_int64_t d;
+        // Instruction is volatile because we don't want it to move
+        // over an adjacent gettimeofday. That would ruin the timing
+        // calibrations.
+        __asm__ __volatile__ ("rdtsc" : "=&A" (d));
+        return d;
+    #else // rdtsc is not supported on Apple silicon
+        return 0;
+    #endif
 #endif
 }
 

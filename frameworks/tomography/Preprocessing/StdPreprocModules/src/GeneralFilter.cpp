@@ -1,4 +1,5 @@
 //<LICENSE>
+
 #include "../include/StdPreprocModules_global.h"
 
 #include <algorithm>
@@ -24,7 +25,7 @@ GeneralFilter::~GeneralFilter() {
 }
 
 
-int GeneralFilter::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int GeneralFilter::Configure(ReconConfig /*config*/, std::map<std::string, std::string> parameters)
 {
     string2enum(GetStringParameter(parameters,"type"),filterType);
 
@@ -43,12 +44,12 @@ std::map<std::string, std::string> GeneralFilter::GetParameters()
 	return parameters;
 }
 
-bool GeneralFilter::SetROI(size_t *roi)
+bool GeneralFilter::SetROI(const std::vector<size_t> &/*roi*/)
 {
 	return false;
 }
 
-int GeneralFilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int GeneralFilter::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & /*coeff*/)
 {
     std::vector<float> kernel;
     size_t N  = 0;

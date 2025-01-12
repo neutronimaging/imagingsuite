@@ -26,19 +26,21 @@ protected:
     int ProcessParallel(kipl::base::TImage<float,3> & img);
     int ProcessParallelStd(kipl::base::TImage<float,3> & img);
     int ProcessParallelStdBlock(size_t tid, kipl::base::TImage<float, 3> *img, size_t firstSlice, size_t N);
+    int ProcessParallelByCleaner(kipl::base::TImage<float,3> & img);
     kipl::base::eConnectivity m_eConnectivity;
     ImagingAlgorithms::eMorphDetectionMethod m_eDetectionMethod;
     ImagingAlgorithms::eMorphCleanMethod m_eCleanMethod;
     std::vector<float> m_fThreshold;
     std::vector<float> m_fSigma;
-    bool m_bThresholdByFraction;
-    int m_nEdgeSmoothLength;
-    int m_nMaxArea;
-    bool m_bRemoveInfNaN;
-    bool m_bClampData;
+    bool  m_bThresholdByFraction;
+    int   m_nEdgeSmoothLength;
+    int   m_nMaxArea;
+    bool  m_bRemoveInfNaN;
+    bool  m_bClampData;
     float m_fMinLevel;
     float m_fMaxLevel;
-    bool m_bTranspose;
+    bool  m_bTranspose;
+    bool  m_bModuleThreading;
 };
 
 #endif // MORPHSPOTCLEANMODULE_H

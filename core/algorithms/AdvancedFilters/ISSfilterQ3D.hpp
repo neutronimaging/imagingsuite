@@ -18,8 +18,13 @@
 #include <iomanip>
 #include <sstream>
 
+#ifdef __aarch64__
+    #include <sse2neon/sse2neon.h>
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
 
-#include <emmintrin.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -272,7 +277,7 @@ T ISSfilterQ3D<T>::_SolveIteration(kipl::base::TImage<T,3> &img)
         #pragma omp parallel reduction(+:sum2)
         {
             double localsum=0.0;
-            int TID=omp_get_thread_num();
+            // int TID=omp_get_thread_num();
             long long int N=img.Size();
             T tempFU;
             T fTau=static_cast<T>(m_dTau);
@@ -385,7 +390,7 @@ int ISSfilterQ3D<T>::_FirstDerivate(std::list<kipl::base::TImage<T,2> > &img_que
     #pragma omp parallel for
     for (int y=0; y<sy; y++)
     {
-		kipl::base::uFQuad d;
+		// kipl::base::uFQuad d;
 
 		T* pImg0=img1.GetLinePtr(y);
 		T* pImgX=img1.GetLinePtr(y)-1;
@@ -898,8 +903,8 @@ int ISSfilterQ3D<T>::_CurvatureSSE(   std::list<kipl::base::TImage<T,2> > &dx_qu
 		T d2y = static_cast<T>(0);
 		T d2z = static_cast<T>(0);
 
-		const int sx = dx.Size(0);
-		const int sy = dx.Size(1);
+		// const int sx = dx.Size(0);
+		// const int sy = dx.Size(1);
 
 		int i=0;
 		const int Nx= static_cast<int>(dx.Size())-1;
@@ -907,7 +912,8 @@ int ISSfilterQ3D<T>::_CurvatureSSE(   std::list<kipl::base::TImage<T,2> > &dx_qu
 		T* pDx0=dx.GetDataPtr();
 		T* pDx1=pDx0+1;
 		#pragma omp for
-		for (i=0; i<Nx; i++) {
+		for (i=0; i<Nx; ++i) 
+		{
 			pResult[i]=pDx1[i]-pDx0[i];
 		}
 
@@ -915,7 +921,8 @@ int ISSfilterQ3D<T>::_CurvatureSSE(   std::list<kipl::base::TImage<T,2> > &dx_qu
 		T* pDy0=dy.GetDataPtr();
 		T* pDy1=pDy0 + dy.Size(0) ;
 		#pragma omp for
-		for (i=0; i<Nx; i++) {
+		for (i=0; i<Ny; ++i) // Replaced Nx by Ny was it a typo originally?
+		{
 			pResult[i]+=pDy1[i]-pDy0[i];
 		}
 

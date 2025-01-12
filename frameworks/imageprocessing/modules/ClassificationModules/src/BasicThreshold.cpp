@@ -1,5 +1,4 @@
 //<LICENSE>
-//#include "stdafx.h"
 #include "BasicThreshold.h"
 
 #ifdef _OPENMP

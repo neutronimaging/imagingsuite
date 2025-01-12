@@ -1,12 +1,15 @@
 //<LICENSE>
-#include "stdafx.h"
-#include "../include/ReconConfig.h"
-#include "../include/PreprocModuleBase.h"
-#include "../include/ReconException.h"
+
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
-#include <string.h>
+// #include <string.h>
+
+
+#include "../include/ReconConfig.h"
+#include "../include/PreprocModuleBase.h"
+#include "../include/ReconException.h"
+
 
 
 PreprocModuleBase::PreprocModuleBase(std::string name, kipl::interactors::InteractionBase *interactor) :
@@ -20,7 +23,7 @@ PreprocModuleBase::~PreprocModuleBase(void)
 }
 
 
-bool PreprocModuleBase::SetROI(const std::vector<size_t> & roi)
+bool PreprocModuleBase::SetROI(const std::vector<size_t> & /*roi*/)
 {
     return false;
 }

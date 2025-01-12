@@ -6,12 +6,12 @@ sudo apt-get update
 sudo apt-get install build-essential git python-is-python3
 sudo snap install cmake --classic
 sudo apt install python3.8-distutils
-sudo apt-get install libarmadillo9 libarmadillo-dev libtiff-dev libcfitsio-dev libfftw3-3 libfftw3-dev libxml2-dev libnexus-dev
+sudo apt-get install libarmadillo9 libarmadillo-dev libtiff-dev libcfitsio-dev libfftw3-3 libfftw3-dev libxml2-dev libnexus-dev libxcb-xinerama0
 ```
 3. Anaconda, it is easier to install anaconda than trying to install all needed dependencies. 
 Install packages for anaconda
 ```
-sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
+sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6  
 ```
 4. Download anaconda
 ```
@@ -57,6 +57,11 @@ cmake ../imagingsuite -DCMAKE_INSTALL_PREFIX=../install
 ```
 
 The environment variable ```CONDA_PREFIX``` should be set automatically when you install Anaconda.
+
+You also need to add the path to the Qt-version 
+```
+-DCMAKE_PREFIX_PATH=/Users/<user name>/Qt/6.2.3/macos
+```
 
 ## Test the bindings
 Once your build is successfull you can try out if it works. First change to the install folder

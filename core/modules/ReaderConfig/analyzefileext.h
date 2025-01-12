@@ -15,6 +15,8 @@ namespace readers {
 /// \brief enum to describe supported file types
 enum eExtensionTypes {
     ExtensionTXT,   ///< The image is provided as lines of space separated numbers
+    ExtensionCSV,
+    ExtensionLST,
     ExtensionDMP,   ///< A raw binary image format. Usually a binary dump file from a camera
     ExtensionDAT,   ///< A raw binary image format.
     ExtensionXML,   ///< Image data stored in xml format (rather unusual)
@@ -29,7 +31,7 @@ enum eExtensionTypes {
     ExtensionSEQ    ///< Images are stored in the Varian ViVa SEQ format
 };
 
-eExtensionTypes READERCONFIGSHARED_EXPORT GetFileExtensionType(std::string fname);
+readers::eExtensionTypes READERCONFIGSHARED_EXPORT GetFileExtensionType(const std::string & fname);
 
 }
 

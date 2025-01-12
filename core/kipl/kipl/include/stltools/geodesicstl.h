@@ -70,17 +70,17 @@ int RecByErosion(std::vector<T> & g, std::vector<T> & f)
 	
 	T minf;
 	typename std::vector<T>::iterator fpos, gpos;
-	std::vector<T> prev=g;
+	std::vector<T> prev_f=g;
 	
 	
-	while (f!=prev) {
-		prev=f;
+	while (f!=prev_f) {
+		prev_f=f;
 		fpos=f.begin();
 		gpos=g.begin();
 		T prev=*fpos;
         *fpos=std::max(*fpos,*gpos);
 	
-		fpos++; gpos++;
+		++fpos; ++gpos;
 		
 		for (; fpos!=f.end(); fpos++, gpos++) {
             minf=std::min(prev,*fpos);
@@ -89,14 +89,14 @@ int RecByErosion(std::vector<T> & g, std::vector<T> & f)
 			
 		}
 	
-		fpos=f.end(); fpos--;
-		gpos=g.end(); gpos--;
+		fpos=f.end(); --fpos;
+		gpos=g.end(); --gpos;
 	
 		prev=*fpos;	
         *fpos=std::max(*fpos,*gpos);
 	
-		fpos--; gpos--;
-		for ( ; fpos!=f.begin(); fpos--, gpos--) {
+		--fpos; --gpos;
+		for ( ; fpos!=f.begin(); --fpos, --gpos) {
             minf=std::min(prev,*fpos);
 			prev=*fpos;
             *fpos=std::max(*gpos,minf);

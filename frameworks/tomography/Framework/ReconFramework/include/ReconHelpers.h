@@ -4,12 +4,12 @@
 #define RECONHELPERS_H_
 
 #include "ReconFramework_global.h"
+
 #include <string>
 #include <map>
 #include <set>
 
 #include "ReconConfig.h"
-
 
 struct RECONFRAMEWORKSHARED_EXPORT ProjectionInfo {
 	ProjectionInfo() : name(""),angle(0.0f), weight(0.0f) {}
@@ -19,8 +19,8 @@ struct RECONFRAMEWORKSHARED_EXPORT ProjectionInfo {
 	float weight;
 };
 
-bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(ReconConfig const * const config,
-                   std::map<float, ProjectionInfo> * ProjectionList, bool ignore_skiplist=false, char eolchar='\n');
+bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(const ReconConfig & config,
+                   std::map<float, ProjectionInfo> & ProjectionList, char eolchar='\n');
 
 bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(std::string sFileMask, std::string sPath,
                    int nFirstIndex, int nLastIndex, int nProjectionStep,
@@ -28,10 +28,9 @@ bool RECONFRAMEWORKSHARED_EXPORT BuildFileList(std::string sFileMask, std::strin
                    std::set<size_t> * nlSkipList,
                    std::map<float, ProjectionInfo>  * ProjectionList);
 
-int RECONFRAMEWORKSHARED_EXPORT ComputeWeights(ReconConfig const * const config,
+int RECONFRAMEWORKSHARED_EXPORT ComputeWeights(const ReconConfig & config,
                                                std::multimap<float, ProjectionInfo> &multiProjectionList,
-                                               std::map<float, ProjectionInfo>  * ProjectionList);
-
+                                               std::map<float, ProjectionInfo>  & ProjectionList);
 
 
 #endif // RECONHELPERS_H_

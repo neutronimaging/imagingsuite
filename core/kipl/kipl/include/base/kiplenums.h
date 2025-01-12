@@ -16,6 +16,11 @@ enum eOperatingSystem {
     OSLinux
 };
 
+enum eThreadingMethod {
+    threadingSTL,
+    threadingOpenMP
+};
+
 enum eQuantiles {
   quantile50 = 50,
   quantile75 = 75,
@@ -159,6 +164,23 @@ KIPLSHARED_EXPORT std::string enum2string(const kipl::base::eOperatingSystem &os
 /// \param str a string containing the name to convert
 /// \param plane the enum result
 KIPLSHARED_EXPORT void  string2enum(const std::string &str, kipl::base::eOperatingSystem &os);
+
+/// \brief Stream output operator for eThreadingMethod
+/// \param s the stream that handles the enum
+/// \param plane the value to send to the stream
+/// \returns a reference to the stream
+KIPLSHARED_EXPORT std::ostream & operator<<(std::ostream & s, kipl::base::eThreadingMethod &tm);
+
+/// \brief Converts a threading method enum to a string
+/// \param plane the enum value to convert
+/// \note You can also enter an integer number
+/// \returns A string with the image plane name
+KIPLSHARED_EXPORT std::string enum2string(const kipl::base::eThreadingMethod &tm);
+
+/// \brief Converts a string to a threading method enum
+/// \param str a string containing the name to convert
+/// \param plane the enum result
+KIPLSHARED_EXPORT void  string2enum(const std::string &str, kipl::base::eThreadingMethod &tm);
 
 /// \brief Stream output operator for eImagePlanes
 /// \param s the stream that handles the enum

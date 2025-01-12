@@ -40,6 +40,17 @@ void bindMorphSpotClean(py::module &m)
                  &ImagingAlgorithms::MorphSpotClean::isThreaded,
                  "Tells if threaded processing is used");
 
+    mscClass.def("setNumberOfThreads", &ImagingAlgorithms::MorphSpotClean::setNumberOfThreads,
+                "Set the number of threads to use for the processing. Values less than one and greater than the number of availble cores will default to the number of physical cores",
+                py::arg("N"));
+                
+    mscClass.def("numberOfThreads",  &ImagingAlgorithms::MorphSpotClean::numberOfThreads,
+                "Tells how many threads are currently used for the processing");
+
+    mscClass.def("setThresholdByFraction", &ImagingAlgorithms::MorphSpotClean::setThresholdByFraction,
+                 "Select if threshold is absolute (false) or by quantile (true, default)",
+                 py::arg("method"));
+
     mscClass.def("setCleanMethod",
                  &ImagingAlgorithms::MorphSpotClean::setCleanMethod,
                  "Returns the current list of coefficients",
@@ -90,9 +101,12 @@ void bindMorphSpotClean(py::module &m)
     mscClass.def("detectionImage",
                  [](ImagingAlgorithms::MorphSpotClean &msc, py::array_t<float> &x, bool remove_bias)
     {
-        auto r = x.unchecked<2>(); // x must have ndim = 2; can be non-writeable
+        // auto r = x.unchecked<2>(); // x must have ndim = 2; can be non-writeable
 
         py::buffer_info buf1 = x.request();
+        if (buf1.ndim != 2) {
+            throw std::runtime_error("Input array must have 2 dimensions");
+        }
 
         std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[1]),
                                     static_cast<size_t>(buf1.shape[0])};
@@ -129,6 +143,7 @@ void bindMorphSpotClean(py::module &m)
                  float th,
                  float sigma)
             {
+                py::print("Process 2D: py::array_t<float> &x, float th, float sigma");
                 py::buffer_info buf1 = x.request();
 
                 std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[1]),
@@ -149,10 +164,11 @@ void bindMorphSpotClean(py::module &m)
                          std::vector<float> &th,
                          std::vector<float> &sigma)
             {
-         py::buffer_info buf1 = x.request();
+        py::buffer_info buf1 = x.request();
 
         if (buf1.ndim == 2)
         {
+            py::print("Process 2D: py::array_t<float> &x, std::vector<float> &th, std::vector<float> &sigma");
             std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
                                             static_cast<size_t>(buf1.shape[0])};
             float *data=static_cast<float*>(buf1.ptr);
@@ -166,6 +182,7 @@ void bindMorphSpotClean(py::module &m)
         }
         else if (buf1.ndim==3)
         {
+            py::print("Process 3D: py::array_t<float> &x, std::vector<float> &th, std::vector<float> &sigma");
             std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[2]),
                                             static_cast<size_t>(buf1.shape[1]),
                                             static_cast<size_t>(buf1.shape[0])};
@@ -194,23 +211,29 @@ void bindMorphSpotClean(py::module &m)
                  double th,
                  double sigma)
     {
+        
         py::buffer_info buf1 = x.request();
 
         if (buf1.ndim == 2)
         {
+            py::print("Process 2D: py::array_t<double> &x, double th, double sigma");
             std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
                                             static_cast<size_t>(buf1.shape[0])};
             double *data=static_cast<double*>(buf1.ptr);
 
             kipl::base::TImage<float,2> img(dims);
 
-            std::copy_n(data,img.Size(),img.GetDataPtr());
+            std::transform(data, data + img.Size(), img.GetDataPtr(), [](double val) {
+                                                                            return static_cast<float>(val);
+                                                                        });
 
             msc.process(img,th,sigma);
             std::copy_n(img.GetDataPtr(),img.Size(),data);
         }
         else if (buf1.ndim==3)
         {
+            py::print("Process 3D: py::array_t<double> &x, double th, double sigma");
+
             std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[2]),
                                             static_cast<size_t>(buf1.shape[1]),
                                             static_cast<size_t>(buf1.shape[0])};
@@ -219,10 +242,17 @@ void bindMorphSpotClean(py::module &m)
 
             kipl::base::TImage<float,3> img(dims);
 
-            std::copy_n(data,img.Size(),img.GetDataPtr());
+            //std::copy_n(data,img.Size(),img.GetDataPtr());
+            std::transform(data, data + img.Size(), img.GetDataPtr(), [](double val) {
+                    return static_cast<float>(val);
+                });
 
             msc.process(img,th,sigma);
             std::copy_n(img.GetDataPtr(),img.Size(),data);
+           
+            std::transform(img.GetDataPtr(), img.GetDataPtr() + img.Size(), data, [](float val) {
+                    return static_cast<double>(val);
+                });
         }
         else
             throw ImagingException("Morphspot clean only supports 2- and 3-D data",__FILE__,__LINE__);
@@ -241,6 +271,8 @@ void bindMorphSpotClean(py::module &m)
                  std::vector<float> &th,
                  std::vector<float> &sigma)
     {
+        py::print("Process 2D: py::array_t<double> &x, std::vector<float> &th, std::vector<float> & sigma");
+        
         py::buffer_info buf1 = x.request();
 
         std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
@@ -250,10 +282,16 @@ void bindMorphSpotClean(py::module &m)
 
         kipl::base::TImage<float,2> img(dims);
 
-        std::copy_n(data,img.Size(),img.GetDataPtr());
+        // std::copy_n(data,img.Size(),img.GetDataPtr());
+        std::transform(data, data + img.Size(), img.GetDataPtr(), [](double val) {
+                return static_cast<float>(val);
+            });
 
         msc.process(img,th,sigma);
-        std::copy_n(img.GetDataPtr(),img.Size(),data);
+        // std::copy_n(img.GetDataPtr(),img.Size(),data);
+        std::transform(img.GetDataPtr(), img.GetDataPtr() + img.Size(),data, [](float val) {
+                return static_cast<double>(val);
+            });
     },
 
                 "Cleans spots from the image in place using th as threshold and sigma as mixing width.",

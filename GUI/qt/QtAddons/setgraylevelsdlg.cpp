@@ -3,7 +3,7 @@
 #include "imageviewerwidget.h"
 
 #include <QSignalBlocker>
-#include <QLineSeries>
+#include <QtCharts/QLineSeries>
 #include <QPen>
 #include <QDebug>
 
@@ -117,7 +117,7 @@ void SetGrayLevelsDlg::updateLevels(bool interval, double a, double b)
 
     m_parent->set_levels(lo,hi);
 
-    QtCharts::QLineSeries *line=new QtCharts::QLineSeries();
+    QLineSeries *line=new QLineSeries();
 
     line->append(lo,histMax);
     line->append(lo,histMin);

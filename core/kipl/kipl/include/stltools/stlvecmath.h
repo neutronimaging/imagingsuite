@@ -306,6 +306,21 @@ double mean(std::vector<T> &v)
 	return sum/N;
 }
 
+/// \brief Computes the median absolute difference MAD
+/// \param v the vector to analyse
+/// \returns the MAD
+template <typename T>
+double MAD(std::vector<T> &v)
+{
+    double m=median(v);
+    std::vector<double> d(v.begin(),v.end());
+
+    for (auto &x : d)
+        x=abs(x-m);
+
+    return median(d);
+}
+
 template <class T>
 std::vector<T> vecabs(std::vector<T> &v)
 {
@@ -328,7 +343,7 @@ std::vector<T> vecabs(std::vector<T> &v)
 template <class T>
 std::vector<T> cumsum(std::vector<T> &v, bool norm=false)
 {
-	T tmp=0;
+	// T tmp=0;
     std::vector<T> tv;
 	tv.resize(v.size());
 

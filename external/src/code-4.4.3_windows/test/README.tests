@@ -1,8 +1,0 @@
-NeXus test programs and files
---------------------------------
-
-Test executables are installed to /usr/local/nexus/tests and
-program source code to /usr/local/nexus/examples
-
---
-$Id$

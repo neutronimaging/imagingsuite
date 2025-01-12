@@ -10,6 +10,8 @@
     <system>
         <memory>8000</memory>
         <loglevel>message</loglevel>
+        <validate>false</validate>
+        <maxthreads>-1</maxthreads>
     </system>
     <projections>
 	<beamgeometry>parallel</beamgeometry>
@@ -70,6 +72,7 @@
                 <modulename>FullLogNorm</modulename>
                 <sharedobject>StdPreprocModules</sharedobject>
                 <active>true</active>
+                <threading>true</threading>
                 <parameters>
                     <referenceaverage>ImageWeightedAverage</referenceaverage>
                     <uselut>false</uselut>
@@ -82,12 +85,13 @@
                 <modulename>MorphSpotClean</modulename>
                 <sharedobject>StdPreprocModules</sharedobject>
                 <active>false</active>
+                <threading>true</threading>
                 <parameters>
                     <removeinfnan>false</removeinfnan>
                     <clampdata>false</clampdata>
                     <cleanmethod>morphcleanreplace</cleanmethod>
                     <connectivity>conn4</connectivity>
-                    <detectionmethod>morphdetectpeaks</detectionmethod>
+                    <detectionmethod>morphdetectallspots</detectionmethod>
                     <thresholdbyfraction>true</thresholdbyfraction>
                     <edgesmooth>5</edgesmooth>
                     <maxarea>30</maxarea>
@@ -103,20 +107,22 @@
                 <modulename>WaveletRingClean</modulename>
                 <sharedobject>StdPreprocModules</sharedobject>
                 <active>false</active>
+                <threading>true</threading>
                 <parameters>
                     <decnum>4</decnum>
                     <method>verticalfft</method>
                     <threading>true</threading>
-                    <sigma>0.1</sigma>
-                    <wname>daub25</wname>
+                    <sigma>0.01</sigma>
+                    <wname>daub17</wname>
                 </parameters>
             </module>
         </preprocessing>
         <backprojector>
             <module>
-                <modulename>MultiProjBP</modulename>
+                <modulename>MultiProjBPparallel</modulename>
                 <sharedobject>StdBackProjectors</sharedobject>
                 <active>true</active>
+                <threading>true</threading>
                 <parameters>
                     <ProjectionBufferSize>16</ProjectionBufferSize>
                     <SliceBlock>32</SliceBlock>
@@ -126,7 +132,7 @@
                     <filtertype>Hamming</filtertype>
                     <order>1</order>
                     <paddingdoubler>2</paddingdoubler>
-                    <usebias>false</usebias>
+                    <usebias>true</usebias>
                     <usecircularmask>true</usecircularmask>
                 </parameters>
             </module>

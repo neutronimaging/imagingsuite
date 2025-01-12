@@ -10,8 +10,9 @@ TARGET = StdPreprocModules
 TEMPLATE = lib
 CONFIG += c++11
 
-CONFIG(release, debug|release): DESTDIR = $$PWD/../../../../../../../lib
-else:CONFIG(debug, debug|release): DESTDIR = $$PWD/../../../../../../../lib/debug
+REPOS=$$PWD/../../../../../../..
+CONFIG(release, debug|release): DESTDIR = $$REPOS/lib
+else:CONFIG(debug, debug|release): DESTDIR = $$REPOS/lib/debug
 
 DEFINES += STDPREPROCMODULES_LIBRARY
 
@@ -19,6 +20,7 @@ SOURCES += \
     ../../src/WaveletRingClean.cpp \
     ../../src/TranslatedProjectionWeighting.cpp \
     ../../src/StdPreprocModules.cpp \
+    ../../src/ReplaceUnderexposedmodule.cpp \
     ../../src/stdafx.cpp \
     ../../src/SpotRingClean.cpp \
     ../../src/SpotClean2.cpp \
@@ -59,6 +61,7 @@ HEADERS += \
     ../../include/BasicRingClean.h \
     ../../include/AdaptiveFilter.h \
     ../../include/SinoSpotClean.h \
+    ../../include/ReplaceUnderexposedmodule.h \
     ../../src/stdafx.h \
     ../../include/TranslateProjectionsModule.h \
     ../../include/MorphSpotCleanModule.h \
@@ -99,17 +102,20 @@ win32 {
     QMAKE_LFLAGS += /MACHINE:X64
     }
 
-    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../../../external/include
-    INCLUDEPATH += $$_PRO_FILE_PWD_/../../../../../../external/include/cfitsio
-    QMAKE_LIBDIR += $$_PRO_FILE_PWD_/../../../../../../external/lib64
+    INCLUDEPATH  += $$REPOS/ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH  += $$REPOS/ExternalDependencies/windows/include/cfitsio
+    QMAKE_LIBDIR += $$REPOS/ExternalDependencies/windows/lib
+    INCLUDEPATH  += $$REPOS/imagingsuite/external/include
 
-    LIBS += -llibxml2_dll -llibtiff -lcfitsio
+    QMAKE_LIBDIR += $$REPOS/imagingsuite/external/lib64
+
+    LIBS += -llibxml2 -llibtiff -lcfitsio
     QMAKE_CXXFLAGS += /openmp /O2
     DEFINES += NOMINMAX
 }
 
-CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../../../lib/
-else:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../../lib/debug/
+CONFIG(release, debug|release): LIBS += -L$$REPOS/lib/
+else:CONFIG(debug, debug|release): LIBS += -L$$REPOS/lib/debug/
 
 LIBS += -lkipl -lModuleConfig -lReconFramework -lImagingAlgorithms
 

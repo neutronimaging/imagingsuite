@@ -1,6 +1,18 @@
 //<LICENCE>
 
-#include <emmintrin.h>
+#ifdef __aarch64__
+    #pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wold-style-cast"
+	#pragma clang diagnostic ignored "-Wcast-align"
+	#pragma clang diagnostic ignored "-Wpedantic"
+	#pragma clang diagnostic ignored "-W#warnings"
+		#include <sse2neon/sse2neon.h>
+	#pragma clang diagnostic pop
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
+
 #include <cstddef>
 #include "../../../include/base/core/imagearithmetics.h"
 

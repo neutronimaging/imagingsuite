@@ -129,22 +129,28 @@ void TIndex2CoordTest::testIndex2Coord2D()
 {
     std::vector<size_t> dims={5,6};
     kipl::base::Index2Coordinates i2c(dims,2);
+
+    QCOMPARE(i2c.sx(),dims[0]);
+    QCOMPARE(i2c.sxy(),dims[0]*dims[1]);
+
     kipl::base::coords2D c2;
     kipl::base::coords3D c3;
 
     for (size_t y=0; y<dims[1]; ++y)
         for (size_t x=0; x<dims[0]; ++x)
     {
+        i2c(y*dims[0]+x,c2);
+
+        QCOMPARE(c2.x,short(x));
+        QCOMPARE(c2.y,short(y));
+
         i2c(y*dims[0]+x,c3);
 
         QCOMPARE(c3.x,short(x));
         QCOMPARE(c3.y,short(y));
         QCOMPARE(c3.z,short(0));
 
-        i2c(y*dims[0]+x,c2);
 
-        QCOMPARE(c2.x,short(x));
-        QCOMPARE(c2.y,short(y));
 
     }
 }
@@ -175,8 +181,15 @@ void TIndex2CoordTest::testIndex2Coord3D()
 
 }
 
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(TIndex2CoordTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(TIndex2CoordTest)
+#endif
 
 
-QTEST_APPLESS_MAIN(TIndex2CoordTest)
 
 #include "tst_tindex2coordtest.moc"

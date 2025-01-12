@@ -5,11 +5,6 @@
 #include <map>
 #include <vector>
 
-//#include <QCoreApplication>
-//#include <QVector>
-//#include <QString>
-//#include <QDebug>
-
 #include <analyzefileext.h>
 #include <base/timage.h>
 #include <base/KiplException.h>
@@ -26,7 +21,7 @@ int process(int argc, char *argv[]);
 
 int showHelp();
 
-int parseArguments(vector<std::string> qargs, std::map<string, string> &pars);
+int parseArguments(vector<std::string> qargs, std::map<std::string, std::string> &pars);
 
 int main(int argc, char *argv[])
 {
@@ -37,16 +32,16 @@ int main(int argc, char *argv[])
 int process(int argc, char *argv[])
 {
     std::ostringstream msg;
-    vector<std::string> qargs;
-    copy_n(argv,argc,std::back_inserter(qargs));
+    std::vector<std::string> qargs;
+    std::copy_n(argv,argc,std::back_inserter(qargs));
 
     std::map<std::string,std::string> args;
     parseArguments(qargs,args);
 
-
     int cnt=qargs.size();
-    if (cnt==1) {
-        logger(logger.LogMessage,"No arguments");
+    if (cnt==1) 
+    {
+        logger.message("No arguments");
         showHelp();
         return 0;
     }
@@ -70,14 +65,16 @@ int process(int argc, char *argv[])
     std::vector<size_t> dimsYZ={dims[1],last-first+1};
     kipl::base::TImage<float,2> sliceYZ(dimsYZ);
 
-    for (size_t i=first; i<=last; ++i) {
+    for (size_t i=first; i<=last; ++i) 
+    {
         img=reader.Read("",srcfname,i,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0,{});
         std::copy_n(img.GetLinePtr(slicex),img.Size(0),sliceXZ.GetLinePtr(i-first));
 
-        float *pLine=sliceYZ.GetLinePtr(i-first);
-        float *pImg=img.GetDataPtr()+slicey;
-        for (size_t j=0; j<img.Size(1); ++j) {
-            pLine[j]=pImg[j*img.Size(0)];
+        float *pLine = sliceYZ.GetLinePtr(i-first);
+        float *pImg  = img.GetDataPtr()+slicey;
+        for (size_t j=0; j<img.Size(1); ++j) 
+        {
+            pLine[j] = pImg[j*img.Size(0)];
         }
     }
 
@@ -100,10 +97,12 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
 {
     auto item=qargs.begin();
     ++item;
-    for ( ; item!= qargs.end() ; ++item) {
+    for ( ; item!= qargs.end() ; ++item) 
+    {
         if ((*item)[0]!='-')
             throw kipl::base::KiplException("Invalid argument",__FILE__,__LINE__);
-        if (*item=="-i") {
+        if (*item=="-i") 
+        {
             ++item;
             if (item==qargs.end())
                 throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
@@ -111,15 +110,17 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
             pars.insert(std::make_pair("infile",*item));
         }
 
-        if (*item=="-o") {
+        if (*item=="-o") 
+        {
             ++item;
             if (item==qargs.end())
-                throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
+                throw kipl::base::KiplException("Too few arguments for -o",__FILE__,__LINE__);
 
             pars.insert(std::make_pair("outfile",*item));
         }
 
-        if (*item=="-first") {
+        if (*item=="-first") 
+        {
             ++item;
             if (item==qargs.end())
                 throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
@@ -127,7 +128,8 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
             pars.insert(std::make_pair("first",*item));
         }
 
-        if (*item=="-last") {
+        if (*item=="-last") 
+        {
             ++item;
             if (item==qargs.end())
                 throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
@@ -135,7 +137,8 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
             pars.insert(std::make_pair("last",*item));
         }
 
-        if (*item=="-rot") {
+        if (*item=="-rot") 
+        {
             ++item;
             if (item==qargs.end())
                 throw kipl::base::KiplException("Too few arguments",__FILE__,__LINE__);
@@ -144,23 +147,25 @@ int parseArguments(vector<string> qargs, std::map<std::string,std::string> &pars
         }
     }
 
-    for (auto par : pars) {
+    for (const auto &par : pars) 
+    {
         std::cout<<par.first<<"="<<par.second<<std::endl;
     }
 
-    return (int)pars.size();
+    return static_cast<int>(pars.size());
 }
 
 int showHelp()
 {
     std::cout<<"Vertical slicer\n";
-    std::cout<<"Usage: multiframesplitter [args] \n";
+    std::cout<<"Usage: verticalslicer [args] \n";
     std::cout<<"(c) Anders Kaestner, 2018\n";
     std::cout<<"Arguments:\n";
     std::cout<<"-i <file_#####.ext> : The image file to split can be either a multi-frame fits or vivaseq\n";
     std::cout<<"-o <slicename.ext> : The file mask of the output images. If skiped the base name of the input is used with index. \n";
     std::cout<<"-first <value> : first frame default is first=0\n";
     std::cout<<"-last <value> : last frame, default is the last available frame\n";
+    std::cout<<"-rot <value> : rotate the image in 90 deg steps\n";
 
     return 0;
 }

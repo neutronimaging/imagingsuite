@@ -1,4 +1,5 @@
 #include <QString>
+#include <QTextStream>
 #include <QtTest>
 
 #include <thread>
@@ -18,6 +19,7 @@
 
 class FrameWorkTest : public QObject
 {
+    
     Q_OBJECT
 
 public:
@@ -25,12 +27,8 @@ public:
     std::vector<float> goldenAngles(int n, int start, float arc);
     std::vector<float> invGoldenAngles(int n, int start, float arc);
 
-private Q_SLOTS:
-    void testConfigConstructor();
-    void testConfigCopyConstructor();
-    void testConfigAssignment();
+private slots:
     void testProjectionReader();
-    void testScanTypeEnum();
     void testBuildFileList_GeneratedSequence();
     void testBuildFileList_GeneratedGolden();
     void testBuildFileList_GeneratedGolden_offset();
@@ -38,6 +36,9 @@ private Q_SLOTS:
     void testBuildFileList_GeneratedInvGolden();
     void testBuildFileList_GeneratedInvGolden_delay();
     void testBuildFileList();
+    void testBuildFileList_SequenceDropProjections();
+    void testBuildFileList_SequenceSkipProjections();
+    void testBuildFileList_skipGolden();
     void testProcessTimingLogger();
 
 
@@ -84,355 +85,7 @@ std::vector<float> FrameWorkTest::invGoldenAngles(int n, int start, float arc)
    return gv;
 }
 
-void FrameWorkTest::testConfigConstructor()
-{
-    ReconConfig config("");
 
-    QCOMPARE(config.System.nMemory,       1500UL);
-    QCOMPARE(config.System.eLogLevel,     kipl::logging::Logger::LogMessage);
-    QCOMPARE(config.System.bValidateData, false);
-
-    QCOMPARE(config.ProjectionInfo.nDims.size(),       2UL);
-    QCOMPARE(config.ProjectionInfo.nDims[0],           2048UL);
-    QCOMPARE(config.ProjectionInfo.nDims[1],           2048UL);
-
-    QCOMPARE(config.ProjectionInfo.beamgeometry,       config.ProjectionInfo.BeamGeometry_Parallel);
-    QCOMPARE(config.ProjectionInfo.fResolution.size(), 2UL);
-    QCOMPARE(config.ProjectionInfo.fBinning,           1.0f);
-    QCOMPARE(config.ProjectionInfo.nMargin,            2UL);
-    QCOMPARE(config.ProjectionInfo.nFirstIndex,        1UL);
-    QCOMPARE(config.ProjectionInfo.nLastIndex,         625UL);
-    QCOMPARE(config.ProjectionInfo.nProjectionStep,    1UL);
-    QCOMPARE(config.ProjectionInfo.nlSkipList.size(),  0UL);
-    QCOMPARE(config.ProjectionInfo.bRepeatLine,        false);
-    QCOMPARE(config.ProjectionInfo.scantype,           config.ProjectionInfo.SequentialScan);
-    QCOMPARE(config.ProjectionInfo.nGoldenStartIdx,    0UL);
-    QCOMPARE(config.ProjectionInfo.imagetype,          config.ProjectionInfo.ImageType_Projections);
-    QCOMPARE(config.ProjectionInfo.fCenter,            1024.0f);
-    QCOMPARE(config.ProjectionInfo.fSOD,               100.0f);
-    QCOMPARE(config.ProjectionInfo.fSDD,               100.0f);
-    QCOMPARE(config.ProjectionInfo.fpPoint.size(),     2UL);
-
-    QCOMPARE(config.ProjectionInfo.bTranslate,         false);
-    QCOMPARE(config.ProjectionInfo.fTiltAngle,         0.0f);
-    QCOMPARE(config.ProjectionInfo.fTiltPivotPosition, 0.0f);
-    QCOMPARE(config.ProjectionInfo.bCorrectTilt,       false);
-
-    QCOMPARE(config.ProjectionInfo.sFileMask,          "proj_####.fits");
-    QCOMPARE(config.ProjectionInfo.sPath,              "");
-
-    QCOMPARE(config.ProjectionInfo.sReferencePath,     "");
-    QCOMPARE(config.ProjectionInfo.sOBFileMask,        "ob_####.fits");
-    QCOMPARE(config.ProjectionInfo.nOBFirstIndex,      1UL);
-    QCOMPARE(config.ProjectionInfo.nOBCount,           5UL);
-    QCOMPARE(config.ProjectionInfo.sDCFileMask,        "dc_####.fits");
-    QCOMPARE(config.ProjectionInfo.nDCFirstIndex,      1UL);
-    QCOMPARE(config.ProjectionInfo.nDCCount,           5UL);
-
-    QCOMPARE(config.ProjectionInfo.roi.size(),         4UL);
-    QCOMPARE(config.ProjectionInfo.roi[0],             0UL);
-    QCOMPARE(config.ProjectionInfo.roi[1],             0UL);
-    QCOMPARE(config.ProjectionInfo.roi[2],             2047UL);
-    QCOMPARE(config.ProjectionInfo.roi[3],             2047UL);
-
-    QCOMPARE(config.ProjectionInfo.projection_roi.size(), 4UL);
-    QCOMPARE(config.ProjectionInfo.projection_roi[0],  0UL);
-    QCOMPARE(config.ProjectionInfo.projection_roi[1],  0UL);
-    QCOMPARE(config.ProjectionInfo.projection_roi[2],  2047UL);
-    QCOMPARE(config.ProjectionInfo.projection_roi[3],  2047UL);
-
-    QCOMPARE(config.ProjectionInfo.dose_roi.size(),    4UL);
-    QCOMPARE(config.ProjectionInfo.dose_roi[0],        0UL);
-    QCOMPARE(config.ProjectionInfo.dose_roi[1],        0UL);
-    QCOMPARE(config.ProjectionInfo.dose_roi[2],        10UL);
-    QCOMPARE(config.ProjectionInfo.dose_roi[3],        10UL);
-
-    QCOMPARE(config.ProjectionInfo.fScanArc.size(),    2UL);
-    QCOMPARE(config.ProjectionInfo.fScanArc[0],        0.0f);
-    QCOMPARE(config.ProjectionInfo.fScanArc[1],        360.0f);
-
-    QCOMPARE(config.ProjectionInfo.eFlip,              kipl::base::ImageFlipNone);
-    QCOMPARE(config.ProjectionInfo.eRotate,            kipl::base::ImageRotateNone);
-
-    QCOMPARE(config.ProjectionInfo.eDirection,         kipl::base::RotationDirCW);
-
-}
-
-void FrameWorkTest::testConfigCopyConstructor()
-{
-    ReconConfig config("");
-
-    config.System.nMemory =       15001UL;
-    config.System.eLogLevel =     kipl::logging::Logger::LogError;
-    config.System.bValidateData =  false;
-
-    config.ProjectionInfo.nDims[0] =           2047UL;
-    config.ProjectionInfo.nDims[1] =           2046UL;
-
-    config.ProjectionInfo.beamgeometry =       config.ProjectionInfo.BeamGeometry_Cone;
-    config.ProjectionInfo.fResolution = {0.123f,1.23f};
-    config.ProjectionInfo.fBinning =           1.0f;
-    config.ProjectionInfo.nMargin =            5UL;
-    config.ProjectionInfo.nFirstIndex =         3UL;
-    config.ProjectionInfo.nLastIndex =         25UL;
-    config.ProjectionInfo.nProjectionStep =     3UL;
-    config.ProjectionInfo.nlSkipList = {1,2,3};
-
-    config.ProjectionInfo.bRepeatLine =        true;
-    config.ProjectionInfo.scantype =           config.ProjectionInfo.GoldenSectionScan;
-    config.ProjectionInfo.nGoldenStartIdx =    10UL;
-    config.ProjectionInfo.imagetype =          config.ProjectionInfo.ImageType_Sinograms;
-    config.ProjectionInfo.fCenter =            10.0f;
-    config.ProjectionInfo.fSOD =               10.0f;
-    config.ProjectionInfo.fSDD =               1000.0f;
-    config.ProjectionInfo.fpPoint = {123.4f, 456.6f};
-
-    config.ProjectionInfo.bTranslate =         true;
-    config.ProjectionInfo.fTiltAngle =         0.1f;
-    config.ProjectionInfo.fTiltPivotPosition= 1.0f;
-    config.ProjectionInfo.bCorrectTilt=       true;
-
-    config.ProjectionInfo.sFileMask =          "projs_###.fits";
-    config.ProjectionInfo.sPath =              "./";
-
-    config.ProjectionInfo.sReferencePath =     "/home/";
-    config.ProjectionInfo.sOBFileMask =        "obs_###.fits";
-    config.ProjectionInfo.nOBFirstIndex =      10UL;
-    config.ProjectionInfo.nOBCount =           50UL;
-    config.ProjectionInfo.sDCFileMask =        "dcs_##.fits";
-    config.ProjectionInfo.nDCFirstIndex =      2UL;
-    config.ProjectionInfo.nDCCount =           25UL;
-
-    config.ProjectionInfo.roi[0] =             1UL;
-    config.ProjectionInfo.roi[1] =             2UL;
-    config.ProjectionInfo.roi[2] =             3UL;
-    config.ProjectionInfo.roi[3] =             4UL;
-
-    config.ProjectionInfo.projection_roi[0] =  5UL;
-    config.ProjectionInfo.projection_roi[1] =  6UL;
-    config.ProjectionInfo.projection_roi[2] =  7UL;
-    config.ProjectionInfo.projection_roi[3] =  8UL;
-
-    config.ProjectionInfo.dose_roi[0] =        9UL;
-    config.ProjectionInfo.dose_roi[1] =        10UL;
-    config.ProjectionInfo.dose_roi[2] =        110UL;
-    config.ProjectionInfo.dose_roi[3] =        120UL;
-
-    config.ProjectionInfo.fScanArc[0] =        10.0f;
-    config.ProjectionInfo.fScanArc[1] =        36.0f;
-
-    config.ProjectionInfo.eFlip =              kipl::base::ImageFlipVertical;
-    config.ProjectionInfo.eRotate =            kipl::base::ImageRotate180;
-
-    config.ProjectionInfo.eDirection =         kipl::base::RotationDirCCW;
-
-    ReconConfig newconfig(config);
-    QCOMPARE(newconfig.System.nMemory,                    config.System.nMemory);
-    QCOMPARE(newconfig.System.eLogLevel,                  config.System.eLogLevel);
-    QCOMPARE(newconfig.System.bValidateData,              config.System.bValidateData);
-
-    QCOMPARE(newconfig.ProjectionInfo.nDims.size(),       config.ProjectionInfo.nDims.size());
-    QCOMPARE(newconfig.ProjectionInfo.nDims[0],           config.ProjectionInfo.nDims[0]);
-    QCOMPARE(newconfig.ProjectionInfo.nDims[1],           config.ProjectionInfo.nDims[1]);
-
-    QCOMPARE(newconfig.ProjectionInfo.beamgeometry,       config.ProjectionInfo.beamgeometry);
-    QCOMPARE(newconfig.ProjectionInfo.fResolution.size(), config.ProjectionInfo.fResolution.size());
-    QCOMPARE(newconfig.ProjectionInfo.fBinning,           config.ProjectionInfo.fBinning);
-    QCOMPARE(newconfig.ProjectionInfo.nMargin,            config.ProjectionInfo.nMargin);
-    QCOMPARE(newconfig.ProjectionInfo.nFirstIndex,        config.ProjectionInfo.nFirstIndex);
-    QCOMPARE(newconfig.ProjectionInfo.nLastIndex,         config.ProjectionInfo.nLastIndex);
-    QCOMPARE(newconfig.ProjectionInfo.nProjectionStep,    config.ProjectionInfo.nProjectionStep);
-    QCOMPARE(newconfig.ProjectionInfo.nlSkipList.size(),  config.ProjectionInfo.nlSkipList.size());
-    QCOMPARE(newconfig.ProjectionInfo.bRepeatLine,        config.ProjectionInfo.bRepeatLine);
-    QCOMPARE(newconfig.ProjectionInfo.scantype,           config.ProjectionInfo.scantype);
-    QCOMPARE(newconfig.ProjectionInfo.nGoldenStartIdx,    config.ProjectionInfo.nGoldenStartIdx);
-    QCOMPARE(newconfig.ProjectionInfo.imagetype,          config.ProjectionInfo.imagetype);
-    QCOMPARE(newconfig.ProjectionInfo.fCenter,            config.ProjectionInfo.fCenter);
-    QCOMPARE(newconfig.ProjectionInfo.fSOD,               config.ProjectionInfo.fSOD);
-    QCOMPARE(newconfig.ProjectionInfo.fSDD,               config.ProjectionInfo.fSDD);
-    QCOMPARE(newconfig.ProjectionInfo.fpPoint.size(),     config.ProjectionInfo.fpPoint.size());
-
-    QCOMPARE(newconfig.ProjectionInfo.bTranslate,         config.ProjectionInfo.bTranslate);
-    QCOMPARE(newconfig.ProjectionInfo.fTiltAngle,         config.ProjectionInfo.fTiltAngle);
-    QCOMPARE(newconfig.ProjectionInfo.fTiltPivotPosition, config.ProjectionInfo.fTiltPivotPosition);
-    QCOMPARE(newconfig.ProjectionInfo.bCorrectTilt,       config.ProjectionInfo.bCorrectTilt);
-
-    QCOMPARE(newconfig.ProjectionInfo.sFileMask,          config.ProjectionInfo.sFileMask);
-    QCOMPARE(newconfig.ProjectionInfo.sPath,              config.ProjectionInfo.sPath);
-
-    QCOMPARE(newconfig.ProjectionInfo.sReferencePath,     config.ProjectionInfo.sReferencePath);
-    QCOMPARE(newconfig.ProjectionInfo.sOBFileMask,        config.ProjectionInfo.sOBFileMask);
-    QCOMPARE(newconfig.ProjectionInfo.nOBFirstIndex,      config.ProjectionInfo.nOBFirstIndex);
-    QCOMPARE(newconfig.ProjectionInfo.nOBCount,           config.ProjectionInfo.nOBCount);
-    QCOMPARE(newconfig.ProjectionInfo.sDCFileMask,        config.ProjectionInfo.sDCFileMask);
-    QCOMPARE(newconfig.ProjectionInfo.nDCFirstIndex,      config.ProjectionInfo.nDCFirstIndex);
-    QCOMPARE(newconfig.ProjectionInfo.nDCCount,           config.ProjectionInfo.nDCCount);
-
-    QCOMPARE(newconfig.ProjectionInfo.roi.size(),         config.ProjectionInfo.roi.size());
-    QCOMPARE(newconfig.ProjectionInfo.roi[0],             config.ProjectionInfo.roi[0]);
-    QCOMPARE(newconfig.ProjectionInfo.roi[1],             config.ProjectionInfo.roi[1]);
-    QCOMPARE(newconfig.ProjectionInfo.roi[2],             config.ProjectionInfo.roi[2]);
-    QCOMPARE(newconfig.ProjectionInfo.roi[3],             config.ProjectionInfo.roi[3]);
-
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi.size(), config.ProjectionInfo.projection_roi.size());
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi[0],  config.ProjectionInfo.projection_roi[0]);
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi[1],  config.ProjectionInfo.projection_roi[1]);
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi[2],  config.ProjectionInfo.projection_roi[2]);
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi[3],  config.ProjectionInfo.projection_roi[3]);
-
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi.size(),    config.ProjectionInfo.dose_roi.size());
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi[0],        config.ProjectionInfo.dose_roi[0]);
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi[1],        config.ProjectionInfo.dose_roi[1]);
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi[2],        config.ProjectionInfo.dose_roi[2]);
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi[3],        config.ProjectionInfo.dose_roi[3]);
-
-    QCOMPARE(newconfig.ProjectionInfo.fScanArc.size(),    config.ProjectionInfo.fScanArc.size());
-    QCOMPARE(newconfig.ProjectionInfo.fScanArc[0],        config.ProjectionInfo.fScanArc[0]);
-    QCOMPARE(newconfig.ProjectionInfo.fScanArc[1],        config.ProjectionInfo.fScanArc[1]);
-
-    QCOMPARE(newconfig.ProjectionInfo.eFlip,              config.ProjectionInfo.eFlip);
-    QCOMPARE(newconfig.ProjectionInfo.eRotate,            config.ProjectionInfo.eRotate);
-
-    QCOMPARE(newconfig.ProjectionInfo.eDirection,         config.ProjectionInfo.eDirection);
-}
-
-void FrameWorkTest::testConfigAssignment()
-{
-    ReconConfig config("");
-
-    config.System.nMemory =       15001UL;
-    config.System.eLogLevel =     kipl::logging::Logger::LogError;
-    config.System.bValidateData =  false;
-
-    config.ProjectionInfo.nDims[0] =           2047UL;
-    config.ProjectionInfo.nDims[1] =           2046UL;
-
-    config.ProjectionInfo.beamgeometry =       config.ProjectionInfo.BeamGeometry_Cone;
-    config.ProjectionInfo.fResolution = {0.123f,1.23f};
-    config.ProjectionInfo.fBinning =           1.0f;
-    config.ProjectionInfo.nMargin =            5UL;
-    config.ProjectionInfo.nFirstIndex =         3UL;
-    config.ProjectionInfo.nLastIndex =         25UL;
-    config.ProjectionInfo.nProjectionStep =     3UL;
-    config.ProjectionInfo.nlSkipList = {1,2,3};
-
-    config.ProjectionInfo.bRepeatLine =        true;
-    config.ProjectionInfo.scantype =           config.ProjectionInfo.GoldenSectionScan;
-    config.ProjectionInfo.nGoldenStartIdx =    10UL;
-    config.ProjectionInfo.imagetype =          config.ProjectionInfo.ImageType_Sinograms;
-    config.ProjectionInfo.fCenter =            10.0f;
-    config.ProjectionInfo.fSOD =               10.0f;
-    config.ProjectionInfo.fSDD =               1000.0f;
-    config.ProjectionInfo.fpPoint = {123.4f, 456.6f};
-
-    config.ProjectionInfo.bTranslate =         true;
-    config.ProjectionInfo.fTiltAngle =         0.1f;
-    config.ProjectionInfo.fTiltPivotPosition= 1.0f;
-    config.ProjectionInfo.bCorrectTilt=       true;
-
-    config.ProjectionInfo.sFileMask =          "projs_###.fits";
-    config.ProjectionInfo.sPath =              "./";
-
-    config.ProjectionInfo.sReferencePath =     "/home/";
-    config.ProjectionInfo.sOBFileMask =        "obs_###.fits";
-    config.ProjectionInfo.nOBFirstIndex =      10UL;
-    config.ProjectionInfo.nOBCount =           50UL;
-    config.ProjectionInfo.sDCFileMask =        "dcs_##.fits";
-    config.ProjectionInfo.nDCFirstIndex =      2UL;
-    config.ProjectionInfo.nDCCount =           25UL;
-
-    config.ProjectionInfo.roi[0] =             1UL;
-    config.ProjectionInfo.roi[1] =             2UL;
-    config.ProjectionInfo.roi[2] =             3UL;
-    config.ProjectionInfo.roi[3] =             4UL;
-
-    config.ProjectionInfo.projection_roi[0] =  5UL;
-    config.ProjectionInfo.projection_roi[1] =  6UL;
-    config.ProjectionInfo.projection_roi[2] =  7UL;
-    config.ProjectionInfo.projection_roi[3] =  8UL;
-
-    config.ProjectionInfo.dose_roi[0] =        9UL;
-    config.ProjectionInfo.dose_roi[1] =        10UL;
-    config.ProjectionInfo.dose_roi[2] =        110UL;
-    config.ProjectionInfo.dose_roi[3] =        120UL;
-
-    config.ProjectionInfo.fScanArc[0] =        10.0f;
-    config.ProjectionInfo.fScanArc[1] =        36.0f;
-
-    config.ProjectionInfo.eFlip =              kipl::base::ImageFlipVertical;
-    config.ProjectionInfo.eRotate =            kipl::base::ImageRotate180;
-
-    config.ProjectionInfo.eDirection =         kipl::base::RotationDirCCW;
-
-    ReconConfig newconfig(config);
-    QCOMPARE(newconfig.System.nMemory,                    config.System.nMemory);
-    QCOMPARE(newconfig.System.eLogLevel,                  config.System.eLogLevel);
-    QCOMPARE(newconfig.System.bValidateData,              config.System.bValidateData);
-
-    QCOMPARE(newconfig.ProjectionInfo.nDims.size(),       config.ProjectionInfo.nDims.size());
-    QCOMPARE(newconfig.ProjectionInfo.nDims[0],           config.ProjectionInfo.nDims[0]);
-    QCOMPARE(newconfig.ProjectionInfo.nDims[1],           config.ProjectionInfo.nDims[1]);
-
-    QCOMPARE(newconfig.ProjectionInfo.beamgeometry,       config.ProjectionInfo.beamgeometry);
-    QCOMPARE(newconfig.ProjectionInfo.fResolution.size(), config.ProjectionInfo.fResolution.size());
-    QCOMPARE(newconfig.ProjectionInfo.fBinning,           config.ProjectionInfo.fBinning);
-    QCOMPARE(newconfig.ProjectionInfo.nMargin,            config.ProjectionInfo.nMargin);
-    QCOMPARE(newconfig.ProjectionInfo.nFirstIndex,        config.ProjectionInfo.nFirstIndex);
-    QCOMPARE(newconfig.ProjectionInfo.nLastIndex,         config.ProjectionInfo.nLastIndex);
-    QCOMPARE(newconfig.ProjectionInfo.nProjectionStep,    config.ProjectionInfo.nProjectionStep);
-    QCOMPARE(newconfig.ProjectionInfo.nlSkipList.size(),  config.ProjectionInfo.nlSkipList.size());
-    QCOMPARE(newconfig.ProjectionInfo.bRepeatLine,        config.ProjectionInfo.bRepeatLine);
-    QCOMPARE(newconfig.ProjectionInfo.scantype,           config.ProjectionInfo.scantype);
-    QCOMPARE(newconfig.ProjectionInfo.nGoldenStartIdx,    config.ProjectionInfo.nGoldenStartIdx);
-    QCOMPARE(newconfig.ProjectionInfo.imagetype,          config.ProjectionInfo.imagetype);
-    QCOMPARE(newconfig.ProjectionInfo.fCenter,            config.ProjectionInfo.fCenter);
-    QCOMPARE(newconfig.ProjectionInfo.fSOD,               config.ProjectionInfo.fSOD);
-    QCOMPARE(newconfig.ProjectionInfo.fSDD,               config.ProjectionInfo.fSDD);
-    QCOMPARE(newconfig.ProjectionInfo.fpPoint.size(),     config.ProjectionInfo.fpPoint.size());
-
-    QCOMPARE(newconfig.ProjectionInfo.bTranslate,         config.ProjectionInfo.bTranslate);
-    QCOMPARE(newconfig.ProjectionInfo.fTiltAngle,         config.ProjectionInfo.fTiltAngle);
-    QCOMPARE(newconfig.ProjectionInfo.fTiltPivotPosition, config.ProjectionInfo.fTiltPivotPosition);
-    QCOMPARE(newconfig.ProjectionInfo.bCorrectTilt,       config.ProjectionInfo.bCorrectTilt);
-
-    QCOMPARE(newconfig.ProjectionInfo.sFileMask,          config.ProjectionInfo.sFileMask);
-    QCOMPARE(newconfig.ProjectionInfo.sPath,              config.ProjectionInfo.sPath);
-
-    QCOMPARE(newconfig.ProjectionInfo.sReferencePath,     config.ProjectionInfo.sReferencePath);
-    QCOMPARE(newconfig.ProjectionInfo.sOBFileMask,        config.ProjectionInfo.sOBFileMask);
-    QCOMPARE(newconfig.ProjectionInfo.nOBFirstIndex,      config.ProjectionInfo.nOBFirstIndex);
-    QCOMPARE(newconfig.ProjectionInfo.nOBCount,           config.ProjectionInfo.nOBCount);
-    QCOMPARE(newconfig.ProjectionInfo.sDCFileMask,        config.ProjectionInfo.sDCFileMask);
-    QCOMPARE(newconfig.ProjectionInfo.nDCFirstIndex,      config.ProjectionInfo.nDCFirstIndex);
-    QCOMPARE(newconfig.ProjectionInfo.nDCCount,           config.ProjectionInfo.nDCCount);
-
-    QCOMPARE(newconfig.ProjectionInfo.roi.size(),         config.ProjectionInfo.roi.size());
-    QCOMPARE(newconfig.ProjectionInfo.roi[0],             config.ProjectionInfo.roi[0]);
-    QCOMPARE(newconfig.ProjectionInfo.roi[1],             config.ProjectionInfo.roi[1]);
-    QCOMPARE(newconfig.ProjectionInfo.roi[2],             config.ProjectionInfo.roi[2]);
-    QCOMPARE(newconfig.ProjectionInfo.roi[3],             config.ProjectionInfo.roi[3]);
-
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi.size(), config.ProjectionInfo.projection_roi.size());
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi[0],  config.ProjectionInfo.projection_roi[0]);
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi[1],  config.ProjectionInfo.projection_roi[1]);
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi[2],  config.ProjectionInfo.projection_roi[2]);
-    QCOMPARE(newconfig.ProjectionInfo.projection_roi[3],  config.ProjectionInfo.projection_roi[3]);
-
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi.size(),    config.ProjectionInfo.dose_roi.size());
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi[0],        config.ProjectionInfo.dose_roi[0]);
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi[1],        config.ProjectionInfo.dose_roi[1]);
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi[2],        config.ProjectionInfo.dose_roi[2]);
-    QCOMPARE(newconfig.ProjectionInfo.dose_roi[3],        config.ProjectionInfo.dose_roi[3]);
-
-    QCOMPARE(newconfig.ProjectionInfo.fScanArc.size(),    config.ProjectionInfo.fScanArc.size());
-    QCOMPARE(newconfig.ProjectionInfo.fScanArc[0],        config.ProjectionInfo.fScanArc[0]);
-    QCOMPARE(newconfig.ProjectionInfo.fScanArc[1],        config.ProjectionInfo.fScanArc[1]);
-
-    QCOMPARE(newconfig.ProjectionInfo.eFlip,              config.ProjectionInfo.eFlip);
-    QCOMPARE(newconfig.ProjectionInfo.eRotate,            config.ProjectionInfo.eRotate);
-
-    QCOMPARE(newconfig.ProjectionInfo.eDirection,         config.ProjectionInfo.eDirection);
-}
 void FrameWorkTest::testProjectionReader()
 {
     QString msg;
@@ -689,15 +342,17 @@ void FrameWorkTest::testProjectionReader()
         std::cout<<"MirrorHorizontalCrop"<<std::endl;
         rot_ref=rot.MirrorHorizontal(m_fimg);
         crop_ref=cropper.Get(rot_ref,crop,false);
-        msg.sprintf("Size mismatch for fits reading with horizontal w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                    res_fits.Size(0),res_fits.Size(1),
-                    crop_ref.Size(0), crop_ref.Size(1));
+
+        QTextStream(&msg) << "Size mismatch for fits reading with horizontal w crop read size "<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                          <<", ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
         QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
         QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
         QVERIFY(res_fits.Size()==crop_ref.Size());
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            msg.clear();
+            QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
             QVERIFY2(res_fits[i]==crop_ref[i],msg.toStdString().c_str());
         }
 
@@ -706,15 +361,17 @@ void FrameWorkTest::testProjectionReader()
         rot_ref=rot.MirrorVertical(m_fimg);
         crop_ref=cropper.Get(rot_ref,crop,false);
 
-        msg.sprintf("Size mismatch for fits reading with vertical w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                    res_fits.Size(0),res_fits.Size(1),
-                    crop_ref.Size(0), crop_ref.Size(1));
+        msg.clear();
+        QTextStream(&msg) <<"Size mismatch for fits reading with vertical w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                          <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
         QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
         QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
-        for (size_t i=0; i<res_fits.Size(); ++i) {
-            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+        for (size_t i=0; i<res_fits.Size(); ++i)
+        {
+            msg.clear();
+            QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
             QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
         }
 
@@ -725,14 +382,14 @@ void FrameWorkTest::testProjectionReader()
 
         crop_ref=cropper.Get(rot_ref,crop,false);
 
-        msg.sprintf("Size mismatch for fits reading with horizontal/vertical w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                    res_fits.Size(0),res_fits.Size(1),
-                    crop_ref.Size(0), crop_ref.Size(1));
+        msg.clear();
+        QTextStream(&msg) <<"Size mismatch for fits reading with horizontal/vertical w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                          <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
         QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
         QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
-        QWARN("The horizontal/vertical test is currently excluded");
+        qWarning()<<"The horizontal/vertical test is currently excluded";
 //        for (size_t i=0; i<res_fits.Size(); ++i) {
 //            msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
 //            QVERIFY2(res_fits[i]==crop_ref[i],msg.toStdString().c_str());
@@ -752,15 +409,17 @@ void FrameWorkTest::testProjectionReader()
             rot_ref=rot.Rotate90(m_fimg);
             crop_ref=cropper.Get(rot_ref,crop,false);
 
-            msg.sprintf("Size mismatch for fits reading with rotate90 w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                        res_fits.Size(0),res_fits.Size(1),
-                        crop_ref.Size(0), crop_ref.Size(1));
+            msg.clear();
+            QTextStream(&msg) <<"Size mismatch for fits reading with rotate90 w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                              <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
             for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
+
                 QVERIFY2(res_fits[i]==crop_ref[i],msg.toStdString().c_str());
             }
         }
@@ -774,15 +433,18 @@ void FrameWorkTest::testProjectionReader()
 
             rot_ref=rot.Rotate180(m_fimg);
             crop_ref=cropper.Get(rot_ref,crop,false);
-            msg.sprintf("Size mismatch for fits reading with rotate180 w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                        res_fits.Size(0),res_fits.Size(1),
-                        crop_ref.Size(0), crop_ref.Size(1));
+
+            msg.clear();
+            QTextStream(&msg) <<"Size mismatch for fits reading with rotate180 w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                              <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
             for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
+
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -795,15 +457,17 @@ void FrameWorkTest::testProjectionReader()
             res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipNone,kipl::base::ImageRotate270,1.0f,crop);
             rot_ref=rot.Rotate270(m_fimg);
             crop_ref=cropper.Get(rot_ref,crop,false);
-            msg.sprintf("Size mismatch for fits reading with rotate270 w crop read size (%zu, %zu), ref size (%zu, %zu)",
-                        res_fits.Size(0),res_fits.Size(1),
-                        crop_ref.Size(0), crop_ref.Size(1));
+
+            msg.clear();
+            QTextStream(&msg) <<"Size mismatch for fits reading with rotate270 w crop read size ("<<res_fits.Size(0)<<", "<<res_fits.Size(1)
+                              <<"), ref size ("<<crop_ref.Size(0)<<", "<< crop_ref.Size(1)<<")";
 
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),msg.toStdString().c_str());
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),msg.toStdString().c_str());
 
             for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -833,7 +497,8 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
             for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -853,8 +518,10 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -873,8 +540,10 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -893,8 +562,33 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
+                QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
+            }
+        }
+        catch (ReconException &e)
+        {
+            cout<<"Exception :"<<e.what()<<std::endl;
+        }
+
+        try
+        {
+            res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate90,1.0f,crop);
+
+            rot_ref=rot.Rotate90(m_fimg);
+            mirror_ref=rot.MirrorHorizontal(rot_ref);
+            crop_ref=cropper.Get(mirror_ref,crop,false);
+
+            QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
+            QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
+
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -913,12 +607,15 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
-        catch (ReconException &e) {
+        catch (ReconException &e)
+        {
             cout<<"Exception :"<<e.what()<<std::endl;
         }
 
@@ -933,28 +630,10 @@ void FrameWorkTest::testProjectionReader()
             QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
             QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
 
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
-                QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
-            }
-        }
-        catch (ReconException &e) {
-            cout<<"Exception :"<<e.what()<<std::endl;
-        }
-
-        try
-        {
-            res_fits=reader.Read("proj_0001.fits",kipl::base::ImageFlipHorizontal,kipl::base::ImageRotate90,1.0f,crop);
-
-            rot_ref=rot.Rotate90(m_fimg);
-            mirror_ref=rot.MirrorHorizontal(rot_ref);
-            crop_ref=cropper.Get(mirror_ref,crop,false);
-
-            QVERIFY2(res_fits.Size(0)==crop_ref.Size(0),"Size mismatch for fits reading with horizontal");
-            QVERIFY2(res_fits.Size(1)==crop_ref.Size(1),"Size mismatch for fits reading with horizontal");
-
-            for (size_t i=0; i<res_fits.Size(); ++i) {
-                msg.sprintf("position %zu: read=%f, ref=%f", i, res_fits[i],crop_ref[i]);
+            for (size_t i=0; i<res_fits.Size(); ++i)
+            {
+                msg.clear();
+                QTextStream(&msg) <<"position "<<i<<": read="<<res_fits[i]<<", ref="<<crop_ref[i];
                 QVERIFY2(res_fits[i]==static_cast<float>(crop_ref[i]),msg.toStdString().c_str());
             }
         }
@@ -964,23 +643,7 @@ void FrameWorkTest::testProjectionReader()
     }
 }
 
-void FrameWorkTest::testScanTypeEnum()
-{
-    std::map<std::string,ReconConfig::cProjections::eScanType> testData;
-    testData["sequential"]=ReconConfig::cProjections::SequentialScan;
-    testData["goldensection"]=ReconConfig::cProjections::GoldenSectionScan;
-    testData["invgoldensection"]=ReconConfig::cProjections::InvGoldenSectionScan;
 
-    ReconConfig::cProjections::eScanType st;
-
-    for (auto item : testData)
-    {
-        QCOMPARE(enum2string(item.second),item.first);
-
-        string2enum(item.first,st);
-        QCOMPARE(st,item.second);
-    }
-}
 
 void FrameWorkTest::testBuildFileList_GeneratedSequence()
 {
@@ -995,7 +658,7 @@ void FrameWorkTest::testBuildFileList_GeneratedSequence()
     config.ProjectionInfo.fScanArc[1]=360.0f;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
     float sum=0.0f;
@@ -1014,7 +677,7 @@ void FrameWorkTest::testBuildFileList_GeneratedSequence()
     config.ProjectionInfo.nFirstIndex=1;
     config.ProjectionInfo.nLastIndex=19;
 
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1,msg.str().c_str());
     sum=0.0f;
@@ -1031,8 +694,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
 {
     std::ostringstream msg;
     size_t N=10;
-    size_t i=0;
-
+    
     ReconConfig config("");
 // Test even number
     config.ProjectionInfo.sFileMask       = "test_####.fits";
@@ -1044,7 +706,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     config.ProjectionInfo.nGoldenStartIdx = 0;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1070,7 +732,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
 
     config.ProjectionInfo.fScanArc[1]=360.0f;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1106,7 +768,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden()
     config.ProjectionInfo.nGoldenStartIdx = 1;
 
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
@@ -1135,7 +797,6 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
 {
     std::ostringstream msg;
     size_t N=10;
-    size_t i=0;
 
     ReconConfig config("");
 // Test even number
@@ -1148,7 +809,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
     config.ProjectionInfo.nGoldenStartIdx = 10;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1174,7 +835,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
 
     config.ProjectionInfo.fScanArc[1]=360.0f;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1210,7 +871,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_offset()
     config.ProjectionInfo.nGoldenStartIdx = 1;
 
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
@@ -1261,7 +922,6 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_delay()
 
     std::ostringstream msg;
     size_t N=10;
-    size_t i=0;
 
     ReconConfig config("");
 // Test even number
@@ -1274,7 +934,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_delay()
     config.ProjectionInfo.nGoldenStartIdx = 0;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1299,7 +959,7 @@ void FrameWorkTest::testBuildFileList_GeneratedGolden_delay()
     config.ProjectionInfo.nGoldenStartIdx = 2;
 
     ProjectionList.clear();
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1331,7 +991,7 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     config.ProjectionInfo.nGoldenStartIdx=0;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1358,7 +1018,7 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
 
     config.ProjectionInfo.fScanArc[1]=360.0f;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
@@ -1394,7 +1054,7 @@ void FrameWorkTest::testBuildFileList_GeneratedInvGolden()
     config.ProjectionInfo.nGoldenStartIdx = 1;
 
     N=config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
     msg.str(""); msg<<"Expected size "<<N<<", got "<<ProjectionList.size();
     QVERIFY2(ProjectionList.size()==N,msg.str().c_str());
     sum=0.0f;
@@ -1443,7 +1103,7 @@ void FrameWorkTest::testBuildFileList()
     config.ProjectionInfo.nLastIndex=i+1;
 
     std::map<float,ProjectionInfo> ProjectionList;
-    BuildFileList(&config,&ProjectionList);
+    BuildFileList(config,ProjectionList);
 
     QVERIFY(ProjectionList.size()==i+1);
 
@@ -1477,6 +1137,93 @@ void FrameWorkTest::testProcessTimingLogger()
     ptl.addLogEntry(entryData);
 }
 
-QTEST_APPLESS_MAIN(FrameWorkTest)
+
+void FrameWorkTest::testBuildFileList_SequenceDropProjections()
+{
+    std::ostringstream msg;
+    ReconConfig config("");
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    ProjectionList.clear();
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=21;
+    config.ProjectionInfo.skipListMode = ReconConfig::cProjections::SkipMode_Drop;
+    config.ProjectionInfo.nlSkipList = {5,9};
+    config.ProjectionInfo.fScanArc={0.0f,180.0f};
+
+    BuildFileList(config,ProjectionList);
+    size_t expectedSize = config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1-config.ProjectionInfo.nlSkipList.size();
+    msg.str(""); msg<<"Expected size "
+        <<expectedSize
+        <<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==expectedSize,msg.str().c_str());
+    float sum=0.0f;
+    for (const auto & item: ProjectionList) 
+    {
+        std::cout<<(item.first)<<", "
+                <<item.second.name<<", "
+                <<item.second.angle<<", "
+                <<item.second.weight<<std::endl;
+        sum+=item.second.weight;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+
+    
+}
+
+void FrameWorkTest::testBuildFileList_SequenceSkipProjections()
+{
+    std::ostringstream msg;
+    ReconConfig config("");
+
+    std::map<float,ProjectionInfo> ProjectionList;
+    ProjectionList.clear();
+    config.ProjectionInfo.sFileMask="test_####.fits";
+    config.ProjectionInfo.nFirstIndex=1;
+    config.ProjectionInfo.nLastIndex=19;
+    config.ProjectionInfo.skipListMode = ReconConfig::cProjections::SkipMode_Skip;
+    config.ProjectionInfo.nlSkipList = {5,9};
+    config.ProjectionInfo.fScanArc={0.0f,180.0f};
+
+
+    BuildFileList(config,ProjectionList);
+    size_t expectedSize = config.ProjectionInfo.nLastIndex-config.ProjectionInfo.nFirstIndex+1-config.ProjectionInfo.nlSkipList.size();
+    msg.str(""); msg<<"Expected size "
+        <<expectedSize
+        <<", got "<<ProjectionList.size();
+    QVERIFY2(ProjectionList.size()==expectedSize,msg.str().c_str());
+    float sum=0.0f;
+    for (const auto & item: ProjectionList) 
+    {
+        std::cout<<(item.first)<<", "
+                <<item.second.name<<", "
+                <<item.second.angle<<", "
+                <<item.second.weight<<std::endl;
+        sum+=item.second.weight;
+    }
+
+    msg.str(""); msg<<"Expected 1.0, got "<<sum;
+    QVERIFY2(qFuzzyCompare(sum,1.0f),msg.str().c_str());
+
+    
+}
+
+void FrameWorkTest::testBuildFileList_skipGolden()
+{
+
+}
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(FrameWorkTest)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(FrameWorkTest)
+#endif
+
 
 #include "tst_frameworktest.moc"

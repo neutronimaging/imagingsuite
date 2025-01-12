@@ -13,7 +13,7 @@
 namespace kipl { namespace math { namespace fft {
 
 FFTBase::FFTBase(const std::vector<size_t> &_dims) :
-	logger("kipl::math::fft::FFTBase", std::clog),
+    logger("kipl::math::fft::FFTBase"),
 	have_r2cPlan(false),
 	have_c2cPlan(false),
 	have_c2rPlan(false),
@@ -25,7 +25,7 @@ FFTBase::FFTBase(const std::vector<size_t> &_dims) :
     cBufferA(nullptr),
     cBufferB(nullptr),
     rBuffer(nullptr),
-    Ndata(std::accumulate(_dims.begin(), _dims.end(), 1, std::multiplies<size_t>())),
+    Ndata(std::accumulate(_dims.begin(), _dims.end(), static_cast<size_t>(1), std::multiplies<size_t>())),
     dims(_dims)
 {
     ndim=dims.size();
@@ -64,8 +64,8 @@ int FFTBase::operator() ( std::complex<double> *inCdata,  std::complex<double> *
 	if (!cBufferB)
         cBufferB = new std::complex<double>[Ndata];
 	
-    std::fill_n(cBufferA,0,Ndata);
-    std::fill_n(cBufferB,0,Ndata);
+    std::fill_n(cBufferA,Ndata, std::complex<double>(0.0));
+    std::fill_n(cBufferB,Ndata, std::complex<double>(0.0));
 
     if (sign<0)
     {
@@ -157,8 +157,8 @@ int FFTBase::operator() (double *inRdata,  std::complex<double> *outCdata)
 	if (!rBuffer)
         rBuffer = new double[Ndata];
 		
-    std::fill_n(cBufferA,0, Ndata);
-    std::fill_n(rBuffer, 0, Ndata);
+    std::fill_n(cBufferA, Ndata, std::complex<double>(0.0));
+    std::fill_n(rBuffer,  Ndata, 0.0);
 
     if (!have_r2cPlan)
     {
@@ -208,8 +208,8 @@ int FFTBase::operator() ( std::complex<double> *inCdata, double *outRdata)
 	if (!rBuffer)
         rBuffer = new double[Ndata];
 
-    std::fill_n(cBufferA, 0, Ndata);
-    std::fill_n(rBuffer,  0, Ndata);
+    std::fill_n(cBufferA, Ndata, std::complex<double>(0.0));
+    std::fill_n(rBuffer,  Ndata, 0.0);
 		
     if (!have_c2rPlan)
     {

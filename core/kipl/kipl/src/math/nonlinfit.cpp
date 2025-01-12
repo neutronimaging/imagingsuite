@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <tuple>
 
 #include <armadillo>
 
@@ -140,7 +141,7 @@ void LevenbergMarquardt::fit(arma::vec &x, arma::vec &y,
 }
 
 void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, arma::vec &x, arma::vec &y,
-                                arma::vec &sig, arma::mat &alpha, arma::vec &beta)
+                                arma::vec &sig, arma::mat &_alpha, arma::vec &beta)
 {
 //Used by fit to evaluate the linearized fitting matrix alpha, and vector beta as in (15.5.8), and to calculate 2.
     int i,j,k,l,m;
@@ -150,7 +151,7 @@ void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, arma::vec &x, ar
     for (j=0; j<mfit; j++)
     { //Initialize (symmetric) alpha, beta.
         for (k=0; k<=j; k++)
-            alpha.at(j,k)=0.0;
+            _alpha.at(j,k)=0.0;
         beta[j]=0.0;
     }
 
@@ -170,33 +171,33 @@ void LevenbergMarquardt::mrqcof(Nonlinear::FitFunctionBase &fn, arma::vec &x, ar
             {
                 wt=dyda[l]*sig2i;
                 for (k=0,m=0;m<l+1;m++)
-                    if (fn.isFree(m)) alpha.at(j,k++) += wt*dyda[m];
+                    if (fn.isFree(m)) _alpha.at(j,k++) += wt*dyda[m];
                 beta[j++] += dy*wt;
             }
         }
-        chisq += dy*dy*sig2i; // And find 2.
+        chisq += dy*dy*sig2i; // And find chi2.
     }
     for (j=1;j<mfit;j++) //Fill in the symmetric side.
-        for (k=0;k<j;k++) alpha.at(k,j)=alpha.at(j,k);
+        for (k=0;k<j;k++) alpha.at(k,j)=_alpha.at(j,k);
 }
 
-void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn)
+void LevenbergMarquardt::covsrt(arma::mat &_covar, Nonlinear::FitFunctionBase &fn)
 {
 //Expand in storage the covariance matrix covar, so as to take into account parameters that
 //are being held fixed. (For the latter, return zero covariances.)
     int i,j,k;
     for (i=mfit;i<ma;i++)
         for (j=0;j<i+1;j++)
-            covar.at(i,j) = covar.at(j,i) = 0.0;
+            _covar.at(i,j) = _covar.at(j,i) = 0.0;
     k=mfit-1;
     for (j=ma-1;j>=0;j--)
     {
         if (fn.isFree(j))
         {
             for (i=0;i<ma;i++)
-                std::swap(covar.at(i,k),covar.at(i,j));
+                std::swap(_covar.at(i,k),_covar.at(i,j));
             for (i=0;i<ma;i++)
-                std::swap(covar.at(k,i),covar.at(j,i));
+                std::swap(_covar.at(k,i),_covar.at(j,i));
             k--;
         }
     }
@@ -242,7 +243,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int FitFunctionBase::setLock(const std::vector<bool> &lv)
     {
-        if (lv.size() != m_Npars)
+        if (lv.size() != static_cast<size_t>(m_Npars))
             throw kipl::base::KiplException("Lock vector is not same size as number of parameters",__FILE__,__LINE__);
 
         m_pars2fit=0;
@@ -294,7 +295,6 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     double Gaussian::operator()(double x)
     {
-        int i;
         double arg,ex;
 
         double y=0.0;
@@ -308,10 +308,9 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Gaussian::operator()(double x, double &y, arma::vec & dyda)
     {
-        int i;
         long double fac,ex,arg;
 
-        if (dyda.n_elem!=m_Npars)
+        if (dyda.n_elem!=static_cast<size_t>(m_Npars))
             dyda=arma::vec(m_Npars);
 
         y=0.0;
@@ -328,41 +327,41 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         return 1;
     }
 
-    int Gaussian::Hessian(double UNUSED(x), arma::mat &UNUSED)
+    int Gaussian::Hessian(double /*x*/, arma::mat & /*hes*/)
     {
-
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
 
-        /*
-        if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
-        hes.newsize(m_Npars,m_Npars);
+//        if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
+//        hes.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+//        return 1;
+
     }
 
-    int Gaussian::Jacobian(double UNUSED(x), arma::mat & UNUSED(jac))
+    int Gaussian::Jacobian(double x, arma::mat & jac)
     {
+        std::ignore = x;
+        std::ignore = jac;
+
         std::cerr<<"The Jacobian is not available"<<std::endl;
         return 1;
-        /*
-        if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
-        jac.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+//        if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
+//        jac.newsize(m_Npars,m_Npars);
+
+//        return 1;
     }
 
     int Gaussian::printPars()
     {
-        int i;
+
         char *est=new char[m_Npars];
 
-        for (i=0; i<m_Npars; i++)
+        for (int i=0; i<m_Npars; i++)
             est[i]=m_lock[i] ? ' ': '*';
 
-        for (i=0; i<m_Npars; i+=3)
+        for (int i=0; i<m_Npars; i+=3)
         {
             std::cout<<est[i]  <<"A="<<m_pars[i]  <<" "
                 <<est[i+1]<<"m="<<m_pars[i+1]<<" "
@@ -398,7 +397,7 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         int i;
         long double fac,ex,arg;
 
-        if (dyda.n_elem!=m_Npars)
+        if (dyda.n_elem!=static_cast<size_t>(m_Npars))
             dyda=arma::vec(m_Npars);
 
         y=0.0;
@@ -414,30 +413,33 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
         return 1;
     }
 
-    int SumOfGaussians::Hessian(double UNUSED(x), arma::mat &UNUSED)
+    int SumOfGaussians::Hessian(double /*x*/, arma::mat & /*hes*/)
     {
+
+
 
         std::cerr<<"The Hessian is not available"<<std::endl;
         return 1;
 
-        /*
-        if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
-        hes.newsize(m_Npars,m_Npars);
+        // if ((hes.num_rows()!=m_Npars) || (hes.num_cols()!=m_Npars))
+        // hes.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+        // return 1;
     }
 
-    int SumOfGaussians::Jacobian(double UNUSED(x), arma::mat & UNUSED(jac))
+    int SumOfGaussians::Jacobian(double x, arma::mat & jac)
     {
+        std::ignore = x;
+        std::ignore = jac;
+
         std::cerr<<"The Jacobian is not available"<<std::endl;
         return 1;
-        /*
-        if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
-        jac.newsize(m_Npars,m_Npars);
 
-        return 1;
-        */
+        // if ((jac.num_rows()!=m_Npars) || (jac.num_cols()!=m_Npars))
+        // jac.newsize(m_Npars,m_Npars);
+
+        // return 1;
+
     }
 
     int SumOfGaussians::printPars()
@@ -472,6 +474,9 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Voight::operator()(double x, double &y, arma::vec &dyda)
     {
+        std::ignore = y;
+        std::ignore = dyda;
+
         long double diff=static_cast<long double>(x-m_pars[1]);
         x=m_pars[0]*exp(-m_pars[2]*fabs(diff)-(m_pars[3]*diff*diff*0.5));
 
@@ -480,12 +485,17 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Voight::Hessian(double x, arma::mat &hes)
     {
+        std::ignore = x;
+        std::ignore = hes;
 
         return -1;
     }
 
     int Voight::Jacobian(double x, arma::mat &jac)
     {
+        std::ignore = x;
+        std::ignore = jac;
+
         return 0;
     }
 
@@ -518,6 +528,8 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Lorenzian::operator()(double x, double &y, arma::vec & dyda)
     {
+        std::ignore = dyda;
+
         y=m_pars[0]/(dPi*(x*x+m_pars[0]*m_pars[0]));
 
         return 1;
@@ -525,11 +537,16 @@ void LevenbergMarquardt::covsrt(arma::mat &covar, Nonlinear::FitFunctionBase &fn
 
     int Lorenzian::Hessian(double x, arma::mat &hes)
     {
+        std::ignore = x;
+        std::ignore = hes;
         return -1;
     }
 
     int Lorenzian::Jacobian(double x, arma::mat &jac)
     {
+        std::ignore = x;
+        std::ignore = jac;
+
         return -1;
     }
 

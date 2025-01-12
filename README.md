@@ -1,3 +1,6 @@
+[![MuhRec CI](https://github.com/neutronimaging/imagingsuite/actions/workflows/Build-multi-OS.yml/badge.svg)](https://github.com/neutronimaging/imagingsuite/actions/workflows/Build-multi-OS.yml)
+[![pymuhrec CI](https://github.com/neutronimaging/imagingsuite/actions/workflows/Build-wheels.yml/badge.svg)](https://github.com/neutronimaging/imagingsuite/actions/workflows/Build-wheels.yml)
+[![python](https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
 # The imaging suite core
 The imaging suite repository contains the core functionality sources for and documentation related to MuhRec, KipTool, and nGITool.
 The project has a [public webpage](https://neutronimaging.github.io/) where you get some more information.
@@ -6,48 +9,13 @@ The project has a [public webpage](https://neutronimaging.github.io/) where you 
 - [MuhRec](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-MuhRec)
 - [KipTool](https://github.com/neutronimaging/imagingsuite/wiki/User-manual-KipTool)
 
+# Contributing
+-[How to contribute](https://github.com/neutronimaging/imagingsuite/blob/master/CONTRIBUTING.md)
+
 # Build instructions
 - [Prerequisities](https://github.com/neutronimaging/imagingsuite/wiki/Prerequisites-for-building)
 - [How to build](https://github.com/neutronimaging/imagingsuite/wiki/Build-instructions)
 
-## Building python bindings
-Python bindings are implemented to allow the use of the modules in python. The bindings are implemented using PYBIND11 and you need to use cmake to build them.
-
-### First step create directories for the build
-Create build and install folders in the ```path``` where you want them
-```bash 
-mkdir <path>/build
-mkdir <path>/install
-```
-
-#### MuhRec back-projectors
-The cmake file to build the backprojector bindings located located in the folder ````imagingsuite/framework/tomography````.
-
-Steps to build:
-
-
-##### Build the module
-```bash
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=../install -DDYNAMIC_LIB=ON
-cmake --build . --target install
-cd ..
-```
-
-##### Post build actions
-```bash 
-cd install/lib
-for f in `ls *.1.0.0.*`; do ln -s $f `basename $f .1.0.0.dylib`.1.dylib; done
-
-```
-### Testing the build
-cd ../python
-PYTHONPATH=$PYTHONPATH:../install python3
-
-```python
-import imgalg
-import muhrectomo
-```
 
 
 

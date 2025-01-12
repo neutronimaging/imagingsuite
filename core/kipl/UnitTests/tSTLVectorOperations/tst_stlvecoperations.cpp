@@ -14,6 +14,7 @@ public:
 
 private slots:
     void test_medianFilter();
+    void test_MAD();
 
 };
 
@@ -43,7 +44,8 @@ void STLVecOperations::test_medianFilter()
     if (N<30)
     {
         auto it=result.begin();
-        for (auto &x: orig) {
+        for (auto &x: orig) 
+        {
             qDebug()<<x<<(*it);
             ++it;
         }
@@ -54,6 +56,23 @@ void STLVecOperations::test_medianFilter()
 
 }
 
-QTEST_APPLESS_MAIN(STLVecOperations)
+void STLVecOperations::test_MAD()
+{
+    std::vector<float> v={0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 1000.0f};
 
-#include "tst_stlvecoperations.moc"
+    auto mad = MAD(v);
+
+    QVERIFY(mad==3.0);
+
+}
+
+#ifdef __APPLE__
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+    QTEST_APPLESS_MAIN(STLVecOperations)
+    #pragma clang diagnostic pop
+#else
+    QTEST_APPLESS_MAIN(STLVecOperations)
+#endif
+
+#include "include/tst_stlvecoperations.moc"

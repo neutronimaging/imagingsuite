@@ -14,8 +14,14 @@
 #include <morphology/morphology.h>
 #include <morphology/morphdist.h>
 #include <morphology/morphfilters.h>
-#include <emmintrin.h>
-#include <xmmintrin.h>
+
+#ifdef __aarch64__
+    #include <sse2neon/sse2neon.h>
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
+
 #include <iostream>
 #include <set>
 #include <strings/miscstring.h>
@@ -49,7 +55,7 @@ SpotClean::~SpotClean(void)
 		delete [] pKernel;
 }
 
-int SpotClean::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int SpotClean::Configure(ReconConfig /*config*/, std::map<std::string, std::string> /*parameters*/)
 {
 	// todo: enter the config entries
 //	fThreshold  = config->Reconstructor.Clean.fGamma;
@@ -81,7 +87,7 @@ std::map<std::string, std::string> SpotClean::GetParameters()
 //	return 0;
 //}
 
-int SpotClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &coeff)
+int SpotClean::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &/*coeff*/)
 {
 	kipl::base::TImage<float,2> res;
 	processList.clear();
@@ -152,7 +158,7 @@ kipl::base::TImage<float,2> SpotClean::BoxFilter(kipl::base::TImage<float,2> img
 {
     std::vector<size_t> dimsU={dim,1};
     std::vector<size_t> dimsV={1,dim};
-	size_t N=dim*dim;
+	// size_t N=dim*dim;
     std::vector<float> fKernel(9,1.0f);
 
 	kipl::filters::TFilter<float,2> filterU(fKernel,dimsU);
@@ -208,19 +214,19 @@ kipl::base::TImage<float,2> SpotClean::ProcessLevelSets(kipl::base::TImage<float
 kipl::base::TImage<float,2> SpotClean::ProcessPixelList(kipl::base::TImage<float,2> img)
 {
 	kipl::base::TImage<float,2> result=img;
-	first_line=img.Size(0)-1;
-	last_line=img.Size()-img.Size(0);
-	sx=img.Size(0);
+	first_line = img.Size(0)-1;
+	last_line = img.Size()-img.Size(0);
+	sx        = img.Size(0);
 
 	kipl::base::TImage<float,2> s=DetectionImage(img,mDetection,nWindowSize);
 	
 	// Make first threshold image
-    kipl::base::TImage<char,2> mask(s.dims());
+    kipl::base::TImage<char,2> cmask(s.dims());
 	for (size_t i=0; i< s.Size(); i++)
-		mask[i]=mLUT.Low()<s[i];
+		cmask[i]=mLUT.Low()<s[i];
 
 	kipl::base::TImage<char,2> dist;
-    kipl::morphology::old::EuclideanDistance(mask,dist);
+    kipl::morphology::old::EuclideanDistance(cmask,dist);
 
 	std::map<float,std::list<size_t> > spotlist;
     for (int i=0; i<static_cast<int>(dist.Size()); i++) {
@@ -314,9 +320,9 @@ size_t SpotClean::ExtractLocalData(size_t pixel,
 kipl::base::TImage<float,2> SpotClean::FillHoles(kipl::base::TImage<float,2> img)
 {
 	// Make mask image
-    kipl::base::TImage<float,2> mask(img.dims()),mask2;
+    kipl::base::TImage<float,2> mask1(img.dims()),mask2;
 	float *pImg=img.GetDataPtr();
-	float *pMask=mask.GetDataPtr();
+	float *pMask=mask1.GetDataPtr();
 
 	for (size_t i=0; i<img.Size(); i++)
 		pMask[i]=(pImg[i]==0);
@@ -325,7 +331,7 @@ kipl::base::TImage<float,2> SpotClean::FillHoles(kipl::base::TImage<float,2> img
     std::vector<float> kernel(9,1.0f);
     std::vector<size_t> kdims={3,3};
 	kipl::morphology::TDilate<float,2> dilate(kernel,kdims);
-	mask2=dilate(mask,kipl::filters::FilterBase::EdgeMirror);
+	mask2=dilate(mask1,kipl::filters::FilterBase::EdgeMirror);
 
 	// Compute propagation field for the filling
 	kipl::base::TImage<float,2> dist;

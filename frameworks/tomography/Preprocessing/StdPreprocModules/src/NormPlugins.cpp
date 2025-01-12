@@ -13,6 +13,7 @@
 #include <ReconException.h>
 #include <ProjectionReader.h>
 #include <ReconConfig.h>
+#include <analyzefileext.h>
 
 #include <ParameterHandling.h>
 
@@ -61,12 +62,9 @@ bool NormBase::SetROI(const std::vector<size_t> &roi)
 {
 	std::stringstream msg;
 	msg<<"ROI=["<<roi[0]<<" "<<roi[1]<<" "<<roi[2]<<" "<<roi[3]<<"]";
-	logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str(),__FUNCTION__);
 	LoadReferenceImages(roi);
     nNormRegion = nOriginalNormRegion;
-
-	size_t roix=roi[2]-roi[0];
-	size_t roiy=roi[3]-roi[1];
 
 	return true;
 }
@@ -134,35 +132,19 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
 
     std::string filename,ext;
     ProjectionReader reader;
-    size_t found;
 
     dose = initialDose; // A precaution in case no dose is calculated
 
     if (N!=0)
     {
         msg.str(""); msg<<"Loading "<<N<<" reference images";
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+        logger.message(msg.str(),__FUNCTION__);
 
         float *fDoses=new float[N];
 
-        found = fmask.find("hdf");
-        if (found==std::string::npos )
-        {
+        auto exttype = readers::GetFileExtensionType(fmask);
 
-            kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
-            img     = reader.Read(filename,
-                        config.ProjectionInfo.eFlip,
-                        config.ProjectionInfo.eRotate,
-                        config.ProjectionInfo.fBinning,
-                        roi);
-
-            tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
-                        config.ProjectionInfo.eFlip,
-                        config.ProjectionInfo.eRotate,
-                        config.ProjectionInfo.fBinning,
-                        nOriginalNormRegion) : initialDose;
-        }
-        else
+        if (exttype == readers::ExtensionHDF5 )
         {
             img     = reader.ReadNexus(fmask, firstIndex,
                         config.ProjectionInfo.eFlip,
@@ -171,6 +153,21 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
                         roi);
 
             tmpdose = bUseNormROI ? reader.GetProjectionDoseNexus(fmask, firstIndex,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        nOriginalNormRegion) : initialDose;
+        }
+        else
+        {
+            kipl::strings::filenames::MakeFileName(fmask,firstIndex,filename,ext,'#','0');
+            img     = reader.Read(filename,
+                        config.ProjectionInfo.eFlip,
+                        config.ProjectionInfo.eRotate,
+                        config.ProjectionInfo.fBinning,
+                        roi);
+
+            tmpdose = bUseNormROI ? reader.GetProjectionDose(filename,
                         config.ProjectionInfo.eFlip,
                         config.ProjectionInfo.eRotate,
                         config.ProjectionInfo.fBinning,
@@ -189,7 +186,7 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
         for (int i=1; i<N; ++i) {
             kipl::strings::filenames::MakeFileName(fmask,i+firstIndex,filename,ext,'#','0');
 
-            if (found==std::string::npos )
+            if (exttype != readers::ExtensionHDF5 )
             {
                 img=reader.Read(filename,
                         m_Config.ProjectionInfo.eFlip,
@@ -242,9 +239,11 @@ kipl::base::TImage<float,2> NormBase::ReferenceLoader(std::string fname,
         delete [] tempdata;
         delete [] fDoses;
 
-        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram) {
-             float *pFlat=refimg.GetDataPtr();
-            for (size_t i=1; i<refimg.Size(1); i++) {
+        if (m_Config.ProjectionInfo.imagetype==ReconConfig::cProjections::ImageType_Proj_RepeatSinogram)
+        {
+            float *pFlat=refimg.GetDataPtr();
+            for (size_t i=1; i<refimg.Size(1); i++)
+            {
                 memcpy(refimg.GetLinePtr(i), pFlat, sizeof(float)*refimg.Size(0));
 
             }
@@ -262,9 +261,10 @@ std::map<std::string, std::string> NormBase::GetParameters()
 {
 	std::map<std::string, std::string> parameters;
 
-    parameters["usenormregion"]=kipl::strings::bool2string(bUseNormROI);
-    parameters["uselut"]=kipl::strings::bool2string(bUseLUT);
-    parameters["referenceaverage"]=enum2string(m_ReferenceAvagerage);
+    parameters["usenormregion"]    = kipl::strings::bool2string(bUseNormROI);
+    parameters["uselut"]           = kipl::strings::bool2string(bUseLUT);
+    parameters["referenceaverage"] = enum2string(m_ReferenceAvagerage);
+
 	return parameters;
 }
 
@@ -440,12 +440,15 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::st
 int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
 {
 	int nDose=img.Size(2);
-	float *doselist=new float[nDose];
+    std::vector<float> doselist;
 
 	std::stringstream msg;
 	
 	if (bUseNormROI==true) {
 		GetFloatParameterVector(coeff,"dose",doselist,nDose);
+        msg.str("");
+        msg<<"Dose vector length "<<doselist.size();
+        logger.message(msg.str());
 		for (int i=0; i<nDose; i++) {
 			doselist[i] = doselist[i]-fDarkDose;
 			doselist[i] = log(doselist[i]<1 ? 1.0f : doselist[i]);
@@ -575,8 +578,6 @@ int FullLogNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::st
 			}
 		}
 	}
-
-	delete [] doselist;
 
     return 0;
 }
@@ -750,7 +751,8 @@ int FullNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::strin
 
     int N=static_cast<int>(img.Size(0)*img.Size(1));
 
-    if ((nDCCount!=0) && (static_cast<int>(mFlatField.Size())!=N)) {
+    if ((nDCCount!=0) && (static_cast<int>(mFlatField.Size())!=N))
+    {
         msg.str("");
         msg<<"Flat field ("<<mFlatField.Size(0)<<", "<<mFlatField.Size(1)<<"),"
             <<" does not match projection ("<<img.Size(0)<<", "<<img.Size(1)<<")"
@@ -764,12 +766,15 @@ int FullNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::strin
 
     if (nDCCount>0) {
         if (nOBCount>0) {
+                
                 #pragma omp parallel for firstprivate(pFlat,pDark)
-                for (int j=0; j<img.Size(2); j++) {
+                for (int j=0; j<static_cast<int>(img.Size(2)); ++j) 
+                {
                     float *pImg=img.GetLinePtr(0,j);
                     float dose=nDose !=1 ? doselist[j] : doselist[0];
 
-                    for (int i=0; i<N; i++) {
+                    for (int i=0; i<N; i++) 
+                    {
                         float fProjPixel=(pImg[i]-pDark[i]);
                         if (fProjPixel<=0)
                             pImg[i]=0;
@@ -780,11 +785,13 @@ int FullNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::strin
         }
         else {
             #pragma omp parallel for firstprivate(pDark)
-            for (int j=0; j<img.Size(2); j++) {
+            for (int j=0; j<static_cast<int>(img.Size(2)); ++j) 
+            {
                 float *pImg=img.GetLinePtr(0,j);
                 float dose=nDose !=1 ? doselist[j] : doselist[0];
 
-                for (int i=0; i<N; i++) {
+                for (int i=0; i<N; i++) 
+                {
                     float fProjPixel=(pImg[i]-pDark[i]);
                     if (fProjPixel<=0)
                         pImg[i]=0;
@@ -795,9 +802,11 @@ int FullNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::strin
         }
     }
     else {
-        if (nOBCount>0) {
+        if (nOBCount>0) 
+        {
             #pragma omp parallel for firstprivate(pFlat)
-            for (int j=0; j<img.Size(2); j++) {
+            for (int j=0; j<static_cast<int>(img.Size(2)); ++j) 
+            {
                 float *pImg=img.GetLinePtr(0,j);
                 float dose=nDose !=1 ? doselist[j] : doselist[0];
                 for (int i=0; i<N; i++) {
@@ -809,12 +818,15 @@ int FullNorm::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::strin
                 }
             }
         }
-        else {
+        else 
+        {
             #pragma omp parallel for
-            for (int j=0; j<img.Size(2); j++) {
+            for (int j=0; j<static_cast<int>(img.Size(2)); ++j) 
+            {
                 float *pImg=img.GetLinePtr(0,j);
                 float dose=nDose !=1 ? doselist[j] : doselist[0];
-                for (int i=0; i<N; i++) {
+                for (int i=0; i<N; i++) 
+                {
                     float fProjPixel=(pImg[i]);
                     if (fProjPixel<=0)
                         pImg[i]=0;
@@ -834,16 +846,20 @@ NegLogNorm::NegLogNorm() : NormBase("NegLogNorm")
 	throw ReconException("NegLogNorm is not implemented");
 }
 
-NegLogNorm::~NegLogNorm() {}
-int NegLogNorm::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+NegLogNorm::~NegLogNorm() 
+{}
+
+int NegLogNorm::Configure(  ReconConfig /*config*/, 
+                            std::map<std::string, std::string> /*parameters*/)
 {
     return 0;
 }
 
-void NegLogNorm::LoadReferenceImages(const std::vector<size_t> &roi)
+void NegLogNorm::LoadReferenceImages(const std::vector<size_t> & /*roi*/)
 {}
 
-int NegLogNorm::ProcessCore(kipl::base::TImage<float,2> & img, std::map<string, string> &coeff)
+int NegLogNorm::ProcessCore(kipl::base::TImage<float,2> & /*img*/, 
+                            std::map<string, string>    & /*coeff*/)
 {
     return 0;
 }
@@ -856,7 +872,8 @@ NegLogProjection::NegLogProjection() : NormBase("NegLogProjection")
 
 NegLogProjection::~NegLogProjection() {}
 
-int NegLogProjection::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int NegLogProjection::Configure(ReconConfig /*config*/, 
+                                std::map<std::string, std::string> /*parameters*/)
 {
 //	path        = config->Projections.sPath;
 //	flatname    = config->Projections.sFileMask;
@@ -871,7 +888,7 @@ int NegLogProjection::Configure(ReconConfig config, std::map<std::string, std::s
 	return 0;
 }
 
-void NegLogProjection::LoadReferenceImages(const std::vector<size_t> &roi)
+void NegLogProjection::LoadReferenceImages(const std::vector<size_t> & /*roi*/)
 {
 	kipl::base::TImage<float,2> flat, dark;
 
@@ -888,7 +905,8 @@ void NegLogProjection::LoadReferenceImages(const std::vector<size_t> &roi)
 	SetReferenceImages(dark, flat);
 }
 
-int NegLogProjection::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, float> & coeff)
+int NegLogProjection::ProcessCore(  kipl::base::TImage<float,2> & img, 
+                                    std::map<std::string, std::string> & /*coeff*/)
 {
 
 	float cLogDose=0.0f;
@@ -916,7 +934,8 @@ LogProjection::LogProjection() : NormBase("LogProjection"), fFactor(-1.0f)
 
 LogProjection::~LogProjection() {}
 
-int LogProjection::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int LogProjection::Configure(   ReconConfig /*config*/, 
+                                std::map<std::string, std::string> parameters)
 {
 	fFactor = GetFloatParameter(parameters,"factor");
 
@@ -932,9 +951,11 @@ std::map<std::string, std::string> LogProjection::GetParameters()
 	return parameters;
 }
 
-void LogProjection::LoadReferenceImages(const std::vector<size_t> &roi) {}
+void LogProjection::LoadReferenceImages(const std::vector<size_t> & /*roi */) 
+{}
 
-int LogProjection::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, string> & coeff)
+int LogProjection::ProcessCore( kipl::base::TImage<float,2> & img, 
+                                std::map<std::string, string> & /*coeff*/)
 {
 	float *pImg=img.GetDataPtr();
 
@@ -949,7 +970,7 @@ int LogProjection::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::
 	return 0;
 }
 
-int LogProjection::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, string> & coeff)
+int LogProjection::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, string> & /*coeff*/)
 {
 	float *pImg=img.GetDataPtr();
 
@@ -968,10 +989,18 @@ InvProjection::InvProjection() : NormBase("InvProjection")
 {
 	throw ReconException("InvProjection is not implemented");
 }
-InvProjection::~InvProjection() {}
-void InvProjection::Configure(ReconConfig *config) {}
-void InvProjection::LoadReferenceImages(size_t *roi) {}
-int InvProjection::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, float> & coeff)
+InvProjection::~InvProjection() 
+{}
+
+int InvProjection::Configure(ReconConfig /*config*/, std::map<std::string, std::string> /*parameters*/) 
+{
+    return 0;
+}
+
+void InvProjection::LoadReferenceImages(const std::vector<size_t> & /*roi*/) 
+{}
+
+int InvProjection::ProcessCore(kipl::base::TImage<float,2> & /*img*/, std::map<std::string, std::string> & /*coeff*/)
 {
 	return 0;
 }
@@ -986,7 +1015,7 @@ DoseWeightProjection::~DoseWeightProjection()
 {
 }
 
-int DoseWeightProjection::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int DoseWeightProjection::Configure(ReconConfig /*config*/, std::map<std::string, std::string> /*parameters*/)
 {
 //	path        = config->Projections.sPath;
 //	flatname    = config->Projections.sFileMask;
@@ -1001,7 +1030,7 @@ int DoseWeightProjection::Configure(ReconConfig config, std::map<std::string, st
 	return 0;
 }
 
-void DoseWeightProjection::LoadReferenceImages(size_t *roi) 
+void DoseWeightProjection::LoadReferenceImages(const std::vector<size_t> & /*roi*/) 
 {
 	kipl::base::TImage<float,2> flat, dark;
 
@@ -1018,7 +1047,8 @@ void DoseWeightProjection::LoadReferenceImages(size_t *roi)
 	SetReferenceImages(dark, flat);
 }
 
-int DoseWeightProjection::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, float> & coeff)
+int DoseWeightProjection::ProcessCore(  kipl::base::TImage<float,2> & img, 
+                                        std::map<std::string, std::string> & /*coeff*/)
 {
 	float fDose=1.0f;
 	if (this->bUseNormROI)
@@ -1034,7 +1064,7 @@ int DoseWeightProjection::ProcessCore(kipl::base::TImage<float,2> & img, std::ma
 }
 
 
-void NormPluginBuilder(ReconConfig * config, NormBase ** plugin)
+void NormPluginBuilder(ReconConfig * /*config*/, NormBase ** /*plugin*/)
 {
 //	int selector = static_cast<int>(config->Reconstructor.Norm.bUseOpenBeam)
 //		     + (static_cast<int>(config->Reconstructor.Norm.bUseDarkCurrent)<<1);

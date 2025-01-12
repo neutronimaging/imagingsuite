@@ -36,7 +36,7 @@ void BallAssemblyAnalysis::analyzeImage(kipl::base::TImage<float,3> &img, std::l
 {
     assemblyStats.clear();
 
-    foreach (auto roi, roiList)
+    for (auto & roi: roiList)
     {
         kipl::math::Statistics stats=kipl::math::imageStatistics(img,roi);
         assemblyStats.insert(std::make_pair(std::stof(roi.label()),stats));
@@ -50,6 +50,7 @@ std::map<float,kipl::math::Statistics> & BallAssemblyAnalysis::getStatistics()
 
 void BallAssemblyAnalysis::createLabelledMask(kipl::base::TImage<float,3> &img)
 {
+    // Todo: implement the method
     std::ostringstream msg;
     const int nBins=1024;
     size_t hist[nBins+1];
@@ -86,7 +87,7 @@ void BallAssemblyAnalysis::createLabelledMask(kipl::base::TImage<float,3> &img)
     kipl::segmentation::Threshold(tmp.GetDataPtr(),mask.GetDataPtr(),tmp.Size(),strelRadius,kipl::segmentation::cmp_greatereq);
     logger(logger.LogMessage,"Distance driven closing for pores in assembly");
 
-    size_t cnt=kipl::morphology::LabelImage(mask,labels,kipl::base::conn6);
+    // size_t cnt=kipl::morphology::LabelImage(mask,labels,kipl::base::conn6);
     //kipl::morphology::LabelArea(labels,cnt,labelarea);
     logger(logger.LogMessage,"Labelled");
 }

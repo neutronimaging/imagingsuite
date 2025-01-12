@@ -99,12 +99,15 @@ win32 {
     contains(QMAKE_HOST.arch, x86_64):{
     QMAKE_LFLAGS += /MACHINE:X64
     }
+    INCLUDEPATH += $$PWD/../../../../ExternalDependencies/windows/include/libxml2
+    INCLUDEPATH += $$PWD/../../../../ExternalDependencies/windows/include/cfitsio
+    LIBPATH     += $$PWD/../../../../ExternalDependencies/windows/lib
+    LIBS += -llibxml2
 
-    INCLUDEPATH += $$PWD/../../../external/include $$PWD/../../../external/include/cfitsio
+    INCLUDEPATH  += $$PWD/../../../external/include
+
     QMAKE_LIBDIR += $$PWD/../../../external/lib64
     QMAKE_CXXFLAGS += /openmp /O2
-    LIBS += -llibxml2_dll
-
 
     exists($$PWD/../../../external/lib64/nexus/*NeXus*) {
 
@@ -113,8 +116,6 @@ win32 {
         INCLUDEPATH += $$PWD/../../../external/include/nexus $$PWD/../../../external/include/hdf5
         QMAKE_LIBDIR += $$PWD/../../../external/lib64/nexus $$PWD/../../../external/lib64/hdf5
 
-#        SOURCES += $$PWD/../../kipl/kipl/src/io/io_nexus.cpp
-#        HEADERS += $$PWD/../../kipl/kipl/include/io/io_nexus.h
     }
 
 }

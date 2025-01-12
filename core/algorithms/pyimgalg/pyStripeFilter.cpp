@@ -16,7 +16,11 @@
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 
+#include "utilities.h"
+
 namespace py = pybind11;
+
+
 
 void bindStripeFilter(py::module &m)
 {
@@ -32,7 +36,11 @@ void bindStripeFilter(py::module &m)
 
     sfClass.def("configure",
                 &ImagingAlgorithms::StripeFilter::configure,
-                "Configures the stripe filter. Note: the dims are given in x,y instead of r,c."
+                "Configures the stripe filter. Note: the dims are given in x,y instead of r,c.",
+                py::arg("dims"),
+                py::arg("wname"),
+                py::arg("scale"),
+                py::arg("wcut")
                 );
 
     sfClass.def("process",
@@ -42,16 +50,43 @@ void bindStripeFilter(py::module &m)
             {
                 py::buffer_info buf1 = x.request();
 
-                std::vector<size_t> dims={static_cast<size_t>(buf1.shape[1]),
-                                            static_cast<size_t>(buf1.shape[0])};
+                if (buf1.ndim == 2)
+                {
+                    std::vector<size_t> dims={static_cast<size_t>(buf1.shape[1]),
+                                                static_cast<size_t>(buf1.shape[0])};
 
-                sf.checkDims(dims);
+                    sf.checkDims(dims);
 
-                kipl::base::TImage<float,2> img(static_cast<float *>(buf1.ptr),dims);
+                    kipl::base::TImage<float,2> img(static_cast<float *>(buf1.ptr),dims);
 
-                sf.process(img,op);
+                    sf.process(img,op);
 
-                std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
+                    std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
+                }
+                else if (buf1.ndim == 3)
+                {
+                    std::vector<size_t> dims={  static_cast<size_t>(buf1.shape[2]),
+                                                static_cast<size_t>(buf1.shape[1]),
+                                                static_cast<size_t>(buf1.shape[0])};
+
+                    std::vector<size_t> sinodims={ dims[0],dims[2]};
+                    sf.checkDims(sinodims);
+                    
+                    kipl::base::TImage<float,3> img(static_cast<float *>(buf1.ptr),dims);
+                    kipl::base::TImage<float,2> sino(sinodims);
+
+                    for (size_t y=0 ; y<img.Size(1); ++y) 
+                    {
+                        ExtractSinogram(img, sino, y);
+                        sf.checkDims(sino.dims());
+                        sf.process(sino,op);
+                        InsertSinogram(sino,img,y);
+                    }
+
+                    std::copy_n(img.GetDataPtr(),img.Size(),static_cast<float*>(buf1.ptr));
+                }
+                else 
+                    throw ImagingException("StripeFilter clean only supports 2- and 3-D data",__FILE__,__LINE__);
             },
 
             "Applies the stripe filter on the image as in-place operation.",

@@ -17,7 +17,7 @@ DataScaler::~DataScaler() {
 }
 
 
-int DataScaler::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int DataScaler::Configure(ReconConfig /*config*/, std::map<std::string, std::string> parameters)
 {
     std::ostringstream msg;
 
@@ -53,12 +53,12 @@ std::map<std::string, std::string> DataScaler::GetParameters()
 	return parameters;
 }
 
-bool DataScaler::SetROI(size_t *roi)
+bool DataScaler::SetROI(const std::vector<size_t> & /*roi*/)
 {
 	return false;
 }
 
-int DataScaler::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff)
+int DataScaler::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & /*coeff*/)
 {
 	float *pImg = img.GetDataPtr();
 
@@ -69,7 +69,7 @@ int DataScaler::ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::str
 	return 0;
 }
 
-int DataScaler::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int DataScaler::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & /*coeff*/)
 {
 	float *pImg = img.GetDataPtr();
 

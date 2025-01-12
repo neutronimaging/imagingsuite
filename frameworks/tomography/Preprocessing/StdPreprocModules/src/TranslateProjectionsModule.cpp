@@ -14,7 +14,7 @@ TranslateProjectionsModule::TranslateProjectionsModule() :
 TranslateProjectionsModule::~TranslateProjectionsModule()
 {}
 
-int TranslateProjectionsModule::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int TranslateProjectionsModule::Configure(ReconConfig /*config*/, std::map<std::string, std::string> parameters)
 {
     m_fSlope     = GetFloatParameter(parameters,"slope");
     m_fIntercept = GetFloatParameter(parameters,"intercept");
@@ -35,12 +35,12 @@ std::map<std::string, std::string> TranslateProjectionsModule::GetParameters()
     return parameters;
 }
 
-bool TranslateProjectionsModule::SetROI(size_t *roi)
+bool TranslateProjectionsModule::SetROI(const std::vector<size_t> & /*roi*/)
 {
     return false;
 }
 
-int TranslateProjectionsModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int TranslateProjectionsModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & /*coeff*/)
 {
     ImagingAlgorithms::TranslateProjections translator;
 

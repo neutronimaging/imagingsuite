@@ -37,9 +37,10 @@ std::vector<size_t> KIPLSHARED_EXPORT GetFITSDims(const std::string &filename)
 {
 	fitsfile *fptr;
 	int status=0;
-	std::ostringstream msg;
+	
     fits_open_image(&fptr, filename.c_str(), READONLY, &status);
 	if (status!=0) {
+		std::ostringstream msg;
 		msg<<"Failed to open '"<<filename<<"' in GetFITSDims";
 		throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
 	}

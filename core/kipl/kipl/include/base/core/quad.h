@@ -3,8 +3,12 @@
 #ifndef QUAD_H_
 #define QUAD_H_
 
-#include <emmintrin.h>
-#include <xmmintrin.h>
+#ifdef __aarch64__
+    #include <sse2neon/sse2neon.h>
+#else
+    #include <xmmintrin.h>
+    #include <emmintrin.h>
+#endif
 
 namespace kipl { namespace base { 
 

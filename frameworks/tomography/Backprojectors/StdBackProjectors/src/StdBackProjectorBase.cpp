@@ -77,7 +77,8 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 
 	ProjCenter=mConfig.ProjectionInfo.fCenter;
 
-    float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
+    // float dirWeight = 2.0f*(mConfig.ProjectionInfo.eDirection-0.5f);
+	float dirWeight = mConfig.ProjectionInfo.eDirection==kipl::base::RotationDirCW ? -1.0f : 1.0f;
     msg.str("");
 
 	fWeights[nProjCounter]  = weight;
@@ -127,15 +128,16 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,2> proj, float ang
 	return nProjCounter;
 }
 
-size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, std::map<std::string, std::string> parameters)
+size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> _projections, 
+									 std::map<std::string, std::string> parameters)
 {
     timer.Tic();
 	if (volume.Size()==0)
 		throw ReconException("The target matrix is not allocated.",__FILE__,__LINE__);
 
-    kipl::base::TImage<float,2> img(projections.dims());
+    kipl::base::TImage<float,2> img(_projections.dims());
 
-	size_t nProj=projections.Size(2);
+	size_t nProj=_projections.Size(2);
 	// Extract the projection parameters
 	float *weights=new float[nProj+16];
 	GetFloatParameterVector(parameters,"weights",weights,nProj);
@@ -150,7 +152,7 @@ size_t StdBackProjectorBase::Process(kipl::base::TImage<float,3> projections, st
 	size_t i=0;
     for (i=0; (i<nProj) && (!UpdateStatus(static_cast<float>(i)/nProj, "Back-projecting")); i++)
     {
-		pProj=projections.GetLinePtr(0,i);
+		pProj=_projections.GetLinePtr(0,i);
 		memcpy(pImg,pProj,sizeof(float)*img.Size());
 		Process(img,angles[i],weights[i],i==(nProj-1));
 	}
@@ -225,14 +227,14 @@ std::vector<size_t> StdBackProjectorBase::GetMatrixDims()
     return dims;
 }
 
-void StdBackProjectorBase::ChangeMaskValue(float x)
+void StdBackProjectorBase::ChangeMaskValue(float val)
 {
 	const size_t N=std::max(std::max(volume.Size(0),volume.Size(1)),volume.Size(2));
 	
 	float *data=new float[N];
     for (size_t i=0; i<N; i++)
     {
-		data[i]=x;
+		data[i]=val;
 	}
 	
     if (MatrixAlignment==StdBackProjectorBase::MatrixXYZ)
@@ -297,6 +299,44 @@ void StdBackProjectorBase::GetHistogram(float *axis, size_t *hist,size_t nBins)
 	axis[0]=matrixMin+scale/2.0f;
 	for (size_t i=1; i<nBins; i++)
 		axis[i]=axis[i-1]+scale;
+}
+
+void StdBackProjectorBase::GetHistogram(std::vector<float> &axis, std::vector<size_t> &hist, size_t nBins)
+{
+	axis = std::vector<float>(nBins,0.0f);
+	hist = std::vector<size_t>(nBins,0UL);
+
+	float matrixMin=Min();
+	float matrixMax=Max();
+	ostringstream msg;
+
+	msg<<"Preparing histogram; #bins: "<<nBins<<", Min: "<<matrixMin<<", Max: "<<matrixMax;
+	logger(kipl::logging::Logger::LogMessage,msg.str());
+
+	float scale=(matrixMax-matrixMin)/(nBins+1);
+	float invScale=1.0f/scale;
+	size_t index=0;
+    for (size_t y=0; y<mask.size(); ++y)
+    {
+        for (size_t x=mask[y].first; x<mask[y].second; ++x)
+        {
+			float *pLine=volume.GetLinePtr(x,y);
+            for (size_t z=0; z<volume.Size(0); ++z)
+            {
+				index=static_cast<size_t>(invScale*(pLine[z]-matrixMin));
+                if (pLine[z]<matrixMin)
+					index=0;
+				else if (nBins<=index)
+					index=nBins-1;
+				hist[index]++;
+			}
+		}
+	}
+
+	axis[0]=matrixMin+scale/2.0f;
+	for (size_t i=1; i<nBins; i++)
+		axis[i]=axis[i-1]+scale;
+
 }
 
 float StdBackProjectorBase::Min()

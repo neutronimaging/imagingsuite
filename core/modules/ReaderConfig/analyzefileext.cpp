@@ -13,7 +13,7 @@ namespace readers {
 
 
 
-eExtensionTypes GetFileExtensionType(std::string fname)
+readers::eExtensionTypes READERCONFIGSHARED_EXPORT GetFileExtensionType(const std::string & fname)
 {
     std::string ext=kipl::strings::filenames::GetFileExtension(fname);
 
@@ -33,6 +33,8 @@ std::string READERCONFIGSHARED_EXPORT enum2string(readers::eExtensionTypes et)
 
     switch (et) {
     case readers::ExtensionTXT:   ext="txt"; break;
+    case readers::ExtensionCSV:   ext="csv"; break;
+    case readers::ExtensionLST:   ext="lst"; break;
     case readers::ExtensionDMP:   ext="dmp"; break;
     case readers::ExtensionDAT:   ext="dat"; break;
     case readers::ExtensionXML:   ext="xml"; break;
@@ -66,6 +68,8 @@ void READERCONFIGSHARED_EXPORT string2enum(std::string ext, readers::eExtensionT
     std::map<std::string,readers::eExtensionTypes> extmap;
 
     extmap["txt"]   = readers::ExtensionTXT;
+    extmap["csv"]   = readers::ExtensionCSV;
+    extmap["lst"]   = readers::ExtensionLST;
     extmap["dmp"]   = readers::ExtensionDMP;
     extmap["dat"]   = readers::ExtensionDAT;
     extmap["xml"]   = readers::ExtensionXML;
@@ -82,7 +86,8 @@ void READERCONFIGSHARED_EXPORT string2enum(std::string ext, readers::eExtensionT
     extmap["hdf4"]  = readers::ExtensionHDF4;
     extmap["hd5"]   = readers::ExtensionHDF5;
     extmap["hdf5"]  = readers::ExtensionHDF5;
-    extmap["hdf"]   = readers::ExtensionHDF;
+    extmap["nx"]    = readers::ExtensionHDF5;
+    extmap["hdf"]   = readers::ExtensionHDF5;
     extmap["seq"]   = readers::ExtensionSEQ;
 
     auto it=extmap.find(e);
