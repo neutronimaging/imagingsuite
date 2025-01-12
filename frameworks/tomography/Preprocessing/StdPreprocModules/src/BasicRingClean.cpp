@@ -19,7 +19,7 @@ BasicRingClean::~BasicRingClean() {
 }
 
 
-int BasicRingClean::Configure(ReconConfig config, std::map<std::string, std::string> parameters)
+int BasicRingClean::Configure(ReconConfig /*config*/, std::map<std::string, std::string> /*parameters*/)
 {
 	return 0;
 }
@@ -34,12 +34,12 @@ std::map<std::string, std::string> BasicRingClean::GetParameters()
 	return parameters;
 }
 
-bool BasicRingClean::SetROI(size_t *roi)
+bool BasicRingClean::SetROI(const std::vector<size_t> & /*roi*/)
 {
 	return false;
 }
 
-int BasicRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff)
+int BasicRingClean::ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & /*coeff*/)
 {
     kipl::base::TImage<float,2> meanproj(img.dims());
 

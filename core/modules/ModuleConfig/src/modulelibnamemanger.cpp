@@ -125,8 +125,9 @@ std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 {
     std::ostringstream msg;
 
-    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"Frameworks/") &&
-        !libInAppPath(path,m_sApplicationPath+"../Frameworks/")   )
+
+    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/lib") &&
+        !libInAppPath(path,m_sApplicationPath+"../lib/")   )
     {
         msg << path.c_str()<<" is not in lib path";
         logger.verbose(msg.str());

@@ -24,18 +24,24 @@ void bindNormalizeImage(py::module &m)
                  py::array_t<float> &_ff,
                  py::array_t<float> &_dc)
     {
-        auto rff = _ff.unchecked<2>(); // x must have ndim = 2; can be non-writeable
+        // auto rff = _ff.unchecked<2>(); // x must have ndim = 2; can be non-writeable
 
         py::buffer_info buf_ff = _ff.request();
+        if (buf_ff.ndim != 2) {
+            throw std::runtime_error("Input array _ff must have 2 dimensions");
+        }
 
         std::vector<size_t> dims_ff = { static_cast<size_t>(buf_ff.shape[1]),
                                         static_cast<size_t>(buf_ff.shape[0])};
                                         
         kipl::base::TImage<float,2> ff(static_cast<float*>(buf_ff.ptr),dims_ff);
 
-        auto rdc = _dc.unchecked<2>(); // x must have ndim = 2; can be non-writeable
+        // auto rdc = _dc.unchecked<2>(); // x must have ndim = 2; can be non-writeable
 
         py::buffer_info buf_dc = _dc.request();
+        if (buf_dc.ndim != 2) {
+            throw std::runtime_error("Input array _dc must have 2 dimensions");
+        }
 
         std::vector<size_t> dims_dc = {    static_cast<size_t>(buf_dc.shape[1]),
                                         static_cast<size_t>(buf_dc.shape[0])};

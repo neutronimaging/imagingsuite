@@ -105,12 +105,15 @@ int RMax(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
     ImgType *pExt=extremes.GetDataPtr();
     const ImgType *pImg=img.GetDataPtr();
     ImgType val=static_cast<ImgType>(0);
-    ptrdiff_t i,j,pos,p;
+    ptrdiff_t i,pos,p;
+    // ptrdiff_t j;
 
     NG.setPosition(0L);
-    for (i=0; i<extremes.Size(); ++i,++NG) {
+    for (i=0; i<extremes.Size(); ++i,++NG) 
+    {
         NG.setPosition(i);
-        if (pExt[i]!=min) {
+        if (pExt[i]!=min) 
+        {
             for (const auto & neighborPix : NG.neighborhood())
             {
                 pos = i + neighborPix;
@@ -122,7 +125,8 @@ int RMax(const kipl::base::TImage<ImgType,N> &img, kipl::base::TImage<ImgType,N>
                 }
             }
 
-            while (!posQ.empty()) {
+            while (!posQ.empty()) 
+            {
                 p=posQ.front();
                 pExt[p]=min;
                 posQ.pop_front();
@@ -220,7 +224,7 @@ int hMin(const kipl::base::TImage<ImgType,N> &img,kipl::base::TImage<ImgType,N> 
 ///	The method computes \f$RMIN(hMIN_h(img)\f$
 ///	\todo Fix edge processing
 template <typename T, size_t N>
-int ExtendedMin(const kipl::base::TImage<T,N> &img,kipl::base::TImage<T,N> &res, T h, kipl::base::eConnectivity conn, bool bilevel)
+int ExtendedMin(const kipl::base::TImage<T,N> &img,kipl::base::TImage<T,N> &res, T h, kipl::base::eConnectivity conn, bool /*bilevel*/)
 {
     if (h<0) {
         throw kipl::base::KiplException("ExtendedMin: h must be >0",__FILE__,__LINE__);
@@ -434,7 +438,7 @@ kipl::base::TImage<T,2> FillExtrema(kipl::base::TImage<T,2> &img)
 }
 
 template <typename T>
-kipl::base::TImage<T,2> FillHole2(kipl::base::TImage<T,2> &img, kipl::base::eConnectivity conn)
+kipl::base::TImage<T,2> FillHole2(kipl::base::TImage<T,2> &img, kipl::base::eConnectivity /*conn*/)
 {
 //    std::stringstream msg;
 //    std::map<T,list<ptrdiff_t> > fifo;
@@ -852,7 +856,7 @@ kipl::base::TImage<T,2> FillExtrema(kipl::base::TImage<T,2> &img)
 }
 
 template <typename T>
-kipl::base::TImage<T,2> FillHole2(kipl::base::TImage<T,2> &img, kipl::morphology::MorphConnect conn)
+kipl::base::TImage<T,2> FillHole2(kipl::base::TImage<T,2> &img, kipl::morphology::MorphConnect /*conn*/)
 {
 //    std::stringstream msg;
 //    std::map<T,list<ptrdiff_t> > fifo;

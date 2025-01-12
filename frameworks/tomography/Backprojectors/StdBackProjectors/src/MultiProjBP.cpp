@@ -12,7 +12,13 @@
 #include <cmath>
 
 #ifdef __aarch64__
-    #include <sse2neon.h>
+    #pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wold-style-cast"
+	#pragma clang diagnostic ignored "-Wcast-align"
+	#pragma clang diagnostic ignored "-Wpedantic"
+	#pragma clang diagnostic ignored "-W#warnings"
+		#include <sse2neon/sse2neon.h>
+	#pragma clang diagnostic pop
 #else
     #include <xmmintrin.h>
     #include <emmintrin.h>
@@ -43,7 +49,7 @@ void MultiProjectionBP::BackProject()
 	const size_t SizeZ         = volume.Size(0)/4; // Already adjusted by a factor 4
 	const size_t SizeV4		   = SizeV/4;
 	const int SizeUm2	   	   = static_cast<int>(SizeU-2);
-	const size_t NProjections  = nProjectionBufferSize;
+	// const size_t NProjections  = nProjectionBufferSize;
 
 	__m128 column[2048];
 	

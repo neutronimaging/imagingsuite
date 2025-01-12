@@ -376,7 +376,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
         msg<<"W="<<fWindow<<", L="<<fLevel;
 
-        showToolTip(event->globalPos()+tooltipOffset,QString::fromStdString(msg.str()));
+        showToolTip(event->globalPosition().toPoint()+tooltipOffset,QString::fromStdString(msg.str()));
         set_levels(fLevel-fWindow/2.0f,fLevel+fWindow/2.0f);
     }
     else
@@ -392,7 +392,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
             msg<<m_ImagePainter.getValue(pos.x(),pos.y())<<" @ ("<<pos.x()<<", "<<pos.y()<<")";
 
-            showToolTip(event->globalPos()+tooltipOffset,QString::fromStdString(msg.str()));
+            showToolTip(event->globalPosition().toPoint()+tooltipOffset,QString::fromStdString(msg.str()));
         }
     }
 
@@ -403,7 +403,7 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
 void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    QPoint origin = event->pos();
+    // QPoint origin = event->pos();
     std::ostringstream msg;
     if ((event->button() == Qt::LeftButton))
     {
