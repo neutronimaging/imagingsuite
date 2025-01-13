@@ -4,7 +4,7 @@
 PACKAGE_NAME="muhrec"
 VERSION="1.0"  # Update this version as needed
 ARCHITECTURE="amd64"
-MAINTAINER="Your Name <your.email@example.com>"  # Replace with your details
+MAINTAINER="Anders Kaestner <anders.kaestner@psi.ch>"  # Replace with your details
 DESCRIPTION="muhrec application package with plugins and resources"
 BUILD_DIR="$HOME/git/build-imagingsuite/Release"
 SCRIPT_DIR="$HOME/git/imagingsuite/applications/muhrec/scripts"
@@ -48,17 +48,17 @@ mkdir -p "$PACKAGE_ROOT/opt/$PACKAGE_NAME"
 # Copy the required directories to /opt/muhrec
 cp -r "$BUILD_DIR/bin" "$PACKAGE_ROOT/opt/$PACKAGE_NAME/"
 cp -r "$BUILD_DIR/lib" "$PACKAGE_ROOT/opt/$PACKAGE_NAME/"
-cp -r "$BUILD_DIR/Plugins" "$PACKAGE_ROOT/opt/$PACKAGE_NAME/"
-cp -r "$BUILD_DIR/Resources" "$PACKAGE_ROOT/opt/$PACKAGE_NAME/"
+cp -r "$BUILD_DIR/plugins" "$PACKAGE_ROOT/opt/$PACKAGE_NAME/"
+cp -r "$BUILD_DIR/resources" "$PACKAGE_ROOT/opt/$PACKAGE_NAME/"
 
 # Copy the script and make it executable
-mkdir -p "$PACKAGE_ROOT/opt/$PACKAGE_NAME/scripts"
-cp "$SCRIPT_DIR/muhrec" "$PACKAGE_ROOT/opt/$PACKAGE_NAME/scripts/"
-chmod +x "$PACKAGE_ROOT/opt/$PACKAGE_NAME/scripts/muhrec"
+#mkdir -p "$PACKAGE_ROOT/opt/$PACKAGE_NAME/scripts"
+cp "$SCRIPT_DIR/muhrec" "$PACKAGE_ROOT/opt/$PACKAGE_NAME/"
+chmod +x "$PACKAGE_ROOT/opt/$PACKAGE_NAME/muhrec"
 
 # Create a symlink in /usr/bin for easy execution
 mkdir -p "$PACKAGE_ROOT/usr/bin"
-ln -s /opt/$PACKAGE_NAME/scripts/muhrec "$PACKAGE_ROOT/usr/bin/muhrec"
+ln -s /opt/$PACKAGE_NAME/muhrec "$PACKAGE_ROOT/usr/bin/muhrec"
 
 # Set ownership and permissions
 sudo chown -R root:root "$PACKAGE_ROOT"
