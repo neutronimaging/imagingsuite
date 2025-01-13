@@ -6,41 +6,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# find_package(LibXml2 REQUIRED)
-
 include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../core/modules/ModuleConfig/include
     ../../../../core/modules/ReaderConfig
 )
-
-# if (APPLE)
-# include_directories(
-#     ../../../../../ExternalDependencies/macos/include
-#     )
-# endif()
-
-# if (WIN32)
-# include_directories(
-#     ../../../../../ExternalDependencies/windows/include
-#     ../../../../../ExternalDependencies/windows/include/nexus
-#     ../../../../../ExternalDependencies/windows/include/cfitsio
-#     ../../../../../ExternalDependencies/windows/include/libxml2
-#     ../../../../external/include/
-# )
-# endif()
-
-# if (UNIX)
-# include_directories(
-#     /usr/include/libxml2
-#     ../../../../core/kipl/kipl/include
-#     ../../../../core/algorithms/ImagingAlgorithms/include
-#     ../../../../external/src/linalg
-#     ../../../../core/modules/ModuleConfig/include
-#     ../../../../core/modules/ReaderConfig
-#     )
-# endif()
 
 set(INC_FILES
     include/ReconHelpers.h
@@ -79,21 +50,10 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-#target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY HAVE_NEXUS)
 target_compile_definitions(${TARGET_NAME} PUBLIC RECONFRAMEWORK_LIBRARY)
-
-# add_definitions(-DHAVE_NEXUS)
 
 
 message(${TARGET_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR})
-
-# if (WIN32)
-#     target_link_directories(${TARGET_NAME} PUBLIC
-#     ../../../../../ExternalDependencies/windows/lib
-#     ../../../../../imagingsuite/external/lib64
-#     ../../../../../imagingsuite/external/lib64/nexus
-#     )
-# endif()   
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC

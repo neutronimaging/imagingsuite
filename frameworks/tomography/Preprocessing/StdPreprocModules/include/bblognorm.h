@@ -24,14 +24,14 @@ public:
     BBLogNorm(kipl::interactors::InteractionBase *interactor=nullptr);
     virtual ~BBLogNorm();
 
-    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and calls PrepareBBData
+    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override; /// Configure all parameters and calls PrepareBBData
     virtual int ConfigureDLG(ReconConfig config, std::map<std::string, std::string> parameters); /// Configure all parameters and does not call PrepareBBData
-    virtual std::map<std::string, std::string> GetParameters();
+    virtual std::map<std::string, std::string> GetParameters() override; /// Get all parameters
     virtual void LoadReferenceImages(const std::vector<size_t> &roi); /// load all images that are needed for referencing in the current roi
-    virtual bool SetROI(const std::vector<size_t> &roi); /// set the current roi to be processed
+    virtual bool SetROI(const std::vector<size_t> &roi) override; /// set the current roi to be processed
 
-    virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
-    virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
+    virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
+    virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) override;
     virtual void SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::base::TImage<float,2> flat); /// set references images
     virtual float GetInterpolationError(kipl::base::TImage<float,2> &mask); /// computes and returns interpolation error and mask on OB image with BBs
     virtual kipl::base::TImage<float, 2> GetMaskImage();
@@ -39,6 +39,7 @@ public:
     virtual void LoadExternalBBData(const std::vector<size_t> &roi); /// load BB images pre-processed elsewhere
 
 protected:
+    using ProcessModuleBase::Configure;
     ReconConfig m_Config;
     std::string path; /// path, maybe not used
     std::string flatname; /// name mask for OB image

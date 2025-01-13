@@ -27,7 +27,7 @@ class BBLogNormDlg : public ConfiguratorDialogBase
 public:
     explicit BBLogNormDlg(QWidget *parent = 0);
      ~BBLogNormDlg();
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
+    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img) override;
 
 private slots:
     void on_button_OBBBpath_clicked();
@@ -52,9 +52,10 @@ private slots:
     void on_pushButton_ext_sample_back_clicked();
 
 private:
-    virtual void ApplyParameters();
-    virtual void UpdateDialog();
-    virtual void UpdateParameters();
+    using ConfiguratorDialogBase::exec;
+    virtual void ApplyParameters() override;
+    virtual void UpdateDialog() override;
+    virtual void UpdateParameters() override;
     virtual void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
 

@@ -78,9 +78,9 @@ void bindCenterEstimator(py::module &m)
     tcClass.def("tiltParameters", [](ImagingAlgorithms::TomoCenter &tc)
     {
         double k=1;
-        double m=0;
-        tc.tiltParameters(k,m);
-        return py::make_tuple(k,m);
+        double mm=0;
+        tc.tiltParameters(k,mm);
+        return py::make_tuple(k,mm);
     },
     "Returns the linear fit coefficients for the center line");
 

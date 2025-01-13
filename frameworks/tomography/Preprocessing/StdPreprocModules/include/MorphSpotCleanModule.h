@@ -20,6 +20,7 @@ public:
     pair<kipl::base::TImage<float,2>,kipl::base::TImage<float,2>> DetectionImage(kipl::base::TImage<float,2> img, ImagingAlgorithms::eMorphDetectionMethod dm, bool removeBias);
 
 protected:
+    using ProcessModuleBase::Configure;
     virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
     virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
     int ProcessSingle(kipl::base::TImage<float,3> & img);

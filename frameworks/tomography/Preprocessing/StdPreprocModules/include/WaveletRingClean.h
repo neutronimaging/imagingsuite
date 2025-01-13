@@ -18,6 +18,8 @@ public:
 	virtual std::map<std::string, std::string> GetParameters();
         virtual bool SetROI(const std::vector<size_t> &roi);
 protected:
+	using PreprocModuleBase::ProcessCore;
+	using PreprocModuleBase::Configure;
 	virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
 
 	int ProcessSingle(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
