@@ -10,17 +10,17 @@ class MODULECONFIGSHARED_EXPORT ModuleLibNameManger
 {
     kipl::logging::Logger logger;
 public:
-    ModuleLibNameManger(const std::string &path);
-    std::string generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os);
-    std::string generateLibName(const std::string &name);
+    ModuleLibNameManger(const std::string &path, const std::string &category);
+    std::string generateLibName(const std::string &namem, const kipl::base::eOperatingSystem &os);
+    std::string generateLibName( const std::string &name);
     std::string stripLibName(const std::string &libPath, const kipl::base::eOperatingSystem &os);
     std::string stripLibName(const std::string &libPath);
-    void setAppPath(const std::string &path);
+    void setAppPath(const std::string &path, const std::string &category);
 
 private:
     std::string generateWindowsLibName(const std::string &name);
-    std::string generateMacOSLibName(const std::string &name);
-    std::string generateLinuxLibName(const std::string &name);
+    std::string generateMacOSLibName(  const std::string &name);
+    std::string generateLinuxLibName(  const std::string &name);
 
     std::string stripWindowsLibName(const std::string &path);
     std::string stripMacOSLibName(const std::string &path);
@@ -29,6 +29,7 @@ private:
     bool libInAppPath(const std::string & path, const std::string &appPath);
 
     std::string m_sApplicationPath;
+    std::string m_sCategoryName;
 
 };
 

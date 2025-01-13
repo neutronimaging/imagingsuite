@@ -4,14 +4,16 @@
 #include <base/KiplException.h>
 #include <strings/filenames.h>
 
-ModuleLibNameManger::ModuleLibNameManger(const std::string &path) :
+ModuleLibNameManger::ModuleLibNameManger(const std::string &path, const std::string &category) :
     logger("ModuleLibNameManger"),
-    m_sApplicationPath(path)
+    m_sApplicationPath(path),
+    m_sCategoryName(category)
 {
-//   kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
+    // kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
+    // kipl::strings::filenames::CheckPathSlashes(m_sCategoryName,true);
 }
 
-std::string ModuleLibNameManger::generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os)
+std::string ModuleLibNameManger::generateLibName(const std::string &name,const kipl::base::eOperatingSystem &os)
 {
     if (name.find_first_of("/\\")!=std::string::npos)
         return name;
@@ -55,17 +57,20 @@ std::string ModuleLibNameManger::stripLibName(const std::string &libPath)
     return stripLibName(libPath,kipl::base::getOperatingSystem());
 }
 
-void ModuleLibNameManger::setAppPath(const std::string &path)
+void ModuleLibNameManger::setAppPath(const std::string &path, const std::string &category)
 {
     m_sApplicationPath = path;
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
-}
+    
+    m_sCategoryName = category;
+    kipl::strings::filenames::CheckPathSlashes(m_sCategoryName,true);
+}   
 
 std::string ModuleLibNameManger::generateWindowsLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath;
 
-    fullName = fullName+name+".dll";
+    fullName = fullName+"PlugIns\\"+m_sCategoryName+"\\"+name+".dll";
 
     return fullName;
 }
@@ -74,7 +79,7 @@ std::string ModuleLibNameManger::generateMacOSLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 6 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
 
-    fullName = fullName+"/Frameworks/lib"+name+".dylib";
+    fullName = fullName+"/PlugIns/"+m_sCategoryName+"/lib"+name+".dylib";
 
     return fullName;
 }
@@ -83,15 +88,16 @@ std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 3 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
 
-    fullName = fullName+"lib/lib"+name+".so";
+    fullName = fullName+"PlugIns/"+m_sCategoryName+"/lib"+name+".so";
 
     return fullName;
 }
 
 std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
 {
-    if (!libInAppPath(path,m_sApplicationPath))
+    if (!libInAppPath(path,m_sApplicationPath+"PlugIns\\"+m_sCategoryName))
     {
+        logger.message(path+" is not in the plugin path");
         return path;
     }
     std::string libName;
@@ -103,12 +109,10 @@ std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
 
 std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
 {
-    std::ostringstream msg;
-    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/Frameworks") &&
-        !libInAppPath(path,m_sApplicationPath+"../Frameworks")   )
+    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/PlugIns/"+m_sCategoryName) &&
+        !libInAppPath(path,m_sApplicationPath+"../PlugIns/"+m_sCategoryName)   )
     {
-        msg << path.c_str()<<" is not in lib path";
-        logger.verbose(msg.str());
+        logger.message(path+" is not in the plugin path");
         return path;
     }
 
@@ -123,14 +127,10 @@ std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
 
 std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
 {
-    std::ostringstream msg;
-
-
-    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/lib") &&
-        !libInAppPath(path,m_sApplicationPath+"../lib/")   )
+    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/PlugIns/"+m_sCategoryName) &&
+        !libInAppPath(path,m_sApplicationPath+"../PlugIns/"+m_sCategoryName)   )
     {
-        msg << path.c_str()<<" is not in lib path";
-        logger.verbose(msg.str());
+        logger.message(path+" is not in the plugin path");
         return path;
     }
 
@@ -146,13 +146,13 @@ bool ModuleLibNameManger::libInAppPath(const std::string &path, const std::strin
 {
     if (path.size()<appPath.size())
     {
-        logger.message(path +" < "+appPath);
+        logger.message("The module path " + path +" < "+appPath);
         return false;
     }
 
     auto truncated = path.substr(0,appPath.size());
 
-    logger.message(truncated +" == "+appPath);
+    logger.message("After truncation "+truncated +" == "+appPath);
 
     if ((truncated != appPath) || path.find_first_of("/\\",appPath.size()+1)!=std::string::npos)
     {
