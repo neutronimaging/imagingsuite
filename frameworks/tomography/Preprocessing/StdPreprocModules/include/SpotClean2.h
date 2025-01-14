@@ -57,6 +57,8 @@ public:
 		return s.str();
 	}
 protected:
+	using PreprocModuleBase::Configure;
+	
 	virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &coeff);
 	virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> &coeff);
 

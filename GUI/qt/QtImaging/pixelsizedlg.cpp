@@ -307,14 +307,14 @@ void PixelSizeDlg::loadImage(QString fn)
 
 void PixelSizeDlg::plotEdge(std::vector<std::pair<float, float> > &ep, QColor c, int idx)
 {
-    QVector<QPointF> data;
+    QVector<QPointF> plot_data;
 
     for (auto &pos : ep)
     {
-        data.push_back(QPointF(static_cast<double>(pos.first),static_cast<double>(pos.second)));
+        plot_data.push_back(QPointF(static_cast<double>(pos.first),static_cast<double>(pos.second)));
     }
 
-    ui->viewer->set_plot(data,c,idx);
+    ui->viewer->set_plot(plot_data,c,idx);
 }
 
 void PixelSizeDlg::computeEdgeEquation(std::vector<std::pair<float,float>> edgePosition)

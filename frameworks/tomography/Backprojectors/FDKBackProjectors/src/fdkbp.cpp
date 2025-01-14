@@ -381,7 +381,7 @@ void FDKbp::project_volume_onto_image_c(kipl::base::TImage<float, 2> &cbi,
        }
 
 
-       if (CBCT_roi[1]-8>=0)
+       if (CBCT_roi[1]>=8)
            CBCT_roi[1] -=8;
        if (CBCT_roi[3]+8<=mConfig.ProjectionInfo.projection_roi[3])
            CBCT_roi[3] +=8;

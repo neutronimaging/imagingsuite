@@ -68,36 +68,37 @@ class MuhrecRecipe(ConanFile):
         if self.settings.os == "Linux":
             for library in Qt_linux_library_list:
                 copy(self, "lib"+library+".so*", os.path.join(qtpath, "lib"), self.lib_folder)
-                copy(self, "libqxcb.so", os.path.join(qtpath, "plugins", "platforms"), os.path.join(bin_folder, "platforms"))
+            copy(self, "libqxcb.so", os.path.join(qtpath, "plugins", "platforms"), os.path.join(bin_folder, "platforms"))
         
         if self.settings.os == "Windows":
             dst = os.path.join(bin_folder,"resources")
         elif self.settings.os == "Linux":
-            dst = os.path.join(bin_folder,"../","resources")
+            dst = os.path.join(bin_folder,"..","resources")
         else:
-            dst = os.path.join(self.framework_folder_MuhRec,"../",'Resources')
+            dst = os.path.join(self.framework_folder_MuhRec,"..",'Resources')
             if self.settings.arch == "armv8":
                 sse2neon_dir = StringIO()
                 self.run("brew --prefix sse2neon", stdout=sse2neon_dir)
                 sse2neon = sse2neon_dir.getvalue().strip()
                 copy(self, 'sse2neon/sse2neon.h', os.path.join(sse2neon, "include"), self.lib_folder)
-        # dirs_exist_ok was only added in python 3.9
-        if sys.version_info[1] > 9:
-            shutil.copytree(
-                os.path.join(self.source_folder,"applications","muhrec","Resources"), 
-                dst,
-                dirs_exist_ok=True,
-                )
-        else:
-            shutil.copytree(
-                os.path.join(self.source_folder,"applications","muhrec","Resources"), 
-                dst
-                )
+        shutil.copytree(
+            os.path.join(self.source_folder,"applications","muhrec","Resources"), 
+            dst,
+            dirs_exist_ok=True,
+            )
 
     def build(self):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
         if self.settings.os == "Macos":
-            copy(self, "*.dylib", self.lib_folder, self.framework_folder_MuhRec, excludes='*cpython*')
-            copy(self, "*.dylib", self.lib_folder, self.framework_folder_imageviewer, excludes='*cpython*')
+            # Copy to both MuhRec and ImageViewer app bundles
+            for framework_folder in [self.framework_folder_MuhRec, self.framework_folder_imageviewer]:
+                copy(self, "*.dylib", self.lib_folder, framework_folder, excludes=['*cpython*', 'BackProjectors', 'Preprocessors'])
+                # Copy plugin dylibs to the PlugIns folder in the app bundles
+                for plugin_type in ["Preprocessors", "BackProjectors"]:
+                    shutil.copytree(
+                        os.path.join(self.lib_folder, plugin_type),
+                        os.path.join(framework_folder, "..", "PlugIns", plugin_type),
+                        dirs_exist_ok=True,
+                        )

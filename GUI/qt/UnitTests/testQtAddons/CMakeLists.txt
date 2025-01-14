@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(TARGET_NAME "tFDKBackProjectors")
-project(${TARGET_NAME} LANGUAGES CXX)
+set(TARGET_NAME "tQtAddons")
+project(tLogging LANGUAGES CXX)
 
 enable_testing()
 
@@ -18,26 +18,20 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
-    ../../Framework/ReconFramework/include/
-    ../../Backprojectors/FDKBackProjectors/src/
-    ../../../../core/modules/ModuleConfig/include
-    ../../../../core/kipl/kipl/include/
-    ../../../../core/algorithms/ImagingAlgorithms/include
-)
+    ../../kipl/include
+    )
 
 set(SRC_FILES
-    tst_FDKBackprojectors.cpp)
+    tst_qtaddons.cpp
+    )
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 
+
 target_link_libraries(${TARGET_NAME}
-    PUBLIC
+    PRIVATE
         Qt6::Test
         kipl
-        ModuleConfig
-        ImagingAlgorithms
-        ReconFramework
-        FDKBackProjectors
     )
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})

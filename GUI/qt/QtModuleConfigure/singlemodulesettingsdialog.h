@@ -24,6 +24,7 @@ class QTMODULECONFIGURESHARED_EXPORT SingleModuleSettingsDialog : public QDialog
 public:
     explicit SingleModuleSettingsDialog(const std::string &sApplicationName,
                                         const std::string &sApplicationPath,
+                                        const std::string &sCategory,
                                         const std::string & sDefaultModuleSource,
                                         QWidget *parent = nullptr);
 
@@ -51,6 +52,7 @@ private:
 
     std::string m_sApplication;
     std::string m_sApplicationPath;
+    std::string m_sCategory;
     std::string m_sDefaultModuleSource;
 
     ModuleConfig m_ModuleConfig;
