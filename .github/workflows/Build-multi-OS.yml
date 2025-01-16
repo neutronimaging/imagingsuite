@@ -191,6 +191,21 @@ jobs:
         name: ${{runner.os}}-${{runner.arch}}-test-results
         path: ${{ matrix.build_root }}/Testing
 
+    - name: Prepare windows installer
+      shell: bash
+      working-directory: imagingsuite
+      if: runner.os == 'Windows'
+      run: |
+        mkdir application
+        cp ../${{ matrix.build_root }}/bin/Release/* application
+        rm application/t*.exe
+        rm application/*.pyd
+
+    - name: Build Windows installer MSI
+      uses: AliceOh/CreateWindowsInstaller@1.0.0
+      with:
+        exefile: MuhRec.exe
+
     - name: Save build artifact Windows
       if: ${{ runner.os == 'Windows' }}
       uses: actions/upload-artifact@master
@@ -200,6 +215,7 @@ jobs:
           ${{ matrix.build_root }}/bin/Release/*
           !${{ matrix.build_root }}/bin/Release/t*.exe
           !${{ matrix.build_root }}/bin/Release/*.pyd
+          *.msi
 
     - name: Save build artifact Linux
       if: ${{ runner.os == 'Linux' }}

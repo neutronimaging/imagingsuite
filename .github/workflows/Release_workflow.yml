@@ -40,3 +40,4 @@ jobs:
             files: |
               pymuhrec-*/*.whl
               MuhRec-*
+              *.msi

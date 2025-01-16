@@ -43,3 +43,5 @@ _deps
 moc_*
 *.moc
 CMakeUserPresets.json
+QtInstaller/packages/core/data/*
+QtInstaller/*.exe
