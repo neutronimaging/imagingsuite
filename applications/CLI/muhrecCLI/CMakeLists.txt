@@ -2,43 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 set(TARGET_NAME "MuhRecCLI")
 project(${TARGET_NAME} VERSION 4.3 LANGUAGES CXX)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-#set(CMAKE_AUTOUIC ON)
-#set(CMAKE_AUTOMOC ON)
-#set(CMAKE_AUTORCC ON)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-#find_package(QT NAMES Qt6 COMPONENTS Core REQUIRED)
-#find_package(Qt6 REQUIRED COMPONENTS Core )
-
-#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
-
-if (APPLE)
-include_directories(
-    # /opt/local/include
-    # /opt/local/include/libxml2
-    # /usr/include/libxml2
-    ../../core/kipl/kipl/include
-    ../../core/modules/ModuleConfig/include
-    ../../core/modules/ReaderConfig
-    ../../core/algorithms/ImagingAlgorithms/include
-    ../../GUI/qt/QtAddons
-    ../../GUI/qt/QtImaging
-    ../../GUI/qt/QtModuleConfigure
-    ../../core/modules/ReaderGUI
-    ../../frameworks/tomography/Framework/ReconFramework/include/
-    ../../core/algorithms/ImagingAlgorithms/include
-    # ../../external/mac/include/
-    #  ../../../ExternalDependencies/macos/include
-    #  ../../../ExternalDependencies/macos/include/nexus
-    # ../../external/mac/include/hdf5
-    )
-endif()
-
-if (WIN32)
 include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
@@ -46,13 +9,7 @@ include_directories(
     ../../../core/algorithms/ImagingAlgorithms/include
     ../../../frameworks/tomography/Framework/ReconFramework/include/
     ../../../core/algorithms/ImagingAlgorithms/include
-    # ../../../../ExternalDependencies/windows/include
-    # ../../../../ExternalDependencies/windows/include/libxml2
-    # ../../../../ExternalDependencies/windows/include/nexus
-    # ../../../external/include/
-    # ../../../external/mac/include/hdf5
     )
-endif()
 
 set(SRC_FILES
     main.cpp
@@ -63,7 +20,7 @@ set(INC_FILES
     muhreccli.h
 )
 
-message(CLIApp Qt${QT_VERSION_MAJOR})
+message("CLI App Muhrec" )
 
 add_executable(${TARGET_NAME}
         ${SRC_FILES}

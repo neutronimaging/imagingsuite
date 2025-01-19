@@ -704,7 +704,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         std::string sSearchStr = m_sApplicationPath;
 
         // Replace template path by module path for pre processing
-        size_t pos=0;
+        // size_t pos=0;
 
         logger(logger.LogMessage,"Updating path of preprocessing modules");
         for (auto &module : m_Config.modules)

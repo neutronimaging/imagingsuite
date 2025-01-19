@@ -47,72 +47,23 @@ add_library(${TARGET_NAME} SHARED
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
-# target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULESGUI_LIBRARY HAVE_NEXUS)
 target_compile_definitions(${TARGET_NAME} PRIVATE INSPECTORMODULESGUI_LIBRARY )
-
-# add_definitions(-DHAVE_NEXUS)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 
-if (WIN32)
-
-    # target_link_directories(${TARGET_NAME} PRIVATE
-    #     ../../../../../ExternalDependencies/windows/lib
-    #     ../../../../../imagingsuite/external/lib64
-    #     ../../../../../imagingsuite/external/lib64/nexus
-    #     )
-    target_link_libraries(${TARGET_NAME}
-        PRIVATE
-        Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::Charts
-        kipl
-        ImagingAlgorithms
-        ModuleConfig
-        ReconFramework
-        QtAddons
-        QtModuleConfigure
-        InspectorModules
-        # libxml2
-        # cfitsio
-        # libtiff
-        # NeXus
-        # NeXusCPP
-    )
-endif()
-
-if (APPLE)
-    target_link_libraries(${TARGET_NAME}
-        PUBLIC
-        Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Widgets
-        Qt${QT_VERSION_MAJOR}::Charts
-    #    Qt${QT_VERSION_MAJOR}::PrintSupport
-        kipl
-        ImagingAlgorithms
-        ModuleConfig
-        ReconFramework
-        QtAddons
-        QtModuleConfigure
-        InspectorModules
-    )
-endif()
-
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  target_link_libraries(${TARGET_NAME} PUBLIC
-      Qt${QT_VERSION_MAJOR}::Core
-      Qt${QT_VERSION_MAJOR}::Widgets
-      Qt${QT_VERSION_MAJOR}::Charts
-  #    Qt${QT_VERSION_MAJOR}::PrintSupport
-      kipl
-      ImagingAlgorithms
-      ModuleConfig
-      ReconFramework
-      QtAddons
-      QtModuleConfigure
-      InspectorModules
-  )
-endif()
+target_link_libraries(${TARGET_NAME}
+    PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Charts
+    kipl
+    ImagingAlgorithms
+    ModuleConfig
+    ReconFramework
+    QtAddons
+    QtModuleConfigure
+    InspectorModules
+)
 
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
