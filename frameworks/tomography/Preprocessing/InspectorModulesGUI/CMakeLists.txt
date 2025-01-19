@@ -7,43 +7,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
-# find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
 
 find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts )
 
 message("Using Qt${QT_VERSION_MAJOR}")
-if (APPLE)
-include_directories(
-    ../../../../core/kipl/kipl/include
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../Framework/ReconFramework/include/
-    ../../../../GUI/qt/QtAddons/
-    ../../../../GUI/qt/QtModuleConfigure/
-    ../../../../core/kipl/kipl/include
-    ../../../../core/modules/ModuleConfig/include
-    # ../../../../../ExternalDependencies/macos/include
-    )
-endif()
 
-if (WIN32)
-include_directories(
-    ../../../../core/kipl/kipl/include
-    ../../Framework/ReconFramework/include/
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../GUI/qt/QtAddons/
-    ../../../../GUI/qt/QtModuleConfigure/
-    ../../../../core/modules/ModuleConfig/include
-    # ../../../../../ExternalDependencies/windows/include
-    # ../../../../../ExternalDependencies/windows/include/libxml2
-    )
-endif()
-
-if (UNIX)
 include_directories(
     ../../Framework/ReconFramework/include/
     ../../../../core/algorithms/ImagingAlgorithms/include
@@ -52,7 +22,6 @@ include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
     )
-endif()
 
 set(INC_FILES
 inspectormodulesgui.h

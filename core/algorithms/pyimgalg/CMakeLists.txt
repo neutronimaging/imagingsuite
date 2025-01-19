@@ -6,15 +6,12 @@
 set(TARGET_NAME "imgalg") 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(OpenMP)
 
 include_directories(
     ../../kipl/kipl/include 
     ../ImagingAlgorithms/include 
-    # ../../../../ExternalDependencies/macos/include
     )
     
 if (WIN32)
@@ -22,10 +19,6 @@ if (WIN32)
         ../../../core/kipl/kipl/include
         ../../../core/kipl/kipl/include
         ../../../core/modules/ModuleConfig/include
-        # ../../../external/include/
-        # ../../../../ExternalDependencies/windows/include
-        # ../../../../ExternalDependencies/windows/include/nexus
-        # ../../../../ExternalDependencies/windows/include/cfitsio
         )
 endif()
 
@@ -79,9 +72,6 @@ endif(APPLE)
 
 if (WIN32)
     target_link_directories(${TARGET_NAME} PRIVATE
-    # ../../../../ExternalDependencies/windows/lib
-    # ../../../../imagingsuite/external/lib64
-    # ../../../../imagingsuite/external/lib64/nexus
     )
     
     target_link_libraries(${TARGET_NAME}
@@ -99,39 +89,14 @@ if (UNIX AND NOT APPLE)
     if(OpenMP_CXX_FOUND)
         target_link_libraries(${TARGET_NAME} PUBLIC
             OpenMP::OpenMP_CXX
-            # pybind11::module
-
               kipl
               ImagingAlgorithms
-              # xml2
-              # tiff
-              # armadillo
-              # lapack
-              # blas
-              # fftw3
-              # fftw3f
-              # cfitsio
-              # NeXus
-              # NeXusCPP
             )
     else()
         target_link_libraries(${TARGET_NAME}
           PUBLIC
-            # pybind11::module
-
-          
               kipl
               ImagingAlgorithms
-              # xml2
-              # tiff
-              # armadillo
-              # lapack
-              # blas
-              # fftw3
-              # fftw3f
-              # cfitsio
-              # NeXus
-              # NeXusCPP
           )
     endif()
 endif()

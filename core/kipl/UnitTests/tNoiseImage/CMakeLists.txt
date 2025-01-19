@@ -14,24 +14,9 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 include_directories(
     ../../kipl/include
 )
-
-# if (APPLE)
-#     include_directories(
-#         ../../../../../ExternalDependencies/macos/include
-#     )
-# endif()
-
-# if (WIN32)
-#     include_directories(
-#         ../../../external/include/
-#     )
-# endif()
 
 set(SRC_FILES
     tst_noiseimage.cpp)
