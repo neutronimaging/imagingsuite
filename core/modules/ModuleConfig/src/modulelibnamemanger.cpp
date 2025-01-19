@@ -52,6 +52,26 @@ std::string ModuleLibNameManger::stripLibName(const std::string &libPath, const 
     return moduleName;
 }
 
+std::string ModuleLibNameManger::generateLibPath(const kipl::base::eOperatingSystem &os)
+{
+    std::string libPath;
+
+    switch (os)
+    {
+        case kipl::base::OSUnknown : throw kipl::base::KiplException("OS not recognized",__FILE__,__LINE__);
+        case kipl::base::OSWindows : libPath = generateWindowsLibPath(); break;
+        case kipl::base::OSMacOS   : libPath = generateMacOSLibPath();   break;
+        case kipl::base::OSLinux   : libPath = generateLinuxLibPath();   break;
+    }
+
+    return libPath;
+}
+
+std::string ModuleLibNameManger::generateLibPath()
+{
+    return generateLibPath(kipl::base::getOperatingSystem());
+}
+
 std::string ModuleLibNameManger::stripLibName(const std::string &libPath)
 {
     return stripLibName(libPath,kipl::base::getOperatingSystem());
@@ -91,6 +111,22 @@ std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
     fullName = fullName+"PlugIns/"+m_sCategoryName+"/lib"+name+".so";
 
     return fullName;
+}
+
+std::string ModuleLibNameManger::generateWindowsLibPath()
+{
+    return m_sApplicationPath+"PlugIns\\"+m_sCategoryName+"\\";
+}
+
+std::string ModuleLibNameManger::generateMacOSLibPath()
+{
+    return m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/PlugIns/"+m_sCategoryName+"/";
+
+}
+
+std::string ModuleLibNameManger::generateLinuxLibPath()
+{
+    return m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/PlugIns/"+m_sCategoryName+"/";
 }
 
 std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)

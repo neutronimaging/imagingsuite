@@ -5,8 +5,8 @@ project(tLogging LANGUAGES CXX)
 
 enable_testing()
 
-find_package(QT NAMES Qt6 COMPONENTS Test REQUIRED)
-find_package(Qt6 COMPONENTS Test REQUIRED)
+# find_package(QT NAMES Qt6 COMPONENTS Test REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Test )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

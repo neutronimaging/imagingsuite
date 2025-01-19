@@ -73,6 +73,7 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
 #endif
 
+
     kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
 
 }
@@ -85,6 +86,7 @@ int AddModuleDialog::configure( const std::string &application,
     m_sApplication         = application;
     m_sApplicationPath     = application_path;
     m_sDefaultModuleSource = defaultsource;
+    
 
     return 0;
 }
