@@ -10,6 +10,7 @@
 #include <list>
 #include <string>
 #include <ModuleException.h>
+#include <modulelibnamemanger.h>
 
 #include <strings/filenames.h>
 
@@ -124,11 +125,15 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
             std::string fname;
             std::vector<std::string> ext;
 
-            kipl::strings::filenames::StripFileName(soname,path,fname,ext);
+            // kipl::strings::filenames::StripFileName(soname,path,fname,ext);
 
-            std::string guisoname = path+fname+"GUI";
-            for (const auto & e : ext)
-                guisoname+=e;
+            // std::string guisoname = path+fname+"GUI";
+            // for (const auto & e : ext)
+            //     guisoname+=e;
+
+            ModuleLibNameManger mng(m_sApplicationPath,"Preprocessors");
+            std::string mname     = mng.stripLibName(soname);
+            std::string guisoname = mng.generateLibName(mname+"GUI",false);
 
             msg.str(""); msg<<"Configuring "<<modulename<<" from "<<soname<<" with "<<guisoname<<std::endl;
             logger(kipl::logging::Logger::LogMessage,msg.str());

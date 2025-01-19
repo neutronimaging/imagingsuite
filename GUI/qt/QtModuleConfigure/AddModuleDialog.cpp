@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include "AddModuleDialog.h"
+#include <modulelibnamemanger.h>
 #include <strings/filenames.h>
 #include <ModuleException.h>
 #include <QString>
@@ -65,14 +66,16 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
     m_sApplicationPath = QCoreApplication::applicationDirPath().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
 
-#if defined(Q_OS_WIN)
-        m_sPreprocessorsPath = m_sApplicationPath+"PlugIns\\Preprocessors\\";
-#elif defined(Q_OS_MAC)
-        m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
-#elif defined(Q_OS_LINUX)
-        m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
-#endif
+// #if defined(Q_OS_WIN)
+//         m_sPreprocessorsPath = m_sApplicationPath+"PlugIns\\Preprocessors\\";
+// #elif defined(Q_OS_MAC)
+//         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
+// #elif defined(Q_OS_LINUX)
+//         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
+// #endif
 
+    ModuleLibNameManger mlnm(m_sApplicationPath,"Preprocessors");
+    m_sPreprocessorsPath = mlnm.generateLibPath();
 
     kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
 
@@ -106,13 +109,24 @@ int AddModuleDialog::exec()
     logger(kipl::logging::Logger::LogMessage,msg.str());
 
     if (fileName.empty()) {
-        #if defined(Q_OS_WIN)
-            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.dll)"));
-        #elif defined(Q_OS_MAC)
-            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.dylib)"));
-        #elif defined(Q_OS_LINUX)
-            qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.so)"));
-        #endif
+        auto os = kipl::base::getOperatingSystem();
+        std::string filterstr;
+        switch (os)
+        {
+            case kipl::base::OSUnknown : throw kipl::base::KiplException("OS not recognized",__FILE__,__LINE__);
+            case kipl::base::OSWindows : filterstr = "libs (*.dll)"; break;
+            case kipl::base::OSMacOS   : filterstr = "libs (*.dylib)"; break;
+            case kipl::base::OSLinux   : filterstr = "libs (*.so)"; break;
+        }
+
+        qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr(filterstr.c_str()));
+        // #if defined(Q_OS_WIN)
+        //     qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.dll)"));
+        // #elif defined(Q_OS_MAC)
+        //     qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.dylib)"));
+        // #elif defined(Q_OS_LINUX)
+        //     qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.so)"));
+        // #endif
     }
 
     logger(kipl::logging::Logger::LogMessage,qfileName.toStdString());
@@ -133,8 +147,8 @@ int AddModuleDialog::exec()
     kipl::strings::filenames::CheckPathSlashes(fileName,false);
     m_ModuleConfig.m_sSharedObject=fileName;
 
-    m_ModuleConfig.m_sModule=modulelist.begin()->first;
-    m_ModuleConfig.parameters=modulelist.begin()->second;
+    m_ModuleConfig.m_sModule  = modulelist.begin()->first;
+    m_ModuleConfig.parameters = modulelist.begin()->second;
     m_ModuleConfig.m_bActive=true;
 
     return QDialog::exec();
