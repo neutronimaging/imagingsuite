@@ -1,12 +1,8 @@
 # This workflow builds and uploads pymuhrec to pypi.
-name: Create Release
+name: Release pymuhrec to PyPi
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - release_workflow
-
 
 jobs:
   Run_build_wheels_workflow:
@@ -25,8 +21,8 @@ jobs:
         - name: Download wheels
           uses: actions/download-artifact@v4
           with:
-            name: wheels
             path: dist/
+
         - name: Publish wheels 📦 to PyPi 
           uses: pypa/gh-action-pypi-publish@release/v1
 
