@@ -3,6 +3,10 @@ name: Release pymuhrec to PyPi
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - release_workflow
+
 
 jobs:
   Run_build_wheels_workflow:
