@@ -26,18 +26,8 @@ jobs:
             zip -r MuhRec-macOS-ARM64.zip MuhRec-macOS-ARM64/*
             zip -r MuhRec-macOS-X64.zip MuhRec-macOS-X64/*
 
-        - name: Download pymuhrec wheels
-          uses: dawidd6/action-download-artifact@v6
-          with:
-            github_token: ${{secrets.GITHUB_TOKEN}}
-            workflow: Build-wheels.yml
-            workflow_conclusion: success
-            branch: master
-
         - name: Create Release and upload artifacts
           uses: softprops/action-gh-release@v2
           with:
             files: |
-              pymuhrec-*/*.whl
               MuhRec-*
-              *.msi

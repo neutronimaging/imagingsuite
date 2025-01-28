@@ -191,49 +191,50 @@ jobs:
         name: ${{runner.os}}-${{runner.arch}}-test-results
         path: ${{ matrix.build_root }}/Testing
 
-    - name: Prepare windows installer
+    - name: Prepare creation of installer
+      working-directory: imagingsuite/QtInstaller
       shell: bash
-      working-directory: imagingsuite
-      if: runner.os == 'Windows'
       run: |
-        mkdir application
-        cp ../${{ matrix.build_root }}/bin/Release/* application
-        rm application/t*.exe
-        rm application/*.pyd
+        if [ "${RUNNER_OS}" == "Windows" ]; then
+          cp -r ../../build-imagingsuite/bin/Release/* packages/core/data/
+          rm packages/core/data/*.pyd
+          rm packages/core/data/t*.exe
+        elif [ "${RUNNER_OS}" == "Linux" ]; then
+          cd ../../build-imagingsuite/Release
+          cp -r bin PlugIns lib resources ../../imagingsuite/QtInstaller/packages/core/data/
+          cd ../../imagingsuite/QtInstaller/packages/core/data
+          rm bin/t* lib/*cpython*
+        elif [ "${RUNNER_OS}" == "macOS" ]; then
+          
+        fi
 
-    - name: Build Windows installer MSI
-      uses: AliceOh/CreateWindowsInstaller@1.0.0
-      with:
-        exefile: MuhRec.exe
+    # - name: Save build artifact Windows
+    #   if: ${{ runner.os == 'Windows' }}
+    #   uses: actions/upload-artifact@master
+    #   with:
+    #     name: MuhRec-${{runner.os}}-${{runner.arch}}
+    #     path: |
+    #       ${{ matrix.build_root }}/bin/Release/*
+    #       !${{ matrix.build_root }}/bin/Release/t*.exe
+    #       !${{ matrix.build_root }}/bin/Release/*.pyd
 
-    - name: Save build artifact Windows
-      if: ${{ runner.os == 'Windows' }}
-      uses: actions/upload-artifact@master
-      with:
-        name: MuhRec-${{runner.os}}-${{runner.arch}}
-        path: |
-          ${{ matrix.build_root }}/bin/Release/*
-          !${{ matrix.build_root }}/bin/Release/t*.exe
-          !${{ matrix.build_root }}/bin/Release/*.pyd
-          *.msi
+    # - name: Save build artifact Linux
+    #   if: ${{ runner.os == 'Linux' }}
+    #   uses: actions/upload-artifact@master
+    #   with:
+    #     name: MuhRec-${{runner.os}}-${{runner.arch}}
+    #     path: |
+    #       ${{ matrix.build_root }}/bin/*
+    #       !${{ matrix.build_root }}/bin/t*
+    #       ${{ matrix.build_root }}/PlugIns/*
+    #       ${{ matrix.build_root }}/lib/*
+    #       !${{ matrix.build_root }}/lib/*cpython*
+    #       ${{ matrix.build_root }}/resources/*
 
-    - name: Save build artifact Linux
-      if: ${{ runner.os == 'Linux' }}
-      uses: actions/upload-artifact@master
-      with:
-        name: MuhRec-${{runner.os}}-${{runner.arch}}
-        path: |
-          ${{ matrix.build_root }}/bin/*
-          !${{ matrix.build_root }}/bin/t*
-          ${{ matrix.build_root }}/PlugIns/*
-          ${{ matrix.build_root }}/lib/*
-          !${{ matrix.build_root }}/lib/*cpython*
-          ${{ matrix.build_root }}/resources/*
-
-    - name: Save build artifact MacOS
-      if: ${{ runner.os == 'macOS' }}
-      uses: actions/upload-artifact@master
-      with:
-        name: MuhRec-${{runner.os}}-${{runner.arch}}
-        path: |
-          ${{ matrix.build_root }}/*.app/*
+    # - name: Save build artifact MacOS
+    #   if: ${{ runner.os == 'macOS' }}
+    #   uses: actions/upload-artifact@master
+    #   with:
+    #     name: MuhRec-${{runner.os}}-${{runner.arch}}
+    #     path: |
+    #       ${{ matrix.build_root }}/*.app/*
