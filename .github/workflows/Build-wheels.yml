@@ -184,7 +184,7 @@ jobs:
           cd Release/lib
           cp *.dylib *.so BackProjectors/*.dylib Preprocessors/*.dylib ../../../imagingsuite/package/pymuhrec
           cd ../../../imagingsuite/package/pymuhrec
-          rm libQt6*.dylib
+          rm Qt6*.dylib
         fi
 
     - name: Ammend shared libraries runpaths
