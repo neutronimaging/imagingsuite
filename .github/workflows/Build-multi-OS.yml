@@ -96,6 +96,7 @@ jobs:
         dir: '${{GITHUB.WORKSPACE}}'
         install-deps: 'true'
         modules: 'qtcharts'
+        tools: 'tools_ifw'
 
     - name: Conan installation
       id: conan
