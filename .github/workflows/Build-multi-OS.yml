@@ -33,30 +33,30 @@ jobs:
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix:
         include:
-          # - os: windows-2022
-          #   c_compiler: cl
-          #   cpp_compiler: cl
-          #   cl: 17
-          #   build_type: Release
-          #   build_root: build-imagingsuite
+          - os: windows-2022
+            c_compiler: cl
+            cpp_compiler: cl
+            cl: 17
+            build_type: Release
+            build_root: build-imagingsuite
           - os: ubuntu-22.04
             c_compiler: gcc
             cpp_compiler: g++
             gcc: 11
             build_type: Release
             build_root: build-imagingsuite/Release
-          # - os: macos-13
-          #   c_compiler: clang
-          #   cpp_compiler: clang++
-          #   clang: 14
-          #   build_type: Release
-          #   build_root: build-imagingsuite/Release
-          # - os: macos-14
-          #   c_compiler: clang
-          #   cpp_compiler: clang++
-          #   clang: 15
-          #   build_type: Release
-          #   build_root: build-imagingsuite/Release
+          - os: macos-13
+            c_compiler: clang
+            cpp_compiler: clang++
+            clang: 14
+            build_type: Release
+            build_root: build-imagingsuite/Release
+          - os: macos-14
+            c_compiler: clang
+            cpp_compiler: clang++
+            clang: 15
+            build_type: Release
+            build_root: build-imagingsuite/Release
 
     steps:
       # Checkouts the source code to build the project with the git history
@@ -216,12 +216,7 @@ jobs:
         if [ "${RUNNER_OS}" == "Windows" ]; then
           ${QTPATH}\..\..\Tools\QtInstallerFramework\4.7\bin\binarycreator.exe -c config\config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer.exe
         else
-          ls ${QTPATH}/../../
-          ls ${QTPATH}/../../Tools/
-          ls ${QTPATH}/../../Tools/QtInstallerFramework/
-          ls ${QTPATH}/../../Tools/QtInstallerFramework/4.7/
-          ls ${QTPATH}/../../Tools/QtInstallerFramework/4.7/bin/
-          ${QTPATH}/../../Tools/QtInstallerFramework/4.7/bin/binarycreator -c config\config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer
+          ${QTPATH}/../../Tools/QtInstallerFramework/4.7/bin/binarycreator -c config/config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer
         fi
 
     - name: Upload installers
