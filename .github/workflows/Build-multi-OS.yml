@@ -196,16 +196,20 @@ jobs:
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          cp -r ../../build-imagingsuite/bin/Release/* packages/core/data
+          cp -r ../../build-imagingsuite/bin/Release/* ./packages/core/data/
           rm packages/core/data/*.pyd
           rm packages/core/data/t*.exe
         elif [ "${RUNNER_OS}" == "Linux" ]; then
-          cd ../../build-imagingsuite/Release
-          cp -r bin PlugIns lib resources ../../imagingsuite/QtInstaller/packages/core/data
-          cd ../../imagingsuite/QtInstaller/packages/core/data
+          pwd
+          ls
+          cd packages/core/data
+          pwd
+          cd ../../../../../build-imagingsuite/Release
+          cp -r bin PlugIns lib resources ../../imagingsuite/QtInstaller/packages/core/data/
+          cd ../../imagingsuite/QtInstaller/packages/core/data/
           rm bin/t* lib/*cpython*
         elif [ "${RUNNER_OS}" == "macOS" ]; then
-          cp ../../build-imagingsuite/Release/*.app/* packages/core/data
+          cp ../../build-imagingsuite/Release/*.app/* ./packages/core/data/
         fi
 
     - name: Create installers
