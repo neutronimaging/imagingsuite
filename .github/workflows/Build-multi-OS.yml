@@ -200,15 +200,6 @@ jobs:
           rm packages/core/data/*.pyd
           rm packages/core/data/t*.exe
         elif [ "${RUNNER_OS}" == "Linux" ]; then
-          pwd
-          ls
-          cd packages
-          ls
-          cd core
-          ls
-          cd data
-          ls
-          pwd
           cd ../../../../../build-imagingsuite/Release
           cp -r bin PlugIns lib resources ../../imagingsuite/QtInstaller/packages/core/data/
           cd ../../imagingsuite/QtInstaller/packages/core/data/
