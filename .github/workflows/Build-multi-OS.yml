@@ -214,9 +214,14 @@ jobs:
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          ${QTPATH}\..\..\Tools\QtInstallerFramework\4.8\bin\binarycreator.exe -c config\config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer.exe
+          ${QTPATH}\..\..\Tools\QtInstallerFramework\4.7\bin\binarycreator.exe -c config\config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer.exe
         else
-          ${QTPATH}/../../Tools/QtInstallerFramework/4.8/bin/binarycreator -c config\config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer
+          ls ${QTPATH}/../../
+          ls ${QTPATH}/../../Tools/
+          ls ${QTPATH}/../../Tools/QtInstallerFramework/
+          ls ${QTPATH}/../../Tools/QtInstallerFramework/4.7/
+          ls ${QTPATH}/../../Tools/QtInstallerFramework/4.7/bin/
+          ${QTPATH}/../../Tools/QtInstallerFramework/4.7/bin/binarycreator -c config\config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer
         fi
 
     - name: Upload installers
