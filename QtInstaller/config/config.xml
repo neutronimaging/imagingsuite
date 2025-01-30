@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>MuhRec</Name>
+    <Version>4.5.0</Version>
+    <Title>MuhRec Installer</Title>
+    <Publisher>PSI</Publisher>
+    <InstallerWindowIcon>muh4_icon.png</InstallerWindowIcon>
+    <InstallerApplicationIcon>muh4_icon</InstallerApplicationIcon>
+    <StartMenuDir>@UserStartMenuProgramsPath@/MuhRec</StartMenuDir>
+    <TargetDir>@ApplicationsDirUser@/MuhRec</TargetDir>
+    <WizardStyle>Modern</WizardStyle>
+    <ControlScript>controllerscript.js</ControlScript>
+</Installer>

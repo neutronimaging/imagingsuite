@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>MuhRec core components</DisplayName>
+    <Name>core</Name>
+    <Description>The core components critical to running MuhRec</Description>
+    <Version>4.5.0</Version>
+    <ReleaseDate>2010-09-21</ReleaseDate>
+    <Licenses>
+        <License name="GNU GENERAL PUBLIC LICENSE" file="LICENSE" />
+    </Licenses>
+    <Default>false</Default>
+    <ForcedInstallation>true</ForcedInstallation>
+    <Script>installscript.js</Script>
+    <UserInterfaces>
+        <UserInterface>customintroductionpage.ui</UserInterface>
+        <UserInterface>shortcutwidget.ui</UserInterface>
+    </UserInterfaces>
+</Package>
