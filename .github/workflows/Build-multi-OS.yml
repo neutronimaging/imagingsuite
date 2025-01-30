@@ -206,7 +206,7 @@ jobs:
           cd ../../imagingsuite/QtInstaller/packages/core/data/
           rm bin/t* lib/*cpython*
         elif [ "${RUNNER_OS}" == "macOS" ]; then
-          cp ../../build-imagingsuite/Release/*.app/* packages/core/data/
+          cp -r ../../build-imagingsuite/Release/*.app packages/core/data/
         fi
 
     - name: Create installers
@@ -214,7 +214,7 @@ jobs:
       shell: bash
       run: |
         if [ "${RUNNER_OS}" == "Windows" ]; then
-          ${QTPATH}\..\..\Tools\QtInstallerFramework\4.7\bin\binarycreator.exe -c config\config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer.exe
+          ${QTPATH}/../../Tools/QtInstallerFramework/4.7/bin/binarycreator.exe -c config/config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer.exe
         else
           ${QTPATH}/../../Tools/QtInstallerFramework/4.7/bin/binarycreator -c config/config.xml -p packages ${{runner.os}}-${{runner.arch}}_MuhRec_Installer
         fi
@@ -222,7 +222,7 @@ jobs:
     - name: Upload installers
       uses: actions/upload-artifact@master
       with:
-        name: MuhRec-${{runner.os}}-${{runner.arch}}
+        name: MuhRec-installer-${{runner.os}}-${{runner.arch}}
         path: imagingsuite/QtInstaller/*MuhRec_Installer*
 
     - name: Save build artifact Windows
