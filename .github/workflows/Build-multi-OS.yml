@@ -202,7 +202,12 @@ jobs:
         elif [ "${RUNNER_OS}" == "Linux" ]; then
           pwd
           ls
-          cd packages/core/data
+          cd packages
+          ls
+          cd core
+          ls
+          cd data
+          ls
           pwd
           cd ../../../../../build-imagingsuite/Release
           cp -r bin PlugIns lib resources ../../imagingsuite/QtInstaller/packages/core/data/
