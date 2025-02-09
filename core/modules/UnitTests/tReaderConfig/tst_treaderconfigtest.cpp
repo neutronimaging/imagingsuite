@@ -369,7 +369,7 @@ void TReaderConfigTest::testCreateDirectories()
         qDebug() << e.what();
     }
 
-    QVERIFY_THROWS_EXCEPTION(ReaderException,{ CheckFolders(path1,false); });
+    QVERIFY_THROWS_EXCEPTION(ReaderException,{ CheckFolders(path1,true); });
     CheckFolders(path1,true);
     QVERIFY(fs::is_directory(path1));
 
