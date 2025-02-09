@@ -103,7 +103,7 @@ protected:
     size_t nSliceBlock;
 //    size_t nSubVolume[2];
     std::vector<size_t> volume_size;
-    float spacing[3];
+    // float spacing[3];
     float fRotation;
 
     ImagingAlgorithms::ProjectionFilter filter;

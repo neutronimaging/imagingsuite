@@ -20,7 +20,7 @@
 
 ReconConfig::ReconConfig(const std::string &appPath) :
     ConfigBase("ReconConfig",appPath),
-    backprojector(appPath)
+    backprojector(appPath,"Backprojectors")
 {
 
 }
@@ -101,7 +101,7 @@ std::string ReconConfig::WriteXML()
 			std::list<ModuleConfig>::iterator it;
 
             for (auto & module : modules) {
-                module.setAppPath(m_sApplicationPath);
+                module.setAppPath(m_sApplicationPath,"Preprocessors");
                 str<<module.WriteXML(indent+8);
 			}
 			str<<std::setw(indent+4)<<" "<<"</preprocessing>\n";
@@ -514,7 +514,7 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
         					sValue="Empty";
 						sName=reinterpret_cast<const char *>(name);
 						if (sName=="module") {
-                            ModuleConfig module(m_sApplicationPath);
+                            ModuleConfig module(m_sApplicationPath, "Preprocessors");
                             module.ParseModule(reader);
 							modules.push_back(module);
 						}
@@ -526,7 +526,7 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 			}
 			if (sName=="backprojector") {
 				logger(kipl::logging::Logger::LogVerbose,"Parsing backproj");
-                backprojector.setAppPath(m_sApplicationPath);
+                backprojector.setAppPath(m_sApplicationPath,"BackProjectors");
                 backprojector.ParseModule(reader);
 			}
 

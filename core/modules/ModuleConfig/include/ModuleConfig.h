@@ -23,7 +23,7 @@ protected:
     kipl::logging::Logger logger; ///< Logging for the Module config objects
 
 public:
-    ModuleConfig(const std::string &modulePath);           ///< Default constructor
+    ModuleConfig(const std::string &modulePath, const std::string &sCategory);           ///< Default constructor
     std::string m_sSharedObject;  ///< File name of the shared object file containing the module
     std::string m_sModule;        ///< Name of the module
 	bool m_bActive;
@@ -40,12 +40,13 @@ public:
 
     /// Dumps the module parameters on the console.
 	std::string PrintParameters();
-    void setAppPath(const std::string &path);
+    void setAppPath(const std::string &path, const std::string &category);
     std::string modulePath();
     std::string moduleSummary();
 protected:
 
     ModuleLibNameManger m_NameManager;
+    std::string m_CategoryName;
 };
 
 
