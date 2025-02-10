@@ -3,7 +3,7 @@ set(TARGET_NAME "ReconFramework")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
