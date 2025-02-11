@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.14)
 set(TARGET_NAME "StdPreprocModules")
 project(kipl LANGUAGES CXX)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include_directories(
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
@@ -86,4 +90,4 @@ target_link_libraries(${TARGET_NAME}
     ReconFramework
 )
 
-  install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

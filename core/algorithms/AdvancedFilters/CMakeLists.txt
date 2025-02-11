@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.14)
 set(TARGET_NAME "AdvancedFilters")
 project(kipl LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include_directories(

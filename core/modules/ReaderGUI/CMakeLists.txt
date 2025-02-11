@@ -8,6 +8,10 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+#add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
+
 find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts )
 

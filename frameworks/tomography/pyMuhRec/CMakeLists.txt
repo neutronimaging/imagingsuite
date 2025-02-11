@@ -3,6 +3,10 @@ message("PyMuhRec")
 set(TARGET_NAME "muhrectomo") 
 project(muhrectomo LANGUAGES CXX)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include

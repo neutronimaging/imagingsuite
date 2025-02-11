@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 # project name and supported language
 project(ReconFramework-binder LANGUAGES CXX)
 
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE

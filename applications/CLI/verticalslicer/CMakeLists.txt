@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 set(TARGET_NAME "verticalslicer")
 project(${TARGET_NAME} VERSION 4.3 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include

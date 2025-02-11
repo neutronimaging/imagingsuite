@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.14)
 set(TARGET_NAME "StdBackProjectors")
 project(StdBackProjectors VERSION 1.0.1 LANGUAGES CXX)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 include_directories(

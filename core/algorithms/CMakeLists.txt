@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 # project name and supported language
 project(ImagingAlgorithms-binder LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(
       CMAKE_LIBRARY_OUTPUT_DIRECTORY "~/git/lib/"
 )
