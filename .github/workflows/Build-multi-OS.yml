@@ -89,9 +89,9 @@ jobs:
 
     # This version of Qt only allows python versions in the range 3.6-3.11
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: Kidev/install-qt-action@v4.4.2
       with:
-        version: '6.5.3'
+        version: '6.8.2'
         dir: '${{GITHUB.WORKSPACE}}'
         install-deps: 'true'
         modules: 'qtcharts'
@@ -109,10 +109,10 @@ jobs:
         path: ${{ env.CONAN_HOME }}
         key: ${{ runner.os }}-${{ runner.arch }}
 
-    - name: Set QTAPTH environment variable
+    - name: Set QTPATH environment variable
       shell: bash
       run: |
-        echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
+        echo "QTPATH=${{env.QT_ROOT_DIR}}" >> "$GITHUB_ENV"
 
     - name: Install sse2neon
       # Needed to compile ARM programs and not currently available on Conan
