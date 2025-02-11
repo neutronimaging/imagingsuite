@@ -13,23 +13,23 @@ class MuhrecRecipe(ConanFile):
 
     def requirements(self):
         self.requires("zlib/[1.3.1]")
-        self.requires("openblas/[0.3.25]")
-        self.requires("pybind11/[2.11.1]")
+        self.requires("openblas/[0.3.25]") # Can't update to 0.3.27 because of armadillo
+        self.requires("pybind11/[2.13.6]")
         #self.requires("pthreads4w/[>2.11.0]")
-        self.requires("libxml2/[2.12.4]")
+        self.requires("libxml2/[2.13.4]")
         self.requires("armadillo/[12.6.4]")
-        self.requires("libtiff/[4.6.0]")
+        self.requires("libtiff/[4.7.0]")
         self.requires("fftw/[3.3.10]")
-        self.requires("cfitsio/[4.3.1]")
-        self.requires("hdf5/[1.14.3]")
+        self.requires("cfitsio/[4.4.0]")
+        self.requires("hdf5/[1.14.5]")
         if self.settings.os == "Windows":
             self.requires("dirent/1.24") # Header files only
         #self.requires("qt/[6.6.1]") Does work but QtCharts is not included
 
 
     def build_requirements(self): # Only used if conanbuild.bat environment is used, such as by "conan build ."
-        self.tool_requires("ninja/[1.12.0]")
-        self.tool_requires("cmake/[3.28.1]") 
+        self.tool_requires("ninja/[1.12.1]")
+        self.tool_requires("cmake/[3.31.3]") 
 
     def layout(self):
         cmake_layout(
