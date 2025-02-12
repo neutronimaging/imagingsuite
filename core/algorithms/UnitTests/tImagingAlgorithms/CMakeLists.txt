@@ -22,19 +22,6 @@ include_directories(
     ../../ImagingAlgorithms/include
 )
 
-# if (APPLE)
-#     include_directories(
-#         ../../../../../ExternalDependencies/macos/include/
-#     )
-# endif()
-
-# if (WIN32)
-#     include_directories(
-#         ../../../../../ExternalDependencies/windows/include/
-#         ../../../../../imagingsuite/external/include/
-#     )
-# endif()
-
 set(SRC_FILES,
 tst_testImagingAlgorithms.cpp)
 

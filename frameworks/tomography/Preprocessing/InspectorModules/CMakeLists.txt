@@ -13,36 +13,6 @@ include_directories(
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../Framework/ReconFramework/include/)
 
-# if (APPLE)
-# include_directories(
-#     ../../../../../ExternalDependencies/macos/include
-#     )
-# endif()
-
-if (WIN32)
-include_directories(
-    ../../../../core/kipl/kipl/include
-    ../../../../core/modules/ModuleConfig/include
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../Framework/ReconFramework/include
-    # ../../../../../ExternalDependencies/windows/include
-    # ../../../../../ExternalDependencies/windows/include/nexus
-    # ../../../../../ExternalDependencies/windows/include/cfitsio
-    # ../../../../../ExternalDependencies/windows/include/libxml2
-    # ../../../../external/include/
-    )
-endif()
-
-if (UNIX)
-include_directories(
-    ../../../../core/kipl/kipl/include
-    #/usr/include/libxml2
-    ../../Framework/ReconFramework/include/
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../core/modules/ModuleConfig/include
-    )
-endif()
-
 set(INC_FILES
   CountNANs.h
   SaveProjections.h

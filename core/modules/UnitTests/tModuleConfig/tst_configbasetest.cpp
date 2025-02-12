@@ -222,7 +222,9 @@ void ConfigBaseTest::testLibNameManagerMac()
 
     QCOMPARE(mlnm.generateLibName(modulePath3,kipl::base::OSMacOS),modulePath3);
 
+    std::string path = mlnm.generateLibPath(kipl::base::OSMacOS);
 
+    QCOMPARE(path,std::string("/Users/kaestner/git/deployed/MuhRec.app/Contents/PlugIns/BackProjectors/"));
 }
 
 void ConfigBaseTest::testLibNameManagerLinux()
@@ -239,6 +241,9 @@ void ConfigBaseTest::testLibNameManagerLinux()
     QCOMPARE(mlnm.stripLibName(modulePath3,kipl::base::OSLinux),std::string("StdBackProjectors"));
     QCOMPARE(mlnm.generateLibName("StdBackProjectors",kipl::base::OSLinux),modulePath);
 
+    std::string path = mlnm.generateLibPath(kipl::base::OSLinux);
+
+    QCOMPARE(path,std::string("/home/kaestner/build-imagingsuite/Release/PlugIns/BackProjectors/"));
     // This is a repeat of the above test
     // std::string modulePath2 = "../build-imagingsuite/Release/lib/libStdBackProjectors.so";
 
@@ -269,7 +274,9 @@ void ConfigBaseTest::testLibNameManagerWindows()
 
     QCOMPARE(mlnm.generateLibName(modulePath2,kipl::base::OSWindows),modulePath2);
 
+    std::string path = mlnm.generateLibPath(kipl::base::OSWindows);
 
+    QCOMPARE(path,std::string("C:\\Users\\kaestner\\git\\deployed\\muhrec\\PlugIns\\Preprocessing\\"));    
 }
 
 #ifdef __APPLE__

@@ -7,26 +7,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
-if (UNIX)
 include_directories(
   ../../../core/kipl/kipl/include
   ../../../core/modules/ModuleConfig/include
-  # ../../../../ExternalDependencies/macos/include
-    )
-endif()
-
-if (WIN32)
-include_directories(
-    ../../../core/kipl/kipl/include
-    ../../../core/modules/ModuleConfig/include
-    # ../../../../ExternalDependencies/windows/include
-    # ../../../../ExternalDependencies/windows/include/cfitsio
-    # ../../../../ExternalDependencies/windows/include/libxml2
-    # ../../../../ExternalDependencies/windows/include/nexus
-    # ../../external/include/
-    )
-endif()
+)
 
 
 set(INC_FILES
@@ -50,7 +34,6 @@ set(SRC_FILES
   profileextractor.cpp
 )
 
-
 add_library(${TARGET_NAME} SHARED
   ${SRC_FILES}
   ${INC_FILES}
@@ -58,10 +41,7 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-#target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGQAALGORITHMS_LIBRARY HAVE_NEXUS)
 target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGQAALGORITHMS_LIBRARY)
-
-#add_definitions(-DHAVE_NEXUS)
 
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)

@@ -8,8 +8,6 @@ enable_testing()
 find_package(QT NAMES Qt6 COMPONENTS Test REQUIRED)
 find_package(Qt6 COMPONENTS Test REQUIRED)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -19,7 +17,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/include
-    # ../../../../../ExternalDependencies/macos/include
 )
 
 set(SRC_FILES,
@@ -35,5 +32,3 @@ target_link_libraries(${TARGET_NAME}
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 
-# install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/tests
-#         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/applications/${TARGET_NAME}.app/Contents/Frameworks)

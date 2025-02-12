@@ -8,8 +8,6 @@ enable_testing()
 find_package(QT NAMES Qt6 COMPONENTS Test REQUIRED)
 find_package(Qt6 COMPONENTS Test REQUIRED)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -26,7 +24,6 @@ set(SRC_FILES
     )
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
-
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE

@@ -6,23 +6,16 @@ set(TARGET_NAME "advfilters")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(OpenMP)
 
 include_directories(
     ../../kipl/kipl/include
-    # ../../../../ExternalDependencies/macos/include
     )
 
 if (WIN32)
     include_directories(
         ../../../core/kipl/kipl/include
         ../../../core/modules/ModuleConfig/include
-        # ../../../external/include/
-        # ../../../../ExternalDependencies/windows/include
-        # ../../../../ExternalDependencies/windows/include/nexus
-        # ../../../../ExternalDependencies/windows/include/cfitsio
         )
 endif()
 
@@ -54,13 +47,7 @@ target_link_libraries(${TARGET_NAME}
   )
 endif(APPLE)
 
-if (WIN32)
-    # target_link_directories(${TARGET_NAME} PRIVATE
-    # ../../../../ExternalDependencies/windows/lib
-    # ../../../../imagingsuite/external/lib64
-    # ../../../../imagingsuite/external/lib64/nexus
-    # )
-    
+if (WIN32)   
     target_link_libraries(${TARGET_NAME}
     PUBLIC
       pybind11::module
