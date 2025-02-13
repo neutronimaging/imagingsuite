@@ -101,13 +101,13 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     std::string defaultpreprocessors;
     std::string defaultprojectors;
 
-    ModuleLibNameManger mlnm(m_sApplicationPath,false,"Preprocessors");
+    ModuleLibNameManager mlnm(m_sApplicationPath,false,"Preprocessors");
     m_sPreprocessorsPath = mlnm.generateLibPath();
     defaultpreprocessors = mlnm.generateLibName("StdPreprocModules");
     kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
     kipl::strings::filenames::CheckPathSlashes(defaultpreprocessors,false);
 
-    ModuleLibNameManger mlnm2(m_sApplicationPath,false,"BackProjectors");
+    ModuleLibNameManager mlnm2(m_sApplicationPath,false,"BackProjectors");
     m_sBackProjectorsPath = mlnm2.generateLibPath();
     defaultprojectors = mlnm2.generateLibName("StdBackProjectors");
     kipl::strings::filenames::CheckPathSlashes(m_sBackProjectorsPath,true);

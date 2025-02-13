@@ -4,8 +4,8 @@
 #include <base/KiplException.h>
 #include <strings/filenames.h>
 
-ModuleLibNameManger::ModuleLibNameManger(const std::string &path, const bool usePluginPath, const std::string &category) :
-    logger("ModuleLibNameManger"),
+ModuleLibNameManager::ModuleLibNameManager(const std::string &path, const bool usePluginPath, const std::string &category) :
+    logger("ModuleLibNameManager"),
     m_sApplicationPath(path),
     m_usePluginPath(usePluginPath),
     m_sCategoryName(category)
@@ -14,7 +14,7 @@ ModuleLibNameManger::ModuleLibNameManger(const std::string &path, const bool use
     // kipl::strings::filenames::CheckPathSlashes(m_sCategoryName,true);
 }
 
-std::string ModuleLibNameManger::generateLibName(const std::string &name,const kipl::base::eOperatingSystem &os)
+std::string ModuleLibNameManager::generateLibName(const std::string &name,const kipl::base::eOperatingSystem &os)
 {
     if (name.find_first_of("/\\")!=std::string::npos)
         return name;
@@ -32,12 +32,12 @@ std::string ModuleLibNameManger::generateLibName(const std::string &name,const k
     return fullName;
 }
 
-std::string ModuleLibNameManger::generateLibName(const std::string &name)
+std::string ModuleLibNameManager::generateLibName(const std::string &name)
 {
     return generateLibName(name,kipl::base::getOperatingSystem());
 }
 
-std::string ModuleLibNameManger::stripLibName(const std::string &libPath, const kipl::base::eOperatingSystem &os)
+std::string ModuleLibNameManager::stripLibName(const std::string &libPath, const kipl::base::eOperatingSystem &os)
 {
     std::string moduleName;
 
@@ -52,7 +52,7 @@ std::string ModuleLibNameManger::stripLibName(const std::string &libPath, const 
     return moduleName;
 }
 
-std::string ModuleLibNameManger::generateLibPath(const kipl::base::eOperatingSystem &os)
+std::string ModuleLibNameManager::generateLibPath(const kipl::base::eOperatingSystem &os)
 {
     std::string libPath;
 
@@ -67,17 +67,17 @@ std::string ModuleLibNameManger::generateLibPath(const kipl::base::eOperatingSys
     return libPath;
 }
 
-std::string ModuleLibNameManger::generateLibPath(const bool usePluginPath)
+std::string ModuleLibNameManager::generateLibPath(const bool usePluginPath)
 {
     return generateLibPath(kipl::base::getOperatingSystem());
 }
 
-std::string ModuleLibNameManger::stripLibName(const std::string &libPath)
+std::string ModuleLibNameManager::stripLibName(const std::string &libPath)
 {
     return stripLibName(libPath,kipl::base::getOperatingSystem());
 }
 
-void ModuleLibNameManger::setAppPath(const std::string &path, const std::string &category)
+void ModuleLibNameManager::setAppPath(const std::string &path, const std::string &category)
 {
     m_sApplicationPath = path;
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
@@ -86,7 +86,7 @@ void ModuleLibNameManger::setAppPath(const std::string &path, const std::string 
     kipl::strings::filenames::CheckPathSlashes(m_sCategoryName,true);
 }   
 
-std::string ModuleLibNameManger::generateWindowsLibName(const std::string &name)
+std::string ModuleLibNameManager::generateWindowsLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath;
 
@@ -98,7 +98,7 @@ std::string ModuleLibNameManger::generateWindowsLibName(const std::string &name)
     return fullName;
 }
 
-std::string ModuleLibNameManger::generateMacOSLibName(const std::string &name)
+std::string ModuleLibNameManager::generateMacOSLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 6 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
 
@@ -110,7 +110,7 @@ std::string ModuleLibNameManger::generateMacOSLibName(const std::string &name)
     return fullName;
 }
 
-std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
+std::string ModuleLibNameManager::generateLinuxLibName(const std::string &name)
 {
     std::string fullName=m_sApplicationPath.substr(0,m_sApplicationPath.size() - 3 - (*m_sApplicationPath.rbegin()=='/' ? 1 : 0));
 
@@ -122,7 +122,7 @@ std::string ModuleLibNameManger::generateLinuxLibName(const std::string &name)
     return fullName;
 }
 
-std::string ModuleLibNameManger::generateWindowsLibPath()
+std::string ModuleLibNameManager::generateWindowsLibPath()
 {
     if (m_usePluginPath)
         return m_sApplicationPath+"PlugIns\\"+m_sCategoryName+"\\";
@@ -130,7 +130,7 @@ std::string ModuleLibNameManger::generateWindowsLibPath()
         return m_sApplicationPath;
 }
 
-std::string ModuleLibNameManger::generateMacOSLibPath()
+std::string ModuleLibNameManager::generateMacOSLibPath()
 {
     if (m_usePluginPath)
         return m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/PlugIns/"+m_sCategoryName+"/";
@@ -139,7 +139,7 @@ std::string ModuleLibNameManger::generateMacOSLibPath()
 
 }
 
-std::string ModuleLibNameManger::generateLinuxLibPath()
+std::string ModuleLibNameManager::generateLinuxLibPath()
 {
     if (m_usePluginPath)
         return m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/PlugIns/"+m_sCategoryName+"/";
@@ -147,7 +147,7 @@ std::string ModuleLibNameManger::generateLinuxLibPath()
         return m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/lib/";
 }
 
-std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
+std::string ModuleLibNameManager::stripWindowsLibName(const std::string &path)
 {
     if (!libInAppPath(path,m_sApplicationPath+"PlugIns\\"+m_sCategoryName))
     {
@@ -161,7 +161,7 @@ std::string ModuleLibNameManger::stripWindowsLibName(const std::string &path)
     return libName;
 }
 
-std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
+std::string ModuleLibNameManager::stripMacOSLibName(const std::string &path)
 {
     if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/PlugIns/"+m_sCategoryName) &&
         !libInAppPath(path,m_sApplicationPath+"../PlugIns/"+m_sCategoryName)   )
@@ -179,7 +179,7 @@ std::string ModuleLibNameManger::stripMacOSLibName(const std::string &path)
     return libName;
 }
 
-std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
+std::string ModuleLibNameManager::stripLinuxLibName(const std::string &path)
 {
     if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/PlugIns/"+m_sCategoryName) &&
         !libInAppPath(path,m_sApplicationPath+"../PlugIns/"+m_sCategoryName)   )
@@ -196,7 +196,7 @@ std::string ModuleLibNameManger::stripLinuxLibName(const std::string &path)
     return libName;
 }
 
-bool ModuleLibNameManger::libInAppPath(const std::string &path, const std::string &appPath)
+bool ModuleLibNameManager::libInAppPath(const std::string &path, const std::string &appPath)
 {
     if (path.size()<appPath.size())
     {

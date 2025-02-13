@@ -131,7 +131,7 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
             // for (const auto & e : ext)
             //     guisoname+=e;
 
-            ModuleLibNameManger mng(m_sApplicationPath, false,"Preprocessors");
+            ModuleLibNameManager mng(m_sApplicationPath, false,"Preprocessors");
             std::string mname     = mng.stripLibName(soname);
             std::string guisoname = mng.generateLibName(mname+"GUI");
 

@@ -1,16 +1,16 @@
 //<LICENSE>
-#ifndef MODULELIBNAMEMANGER_H
-#define MODULELIBNAMEMANGER_H
+#ifndef ModuleLibNameManager_H
+#define ModuleLibNameManager_H
 #include "ModuleConfig_global.h"
 #include <string>
 #include <logging/logger.h>
 #include <base/kiplenums.h>
 
-class MODULECONFIGSHARED_EXPORT ModuleLibNameManger
+class MODULECONFIGSHARED_EXPORT ModuleLibNameManager
 {
     kipl::logging::Logger logger;
 public:
-    ModuleLibNameManger(const std::string &path, const bool usePluginPath, const std::string &category);
+    ModuleLibNameManager(const std::string &path, const bool usePluginPath, const std::string &category);
     std::string generateLibName(const std::string &name, const kipl::base::eOperatingSystem &os);
     std::string generateLibName(const std::string &name);
     std::string stripLibName(const std::string &libPath, const kipl::base::eOperatingSystem &os);
@@ -41,4 +41,4 @@ private:
 
 };
 
-#endif // MODULELIBNAMEMANGER_H
+#endif // ModuleLibNameManager_H

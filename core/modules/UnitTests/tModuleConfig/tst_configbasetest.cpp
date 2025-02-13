@@ -202,7 +202,7 @@ void ConfigBaseTest::testLibNameManagerMac()
     std::string modulePath2 = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../PlugIns/BackProjectors/libStdBackProjectors.dylib";
 
     // Tests with plugin path
-    ModuleLibNameManger mlnm(appPath,true,category);
+    ModuleLibNameManager mlnm(appPath,true,category);
 
     std::string name=mlnm.stripLibName(modulePath,kipl::base::OSMacOS);
 
@@ -228,7 +228,7 @@ void ConfigBaseTest::testLibNameManagerMac()
     QCOMPARE(path,std::string("/Users/kaestner/git/deployed/MuhRec.app/Contents/PlugIns/BackProjectors/"));
 
     // Tests without plugin path
-    ModuleLibNameManger mlnm2(appPath,false,category);
+    ModuleLibNameManager mlnm2(appPath,false,category);
 }
 
 void ConfigBaseTest::testLibNameManagerLinux()
@@ -239,7 +239,7 @@ void ConfigBaseTest::testLibNameManagerLinux()
     std::string modulePath3 = "/home/kaestner/build-imagingsuite/Release/PlugIns/BackProjectors/libStdBackProjectors.so";
 
     // Tests with plugin path
-    ModuleLibNameManger mlnm(appPath,true,category);
+    ModuleLibNameManager mlnm(appPath,true,category);
 
     qDebug() << mlnm.stripLibName(modulePath3,kipl::base::OSLinux).c_str() <<", "<< std::string("StdBackProjectors").c_str();
     
@@ -258,7 +258,7 @@ void ConfigBaseTest::testLibNameManagerLinux()
 
 
     // Tests without plugin path
-    ModuleLibNameManger mlnm2(appPath,false,category);
+    ModuleLibNameManager mlnm2(appPath,false,category);
 
 }
 
@@ -272,7 +272,7 @@ void ConfigBaseTest::testLibNameManagerWindows()
     // kipl::strings::filenames::CheckPathSlashes(modulePath,false);
 
     // Tests with plugin path
-    ModuleLibNameManger mlnm(appPath,true,category);
+    ModuleLibNameManager mlnm(appPath,true,category);
 
     QCOMPARE(mlnm.stripLibName(modulePath,kipl::base::OSWindows),"StdPreprocModules");
 
@@ -290,7 +290,7 @@ void ConfigBaseTest::testLibNameManagerWindows()
     QCOMPARE(path,std::string("C:\\Users\\kaestner\\git\\deployed\\muhrec\\PlugIns\\Preprocessing\\"));    
 
     // Tests without plugin path
-    ModuleLibNameManger mlnm2(appPath,false,category);
+    ModuleLibNameManager mlnm2(appPath,false,category);
 
 }
 

@@ -45,7 +45,7 @@ public:
     std::string moduleSummary();
 protected:
 
-    ModuleLibNameManger m_NameManager;
+    ModuleLibNameManager m_NameManager;
     std::string m_CategoryName;
 };
 
