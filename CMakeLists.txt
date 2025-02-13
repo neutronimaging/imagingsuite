@@ -1,5 +1,5 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.30)
 
 # execute_process(
 #   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
