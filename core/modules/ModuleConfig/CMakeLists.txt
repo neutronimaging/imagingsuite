@@ -22,7 +22,7 @@ set(INC_FILES
   include/ModuleConfig.h 
   include/ConfigBase.h 
   include/datamodulebase.h 
-  include/modulelibnamemanger.h 
+  include/modulelibnamemanager.h 
 )
 
 set(SRC_FILES
@@ -34,7 +34,7 @@ set(SRC_FILES
   src/ModuleConfig.cpp 
   src/ConfigBase.cpp 
   src/datamodulebase.cpp 
-  src/modulelibnamemanger.cpp
+  src/modulelibnamemanager.cpp
 )
 
 add_library(${TARGET_NAME} SHARED

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include "AddModuleDialog.h"
-#include <modulelibnamemanger.h>
+#include <modulelibnamemanager.h>
 #include <strings/filenames.h>
 #include <ModuleException.h>
 #include <QString>
@@ -66,7 +66,7 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
     m_sApplicationPath = QCoreApplication::applicationDirPath().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
 
-    ModuleLibNameManger mlnm(m_sApplicationPath,"Preprocessors");
+    ModuleLibNameManger mlnm(m_sApplicationPath, false,"Preprocessors");
     m_sPreprocessorsPath = mlnm.generateLibPath();
 
     kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
