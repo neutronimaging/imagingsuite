@@ -66,19 +66,10 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
     m_sApplicationPath = QCoreApplication::applicationDirPath().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
 
-// #if defined(Q_OS_WIN)
-//         m_sPreprocessorsPath = m_sApplicationPath+"PlugIns\\Preprocessors\\";
-// #elif defined(Q_OS_MAC)
-//         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
-// #elif defined(Q_OS_LINUX)
-//         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
-// #endif
-
     ModuleLibNameManger mlnm(m_sApplicationPath,"Preprocessors");
     m_sPreprocessorsPath = mlnm.generateLibPath();
 
     kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
-
 }
 
 int AddModuleDialog::configure( const std::string &application, 
