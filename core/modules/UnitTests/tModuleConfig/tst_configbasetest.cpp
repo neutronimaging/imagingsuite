@@ -198,8 +198,8 @@ void ConfigBaseTest::testLibNameManagerMac()
 {
     std::string appPath     = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/";
     std::string category    = "BackProjectors";
-    std::string modulePath  = "/Users/kaestner/git/deployed/MuhRec.app/Contents/PlugIns/BackProjectors/libStdBackProjectors.dylib";
-    std::string modulePath2 = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../PlugIns/BackProjectors/libStdBackProjectors.dylib";
+    std::string modulePath  = "/Users/kaestner/git/deployed/MuhRec.app/Contents/Frameworks/libStdBackProjectors.dylib";
+    std::string modulePath2 = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.dylib";
 
     ModuleLibNameManger mlnm(appPath,category);
 
@@ -224,15 +224,15 @@ void ConfigBaseTest::testLibNameManagerMac()
 
     std::string path = mlnm.generateLibPath(kipl::base::OSMacOS);
 
-    QCOMPARE(path,std::string("/Users/kaestner/git/deployed/MuhRec.app/Contents/PlugIns/BackProjectors/"));
+    QCOMPARE(path,std::string("/Users/kaestner/git/deployed/MuhRec.app/Contents/Frameworks/"));
 }
 
 void ConfigBaseTest::testLibNameManagerLinux()
 {
     std::string appPath     = "/home/kaestner/build-imagingsuite/Release/bin";
     std::string category    = "BackProjectors";
-    std::string modulePath  = "/home/kaestner/build-imagingsuite/Release/PlugIns/BackProjectors/libStdBackProjectors.so";
-    std::string modulePath3 = "/home/kaestner/build-imagingsuite/Release/PlugIns/BackProjectors/libStdBackProjectors.so";
+    std::string modulePath  = "/home/kaestner/build-imagingsuite/Release/lib/libStdBackProjectors.so";
+    std::string modulePath3 = "/home/kaestner/build-imagingsuite/Release/lib/libStdBackProjectors.so";
 
     ModuleLibNameManger mlnm(appPath,category);
 
@@ -243,7 +243,7 @@ void ConfigBaseTest::testLibNameManagerLinux()
 
     std::string path = mlnm.generateLibPath(kipl::base::OSLinux);
 
-    QCOMPARE(path,std::string("/home/kaestner/build-imagingsuite/Release/PlugIns/BackProjectors/"));
+    QCOMPARE(path,std::string("/home/kaestner/build-imagingsuite/Release/lib/"));
     // This is a repeat of the above test
     // std::string modulePath2 = "../build-imagingsuite/Release/lib/libStdBackProjectors.so";
 
@@ -256,7 +256,7 @@ void ConfigBaseTest::testLibNameManagerWindows()
 {
     std::string appPath    = "C:\\Users\\kaestner\\git\\deployed\\muhrec\\";
     std::string category   = "Preprocessing";
-    std::string modulePath = "C:\\Users\\kaestner\\git\\deployed\\muhrec\\PlugIns\\Preprocessing\\StdPreprocModules.dll";
+    std::string modulePath = "C:\\Users\\kaestner\\git\\deployed\\muhrec\\StdPreprocModules.dll";
 
     // kipl::strings::filenames::CheckPathSlashes(appPath,true);
     // kipl::strings::filenames::CheckPathSlashes(modulePath,false);
@@ -267,7 +267,7 @@ void ConfigBaseTest::testLibNameManagerWindows()
 
     QCOMPARE(mlnm.generateLibName("StdPreprocModules",kipl::base::OSWindows),modulePath);
 
-    std::string modulePath2 = "C:\\Users\\kaestner\\muhrec\\PlugIns\\Preprocprocessing\\StdPreprocModules.dll";
+    std::string modulePath2 = "C:\\Users\\kaestner\\muhrec\\StdPreprocModules.dll";
 
 
     QCOMPARE(mlnm.stripLibName(modulePath2,kipl::base::OSWindows),modulePath2);
@@ -276,7 +276,7 @@ void ConfigBaseTest::testLibNameManagerWindows()
 
     std::string path = mlnm.generateLibPath(kipl::base::OSWindows);
 
-    QCOMPARE(path,std::string("C:\\Users\\kaestner\\git\\deployed\\muhrec\\PlugIns\\Preprocessing\\"));    
+    QCOMPARE(path,std::string("C:\\Users\\kaestner\\git\\deployed\\muhrec\\"));    
 }
 
 #ifdef __APPLE__
