@@ -149,11 +149,23 @@ std::string ModuleLibNameManager::generateLinuxLibPath()
 
 std::string ModuleLibNameManager::stripWindowsLibName(const std::string &path)
 {
-    if (!libInAppPath(path,m_sApplicationPath+"PlugIns\\"+m_sCategoryName))
+    if (m_usePluginPath) 
     {
-        logger.message(path+" is not in the plugin path");
-        return path;
+        if (!libInAppPath(path,m_sApplicationPath+"PlugIns\\"+m_sCategoryName))
+        {
+            logger.message(path+" is not in the plugin path");
+            return path;
+        }
     }
+    else
+    {
+        if (!libInAppPath(path,m_sApplicationPath))
+        {
+            logger.message(path+" is not in the plugin path");
+            return path;
+        }
+    }
+
     std::string libName;
 
     libName = path.substr(path.find_last_of("/\\")+1);
@@ -163,13 +175,25 @@ std::string ModuleLibNameManager::stripWindowsLibName(const std::string &path)
 
 std::string ModuleLibNameManager::stripMacOSLibName(const std::string &path)
 {
-    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/PlugIns/"+m_sCategoryName) &&
-        !libInAppPath(path,m_sApplicationPath+"../PlugIns/"+m_sCategoryName)   )
+    if (m_usePluginPath)
     {
-        logger.message(path+" is not in the plugin path");
-        return path;
+        if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/PlugIns/"+m_sCategoryName) &&
+            !libInAppPath(path,m_sApplicationPath+"../PlugIns/"+m_sCategoryName)   )
+        {
+            logger.message(path+" is not in the plugin path");
+            return path;
+        }
     }
-
+    else
+    {
+        if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-7)+"/Frameworks") &&
+            !libInAppPath(path,m_sApplicationPath+"../Frameworks")   )
+        {
+            logger.message(path+" is not in the plugin path");
+            return path;
+        }
+    }
+    
     std::string libName;
 
     libName = path.substr(path.find_last_of('/')+1);
@@ -181,11 +205,23 @@ std::string ModuleLibNameManager::stripMacOSLibName(const std::string &path)
 
 std::string ModuleLibNameManager::stripLinuxLibName(const std::string &path)
 {
-    if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/PlugIns/"+m_sCategoryName) &&
-        !libInAppPath(path,m_sApplicationPath+"../PlugIns/"+m_sCategoryName)   )
+    if (m_usePluginPath)
     {
-        logger.message(path+" is not in the plugin path");
-        return path;
+        if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/PlugIns/"+m_sCategoryName) &&
+            !libInAppPath(path,m_sApplicationPath+"/../PlugIns/"+m_sCategoryName)   )
+        {
+            logger.message(path+" is not in the plugin path");
+            return path;
+        }
+    }
+    else
+    {
+        if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/lib") &&
+            !libInAppPath(path,m_sApplicationPath+"/../lib")   )
+        {
+            logger.message(path+" is not in the plugin path");
+            return path;
+        }
     }
 
     std::string libName;

@@ -204,8 +204,8 @@ void ConfigBaseTest::testLibNameManagerMac()
     // Tests with standard path
     //
     {
-    std::string modulePathStd1  = "/Users/kaestner/git/deployed/MuhRec.app/Contents/PlugIns/BackProjectors/libStdBackProjectors.dylib";
-    std::string modulePathStd2 = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../PlugIns/BackProjectors/libStdBackProjectors.dylib";
+    std::string modulePathStd1  = "/Users/kaestner/git/deployed/MuhRec.app/Contents/Frameworks/libStdBackProjectors.dylib";
+    std::string modulePathStd2 = "/Users/kaestner/git/deployed/MuhRec.app/Contents/MacOS/../Frameworks/libStdBackProjectors.dylib";
 
     ModuleLibNameManager mlnm_std(appPath,false,category);
 
