@@ -149,12 +149,9 @@ jobs:
 
     - name: Ammend shared libraries runpaths
       if: ${{ runner.os == 'Linux' }}
-      working-directory: build-imagingsuite/Release
+      working-directory: build-imagingsuite/Release/lib
       shell: bash
-      run: |
-        patchelf --set-rpath '$ORIGIN' lib/*.so*
-        patchelf --set-rpath '$ORIGIN:$ORIGIN/../../lib' PlugIns/BackProjectors/*.so*
-        patchelf --set-rpath '$ORIGIN:$ORIGIN/../../lib' PlugIns/Preprocessors/*.so*
+      run: patchelf --set-rpath '$ORIGIN' *.so*
 
     - name: Test
       id: tests
@@ -163,25 +160,7 @@ jobs:
       #Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       #See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       # The seperation of module files into seperate folders breaks the ctest test discovery, copy temprarily to the root folder for testing
-      run: |
-        if [ "${RUNNER_OS}" == "Windows" ]; then
-          cp ./bin/Release/PlugIns/Preprocessors/* ./bin/Release/PlugIns/BackProjectors/* ./bin/Release/
-        elif [ "${RUNNER_OS}" == "Linux" ]; then
-          cp ./PlugIns/Preprocessors/* ./PlugIns/BackProjectors/* ./lib/
-        elif [ "${RUNNER_OS}" == "macOS" ]; then
-          cp ./lib/Preprocessors/* ./lib/BackProjectors/* ./lib/
-        fi
-
-        ctest --build-config ${{ matrix.build_type }}
-        
-        if [ "${RUNNER_OS}" == "Windows" ]; then
-          rm ./bin/Release/*Modules.dll ./bin/Release/*Projectors.dll
-        elif [ "${RUNNER_OS}" == "Linux" ]; then
-          rm lib/*Modules.so lib/*Projectors.so
-        elif [ "${RUNNER_OS}" == "macOS" ]; then
-          rm -r lib/*Modules.dylib lib/*Projectors.dylib lib/sse2neon
-        fi
-      continue-on-error: true
+      run: ctest --build-config ${{ matrix.build_type }}
 
     - name: Archive test results
       if: steps.tests.outcome == 'failure'
@@ -208,7 +187,6 @@ jobs:
         path: |
           ${{ matrix.build_root }}/bin/*
           !${{ matrix.build_root }}/bin/t*
-          ${{ matrix.build_root }}/PlugIns/*
           ${{ matrix.build_root }}/lib/*
           !${{ matrix.build_root }}/lib/*cpython*
           ${{ matrix.build_root }}/resources/*
