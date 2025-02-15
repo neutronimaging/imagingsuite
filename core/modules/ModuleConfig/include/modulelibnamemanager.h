@@ -18,6 +18,7 @@ public:
     std::string generateLibPath(const kipl::base::eOperatingSystem &os);
     std::string generateLibPath(const bool usePluginPath = false);
     void setAppPath(const std::string &path, const std::string &category);
+    bool usesPluginPath() { return m_usePluginPath; }
 
 private:
     std::string generateWindowsLibName( const std::string &name);
