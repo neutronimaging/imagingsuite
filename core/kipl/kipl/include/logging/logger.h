@@ -78,18 +78,18 @@ public:
 	/// \brief Log a message
 	/// \param severity The log level of the current log message
 	/// \param message A string containing the message
-    void operator()(LogLevel severity, const std::string &message, const std::string &functionName="");
+    void operator()(LogLevel severity, const std::string &message, const std::string &functionName="") const;
 
     /// \brief Log a message
     /// \param severity The log level of the current log message
     /// \param message A string containing the message
-    void operator()(LogLevel severity, std::stringstream & message, const std::string &functionName="");
+    void operator()(LogLevel severity, std::stringstream & message, const std::string &functionName="") const;
 
-    void error(  const std::string &message, const std::string &functionName="");
-    void warning(const std::string &message, const std::string &functionName="");
-    void message(const std::string &message, const std::string &functionName="");
-    void verbose(const std::string &message, const std::string &functionName="");
-    void debug(  const std::string &message, const std::string &functionName="");
+    void error(  const std::string &message, const std::string &functionName="") const;
+    void warning(const std::string &message, const std::string &functionName="") const;
+    void message(const std::string &message, const std::string &functionName="") const;
+    void verbose(const std::string &message, const std::string &functionName="") const;
+    void debug(  const std::string &message, const std::string &functionName="") const;
 
 protected:
 

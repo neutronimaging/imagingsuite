@@ -51,6 +51,8 @@ set(SRC_FILES
     AddModuleDialog.cpp
     ConfiguratorDialogBase.cpp
     singlemodulesettingsdialog.cpp
+    ModuleFilterProxyModel.cpp
+
 ) 
 
 set (INC_FILES
@@ -64,6 +66,7 @@ set (INC_FILES
     QListWidgetModuleItem.h
     ConfiguratorDialogBase.h
     singlemodulesettingsdialog.h
+    ModuleFilterProxyModel.h
 )
 
 

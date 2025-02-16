@@ -46,6 +46,7 @@ ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
 
 void ModuleChainConfiguratorWidget::configure(const std::string &application, 
                                               const std::string &applicationpath, 
+                                              const std::string &moduleFilterString,
                                               const std::string &category,
                                               ModuleConfigurator *pConfigurator)
 {
@@ -53,6 +54,7 @@ void ModuleChainConfiguratorWidget::configure(const std::string &application,
     m_sApplicationPath = applicationpath;
     m_sCategory        = category;
     m_pConfigurator    = pConfigurator;
+    m_sModuleFilterString = moduleFilterString;
 }
 
 QSize ModuleChainConfiguratorWidget::minimumSizeHint() const
@@ -71,7 +73,8 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 
     AddModuleDialog dlg(this);
 
-    dlg.configure(m_sApplication,m_sDefaultModuleSource,m_sApplicationPath,m_sCategory);
+    logger.message("Adding module");
+    dlg.configure(m_sApplication,m_sDefaultModuleSource, m_sModuleFilterString,m_sApplicationPath,m_sCategory);
     if (dlg.exec()==QDialog::Accepted)
     {
         auto mcfg=dlg.GetModuleConfig();
