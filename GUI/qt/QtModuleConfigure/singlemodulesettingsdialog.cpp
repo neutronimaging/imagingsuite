@@ -267,7 +267,7 @@ void SingleModuleSettingsDialog::on_pushButton_Browse_clicked()
         case kipl::base::OSUnknown:
             throw kipl::base::KiplException("OS not recognized", __FILE__, __LINE__);
         case kipl::base::OSWindows:
-            filters = "module libs (*BackProjectors.dylib)";
+            filters = "module libs (*BackProjectors.dll)";
             break;
         case kipl::base::OSMacOS:
             filters = "module libs (*BackProjectors.dylib)";
