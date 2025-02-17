@@ -216,7 +216,7 @@ std::string ModuleLibNameManager::stripLinuxLibName(const std::string &path)
     }
     else
     {
-        if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()-4)+"/lib") &&
+        if (!libInAppPath(path,m_sApplicationPath.substr(0,m_sApplicationPath.size()- (*m_sApplicationPath.rbegin()=='/' ? 5 : 4))+"/lib") &&
             !libInAppPath(path,m_sApplicationPath+"/../lib")   )
         {
             logger.message(path+" is not in the plugin path");
@@ -242,7 +242,7 @@ bool ModuleLibNameManager::libInAppPath(const std::string &path, const std::stri
 
     auto truncated = path.substr(0,appPath.size());
 
-    logger.message("After truncation "+truncated +" == "+appPath);
+    logger.message("After truncation("+truncated +") == AppPath("+appPath +")?");
 
     if ((truncated != appPath) || path.find_first_of("/\\",appPath.size()+1)!=std::string::npos)
     {
