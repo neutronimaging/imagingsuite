@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 
 set(TARGET_NAME "StdBackProjectors")
 project(StdBackProjectors VERSION 1.0.1 LANGUAGES CXX)

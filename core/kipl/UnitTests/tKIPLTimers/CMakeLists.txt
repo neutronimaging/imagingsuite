@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 
 set(TARGET_NAME "tkipltimer")
 project(tkipltimer LANGUAGES CXX)

@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 message("PyMuhRec")
 set(TARGET_NAME "muhrectomo") 
 project(muhrectomo LANGUAGES CXX)

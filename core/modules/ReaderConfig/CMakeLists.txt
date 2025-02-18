@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 message("ReaderConfig")
 set(TARGET_NAME "ReaderConfig")
 project(kipl LANGUAGES CXX)

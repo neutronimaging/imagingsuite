@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 
 set(TARGET_NAME "tBBLogNorm")
 project(${TARGET_NAME} LANGUAGES CXX)

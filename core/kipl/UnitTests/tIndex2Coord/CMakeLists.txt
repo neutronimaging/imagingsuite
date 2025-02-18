@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 
 set(TARGET_NAME "tIndex2Coord")
 project(tIndex2Coord LANGUAGES CXX)

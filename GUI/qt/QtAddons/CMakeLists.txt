@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 
 set(TARGET_NAME "QtAddons")
 project(${TARGET_NAME} LANGUAGES CXX)

@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 
 set(TARGET_NAME "tDirAnalysis")
 project(tDirAnalysis LANGUAGES CXX)

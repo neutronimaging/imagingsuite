@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 
 set(TARGET_NAME "tQtAddons")
 project(tLogging LANGUAGES CXX)

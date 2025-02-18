@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 
 set(TARGET_NAME "tKiplAdvFilters")
 project(tLogging LANGUAGES CXX)

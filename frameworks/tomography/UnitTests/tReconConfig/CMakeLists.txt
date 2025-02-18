@@ -1,4 +1,4 @@
-(VERSION 3.30)
+
 
 set(TARGET_NAME "tReconConfig")
 project(${TARGET_NAME} LANGUAGES CXX)
