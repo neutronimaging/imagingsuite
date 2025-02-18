@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+
 
 set(TARGET_NAME "ModuleConfig")
 project(kipl LANGUAGES CXX)
@@ -12,14 +12,6 @@ include_directories(
     ../../../core/modules/ModuleConfig/include
 )
 
-# if (APPLE)
-# include_directories(
-#     ../../../../ExternalDependencies/macos/include
-# )
-# endif()
-
-# link_directories( ../../../../lib )
-
 set(INC_FILES
   include/ModuleConfig_global.h 
   include/publication.h 
@@ -30,7 +22,7 @@ set(INC_FILES
   include/ModuleConfig.h 
   include/ConfigBase.h 
   include/datamodulebase.h 
-  include/modulelibnamemanger.h 
+  include/modulelibnamemanager.h 
 )
 
 set(SRC_FILES
@@ -42,7 +34,7 @@ set(SRC_FILES
   src/ModuleConfig.cpp 
   src/ConfigBase.cpp 
   src/datamodulebase.cpp 
-  src/modulelibnamemanger.cpp
+  src/modulelibnamemanager.cpp
 )
 
 add_library(${TARGET_NAME} SHARED
@@ -52,18 +44,8 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-# target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY HAVE_NEXUS)
 target_compile_definitions(${TARGET_NAME} PRIVATE MODULECONFIG_LIBRARY)
 
-#add_definitions(-DHAVE_NEXUS)
-
-# if (WIN32)
-# target_link_directories(${TARGET_NAME} PRIVATE
-# # ../../../../ExternalDependencies/windows/lib
-# ../../../../imagingsuite/external/lib64
-# ../../../../imagingsuite/external/lib64/nexus
-# )
-# endif()
 
 target_link_libraries(${TARGET_NAME}
     PUBLIC

@@ -32,6 +32,7 @@ public:
 
     int configure(const std::string &application, 
                   const std::string &defaultsource, 
+                  const std::string &modulefilterstring, 
                   const std::string &application_path,
                   const std::string &sCategory);
     virtual int exec();
@@ -66,6 +67,7 @@ protected:
 	std::string m_sApplication;
 	std::string m_sApplicationPath;
     std::string m_sPreprocessorsPath;
+    std::string m_sModuleFilterString;
     std::string m_sDefaultModuleSource;
     ModuleConfig m_ModuleConfig;
 };

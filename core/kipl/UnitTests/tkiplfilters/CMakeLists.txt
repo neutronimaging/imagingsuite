@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+
 
 set(TARGET_NAME "tkiplfilters")
 project(tLogging LANGUAGES CXX)
@@ -7,8 +7,6 @@ enable_testing()
 
 find_package(QT NAMES Qt6 COMPONENTS Test REQUIRED)
 find_package(Qt6 COMPONENTS Test REQUIRED)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -26,30 +24,12 @@ set(SRC_FILES,
 
 add_executable(${TARGET_NAME} tst_kiplfilters.cpp)
 
-if (WIN32)
-include_directories(
-    ../../kipl/include
-    )
-
-    
-    target_link_libraries(${TARGET_NAME}
-    PRIVATE
-        Qt6::Test
-        kipl
-
-        #libopenblas
-        OpenBLAS::OpenBLAS
-    )
-else()
-
-
 target_link_libraries(${TARGET_NAME}
-    PRIVATE
-        Qt6::Test
-        kipl
-    )
-
-endif()
+PRIVATE
+    Qt6::Test
+    kipl
+    OpenBLAS::OpenBLAS
+)
 
 add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 

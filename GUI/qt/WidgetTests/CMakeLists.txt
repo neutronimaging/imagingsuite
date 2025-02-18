@@ -1,8 +1,6 @@
-cmake_minimum_required(VERSION 3.5)
+
 set(TARGET_NAME "WidgetTests")
 project(${TARGET_NAME} VERSION 0.1 LANGUAGES CXX)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -24,10 +22,6 @@ include_directories(
     ../../../GUI/qt/QtAddons
     ../../../GUI/qt/QtModuleConfigure
     ../../../core/modules/ReaderGUI
-    # ../../../external/mac/include/
-    # ../../../../ExternalDependencies/macos/include
-    # ../../../../ExternalDependencies/macos/include/nexus
-    # ../../../external/mac/include/hdf5
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
 

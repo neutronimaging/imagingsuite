@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+
 
 set(TARGET_NAME "tImagingAlgorithms")
 project(tLogging LANGUAGES CXX)
@@ -21,19 +21,6 @@ include_directories(
     ../../../kipl/kipl/include
     ../../ImagingAlgorithms/include
 )
-
-# if (APPLE)
-#     include_directories(
-#         ../../../../../ExternalDependencies/macos/include/
-#     )
-# endif()
-
-# if (WIN32)
-#     include_directories(
-#         ../../../../../ExternalDependencies/windows/include/
-#         ../../../../../imagingsuite/external/include/
-#     )
-# endif()
 
 set(SRC_FILES,
 tst_testImagingAlgorithms.cpp)

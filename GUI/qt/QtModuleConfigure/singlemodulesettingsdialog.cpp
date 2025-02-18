@@ -259,17 +259,25 @@ void SingleModuleSettingsDialog::on_pushButton_Browse_clicked()
 
     QString appPath = QCoreApplication::applicationDirPath();
     QString fileName;
-    #if defined(Q_OS_WIN)
-        appPath += "/PlugIns/BackProjectors";
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
-    #elif defined(Q_OS_MAC)
-        appPath +="/../PlugIns/BackProjectors/";
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib)"));
-    #elif defined(Q_OS_LINUX)
-        appPath +="/../PlugIns/BackProjectors/";
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.so)"));
-    #endif
-    logger.message(appPath.toStdString());
+ 
+    auto os = kipl::base::getOperatingSystem();
+    QString filters("");
+
+    switch (os) {
+        case kipl::base::OSUnknown:
+            throw kipl::base::KiplException("OS not recognized", __FILE__, __LINE__);
+        case kipl::base::OSWindows:
+            filters = "module libs (*BackProjectors.dll)";
+            break;
+        case kipl::base::OSMacOS:
+            filters = "module libs (*BackProjectors.dylib)";
+            break;
+        case kipl::base::OSLinux:
+            filters = "module libs (*BackProjectors.so)";
+            break;
+    }
+
+    fileName = QFileDialog::getOpenFileName(this, tr("Open back projector library"), QString::fromStdString(m_sDefaultModuleSource), filters);
 
     if ( fileName.isNull() )
     {

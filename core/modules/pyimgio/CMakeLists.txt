@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+
 
 set(TARGET_NAME "pyimgio")
 project(kipl LANGUAGES CXX)
@@ -12,7 +12,6 @@ include_directories(../../kipl/kipl/include
                     ../ReaderConfig
 )
 
-# add_definitions(-DVERSION="1.6.0")
 # create python module
 add_library(imgio
   MODULE
