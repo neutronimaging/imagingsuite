@@ -3,7 +3,7 @@
 #include "../include/ModuleConfig_global.h"
 #include "../include/ModuleConfig.h"
 #include "../include/ModuleException.h"
-#include "../include/modulelibnamemanger.h"
+#include "../include/modulelibnamemanager.h"
 #include <sstream>
 #include <iomanip>
 
@@ -18,7 +18,7 @@ ModuleConfig::ModuleConfig(const std::string &sAppPath, const std::string &sCate
     m_sModule("Empty"),
     m_bActive(true),
     m_bThreading(false),
-    m_NameManager(sAppPath, sCategory)
+    m_NameManager(sAppPath, false,sCategory)
 {
 }
 

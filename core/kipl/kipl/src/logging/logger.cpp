@@ -101,7 +101,7 @@ void Logger::SetLogLevel(LogLevel level)
 	Logger::CurrentLogLevel=level;
 }
 
-void Logger::operator()(LogLevel severity, const string &message, const std::string &functionName)
+void Logger::operator()(LogLevel severity, const string &message, const std::string &functionName) const
 {	
 	std::ostringstream ostr;
     if (functionName.empty())
@@ -115,32 +115,32 @@ void Logger::operator()(LogLevel severity, const string &message, const std::str
 /// \brief Log a message
 /// \param severity The log level of the current log message
 /// \param message A string containing the message
-void Logger::operator()(LogLevel severity, std::stringstream & message, const std::string &functionName)
+void Logger::operator()(LogLevel severity, std::stringstream & message, const std::string &functionName) const
 {
     operator ()(severity,message.str(),functionName);
 }
 
-void Logger::error(const std::string &message, const string &functionName)
+void Logger::error(const std::string &message, const string &functionName) const
 {
     operator()(LogError,message,functionName);
 }
 
-void Logger::warning(const std::string &message, const string &functionName)
+void Logger::warning(const std::string &message, const string &functionName) const
 {
     operator()(LogWarning,message,functionName);
 }
 
-void Logger::message(const std::string &message, const string &functionName)
+void Logger::message(const std::string &message, const string &functionName) const 
 {
     operator()(LogMessage,message,functionName);
 }
 
-void Logger::verbose(const std::string &message, const string &functionName)
+void Logger::verbose(const std::string &message, const string &functionName) const
 {
     operator()(LogVerbose,message,functionName);
 }
 
-void Logger::debug(const string &message, const string &functionName)
+void Logger::debug(const string &message, const string &functionName) const
 {
     operator()(LogDebug,message,functionName);
 }

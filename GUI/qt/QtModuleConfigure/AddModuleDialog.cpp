@@ -6,7 +6,8 @@
 #include <iostream>
 #include <sstream>
 #include "AddModuleDialog.h"
-#include <modulelibnamemanger.h>
+#include "ModuleFilterProxyModel.h"
+#include <modulelibnamemanager.h>
 #include <strings/filenames.h>
 #include <ModuleException.h>
 #include <QString>
@@ -27,7 +28,7 @@ typedef  void * HINSTANCE;
 
 AddModuleDialog::AddModuleDialog(QWidget * parent) :
     QDialog(parent),
-	logger("AddModuleDialog"),
+    logger("AddModuleDialog"),
     m_Label_file("Module library"),
     m_Label_module("Module name"),
     m_Button_Browse("Browse"),
@@ -59,97 +60,105 @@ AddModuleDialog::AddModuleDialog(QWidget * parent) :
     m_Layout_Controls.addWidget(&m_Button_OK);
     setFixedHeight(sizeHint().height());
 
-    connect(&m_Button_OK,SIGNAL(clicked()),this,SLOT(accept()));
-    connect(&m_Button_Cancel,SIGNAL(clicked()),this,SLOT(reject()));
-    connect(&m_Button_Browse,SIGNAL(clicked()),this,SLOT(on_change_objectfile()));
+    connect(&m_Button_OK,     SIGNAL(clicked()), this, SLOT(accept()));
+    connect(&m_Button_Cancel, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(&m_Button_Browse, SIGNAL(clicked()), this, SLOT(on_change_objectfile()));
 
     m_sApplicationPath = QCoreApplication::applicationDirPath().toStdString();
-    kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath,true);
+    kipl::strings::filenames::CheckPathSlashes(m_sApplicationPath, true);
 
-// #if defined(Q_OS_WIN)
-//         m_sPreprocessorsPath = m_sApplicationPath+"PlugIns\\Preprocessors\\";
-// #elif defined(Q_OS_MAC)
-//         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
-// #elif defined(Q_OS_LINUX)
-//         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
-// #endif
-
-    ModuleLibNameManger mlnm(m_sApplicationPath,"Preprocessors");
+    ModuleLibNameManager mlnm(m_sApplicationPath, false, "Preprocessors");
     m_sPreprocessorsPath = mlnm.generateLibPath();
 
-    kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
-
+    kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath, true);
 }
 
-int AddModuleDialog::configure( const std::string &application, 
-                                const std::string &defaultsource, 
-                                const std::string &application_path, 
-                                const std::string &sCategory)
+int AddModuleDialog::configure(const std::string &application,
+                               const std::string &defaultsource,
+                               const std::string &modulefilterstring,
+                               const std::string &application_path,
+                               const std::string & /*sCategory*/)
 {
-    m_sApplication         = application;
-    m_sApplicationPath     = application_path;
+    m_sApplication = application;
+    m_sApplicationPath = application_path;
     m_sDefaultModuleSource = defaultsource;
-    
+    m_sModuleFilterString = modulefilterstring;
 
     return 0;
 }
 
 int AddModuleDialog::exec()
 {
-
     std::ostringstream msg;
 
-    msg<<"ApplicationPath "<<m_sApplicationPath;
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    msg << "ApplicationPath " << m_sApplicationPath << " filter string" << m_sModuleFilterString;
+    logger.message(msg.str());
 
-    std::string fileName=m_sDefaultModuleSource;
+    std::string fileName = m_sDefaultModuleSource;
     QString qfileName = QString::fromStdString(fileName);
-    msg.str(""); msg<<"default module "<<m_sDefaultModuleSource;
+    msg.str("");
+    msg << "Default module " << (m_sDefaultModuleSource.empty() ? "not set" : m_sDefaultModuleSource);
 
-    logger(kipl::logging::Logger::LogMessage,msg.str());
+    logger.message(msg.str());
 
     if (fileName.empty()) {
         auto os = kipl::base::getOperatingSystem();
-        std::string filterstr;
-        switch (os)
-        {
-            case kipl::base::OSUnknown : throw kipl::base::KiplException("OS not recognized",__FILE__,__LINE__);
-            case kipl::base::OSWindows : filterstr = "libs (*.dll)"; break;
-            case kipl::base::OSMacOS   : filterstr = "libs (*.dylib)"; break;
-            case kipl::base::OSLinux   : filterstr = "libs (*.so)"; break;
+        QString filters;
+        std::string ext("");
+
+        switch (os) {
+            case kipl::base::OSUnknown:
+                throw kipl::base::KiplException("OS not recognized", __FILE__, __LINE__);
+            case kipl::base::OSWindows:
+                filters = "module libs (*Modules.dll)";
+                ext = m_sModuleFilterString + "Modules.dll";
+                break;
+            case kipl::base::OSMacOS:
+                filters = "module libs (*Modules.dylib)";
+                ext = m_sModuleFilterString + "Modules.dylib";
+                break;
+            case kipl::base::OSLinux:
+                filters = "module libs (*Modules.so)";
+                ext = m_sModuleFilterString + "Modules.so";
+                break;
         }
 
-        qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr(filterstr.c_str()));
-        // #if defined(Q_OS_WIN)
-        //     qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.dll)"));
-        // #elif defined(Q_OS_MAC)
-        //     qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.dylib)"));
-        // #elif defined(Q_OS_LINUX)
-        //     qfileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.so)"));
-        // #endif
+        // QFileDialog dialog(this, tr("Open module library"));
+        // dialog.setNameFilters(filters);
+        // dialog.setFileMode(QFileDialog::ExistingFiles);
+        // dialog.setViewMode(QFileDialog::Detail);
+        // dialog.setDirectory(QString::fromStdString(m_sPreprocessorsPath)); // Optional: Set the initial directory
+        // if (dialog.exec()) {
+        //     QStringList selectedFiles = dialog.selectedFiles();
+        //     if (!selectedFiles.isEmpty()) {
+        //         qfileName = selectedFiles.first();
+        //     }
+        // }
+
+        qfileName = QFileDialog::getOpenFileName(this, tr("Open module library"), QString::fromStdString(m_sPreprocessorsPath), filters);
     }
 
-    logger(kipl::logging::Logger::LogMessage,qfileName.toStdString());
+    logger(kipl::logging::Logger::LogMessage, qfileName.toStdString());
     if (qfileName.isEmpty()) {
-        QMessageBox::warning(this,"Warning","No module library file was chosen");
+        QMessageBox::warning(this, "Warning", "No module library file was chosen");
 
-        logger(kipl::logging::Logger::LogWarning,"No file selected");
+        logger.warning("No file selected");
         return 0;
     }
 
-    if (UpdateModuleCombobox(qfileName)!=0)
-    {
+    if (UpdateModuleCombobox(qfileName) != 0) {
         return QDialog::Rejected;
     }
+
     m_Modulefile_edit.setText(qfileName);
 
     fileName = qfileName.toStdString();
-    kipl::strings::filenames::CheckPathSlashes(fileName,false);
-    m_ModuleConfig.m_sSharedObject=fileName;
+    kipl::strings::filenames::CheckPathSlashes(fileName, false);
+    m_ModuleConfig.m_sSharedObject = fileName;
 
     m_ModuleConfig.m_sModule  = modulelist.begin()->first;
     m_ModuleConfig.parameters = modulelist.begin()->second;
-    m_ModuleConfig.m_bActive=true;
+    m_ModuleConfig.m_bActive  = true;
 
     return QDialog::exec();
 }
@@ -158,15 +167,14 @@ int AddModuleDialog::UpdateModuleCombobox(QString &fname)
 {
     QDir dir;
 
-    if (!dir.exists(fname))
-    {
+    if (!dir.exists(fname)) {
         logger.warning("Module file doesn't exist");
 
-        QFileDialog dlg(this,"Select a module file",QString::fromStdString(m_sPreprocessorsPath));
+        QFileDialog dlg(this, "Select a module file", QString::fromStdString(m_sPreprocessorsPath));
 
         auto res = dlg.exec();
 
-        if (res!=QDialog::Accepted)
+        if (res != QDialog::Accepted)
             return 0;
 
         fname = dlg.selectedFiles().first();
@@ -175,15 +183,13 @@ int AddModuleDialog::UpdateModuleCombobox(QString &fname)
     std::ostringstream msg;
     try {
         modulelist.clear();
-        modulelist=GetModuleList(fname.toStdString());
-    }
-    catch (ModuleException &e) {
-        msg<<"Failed to generate module list from "<<fname.toStdString()<<"\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
-    }
-    catch (kipl::base::KiplException &e) {
-        msg<<"Failed to generate module list from "<<fname.toStdString()<<" with a KiplException\n"<<e.what();
-        logger(kipl::logging::Logger::LogError,msg.str());
+        modulelist = GetModuleList(fname.toStdString());
+    } catch (ModuleException &e) {
+        msg << "Failed to generate module list from " << fname.toStdString() << "\n" << e.what();
+        logger(kipl::logging::Logger::LogError, msg.str());
+    } catch (kipl::base::KiplException &e) {
+        msg << "Failed to generate module list from " << fname.toStdString() << " with a KiplException\n" << e.what();
+        logger(kipl::logging::Logger::LogError, msg.str());
     }
 
     if (!msg.str().empty()) {
@@ -197,31 +203,30 @@ int AddModuleDialog::UpdateModuleCombobox(QString &fname)
     }
 
     m_Combobox_modules.clear();
-    std::map<std::string, std::map<std::string, std::string> >::iterator it;
+    std::map<std::string, std::map<std::string, std::string>>::iterator it;
     msg.str("");
-    msg<<"The library has "<<modulelist.size()<<" modules";
-    logger(kipl::logging::Logger::LogVerbose,msg.str());
-    for (it=modulelist.begin(); it!=modulelist.end(); it++) {
+    msg << "The library has " << modulelist.size() << " modules";
+    logger(kipl::logging::Logger::LogVerbose, msg.str());
+    for (it = modulelist.begin(); it != modulelist.end(); it++) {
         m_Combobox_modules.addItem(QString::fromStdString(it->first));
     }
 
     return 0;
 }
 
-std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetModuleList(std::string filename)
+std::map<std::string, std::map<std::string, std::string>> AddModuleDialog::GetModuleList(std::string filename)
 {
     std::ostringstream msg;
     HINSTANCE hinstLib;
 #ifdef _MSC_VER
-    std::wstring so(filename.begin(),filename.end());
+    std::wstring so(filename.begin(), filename.end());
 
     hinstLib = LoadLibraryW(so.c_str());
 #else
     hinstLib = dlopen(filename.c_str(), RTLD_LAZY);
 #endif
 
-    if (hinstLib != nullptr)
-    {
+    if (hinstLib != nullptr) {
         MODULELIST fnGetModuleList;
 #ifdef _MSC_VER
         fnGetModuleList = reinterpret_cast<MODULELIST>(GetProcAddress(hinstLib, "GetModuleList"));
@@ -229,47 +234,41 @@ std::map<std::string, std::map<std::string, std::string> > AddModuleDialog::GetM
         fnGetModuleList = reinterpret_cast<MODULELIST>(dlsym(hinstLib, "GetModuleList"));
 #endif
         msg.str("");
-        msg<<"Got functions from "<<filename<<" success="<<(fnGetModuleList == nullptr ? "no" : "yes");
-        logger(kipl::logging::Logger::LogMessage,msg.str());
-         // If the function address is valid, call the function.
-        if (fnGetModuleList !=nullptr)
-        {
-
-            if (fnGetModuleList(m_sApplication.c_str(),&modulelist)!=0) {
+        msg << "Got functions from " << filename << " success=" << (fnGetModuleList == nullptr ? "no" : "yes");
+        logger(kipl::logging::Logger::LogMessage, msg.str());
+        // If the function address is valid, call the function.
+        if (fnGetModuleList != nullptr) {
+            if (fnGetModuleList(m_sApplication.c_str(), &modulelist) != 0) {
                 msg.str("");
-                msg<<"Shared object file "<<filename<<" does not contain modules for "<<m_sApplication;
-                logger(kipl::logging::Logger::LogError,msg.str());
-                throw ModuleException(msg.str(),__FILE__,__LINE__);
+                msg << "Shared object file " << filename << " does not contain modules for " << m_sApplication;
+                logger(kipl::logging::Logger::LogError, msg.str());
+                throw ModuleException(msg.str(), __FILE__, __LINE__);
             }
-
-        }
-        else
-        {
+        } else {
             msg.str("");
-            msg<<"Failed to get the module list from "<<filename<<" (Error: "
+            msg << "Failed to get the module list from " << filename << " (Error: "
 #ifdef _MSC_VER
-                    <<GetLastError()<<")";
+                << GetLastError() << ")";
 #else
-                    <<dlerror()<<")";
+                << dlerror() << ")";
 #endif
 
-            throw ModuleException(msg.str(),__FILE__,__LINE__);
+            throw ModuleException(msg.str(), __FILE__, __LINE__);
         }
-    }
-    else {
+    } else {
         msg.str("");
-        msg<<"Failed to open library file "<<filename;
-        logger(kipl::logging::Logger::LogMessage,msg.str());
+        msg << "Failed to open library file " << filename;
+        logger(kipl::logging::Logger::LogMessage, msg.str());
 
         msg.str("");
-        msg<<"Failed to open library file "<<filename<<" (Error: "
+        msg << "Failed to open library file " << filename << " (Error: "
 #ifdef _MSC_VER
-                <<GetLastError()<<")";
+            << GetLastError() << ")";
 #else
-                <<dlerror()<<")";
+            << dlerror() << ")";
 #endif
 
-        throw ModuleException(msg.str(),__FILE__,__LINE__);
+        throw ModuleException(msg.str(), __FILE__, __LINE__);
     }
 
     return modulelist;
@@ -281,13 +280,33 @@ void AddModuleDialog::on_change_objectfile()
 
     QString fileName;
 
-    #if defined(Q_OS_WIN)
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.dll)"));
-    #elif defined(Q_OS_MAC)
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.dylib)"));
-    #elif defined(Q_OS_LINUX)
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),QString::fromStdString(m_sPreprocessorsPath),tr("libs (*.so)"));
-    #endif
+    auto os = kipl::base::getOperatingSystem();
+    QString filters;
+    std::string ext("");
+
+    switch (os) {
+        case kipl::base::OSUnknown:
+            throw kipl::base::KiplException("OS not recognized", __FILE__, __LINE__);
+        case kipl::base::OSWindows:
+            filters = "module libs (*Modules.dll)";
+            ext = m_sModuleFilterString + "Modules.dll";
+            break;
+        case kipl::base::OSMacOS:
+            filters = "module libs (*Modules.dylib)";
+            ext = m_sModuleFilterString + "Modules.dylib";
+            break;
+        case kipl::base::OSLinux:
+            filters = "module libs (*Modules.so)";
+            ext = m_sModuleFilterString + "Modules.so";
+            break;
+    }
+
+    msg.str("");
+    msg << "Default module path " << (m_sPreprocessorsPath.empty() ? "not set" : m_sPreprocessorsPath) << ", Module filter string " << ext;
+
+    logger.message(msg.str());
+
+    fileName = QFileDialog::getOpenFileName(this, tr("Open module library"), QString::fromStdString(m_sPreprocessorsPath), filters);
 
     logger(kipl::logging::Logger::LogMessage,fileName.toStdString());
     if (fileName.isEmpty()) {
@@ -295,7 +314,7 @@ void AddModuleDialog::on_change_objectfile()
         return;
     }
 
-    if (fileName.toStdString() == m_ModuleConfig.m_sSharedObject ) {
+    if (fileName.toStdString() == m_ModuleConfig.m_sSharedObject) {
         logger(kipl::logging::Logger::LogMessage,"The same library file was selected.");
         return;
     }
@@ -308,17 +327,17 @@ void AddModuleDialog::on_change_objectfile()
 
 void AddModuleDialog::accept()
 {
-    logger(kipl::logging::Logger::LogVerbose,"OK");
-    m_ModuleConfig.m_sSharedObject=m_Modulefile_edit.text().toStdString();
-    m_ModuleConfig.m_sModule=m_Combobox_modules.currentText().toStdString();
-    m_ModuleConfig.parameters=modulelist[m_ModuleConfig.m_sModule];
-    m_ModuleConfig.m_bActive=true;
+    logger(kipl::logging::Logger::LogVerbose, "OK");
+    m_ModuleConfig.m_sSharedObject = m_Modulefile_edit.text().toStdString();
+    m_ModuleConfig.m_sModule = m_Combobox_modules.currentText().toStdString();
+    m_ModuleConfig.parameters = modulelist[m_ModuleConfig.m_sModule];
+    m_ModuleConfig.m_bActive = true;
 
     QDialog::accept();
 }
 
 void AddModuleDialog::reject()
 {
-    logger(kipl::logging::Logger::LogMessage,"Cancel");
+    logger(kipl::logging::Logger::LogMessage, "Cancel");
     QDialog::reject();
 }

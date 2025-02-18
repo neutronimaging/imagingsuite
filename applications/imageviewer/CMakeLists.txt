@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+
 set(TARGET_NAME "ImageViewer")
 project(${TARGET_NAME} VERSION 4.3 LANGUAGES CXX)
 

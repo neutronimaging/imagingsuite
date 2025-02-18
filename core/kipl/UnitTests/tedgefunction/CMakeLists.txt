@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+
 
 set(TARGET_NAME "tedgefunction")
 project(tedgefunction LANGUAGES CXX)

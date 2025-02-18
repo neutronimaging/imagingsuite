@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+
 set(TARGET_NAME "WidgetTests")
 project(${TARGET_NAME} VERSION 0.1 LANGUAGES CXX)
 

@@ -92,13 +92,5 @@ class MuhrecRecipe(ConanFile):
         cmake.configure()
         cmake.build()
         if self.settings.os == "Macos":
-            # Copy to both MuhRec and ImageViewer app bundles
-            for framework_folder in [self.framework_folder_MuhRec, self.framework_folder_imageviewer]:
-                copy(self, "*.dylib", self.lib_folder, framework_folder, excludes=['*cpython*', 'BackProjectors', 'Preprocessors'])
-                # Copy plugin dylibs to the PlugIns folder in the app bundles
-                for plugin_type in ["Preprocessors", "BackProjectors"]:
-                    shutil.copytree(
-                        os.path.join(self.lib_folder, plugin_type),
-                        os.path.join(framework_folder, "..", "PlugIns", plugin_type),
-                        dirs_exist_ok=True,
-                        )
+            copy(self, "*.dylib", self.lib_folder, self.framework_folder_MuhRec, excludes='*cpython*')
+            copy(self, "*.dylib", self.lib_folder, self.framework_folder_imageviewer, excludes='*cpython*')

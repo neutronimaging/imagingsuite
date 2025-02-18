@@ -10,7 +10,7 @@
 #include <list>
 #include <string>
 #include <ModuleException.h>
-#include <modulelibnamemanger.h>
+#include <modulelibnamemanager.h>
 
 #include <strings/filenames.h>
 
@@ -46,6 +46,7 @@ ModuleChainConfiguratorWidget::ModuleChainConfiguratorWidget(QWidget *parent) :
 
 void ModuleChainConfiguratorWidget::configure(const std::string &application, 
                                               const std::string &applicationpath, 
+                                              const std::string &moduleFilterString,
                                               const std::string &category,
                                               ModuleConfigurator *pConfigurator)
 {
@@ -53,6 +54,7 @@ void ModuleChainConfiguratorWidget::configure(const std::string &application,
     m_sApplicationPath = applicationpath;
     m_sCategory        = category;
     m_pConfigurator    = pConfigurator;
+    m_sModuleFilterString = moduleFilterString;
 }
 
 QSize ModuleChainConfiguratorWidget::minimumSizeHint() const
@@ -71,7 +73,8 @@ void ModuleChainConfiguratorWidget::on_Button_ModuleAdd()
 
     AddModuleDialog dlg(this);
 
-    dlg.configure(m_sApplication,m_sDefaultModuleSource,m_sApplicationPath,m_sCategory);
+    logger.message("Adding module");
+    dlg.configure(m_sApplication,m_sDefaultModuleSource, m_sModuleFilterString,m_sApplicationPath,m_sCategory);
     if (dlg.exec()==QDialog::Accepted)
     {
         auto mcfg=dlg.GetModuleConfig();
@@ -131,9 +134,9 @@ void ModuleChainConfiguratorWidget::on_Button_ConfigureModule()
             // for (const auto & e : ext)
             //     guisoname+=e;
 
-            ModuleLibNameManger mng(m_sApplicationPath,"Preprocessors");
+            ModuleLibNameManager mng(m_sApplicationPath, false,"Preprocessors");
             std::string mname     = mng.stripLibName(soname);
-            std::string guisoname = mng.generateLibName(mname+"GUI",false);
+            std::string guisoname = mng.generateLibName(mname+"GUI");
 
             msg.str(""); msg<<"Configuring "<<modulename<<" from "<<soname<<" with "<<guisoname<<std::endl;
             logger(kipl::logging::Logger::LogMessage,msg.str());

@@ -13,7 +13,7 @@
 #include <logging/logger.h>
 #include "publication.h"
 
-#include "modulelibnamemanger.h"
+#include "modulelibnamemanager.h"
 
 /// Container for module configuration information.
 /// This information is used in the configuration struct based on ConfigBase.
@@ -45,7 +45,7 @@ public:
     std::string moduleSummary();
 protected:
 
-    ModuleLibNameManger m_NameManager;
+    ModuleLibNameManager m_NameManager;
     std::string m_CategoryName;
 };
 

@@ -100,30 +100,14 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     // Setup default module libs in the config
     std::string defaultpreprocessors;
     std::string defaultprojectors;
-// #if defined(Q_OS_WIN)
-//         m_sPreprocessorsPath = m_sApplicationPath+"PlugIns\\Preprocessors\\";
-//         m_sBackProjectorsPath = m_sApplicationPath+"PlugIns\\BackProjectors\\";
-//         defaultpreprocessors=m_sPreprocessorsPath+"StdPreprocModules.dll";
-//         defaultprojectors=m_sBackProjectorsPath+"StdBackProjectors.dll";
-// #elif defined(Q_OS_MAC)
-//         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
-//         m_sBackProjectorsPath = m_sApplicationPath+"../PlugIns/BackProjectors/";
-//         defaultpreprocessors=m_sPreprocessorsPath+"libStdPreprocModules.dylib";
-//         defaultprojectors=m_sBackProjectorsPath+"libStdBackProjectors.dylib";
-// #elif defined(Q_OS_LINUX)
-//         m_sPreprocessorsPath = m_sApplicationPath+"../PlugIns/Preprocessors/";
-//         m_sBackProjectorsPath = m_sApplicationPath+"../PlugIns/BackProjectors/";
-//         defaultpreprocessors=m_sPreprocessorsPath+"libStdPreprocModules.so";
-//         defaultprojectors=m_sBackProjectorsPath+"libStdBackProjectors.so";
-// #endif
 
-    ModuleLibNameManger mlnm(m_sApplicationPath,"Preprocessors");
+    ModuleLibNameManager mlnm(m_sApplicationPath,false,"Preprocessors");
     m_sPreprocessorsPath = mlnm.generateLibPath();
     defaultpreprocessors = mlnm.generateLibName("StdPreprocModules");
     kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
     kipl::strings::filenames::CheckPathSlashes(defaultpreprocessors,false);
 
-    ModuleLibNameManger mlnm2(m_sApplicationPath,"BackProjectors");
+    ModuleLibNameManager mlnm2(m_sApplicationPath,false,"BackProjectors");
     m_sBackProjectorsPath = mlnm2.generateLibPath();
     defaultprojectors = mlnm2.generateLibName("StdBackProjectors");
     kipl::strings::filenames::CheckPathSlashes(m_sBackProjectorsPath,true);
@@ -138,7 +122,7 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     logger.message(msg.str());
 
     ui->ConfiguratorBackProj->Configure("muhrecbp", defaultprojectors,  "BackProjectors", m_sApplicationPath);
-    ui->moduleconfigurator  ->configure("muhrec",   m_sApplicationPath, "Preprocessors", &m_ModuleConfigurator);
+    ui->moduleconfigurator  ->configure("muhrec",   m_sApplicationPath, "Modules", "Preprocessors", &m_ModuleConfigurator);
     ui->moduleconfigurator  ->SetDefaultModuleSource(defaultpreprocessors);
     ui->moduleconfigurator  ->SetApplicationObject(this);
 

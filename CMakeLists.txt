@@ -1,5 +1,5 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.30)
 
 # execute_process(
 #   COMMAND git describe --tags --abbrev=0 | cut -d'v' -f 2
@@ -59,20 +59,14 @@ if (WIN32)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Release)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/Release)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Release)
-  set(PREPROCESSOR_MODULES_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Release/PlugIns/Preprocessors)
-  set(PROJECTOR_MODULES_DIRECTORY    ${CMAKE_BINARY_DIR}/bin/Release/PlugIns/BackProjectors)
 elseif (LINUX)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-  set(PREPROCESSOR_MODULES_DIRECTORY ${CMAKE_BINARY_DIR}/PlugIns/Preprocessors)
-  set(PROJECTOR_MODULES_DIRECTORY    ${CMAKE_BINARY_DIR}/PlugIns/BackProjectors)
 elseif (APPLE)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-  set(PREPROCESSOR_MODULES_DIRECTORY ${CMAKE_BINARY_DIR}/lib/Preprocessors)
-  set(PROJECTOR_MODULES_DIRECTORY    ${CMAKE_BINARY_DIR}/lib/BackProjectors)
   include_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 endif()
 
@@ -239,15 +233,3 @@ add_subdirectory(applications/imageviewer)
 add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
 add_subdirectory(core/algorithms/pyadvancedfilters)
-
-set_target_properties(InspectorModules StdPreprocModules
-    PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${PREPROCESSOR_MODULES_DIRECTORY}
-    RUNTIME_OUTPUT_DIRECTORY ${PREPROCESSOR_MODULES_DIRECTORY}
-)
-
-set_target_properties(FDKBackProjectors StdBackProjectors
-    PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${PROJECTOR_MODULES_DIRECTORY}
-    RUNTIME_OUTPUT_DIRECTORY ${PROJECTOR_MODULES_DIRECTORY}
-)
