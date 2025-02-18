@@ -83,10 +83,10 @@ Component.prototype.createOperations = function()
     if (systemInfo.productType === "windows") {
         var shortcutpage = component.userInterface("ShortcutWidget");
         if (shortcutpage && shortcutpage.createDesktopShortcut.checked) {
-            component.addOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@DesktopDir@/MuhRec.lnk");
+            component.addElevatedOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@DesktopDir@/MuhRec.lnk");
         }
         if (shortcutpage && shortcutpage.createStartMenuShortcut.checked) {
-            component.addOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@StartMenuDir@/MuhRec.lnk",
+            component.addElevatedOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@StartMenuDir@/MuhRec.lnk",
                 "workingDirectory=@TargetDir@");
         }   
     }
