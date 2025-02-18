@@ -86,7 +86,7 @@ Component.prototype.createOperations = function()
             component.addElevatedOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@DesktopDir@/MuhRec.lnk");
         }
         if (shortcutpage && shortcutpage.createStartMenuShortcut.checked) {
-            component.addElevatedOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@StartMenuDir@/MuhRec.lnk",
+            component.addElevatedOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@UserStartMenuProgramsPath@/@StartMenuDir@/MuhRec.lnk",
                 "workingDirectory=@TargetDir@");
         }   
     }

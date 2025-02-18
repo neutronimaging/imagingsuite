@@ -6,7 +6,7 @@
     <Publisher>PSI</Publisher>
     <InstallerWindowIcon>muh4_download.png</InstallerWindowIcon>
     <InstallerApplicationIcon>muh4_download</InstallerApplicationIcon>
-    <StartMenuDir>@UserStartMenuProgramsPath@/MuhRec</StartMenuDir>
+    <StartMenuDir>MuhRec</StartMenuDir>
     <TargetDir>@ApplicationsDirUser@/MuhRec</TargetDir>
     <WizardStyle>Modern</WizardStyle>
     <ControlScript>controllerscript.js</ControlScript>
