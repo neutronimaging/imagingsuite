@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+(VERSION 3.30)
 set(TARGET_NAME "MuhRec")
 project(${TARGET_NAME} VERSION 4.4 LANGUAGES CXX)
 

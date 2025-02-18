@@ -1,5 +1,5 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 3.30)
+(VERSION 3.30)
 
 # project name and supported language
 project(ReconFramework-binder LANGUAGES CXX)

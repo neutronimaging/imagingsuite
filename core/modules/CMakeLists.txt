@@ -1,5 +1,5 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 3.30 FATAL_ERROR)
+(VERSION 3.30 FATAL_ERROR)
 
 # project name and supported language
 project(ImagingModules-binder LANGUAGES CXX)
