@@ -28,7 +28,7 @@
 
 var Dir = new function () {
     this.toNativeSparator = function (path) {
-        if (systemInfo.productType === "windows")
+        if (systemInfo.kernelType === "winnt")
             return path.replace(/\//g, '\\');
         return path;
     }
@@ -49,7 +49,7 @@ Component.prototype.loaded = function () {
         }
     }
 
-    if (systemInfo.productType === "windows") {
+    if (systemInfo.kernelType === "winnt") {
         if (installer.addWizardPage(component, "ShortcutWidget", QInstaller.StartMenuSelection)) {
             var widget = gui.pageWidgetByObjectName("DynamicShortcutWidget");
             if (widget != null) {
@@ -80,7 +80,7 @@ Component.prototype.createOperations = function()
         console.log(e);
     }
 	
-    if (systemInfo.productType === "windows") {
+    if (systemInfo.kernelType === "winnt") {
         var shortcutpage = component.userInterface("ShortcutWidget");
         if (shortcutpage && shortcutpage.createDesktopShortcut.checked) {
             component.addElevatedOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@DesktopDir@/MuhRec.lnk");
@@ -89,5 +89,9 @@ Component.prototype.createOperations = function()
             component.addElevatedOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@UserStartMenuProgramsPath@/@StartMenuDir@/MuhRec.lnk",
                 "workingDirectory=@TargetDir@");
         }   
+    } else if (systemInfo.kernelType === "linux") {
+        console.log("Creating Symlinks in @RootDir@/usr/local/bin");
+        component.addOperation("CreateLink", "@RootDir@usr/local/bin/MuhRec", "@TargetDir@/bin/MuhRec");
+        component.addOperation("CreateLink", "@RootDir@usr/local/bin/ImageViewer", "@TargetDir@/bin/ImageViewer");
     }
 }
