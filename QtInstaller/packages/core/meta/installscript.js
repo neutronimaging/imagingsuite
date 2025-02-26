@@ -93,5 +93,13 @@ Component.prototype.createOperations = function()
         console.log("Creating Symlinks in @RootDir@/usr/local/bin");
         component.addOperation("CreateLink", "@RootDir@usr/local/bin/MuhRec", "@TargetDir@/bin/MuhRec");
         component.addOperation("CreateLink", "@RootDir@usr/local/bin/ImageViewer", "@TargetDir@/bin/ImageViewer");
+        component.addOperation("CreateDesktopEntry", "MuhRec", 
+                               "Type=Application\n
+                                Name=MuhRec\n
+                                Comment=Neutron Tomography Software\n
+                                Path=/opt/bin\n
+                                Exec=MuhRec\n
+                                Icon=@TargetDir@/resources/muh4_icon.svg"
+                                    );
     }
 }
