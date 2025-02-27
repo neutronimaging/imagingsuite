@@ -48,13 +48,26 @@ Component.prototype.loaded = function () {
             page.entered.connect(Component.prototype.dynamicCustromIntroductionPageEntered);
         }
     }
-
+    console.log("component loaded");
     if (systemInfo.kernelType === "winnt") {
+        console.log("System is windows")
         if (installer.addWizardPage(component, "ShortcutWidget", QInstaller.StartMenuSelection)) {
             var widget = gui.pageWidgetByObjectName("DynamicShortcutWidget");
             if (widget != null) {
                 widget.createDesktopShortcut.checked = true;
                 widget.createStartMenuShortcut.checked = true;
+
+                widget.windowTitle = "Create shortcuts";
+            }
+        }
+    } else if (systemInfo.kernelType == "linux") {
+        console.log("System is linux");
+        if (installer.addWizardPage(component, "SymlinkWidget", QInstaller.StartMenuSelection)) {
+            var widget = gui.pageWidgetByObjectName("DynamicSymlinkWidget");
+            if (widget != null) {
+                widget.createDesktopShortcut.checked = true;
+                widget.createUserLink.checked = true;
+                widget.createSystemLink.checked = false;
 
                 widget.windowTitle = "Create shortcuts";
             }
@@ -90,16 +103,37 @@ Component.prototype.createOperations = function()
                 "workingDirectory=@TargetDir@");
         }   
     } else if (systemInfo.kernelType === "linux") {
-        console.log("Creating Symlinks in @RootDir@/usr/local/bin");
-        component.addOperation("CreateLink", "@RootDir@usr/local/bin/MuhRec", "@TargetDir@/bin/MuhRec");
-        component.addOperation("CreateLink", "@RootDir@usr/local/bin/ImageViewer", "@TargetDir@/bin/ImageViewer");
-        component.addOperation("CreateDesktopEntry", "MuhRec", 
-                               "Type=Application\n
-                                Name=MuhRec\n
-                                Comment=Neutron Tomography Software\n
-                                Path=/opt/bin\n
-                                Exec=MuhRec\n
-                                Icon=@TargetDir@/resources/muh4_icon.svg"
-                                    );
+        var shortcutpage = component.userInterface("SymlinkWidget");
+        if (shortcutpage && shortcutpage.createDesktopShortcut.checked) {
+            component.addOperation("CreateDesktopEntry", "MuhRec", 
+                "Type=Application\n
+                 Name=MuhRec\n
+                 Comment=Neutron Tomography Software\n
+                 Path=/opt/bin\n
+                 Exec=MuhRec\n
+                 Icon=@TargetDir@/resources/muh4_icon.svg\n
+                 Categories=Science"
+                     );
+            component.addOperation("CreateDesktopEntry", "ImageViewer", 
+                "Type=Application\n
+                 Name=ImageViewer\n
+                 Comment=Neutron Tomography Image Viewer\n
+                 Path=/opt/bin\n
+                 Exec=ImageViewer\n
+                 Icon=@TargetDir@/resources/viewer_icon.svg\n
+                 Categories=Science"
+                     );
+
+        }
+        if (shortcutpage && shortcutpage.createUserLink.checked) {
+            console.log("Creating Symlinks in @HomeDir@/.local/bin");
+            component.addOperation("CreateLink", "@HomeDir@/.local/bin/MuhRec", "@TargetDir@/bin/MuhRec");
+            component.addOperation("CreateLink", "@HomeDir@/.local/bin/ImageViewer", "@TargetDir@/bin/ImageViewer");
+        }
+        if (shortcutpage && shortcutpage.createSystemLink.checked) {
+            console.log("Creating Symlinks in @RootDir@usr/local/bin");
+            component.addElevatedOperation("CreateLink", "@RootDir@usr/local/bin/MuhRec", "@TargetDir@/bin/MuhRec");
+            component.addElevatedOperation("CreateLink", "@RootDir@usr/local/bin/ImageViewer", "@TargetDir@/bin/ImageViewer");
+        }
     }
 }
