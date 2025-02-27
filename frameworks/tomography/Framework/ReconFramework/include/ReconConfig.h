@@ -198,6 +198,7 @@ public:
     std::string WriteXML();
 
 protected:
+    using ConfigBase::operator=;
     /// Parse the contents of an opened configuration file.
     /// \param reader A handle to the an opened xml reader.
     /// \param cName Name of the main block.

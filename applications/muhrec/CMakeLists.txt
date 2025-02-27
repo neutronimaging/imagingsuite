@@ -1,22 +1,20 @@
-cmake_minimum_required(VERSION 3.5)
+
 set(TARGET_NAME "MuhRec")
 project(${TARGET_NAME} VERSION 4.4 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
 if (APPLE)
 file(COPY ${CMAKE_BINARY_DIR}/lib/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks")
 endif()
 
-if (APPLE)
 include_directories(
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
@@ -28,45 +26,8 @@ include_directories(
     ../../core/modules/ReaderGUI
     ../../frameworks/tomography/Framework/ReconFramework/include/
     ../../core/algorithms/ImagingAlgorithms/include
-    # ../../../ExternalDependencies/macos/include
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
-endif()
-
-if (WIN32)
-include_directories(
-    ../../core/kipl/kipl/include
-    ../../core/modules/ModuleConfig/include
-    ../../core/modules/ReaderConfig
-    ../../core/algorithms/ImagingAlgorithms/include
-    ../../GUI/qt/QtAddons
-    ../../GUI/qt/QtImaging
-    ../../GUI/qt/QtModuleConfigure
-    ../../core/modules/ReaderGUI
-    ../../frameworks/tomography/Framework/ReconFramework/include/
-    ../../core/algorithms/ImagingAlgorithms/include
-    # ../../../ExternalDependencies/windows/include
-    # ../../external/include/
-    Qt6Widgets_INCLUDE_DIRS/QtCharts
-    )
-endif()
-
-if (UNIX)
-include_directories(
-    ../../core/kipl/kipl/include
-    ../../core/modules/ModuleConfig/include
-    ../../core/modules/ReaderConfig
-    ../../core/algorithms/ImagingAlgorithms/include
-    ../../GUI/qt/QtAddons
-    ../../GUI/qt/QtImaging
-    ../../GUI/qt/QtModuleConfigure
-    ../../core/modules/ReaderGUI
-    ../../frameworks/tomography/Framework/ReconFramework/include/
-    ../../core/algorithms/ImagingAlgorithms/include
-
-    Qt6Widgets_INCLUDE_DIRS/QtCharts
-    )
-endif()
 
 set(SRC_FILES
     src/MuhrecInteractor.cpp
@@ -164,24 +125,6 @@ if (WIN32)
         QtImaging
     )
 endif()
-
-# if (APPLE)
-
-#     target_link_libraries(${TARGET_NAME} PUBLIC
-#         Qt${QT_VERSION_MAJOR}::Core
-#         Qt${QT_VERSION_MAJOR}::Widgets
-#         Qt${QT_VERSION_MAJOR}::Concurrent
-#         kipl
-#         ModuleConfig
-#         ImagingAlgorithms
-#         ReaderConfig
-#         QtAddons
-#         ReaderGUI
-#         QtModuleConfigure
-#         ReconFramework
-#         QtImaging
-#     )
-# endif()
 
 
 

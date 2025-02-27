@@ -35,6 +35,7 @@ private slots:
     void on_button_apply_clicked();
 
 private:
+    using ConfiguratorDialogBase::exec;
     Ui::WaveletRingCleanDlg *ui;
 
     virtual void ApplyParameters();

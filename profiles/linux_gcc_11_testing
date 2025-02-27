@@ -1,0 +1,14 @@
+[settings]
+os=Linux
+arch=x86_64
+build_type=Release
+compiler=gcc
+compiler.version=11
+compiler.cppstd=20
+compiler.libcxx=libstdc++11
+[options]
+[conf]
+tools.build:cflags=['-pg', '-fsanitize=address']
+tools.build:cxxflags=['-pg', '-fsanitize=address']
+tools.build:exelinkflags=['-fsanitize=address']
+tools.build:sharedlinkflags=['-fsanitize=address']

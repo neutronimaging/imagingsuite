@@ -30,7 +30,7 @@ class QTMODULECONFIGURESHARED_EXPORT ModuleChainConfiguratorWidget : public QWid
     kipl::logging::Logger logger;
 public:
     explicit ModuleChainConfiguratorWidget(QWidget *parent = nullptr);
-    void configure(std::string application, std::string applicationpath="", ModuleConfigurator *pConfigurator=nullptr);
+    void configure(const std::string &application, const std::string &applicationpath="", const std::string &moduleFilterString = "",const std::string &category="", ModuleConfigurator *pConfigurator=nullptr);
     void SetApplicationObject(ApplicationBase * app );
     void SetDefaultModuleSource(std::string file);
     std::vector<ModuleConfig> GetModules();
@@ -76,7 +76,9 @@ protected:
 
     std::string m_sApplication;
     std::string m_sApplicationPath;
+    std::string m_sCategory;
     std::string m_sDefaultModuleSource;
+    std::string m_sModuleFilterString;
     ApplicationBase * m_pApplication ;
     ModuleConfigurator * m_pConfigurator;
 };

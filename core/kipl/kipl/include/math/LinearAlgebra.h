@@ -19,10 +19,10 @@ public:
 	void Resize(int rows, int cols);
 
 	T * ElementPtr() { return m_pData;}
-	T const * const ElementPtr() const { return m_pData;}
+	T const * ElementPtr() const { return m_pData;}
 
 	T * operator[](int row) { return m_pData+row*m_nCols;}
-	T const * const operator[](int row) const { return m_pData+row*m_nCols;}
+	T const * operator[](int row) const { return m_pData+row*m_nCols;}
 
 	int Rows() const {return m_nRows;}
 	int Cols() const {return m_nCols;}

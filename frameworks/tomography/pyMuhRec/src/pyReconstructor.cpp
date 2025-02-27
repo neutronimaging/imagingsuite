@@ -60,6 +60,7 @@ void bindReconstructor(py::module &m)
                         backprojPars["ProjectionBufferSize"] = "16";
                         backprojPars["SliceBlock"]           = "32";
                         backprojPars["SubVolume"]            = "1 1";
+                        backprojPars["Algorithm"]            = "eFDKbp_single_stl";  
 
 
                         std::vector<float> vec;

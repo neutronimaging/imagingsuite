@@ -32,8 +32,8 @@ jobs:
       # 4. <MacOS 14 with arm64 arch, Release, Clang 15 compiler toolchain
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix: # Qt requires py7zr==0.20.x which requires python 3.7^
-        python-version: ["3.7","3.8","3.9", "3.10", "3.11", "3.12"]
-        os: [windows-2022, ubuntu-latest, macos-13, macos-14]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        os: [windows-2022, ubuntu-22.04, macos-13, macos-14]
         include:
           - os: windows-2022
             c_compiler: cl
@@ -41,7 +41,7 @@ jobs:
             cl: 17
             build_type: Release
             build_root: build-imagingsuite
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             c_compiler: gcc
             cpp_compiler: g++
             gcc: 11
@@ -106,9 +106,9 @@ jobs:
 
     # This version of Qt only allows python versions in the range 3.6-3.11 #
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: Kidev/install-qt-action@v4.4.2
       with:
-        version: '6.5.3'
+        version: '6.8.2'
         dir: '${{GITHUB.WORKSPACE}}'
         install-deps: 'true'
         modules: 'qtcharts'
@@ -130,7 +130,7 @@ jobs:
     - name: Set QTPATH environment variable
       shell: bash
       run: |
-        echo "QTPATH=${{env.Qt6_DIR}}" >> "$GITHUB_ENV"
+        echo "QTPATH=${{env.QT_ROOT_DIR}}" >> "$GITHUB_ENV"
 
     - name: Install sse2neon
       # Needed to compile ARM programs and not currently available on Conan
@@ -165,12 +165,6 @@ jobs:
           ${QTPATH}/bin/macdeployqt imageviewer.app
         fi
 
-    - name: Ammend shared libraries runpaths
-      if: ${{ runner.os == 'Linux' }}
-      working-directory: build-imagingsuite/Release/lib
-      shell: bash
-      run: patchelf --set-rpath '$ORIGIN' *.so*
-
     - name: Copy bindings and shared libraries to package folder
       shell: bash
       working-directory: build-imagingsuite
@@ -180,13 +174,20 @@ jobs:
           cp *.dll ../../../imagingsuite/package/pymuhrec
           cp *.pyd ../../../imagingsuite/package/pymuhrec
         elif [ "${RUNNER_OS}" == "Linux" ]; then
-          cd Release/lib
-          cp * ../../../imagingsuite/package/pymuhrec
+          cd Release
+          cp lib/* ../../imagingsuite/package/pymuhrec
         elif [ "${RUNNER_OS}" == "macOS" ]; then
           cd Release/lib
           cp *.dylib ../../../imagingsuite/package/pymuhrec
           cp *.so ../../../imagingsuite/package/pymuhrec
         fi
+
+    - name: Ammend shared libraries runpaths
+      if: ${{ runner.os == 'Linux' }}
+      working-directory: imagingsuite/package/pymuhrec
+      shell: bash
+      run: |
+        patchelf --set-rpath '$ORIGIN' *.so*
 
     - name: Build wheels
       shell: bash

@@ -3,7 +3,7 @@
 #include "../include/ModuleConfig_global.h"
 #include "../include/ModuleConfig.h"
 #include "../include/ModuleException.h"
-#include "../include/modulelibnamemanger.h"
+#include "../include/modulelibnamemanager.h"
 #include <sstream>
 #include <iomanip>
 
@@ -12,13 +12,13 @@
 #include <strings/filenames.h>
 
 
-ModuleConfig::ModuleConfig(const std::string &appPath) :
+ModuleConfig::ModuleConfig(const std::string &sAppPath, const std::string &sCategory) :
 	logger("ModuleConfig"),
     m_sSharedObject("NoObjectFile"),
     m_sModule("Empty"),
     m_bActive(true),
     m_bThreading(false),
-    m_NameManager(appPath)
+    m_NameManager(sAppPath, false,sCategory)
 {
 }
 
@@ -136,9 +136,9 @@ std::string ModuleConfig::PrintParameters()
     return s.str();
 }
 
-void ModuleConfig::setAppPath(const std::string &path)
+void ModuleConfig::setAppPath(const std::string &path, const std::string &category)
 {
-    m_NameManager.setAppPath(path);
+	m_NameManager.setAppPath(path,category);
 }
 
 std::string ModuleConfig::modulePath()

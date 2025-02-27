@@ -30,7 +30,7 @@ cmake_install.cmake
 *.synctex.gz
 .vscode*
 package/pymuhrec/*.dll
-package/pymuhrec/*.so
+package/pymuhrec/*.so*
 package/pymuhrec/*.dylib
 package/pymuhrec/*.pyd
 package/pymuhrec.egg-info
@@ -43,3 +43,4 @@ _deps
 moc_*
 *.moc
 CMakeUserPresets.json
+QtInstaller/*installer*

@@ -17,6 +17,9 @@ public:
 	void ProcessSinogram(kipl::base::TImage<float,2> &img, float *profile);
 	kipl::base::TImage<float,2> profile;
 protected:
+	using PreprocModuleBase::ProcessCore;
+	using PreprocModuleBase::Configure;
+	
 	virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
 	int ComputeProfile(kipl::base::TImage<float,3> & img);
 

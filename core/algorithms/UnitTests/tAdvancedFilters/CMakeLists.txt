@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+
 
 set(TARGET_NAME "tAdvancedFilters")
 project(tLogging LANGUAGES CXX)
@@ -14,13 +14,12 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../../kipl/kipl/include
     ../../AdvancedFilters
-    # ../../../../../ExternalDependencies/macos/include/
 )
 
 set(SRC_FILES,
