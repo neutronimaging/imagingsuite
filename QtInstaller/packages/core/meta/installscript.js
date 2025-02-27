@@ -107,7 +107,7 @@ Component.prototype.createOperations = function()
         if (shortcutpage && shortcutpage.createDesktopShortcut.checked) {
             component.addOperation("CreateDesktopEntry", "MuhRec", 
                 "Type=Application\n
-                 Name=@HomeDir@/.local/share/applications/MuhRec\n
+                 Name=@HomeDir@/.local/share/applications/MuhRec.desktop\n
                  Comment=Neutron Tomography Software\n
                  Path=/opt/bin\n
                  Exec=MuhRec\n
@@ -116,7 +116,7 @@ Component.prototype.createOperations = function()
                      );
             component.addOperation("CreateDesktopEntry", "ImageViewer", 
                 "Type=Application\n
-                 Name=@HomeDir@/.local/share/applications/ImageViewer\n
+                 Name=@HomeDir@/.local/share/applications/ImageViewer.desktop\n
                  Comment=Neutron Tomography Image Viewer\n
                  Path=/opt/bin\n
                  Exec=ImageViewer\n
