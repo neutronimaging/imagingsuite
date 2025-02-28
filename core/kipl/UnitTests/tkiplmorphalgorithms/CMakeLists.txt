@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.5)
-
 set(TARGET_NAME "tkiplmorphalgorithms")
 project(${TARGET_NAME} LANGUAGES CXX)
 
@@ -14,18 +12,11 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
     ../../kipl/include
     )
-
-if (APPLE)
-    include_directories(
-        ../../../../../ExternalDependencies/macos/include
-    )
-endif()
 
 set(SRC_FILES
     tst_kiplmorphalgorithms.cpp)
