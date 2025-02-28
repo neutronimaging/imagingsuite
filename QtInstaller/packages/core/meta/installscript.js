@@ -105,21 +105,21 @@ Component.prototype.createOperations = function()
     } else if (systemInfo.kernelType === "linux") {
         var shortcutpage = component.userInterface("SymlinkWidget");
         if (shortcutpage && shortcutpage.createDesktopShortcut.checked) {
-            component.addOperation("CreateDesktopEntry", "MuhRec", 
-                "Type=Application\n
-                 Name=@HomeDir@/.local/share/applications/MuhRec.desktop\n
-                 Comment=Neutron Tomography Software\n
-                 Exec=@TargetDir@/bin/MuhRec\n
-                 Icon=@TargetDir@/resources/muh4_icon.svg\n
-                 Categories=Science"
+            component.addOperation("CreateDesktopEntry", "@HomeDir@/.local/share/applications/MuhRec.desktop", 
+                "Type=Application\n"+
+                 "Name=MuhRec\n"+
+                 "Comment=Neutron Tomography Software\n"+
+                 "Exec=@TargetDir@/bin/MuhRec\n"+
+                 "Icon=@TargetDir@/resources/muh4_icon.svg\n"+
+                 "Categories=Science"
                      );
-            component.addOperation("CreateDesktopEntry", "ImageViewer", 
-                "Type=Application\n
-                 Name=@HomeDir@/.local/share/applications/ImageViewer.desktop\n
-                 Comment=Neutron Tomography Image Viewer\n
-                 Exec=@TargetDir@/bin/ImageViewer\n
-                 Icon=@TargetDir@/resources/viewer_icon.svg\n
-                 Categories=Science"
+            component.addOperation("CreateDesktopEntry", "@HomeDir@/.local/share/applications/ImageViewer.desktop", 
+                "Type=Application\n"+
+                 "Name=ImageViewer\n"+
+                 "Comment=Neutron Tomography Image Viewer\n"+
+                 "Exec=@TargetDir@/bin/ImageViewer\n"+
+                 "Icon=@TargetDir@/resources/viewer_icon.svg\n"+
+                 "Categories=Science"
                      );
 
         }
