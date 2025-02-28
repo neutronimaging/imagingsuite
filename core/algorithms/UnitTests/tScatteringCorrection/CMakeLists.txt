@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.5)
-
 set(TARGET_NAME "tScatterCorrection")
 project(${TARGET_NAME} LANGUAGES CXX)
 
@@ -22,18 +20,6 @@ include_directories(
     ../../ImagingAlgorithms/include
     ../../ScatteringCorrection/src
 )
-
-if (APPLE)
-    include_directories(
-        ../../../../../ExternalDependencies/macos/include/
-    )
-endif()
-
-if (WIN32)
-    include_directories(
-        ../../../../external/include/
-    )
-endif()
 
 set(SRC_FILES
 tst_ScatterCorrection.cpp)
