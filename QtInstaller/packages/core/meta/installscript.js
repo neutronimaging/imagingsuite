@@ -109,8 +109,7 @@ Component.prototype.createOperations = function()
                 "Type=Application\n
                  Name=@HomeDir@/.local/share/applications/MuhRec.desktop\n
                  Comment=Neutron Tomography Software\n
-                 Path=/opt/bin\n
-                 Exec=MuhRec\n
+                 Exec=@TargetDir@/bin/MuhRec\n
                  Icon=@TargetDir@/resources/muh4_icon.svg\n
                  Categories=Science"
                      );
@@ -118,8 +117,7 @@ Component.prototype.createOperations = function()
                 "Type=Application\n
                  Name=@HomeDir@/.local/share/applications/ImageViewer.desktop\n
                  Comment=Neutron Tomography Image Viewer\n
-                 Path=/opt/bin\n
-                 Exec=ImageViewer\n
+                 Exec=@TargetDir@/bin/ImageViewer\n
                  Icon=@TargetDir@/resources/viewer_icon.svg\n
                  Categories=Science"
                      );
