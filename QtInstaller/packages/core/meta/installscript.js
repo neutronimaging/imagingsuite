@@ -127,13 +127,13 @@ Component.prototype.createOperations = function()
         }
         if (shortcutpage && shortcutpage.createUserLink.checked) {
             console.log("Creating Symlinks in @HomeDir@/.local/bin");
-            component.addOperation("CreateLink", "@HomeDir@/.local/bin/MuhRec", "@TargetDir@/bin/MuhRec");
-            component.addOperation("CreateLink", "@HomeDir@/.local/bin/ImageViewer", "@TargetDir@/bin/ImageViewer");
+            component.addOperation("CreateLink", "@HomeDir@/.local/bin/muhrec", "@TargetDir@/bin/MuhRec");
+            component.addOperation("CreateLink", "@HomeDir@/.local/bin/imageviewer", "@TargetDir@/bin/ImageViewer");
         }
         if (shortcutpage && shortcutpage.createSystemLink.checked) {
             console.log("Creating Symlinks in @RootDir@usr/local/bin");
-            component.addElevatedOperation("CreateLink", "@RootDir@usr/local/bin/MuhRec", "@TargetDir@/bin/MuhRec");
-            component.addElevatedOperation("CreateLink", "@RootDir@usr/local/bin/ImageViewer", "@TargetDir@/bin/ImageViewer");
+            component.addElevatedOperation("CreateLink", "@RootDir@usr/local/bin/muhrec", "@TargetDir@/bin/MuhRec");
+            component.addElevatedOperation("CreateLink", "@RootDir@usr/local/bin/imageviewer", "@TargetDir@/bin/ImageViewer");
         }
     }
 }
