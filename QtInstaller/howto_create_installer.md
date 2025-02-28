@@ -12,7 +12,7 @@ from imagingsuite\QtInstaller in a bash terminal:
 
 # Linux
 from build-imagingsuite/Release in a bash terminal:
-    cp -r bin PlugIns lib resources ../../imagingsuite/QtInstaller/packages/core/data/
+    cp -r bin lib resources ../../imagingsuite/QtInstaller/packages/core/data/
     cd ../../imagingsuite/QtInstaller/packages/core/data/
     rm bin/t* lib/*cpython*
 

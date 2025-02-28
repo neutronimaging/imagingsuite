@@ -14,5 +14,6 @@
     <UserInterfaces>
         <UserInterface>customintroductionpage.ui</UserInterface>
         <UserInterface>shortcutwidget.ui</UserInterface>
+        <UserInterface>symlinkwidget.ui</UserInterface>
     </UserInterfaces>
 </Package>
