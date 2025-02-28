@@ -75,6 +75,9 @@ public:
     /// @return A tuple with the bins and start bin position
     std::tuple<std::vector<size_t>, std::vector<float> >  histogram();
 
+    eSegmentationMethod segmentationMethod() const { return m_segmentationMethod; }
+    float threshold() const { return m_fThreshold; }
+
 private:
     /// @brief Performs the segmentation task
     /// @param bb A graylevel image with BB dots

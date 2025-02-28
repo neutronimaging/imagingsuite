@@ -11,6 +11,8 @@
 #include <base/thistogram.h>
 #include <io/io_tiff.h>
 
+#include <algorithm>
+
 SegmentBB::SegmentBB() :
     logger("SegmentBB"),
     m_fRadius(5.0f),
@@ -70,7 +72,7 @@ void SegmentBB::setParameters(const std::map<std::string, std::string> &params)
     std::ignore = params;
 }
 
-void SegmentBB::exec( const kipl::base::TImage<float,2> & bb, 
+void SegmentBB::exec( const kipl::base::TImage<float,2> & x, 
                             kipl::base::TImage<float,2> & mask,
                       const std::vector<size_t> & ROI)
 {   
@@ -79,16 +81,17 @@ void SegmentBB::exec( const kipl::base::TImage<float,2> & bb,
     // 3. Find threshold  
     // 4. Apply threshold 
     // 5. Morph open and close 
-    segment(bb, mask);
+   
+    segment(x, mask);
     // kipl::io::WriteTIFF(mask,"segmented_mask.tif");
 
     // 6. Label image 
     // 7. Get region properties
     // 8. Filter on size, position, and intensity 
-    identifyBBs(bb, mask, ROI);
+    identifyBBs(x, mask, ROI);
 
     // 9. Create dot mask
-    prepareMask(bb.dims());
+    prepareMask(x.dims());
     // kipl::io::WriteTIFF(m_mask,"prepared_mask.tif");
 
 }
@@ -114,13 +117,15 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
     auto fltv = medv(bb, kipl::filters::FilterBase::EdgeZero);
     auto flat = medh(fltv,kipl::filters::FilterBase::EdgeZero);
 
-    flat-=bb; 
-    kipl::io::WriteTIFF(flat,"flat_img.tif",kipl::base::Float32);
+    flat-=bb;
+ 
+    // kipl::io::WriteTIFF(flat,"flat_img.tif",kipl::base::Float32);
 
     std::vector<size_t> hist;
     std::vector<float>  axis;
     int ndims = 256;
-    kipl::base::Histogram(flat.GetDataPtr(), flat.Size(), ndims, hist, axis, 0.0f,0.0f, true);
+    float maxval =  * std::max_element(flat.GetDataPtr(), flat.GetDataPtr()+flat.Size());
+    kipl::base::Histogram(flat.GetDataPtr(), flat.Size(), ndims, hist, axis, 0.0f,maxval, true);
 
 
     // 3. Find threshold  
@@ -184,8 +189,8 @@ void SegmentBB::identifyBBs(const kipl::base::TImage<float,2> &bb,
                             const kipl::base::TImage<float,2> &mask,
                             const std::vector<size_t> & ROI)
 {
-    kipl::io::WriteTIFF(bb,"bb.tif");
-    kipl::io::WriteTIFF(bb,"mask.tif");
+    // kipl::io::WriteTIFF(bb,"bb.tif");
+    // kipl::io::WriteTIFF(bb,"mask.tif");
     // 6. Label image 
     kipl::base::TImage<int,2> lbl(mask.dims());
 

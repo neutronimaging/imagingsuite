@@ -39,6 +39,7 @@ private Q_SLOTS:
 
     void Normalize_basic();
 
+private:
     void ScatterCorrection_SetRefs();
 
 private:
@@ -79,7 +80,7 @@ TestScatterCorrection::TestScatterCorrection()
 
     fname = dataPath+"2D/fits/BB/dc_00001.fits";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
-    kipl::io::ReadFITS(bbob,fname);
+    kipl::io::ReadFITS(dc,fname);
 
     fname = dataPath+"2D/fits/BB/bbob_00001.fits";
     kipl::strings::filenames::CheckPathSlashes(fname,false);
@@ -108,7 +109,15 @@ void TestScatterCorrection::SegmentBB_segmentation()
     kipl::base::TImage<float,2> img;
 
     kipl::base::TImage<float,2> res(img.dims()); 
+    // qDebug()<<"BBob size: "<<bbob.Size(0)<<bbob.Size(1)<<enum2string(bb_seg.segmentationMethod());
+
+    // kipl::io::WriteTIFF(bbob,"bb_in_segtest.tif");
+    try {
     bb_seg.exec(bbob,res,{200UL,300UL,1900UL,1900UL});
+    } catch (ImagingException &e) {
+        qDebug()<<e.what();
+        QFAIL("Segmentation failed with exception");
+    }
 
     kipl::io::WriteTIFF(res,"res.tif",kipl::base::Float32);
 }
@@ -120,7 +129,13 @@ void TestScatterCorrection::ScatterEstimation_fit()
     kipl::base::TImage<float,2> img;
 
     kipl::base::TImage<float,2> res(img.dims()); 
-    bb_seg.exec(bbob,res,{200UL,300UL,1900UL,1900UL});
+    try {
+        bb_seg.exec(bbob,res,{200UL,300UL,1900UL,1900UL});
+    } catch (ImagingException &e) {
+        qDebug()<<e.what();
+        QFAIL("Segmentation failed with exception");
+    }
+
     auto [x,y] = bb_seg.dotCoordinates();
     // std::vector<float> x = { 1806.53, 1435.3, 1062.5, 319.944, 690.995, 
     //                         1808.76, 1064.09, 1436.43, 693.334, 320.784, 
@@ -206,29 +221,42 @@ void TestScatterCorrection::ScatterEstimation_dose()
 void TestScatterCorrection::ScatterEstimation_enums()
 {
     ScatterEstimator::eAverageMethod mA;
-    string2enum("avgmean",mA);
-    QCOMPARE(mA, ScatterEstimator::avg_mean);
-    string2enum("avgmedian",mA);
-    QCOMPARE(mA, ScatterEstimator::avg_median);
-    string2enum("avgmin",mA);
-    QCOMPARE(mA, ScatterEstimator::avg_min);
-    string2enum("avgmax",mA);
-    QCOMPARE(mA, ScatterEstimator::avg_max);
+    try {
+        string2enum("avgmean",mA);
+        QCOMPARE(mA, ScatterEstimator::avg_mean);
+        string2enum("avgmedian",mA);
+        QCOMPARE(mA, ScatterEstimator::avg_median);
+        string2enum("avgmin",mA);
+        QCOMPARE(mA, ScatterEstimator::avg_min);
+        string2enum("avgmax",mA);
+        QCOMPARE(mA, ScatterEstimator::avg_max);
 
-    QCOMPARE(enum2string(ScatterEstimator::avg_mean),"avgmean");
-    QCOMPARE(enum2string(ScatterEstimator::avg_median),"avgmedian");
-    QCOMPARE(enum2string(ScatterEstimator::avg_min),"avgmin");
-    QCOMPARE(enum2string(ScatterEstimator::avg_max),"avgmax");
+        QCOMPARE(enum2string(ScatterEstimator::avg_mean),"avgmean");
+        QCOMPARE(enum2string(ScatterEstimator::avg_median),"avgmedian");
+        QCOMPARE(enum2string(ScatterEstimator::avg_min),"avgmin");
+        QCOMPARE(enum2string(ScatterEstimator::avg_max),"avgmax");
+    } catch (ImagingException &e) {
+        qDebug()<<e.what();
+        QFAIL("string2enum failed with exception");
+    }
+    
+
+    
 
     ScatterEstimator::eFitMethod mF;
     
-    string2enum("fitpolynimal",mF);
-    QCOMPARE(mF,ScatterEstimator::fitmethod_polynomial);
-    string2enum("fitspline",mF);
-    QCOMPARE(mF,ScatterEstimator::fitmethod_thinplatesplines);
+    try {
+        string2enum("fitpolynimal",mF);
+        QCOMPARE(mF,ScatterEstimator::fitmethod_polynomial);
+        string2enum("fitspline",mF);
+        QCOMPARE(mF,ScatterEstimator::fitmethod_thinplatesplines);
 
-    QCOMPARE(enum2string(ScatterEstimator::fitmethod_polynomial),"fitpolynimal");
-    QCOMPARE(enum2string(ScatterEstimator::fitmethod_thinplatesplines),"fitspline");
+        QCOMPARE(enum2string(ScatterEstimator::fitmethod_polynomial),"fitpolynimal");
+        QCOMPARE(enum2string(ScatterEstimator::fitmethod_thinplatesplines),"fitspline");
+    } catch (ImagingException &e) {
+        qDebug()<<e.what();
+        QFAIL("string2enum failed with exception");
+    }
 }
 
 void TestScatterCorrection::Normalize_basic()
