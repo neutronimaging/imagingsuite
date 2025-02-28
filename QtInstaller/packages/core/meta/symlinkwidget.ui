@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ShortcutWidget</class>
+ <class>SymlinkWidget</class>
  <widget class="QWidget" name="SymlinkWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>500</width>
     <height>300</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>400</width>
+    <width>500</width>
     <height>300</height>
    </size>
   </property>
@@ -51,37 +51,59 @@
    </item>
 
    <item row="1" column="0">
-    <widget class="QCheckBox" name="createUserLink">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Create symlinks to applications on user path (~.local/bin)</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QCheckBox" name="createUserLink">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Create symlinks to applications on user path (~.local/bin)</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="createUserLinkLabel">
+       <property name="text">
+        <string>OBS! May require logging in again to take effect</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
 
    <item row="2" column="0">
-    <widget class="QCheckBox" name="createSystemLink">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Create symlinks to applications on system path (/usr/local/bin) OBS! Requires root access</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QCheckBox" name="createSystemLink">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Create symlinks to applications on system path (/usr/local/bin)</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="createUserLinkLabel">
+       <property name="text">
+        <string>OBS! Requires root access</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
 
    <item row="3" column="0">
@@ -104,7 +126,8 @@
  </widget>
  <tabstops>
   <tabstop>createDesktopShortcut</tabstop>
-  <tabstop>createStartMenuShortcut</tabstop>
+  <tabstop>createUserLink</tabstop>
+  <tabstop>createSystemLink</tabstop>
  </tabstops>
  <connections/>
 </ui>
