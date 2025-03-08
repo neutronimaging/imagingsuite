@@ -1,16 +1,38 @@
+//<LICENSE>
+
 #include "../include/math/thinplatespline.h"
 
+#include <vector>
+#include <cmath>
+#include <armadillo>
+
+// Thin Plate Spline Radial Basis Function
 
 namespace kipl { namespace math {
-   
+
+float tps_rbf(float r) 
+{
+    if (r == 0.0f) 
+        return 0.0f;
+
+    return r * r * std::log(r);
+}
+    
 ThinPlateSpline::ThinPlateSpline() 
 {    }
 
-ThinPlateSpline::ThinPlateSpline(const std::vector<float>& x, const std::vector<float>& y, const std::vector<float>& w) :
-    x(x), y(y), w(w)
+ThinPlateSpline::ThinPlateSpline( const std::vector<float>& x, 
+                                  const std::vector<float>& y, 
+                                  const std::vector<float>& values)
 {    
-    checkSize(x, y, w);
-    fit();
+    setPoints(x, y, values);
+}
+
+ThinPlateSpline::ThinPlateSpline( const std::vector<double>& x, 
+                                  const std::vector<double>& y, 
+                                  const std::vector<double>& values)
+{    
+    setPoints(x, y, values);
 }
 
 ThinPlateSpline::~ThinPlateSpline() 
@@ -18,27 +40,72 @@ ThinPlateSpline::~ThinPlateSpline()
 
 }
 
-void ThinPlateSpline::setPoints(const std::vector<float>& x, const std::vector<float>& y, const std::vector<float>& w) 
+void ThinPlateSpline::setPoints( const std::vector<float>& x, 
+                                 const std::vector<float>& y, 
+                                 const std::vector<float>& values) 
 {    
-    checkSize(x, y, w);
-    this->x = x;
-    this->y = y;
-    this->w = w;
+    if (x.size() != y.size() || x.size() != values.size()) 
+    {
+        throw std::invalid_argument("Vectors x, y, and w must have the same size");
+    }
+
+    m_points.resize(x.size());
+    m_values.resize(x.size());
+
+    for (size_t i = 0; i < x.size(); ++i) 
+    {
+        m_points[i] = arma::vec({static_cast<double>(x[i]) , static_cast<double>(y[i]) });
+        m_values[i] = static_cast<double>(values[i]);
+    }
+
     fit();
+}
+
+void ThinPlateSpline::setPoints( const std::vector<double>& x, 
+                                 const std::vector<double>& y, 
+                                 const std::vector<double>& values) 
+{    
+    if (x.size() != y.size() || x.size() != values.size()) 
+    {
+        throw std::invalid_argument("Vectors x, y, and w must have the same size");
+    }
+
+    m_points.resize(x.size());
+    m_values.resize(x.size());
+
+    for (size_t i = 0; i < x.size(); ++i) 
+    {
+        m_points[i] = arma::vec({x[i] , y[i] });
+        m_values[i] = static_cast<double>(values[i]);
+    }
+
+    fit();
+}
+
+float ThinPlateSpline::interpolate(double x, double y) 
+{    
+    if (m_points.size() == 0) 
+    {
+        throw std::invalid_argument("No points have been set");
+    }
+
+    arma::vec p = {x, y};
+    double result = m_c(0) + m_c(1) * x + m_c(2) * y;
+    for (size_t i = 0; i < m_points.size(); ++i) {
+        result += m_w(i) * tps_rbf(arma::norm(p - m_points[i]));
+    }
+
+    return result;
 }
 
 float ThinPlateSpline::interpolate(float x, float y) 
 {    
-    if (this->x.size() == 0) {
-        throw std::invalid_argument("No points have been set");
-    }
-
-    return 0.0f;
+    return interpolate(static_cast<double>(x), static_cast<double>(y));
 }
 
 float ThinPlateSpline::interpolate(size_t x, size_t y) 
 {    
-    return interpolate(static_cast<float>(x), static_cast<float>(y));
+    return interpolate(static_cast<double>(x), static_cast<double>(y));
 }
 
 kipl::base::TImage<float,2> ThinPlateSpline::render(const std::vector<size_t> dims, const std::vector<size_t> &fov) 
@@ -58,16 +125,42 @@ kipl::base::TImage<float,2> ThinPlateSpline::render(const std::vector<size_t> di
 
 void ThinPlateSpline::fit() 
 {    
-
-}
-
-void ThinPlateSpline::checkSize(const std::vector<float>& x, const std::vector<float>& y, const std::vector<float>& w) 
-{    
-    if (x.size() != y.size() || x.size() != w.size()) {
-        throw std::invalid_argument("Vectors x, y, and w must have the same size");
+    size_t n = m_points.size();
+        
+    // Create the K matrix
+    arma::mat K(n, n, arma::fill::zeros);
+    for (size_t i = 0; i < n; ++i)
+    {
+        for (size_t j = 0; j < n; ++j) 
+        {
+            K(i, j) = tps_rbf(arma::norm(m_points[i] - m_points[j]));
+        }
     }
-}
 
+    // Create the P matrix
+    arma::mat P(n, 3, arma::fill::ones);
+    for (size_t i = 0; i < n; ++i) 
+    {
+        P(i, 1) = m_points[i][0] ;
+        P(i, 2) = m_points[i][1] ;
+    }
+
+    // Form the system of equations
+    arma::mat A = arma::join_vert(
+        arma::join_horiz(K, P),
+        arma::join_horiz(P.t(), arma::zeros<arma::mat>(3, 3))
+    );
+
+    arma::vec B = arma::join_vert(arma::vec(m_values), arma::zeros<arma::vec>(3));
+
+    // Solve the system
+    arma::vec params = arma::solve(A, B);
+
+    // Extract the weights and coefficients
+    m_w = params.subvec(0, n - 1);
+    m_c = params.subvec(n, n + 2);
+
+}
 
 }}
 
