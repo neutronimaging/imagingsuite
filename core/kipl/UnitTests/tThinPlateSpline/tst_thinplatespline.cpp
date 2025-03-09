@@ -135,12 +135,10 @@ void TestThinPlateSpline::test_render()
 
 void TestThinPlateSpline::test_render_large()
 {
-
-    
     size_t n = 5;
-    std::vector<float> x(n);
-    std::vector<float> y(n);
-    std::vector<float> w(n);
+    std::vector<float> x(n*n);
+    std::vector<float> y(n*n);
+    std::vector<float> v(n*n);
 
     float fn = static_cast<float>(n);
     for (size_t xx = 0, i=0; xx < n; ++xx)
@@ -148,7 +146,8 @@ void TestThinPlateSpline::test_render_large()
     {   
         x[i] = static_cast<float>(xx)*200.0f+100.0f;
         y[i] = static_cast<float>(yy)*200.0f+100.0f;
-        w[i] = static_cast<float>(std::sin(static_cast<float>(xx)/fn*3.14f)*std::cos(static_cast<float>(yy)/fn*3.14f));
+        v[i] = static_cast<float>(std::sin(static_cast<float>(xx)/fn*3.14f)*std::cos(static_cast<float>(yy)/fn*3.14f));
+        qDebug() << "x: " << x[i] << " y: " << y[i] << " v: " << v[i];
     }
 
     std::vector<size_t> dims = {1000, 1000};
@@ -158,7 +157,7 @@ void TestThinPlateSpline::test_render_large()
     QBENCHMARK
     {
         kipl::math::ThinPlateSpline tps;
-        tps.setPoints(x, y, w);
+        tps.setPoints(x, y, v);
 
         img = tps.render(dims);
     }
@@ -170,8 +169,11 @@ void TestThinPlateSpline::test_render_large()
     QCOMPARE(imgdims[1], dims[1]);
 
 
-    for (size_t i = 0; i < n; ++i)
-        QCOMPARE(img(static_cast<size_t>(x[i]), static_cast<size_t>(y[i])), w[i]);
+    for (size_t i = 0; i < n; ++i) 
+    {
+        qDebug() << "x: " << x[i] << " y: " << y[i] << " v: " << v[i];
+        QCOMPARE(img(static_cast<size_t>(x[i]), static_cast<size_t>(y[i])), v[i]);
+    }
     
     
 

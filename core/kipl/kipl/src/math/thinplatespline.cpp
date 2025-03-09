@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <armadillo>
+#include <iostream>
 
 // Thin Plate Spline Radial Basis Function
 
@@ -155,6 +156,8 @@ void ThinPlateSpline::fit()
 
     // Solve the system
     arma::vec params = arma::solve(A, B);
+
+    // std::cout << "params: " << params << std::endl;
 
     // Extract the weights and coefficients
     m_w = params.subvec(0, n - 1);
