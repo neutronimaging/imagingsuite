@@ -67,7 +67,7 @@ std::string ModuleLibNameManager::generateLibPath(const kipl::base::eOperatingSy
     return libPath;
 }
 
-std::string ModuleLibNameManager::generateLibPath(const bool usePluginPath)
+std::string ModuleLibNameManager::generateLibPath(const bool /*usePluginPath*/)
 {
     return generateLibPath(kipl::base::getOperatingSystem());
 }
