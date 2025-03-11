@@ -1,15 +1,4 @@
-//
-// This file is part of the preprocessing modules recon2 library by Anders Kaestner
-// (c) 2011 Anders Kaestner
-// Distribution is only allowed with the permission of the author.
-//
-// Revision information
-// $Author$
-// $Date$
-// $Rev$
-// $Id$
-//
-
+//<LICENSE>
 
 #ifndef _NORMPLUGINS_H_
 #define _NORMPLUGINS_H_
@@ -28,7 +17,7 @@ class  STDPREPROCMODULESSHARED_EXPORT NormBase :
 {
 public:
 	NormBase(std::string name);
-	virtual ~NormBase(void);
+	~NormBase(void);
 	
     virtual void LoadReferenceImages(const std::vector<size_t> &roi) = 0;
     bool SetROI(const std::vector<size_t> &roi) override;
@@ -90,6 +79,7 @@ public:
     void LoadReferenceImages(const std::vector<size_t> &roi) override;
 
 protected:
+	using NormBase::ProcessCore;
 	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
 	int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) override;
 
@@ -109,6 +99,7 @@ public:
     void LoadReferenceImages(const std::vector<size_t> &roi) override;
 
 protected:
+	using NormBase::ProcessCore;
     int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
     int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) override;
 
@@ -127,7 +118,8 @@ public:
 
 	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
 protected:
-    int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, string> & coeff) override;
+	using NormBase::ProcessCore;
+	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, string> & coeff) override;
 };
 
 class  STDPREPROCMODULESSHARED_EXPORT NegLogProjection : public NormBase
@@ -154,6 +146,7 @@ public:
 	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
 
 protected:
+	using NormBase::ProcessCore;
 	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, string> & coeff) override;
 	int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, string> & coeff) override;
 	float fFactor;
@@ -167,6 +160,7 @@ public:
 	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
 	void LoadReferenceImages(const std::vector<size_t> &roi) override;
 protected:
+	using NormBase::ProcessCore;
 	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
 };
 

@@ -8,12 +8,12 @@
 class SinoSpotClean: public PreprocModuleBase {
 public:
 	SinoSpotClean();
-	virtual ~SinoSpotClean();
-	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-    virtual bool SetROI(const std::vector<size_t> &/*roi*/) {return false;}
-	virtual std::map<std::string, std::string> GetParameters();
+	~SinoSpotClean();
+	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
+    bool SetROI(const std::vector<size_t> &/*roi*/) override {return false;}
+	std::map<std::string, std::string> GetParameters() override;
 
-	virtual std::string Version() {
+	std::string Version() override {
 		ostringstream s;
 		s<<"SinoSpotClean ("<<std::max(kipl::strings::VersionNumber("$Rev: 1314 $"), PreprocModuleBase::SourceVersion())<<"), "<<ProcessModuleBase::Version();
 
@@ -21,8 +21,8 @@ public:
 	}
 
 protected:
-	virtual int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
-	virtual int SourceVersion();
+	int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters) override;
+	int SourceVersion() override;
 
 	int CleanSinogramSpots(kipl::base::TImage<float,2> &img, int length, float th);
 

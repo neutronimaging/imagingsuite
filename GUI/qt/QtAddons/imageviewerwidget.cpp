@@ -536,10 +536,10 @@ void ImageViewerWidget::image_dims(int &x, int &y)
     y=dims[1];
 }
 
-void ImageViewerWidget::set_plot(QVector<QPointF> data, QColor color, int idx)
+void ImageViewerWidget::set_plot(QVector<QPointF> datapoints, QColor color, int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.setPlot(data,color,idx);
+    m_ImagePainter.setPlot(datapoints,color,idx);
 }
 
 void ImageViewerWidget::clear_plot(int idx)

@@ -36,7 +36,7 @@ public:
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
 protected:
-    virtual int exec() { return QDialog::exec(); }
+   // virtual int exec() override { return QDialog::exec(); }
     virtual void UpdateDialog() = 0;
     virtual void UpdateParameters() = 0;
     virtual void ApplyParameters() = 0;

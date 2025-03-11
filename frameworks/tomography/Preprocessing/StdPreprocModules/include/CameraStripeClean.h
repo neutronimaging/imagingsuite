@@ -10,12 +10,16 @@ public:
     CameraStripeClean();
     virtual ~CameraStripeClean();
 
-    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-    virtual std::map<std::string, std::string> GetParameters();
-    virtual bool SetROI(const std::vector<size_t> &roi);
+    using PreprocModuleBase::Configure;
+    int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
+    using PreprocModuleBase::GetParameters;
+    std::map<std::string, std::string> GetParameters() override;
+    using PreprocModuleBase::SetROI;
+    bool SetROI(const std::vector<size_t> &roi) override;
 protected:
-    virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
-    virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
+    using PreprocModuleBase::ProcessCore;
+    int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
+    int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) override;
 
     float m_fThreshold;
 };

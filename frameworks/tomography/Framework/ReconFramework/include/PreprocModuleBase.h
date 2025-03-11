@@ -57,10 +57,10 @@ protected:
 
     /// Hides the Configure method in the base class
     /// \param parameters A list of parameters to configure the module.
-    virtual int Configure(std::map<std::string, std::string> parameters);
+    int Configure(std::map<std::string, std::string> parameters) override;
 
     /// The numerical version number from the repository
-	virtual int SourceVersion();
+	int SourceVersion() override;
 };
 
 
