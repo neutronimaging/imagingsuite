@@ -332,11 +332,9 @@ void FullLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::bas
 	
     float dose=1.0f/(fFlatDose);
 
-	if (dose!=dose)
-		throw ReconException("The reference dose is a NaN",__FILE__,__LINE__);
+	if (dose!=dose) throw ReconException("The reference dose is a NaN",__FILE__,__LINE__);
 
-    if (isinf(dose)==true)
-        throw ReconException("The reference dose is Inf",__FILE__,__LINE__);
+    if (isinf(dose)==true) throw ReconException("The reference dose is Inf",__FILE__,__LINE__);
 
 	const int N=static_cast<int>(flat.Size());
 	float *pFlat=flat.GetDataPtr();

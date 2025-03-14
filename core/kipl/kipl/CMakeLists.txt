@@ -327,6 +327,7 @@ if (WIN32)
         cfitsio::cfitsio
         OpenBLAS::OpenBLAS
         fftw::fftw
+        HDF5::HDF5
         armadillo::armadillo
         dirent::dirent
     )
@@ -343,6 +344,7 @@ if (UNIX)
             TIFF::TIFF
             cfitsio::cfitsio
             OpenBLAS::OpenBLAS
+            HDF5::HDF5
             armadillo::armadillo
             fftw::fftw
         )
@@ -353,6 +355,7 @@ if (UNIX)
                 TIFF::TIFF
                 cfitsio::cfitsio
                 OpenBLAS::OpenBLAS
+                HDF5::HDF5
                 armadillo::armadillo
                 fftw::fftw
             )

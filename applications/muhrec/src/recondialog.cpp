@@ -55,8 +55,8 @@ int ReconDialog::exec(ReconEngine * engine, bool bRerunBackProj)
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(100);
 
-    auto process_thread  = std::thread([=] { process(); });
-    auto progress_thread = std::thread([=] { progress(); });
+    auto process_thread  = std::thread([=,this] { process(); });
+    auto progress_thread = std::thread([=,this] { progress(); });
 
     int res=QDialog::exec();
 

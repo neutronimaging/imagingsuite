@@ -251,7 +251,7 @@ void MultiProjectionBPparallel::BackProjectSTL()
     for (int i = 0; i < nThreads; ++i)
     {   // spawn threads
 
-        threads.push_back(std::thread([=] { BackProjectSTL(begin,end); }));
+        threads.push_back(std::thread([=, this] { BackProjectSTL(begin,end); }));
 
         --blockRest;
         begin  = end;

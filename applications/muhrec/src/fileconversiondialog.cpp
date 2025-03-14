@@ -166,8 +166,8 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     msg<<"The input data has ext="<<ext1<<", and will be saved as ext="<<ext2;
     logger(logger.LogDebug,msg.str());
 
-    auto progress_thread = std::thread([=]{ Progress(); });
-    auto process_thread  = std::thread([=]{ Process(ext1==ext2); });
+    auto progress_thread = std::thread([=,this]{ Progress(); });
+    auto process_thread  = std::thread([=,this]{ Process(ext1==ext2); });
 
     process_thread.join();
     progress_thread.join();

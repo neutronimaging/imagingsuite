@@ -339,7 +339,7 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
         // spawn threads
 
         auto pImg = &img;
-        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,begin,end); }));
+        threads.push_back(std::thread([=,this] { ProcessParallelStdBlock(i,pImg,begin,end); }));
         begin = end;
     }
 
