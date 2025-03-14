@@ -8,6 +8,7 @@
 
 class STDPREPROCMODULESSHARED_EXPORT ISSfilter: public PreprocModuleBase {
 public:
+	using PreprocModuleBase::Configure;
 	ISSfilter();
 	virtual ~ISSfilter();
 
@@ -17,6 +18,7 @@ public:
 	void ErrorCurve(bool bErrorCurve) {m_bErrorCurve=bErrorCurve;}
     float const * ErrorCurve() {return m_fErrorCurve;}
 protected:
+	using PreprocModuleBase::ProcessCore;
 	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
 	int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) override;
 

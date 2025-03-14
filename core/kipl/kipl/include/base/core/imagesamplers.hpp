@@ -12,52 +12,75 @@ namespace kipl { namespace base {
 template <class ImgType, size_t NDim>
 int ReBin(const kipl::base::TImage<ImgType,NDim> &img, 
 		kipl::base::TImage<ImgType,NDim> &result, 
-		size_t const * const nbin) {
+		const std::vector<size_t> &nbins) 
+{
 
     auto imgDim=img.dims();
-	int bins[8]={1,1,1,1,1,1,1,1};
     std::vector<size_t> dims(NDim,1);
 
 	double scale=1.0;
     for (size_t i=0; i<NDim; i++)
     {
-		bins[i]=nbin[i];
-		dims[i]=imgDim[i]/nbin[i];
+		dims[i]=imgDim[i]/nbins[i];
 		if (dims[i]==0)
 			throw kipl::base::KiplException("Binning result in zero-size image");
-		scale*=nbin[i];
+		scale*=nbins[i];
 	}
 	
 	kipl::base::TImage<double,NDim> ws(dims);
 	ws=0.0;
 
-	ImgType *pRes=NULL;
-	double *pWs=NULL;
+	ImgType *pRes = nullptr;
+	double  *pWs  = nullptr;
 
-    for (size_t z=0 ; z<dims[2]; z++)
-    {
-        for (int zi=0; zi<bins[2]; zi++)
-        {
-            for (size_t y=0; y<dims[1]; y++)
-            {
-				pWs=ws.GetLinePtr(y,z);
-                for (int yi=0; yi<bins[1]; yi++)
-                {
-					ImgType const * pImg=img.GetLinePtr(y*bins[1]+yi,z*bins[2]+zi);
-                    for (size_t x=0; x<dims[0]; x++)
-                    {
-						pWs[x]=0.0;
-						size_t bx=x*bins[0];
-                        for (size_t xi=0; xi<static_cast<size_t>(bins[0]); xi++)
-                        {
-							pWs[x]+=pImg[bx++];
+	if (NDim==3)
+	{
+		for (size_t z=0 ; z<dims[2]; z++)
+		{
+			for (size_t zi=0; zi<nbins[2]; zi++)
+			{
+				for (size_t y=0; y<dims[1]; y++)
+				{
+					pWs=ws.GetLinePtr(y,z);
+					for (size_t yi=0; yi<nbins[1]; yi++)
+					{
+						ImgType const * pImg=img.GetLinePtr(y*nbins[1]+yi,z*nbins[2]+zi);
+						for (size_t x=0; x<dims[0]; x++)
+						{
+							pWs[x]=0.0;
+							size_t bx=x*nbins[0];
+							for (size_t xi=0; xi<nbins[0]; xi++)
+							{
+								pWs[x]+=pImg[bx++];
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-	
+	else
+	{
+		for (size_t y=0; y<dims[1]; y++)
+		{
+			pWs=ws.GetLinePtr(y);
+			for (size_t yi=0; yi<nbins[1]; yi++)
+			{
+				ImgType const * pImg=img.GetLinePtr(y*nbins[1]+yi);
+				for (size_t x=0; x<dims[0]; x++)
+				{
+					pWs[x]=0.0;
+					size_t bx=x*nbins[0];
+					for (size_t xi=0; xi<nbins[0]; xi++)
+					{
+						pWs[x]+=pImg[bx++];
+					}
+				}
+			}
+		}
+	}
+
+
     try
     {
         result.resize(dims);

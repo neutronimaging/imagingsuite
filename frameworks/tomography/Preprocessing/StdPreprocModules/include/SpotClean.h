@@ -26,15 +26,18 @@ class SpotClean :
 	public PreprocModuleBase
 {
 public:
+	using PreprocModuleBase::Configure;
 	SpotClean(void);
 	virtual ~SpotClean(void);
 
-	virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-	virtual std::map<std::string, std::string> GetParameters();
+	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
+	std::map<std::string, std::string> GetParameters() override;
 
 	kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img, eSpotDetection method, size_t dims);
 protected:
-	virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &coeff);
+	using PreprocModuleBase::ProcessCore;
+	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> &coeff) override;
+
 private:
 
 	kipl::base::TImage<float,2> FillHoles(kipl::base::TImage<float,2> img);

@@ -246,7 +246,7 @@ void uxROIWidget::setTitle(const QString &lbl)
 
 bool uxROIWidget::setROIColor(const QString color)
 {
-    if (QColor::isValidColor(color)==false)
+    if (QColor::isValidColorName(color)==false)
         return false;
 
     roiColor=color;

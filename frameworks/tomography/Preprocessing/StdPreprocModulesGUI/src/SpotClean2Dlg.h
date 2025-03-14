@@ -26,18 +26,19 @@ class SpotClean2Dlg : public ConfiguratorDialogBase
     Q_OBJECT
 
 public:
+    using ConfiguratorDialogBase::exec;
     explicit SpotClean2Dlg(QWidget *parent = 0);
     ~SpotClean2Dlg();
 
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
+   int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img) override;
 
 private:
     Ui::SpotClean2Dlg *ui;
 
 protected:
-    virtual void ApplyParameters();
-    virtual void UpdateDialog();
-    virtual void UpdateParameters();
+    void ApplyParameters() override;
+    void UpdateDialog() override;
+    void UpdateParameters() override;
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
     ReconConfig *m_Config;

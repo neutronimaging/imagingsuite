@@ -494,7 +494,8 @@ float ImageReader::projectionDose(  std::string filename,
 {
     kipl::base::TImage<float,2> img;
 
-    if (!(nDoseROI[0]*nDoseROI[1]*nDoseROI[2]*nDoseROI[3]))
+    
+    if ((nDoseROI[0]>=nDoseROI[2]) || (nDoseROI[1]>=nDoseROI[3]))
         return 1.0f;
 
     img=Read(filename,flip,rotate,binning,nDoseROI);

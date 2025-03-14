@@ -471,11 +471,11 @@ void ImageViewerWidget::showToolTip(QPoint position, QString message)
 
 }
 
-void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> & dims, bool keep_roi)
+void ImageViewerWidget::set_image(float const * const imgdata, const std::vector<size_t> & dims, bool keep_roi)
 {
     QMutexLocker locker(&m_ImageMutex);
     std::ostringstream msg;
-    m_ImagePainter.setImage(data,dims);
+    m_ImagePainter.setImage(imgdata,dims);
     if (!keep_roi)
     {
         roiRect=QRect();
@@ -506,10 +506,10 @@ QRect ImageViewerWidget::get_marked_roi()
     return roiRect;
 }
 
-void ImageViewerWidget::set_image(float const * const data, const std::vector<size_t> &dims, float low, float high, bool keep_roi)
+void ImageViewerWidget::set_image(float const * const imgdata, const std::vector<size_t> &dims, float low, float high, bool keep_roi)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.setImage(data,dims,low,high);
+    m_ImagePainter.setImage(imgdata,dims,low,high);
 
     m_infoDialog.setHistogram(m_ImagePainter.getImageHistogram());
     if (!keep_roi)
@@ -536,10 +536,10 @@ void ImageViewerWidget::image_dims(int &x, int &y)
     y=dims[1];
 }
 
-void ImageViewerWidget::set_plot(QVector<QPointF> data, QColor color, int idx)
+void ImageViewerWidget::set_plot(QVector<QPointF> datapoints, QColor color, int idx)
 {
     QMutexLocker locker(&m_ImageMutex);
-    m_ImagePainter.setPlot(data,color,idx);
+    m_ImagePainter.setPlot(datapoints,color,idx);
 }
 
 void ImageViewerWidget::clear_plot(int idx)
