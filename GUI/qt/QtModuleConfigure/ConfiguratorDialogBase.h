@@ -29,6 +29,7 @@ class QTMODULECONFIGURESHARED_EXPORT ConfiguratorDialogBase : public QDialog
 protected:
 	kipl::logging::Logger logger;
 public:
+    using QDialog::exec;
     explicit ConfiguratorDialogBase(std::string name, bool emptyDialog, bool hasApply, bool needImages, QWidget *parent=nullptr);
     virtual ~ConfiguratorDialogBase();
     bool NeedImages() {return m_bNeedImages;}

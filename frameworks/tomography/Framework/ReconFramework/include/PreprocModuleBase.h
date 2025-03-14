@@ -20,6 +20,7 @@
 class  RECONFRAMEWORKSHARED_EXPORT PreprocModuleBase : public ProcessModuleBase
 {
 public:
+    using ProcessModuleBase::Version;
     /// Constructor that essentially forwards the parameterto the base.
     /// \param name The name of the module.
     PreprocModuleBase(std::string name="PreprocModuleBase", kipl::interactors::InteractionBase *interactor=nullptr);
@@ -39,7 +40,7 @@ public:
 
     /// The current repository version of the module.
     /// \returns A version string.
-    virtual std::string Version();
+    std::string Version() override;
 
 protected:
     /// Extracts a sinogram from the projection data block.

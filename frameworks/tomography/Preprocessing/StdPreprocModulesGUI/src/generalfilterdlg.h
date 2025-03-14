@@ -23,9 +23,13 @@ public:
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img) override;
 
 private:
-    virtual void ApplyParameters();
-    virtual void UpdateDialog();
-    virtual void UpdateParameters();
+    using ConfiguratorDialogBase::ApplyParameters;
+    using ConfiguratorDialogBase::UpdateDialog;
+    using ConfiguratorDialogBase::UpdateParameters;
+    
+    void ApplyParameters() override;
+    void UpdateDialog() override;
+    void UpdateParameters() override;
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
     Ui::GeneralFilterDlg *ui;

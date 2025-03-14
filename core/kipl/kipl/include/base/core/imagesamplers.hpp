@@ -37,7 +37,7 @@ int ReBin(const kipl::base::TImage<ImgType,NDim> &img,
 	{
 		for (size_t z=0 ; z<dims[2]; z++)
 		{
-			for (int zi=0; zi<nbins[2]; zi++)
+			for (size_t zi=0; zi<nbins[2]; zi++)
 			{
 				for (size_t y=0; y<dims[1]; y++)
 				{

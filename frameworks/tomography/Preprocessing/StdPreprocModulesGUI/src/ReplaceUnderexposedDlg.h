@@ -20,7 +20,7 @@ public:
     explicit ReplaceUnderexposedDlg(QWidget *parent = nullptr);
     ~ReplaceUnderexposedDlg();
 
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img) override;
+    int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img) override;
     void SetDoseList(std::vector<float> &dose);
 private slots:
     void on_doubleSpinBox_threshold_valueChanged(double arg1);
@@ -28,9 +28,9 @@ private slots:
     void on_doubleSpinBox_threshold_editingFinished();
 
 private:
-    virtual void ApplyParameters();
-    virtual void UpdateDialog();
-    virtual void UpdateParameters();
+    void ApplyParameters() override;
+    void UpdateDialog() override;
+    void UpdateParameters() override;
     void UpdateParameterList(std::map<std::string, std::string> &parameters);
     void LoadDoseList(ReconConfig &config);
 

@@ -24,11 +24,13 @@ class STDPREPROCMODULESSHARED_EXPORT ProjectionFilterSingle :
 {
 public:
     using PreprocModuleBase::Configure;
+    using PreprocModuleBase::GetParameters;
+
     ProjectionFilterSingle(kipl::interactors::InteractionBase *interactor);
 	virtual ~ProjectionFilterSingle(void);
 
     int Configure(ReconConfig config, std::map<std::string,std::string> parameters) override;
-    std::map<std::string, std::string> GetParameters();
+    std::map<std::string, std::string> GetParameters() override;
     const vector<float> & filterWeights() {return mFilter.filterWeights();}
 
 private:
