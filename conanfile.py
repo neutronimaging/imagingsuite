@@ -86,6 +86,7 @@ class MuhrecRecipe(ConanFile):
             dst,
             dirs_exist_ok=True,
             )
+        copy(self, "viewer_icon.svg", os.path.join(self.source_folder, "applications", "imageviewer","resources"), dst)
 
     def build(self):
         cmake = CMake(self)
