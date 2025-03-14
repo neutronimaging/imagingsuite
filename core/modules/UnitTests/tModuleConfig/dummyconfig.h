@@ -7,7 +7,9 @@ class DummyConfig : public ConfigBase
 {
 public:
     using ConfigBase::operator=;
+    DummyConfig(const DummyConfig &other) : ConfigBase(other) {ProjectionInfo = other.ProjectionInfo;}
     DummyConfig(std::string name="DummyConfig", std::string path="");
+    DummyConfig& operator=(const DummyConfig& other); 
 
     std::string WriteXML() override {return "";}  ///< Virtual method to used to stream an XML formatted string
 
@@ -18,6 +20,8 @@ public:
     std::string SanityMessage(bool /*mess*/) override {return "";}
 
     void ParseProcessChain(xmlTextReaderPtr /*reader*/) override {}
+
+
 
     class cProjectionInfo {
         public:
