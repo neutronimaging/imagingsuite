@@ -16,6 +16,9 @@ class  STDPREPROCMODULESSHARED_EXPORT NormBase :
 	public PreprocModuleBase
 {
 public:
+	using PreprocModuleBase::Configure;
+	using PreprocModuleBase::ProcessCore;
+
 	NormBase(std::string name);
 	~NormBase(void);
 	
@@ -71,6 +74,8 @@ protected:
 class  STDPREPROCMODULESSHARED_EXPORT FullLogNorm : public NormBase
 {
 public:
+	using NormBase::Configure;
+
 	FullLogNorm();
 	virtual ~FullLogNorm();
 
@@ -91,6 +96,8 @@ private:
 class  STDPREPROCMODULESSHARED_EXPORT FullNorm : public NormBase
 {
 public:
+	using NormBase::Configure;
+
     FullNorm();
     virtual ~FullNorm();
 
@@ -110,6 +117,7 @@ private:
 class NegLogNorm : public NormBase
 {
 public:
+	using NormBase::Configure;
 	NegLogNorm();
 	virtual ~NegLogNorm();
 
@@ -125,20 +133,21 @@ protected:
 class  STDPREPROCMODULESSHARED_EXPORT NegLogProjection : public NormBase
 {
 public:
+	using NormBase::Configure;
 	NegLogProjection();
 	virtual ~NegLogProjection();
     void LoadReferenceImages(const std::vector<size_t> &roi) override;
 
 	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
 protected:
+	using NormBase::ProcessCore;
 	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
-private:
-	// float mDose;
 };
 
 class  STDPREPROCMODULESSHARED_EXPORT LogProjection : public NormBase
 {
 public:
+	using NormBase::Configure;
 	LogProjection();
 	virtual ~LogProjection();
     void LoadReferenceImages(const std::vector<size_t> &roi) override;
@@ -155,10 +164,12 @@ protected:
 class  STDPREPROCMODULESSHARED_EXPORT InvProjection : public NormBase
 {
 public:
+	using NormBase::Configure;
 	InvProjection();
 	virtual ~InvProjection();
 	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
 	void LoadReferenceImages(const std::vector<size_t> &roi) override;
+
 protected:
 	using NormBase::ProcessCore;
 	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
@@ -167,6 +178,7 @@ protected:
 class  STDPREPROCMODULESSHARED_EXPORT DoseWeightProjection : public NormBase
 {
 public:
+	using NormBase::Configure;
 	DoseWeightProjection();
 	virtual ~DoseWeightProjection();
 	void LoadReferenceImages(const std::vector<size_t> &roi) override;
@@ -174,7 +186,9 @@ public:
 
 	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
 	int Initialize() override {return 0;}
+
 protected:
+	using NormBase::ProcessCore;
 	int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
 };
 

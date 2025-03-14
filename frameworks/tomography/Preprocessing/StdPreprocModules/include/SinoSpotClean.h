@@ -7,6 +7,7 @@
 
 class SinoSpotClean: public PreprocModuleBase {
 public:
+	using PreprocModuleBase::Configure;
 	SinoSpotClean();
 	~SinoSpotClean();
 	int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
@@ -21,6 +22,7 @@ public:
 	}
 
 protected:
+	using PreprocModuleBase::ProcessCore;
 	int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters) override;
 	int SourceVersion() override;
 

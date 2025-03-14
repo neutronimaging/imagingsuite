@@ -450,7 +450,7 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float, 2> &img)
     for (size_t i=0; i<padded.Size(); ++i)
     {
         float val=pImg[i];
-        bool res;
+        bool res=false;
         switch (m_eMorphDetect)
         {
         case MorphDetectDarkSpots :

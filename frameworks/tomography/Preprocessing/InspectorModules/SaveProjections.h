@@ -13,14 +13,16 @@
 class INSPECTORMODULESSHARED_EXPORT SaveProjections : public PreprocModuleBase
 {
 public:
-    SaveProjections(kipl::interactors::InteractionBase *interactor=nullptr);
-	virtual ~SaveProjections();
+	using PreprocModuleBase::Configure;
 
-	virtual std::map<std::basic_string<char>, std::basic_string<char> > GetParameters();
-	virtual int Configure(ReconConfig config, std::map<std::basic_string<char>, std::basic_string<char> > parameters);
+    SaveProjections(kipl::interactors::InteractionBase *interactor=nullptr);
+	~SaveProjections();
+
+	std::map<std::basic_string<char>, std::basic_string<char> > GetParameters() override;
+	int Configure(ReconConfig config, std::map<std::basic_string<char>, std::basic_string<char> > parameters) override;
 protected:
-	
-	virtual int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
+	using PreprocModuleBase::ProcessCore;
+	int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters) override;
 
 	ReconConfig m_config;
     std::string m_sPath;

@@ -108,8 +108,8 @@ void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
     }
     kipl::io::WriteTIFF(orig,"csa_test_orig.tif",kipl::base::Float32);
 
-    kipl::math::Statistics stats[6];
-    kipl::base::coords3Df centers[6];
+    // std::vector<kipl::math::Statistics> stats(6);
+    // std::vector<kipl::base::coords3Df> centers(6);
 
     csa.saveIntermediateImages=true;
 

@@ -6,17 +6,18 @@
 class DummyConfig : public ConfigBase
 {
 public:
+    using ConfigBase::operator=;
     DummyConfig(std::string name="DummyConfig", std::string path="");
 
-    virtual std::string WriteXML() {return "";}  ///< Virtual method to used to stream an XML formatted string
+    std::string WriteXML() override {return "";}  ///< Virtual method to used to stream an XML formatted string
 
-    virtual std::string SanitySlicesCheck() {return "";}
+    std::string SanitySlicesCheck() override {return "";}
 
-    virtual void ParseConfig(xmlTextReaderPtr /*reader*/, std::string /*sName*/) {}
+    void ParseConfig(xmlTextReaderPtr /*reader*/, std::string /*sName*/) override {}
 
-    virtual std::string SanityMessage(bool /*mess*/) {return "";}
+    std::string SanityMessage(bool /*mess*/) override {return "";}
 
-    virtual void ParseProcessChain(xmlTextReaderPtr /*reader*/) {}
+    void ParseProcessChain(xmlTextReaderPtr /*reader*/) override {}
 
     class cProjectionInfo {
         public:

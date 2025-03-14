@@ -285,7 +285,7 @@ Read(std::string filename,
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
 
-    size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
+    vector<size_t> bins={static_cast<size_t>(binning), static_cast<size_t>(binning)};
 	kipl::base::TImage<float,2> binned;
 	msg.str("");
 	msg<<"Failed to resample or rotate the projection with a ";
@@ -419,7 +419,7 @@ kipl::base::TImage<float,2> ProjectionReader::GetNexusSlice(kipl::base::TImage<f
         cropped = img;
     }
 
-    size_t bins[2]={static_cast<size_t>(binning), static_cast<size_t>(binning)};
+    std::vector<size_t> bins={static_cast<size_t>(binning), static_cast<size_t>(binning)};
 
     msg.str("");
     msg<<"Failed to resample or rotate the projection with a ";
@@ -803,10 +803,19 @@ float ProjectionReader::GetProjectionDose(std::string filename,
 {
 	kipl::base::TImage<float,2> img;
 
-	if (!(nDoseROI[0]*nDoseROI[1]*nDoseROI[2]*nDoseROI[3]))
-		return 1.0f;
+	// if (!(nDoseROI[0] &&nDoseROI[1]*nDoseROI[2]*nDoseROI[3]))
+    auto [min0, max0] = std::minmax(nDoseROI[0], nDoseROI[2]);
+    auto [min1, max1] = std::minmax(nDoseROI[1], nDoseROI[3]);
 
-	img=Read(filename,flip,rotate,binning,nDoseROI);
+    std::vector<size_t> doseROI = {min0,max1,max0,max1}; 
+    
+    if (doseROI[0]==doseROI[2] || doseROI[1]==doseROI[3])
+    {
+        logger.warning("Dose ROI is empty, returning 1.0");
+		return 1.0f;
+    }
+
+	img=Read(filename,flip,rotate,binning,doseROI);
 
 	float *pImg=img.GetDataPtr();
 
@@ -839,10 +848,18 @@ float ProjectionReader::GetProjectionDoseNexus(const std::string & filename, siz
 
     kipl::base::TImage<float,2> img;
 
-    if (!(nDoseROI[0]*nDoseROI[1]*nDoseROI[2]*nDoseROI[3]))
-        return 1.0f;
+    auto [min0, max0] = std::minmax(nDoseROI[0], nDoseROI[2]);
+    auto [min1, max1] = std::minmax(nDoseROI[1], nDoseROI[3]);
 
-    img=ReadNexus(filename,number,flip,rotate,binning,nDoseROI);
+    std::vector<size_t> doseROI = {min0,max1,max0,max1}; 
+    
+    if (doseROI[0]==doseROI[2] || doseROI[1]==doseROI[3])
+    {
+        logger.warning("Dose ROI is empty, returning 1.0");
+        return 1.0f;
+    }
+
+    img=ReadNexus(filename,number,flip,rotate,binning,doseROI);
 
     float *pImg=img.GetDataPtr();
 
@@ -874,10 +891,19 @@ std::vector<float> ProjectionReader::GetProjectionDoseListNexus(const std::strin
 
     kipl::base::TImage<float,3> img;
 
-    if (!(nDoseROI[0]*nDoseROI[1]*nDoseROI[2]*nDoseROI[3]))
-        return {};
+    auto [min0, max0] = std::minmax(nDoseROI[0], nDoseROI[2]);
+    auto [min1, max1] = std::minmax(nDoseROI[1], nDoseROI[3]);
 
-    img=ReadNexusStack(filename,start,end,flip,rotate,binning,nDoseROI);
+    std::vector<size_t> doseROI = {min0,max1,max0,max1}; 
+    
+    if (doseROI[0]==doseROI[2] || doseROI[1]==doseROI[3])
+    {
+        logger.warning("Dose ROI is empty, returning 1.0");
+        return {};
+    }
+        
+
+    img=ReadNexusStack(filename,start,end,flip,rotate,binning,doseROI);
 
     float *pImg=img.GetDataPtr();
 
@@ -1171,8 +1197,7 @@ kipl::base::TImage<float,3> ProjectionReader::Read( ReconConfig config, const st
 
 bool ProjectionReader::UpdateStatus(float val, std::string msg)
 {
-    if (m_Interactor!=nullptr)
-        return m_Interactor->SetProgress(val, msg);
+    if (m_Interactor!=nullptr) return m_Interactor->SetProgress(val, msg);
 
 	return false;
 }
