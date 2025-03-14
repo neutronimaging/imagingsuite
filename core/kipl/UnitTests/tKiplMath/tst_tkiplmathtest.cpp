@@ -674,9 +674,9 @@ void TKiplMathTest::TestGradient()
     float exp_gradient_f[12] = {-7.25634766, -7.02416992, -6.57446289, 51.55053711, 74.95629883, 24.43969727,
                                4.27734375, -0.77632507, -2.36423198, -2.62792969, -2.59985352, -2.57324219};
 
-    float *comp_gradient_f = new float[12];
+    std::vector<float> comp_gradient_f(12);
 
-    kipl::math::num_gradient(data_f, x_f, 12, comp_gradient_f);
+    kipl::math::num_gradient(data_f, x_f, 12, comp_gradient_f.data());
 
     for (int i=0; i<12; ++i)
     {
@@ -684,8 +684,6 @@ void TKiplMathTest::TestGradient()
         QVERIFY(fabs(comp_gradient_f[i]-exp_gradient_f[i])<1e-3);
 //        QCOMPARE(comp_gradient[i], exp_gradient[i]); // does not like negative?
     }
-
-    delete [] comp_gradient;
 
 }
 

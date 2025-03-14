@@ -8,3 +8,12 @@ DummyConfig::DummyConfig(std::string name, std::string path) :
 {
 
 }
+
+DummyConfig& DummyConfig::operator=(const DummyConfig& other)
+{
+    if (this != &other) {
+        ConfigBase::operator=(other);
+        ProjectionInfo = other.ProjectionInfo;
+    }
+    return *this;
+}

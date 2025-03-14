@@ -338,7 +338,7 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
             std::vector<short> buffer(nChunkSize*2,0);
 
             size_t nChunks = nBlockLen/nChunkSize;
-            size_t nRem    = nBlockLen % nChunkSize;
+            size_t nRem2    = nBlockLen % nChunkSize;
             size_t begin = 0UL;
 
             for (size_t i=0; i<nChunks; ++i)
@@ -346,15 +346,15 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
                 size_t cnt = 0UL;
                 size_t nChunk = nChunkSize;
                 if (i==0)
-                    nChunk += nRem;
+                    nChunk += nRem2; // Todo: Not the most efficient way to handle the remainder
 
                 if (avoidZeros)
                 {
-                    for (auto j=begin; j<begin+nChunk; ++j)
+                    for (auto jj=begin; jj<begin+nChunk; ++jj)
                     {
-                        if ( (pBlock[j]!=0.0f) && std::isfinite(pBlock[j]))
+                        if ( (pBlock[jj]!=0.0f) && std::isfinite(pBlock[jj]))
                         {
-                            index=static_cast<short>((pBlock[j]-start)*scale);
+                            index=static_cast<short>((pBlock[jj]-start)*scale);
                             if ((index<inBins) && (0<=index))
                                 buffer[cnt++]=index;
                         }
@@ -362,18 +362,18 @@ int KIPLSHARED_EXPORT HistogramOpt(float const * const data,
                 }
                 else
                 {
-                    for (auto j=begin; j<begin+nChunk; ++j) 
+                    for (auto jj=begin; jj<begin+nChunk; ++jj) 
                     {
-                        index=static_cast<int>((pBlock[j]-start)*scale);
-                        if ((index<inBins) && (0<=index) && std::isfinite(pBlock[j]))
+                        index=static_cast<int>((pBlock[jj]-start)*scale);
+                        if ((index<inBins) && (0<=index) && std::isfinite(pBlock[jj]))
                             buffer[cnt++]=index;
                     }
                 }
 
                 std::sort(buffer.begin(), buffer.begin()+cnt);
 
-                for (size_t j=0; j<cnt; ++j)
-                    temp_hist[buffer[j]]++;
+                for (size_t jj=0; jj<cnt; ++jj)
+                    temp_hist[buffer[jj]]++;
 
                 begin += nChunk;
             }            

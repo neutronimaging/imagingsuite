@@ -420,8 +420,8 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     try {
         maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
     }
-    catch (ImagingException &e) {
-        logger(kipl::logging::Logger::LogError,e.what());
+    catch (const ImagingException &ex) {
+        logger(kipl::logging::Logger::LogError,ex.what());
         std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("kipl::morphology::FillPeaks failed", __FILE__, __LINE__);
     }
@@ -439,19 +439,19 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
          msg << "number of objects: " << num_obj;
          logger(kipl::logging::Logger::LogDebug, msg.str());
      }
-     catch (ImagingException &e) {
-         logger(kipl::logging::Logger::LogError,e.what());
+     catch (const ImagingException &ex) {
+         logger(kipl::logging::Logger::LogError,ex.what());
          std::cerr<<"Error in the SegmentBlackBody function\n";
          throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
-     catch(kipl::base::KiplException &e){
-         logger(kipl::logging::Logger::LogError,e.what());
+     catch(const kipl::base::KiplException &ex){
+         logger(kipl::logging::Logger::LogError,ex.what());
          std::cerr<<"Error in the SegmentBlackBody function\n";
          throw kipl::base::KiplException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
-     catch (std::exception &e)
+     catch (const std::exception &ex)
      {
-         logger(kipl::logging::Logger::LogError,e.what());
+         logger(kipl::logging::Logger::LogError,ex.what());
          throw ImagingException("kipl::morphology::LabelImage failed", __FILE__, __LINE__);
      }
 
@@ -1855,8 +1855,8 @@ float * ReferenceImageCorrection::PrepareBlackBodyImage(kipl::base::TImage<float
     try{
         SegmentBlackBody(norm, mask);
     }
-    catch (kipl::base::KiplException &e) {
-        logger(kipl::logging::Logger::LogError,e.what());
+    catch (const kipl::base::KiplException &ex) {
+        logger(kipl::logging::Logger::LogError,ex.what());
         std::cerr<<"Error in the SegmentBlackBody function\n";
         throw ImagingException("SegmentBlackBodyNorm failed", __FILE__, __LINE__);
     }
@@ -2093,8 +2093,8 @@ float* ReferenceImageCorrection::InterpolateSplineGeneric(float *param, int nBBs
     float *big_a;
     float *bb_angles = new float[m_nBBimages];
     float step;
-    int index_1;
-    int index_2;
+    int index_1=0;
+    int index_2=0;
 
     if(angles[0]<angles[2]) {
         bb_angles = new float[m_nBBimages+1];

@@ -70,7 +70,7 @@ bool GNUPlot::plot(float w)
 	return true;
 }
 
-bool GNUPlot::plot(float const * const data, size_t const N, string label)
+bool GNUPlot::plot(float const * data, size_t const N, string label)
 {
 	if (figures.empty())
 		figure(0);
@@ -79,7 +79,7 @@ bool GNUPlot::plot(float const * const data, size_t const N, string label)
 	ofstream outfile;
 	string plotname=OpenBinaryPlotFile(outfile);
 
-	outfile.write(reinterpret_cast<char const * const>(data),N*sizeof(float));
+	outfile.write(reinterpret_cast<char const *>(data),N*sizeof(float));
 	outfile.close();
 	
 	cmd<<"plot '"<<plotname<<"' binary array="<<N;
@@ -91,7 +91,7 @@ bool GNUPlot::plot(float const * const data, size_t const N, string label)
 	return true;
 }
 
-bool GNUPlot::plot(double const * const data, size_t const N, string label)
+bool GNUPlot::plot(double const * data, size_t const N, string label)
 {
 	if (figures.empty())
 		figure(0);
@@ -100,7 +100,7 @@ bool GNUPlot::plot(double const * const data, size_t const N, string label)
 	ofstream outfile;
 	string plotname=OpenBinaryPlotFile(outfile);
 
-	outfile.write(reinterpret_cast<char const * const>(data),N*sizeof(double));
+	outfile.write(reinterpret_cast<char const *>(data),N*sizeof(double));
 	outfile.close();
 	
 	cmd<<"plot '"<<plotname<<"' binary array="<<N<<" format=\"%%double\"";
@@ -112,7 +112,7 @@ bool GNUPlot::plot(double const * const data, size_t const N, string label)
 	return true;
 }
 
-bool GNUPlot::plot(float const * const axis, float const * const data, size_t const N, std::string label)
+bool GNUPlot::plot(float const * axis, float const * data, size_t const N, std::string label)
 {
 	if (figures.empty())
 		figure(0);
@@ -121,8 +121,8 @@ bool GNUPlot::plot(float const * const axis, float const * const data, size_t co
 	ofstream outfile;
 	string plotname=OpenBinaryPlotFile(outfile);
 
-	outfile.write(reinterpret_cast<char const * const>(axis),N*sizeof(float));
-	outfile.write(reinterpret_cast<char const * const>(data),N*sizeof(float));
+	outfile.write(reinterpret_cast<char const *>(axis),N*sizeof(float));
+	outfile.write(reinterpret_cast<char const *>(data),N*sizeof(float));
 	
 	outfile.close();
 	
@@ -140,7 +140,7 @@ bool GNUPlot::image(const kipl::base::TImage<float,2> img)
     return image(img.GetDataPtr(), img.dims());
 }
 
-bool GNUPlot::image(float const * const data, const std::vector<size_t> & dims)
+bool GNUPlot::image(float const * data, const std::vector<size_t> & dims)
 {
 	ostringstream cmd;
 	
@@ -150,7 +150,7 @@ bool GNUPlot::image(float const * const data, const std::vector<size_t> & dims)
 	ofstream outfile;
 	string plotname=OpenBinaryPlotFile(outfile);
 	
-	outfile.write(reinterpret_cast<char const * const>(data),dims[0]*dims[1]*sizeof(float));
+	outfile.write(reinterpret_cast<char const *>(data),dims[0]*dims[1]*sizeof(float));
 	outfile.close();
 	
 	cmd<<"set xrange [-0.5:"<<dims[0]-0.5<<"]; set yrange [-0.5:"<<dims[1]-0.5<<"]; plot '"<<plotname<<"' binary array="<<dims[0]<<"x"<<dims[1]<<" with image";
@@ -162,7 +162,7 @@ bool GNUPlot::image(float const * const data, const std::vector<size_t> & dims)
 bool GNUPlot::image(const kipl::base::TImage<short,2> img)
 {
 	float *pData=new float[img.Size()];
-	short const * const pImg=img.GetDataPtr();
+	short const * pImg=img.GetDataPtr();
 	
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=pImg[i];
@@ -177,7 +177,7 @@ bool GNUPlot::image(const kipl::base::TImage<short,2> img)
 bool GNUPlot::image(const kipl::base::TImage<int,2> img)
 {
 	float *pData=new float[img.Size()];
-	int const * const pImg=img.GetDataPtr();
+	int const * pImg=img.GetDataPtr();
 	
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=static_cast<float>(pImg[i]);
@@ -192,7 +192,7 @@ bool GNUPlot::image(const kipl::base::TImage<int,2> img)
 bool GNUPlot::image(const kipl::base::TImage<unsigned char,2> img) 
 {
 	float *pData=new float[img.Size()];
-	unsigned char const * const pImg=img.GetDataPtr();
+	unsigned char const * pImg=img.GetDataPtr();
 	
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=static_cast<float>(pImg[i]);
@@ -207,7 +207,7 @@ bool GNUPlot::image(const kipl::base::TImage<unsigned char,2> img)
 bool GNUPlot::image(const kipl::base::TImage<char,2> img)
 {
 	float *pData=new float[img.Size()];
-	char const * const pImg=img.GetDataPtr();
+	char const * pImg=img.GetDataPtr();
 	
 	for (size_t i=0; i<img.Size(); i++)
 		pData[i]=static_cast<float>(pImg[i]);
@@ -359,7 +359,7 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //	return true;
 //}
 //
-//bool GNUPlot::plot(float const * const data, size_t const N, string label)
+//bool GNUPlot::plot(float const * data, size_t const N, string label)
 //{
 //	if (figures.empty())
 //		figure(0);
@@ -368,7 +368,7 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //	ofstream outfile;
 //	string plotname=OpenBinaryPlotFile(outfile);
 //
-//	outfile.write(reinterpret_cast<char const * const>(data),N*sizeof(float));
+//	outfile.write(reinterpret_cast<char const *>(data),N*sizeof(float));
 //	outfile.close();
 //	
 //	cmd<<"plot '"<<plotname<<"' binary array="<<N;
@@ -380,7 +380,7 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //	return true;
 //}
 //
-//bool GNUPlot::plot(float const * const axis, float const * const data, size_t const N, std::string label)
+//bool GNUPlot::plot(float const * axis, float const * data, size_t const N, std::string label)
 //{
 //	if (figures.empty())
 //		figure(0);
@@ -389,8 +389,8 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //	ofstream outfile;
 //	string plotname=OpenBinaryPlotFile(outfile);
 //
-//	outfile.write(reinterpret_cast<char const * const>(axis),N*sizeof(float));
-//	outfile.write(reinterpret_cast<char const * const>(data),N*sizeof(float));
+//	outfile.write(reinterpret_cast<char const *>(axis),N*sizeof(float));
+//	outfile.write(reinterpret_cast<char const *>(data),N*sizeof(float));
 //	
 //	outfile.close();
 //	
@@ -408,7 +408,7 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //	return image(img.GetDataPtr(), img.Dims());
 //}
 //
-//bool GNUPlot::image(float const * const data, size_t const * const dims)
+//bool GNUPlot::image(float const * data, size_t const * dims)
 //{
 //	ostringstream cmd;
 //	
@@ -419,7 +419,7 @@ std::ostream & operator<<(std::ostream &s, GNUPlot::ColorMaps map)
 //	string plotname=OpenBinaryPlotFile(outfile);
 //
 //	
-//	outfile.write(reinterpret_cast<char const * const>(data),dims[0]*dims[1]*sizeof(float));
+//	outfile.write(reinterpret_cast<char const *>(data),dims[0]*dims[1]*sizeof(float));
 //	
 //	outfile.close();
 //	

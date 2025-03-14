@@ -451,8 +451,7 @@ void ReconConfig::ParseMatrix(xmlTextReaderPtr reader)
 	        
 	        sName=reinterpret_cast<const char *>(name);	                
 	        
-	        if (sName=="dims") 
-	        	kipl::strings::String2Array(sValue,MatrixInfo.nDims,3);
+	        if (sName=="dims")              kipl::strings::String2Array(sValue,MatrixInfo.nDims,3);
 			if (sName=="serialize") 		MatrixInfo.bAutomaticSerialize = kipl::strings::string2bool(sValue);
 	        if (sName=="path") 				MatrixInfo.sDestinationPath    = sValue;
 	        if (sName=="matrixname") 	  	MatrixInfo.sFileMask           = sValue;

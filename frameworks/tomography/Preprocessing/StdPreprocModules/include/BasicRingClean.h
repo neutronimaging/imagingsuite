@@ -13,6 +13,7 @@
 
 class STDPREPROCMODULESSHARED_EXPORT BasicRingClean: public PreprocModuleBase {
 public:
+	using PreprocModuleBase::Configure;
 	BasicRingClean();
 	virtual ~BasicRingClean();
 	
@@ -20,6 +21,7 @@ public:
 	std::map<std::string, std::string> GetParameters() override;
 	bool SetROI(const std::vector<size_t> & roi) override;
 protected:
+	using PreprocModuleBase::ProcessCore;
 	int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) override;
 
 
