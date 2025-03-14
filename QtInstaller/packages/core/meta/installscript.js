@@ -28,7 +28,7 @@
 
 var Dir = new function () {
     this.toNativeSparator = function (path) {
-        if (systemInfo.productType === "windows")
+        if (systemInfo.kernelType === "winnt")
             return path.replace(/\//g, '\\');
         return path;
     }
@@ -48,13 +48,26 @@ Component.prototype.loaded = function () {
             page.entered.connect(Component.prototype.dynamicCustromIntroductionPageEntered);
         }
     }
-
-    if (systemInfo.productType === "windows") {
+    console.log("component loaded");
+    if (systemInfo.kernelType === "winnt") {
+        console.log("System is windows")
         if (installer.addWizardPage(component, "ShortcutWidget", QInstaller.StartMenuSelection)) {
             var widget = gui.pageWidgetByObjectName("DynamicShortcutWidget");
             if (widget != null) {
                 widget.createDesktopShortcut.checked = true;
                 widget.createStartMenuShortcut.checked = true;
+
+                widget.windowTitle = "Create shortcuts";
+            }
+        }
+    } else if (systemInfo.kernelType == "linux") {
+        console.log("System is linux");
+        if (installer.addWizardPage(component, "SymlinkWidget", QInstaller.StartMenuSelection)) {
+            var widget = gui.pageWidgetByObjectName("DynamicSymlinkWidget");
+            if (widget != null) {
+                widget.createDesktopShortcut.checked = true;
+                widget.createUserLink.checked = true;
+                widget.createSystemLink.checked = false;
 
                 widget.windowTitle = "Create shortcuts";
             }
@@ -80,7 +93,7 @@ Component.prototype.createOperations = function()
         console.log(e);
     }
 	
-    if (systemInfo.productType === "windows") {
+    if (systemInfo.kernelType === "winnt") {
         var shortcutpage = component.userInterface("ShortcutWidget");
         if (shortcutpage && shortcutpage.createDesktopShortcut.checked) {
             component.addElevatedOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@DesktopDir@/MuhRec.lnk");
@@ -89,5 +102,36 @@ Component.prototype.createOperations = function()
             component.addElevatedOperation("CreateShortcut", "@TargetDir@/MuhRec.exe", "@UserStartMenuProgramsPath@/@StartMenuDir@/MuhRec.lnk",
                 "workingDirectory=@TargetDir@");
         }   
+    } else if (systemInfo.kernelType === "linux") {
+        var shortcutpage = component.userInterface("SymlinkWidget");
+        if (shortcutpage && shortcutpage.createDesktopShortcut.checked) {
+            component.addOperation("CreateDesktopEntry", "@HomeDir@/.local/share/applications/MuhRec.desktop", 
+                "Type=Application\n"+
+                 "Name=MuhRec\n"+
+                 "Comment=Neutron Tomography Software\n"+
+                 "Exec=@TargetDir@/bin/MuhRec\n"+
+                 "Icon=@TargetDir@/resources/muh4_icon.svg\n"+
+                 "Categories=Science"
+                     );
+            component.addOperation("CreateDesktopEntry", "@HomeDir@/.local/share/applications/ImageViewer.desktop", 
+                "Type=Application\n"+
+                 "Name=ImageViewer\n"+
+                 "Comment=Neutron Tomography Image Viewer\n"+
+                 "Exec=@TargetDir@/bin/ImageViewer\n"+
+                 "Icon=@TargetDir@/resources/viewer_icon.svg\n"+
+                 "Categories=Science"
+                     );
+
+        }
+        if (shortcutpage && shortcutpage.createUserLink.checked) {
+            console.log("Creating Symlinks in @HomeDir@/.local/bin");
+            component.addOperation("CreateLink", "@HomeDir@/.local/bin/muhrec", "@TargetDir@/bin/MuhRec");
+            component.addOperation("CreateLink", "@HomeDir@/.local/bin/imageviewer", "@TargetDir@/bin/ImageViewer");
+        }
+        if (shortcutpage && shortcutpage.createSystemLink.checked) {
+            console.log("Creating Symlinks in @RootDir@usr/local/bin");
+            component.addElevatedOperation("CreateLink", "@RootDir@usr/local/bin/muhrec", "@TargetDir@/bin/MuhRec");
+            component.addElevatedOperation("CreateLink", "@RootDir@usr/local/bin/imageviewer", "@TargetDir@/bin/ImageViewer");
+        }
     }
 }
