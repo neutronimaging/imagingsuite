@@ -88,6 +88,7 @@ set(INC_FILES
     include/morphology/core/morphdist.hpp
     include/morphology/core/DanielssonDistance.hpp
     include/morphology/base3dskeleton.h
+    include/math/thinplatespline.h
     include/math/sums.h
     include/math/statistics.h
     include/math/numfunc.h
@@ -279,6 +280,7 @@ set(SRC_FILES
     src/morphology/label.cpp
     src/utilities/TimeDate.cpp
     src/pca/pca.cpp
+    src/math/thinplatespline.cpp
     src/math/covariance.cpp
     src/morphology/skeleton.cpp
     src/io/DirAnalyzer.cpp
