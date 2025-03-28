@@ -144,6 +144,7 @@ void ScatteringCorrection::calibrate()
     }
     else if (m_refs.count("ob"))
     {
+        logger.warning("Dark current image missing, using zero image for calibration");
         dc.resize(m_refs["ob"].dims());
         dc=0.0f;
     }
@@ -187,6 +188,11 @@ void ScatteringCorrection::calibrate()
         if (m_refs.count("mask")) 
         {
              std::copy_n(m_refs["mask"].GetDataPtr(),mask.Size(),mask.GetDataPtr());
+        }
+        else 
+        {
+            logger.error("User mask image missing, calibration failed");
+            throw ImagingException("User mask image missing, calibration failed",__FILE__,__LINE__);
         }
     }
 

@@ -73,6 +73,8 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ScatteringCorrection
         kipl::base::TImage<float,2> mask;
 
         SegmentBB m_SegmentBB;
+        ScatterEstimator m_ScatterEstimator;
+        ImageNormalization m_ImageNormalization;
 
 };
 
