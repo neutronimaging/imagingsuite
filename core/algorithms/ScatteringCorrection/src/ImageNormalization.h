@@ -17,7 +17,7 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ImageNormalization
 
     public:
         /// @brief Enum to select the normalization method
-        enum eNormalizationMethod 
+        enum class eNormalizationMethod 
         {
             basicNormalization,
             scatterNormalization,
@@ -62,7 +62,7 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ImageNormalization
         /// @return The normalized image
         kipl::base::TImage<float,2> process(kipl::base::TImage<float,2> &img, 
                                                   float                        dose, 
-                                                  eNormalizationMethod         normMethod=basicNormalization,
+                                                  eNormalizationMethod         normMethod=eNormalizationMethod::basicNormalization,
                                                   float                        tau=0.0f);
 
         /// @brief Inplace normalization of a stack of images
@@ -72,7 +72,7 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ImageNormalization
         /// @param tau Weight factor to compensate the intensity loss by the bb grid
         void process(   kipl::base::TImage<float,3> &img, 
                         const std::vector<float>          &dose, 
-                        eNormalizationMethod               normMethod=basicNormalization,
+                        eNormalizationMethod               normMethod=eNormalizationMethod::basicNormalization,
                         float                              tau=0.0f);
 
     private: 

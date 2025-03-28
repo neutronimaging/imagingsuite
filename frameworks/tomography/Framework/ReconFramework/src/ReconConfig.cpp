@@ -659,7 +659,7 @@ ReconConfig::cProjections::cProjections() :
     nLastIndex(625),
     nProjectionStep(1),
     nRepeatedView(1),
-    averageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    averageMethod(ImagingAlgorithms::AverageImage::eAverageMethod::WeightedAverage),
     skipListMode(SkipMode_None),
     bRepeatLine(false),
     scantype(SequentialScan),

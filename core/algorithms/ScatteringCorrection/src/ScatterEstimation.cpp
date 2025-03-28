@@ -11,8 +11,8 @@ ScatterEstimator::ScatterEstimator() :
     m_nPolyOrderX(2),
     m_nPolyOrderY(2),
     m_fDotRadius(5),
-    m_AvgMethod(avg_mean),
-    m_FitMethod(fitmethod_polynomial)
+    m_AvgMethod(eAverageMethod::mean),
+    m_FitMethod(eFitMethod::polynomial)
 {
 
 }
@@ -23,8 +23,8 @@ ScatterEstimator::ScatterEstimator(const std::map<std::string,std::string> &para
     m_nPolyOrderX(2),
     m_nPolyOrderY(2),
     m_fDotRadius(5),
-    m_AvgMethod(avg_mean),
-    m_FitMethod(fitmethod_polynomial)
+    m_AvgMethod(eAverageMethod::mean),
+    m_FitMethod(eFitMethod::polynomial)
 {
     setParameters(params);
 }
@@ -304,10 +304,10 @@ float ScatterEstimator::dotValue(const  kipl::base::TImage<float,2> &img,
     float m=0.0f;
     switch (m_AvgMethod)
     {
-        case avg_mean: 
+        case eAverageMethod::mean: 
             m=std::accumulate(v.begin(), v.end(),0.0f)/v.size();
             break;
-        case avg_median: break;
+        case eAverageMethod::median: break;
             m = median(v);
         default:
             throw ImagingException("Unknown average method for dot pixels", __FILE__, __LINE__);
@@ -374,10 +374,10 @@ void ScatterEstimator::transferFitParameters()
 std::string enum2string(ScatterEstimator::eAverageMethod m)
 {
     std::map<ScatterEstimator::eAverageMethod, std::string> table={
-            {ScatterEstimator::avg_mean,   "avgmean"},
-            {ScatterEstimator::avg_median, "avgmedian"},
-            {ScatterEstimator::avg_min,    "avgmin"},
-            {ScatterEstimator::avg_max,    "avgmax"}};
+            {ScatterEstimator::eAverageMethod::mean,   "avgmean"},
+            {ScatterEstimator::eAverageMethod::median, "avgmedian"},
+            {ScatterEstimator::eAverageMethod::min,    "avgmin"},
+            {ScatterEstimator::eAverageMethod::max,    "avgmax"}};
 
     return table.at(m);
 }
@@ -385,10 +385,10 @@ std::string enum2string(ScatterEstimator::eAverageMethod m)
 void string2enum(const std::string &s, ScatterEstimator::eAverageMethod &m)
 {
     std::map<std::string, ScatterEstimator::eAverageMethod> table={
-            {"avgmean",   ScatterEstimator::avg_mean},
-            {"avgmedian", ScatterEstimator::avg_median},
-            {"avgmin",    ScatterEstimator::avg_min},
-            {"avgmax",    ScatterEstimator::avg_max}};
+            {"avgmean",   ScatterEstimator::eAverageMethod::mean},
+            {"avgmedian", ScatterEstimator::eAverageMethod::median},
+            {"avgmin",    ScatterEstimator::eAverageMethod::min},
+            {"avgmax",    ScatterEstimator::eAverageMethod::max}};
 
     m=table.at(s); 
 }
@@ -403,16 +403,16 @@ std::ostream & operator<<(std::ostream & s, ScatterEstimator::eAverageMethod m)
 std::string enum2string(ScatterEstimator::eFitMethod m)
 {
     std::map<ScatterEstimator::eFitMethod, std::string> table={
-            {ScatterEstimator::fitmethod_polynomial,      "fitpolynimal"},
-            {ScatterEstimator::fitmethod_thinplatesplines,"fitspline"}};
+            {ScatterEstimator::eFitMethod::polynomial,      "fitpolynimal"},
+            {ScatterEstimator::eFitMethod::thinplatesplines,"fitspline"}};
 
     return table.at(m);
 }
 void string2enum(const std::string &s, ScatterEstimator::eFitMethod &m)
 {    
     std::map<std::string, ScatterEstimator::eFitMethod> table={
-            {"fitpolynimal", ScatterEstimator::fitmethod_polynomial},
-            {"fitspline",    ScatterEstimator::fitmethod_thinplatesplines}};
+            {"fitpolynimal", ScatterEstimator::eFitMethod::polynomial},
+            {"fitspline",    ScatterEstimator::eFitMethod::thinplatesplines}};
 
     m=table.at(s); 
 }

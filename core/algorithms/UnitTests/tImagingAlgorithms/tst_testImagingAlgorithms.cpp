@@ -260,27 +260,27 @@ void TestImagingAlgorithms::AverageImage_Enums()
 {
 
     std::string key;
-    key = enum2string(ImagingAlgorithms::AverageImage::ImageAverage);
+    key = enum2string(ImagingAlgorithms::AverageImage::eAverageMethod::Average);
     QCOMPARE(key,std::string("ImageAverage"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),             std::string("ImageSum"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),          std::string("ImageMedian"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage), std::string("ImageWeightedAverage"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),             std::string("ImageMin"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),             std::string("ImageMax"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::eAverageMethod::Sum),             std::string("ImageSum"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::eAverageMethod::Median),          std::string("ImageMedian"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::eAverageMethod::WeightedAverage), std::string("ImageWeightedAverage"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::eAverageMethod::Min),             std::string("ImageMin"));
+    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::eAverageMethod::Max),             std::string("ImageMax"));
 
     ImagingAlgorithms::AverageImage::eAverageMethod e;
     string2enum("ImageAverage",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageAverage);
+    QCOMPARE(e,ImagingAlgorithms::AverageImage::eAverageMethod::Average);
     string2enum("ImageSum",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageSum);
+    QCOMPARE(e,ImagingAlgorithms::AverageImage::eAverageMethod::Sum);
     string2enum("ImageMedian",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageMedian);
+    QCOMPARE(e,ImagingAlgorithms::AverageImage::eAverageMethod::Median);
     string2enum("ImageWeightedAverage",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageWeightedAverage);
+    QCOMPARE(e,ImagingAlgorithms::AverageImage::eAverageMethod::WeightedAverage);
     string2enum("ImageMin",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageMin);
+    QCOMPARE(e,ImagingAlgorithms::AverageImage::eAverageMethod::Min);
     string2enum("ImageMax",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageMax);
+    QCOMPARE(e,ImagingAlgorithms::AverageImage::eAverageMethod::Max);
 }
 
 void TestImagingAlgorithms::AverageImage_Processing()
@@ -300,27 +300,27 @@ void TestImagingAlgorithms::AverageImage_Processing()
         }
     }
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageSum);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Sum);
     float r0=res[0];
     QCOMPARE(r0,15.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageAverage);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Average);
     r0=res[0];
     QCOMPARE(r0,3.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageWeightedAverage);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::WeightedAverage);
     r0=res[0];
     QCOMPARE(r0,3.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMedian);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Median);
     r0=res[0];
     QCOMPARE(r0,3.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMin);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Min);
     r0=res[0];
     QCOMPARE(r0,1.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMax);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Max);
     r0=res[0];
     QCOMPARE(r0,5.0f);
 }
@@ -343,27 +343,27 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
         w[i]=static_cast<float>(i+1);
     }
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageSum,w);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Sum,w);
     float r0=res[0];
     QCOMPARE(r0,55.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageAverage,w);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Average,w);
     r0=res[0];
     QCOMPARE(r0,11.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageWeightedAverage,w);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::WeightedAverage,w);
     r0=res[0];
     QCOMPARE(r0,11.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMedian,w);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Median,w);
     r0=res[0];
     QCOMPARE(r0,9.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMin,w);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Min,w);
     r0=res[0];
     QCOMPARE(r0,1.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMax,w);
+    res=avg(stack,ImagingAlgorithms::AverageImage::eAverageMethod::Max,w);
     r0=res[0];
     QCOMPARE(r0,25.0f);
 }

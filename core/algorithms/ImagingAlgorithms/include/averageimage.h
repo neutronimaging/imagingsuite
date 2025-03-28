@@ -13,14 +13,14 @@ namespace ImagingAlgorithms {
 class IMAGINGALGORITHMSSHARED_EXPORT AverageImage
 {
 public:
-    enum eAverageMethod {
-        ImageSelectSingle,      ///< Selects the first XY-image in the stack
-        ImageSum,               ///< Compute the sum of the XY-images
-        ImageAverage,           ///< Compute the average of the XY-images
-        ImageMedian,            ///< Compute the median of the XY-images
-        ImageWeightedAverage,   ///< Compute the weighted average of the images
-        ImageMin,               ///< Compute the minimum pixel value of the images
-        ImageMax                ///< Compute the maximum pixel value of the images
+    enum class eAverageMethod {
+        SelectSingle,      ///< Selects the first XY-image in the stack
+        Sum,               ///< Compute the sum of the XY-images
+        Average,           ///< Compute the average of the XY-images
+        Median,            ///< Compute the median of the XY-images
+        WeightedAverage,   ///< Compute the weighted average of the images
+        Min,               ///< Compute the minimum pixel value of the images
+        Max                ///< Compute the maximum pixel value of the images
     };
 
     AverageImage();

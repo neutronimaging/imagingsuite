@@ -223,18 +223,18 @@ void TestScatterCorrection::ScatterEstimation_enums()
     ScatterEstimator::eAverageMethod mA;
     try {
         string2enum("avgmean",mA);
-        QCOMPARE(mA, ScatterEstimator::avg_mean);
+        QCOMPARE(mA, ScatterEstimator::eAverageMethod::mean);
         string2enum("avgmedian",mA);
-        QCOMPARE(mA, ScatterEstimator::avg_median);
+        QCOMPARE(mA, ScatterEstimator::eAverageMethod::median);
         string2enum("avgmin",mA);
-        QCOMPARE(mA, ScatterEstimator::avg_min);
+        QCOMPARE(mA, ScatterEstimator::eAverageMethod::min);
         string2enum("avgmax",mA);
-        QCOMPARE(mA, ScatterEstimator::avg_max);
+        QCOMPARE(mA, ScatterEstimator::eAverageMethod::max);
 
-        QCOMPARE(enum2string(ScatterEstimator::avg_mean),"avgmean");
-        QCOMPARE(enum2string(ScatterEstimator::avg_median),"avgmedian");
-        QCOMPARE(enum2string(ScatterEstimator::avg_min),"avgmin");
-        QCOMPARE(enum2string(ScatterEstimator::avg_max),"avgmax");
+        QCOMPARE(enum2string(ScatterEstimator::eAverageMethod::mean),"avgmean");
+        QCOMPARE(enum2string(ScatterEstimator::eAverageMethod::median),"avgmedian");
+        QCOMPARE(enum2string(ScatterEstimator::eAverageMethod::min),"avgmin");
+        QCOMPARE(enum2string(ScatterEstimator::eAverageMethod::max),"avgmax");
     } catch (ImagingException &e) {
         qDebug()<<e.what();
         QFAIL("string2enum failed with exception");
@@ -247,12 +247,12 @@ void TestScatterCorrection::ScatterEstimation_enums()
     
     try {
         string2enum("fitpolynimal",mF);
-        QCOMPARE(mF,ScatterEstimator::fitmethod_polynomial);
+        QCOMPARE(mF,ScatterEstimator::eFitMethod::polynomial);
         string2enum("fitspline",mF);
-        QCOMPARE(mF,ScatterEstimator::fitmethod_thinplatesplines);
+        QCOMPARE(mF,ScatterEstimator::eFitMethod::thinplatesplines);
 
-        QCOMPARE(enum2string(ScatterEstimator::fitmethod_polynomial),"fitpolynimal");
-        QCOMPARE(enum2string(ScatterEstimator::fitmethod_thinplatesplines),"fitspline");
+        QCOMPARE(enum2string(ScatterEstimator::eFitMethod::polynomial),"fitpolynimal");
+        QCOMPARE(enum2string(ScatterEstimator::eFitMethod::thinplatesplines),"fitspline");
     } catch (ImagingException &e) {
         qDebug()<<e.what();
         QFAIL("string2enum failed with exception");

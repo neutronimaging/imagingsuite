@@ -28,7 +28,7 @@ NormBase::NormBase(std::string name) :
     nDCFirstIndex(1),
     nBBCount(0),
     nBBFirstIndex(1),
-    m_ReferenceAvagerage(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    m_ReferenceAvagerage(ImagingAlgorithms::AverageImage::eAverageMethod::WeightedAverage),
     fFlatDose(1.0f),
     fBlackDose(1.0f),
     bUseNormROI(true),
@@ -97,7 +97,7 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
     }
     catch (...) {
         logger(logger.LogWarning,"referenceaverage not found, using image average.");
-        m_ReferenceAvagerage = ImagingAlgorithms::AverageImage::ImageAverage;
+        m_ReferenceAvagerage = ImagingAlgorithms::AverageImage::eAverageMethod::Average;
     }
 
     nOriginalNormRegion = config.ProjectionInfo.dose_roi;

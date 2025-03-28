@@ -25,7 +25,7 @@ FileSet::FileSet() :
     m_fBinning(1.0f),
     m_Flip(kipl::base::ImageFlipNone),
     m_Rotate(kipl::base::ImageRotateNone),
-    m_AverageMethod(ImagingAlgorithms::AverageImage::ImageAverage),
+    m_AverageMethod(ImagingAlgorithms::AverageImage::eAverageMethod::Average),
     m_bUseROI(false),
     m_ROI({0,0,100,100})
 {
