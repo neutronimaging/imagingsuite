@@ -197,6 +197,9 @@ void ScatteringCorrection::calibrate()
     }
 
     m_SegmentBB.exec(bbob,mask,m_BBROI);
+
+    auto [x,y] = m_SegmentBB.dotCoordinates();
+    m_ScatterEstimator.fit(x,y,bbob,5,2,2); // Todo: make these parameters configurable
 }
 
 kipl::base::TImage<float,2> ScatteringCorrection::process(kipl::base::TImage<float,2> &img, float /*dose*/) 
@@ -206,5 +209,19 @@ kipl::base::TImage<float,2> ScatteringCorrection::process(kipl::base::TImage<flo
     return corrected;
 }
 
-void ScatteringCorrection::process(kipl::base::TImage<float,3> & /*img*/, std::vector<float> /*dose*/) 
-{ }
+void ScatteringCorrection::process(kipl::base::TImage<float,3> & img, std::vector<float> doses) 
+{ 
+    kipl::base::TImage<float,2> corrected(img.dims());
+
+
+    for (size_t i=0; i<img.Size(2); ++i) 
+    {
+        std::copy_n(img.GetLinePtr(0,i),corrected.Size(),corrected.GetDataPtr());
+
+        auto dose = doses[i]-m_dcdose;
+
+        corrected = process(corrected,dose);
+
+        std::copy_n(corrected.GetDataPtr(),img.Size(),img.GetLinePtr(0,i));
+    }
+}
