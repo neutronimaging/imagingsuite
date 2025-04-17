@@ -56,7 +56,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     ffirstAngle(0.0f),
     flastAngle(360.0f),
     m_nWindow(5),
-    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::eAverageMethod::WeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
     m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),

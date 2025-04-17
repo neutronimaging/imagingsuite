@@ -62,13 +62,13 @@ kipl::base::TImage<float,2> ImageNormalization::process(kipl::base::TImage<float
     
     switch (normMethod)
     {
-        case basicNormalization:
+        case eNormalizationMethod::basicNormalization:
             processBasicNormalization(res,dose);
             break;
-        case scatterNormalization:
+        case eNormalizationMethod::scatterNormalization:
             break;
-        case interpolateScatterNormalization:
-        case one2oneScatterNormalization:
+        case eNormalizationMethod::interpolateScatterNormalization:
+        case eNormalizationMethod::one2oneScatterNormalization:
         default: 
             ImagingException("Normalization method not implemented or supported", __FILE__, __LINE__);
     }

@@ -46,7 +46,7 @@ BBLogNormDlg::BBLogNormDlg(QWidget *parent) :
     bSameMask(true),
     bUseManualThresh(false),
     bExtSingleFile(true),
-    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::eAverageMethod::WeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
     m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),

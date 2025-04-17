@@ -17,7 +17,7 @@ SegmentBB::SegmentBB() :
     logger("SegmentBB"),
     m_fRadius(5.0f),
     m_areaLimits({10,1000}),
-    m_segmentationMethod(method_otsu),
+    m_segmentationMethod(eSegmentationMethod::otsu),
     m_fThreshold(0.0f)
 {
 
@@ -100,7 +100,7 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
                               kipl::base::TImage<float,2> &mask)
 {
     std::ostringstream msg;
-    if ((m_segmentationMethod == method_usermask) && 
+    if ((m_segmentationMethod == eSegmentationMethod::usermask) && 
         (bb.Size(0)==mask.Size(0)) && 
         (bb.Size(0)==mask.Size(1)))
     {   
@@ -135,10 +135,10 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
 
     switch (m_segmentationMethod)
     {
-        case SegmentBB::method_usermask :
+        case SegmentBB::eSegmentationMethod::usermask :
             logger.warning("Provided user mask size didn't match bb image size. Using Otsu to segement BB.");
 
-        case SegmentBB::method_otsu :  
+        case SegmentBB::eSegmentationMethod::otsu :  
             idx = kipl::segmentation::Threshold_Otsu(hist);
             msg.str(""); msg<<"Otsu threshold at idx:"<<idx<<", level:"<<axis[idx];
             logger.message(msg.str());
@@ -148,7 +148,7 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
                                 axis[idx],
                                 kipl::segmentation::cmp_less);
             break;
-        case SegmentBB::method_rosin :
+        case SegmentBB::eSegmentationMethod::rosin :
             idx = kipl::segmentation::Threshold_Rosin(hist);
             kipl::segmentation::Threshold( bb.GetDataPtr(), 
                                            mask.GetDataPtr(), 
@@ -157,7 +157,7 @@ void SegmentBB::segment(const kipl::base::TImage<float,2> &bb,
                                            kipl::segmentation::cmp_less);
 
             break;
-        case SegmentBB::method_manual :
+        case SegmentBB::eSegmentationMethod::manual :
             kipl::segmentation::Threshold( bb.GetDataPtr(), 
                                            mask.GetDataPtr(), 
                                            bb.Size(), 
@@ -300,10 +300,10 @@ std::tuple<std::vector<size_t>, std::vector<float> >  SegmentBB::histogram()
 std::string enum2string(SegmentBB::eSegmentationMethod sm)
 {
     std::map<SegmentBB::eSegmentationMethod, std::string> table = {
-        {SegmentBB::method_manual,  "segment_manual"},
-        {SegmentBB::method_otsu,    "segment_otsu"},
-        {SegmentBB::method_rosin,   "segment_rosin"},
-        {SegmentBB::method_usermask,"segment_usermask"}
+        {SegmentBB::eSegmentationMethod::manual,  "segment_manual"},
+        {SegmentBB::eSegmentationMethod::otsu,    "segment_otsu"},
+        {SegmentBB::eSegmentationMethod::rosin,   "segment_rosin"},
+        {SegmentBB::eSegmentationMethod::usermask,"segment_usermask"}
     };
     
     return table.at(sm);
@@ -312,10 +312,10 @@ std::string enum2string(SegmentBB::eSegmentationMethod sm)
 void string2enum(const std::string & str, SegmentBB::eSegmentationMethod &sm)
 {
     std::map<std::string, SegmentBB::eSegmentationMethod> table = {
-        {"segment_manual",   SegmentBB::method_manual},
-        {"segment_otsu",     SegmentBB::method_otsu},
-        {"segment_rosin",    SegmentBB::method_rosin},
-        {"segment_usermask", SegmentBB::method_usermask}
+        {"segment_manual",   SegmentBB::eSegmentationMethod::manual},
+        {"segment_otsu",     SegmentBB::eSegmentationMethod::otsu},
+        {"segment_rosin",    SegmentBB::eSegmentationMethod::rosin},
+        {"segment_usermask", SegmentBB::eSegmentationMethod::usermask}
     };
 
     sm = table.at(str);

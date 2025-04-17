@@ -20,11 +20,11 @@ class SCATTERINGCORRECTIONSHARED_EXPORT SegmentBB
 private:
     kipl::logging::Logger logger;
 public:
-    enum eSegmentationMethod {
-        method_manual,
-        method_otsu,
-        method_rosin,
-        method_usermask
+    enum class eSegmentationMethod {
+        manual,
+        otsu,
+        rosin,
+        usermask
     };
 
     /// @brief  Base C'tor for the segmentation class

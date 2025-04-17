@@ -51,7 +51,7 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     bExtSingleFile(true),
     fdose_ext_slice(0.0f),
     m_MaskMethod(ImagingAlgorithms::ReferenceImageCorrection::otsuMask),
-    m_AverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    m_AverageMethod(ImagingAlgorithms::AverageImage::eAverageMethod::WeightedAverage),
     m_IntMeth_x(SecondOrder_x),
     m_IntMeth_y(SecondOrder_y),
     m_nDoseROI(4,0UL),

@@ -18,19 +18,19 @@ class SCATTERINGCORRECTIONSHARED_EXPORT ScatterEstimator
 
     public:
         /// @brief Enum to select averaging method for the dots
-        enum eAverageMethod 
+        enum class eAverageMethod 
         {
-            avg_mean,
-            avg_median,
-            avg_min,
-            avg_max
+            mean,
+            median,
+            min,
+            max
         };
 
         /// @brief Enum to select the fitting method
-        enum eFitMethod 
+        enum class eFitMethod 
         {
-            fitmethod_polynomial,
-            fitmethod_thinplatesplines
+            polynomial,
+            thinplatesplines
         };
 
         /// @brief Base C'tor for default initialization
