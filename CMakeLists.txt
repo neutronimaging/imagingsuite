@@ -225,6 +225,7 @@ if (WIN32)
 #   add_subdirectory(applications/verticalslicer)
 #   add_subdirectory(applications/CLI/multiframesplitter)
 endif()
+add_subdirectory(applications/CLI/multiframesplitter)
 add_subdirectory(applications/CLI/verticalslicer)
 
 add_subdirectory(applications/imageviewer)
