@@ -5,10 +5,6 @@
 #include <sstream>
 #include <vector>
 
-//#include <QCoreApplication>
-//#include <QVector>
-//#include <QDebug>
-
 #include <ReconFactory.h>
 #include <ReconEngine.h>
 #include <ReconConfig.h>
@@ -22,21 +18,8 @@
 
 #include "muhreccli.h"
 
-//MuhRecCLI::MuhRecCLI(QCoreApplication *a) :
-//    logger("MuhRecCLI"),
-//    app(a)
-//{
-//    QVector<QString> qargs=app->arguments().toVector();
-
-//    for (int i=0; i<qargs.size(); i++) {
-//        args.push_back(qargs[i].toStdString());
-//    }
-//    applicationPath = QCoreApplication::applicationDirPath().toStdString();
-//}
-
 MuhRecCLI::MuhRecCLI(int argc, char ** argv) :
     logger("MuhRecCLI")
-//    app(nullptr)
 {
     for (int i=0; i<argc ; ++i)
         args.push_back(argv[i]);
