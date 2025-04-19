@@ -666,7 +666,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         m_Config.setAppPath(m_sApplicationPath);
         m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
         msg.str("");
-        msg<<m_Config.WriteXML();
+        msg<<"Loaded config:\n"<<m_Config.WriteXML();
         logger(logger.LogMessage,msg.str());
     }
     catch (ReconException &e)
@@ -699,7 +699,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         // Replace template path by module path for pre processing
         // size_t pos=0;
 
-        logger(logger.LogMessage,"Updating path of preprocessing modules");
+        logger.message("Updating path of preprocessing modules");
         for (auto &module : m_Config.modules)
         {
             module.setAppPath(m_sApplicationPath,"Preprocessors");
@@ -707,7 +707,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
             logger.message(module.m_sSharedObject);
         }
 
-        logger(logger.LogMessage,"Updating path of back projector");
+        logger.message("Updating path of back projector");
         m_Config.backprojector.setAppPath(m_sApplicationPath,"BackProjectors");
 
         logger.message(m_Config.backprojector.m_sSharedObject);
@@ -725,6 +725,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
     }
 
+    kipl::logging::Logger::SetLogLevel(m_Config.System.eLogLevel);
     // m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
 
     m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.size());
