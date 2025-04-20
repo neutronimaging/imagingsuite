@@ -5,10 +5,6 @@
 #include <sstream>
 #include <vector>
 
-//#include <QCoreApplication>
-//#include <QVector>
-//#include <QDebug>
-
 #include <ReconFactory.h>
 #include <ReconEngine.h>
 #include <ReconConfig.h>
@@ -22,21 +18,8 @@
 
 #include "muhreccli.h"
 
-//MuhRecCLI::MuhRecCLI(QCoreApplication *a) :
-//    logger("MuhRecCLI"),
-//    app(a)
-//{
-//    QVector<QString> qargs=app->arguments().toVector();
-
-//    for (int i=0; i<qargs.size(); i++) {
-//        args.push_back(qargs[i].toStdString());
-//    }
-//    applicationPath = QCoreApplication::applicationDirPath().toStdString();
-//}
-
 MuhRecCLI::MuhRecCLI(int argc, char ** argv) :
     logger("MuhRecCLI")
-//    app(nullptr)
 {
     for (int i=0; i<argc ; ++i)
         args.push_back(argv[i]);
@@ -54,7 +37,7 @@ int MuhRecCLI::exec()
 #ifdef _OPENMP
     omp_set_nested(1);
 #endif
-    logger(kipl::logging::Logger::LogMessage,"MuhRec is running in CLI mode");
+    logger.message("MuhRec is running in CLI mode");
 
     if (2<args.size())
     {
@@ -63,12 +46,14 @@ int MuhRecCLI::exec()
 
             try
             {
-                logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
+                logger.message("Building a reconstructor");
                 ReconConfig config(applicationPath);
 
                 config.LoadConfigFile(args[2],"reconstructor");
                 config.GetCommandLinePars(args);
                 config.MatrixInfo.bAutomaticSerialize=true;
+                logger.message("Configuration file loaded");
+                kipl::logging::Logger::SetLogLevel(config.System.eLogLevel);
 
                 ReconFactory factory;
                 ReconEngine *pEngine=factory.BuildEngine(config,nullptr);
@@ -78,9 +63,9 @@ int MuhRecCLI::exec()
                     std::string confname=config.MatrixInfo.sDestinationPath;
                     kipl::strings::filenames::CheckPathSlashes(confname,true);
                     CheckFolders(confname,true);
-                    logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
+                    logger.message("Starting reconstruction");
                     pEngine->Run3D();
-                    logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
+                    logger.message("Reconstruction done");
 
                     std::string basename=config.MatrixInfo.sFileMask.substr(0,config.MatrixInfo.sFileMask.find_first_of('#'));
                     confname+=basename+"_recon.xml";
@@ -91,7 +76,7 @@ int MuhRecCLI::exec()
                     conffile.close();
                 }
                 else {
-                    logger(kipl::logging::Logger::LogError, "There is no reconstruction engine, skipping reconstruction");
+                    logger.error("There is no reconstruction engine, skipping reconstruction");
                     return -1;
                 }
             }  // Exception handling as last resort to report unhandled faults
@@ -102,7 +87,7 @@ int MuhRecCLI::exec()
             }
             catch (ModuleException &e) {
                 msg<<"A module exception was thrown during the main window initialization\n"<<e.what();
-                logger(kipl::logging::Logger::LogError,msg.str());
+                logger.error(msg.str());
 
                 return -3;
             }
@@ -124,7 +109,7 @@ int MuhRecCLI::exec()
         }
     }
     else {
-        logger(kipl::logging::Logger::LogError,"No arguments provided.");
+        logger.error("No arguments provided.");
         return -7;
     }
 
