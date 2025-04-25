@@ -28,7 +28,7 @@
 #include "muhrecmainwindow.h"
 
 int RunGUI(QApplication *app);
-int RunOffline(QApplication *app);
+int RunCLI(QApplication *app);
 void TestConfig();
 
 
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     }
     else {
         logger.message("Running MuhRec in CLI mode.");
-        return RunOffline(&app);
+        return RunCLI(&app);
     }
 
     return 0;
@@ -122,10 +122,10 @@ int RunGUI(QApplication *app)
     return -100;
 }
 
-int RunOffline(QApplication *app)
+int RunCLI(QApplication *app)
 {
     std::ostringstream msg;
-    kipl::logging::Logger logger("MuhRec4::RunOffline");
+    kipl::logging::Logger logger("MuhRec4::RunCLI");
 
 #ifdef _OPENMP
     omp_set_nested(1);
@@ -142,10 +142,10 @@ int RunOffline(QApplication *app)
     {
         if (args[1]=="-f") 
         {
-            logger(kipl::logging::Logger::LogMessage,"MuhRec is running in CLI mode");
+            logger.message("MuhRec is running in CLI mode");
             try {
                 ReconFactory factory;
-                logger(kipl::logging::Logger::LogMessage, "Building a reconstructor");
+                logger.message("Building a reconstructor");
 
                 std::string application_path=app->applicationDirPath().toStdString();
 
@@ -157,6 +157,9 @@ int RunOffline(QApplication *app)
 
                 config.GetCommandLinePars(args);
                 config.MatrixInfo.bAutomaticSerialize=true;
+
+                kipl::logging::Logger::SetLogLevel(config.System.eLogLevel);
+
                 ReconEngine *pEngine=factory.BuildEngine(config,nullptr);
                 if (pEngine!=nullptr) 
                 {
@@ -165,12 +168,12 @@ int RunOffline(QApplication *app)
 
                     CheckFolders(confname,true);
 
-                    logger(kipl::logging::Logger::LogMessage, "Starting reconstruction");
+                    logger.message("Starting reconstruction");
                     pEngine->Run3D();
-                    logger(kipl::logging::Logger::LogMessage, "Reconstruction done");
+                    logger.message("Reconstruction done");
 
                     std::string basename=config.MatrixInfo.sFileMask.substr(0,config.MatrixInfo.sFileMask.find_first_of('#'));
-                    confname+=basename+"_recon.xml";
+                    confname+=basename+"recon.xml";
 
                     ofstream conffile(confname.c_str());
 
@@ -179,7 +182,7 @@ int RunOffline(QApplication *app)
                 }
                 else 
                 {
-                    logger(kipl::logging::Logger::LogMessage, "There is no reconstruction engine, skipping reconstruction");
+                    logger.error("There is no reconstruction engine, skipping reconstruction");
                 }
             }  // Exception handling as last resort to report unhandled faults
             catch (ReconException &re) 
@@ -191,7 +194,7 @@ int RunOffline(QApplication *app)
             catch (ModuleException &e) 
             {
                 msg<<"A module exception was thrown during the main window initialization\n"<<e.what();
-                logger(kipl::logging::Logger::LogError,msg.str());
+                logger.error(msg.str());
 
                 return -3;
             }
