@@ -5,6 +5,7 @@
 #include <pybind11/stl.h>
 
 #include <ImagingException.h>
+#include <base/KiplException.h>
 
 namespace py = pybind11;
 
@@ -17,6 +18,7 @@ void bindPixelInfo(py::module &m);
 void bindException(py::module &m);
 void bindProjectionFilter(py::module &m);
 void bindCenterEstimator(py::module &m);
+void bindTPSInterpolator(py::module &m);
 
 PYBIND11_MODULE(imgalg,m)
 {
@@ -27,9 +29,11 @@ PYBIND11_MODULE(imgalg,m)
     bindProjectionFilter(m);
     bindNormalizeImage(m);
     bindCenterEstimator(m);
+    bindTPSInterpolator(m);
 //    bindPixelInfo(m);
 //    bindException(m);
 
     py::register_exception<ImagingException>(m, "ImagingException");
+    py::register_exception<kipl::base::KiplException>(m, "KiplException");
 }
 
