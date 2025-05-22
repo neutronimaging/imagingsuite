@@ -1054,8 +1054,8 @@ inline float FDKbp_single::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, 
 // get_pixel_value_c seems to be no faster than get_pixel_value_b, despite having two fewer compares.
 inline float FDKbp_single::get_pixel_value_interp (kipl::base::TImage<float,2> &cbi, float r, float c)
 {
-    if ((r < 0) || (r >= static_cast<float>(cbi.Size(1)+1)) ||
-        (c < 0) || (c >= static_cast<float>(cbi.Size(0)+1))) return 0.0f;
+    if ((r < 0) || (r >= static_cast<float>(cbi.Size(1)-1)) ||
+        (c < 0) || (c >= static_cast<float>(cbi.Size(0)-1))) return 0.0f;
     
     float rr = 0UL;
     float cc = 0UL;
