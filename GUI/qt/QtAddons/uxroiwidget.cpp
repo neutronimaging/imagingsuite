@@ -64,7 +64,6 @@ void uxROIWidget::setBoundingBox(int x0, int y0, int x1, int y1, bool updateFiel
     if (updateFields) {
         setROI(x0,y0,x1,y1);
     }
-    // logger.message("ROI bounding box set to: ("+std::to_string(x0)+", "+std::to_string(y0)+", "+std::to_string(x1)+", "+std::to_string(y1)+")");    
 }
 
 void uxROIWidget::updateBounds()
@@ -212,25 +211,18 @@ void uxROIWidget::getROI(int *roi)
 
 void uxROIWidget::getROI(std::vector<int> &roi)
 {
-    roi=std::vector<int>{
-    ui->spinX0->value(),
-    ui->spinY0->value(),
-    ui->spinX1->value(),
-    ui->spinY1->value()};
-
-    // logger.message("Get ROI: ("+std::to_string(roi[0])+", "+std::to_string(roi[1])+", "+std::to_string(roi[2])+", "+std::to_string(roi[3])+")");
-
+    roi = std::vector<int>{ ui->spinX0->value(),
+                            ui->spinY0->value(),
+                            ui->spinX1->value(),
+                            ui->spinY1->value()};
 }
 
 void uxROIWidget::getROI(std::vector<size_t> &roi)
 {
-    roi=std::vector<size_t>{
-    static_cast<size_t>(ui->spinX0->value()),
-    static_cast<size_t>(ui->spinY0->value()),
-    static_cast<size_t>(ui->spinX1->value()),
-    static_cast<size_t>(ui->spinY1->value())};
-
-    // logger.message("Get ROI: ("+std::to_string(roi[0])+", "+std::to_string(roi[1])+", "+std::to_string(roi[2])+", "+std::to_string(roi[3])+")");
+    roi = std::vector<size_t>{ static_cast<size_t>(ui->spinX0->value()),
+                            static_cast<size_t>(ui->spinY0->value()),
+                            static_cast<size_t>(ui->spinX1->value()),
+                            static_cast<size_t>(ui->spinY1->value())};
 }
 
 void uxROIWidget::getROI(size_t *roi)
