@@ -853,7 +853,7 @@ float ProjectionReader::GetProjectionDoseNexus(const std::string & filename, siz
     auto [min0, max0] = std::minmax(nDoseROI[0], nDoseROI[2]);
     auto [min1, max1] = std::minmax(nDoseROI[1], nDoseROI[3]);
 
-    std::vector<size_t> doseROI = {min0,max1,max0,max1}; 
+    std::vector<size_t> doseROI = {min0,min1,max0,max1}; 
     
     if (doseROI[0]==doseROI[2] || doseROI[1]==doseROI[3])
     {
@@ -896,7 +896,7 @@ std::vector<float> ProjectionReader::GetProjectionDoseListNexus(const std::strin
     auto [min0, max0] = std::minmax(nDoseROI[0], nDoseROI[2]);
     auto [min1, max1] = std::minmax(nDoseROI[1], nDoseROI[3]);
 
-    std::vector<size_t> doseROI = {min0,max1,max0,max1}; 
+    std::vector<size_t> doseROI = {min0,min1,max0,max1}; 
     
     if (doseROI[0]==doseROI[2] || doseROI[1]==doseROI[3])
     {
