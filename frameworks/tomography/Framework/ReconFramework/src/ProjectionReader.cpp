@@ -803,12 +803,14 @@ float ProjectionReader::GetProjectionDose(std::string filename,
 {
 	kipl::base::TImage<float,2> img;
 
-	// if (!(nDoseROI[0] &&nDoseROI[1]*nDoseROI[2]*nDoseROI[3]))
     auto [min0, max0] = std::minmax(nDoseROI[0], nDoseROI[2]);
     auto [min1, max1] = std::minmax(nDoseROI[1], nDoseROI[3]);
 
-    std::vector<size_t> doseROI = {min0,max1,max0,max1}; 
-    
+    std::vector<size_t> doseROI = {min0,min1,max0,max1}; 
+    // logger.message("Dose ROI: ["+std::to_string(doseROI[0])+","
+    //             +std::to_string(doseROI[1])+","
+    //             +std::to_string(doseROI[2])+","
+    //             +std::to_string(doseROI[3])+"]");
     if (doseROI[0]==doseROI[2] || doseROI[1]==doseROI[3])
     {
         logger.warning("Dose ROI is empty, returning 1.0");
