@@ -900,14 +900,32 @@ void FDKbp_single::project_volume_onto_image_stl(kipl::base::TImage<float, 2> &c
                 acc2.z = zip[k].z + yip[j].z;
                 
                 float *pimg = img+pk+j*volume.Size(0) + mask[j].first+1;
-                for (size_t i = mask[j].first+1; i <= mask[j].second; ++i)
-                {
-                    auto current_xip = xip[i];
-                    float dw = 1.0f / (acc2.z+current_xip.z);
 
-                    *(pimg++) +=
-                            dw*dw * get_pixel_value_c (cbi, dw*(acc2.y+current_xip.y), dw*(acc2.x+current_xip.x));
+                switch (this->m_interpolation) {
+                    case eFDKbp_interpolation::nearest:
+
+                        for (size_t i = mask[j].first+1; i <= mask[j].second; ++i) {
+                            auto current_xip = xip[i];
+                            float dw = 1.0f / (acc2.z+current_xip.z);
+                            *(pimg++) += dw*dw * get_pixel_value_c (cbi, dw*(acc2.y+current_xip.y), dw*(acc2.x+current_xip.x));
+                        }
+                        break;
+                    case eFDKbp_interpolation::bilinear:
+                        for (size_t i = mask[j].first+1; i <= mask[j].second; ++i) {
+                            auto current_xip = xip[i];
+                            float dw = 1.0f / (acc2.z+current_xip.z);
+                            *(pimg++) += dw*dw * get_pixel_value_interp (cbi, dw*(acc2.y+current_xip.y), dw*(acc2.x+current_xip.x));
+                        }
+                        break;
+                    default:
+                        for (size_t i = mask[j].first+1; i <= mask[j].second; ++i) {
+                            auto current_xip = xip[i];
+                            float dw = 1.0f / (acc2.z+current_xip.z);
+                            *(pimg++) += dw*dw * get_pixel_value_c (cbi, dw*(acc2.y+current_xip.y), dw*(acc2.x+current_xip.x));
+                        }
+                        break;
                 }
+                
             }
         });
     }
