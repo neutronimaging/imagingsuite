@@ -48,6 +48,7 @@
 FDKbp_single::FDKbp_single(kipl::interactors::InteractionBase *interactor) :
     FdkReconBase("muhrec","FDKbp_single",BackProjectorModuleBase::MatrixXYZ,interactor),
     m_algorithm(eFDKbp_single_stl),
+    m_interpolation(eFDKbp_interpolation::nearest),
     m_threadPool(nullptr)
 {
     publications.push_back(Publication(std::vector<std::string>({"L. A. Feldkamp","L. C. Davis","J. W. Kress"}),
@@ -87,6 +88,7 @@ int FDKbp_single::Configure(ReconConfig config, std::map<std::string, std::strin
     FdkReconBase::Configure(config,parameters);
 
     string2enum(GetStringParameter(parameters,"Algorithm"),m_algorithm);
+    string2enum(GetStringParameter(parameters,"Interpolation"),m_interpolation);
 
     return 0;
 }
@@ -101,7 +103,8 @@ std::map<std::string, std::string> FDKbp_single::GetParameters()
     std::map<std::string, std::string> parameters;
     parameters = FdkReconBase::GetParameters();
 
-    parameters["Algorithm"]=enum2string(m_algorithm);
+    parameters["Algorithm"]     = enum2string(m_algorithm);
+    parameters["Interpolation"] = enum2string(m_interpolation);
 
     return parameters;
 }
@@ -897,14 +900,32 @@ void FDKbp_single::project_volume_onto_image_stl(kipl::base::TImage<float, 2> &c
                 acc2.z = zip[k].z + yip[j].z;
                 
                 float *pimg = img+pk+j*volume.Size(0) + mask[j].first+1;
-                for (size_t i = mask[j].first+1; i <= mask[j].second; ++i)
-                {
-                    auto current_xip = xip[i];
-                    float dw = 1.0f / (acc2.z+current_xip.z);
 
-                    *(pimg++) +=
-                            dw*dw * get_pixel_value_c (cbi, dw*(acc2.y+current_xip.y), dw*(acc2.x+current_xip.x));
+                switch (this->m_interpolation) {
+                    case eFDKbp_interpolation::nearest:
+
+                        for (size_t i = mask[j].first+1; i <= mask[j].second; ++i) {
+                            auto current_xip = xip[i];
+                            float dw = 1.0f / (acc2.z+current_xip.z);
+                            *(pimg++) += dw*dw * get_pixel_value_c (cbi, dw*(acc2.y+current_xip.y), dw*(acc2.x+current_xip.x));
+                        }
+                        break;
+                    case eFDKbp_interpolation::bilinear:
+                        for (size_t i = mask[j].first+1; i <= mask[j].second; ++i) {
+                            auto current_xip = xip[i];
+                            float dw = 1.0f / (acc2.z+current_xip.z);
+                            *(pimg++) += dw*dw * get_pixel_value_interp (cbi, dw*(acc2.y+current_xip.y), dw*(acc2.x+current_xip.x));
+                        }
+                        break;
+                    default:
+                        for (size_t i = mask[j].first+1; i <= mask[j].second; ++i) {
+                            auto current_xip = xip[i];
+                            float dw = 1.0f / (acc2.z+current_xip.z);
+                            *(pimg++) += dw*dw * get_pixel_value_c (cbi, dw*(acc2.y+current_xip.y), dw*(acc2.x+current_xip.x));
+                        }
+                        break;
                 }
+                
             }
         });
     }
@@ -1030,6 +1051,27 @@ inline float FDKbp_single::get_pixel_value_c (kipl::base::TImage<float,2> &cbi, 
     return cbi[rr*cbi.Size(0) + cc];
 }
 
+// get_pixel_value_c seems to be no faster than get_pixel_value_b, despite having two fewer compares.
+inline float FDKbp_single::get_pixel_value_interp (kipl::base::TImage<float,2> &cbi, float r, float c)
+{
+    if ((r < 0) || (r >= static_cast<float>(cbi.Size(1)-1)) ||
+        (c < 0) || (c >= static_cast<float>(cbi.Size(0)-1))) return 0.0f;
+    
+    float rr = 0UL;
+    float cc = 0UL;
+    
+    float wr = std::modf(r, &rr);
+    float wc = std::modf(c, &cc);
+
+    float *p  = cbi.GetLinePtr(static_cast<size_t>(rr)) + static_cast<size_t>(cc);
+    float a0 = p[0];
+    float a1 = p[1];
+    float b0 = p[cbi.Size(0)];
+    float b1 = p[cbi.Size(0)+1];
+    
+    return a0+wc*(a1-a0)+wr*(wc*(a0-a1-b0+b1) + b0 -a0) ;
+
+}
 
 void string2enum(const std::string &str, eFDKbp_singleAlgorithms &alg)
 {
@@ -1070,3 +1112,37 @@ ostringstream& operator<<(ostringstream& os, eFDKbp_singleAlgorithms alg)
     os << enum2string(alg);
     return os;
 }   
+
+void string2enum(const std::string &str, eFDKbp_interpolation &interp)
+{
+    std::map<std::string, eFDKbp_interpolation> map;
+
+    map["eFDKbp_interpolation_nearest"] = eFDKbp_interpolation::nearest;
+    map["eFDKbp_interpolation_bilinear"]  = eFDKbp_interpolation::bilinear;
+    
+    if (map.find(str) == map.end())
+    {
+        throw std::runtime_error("Unknown FDK interpolation: " + str);
+    }
+
+    interp = map[str];
+}
+
+std::string enum2string(const eFDKbp_interpolation &interp)
+{
+    switch(interp)
+    {
+        case eFDKbp_interpolation::nearest:
+            return "eFDKbp_interpolation_nearest";
+        case eFDKbp_interpolation::bilinear:
+            return "eFDKbp_interpolation_bilinear";
+        default:
+            throw std::runtime_error("Unknown FDK interpolation enum");
+    }
+}
+
+ostringstream& operator<<(ostringstream& os, const eFDKbp_interpolation &interp)
+{
+    os << enum2string(interp);
+    return os;
+}
