@@ -1523,10 +1523,10 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.sPath="";
     m_Config.ProjectionInfo.sReferencePath="";
 
-    m_Config.ProjectionInfo.sFileMask = ui->editProjectionMask->text().toStdString();
+    m_Config.ProjectionInfo.sFileMask   = ui->editProjectionMask->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sFileMask,false);
     m_Config.ProjectionInfo.nFirstIndex = ui->spinFirstProjection->value();
-    m_Config.ProjectionInfo.nLastIndex = ui->spinLastProjection->value();
+    m_Config.ProjectionInfo.nLastIndex  = ui->spinLastProjection->value();
     if (m_Config.ProjectionInfo.nLastIndex<m_Config.ProjectionInfo.nFirstIndex)
     {
         qDebug()<<"Update config: Last<First projection";
@@ -1538,10 +1538,10 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.nProjectionStep = ui->spinProjectionStep->value();
     m_Config.ProjectionInfo.nRepeatedView   = ui->spinBox_projPerView->value();
     m_Config.ProjectionInfo.averageMethod   = static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboBox_projectionCominationMethod->currentIndex());
-    m_Config.ProjectionInfo.imagetype = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
-    m_Config.ProjectionInfo.fBinning = ui->spinProjectionBinning->value();
-    m_Config.ProjectionInfo.eFlip = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
-    m_Config.ProjectionInfo.eRotate = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
+    m_Config.ProjectionInfo.imagetype       = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
+    m_Config.ProjectionInfo.fBinning        = ui->spinProjectionBinning->value();
+    m_Config.ProjectionInfo.eFlip           = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
+    m_Config.ProjectionInfo.eRotate         = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
 
 //    m_Config.ProjectionInfo.sReferencePath = ui->editReferencePath->text().toStdString();
 //    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sReferencePath,true);
@@ -1566,6 +1566,10 @@ void MuhRecMainWindow::UpdateConfig()
     
 
     ui->widgetDoseROI->getROI(m_Config.ProjectionInfo.dose_roi);
+    logger.message("Config dose ROI: ["+std::to_string(m_Config.ProjectionInfo.dose_roi[0])+","
+                    +std::to_string(m_Config.ProjectionInfo.dose_roi[1])+","
+                    +std::to_string(m_Config.ProjectionInfo.dose_roi[2])+","
+                    +std::to_string(m_Config.ProjectionInfo.dose_roi[3])+"]");
     ui->widgetProjectionROI->getROI(m_Config.ProjectionInfo.projection_roi);
 
     m_Config.ProjectionInfo.roi[0]             = m_Config.ProjectionInfo.projection_roi[0];

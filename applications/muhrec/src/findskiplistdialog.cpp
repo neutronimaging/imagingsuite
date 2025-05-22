@@ -29,6 +29,10 @@ FindSkipListDialog::~FindSkipListDialog()
 
 int FindSkipListDialog::exec(ReconConfig &config)
 {
+    // logger.message("Config dose ROI: ["+std::to_string(config.ProjectionInfo.dose_roi[0])+","
+    //             +std::to_string(config.ProjectionInfo.dose_roi[1])+","
+    //             +std::to_string(config.ProjectionInfo.dose_roi[2])+","
+    //             +std::to_string(config.ProjectionInfo.dose_roi[3])+"]");
     ostringstream msg;
     try {
         LoadDoseList(config);
