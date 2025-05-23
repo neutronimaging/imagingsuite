@@ -290,11 +290,10 @@ void ImageViewerWidget::mousePressEvent(QMouseEvent *event)
             {
                 m_RubberBandStatus = RubberBandDrag;
                 m_rubberBandBox.setGeometry(QRect(origin, QSize()));
-                rubberBandRect = m_rubberBandBox.rect().normalized();
+                rubberBandRect = m_rubberBandBox.geometry().normalized(); // This is fine for the visual
                 m_rubberBandBox.show();
                 setCursor(Qt::CrossCursor);
             }
-            rubberBandRect = QRect(origin.x(),origin.y(),m_rubberBandBox.rect().width(),m_rubberBandBox.rect().height());
         }
         if (m_MouseMode==ViewerPan)
         {
@@ -327,27 +326,8 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
     if (m_RubberBandStatus == RubberBandDrag)
     {
         m_rubberBandBox.setGeometry(QRect(m_rubberBandOrigin, origin).normalized());
-        rubberBandRect = m_rubberBandBox.rect().normalized();
+        rubberBandRect = m_rubberBandBox.geometry().normalized();
     }
-//    else if (m_RubberBandStatus == RubberBandMove)
-//    {
-//        const int w=10;
-//        QRect r0 = QRect(m_rubberBandOrigin.x()-w,
-//                         m_rubberBandOrigin.y()-w,
-//                         rubberBandRect.width()+2*w,
-//                         rubberBandRect.height()+2*w);
-//        QRect r1 = QRect(m_rubberBandOrigin.x()+w,
-//                         m_rubberBandOrigin.y()+w,
-//                         rubberBandRect.width()-2*w,
-//                         rubberBandRect.height()-2*w);
-
-//        if ((r0.contains(origin)==true) && (r1.contains(origin)==false))
-//        {
-//            m_rubberBandBox.move(origin);
-//            QRect r = m_rubberBandBox.rect();
-//            rubberBandRect = r;
-//        }
-//    }
 
     if (m_MouseMode==ViewerPan)
     {
@@ -403,19 +383,20 @@ void ImageViewerWidget::mouseMoveEvent(QMouseEvent *event)
 
 void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    // QPoint origin = event->pos();
+    QPoint origin = event->pos();
     std::ostringstream msg;
     if ((event->button() == Qt::LeftButton))
     {
         if ((m_RubberBandStatus == RubberBandDrag) || (m_RubberBandStatus == RubberBandMove))
         {
-            QRect r=m_rubberBandBox.rect().normalized();
-            rubberBandRect = r;
-            int xpos = m_ImagePainter.globalPositionX(floor((m_rubberBandOrigin.x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale()));
-            int ypos = m_ImagePainter.globalPositionY(floor((m_rubberBandOrigin.y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale()));
+            // rubberBandRect = m_rubberBandBox.geometry().normalized();
+            rubberBandRect = QRect(m_rubberBandOrigin, origin).normalized();
+            
+            int xpos = m_ImagePainter.globalPositionX(floor((rubberBandRect.x()-m_ImagePainter.getOffsetx())/m_ImagePainter.getScale()));
+            int ypos = m_ImagePainter.globalPositionY(floor((rubberBandRect.y()-m_ImagePainter.getOffsety())/m_ImagePainter.getScale()));
 
-            int w    = floor(r.width()/m_ImagePainter.getScale());
-            int h    = floor(r.height()/m_ImagePainter.getScale());
+            int w    = floor(rubberBandRect.width()/m_ImagePainter.getScale());
+            int h    = floor(rubberBandRect.height()/m_ImagePainter.getScale());
 
             xpos = xpos < 0 ? 0 : xpos;
             ypos = ypos < 0 ? 0 : ypos;
@@ -427,10 +408,15 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 
             roiRect=roiRect.normalized();
             msg.str("");
-            msg<<"roiRect="<<roiRect.x()<<", "<<roiRect.y()<<", h="<<roiRect.height()<<", w="<<roiRect.y();
+            msg << "mouse release roiRect: x=" << roiRect.x() 
+                << ", y=" << roiRect.y() 
+                << ", width=" << roiRect.width() 
+                << ", height=" << roiRect.height() 
+                << ", scale=" << m_ImagePainter.getScale();
             logger.message(msg.str());
 
             m_RubberBandStatus = RubberBandFreeze;
+
             m_infoDialog.updateInfo(m_ImagePainter.getImage(), roiRect);
         }
         if (m_MouseMode==ViewerPan)
