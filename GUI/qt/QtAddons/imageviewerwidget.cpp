@@ -408,7 +408,11 @@ void ImageViewerWidget::mouseReleaseEvent(QMouseEvent *event)
 
             roiRect=roiRect.normalized();
             msg.str("");
-            msg<<"mouse release roiRect="<<roiRect.x()<<", "<<roiRect.y()<<", h="<<roiRect.height()<<", w="<<roiRect.width();
+            msg << "mouse release roiRect: x=" << roiRect.x() 
+                << ", y=" << roiRect.y() 
+                << ", width=" << roiRect.width() 
+                << ", height=" << roiRect.height() 
+                << ", scale=" << m_ImagePainter.getScale();
             logger.message(msg.str());
 
             m_RubberBandStatus = RubberBandFreeze;
