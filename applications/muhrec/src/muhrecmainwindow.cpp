@@ -2452,9 +2452,35 @@ void MuhRecMainWindow::on_dspinRotationCenter_valueChanged(double arg1)
     CenterOfRotationChanged();
 }
 
-void MuhRecMainWindow::on_dspinTiltAngle_valueChanged(double arg1)
+void MuhRecMainWindow::on_dspinTiltAngle_valueChanged(double tiltangle)
 {
-    (void) arg1;
+    if (ui->checkCorrectTilt->checkState()==Qt::Checked)
+    {
+        double tantilt=tan(tiltangle*3.1415/180.0);
+
+        double d_left = ui->dspinRotationCenter->value() - m_Config.ProjectionInfo.projection_roi[0];
+        double d_right = m_Config.ProjectionInfo.projection_roi[2] - ui->dspinRotationCenter->value();
+
+        double xtalk = std::fabs(std::min(d_left, d_right) * tantilt);
+
+        if (5<xtalk) 
+        {
+            QMessageBox dlg;
+            dlg.setWindowTitle("Tilt correction warning");
+            dlg.setTextFormat(Qt::RichText);
+            dlg.setText("<b>The tilt angle is too high.</b>");
+            dlg.setInformativeText("The vertical shift is greater than 5 pixels at the perimeter. "
+                        "This leads to blurring and distortion artifacts in the reconstruction. "
+                        "You should rotate the images by the tilt angle before reconstruction. "
+                        "<br/><br>See the <a href='https://github.com/neutronimaging/imagingsuite/wiki/User-manuals-MuhRec-Tilt#tilt-correction-in-muhrec'>user manual</a> for more information.<br/>"
+                        );  
+                        
+            dlg.setStandardButtons(QMessageBox::Ok);
+            logger.warning("Tilt angle is too high, vertical shift at perimeter is greater than 5 pixels (" + std::to_string(xtalk) + " pixels).");
+            dlg.exec();
+
+        }
+    }
     CenterOfRotationChanged();
 }
 

@@ -46,6 +46,7 @@ set(SRC_FILES
     src/stdafx.cpp
     src/globalsettingsdialog.cpp
     src/viewgeometrylistdialog.cpp
+    src/tiltwarningdialog.cpp
     src/main.cpp
 )
 
@@ -66,6 +67,7 @@ set(INC_FILES
     src/stdafx.h
     src/globalsettingsdialog.h
     src/viewgeometrylistdialog.h
+    src/tiltwarningdialog.h
 )
 
 set(UI_FILES
@@ -81,6 +83,7 @@ set(UI_FILES
     src/referencefiledlg.ui
     src/moduleconfigprogressdialog.ui
     src/viewgeometrylistdialog.ui
+    src/tiltwarningdialog.ui
 )
 
 # The MACOSX_BUNDLE_ICON_FILE variable is added to the Info.plist
@@ -106,6 +109,7 @@ qt_add_executable(${TARGET_NAME}
     ${UI_FILES}
     ${app_icon_macos}
     ${APP_ICON_RESOURCE_WINDOWS}
+    src/tiltwarningdialog.h src/tiltwarningdialog.cpp src/tiltwarningdialog.ui
 )
 
 if (WIN32)
