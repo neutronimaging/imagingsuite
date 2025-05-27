@@ -15,12 +15,12 @@
 //    class testBasicReconstructor;
 //}}
 
-enum eFDKbp_singleAlgorithms
+enum class eFDKbp_singleAlgorithms
 {
-    eFDKbp_single_reference,
-    eFDKbp_single_c,
-    eFDKbp_single_c2,
-    eFDKbp_single_stl
+    reference,
+    c,
+    c2,
+    stl
 };
 
 enum class eFDKbp_interpolation

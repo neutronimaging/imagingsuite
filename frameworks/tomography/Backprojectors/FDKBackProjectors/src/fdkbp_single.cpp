@@ -47,8 +47,8 @@
 
 FDKbp_single::FDKbp_single(kipl::interactors::InteractionBase *interactor) :
     FdkReconBase("muhrec","FDKbp_single",BackProjectorModuleBase::MatrixXYZ,interactor),
-    m_algorithm(eFDKbp_single_stl),
-    m_interpolation(eFDKbp_interpolation::nearest),
+    m_algorithm(eFDKbp_singleAlgorithms::stl),
+    m_interpolation(eFDKbp_interpolation::bilinear),
     m_threadPool(nullptr)
 {
     publications.push_back(Publication(std::vector<std::string>({"L. A. Feldkamp","L. C. Davis","J. W. Kress"}),
@@ -319,19 +319,19 @@ size_t FDKbp_single::reconstruct(kipl::base::TImage<float,2> &proj, float angles
 
     switch (m_algorithm)
     {
-        case eFDKbp_single_reference:
+        case eFDKbp_singleAlgorithms::reference:
             logger.warning("Reference FDK back-projector is not implemented");
             //project_volume_onto_image_reference (proj, proj_matrix, nProj);
             break;
-        case eFDKbp_single_c:   
+        case eFDKbp_singleAlgorithms::c:   
             // logger.message("Using FDK back-projector");
             project_volume_onto_image_c (proj, proj_matrix, nProj);
             break;
-        case eFDKbp_single_c2:  
+        case eFDKbp_singleAlgorithms::c2:  
             // logger.message("Using revised FDK back-projector");
             project_volume_onto_image_c2 (proj, proj_matrix, nProj);
             break;
-        case eFDKbp_single_stl:
+        case eFDKbp_singleAlgorithms::stl:
             // logger.message("Using STL FDK back-projector");
             if (m_threadPool == nullptr)
             {
@@ -1077,10 +1077,10 @@ void string2enum(const std::string &str, eFDKbp_singleAlgorithms &alg)
 {
     std::map<std::string, eFDKbp_singleAlgorithms> map;
 
-    map["eFDKbp_single_reference"] = eFDKbp_single_reference;
-    map["eFDKbp_single_c"]         = eFDKbp_single_c;
-    map["eFDKbp_single_c2"]        = eFDKbp_single_c2;
-    map["eFDKbp_single_stl"]       = eFDKbp_single_stl;
+    map["reference"] = eFDKbp_singleAlgorithms::reference;
+    map["c"]         = eFDKbp_singleAlgorithms::c;
+    map["c2"]        = eFDKbp_singleAlgorithms::c2;
+    map["stl"]       = eFDKbp_singleAlgorithms::stl;
     
     if (map.find(str) == map.end())
     {
@@ -1094,14 +1094,14 @@ std::string enum2string(eFDKbp_singleAlgorithms alg)
 
     switch(alg)
     {
-        case eFDKbp_single_reference:
-            return "eFDKbp_single_reference";
-        case eFDKbp_single_c:
-            return "eFDKbp_single_c";
-        case eFDKbp_single_c2:
-            return "eFDKbp_single_c2";
-        case eFDKbp_single_stl:
-            return "eFDKbp_single_stl";
+        case eFDKbp_singleAlgorithms::reference:
+            return "reference";
+        case eFDKbp_singleAlgorithms::c:
+            return "c";
+        case eFDKbp_singleAlgorithms::c2:
+            return "c2";
+        case eFDKbp_singleAlgorithms::stl:
+            return "stl";
         default:
             throw std::runtime_error("Unknown FDK algorithm enum");
     }
@@ -1117,8 +1117,8 @@ void string2enum(const std::string &str, eFDKbp_interpolation &interp)
 {
     std::map<std::string, eFDKbp_interpolation> map;
 
-    map["eFDKbp_interpolation_nearest"] = eFDKbp_interpolation::nearest;
-    map["eFDKbp_interpolation_bilinear"]  = eFDKbp_interpolation::bilinear;
+    map["nearest"] = eFDKbp_interpolation::nearest;
+    map["bilinear"]  = eFDKbp_interpolation::bilinear;
     
     if (map.find(str) == map.end())
     {
@@ -1133,9 +1133,9 @@ std::string enum2string(const eFDKbp_interpolation &interp)
     switch(interp)
     {
         case eFDKbp_interpolation::nearest:
-            return "eFDKbp_interpolation_nearest";
+            return "nearest";
         case eFDKbp_interpolation::bilinear:
-            return "eFDKbp_interpolation_bilinear";
+            return "bilinear";
         default:
             throw std::runtime_error("Unknown FDK interpolation enum");
     }
