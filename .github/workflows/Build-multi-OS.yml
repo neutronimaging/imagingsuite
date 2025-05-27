@@ -90,7 +90,7 @@ jobs:
 
     # This version of Qt only allows python versions in the range 3.6-3.11
     - name: Install Qt
-      uses: jurplel/install-qt-action@master
+      uses: jurplel/install-qt-action@v4
       with:
         version: '6.8.2'
         dir: '${{GITHUB.WORKSPACE}}'
