@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <algorithm>
+#include <cmath>
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -2461,7 +2463,7 @@ void MuhRecMainWindow::on_dspinTiltAngle_valueChanged(double tiltangle)
         double d_left = ui->dspinRotationCenter->value() - m_Config.ProjectionInfo.projection_roi[0];
         double d_right = m_Config.ProjectionInfo.projection_roi[2] - ui->dspinRotationCenter->value();
 
-        double xtalk = std::fabs(std::min(d_left, d_right) * tantilt);
+        double xtalk = std::fabs((std::min)(d_left, d_right) * tantilt);
 
         if (5<xtalk) 
         {
