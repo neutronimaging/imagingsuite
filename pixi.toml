@@ -2,7 +2,7 @@
 authors = ["Anders Kaestner <anders.kaestner@psi.ch>"]
 channels = ["conda-forge"]
 name = "scripts"
-platforms = ["linux-64", "osx-64", "osx-arm64"]
+platforms = ["linux-64", "osx-64", "osx-arm64","win-64"]
 version = "0.1.0"
 
 [tasks]
@@ -32,3 +32,7 @@ matplotlib-scalebar = "*"
 ffmpeg = "*"
 rise = "*"
 jupyter_contrib_nbextensions = "*"
+pip = "*"
+cmake = "*"
+ninja = "*"
+conan = "*"
