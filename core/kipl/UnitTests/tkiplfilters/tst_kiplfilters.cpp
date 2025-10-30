@@ -26,6 +26,7 @@ private slots:
     void test_MedianFilter();
     void benchmark_MedianFilterSingle();
     void benchmark_MedianFilterParallel();
+    void test_stddevfilter();
 
 private:
     std::string dataPath;
@@ -160,6 +161,36 @@ void KiplFilters::benchmark_MedianFilterParallel()
     {
         auto res_parallel = med(img,kipl::filters::FilterBase::EdgeZero);
     }
+}
+
+void KiplFilters::test_stddevfilter()
+{
+    std::vector<size_t> dims = {16,16};
+    kipl::base::TImage<float,2> img(dims);
+    for (size_t i=0; i<img.Size(); ++i)
+        img[i] = static_cast<float>(i);
+    
+    kipl::filters::StdDevFilter<float,2> stddev({3,3});
+    auto res = stddev(img,kipl::filters::FilterBase::EdgeZero);
+
+
+    QCOMPARE(res.Size(),img.Size());
+    
+    // Still not complete
+    for (size_t i=1; i<res.Size(1)-1; ++i)
+    {
+        for (size_t j=1; j<res.Size(0)-1; ++j)
+        {
+            size_t idx = i * res.Size(0) + j;
+            float expected = 0.0f;
+            if (i >= 3 && i < img.Size(1) - 3 && j >= 3 && j < img.Size(0) - 3)
+            {
+                expected = 4.472136f; // Standard deviation of a 3x3 neighborhood of the image
+            }
+            QCOMPARE(res[idx], expected);
+        }
+    }
+
 }
 
 #ifdef __APPLE__
