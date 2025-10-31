@@ -173,10 +173,56 @@ kipl::base::TImage<float,2> AverageImage::ComputeWeightedAverage(kipl::base::TIm
     return res;
 }
 
+
 kipl::base::TImage<float,2> AverageImage::ComputeMADWeightedAverage(kipl::base::TImage<float,3> & img)
 {
     kipl::base::TImage<float,2> res(img.dims());
 
+    const size_t N=res.Size();
+    
+    const size_t M=img.Size(2);
+    float *pRes=res.GetDataPtr();
+    float *pImg=img.GetDataPtr();
+    
+    for (size_t i=0; i<N; ++i, ++pImg, ++pRes) 
+    {
+        // Get data column
+        std::vector<float> data(M);
+        for (size_t j=0; j<M; ++j) 
+        {
+            data[j]=pImg[j*N];
+        }
+
+        // Sort data and get median
+        // kipl::math::median_STL(data.data(),data.size(),&med);
+        float med = kipl::math::median_STL(data);
+
+        // Compute MAD
+        std::vector<float> absdev(M);
+        float mindev=std::numeric_limits<float>::max();
+        for (size_t j=0; j<M; j++) 
+        {
+            absdev[j]=std::abs(data[j]-med);
+            if ((absdev[j]<mindev) && (absdev[j]>0.0f))
+                mindev=absdev[j];
+        }
+
+        // Handle case where all deviations are zero, i.e. all values are identical
+        if (mindev==std::numeric_limits<float>::max()) 
+            mindev=1.0f;
+
+        // Compute weighted average
+        float weight_sum=0.0f;
+        pRes[0]=0.0f;
+        for (size_t j=0; j<M; j++) 
+        {
+            float weight=absdev[j]>0.0f ? 1.0f/absdev[j] : 1.0f/mindev;
+            weight_sum+=weight;
+
+            pRes[0]+=weight*data[j];
+        }
+        pRes[0]/=weight_sum;
+    }
     return res;
 }
 
