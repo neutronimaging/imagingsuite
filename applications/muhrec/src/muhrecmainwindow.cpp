@@ -1539,7 +1539,7 @@ void MuhRecMainWindow::UpdateConfig()
     }
     m_Config.ProjectionInfo.nProjectionStep = ui->spinProjectionStep->value();
     m_Config.ProjectionInfo.nRepeatedView   = ui->spinBox_projPerView->value();
-    m_Config.ProjectionInfo.averageMethod   = static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboBox_projectionCominationMethod->currentIndex());
+    m_Config.ProjectionInfo.averageMethod   = static_cast<ImagingAlgorithms::eAverageImageMethod>(ui->comboBox_projectionCominationMethod->currentIndex());
     m_Config.ProjectionInfo.imagetype       = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
     m_Config.ProjectionInfo.fBinning        = ui->spinProjectionBinning->value();
     m_Config.ProjectionInfo.eFlip           = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());

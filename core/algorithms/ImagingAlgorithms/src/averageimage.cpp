@@ -33,7 +33,7 @@ int AverageImage::windowSize()
 }
 
 kipl::base::TImage<float,2> AverageImage::operator()(kipl::base::TImage<float,3> &img,
-                                                     eAverageMethod method,
+                                                     eAverageImageMethod method,
                                                      std::vector<float> weights)
 {
     kipl::base::TImage<float,2> res(img.dims());
@@ -46,13 +46,14 @@ kipl::base::TImage<float,2> AverageImage::operator()(kipl::base::TImage<float,3>
     }
 
     switch (method) {
-        case ImageSelectSingle:     std::copy_n(wimg.GetDataPtr(),res.Size(),res.GetDataPtr()); break;
-        case ImageSum:              res=ComputeSum(wimg); break;
-        case ImageAverage:          res=ComputeAverage(wimg); break;
-        case ImageMedian:           res=ComputeMedian(wimg); break;
-        case ImageWeightedAverage:  res=ComputeWeightedAverage(wimg); break;
-        case ImageMin:              res=ComputeMin(wimg); break;
-        case ImageMax:              res=ComputeMax(wimg); break;
+        case eAverageImageMethod::SelectSingle:     std::copy_n(wimg.GetDataPtr(),res.Size(),res.GetDataPtr()); break;
+        case eAverageImageMethod::Sum:              res=ComputeSum(wimg); break;
+        case eAverageImageMethod::Average:          res=ComputeAverage(wimg); break;
+        case eAverageImageMethod::Median:           res=ComputeMedian(wimg); break;
+        case eAverageImageMethod::WeightedAverage:  res=ComputeWeightedAverage(wimg); break;
+        case eAverageImageMethod::MADWeightedAverage: res=ComputeMADWeightedAverage(wimg); break;
+        case eAverageImageMethod::Min:              res=ComputeMin(wimg); break;
+        case eAverageImageMethod::Max:              res=ComputeMax(wimg); break;
         default : throw ImagingException("Unknown average method in AverageImage",__FILE__, __LINE__);
     }
 
@@ -172,6 +173,13 @@ kipl::base::TImage<float,2> AverageImage::ComputeWeightedAverage(kipl::base::TIm
     return res;
 }
 
+kipl::base::TImage<float,2> AverageImage::ComputeMADWeightedAverage(kipl::base::TImage<float,3> & img)
+{
+    kipl::base::TImage<float,2> res(img.dims());
+
+    return res;
+}
+
 kipl::base::TImage<float,2> AverageImage::ComputeMin(kipl::base::TImage<float,3> & img)
 {
     kipl::base::TImage<float,2> res(img.dims());
@@ -221,17 +229,18 @@ void AverageImage::GetColumn(kipl::base::TImage<float,3> &img, size_t idx, float
 
 }
 
-void string2enum(const string &str, ImagingAlgorithms::AverageImage::eAverageMethod &eam)
+void string2enum(const string &str, ImagingAlgorithms::eAverageImageMethod &eam)
 {
-    std::map<std::string,ImagingAlgorithms::AverageImage::eAverageMethod> methods;
+    std::map<std::string,ImagingAlgorithms::eAverageImageMethod> methods;
 
-    methods["ImageSelectSingle"]    = ImagingAlgorithms::AverageImage::ImageSelectSingle;
-    methods["ImageSum"]             = ImagingAlgorithms::AverageImage::ImageSum;
-    methods["ImageAverage"]         = ImagingAlgorithms::AverageImage::ImageAverage;
-    methods["ImageMedian"]          = ImagingAlgorithms::AverageImage::ImageMedian;
-    methods["ImageWeightedAverage"] = ImagingAlgorithms::AverageImage::ImageWeightedAverage;
-    methods["ImageMin"]             = ImagingAlgorithms::AverageImage::ImageMin;
-    methods["ImageMax"]             = ImagingAlgorithms::AverageImage::ImageMax;
+    methods["ImageSelectSingle"]    = ImagingAlgorithms::eAverageImageMethod::SelectSingle;
+    methods["ImageSum"]             = ImagingAlgorithms::eAverageImageMethod::Sum;
+    methods["ImageAverage"]         = ImagingAlgorithms::eAverageImageMethod::Average;
+    methods["ImageMedian"]          = ImagingAlgorithms::eAverageImageMethod::Median;
+    methods["ImageWeightedAverage"] = ImagingAlgorithms::eAverageImageMethod::WeightedAverage;
+    methods["ImageMADWeightedAverage"] = ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage;
+    methods["ImageMin"]             = ImagingAlgorithms::eAverageImageMethod::Min;
+    methods["ImageMax"]             = ImagingAlgorithms::eAverageImageMethod::Max;
 
     if (methods.count(str)==0)
         throw ImagingException("The key string does not exist for eAverageMethod",__FILE__,__LINE__);
@@ -239,26 +248,27 @@ void string2enum(const string &str, ImagingAlgorithms::AverageImage::eAverageMet
     eam=methods[str];
 }
 
-std::string enum2string(ImagingAlgorithms::AverageImage::eAverageMethod eam)
+std::string enum2string(ImagingAlgorithms::eAverageImageMethod eam)
 {
     std::string str;
 
     switch (eam)
     {
-        case ImagingAlgorithms::AverageImage::ImageSelectSingle:    str = "ImageSelectSingle"; break;
-        case ImagingAlgorithms::AverageImage::ImageSum:             str = "ImageSum"; break;
-        case ImagingAlgorithms::AverageImage::ImageAverage:         str = "ImageAverage"; break;
-        case ImagingAlgorithms::AverageImage::ImageMedian:          str = "ImageMedian"; break;
-        case ImagingAlgorithms::AverageImage::ImageWeightedAverage: str = "ImageWeightedAverage"; break;
-        case ImagingAlgorithms::AverageImage::ImageMin:             str = "ImageMin"; break;
-        case ImagingAlgorithms::AverageImage::ImageMax:             str = "ImageMax"; break;
+        case ImagingAlgorithms::eAverageImageMethod::SelectSingle:    str = "ImageSelectSingle"; break;
+        case ImagingAlgorithms::eAverageImageMethod::Sum:             str = "ImageSum"; break;
+        case ImagingAlgorithms::eAverageImageMethod::Average:         str = "ImageAverage"; break;
+        case ImagingAlgorithms::eAverageImageMethod::Median:          str = "ImageMedian"; break;
+        case ImagingAlgorithms::eAverageImageMethod::WeightedAverage: str = "ImageWeightedAverage"; break;
+        case ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage: str = "ImageMADWeightedAverage"; break;
+        case ImagingAlgorithms::eAverageImageMethod::Min:             str = "ImageMin"; break;
+        case ImagingAlgorithms::eAverageImageMethod::Max:             str = "ImageMax"; break;
         default:
             throw ImagingException("Unknown average method in enum2string for eAverageMethod",__FILE__,__LINE__);
     }
     return  str;
 }
 
-std::ostream & operator<<(ostream & s, ImagingAlgorithms::AverageImage::eAverageMethod & eam)
+std::ostream & operator<<(ostream & s, ImagingAlgorithms::eAverageImageMethod & eam)
 {
     s<<enum2string(eam);
 
