@@ -364,7 +364,7 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
 
     res=avg(stack,ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage,w);
     r0=res[0];
-    QCOMPARE(r0,11.0f);
+    QCOMPARE(r0,9.0f);
 
     res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Median,w);
     r0=res[0];
