@@ -51,13 +51,13 @@ void bindAverageImage(py::module &m)
 
 
     py::enum_<ImagingAlgorithms::eAverageImageMethod>(avgClass,"eAverageImageMethod")
-            .value("ImageSum",             ImagingAlgorithms::eAverageImageMethod::Sum)
-            .value("ImageAverage",         ImagingAlgorithms::eAverageImageMethod::Average)
-            .value("ImageMedian",          ImagingAlgorithms::eAverageImageMethod::Median)
-            .value("ImageWeightedAverage", ImagingAlgorithms::eAverageImageMethod::WeightedAverage)
-            .value("ImageMADWeightedAverage", ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage)
-            .value("ImageMin",             ImagingAlgorithms::eAverageImageMethod::Min)
-            .value("ImageMax",             ImagingAlgorithms::eAverageImageMethod::Max)
+            .value("Sum",             ImagingAlgorithms::eAverageImageMethod::Sum)
+            .value("Average",         ImagingAlgorithms::eAverageImageMethod::Average)
+            .value("Median",          ImagingAlgorithms::eAverageImageMethod::Median)
+            .value("WeightedAverage", ImagingAlgorithms::eAverageImageMethod::WeightedAverage)
+            .value("MADWeightedAverage", ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage)
+            .value("Min",             ImagingAlgorithms::eAverageImageMethod::Min)
+            .value("Max",             ImagingAlgorithms::eAverageImageMethod::Max)
             .export_values();
 
 }
