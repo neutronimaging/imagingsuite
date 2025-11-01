@@ -59,11 +59,10 @@ void median_STL(T *arr, size_t n, S *med);
 
 /// @brief Compute the median of a vector using the STL
 /// @tparam T Vector element type
-/// @tparam S Median type
 /// @param v The data vector
-/// @return The median value
-template<class T, class S>
-S median_STL(const std::vector<T> &v);
+/// @return The median value (same type as vector element)
+template<class T>
+T median_STL(const std::vector<T> &v);
 
 }}
 
