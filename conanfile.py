@@ -20,7 +20,7 @@ class MuhrecRecipe(ConanFile):
         self.requires("armadillo/[12.6.4]")
         self.requires("libtiff/[4.7.0]")
         self.requires("fftw/[3.3.10]")
-        self.requires("cfitsio/[4.4.0]")
+        self.requires("cfitsio/[4.6.3]")
         self.requires("hdf5/[1.14.5]")
         if self.settings.os == "Windows":
             self.requires("dirent/1.24") # Header files only
