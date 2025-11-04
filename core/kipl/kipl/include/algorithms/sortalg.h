@@ -1,8 +1,11 @@
 //<LICENCE>
+#ifndef SORTALG_H
+#define SORTALG_H
 
-#ifndef __sortalg_h
-#define __sortalg_h
+#include <vector>
 
+namespace kipl {
+namespace algorithms {
 /// \brief Sort an array using the heap sort algorithm the operation is inplace
 /// \param ra The array to sort
 /// \param n number of elements
@@ -44,6 +47,9 @@ void heapsort(T * ra, int n)
 	ra++;
 }
 
+template <class It>
+std::vector<size_t> arg_sort(const It& begin, const It& end);
+
 /*
 template <class T>
 void heapsort(T * ra, int n)
@@ -83,4 +89,8 @@ void heapsort(T * ra, int n)
 	ra++;
 }
 */
+
+}}
 #endif
+
+#include "core/sortalg.hpp"

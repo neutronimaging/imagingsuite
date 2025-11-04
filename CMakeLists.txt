@@ -152,6 +152,7 @@ enable_testing()
 add_subdirectory(core/kipl/kipl)
 
 # Core library tests
+add_subdirectory(core/kipl/UnitTests/tAlgorithms)
 add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
 add_subdirectory(core/kipl/UnitTests/tLogging)
 add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
