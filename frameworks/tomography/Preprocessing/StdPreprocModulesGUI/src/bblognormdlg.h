@@ -100,7 +100,7 @@ private:
     bool bExtSingleFile; /// boolean value on the use of single external file for sample background
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
-    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
+    ImagingAlgorithms::eAverageImageMethod m_ReferenceAverageMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions;
     ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX m_xInterpOrder;

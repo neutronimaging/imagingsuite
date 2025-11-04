@@ -2,6 +2,7 @@
 #include <list>
 #include <limits>
 #include <cmath>
+#include <tuple>
 
 #include <QString>
 #include <QtTest>
@@ -20,6 +21,7 @@
 #include <math/image_statistics.h>
 #include <math/covariance.h>
 #include <math/gradient.h>
+#include <math/core/sigmaclip.hpp>
 #include <math/linfit.h>
 #include <base/thistogram.h>
 #include <io/io_tiff.h>
@@ -59,6 +61,10 @@ private Q_SLOTS:
     void testARMANonLinFit_GaussianFunction();
     void testARMANonLinFit_fitter();
     void testARMANonLinFit_realDataFit();
+
+    void test_basic_outlier_removal();
+    void test_nan_handling_and_outlier();
+    void test_all_clipped_returns_empty();
 
 private :
     void testPolyFit();
@@ -782,6 +788,57 @@ void TKiplMathTest::testFindLimits()
     kipl::base::FindLimits(vec,80.0f,lo,hi);
     QCOMPARE(lo,9UL);
     QCOMPARE(hi,89UL);
+}
+
+void TKiplMathTest::test_basic_outlier_removal()
+{
+    std::vector<double> data{1.0, 2.0, 3.0, 1000.0};
+    auto [clipped, lower, upper] = kipl::math::sigma_clip(data, 1.0, 1.0);
+
+    qDebug() << "Clipped size:" << clipped.size();
+    qDebug() << "Lower bound:" << lower;
+    qDebug() << "Upper bound:" << upper;    
+    qDebug() << "Clipped data:";
+    for (double v : clipped) {
+        qDebug() << v;
+    }   
+    // 1000 should be removed -> three elements remain
+    QCOMPARE(clipped.size(), static_cast<size_t>(3));
+    QVERIFY(std::find(clipped.begin(), clipped.end(), 1000.0) == clipped.end());
+
+    // mean of remaining should be 2.0
+    double mean = std::accumulate(clipped.begin(), clipped.end(), 0.0) / clipped.size();
+    QVERIFY(std::abs(mean - 2.0) < 1e-9);
+
+    // bounds should be finite and contain the remaining values
+    QVERIFY(std::isfinite(lower));
+    QVERIFY(std::isfinite(upper));
+    for (double v : clipped) {
+        QVERIFY(v >= lower - 1e-12 && v <= upper + 1e-12);
+    }
+}
+
+void TKiplMathTest::test_nan_handling_and_outlier()
+{
+    std::vector<double> data{1.0, 2.0, std::nan(""), 3.0, 100.0};
+    auto [clipped, lower, upper] = kipl::math::sigma_clip(data, 1.0, 1.0);
+
+    // NaN and 100 should be removed -> remaining 1,2,3
+    QCOMPARE(clipped.size(), static_cast<size_t>(3));
+    QVERIFY(!std::isnan(clipped[0]) && !std::isnan(clipped[1]) && !std::isnan(clipped[2]));
+    double mean = std::accumulate(clipped.begin(), clipped.end(), 0.0) / clipped.size();
+    QVERIFY(std::abs(mean - 2.0) < 1e-9);
+}
+
+void TKiplMathTest::test_all_clipped_returns_empty()
+{
+    // Very tight clip -> everything removed
+    std::vector<double> data{1000.0, 2000.0};
+    auto [clipped, lower, upper] = kipl::math::sigma_clip(data, 0.0001, 0.0001);
+
+    QCOMPARE(clipped.size(), static_cast<size_t>(0));
+    QCOMPARE(lower, 0.0);
+    QCOMPARE(upper, 0.0);
 }
 
 #ifdef __APPLE__

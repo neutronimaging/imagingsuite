@@ -312,7 +312,7 @@ int FileConversionDialog::ConvertImages()
                    ++it;
                 }
 
-                img=avgimg(img3d,static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboAverageMethod->currentIndex()));
+                img=avgimg(img3d,static_cast<ImagingAlgorithms::eAverageImageMethod>(ui->comboAverageMethod->currentIndex()));
             }
             else
             {

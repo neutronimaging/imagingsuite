@@ -11,6 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
+# find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
 message("Using Qt${QT_VERSION_MAJOR}")
 

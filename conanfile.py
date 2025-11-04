@@ -22,6 +22,7 @@ class MuhrecRecipe(ConanFile):
         self.requires("fftw/[3.3.10]")
         self.requires("cfitsio/[4.4.0]")
         self.requires("hdf5/[1.14.5]")
+        self.requires("nlohmann_json/[3.12.0]")
         if self.settings.os == "Windows":
             self.requires("dirent/1.24") # Header files only
         #self.requires("qt/[6.6.1]") Does work but QtCharts is not included

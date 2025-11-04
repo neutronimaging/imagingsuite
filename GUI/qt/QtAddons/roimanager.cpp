@@ -240,7 +240,12 @@ void QtAddons::ROIManager::on_button_save_clicked()
 {
     QString filename = QFileDialog::getSaveFileName(this,"Save ROI list",QDir::homePath());
     QFile f( filename );
-    f.open( QIODevice::WriteOnly );
+    
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "roi_manager: failed to open roi file" << filename << ":" << f.errorString();
+        return;
+    }
+
     QTextStream out(&f);
     // store data in f
     out<<"{\n";
