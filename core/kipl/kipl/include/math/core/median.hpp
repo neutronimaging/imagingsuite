@@ -55,6 +55,24 @@ void median_STL(T *v,const size_t n, S * med)
         }
 }
 
+template<class T>
+T median_STL(const std::vector<T> &v)
+{
+    size_t n = v.size();
+    if (n == 0) return T{}; // or throw if you prefer
+
+    std::vector<T> tmp(v.begin(), v.end());
+    size_t mid = n / 2;
+
+    // partial_sort so that tmp[mid] (and tmp[mid-1] for even n) are the correct elements
+    std::partial_sort(tmp.begin(), tmp.begin() + mid + 1, tmp.end());
+
+    if (n & 1)
+        return tmp[mid];
+    else
+        return static_cast<T>((static_cast<double>(tmp[mid - 1]) + static_cast<double>(tmp[mid])) * 0.5);
+}
+
 #define PIX_SORT(a,b) { if ((a)>(b)) swap(a,b); }
 
 template <class T>
@@ -170,5 +188,4 @@ void median_quick_select(T *arr, const size_t n, S *med)
 
 
 }}
-
-#endif /*MEDIAN_HPP_*/
+#endif

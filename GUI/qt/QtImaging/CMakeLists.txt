@@ -45,9 +45,6 @@ add_library(${TARGET_NAME} SHARED
   ${UI_FILES}
 )
 
-if (APPLE)
-
-
 target_link_libraries(${TARGET_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
@@ -57,32 +54,45 @@ target_link_libraries(${TARGET_NAME} PRIVATE
     QtAddons
     ImagingAlgorithms
     )
-endif()
 
-if (WIN32)
+# if (APPLE)
 
-target_link_libraries(${TARGET_NAME} PRIVATE
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Widgets
 
-    kipl
-    ReaderConfig
-    QtAddons
-    ImagingAlgorithms
-    )
-endif()
+# target_link_libraries(${TARGET_NAME} PRIVATE
+#     Qt${QT_VERSION_MAJOR}::Core
+#     Qt${QT_VERSION_MAJOR}::Widgets
+#     PUBLIC
+#     kipl
+#     ReaderConfig
+#     QtAddons
+#     ImagingAlgorithms
+#     )
+# endif()
 
-if (UNIX)
+# if (WIN32)
 
-target_link_libraries(${TARGET_NAME} PRIVATE
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Widgets
-    kipl
-    ReaderConfig
-    QtAddons
-    ImagingAlgorithms
-    )
-endif()
+# target_link_libraries(${TARGET_NAME} PRIVATE
+#     Qt${QT_VERSION_MAJOR}::Core
+#     Qt${QT_VERSION_MAJOR}::Widgets
+
+#     kipl
+#     ReaderConfig
+#     QtAddons
+#     ImagingAlgorithms
+#     )
+# endif()
+
+# if (UNIX)
+
+# target_link_libraries(${TARGET_NAME} PRIVATE
+#     Qt${QT_VERSION_MAJOR}::Core
+#     Qt${QT_VERSION_MAJOR}::Widgets
+#     kipl
+#     ReaderConfig
+#     QtAddons
+#     ImagingAlgorithms
+#     )
+# endif()
 
 target_compile_definitions(${TARGET_NAME} PRIVATE QTIMAGING_LIBRARY)
 

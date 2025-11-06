@@ -57,6 +57,12 @@ void median_quick_select_sse2(float *arr, const size_t n, float *med);
 template<class T, class S>
 void median_STL(T *arr, size_t n, S *med);
 
+/// @brief Compute the median of a vector using the STL
+/// @tparam T Vector element type
+/// @param v The data vector
+/// @return The median value (same type as vector element)
+template<class T>
+T median_STL(const std::vector<T> &v);
 
 }}
 

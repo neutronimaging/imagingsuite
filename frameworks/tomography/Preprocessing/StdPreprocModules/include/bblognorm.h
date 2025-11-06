@@ -145,7 +145,7 @@ protected:
 
 private:
     int m_nWindow; /// apparentely not used
-    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod; /// method chosen for averaging Referencing images
+    ImagingAlgorithms::eAverageImageMethod m_ReferenceAverageMethod; /// method chosen for averaging Referencing images
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;/// method chosen for Referencing (BBLogNorm or LogNorm, only BBLogNorm is implemented at the moment)
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions; /// options for BB image reference correction (Interpolate, Average, OneToOne)
     ImagingAlgorithms::ReferenceImageCorrection m_corrector; /// instance of ReferenceImageCorrection
