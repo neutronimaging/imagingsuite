@@ -17,7 +17,7 @@ include_directories(
     ../../kipl/include
     )
 
-set(SRC_FILES,
+set(SRC_FILES
     tst_algorithms.cpp)
 
 add_executable(${TARGET_NAME} tst_algorithms.cpp)
