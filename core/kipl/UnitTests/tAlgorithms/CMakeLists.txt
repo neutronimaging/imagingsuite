@@ -23,7 +23,7 @@ set(SRC_FILES
 add_executable(${TARGET_NAME} tst_algorithms.cpp)
 
 target_link_libraries(${TARGET_NAME}
-    PUBLIC
+    PRIVATE
         Qt6::Test
         kipl
     )
