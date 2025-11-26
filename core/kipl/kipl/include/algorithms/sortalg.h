@@ -47,6 +47,11 @@ void heapsort(T * ra, int n)
 	ra++;
 }
 
+/// @brief Returns a vector of indices that would sort the input range in ascending order.
+/// @tparam It Iterator type (must support random access).
+/// @param begin Iterator to the beginning of the range.
+/// @param end Iterator to the end of the range.
+/// @return A vector of indices that would sort the range.
 template <class It>
 std::vector<size_t> arg_sort(const It& begin, const It& end);
 
