@@ -47,7 +47,7 @@ AlgorithmsTest::AlgorithmsTest()
 
 void AlgorithmsTest::testArgSort()
 {
-    std::vector<int> data = { 40, 10, 5,20, 30 };
+    std::vector<int> data = { 40, 10, 5, 20, 30 };
     std::vector<size_t> sorted_indices = kipl::algorithms::arg_sort(data.begin(), data.end());
 
     std::vector<size_t> expected_indices = { 2, 1, 3, 4, 0 }; // Indices that would sort the array
