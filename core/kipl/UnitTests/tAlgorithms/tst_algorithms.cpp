@@ -25,6 +25,15 @@ private Q_SLOTS:
     void testDuplicatesPreserveSortedValues();
     void testPointerIterator();
 
+    void testUniqueEmpty();
+    void testUniqueSingle();
+    void testUniqueNoDuplicates();
+    void testUniqueAllDuplicates();
+    void testUniqueMixedUnsorted();
+    void testUniqueNegativeValues();
+    void testUniqueStrings();
+    void testUniqueLargeRandom();
+
 };
 
 AlgorithmsTest::AlgorithmsTest()
@@ -106,6 +115,79 @@ void AlgorithmsTest::testPointerIterator()
     std::vector<double> expected(std::begin(arr), std::end(arr));
     std::sort(expected.begin(), expected.end());
     QCOMPARE(sorted_values, expected);
+}
+
+void AlgorithmsTest::testUniqueEmpty() {
+    std::vector<int> v;
+    auto u = kipl::algorithms::unique_values(v);
+    QCOMPARE(u.size(), size_t(0));
+}
+
+void AlgorithmsTest::testUniqueSingle() {
+    std::vector<int> v{42};
+    auto u = kipl::algorithms::unique_values(v);
+    QCOMPARE(u.size(), size_t(1));
+    QCOMPARE(u[0], 42);
+}
+
+void AlgorithmsTest::testUniqueNoDuplicates() {
+    std::vector<int> v{5,1,7,3};
+    auto u = kipl::algorithms::unique_values(v);
+    std::vector<int> expected{1,3,5,7};
+    QCOMPARE(u, expected);
+}
+
+void AlgorithmsTest::testUniqueAllDuplicates() {
+    std::vector<int> v{9,9,9,9};
+    auto u = kipl::algorithms::unique_values(v);
+    QCOMPARE(u.size(), size_t(1));
+    QCOMPARE(u[0], 9);
+}
+
+void AlgorithmsTest::testUniqueMixedUnsorted() {
+    std::vector<int> v{4,2,4,1,2,3,3,4};
+    auto u = kipl::algorithms::unique_values(v);
+    std::vector<int> expected{1,2,3,4};
+    QCOMPARE(u, expected);
+}
+
+void AlgorithmsTest::testUniqueNegativeValues() {
+    std::vector<int> v{-1,-5,-1,0,-5,2};
+    auto u = kipl::algorithms::unique_values(v);
+    std::vector<int> expected{-5,-1,0,2};
+    QCOMPARE(u, expected);
+}
+
+void AlgorithmsTest::testUniqueStrings() {
+    std::vector<std::string> v{"b","a","b","c","a"};
+    auto u = kipl::algorithms::unique_values(v);
+    std::vector<std::string> expected{"a","b","c"};
+    QCOMPARE(u, expected);
+}
+
+void AlgorithmsTest::testUniqueLargeRandom() {
+    std::mt19937 rng(12345);
+    std::uniform_int_distribution<int> dist(0, 200);
+    std::vector<int> v;
+    v.reserve(2000);
+    for (int i=0;i<2000;++i) v.push_back(dist(rng));
+    auto u = kipl::algorithms::unique_values(v);
+
+    // Check sorted
+    QVERIFY(std::is_sorted(u.begin(), u.end()));
+
+    // Check all unique
+    for (size_t i=1;i<u.size();++i)
+        QVERIFY(u[i-1] != u[i]);
+
+    // Cross‑check with std::set
+    std::set<int> s(v.begin(), v.end());
+    QCOMPARE(u.size(), s.size());
+    size_t idx = 0;
+    for (int val : s) {
+        QCOMPARE(u[idx], val);
+        ++idx;
+    }
 }
 
 QTEST_APPLESS_MAIN(AlgorithmsTest)
