@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include <algorithms/sortalg.h>
+#include <algorithms/unique.h>
 
 #include <iostream>
 #include <fstream>
