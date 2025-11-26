@@ -3,8 +3,6 @@
 
 #include <vector>
 #include <algorithm>
-#include <numeric>   // std::iota
-#include <iterator>  // std::distance
 
 namespace kipl {
 namespace algorithms {
