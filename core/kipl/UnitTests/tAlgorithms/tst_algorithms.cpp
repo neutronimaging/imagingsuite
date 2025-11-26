@@ -183,7 +183,7 @@ void AlgorithmsTest::testUniqueLargeRandom() {
     for (size_t i=1;i<u.size();++i)
         QVERIFY(u[i-1] != u[i]);
 
-    // Cross‑check with std::set
+    // Cross-check with std::set
     std::set<int> s(v.begin(), v.end());
     QCOMPARE(u.size(), s.size());
     size_t idx = 0;
