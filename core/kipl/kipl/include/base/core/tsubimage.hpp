@@ -121,7 +121,9 @@ TSubImage<T,NDims>::TSubImage(std::vector<size_t> const & position, std::vector<
 template <typename T, size_t NDims>
 TSubImage<T,NDims>::TSubImage(std::vector<size_t> const & position, size_t const lengths, size_t _margin) :
 	m_start(position),
+	m_estart(position),
 	m_length(NDims,lengths),
+	m_elength(NDims,lengths),
 	m_margin(_margin)
 {
 	if (m_start.size()!=NDims)
