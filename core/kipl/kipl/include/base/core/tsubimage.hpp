@@ -276,7 +276,7 @@ void TSubImage<T,NDims>::insert(const kipl::base::TImage<T,NDims> & subImg, kipl
 }
 
 template <typename T, size_t NDims>
-const std::vector<size_t> & TSubImage<T,NDims>::start()
+const std::vector<size_t> & TSubImage<T,NDims>::start() const
 {
 	return m_start;
 }
