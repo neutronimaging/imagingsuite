@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <span>
+#include <ranges>
 
 namespace kipl { namespace base {
 
@@ -440,6 +441,144 @@ void TSubImage<T,NDims>::Put(const TImage<T,NDims> src, TImage<T, NDims> dest, s
 	}
 	
 }
+
+// ImagePatchExtractor class implementation
+template <typename T, size_t NDims>	
+ImagePatchExtractor<T, NDims>::ImagePatchExtractor(std::vector<size_t> const & imageDims, std::vector<size_t> const & subImageDims, size_t margin) :
+	m_imageDims(imageDims),
+	m_subImageDims(subImageDims),
+	m_margin(margin)
+{
+	if constexpr (NDims != 2) {
+		throw kipl::base::KiplException("ImagePatchExtractor: only 2D supported", __FILE__, __LINE__);
+	}
+
+	if (m_imageDims.size() != subImageDims.size())
+		throw kipl::base::KiplException("ImagePatchExtractor: imageDims size != subImageDims size", __FILE__, __LINE__);
+	
+	for (size_t i=0; i<m_imageDims.size(); ++i) {
+		if (m_subImageDims[i] == 0)
+			throw kipl::base::KiplException("ImagePatchExtractor: subImageDims contains zero", __FILE__, __LINE__);
+		if (m_imageDims[i] == 0)
+			throw kipl::base::KiplException("ImagePatchExtractor: imageDims contains zero", __FILE__, __LINE__);
+		if (m_imageDims[i] < m_subImageDims[i])
+			throw kipl::base::KiplException("ImagePatchExtractor: subImageDims larger than imageDims", __FILE__, __LINE__);
+	}
+	
+
+	// Calculate number of patches in each dimension
+	size_t nDims = m_subImageDims.size();
+	m_gridDims.resize(nDims);
+	m_gridRemainders.resize(nDims);
+	for (size_t d = 0; d < nDims; ++d) {
+		if (m_imageDims[d] < m_subImageDims[d])
+			throw kipl::base::KiplException("ImagePatchExtractor: subImageDims larger than imageDims in one dimension", __FILE__, __LINE__);
+
+		m_gridDims[d]       = m_imageDims[d] / m_subImageDims[d]; // Ceiling division
+		m_gridRemainders[d] = m_imageDims[d] % m_subImageDims[d];
+	}
+
+	// Calculate total number of patches
+	m_totalPatches = 1;
+	for (auto n : m_gridDims) {
+		m_totalPatches *= n;
+	}
+}
+
+template <typename T, size_t NDims>
+size_t ImagePatchExtractor<T, NDims>::size() const
+{
+	return m_totalPatches;
+}
+
+template <typename T, size_t NDims>
+size_t ImagePatchExtractor<T, NDims>::size(size_t axis) const
+{
+	if (axis >= m_gridDims.size())
+		throw kipl::base::KiplException("ImagePatchExtractor::size: axis out of range", __FILE__, __LINE__);
+	return m_gridDims[axis];
+}
+
+template <typename T, size_t NDims>
+std::vector< kipl::base::TSubImage<T,NDims> > ImagePatchExtractor<T, NDims>::getAllSubImages() const
+{
+	std::vector< kipl::base::TSubImage<T,NDims> > subImages;
+
+	subImages.reserve(m_totalPatches);
+
+	// Iterate over all patch indices
+	std::vector<size_t> currentIndices(NDims, 0);
+	for (size_t count = 0; count < m_totalPatches; ++count) {
+		// Calculate start position for current patch
+		size_t x = count % m_gridDims[0];
+		size_t y = count / m_gridDims[0];
+
+		auto [startPos, adjustedSubImageDims] = calculatePatchInfo(x, y);
+
+		subImages.emplace_back(startPos, adjustedSubImageDims, m_margin);
+	}
+
+	return subImages;
+}
+
+template <typename T, size_t NDims>
+std::tuple<std::vector<size_t>, std::vector<size_t> > ImagePatchExtractor<T, NDims>::calculatePatchInfo(size_t x, size_t y) const
+{
+		std::vector<size_t> startPos({x*m_subImageDims[0],y*m_subImageDims[1]});
+		std::vector<size_t> adjustedSubImageDims = m_subImageDims;
+
+		if (x<m_gridRemainders[0] && m_gridDims[0]>1) {
+			adjustedSubImageDims[0]+=1;
+			startPos[0]+=x;
+		}
+		else
+			startPos[0]+=m_gridRemainders[0];
+
+		if (y<m_gridRemainders[1] && m_gridDims[1]>1) {
+			adjustedSubImageDims[1]+=1;
+			startPos[1]+=y;
+		}
+		else
+			startPos[1]+=m_gridRemainders[1];
+
+		return {startPos, adjustedSubImageDims};
+}
+
+template <typename T, size_t NDims>
+kipl::base::TSubImage<T,NDims> ImagePatchExtractor<T, NDims>::operator[](size_t idx) const
+{
+	return this->at(idx);
+}
+
+template <typename T, size_t NDims>
+kipl::base::TSubImage<T,NDims> ImagePatchExtractor<T, NDims>::at(size_t idx) const
+{
+	if (idx >= m_totalPatches)
+		throw kipl::base::KiplException("ImagePatchExtractor::at: index out of range", __FILE__, __LINE__);
+
+	size_t x = idx % m_gridDims[0];
+	size_t y = idx / m_gridDims[0];
+
+	auto [startPos, adjustedSubImageDims] = calculatePatchInfo(x, y);
+	
+	return kipl::base::TSubImage<T,NDims>(startPos, adjustedSubImageDims, m_margin);
+}
+
+template <typename T, size_t NDims>
+kipl::base::TSubImage<T,NDims> ImagePatchExtractor<T, NDims>::operator()(size_t x,size_t y) const
+{
+	if constexpr (NDims != 2)
+		throw kipl::base::KiplException("ImagePatchExtractor::operator(): only for 2D images", __FILE__, __LINE__);
+
+	if (x >= m_gridDims[0] || y >= m_gridDims[1])
+		throw kipl::base::KiplException("ImagePatchExtractor::operator(): index out of range", __FILE__, __LINE__);
+
+	// Calculate start position for the patch
+	auto [startPos, adjustedSubImageDims] = calculatePatchInfo(x, y);
+
+	return kipl::base::TSubImage<T,NDims>(startPos, m_subImageDims, m_margin);
+}
+
 
 template <typename T>
 TImage<T,2> ExtractSlice(TImage<T,3> volume, size_t idx)

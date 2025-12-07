@@ -4,6 +4,7 @@
 #define TSUBIMAGE_H_
 
 #include <vector>
+#include <tuple>
 
 #include "timage.h"
 
@@ -76,18 +77,25 @@ template <typename T, size_t NDims>
 class ImagePatchExtractor {
 public:
     ImagePatchExtractor(std::vector<size_t> const & imageDims, std::vector<size_t> const & subImageDims, size_t margin);
-    bool next(std::vector<size_t> & start, std::vector<size_t> & length);   
+ 
     size_t size() const;
     size_t size(size_t axis) const;
     std::vector< kipl::base::TSubImage<T,NDims> > getAllSubImages() const;
-    
+
+    kipl::base::TSubImage<T,NDims> operator[](size_t idx) const;
+    kipl::base::TSubImage<T,NDims> at(size_t idx) const;
+    kipl::base::TSubImage<T,NDims> operator()(size_t x,size_t y) const;
+
 private:
+    std::tuple<std::vector<size_t>, std::vector<size_t> > calculatePatchInfo(size_t x, size_t y) const;
+
     std::vector<size_t> m_imageDims;
     std::vector<size_t> m_subImageDims;
-    std::vector<size_t> m_margin;
-    std::vector<size_t> m_currentPos;
+    size_t m_margin;
 
-    size_t m_gridDims[NDims];
+    std::vector<size_t> m_gridDims;
+    std::vector<size_t> m_gridRemainders;
+    size_t m_totalPatches;
 };
 
 /// \brief Extracts a 2D slice in the XY plane from a 3D image

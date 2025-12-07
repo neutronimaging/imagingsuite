@@ -22,6 +22,9 @@ private Q_SLOTS:
     void testCornerCases2D();
     void testExtractInsert3D();
     void testStaticMembers();
+
+    void testPatchExtractorInitialization();
+    void testPatchExtractorAccessors();
 };
 
 SubImageTest::SubImageTest()
@@ -466,6 +469,83 @@ void SubImageTest::testExtractInsert3D()
             }
         }
     }
+}
+
+void SubImageTest::testPatchExtractorInitialization()
+{
+    kipl::base::TImage<float,2> img({10,10});
+    for (size_t y=0; y<img.Size(1); y++) {
+        for (size_t x=0; x<img.Size(0); x++) {
+            img(x,y) = static_cast<float>(y*10 + x);
+        }
+    }
+
+    std::vector<size_t> subImageDims = {4,3};
+    size_t margin = 1;
+
+    kipl::base::ImagePatchExtractor<float,2> extractor(img.dims(), subImageDims, margin);
+    // QCOMPARE(extractor.imageDims(), std::vector<size_t>({10,10}));
+    // QCOMPARE(extractor.subImageDims(), subImageDims);
+    // QCOMPARE(extractor.margin(), margin);   
+    QCOMPARE(extractor.size(0), size_t(2)); // 2 full patches 
+    QCOMPARE(extractor.size(1), size_t(3)); // 3 full patches
+    QCOMPARE(extractor.size(), size_t(6));  // 2 * 3 = 6 patches
+}
+
+void SubImageTest::testPatchExtractorAccessors()
+{
+    kipl::base::TImage<float,2> img({14,10});
+    for (size_t y=0; y<img.Size(1); y++) {
+        for (size_t x=0; x<img.Size(0); x++) {
+            img(x,y) = static_cast<float>(y*10 + x);
+        }
+    }
+
+    std::vector<size_t> subImageDims = {4,3};
+    size_t margin = 1;
+
+    kipl::base::ImagePatchExtractor<float,2> extractor(img.dims(), subImageDims, margin);
+
+    auto subImages = extractor.getAllSubImages();
+
+    std::vector<size_t> lengthsum = {0,0}; // 14/4=3 full +1 remainder, 10/3=3 full +1 remainder
+    for (size_t i=0; i<extractor.size(); ++i) {
+        kipl::base::TSubImage<float,2> subImg = extractor.at(i);
+        std::vector<size_t> start = subImg.start();
+        std::vector<size_t> length = subImg.length();
+
+        auto start2 = subImages[i].start();
+        auto length2 = subImages[i].length();
+        QCOMPARE(start, start2);
+        QCOMPARE(length, length2);
+        lengthsum[0] += length[0];
+        lengthsum[1] += length[1];
+    }
+
+    std::cout << "Total length sum: (" << lengthsum[0] << "," << lengthsum[1] << ")" << std::endl;
+    QCOMPARE(lengthsum[0]/extractor.size(1), img.Size(0));
+    QCOMPARE(lengthsum[1]/extractor.size(0), img.Size(1));
+
+    size_t ysum = 0UL;
+    for (size_t y=0, i=0; y<extractor.size(1); ++y) {
+        size_t xsum = 0UL;
+        for (size_t x=0; x<extractor.size(0); ++x,++i) {
+            size_t idx = y * extractor.size(0) + x;
+            kipl::base::TSubImage<float,2> subImg = extractor.at(idx);
+            std::vector<size_t> start = subImg.start();
+            std::vector<size_t> length = subImg.length();
+
+            auto start2 = subImages[i].start();
+            auto length2 = subImages[i].length();
+            QCOMPARE(start, start2);
+            QCOMPARE(length, length2);
+
+            xsum += length[0];
+            ysum += length[1];
+        }
+        QCOMPARE(xsum, img.Size(0));
+    }   
+    QCOMPARE(ysum/extractor.size(0), img.Size(1));
 }
 
 void SubImageTest::testStaticMembers()
