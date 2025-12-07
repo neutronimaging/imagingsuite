@@ -121,12 +121,11 @@ TSubImage<T,NDims>::TSubImage(std::vector<size_t> const & position, std::vector<
 template <typename T, size_t NDims>
 TSubImage<T,NDims>::TSubImage(std::vector<size_t> const & position, size_t const lengths, size_t _margin) :
 	m_start(position),
+	m_estart(position),
 	m_length(NDims,lengths),
+	m_elength(NDims,lengths),
 	m_margin(_margin)
 {
-	if (m_start.empty())
-		throw kipl::base::KiplException("TSubImage is not initialized. Only static methods allowed.",__FILE__,__LINE__);
-
 	if (m_start.size()!=NDims)
 		throw kipl::base::KiplException("TSubImage: start size does not match NDims",__FILE__,__LINE__);
 
@@ -214,11 +213,19 @@ void TSubImage<T,NDims>::extract(const kipl::base::TImage<T,NDims> & src, kipl::
 			}
 		}
     } else if constexpr (NDims == 3) {
-        for (size_t z=0; z<m_elength[2]; ++z) {
-            for (size_t y=0; y<m_elength[1]; y++) {
-                auto pSrc = src.GetLinePtr(y+m_estart[1],z+m_estart[2])+m_estart[0];
-                auto pDst = dst.GetLinePtr(y,z);
-                std::copy_n(pSrc, m_elength[0], pDst);
+        // Mirror boundary handling for 3D extraction
+        for (size_t z = 0; z < m_elength[2]; ++z) {
+            std::ptrdiff_t src_z = static_cast<std::ptrdiff_t>(z) + static_cast<std::ptrdiff_t>(m_estart[2]);
+            src_z = reflect_index(src_z, src.Size(2));
+            for (size_t y = 0; y < m_elength[1]; ++y) {
+                std::ptrdiff_t src_y = static_cast<std::ptrdiff_t>(y) + static_cast<std::ptrdiff_t>(m_estart[1]);
+                src_y = reflect_index(src_y, src.Size(1));
+                auto pDst = dst.GetLinePtr(y, z);
+                for (size_t x = 0; x < m_elength[0]; ++x) {
+                    std::ptrdiff_t src_x = static_cast<std::ptrdiff_t>(x) + static_cast<std::ptrdiff_t>(m_estart[0]);
+                    src_x = reflect_index(src_x, src.Size(0));
+                    pDst[x] = src(src_x, src_y, src_z);
+                }
             }
         }
     } else {
@@ -275,25 +282,25 @@ const std::vector<size_t> & TSubImage<T,NDims>::start()
 }
 
 template <typename T, size_t NDims>
-const std::vector<size_t> & TSubImage<T,NDims>::estart()
+const std::vector<size_t> & TSubImage<T,NDims>::estart() const
 {
 	return m_estart;
 }
 
 template <typename T, size_t NDims>
-const std::vector<size_t> & TSubImage<T,NDims>::length()
+const std::vector<size_t> & TSubImage<T,NDims>::length() const
 {
 	return m_length;
 }
 
 template <typename T, size_t NDims>
-const std::vector<size_t> & TSubImage<T,NDims>::elength()
+const std::vector<size_t> & TSubImage<T,NDims>::elength() const
 {
 	return m_elength;
 }
 
 template <typename T, size_t NDims>
-size_t TSubImage<T,NDims>::margin()
+size_t TSubImage<T,NDims>::margin() const
 {
 	return m_margin;
 }
@@ -471,8 +478,6 @@ ImagePatchExtractor<T, NDims>::ImagePatchExtractor(std::vector<size_t> const & i
 	m_gridDims.resize(nDims);
 	m_gridRemainders.resize(nDims);
 	for (size_t d = 0; d < nDims; ++d) {
-		if (m_imageDims[d] < m_subImageDims[d])
-			throw kipl::base::KiplException("ImagePatchExtractor: subImageDims larger than imageDims in one dimension", __FILE__, __LINE__);
 
 		m_gridDims[d]       = m_imageDims[d] / m_subImageDims[d]; // Ceiling division
 		m_gridRemainders[d] = m_imageDims[d] % m_subImageDims[d];
@@ -576,7 +581,7 @@ kipl::base::TSubImage<T,NDims> ImagePatchExtractor<T, NDims>::operator()(size_t 
 	// Calculate start position for the patch
 	auto [startPos, adjustedSubImageDims] = calculatePatchInfo(x, y);
 
-	return kipl::base::TSubImage<T,NDims>(startPos, m_subImageDims, m_margin);
+	return kipl::base::TSubImage<T,NDims>(startPos, adjustedSubImageDims, m_margin);
 }
 
 

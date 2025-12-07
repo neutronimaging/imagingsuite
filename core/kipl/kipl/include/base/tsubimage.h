@@ -57,11 +57,11 @@ public:
     /// \param nStart tuple with the coordinate of the insertion corner
 	static void Put(const TImage<T,NDims> src, TImage<T, NDims> dest, size_t const *const nStart);
 
-    const std::vector<size_t> & start();
-    const std::vector<size_t> & estart();
-    const std::vector<size_t> & length();
-    const std::vector<size_t> & elength();
-    size_t margin();
+    const std::vector<size_t> & start() const;
+    const std::vector<size_t> & estart() const;
+    const std::vector<size_t> & length() const;
+    const std::vector<size_t> & elength() const;
+    size_t margin() const;
 
 private:
     std::vector<size_t> m_start;
