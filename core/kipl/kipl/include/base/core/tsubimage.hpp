@@ -576,7 +576,7 @@ kipl::base::TSubImage<T,NDims> ImagePatchExtractor<T, NDims>::operator()(size_t 
 	// Calculate start position for the patch
 	auto [startPos, adjustedSubImageDims] = calculatePatchInfo(x, y);
 
-	return kipl::base::TSubImage<T,NDims>(startPos, m_subImageDims, m_margin);
+	return kipl::base::TSubImage<T,NDims>(startPos, adjustedSubImageDims, m_margin);
 }
 
 
