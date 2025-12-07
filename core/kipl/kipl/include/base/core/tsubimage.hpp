@@ -211,11 +211,19 @@ void TSubImage<T,NDims>::extract(const kipl::base::TImage<T,NDims> & src, kipl::
 			}
 		}
     } else if constexpr (NDims == 3) {
-        for (size_t z=0; z<m_elength[2]; ++z) {
-            for (size_t y=0; y<m_elength[1]; y++) {
-                auto pSrc = src.GetLinePtr(y+m_estart[1],z+m_estart[2])+m_estart[0];
-                auto pDst = dst.GetLinePtr(y,z);
-                std::copy_n(pSrc, m_elength[0], pDst);
+        // Mirror boundary handling for 3D extraction
+        for (size_t z = 0; z < m_elength[2]; ++z) {
+            std::ptrdiff_t src_z = static_cast<std::ptrdiff_t>(z) + static_cast<std::ptrdiff_t>(m_estart[2]);
+            src_z = reflect_index(src_z, src.Size(2));
+            for (size_t y = 0; y < m_elength[1]; ++y) {
+                std::ptrdiff_t src_y = static_cast<std::ptrdiff_t>(y) + static_cast<std::ptrdiff_t>(m_estart[1]);
+                src_y = reflect_index(src_y, src.Size(1));
+                auto pDst = dst.GetLinePtr(y, z);
+                for (size_t x = 0; x < m_elength[0]; ++x) {
+                    std::ptrdiff_t src_x = static_cast<std::ptrdiff_t>(x) + static_cast<std::ptrdiff_t>(m_estart[0]);
+                    src_x = reflect_index(src_x, src.Size(0));
+                    pDst[x] = src(src_x, src_y, src_z);
+                }
             }
         }
     } else {
