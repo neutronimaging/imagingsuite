@@ -275,25 +275,25 @@ const std::vector<size_t> & TSubImage<T,NDims>::start()
 }
 
 template <typename T, size_t NDims>
-const std::vector<size_t> & TSubImage<T,NDims>::estart()
+const std::vector<size_t> & TSubImage<T,NDims>::estart() const
 {
 	return m_estart;
 }
 
 template <typename T, size_t NDims>
-const std::vector<size_t> & TSubImage<T,NDims>::length()
+const std::vector<size_t> & TSubImage<T,NDims>::length() const
 {
 	return m_length;
 }
 
 template <typename T, size_t NDims>
-const std::vector<size_t> & TSubImage<T,NDims>::elength()
+const std::vector<size_t> & TSubImage<T,NDims>::elength() const
 {
 	return m_elength;
 }
 
 template <typename T, size_t NDims>
-size_t TSubImage<T,NDims>::margin()
+size_t TSubImage<T,NDims>::margin() const
 {
 	return m_margin;
 }
