@@ -124,9 +124,6 @@ TSubImage<T,NDims>::TSubImage(std::vector<size_t> const & position, size_t const
 	m_length(NDims,lengths),
 	m_margin(_margin)
 {
-	if (m_start.empty())
-		throw kipl::base::KiplException("TSubImage is not initialized. Only static methods allowed.",__FILE__,__LINE__);
-
 	if (m_start.size()!=NDims)
 		throw kipl::base::KiplException("TSubImage: start size does not match NDims",__FILE__,__LINE__);
 
