@@ -18,7 +18,7 @@ namespace kipl { namespace base {
 // Reflect an index into [0, n-1] using "mirror" boundary (…3 2 1 | 0 1 2 3 2 1…)
 inline std::size_t reflect_index(std::ptrdiff_t i, std::size_t n) {
     if (n == 0) return 0;
-    // if (n == 1) return 0;
+    if (n == 1) return 0;
     // bring i into [-(n-1), +infty)
     if (i < 0) {
         // mirror to positive by periodic extension of length 2*(n-1)
