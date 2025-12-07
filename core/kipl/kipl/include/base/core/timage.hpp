@@ -425,7 +425,7 @@ std::ostream & operator<<(std::ostream &s, const TImage<T,N> &img)
     if ((2u<=N) && (img.Size(0)<=10u) && (img.Size(1)<=10u)) {
         for (size_t y=0; y<img.Size(1); y++) {
             s<<std::endl;
-            for (size_t x=0; x<img.Size(1); x++) {
+            for (size_t x=0; x<img.Size(0); x++) {
                 s<<setw(6)<<img[x+img.Size(0)*y]<<" ";
             }
             s<<std::endl;

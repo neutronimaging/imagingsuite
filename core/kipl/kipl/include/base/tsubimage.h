@@ -13,6 +13,28 @@ namespace kipl { namespace base {
 template <typename T, size_t NDims>
 class TSubImage {
 public:
+    TSubImage();
+    TSubImage(std::vector<size_t> const & position, std::vector<size_t> const & lengths, size_t _margin);
+    TSubImage(std::vector<size_t> const & position, size_t const lengths, size_t _margin);
+
+    /// \brief Extracts the subimage from the source image
+    /// \param src The image to extract the subimage from
+    /// \return A subimage including margins as defined in the constructor
+    kipl::base::TImage<T,NDims> extract(const kipl::base::TImage<T,NDims> & src) const;
+
+    /// \brief Extracts the subimage from the source image into the provided destination image. This is more efficient as no new image is created.
+    /// \param src The image to extract the subimage from
+    /// \param dst The image to store the extracted subimage into
+    void extract(const kipl::base::TImage<T,NDims> & src, kipl::base::TImage<T,NDims> & dst) const;
+
+    /// \brief Insterts the subimage into the destination image
+    /// \param subImg The subimage to insert
+    /// \param dest The image to insert the subimage into
+    /// \param includeMargin If true, the margin defined in the constructor is included in the insertion
+    void insert(const kipl::base::TImage<T,NDims> & subImg, kipl::base::TImage<T,NDims> & dest, bool includeMargin=false) const;
+
+    // Static methods
+
     /// \brief Gets a sub image using start position and width for each axis
     /// \param src The source image
     /// \param nStart array with starting positions for each image axis
@@ -33,6 +55,39 @@ public:
     /// \param dest the larger image that will receive the sub image
     /// \param nStart tuple with the coordinate of the insertion corner
 	static void Put(const TImage<T,NDims> src, TImage<T, NDims> dest, size_t const *const nStart);
+
+    const std::vector<size_t> & start();
+    const std::vector<size_t> & estart();
+    const std::vector<size_t> & length();
+    const std::vector<size_t> & elength();
+    size_t margin();
+
+private:
+    std::vector<size_t> m_start;
+    std::vector<size_t> m_estart;
+    std::vector<size_t> m_length;
+    std::vector<size_t> m_elength;
+
+    size_t m_margin;
+};
+
+/// \brief Class to scan an image and produce subimage items
+template <typename T, size_t NDims>
+class ImagePatchExtractor {
+public:
+    ImagePatchExtractor(std::vector<size_t> const & imageDims, std::vector<size_t> const & subImageDims, size_t margin);
+    bool next(std::vector<size_t> & start, std::vector<size_t> & length);   
+    size_t size() const;
+    size_t size(size_t axis) const;
+    std::vector< kipl::base::TSubImage<T,NDims> > getAllSubImages() const;
+    
+private:
+    std::vector<size_t> m_imageDims;
+    std::vector<size_t> m_subImageDims;
+    std::vector<size_t> m_margin;
+    std::vector<size_t> m_currentPos;
+
+    size_t m_gridDims[NDims];
 };
 
 /// \brief Extracts a 2D slice in the XY plane from a 3D image

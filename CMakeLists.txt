@@ -171,6 +171,7 @@ add_subdirectory(core/kipl/UnitTests/tKiplMath)
 add_subdirectory(core/kipl/UnitTests/tKIPLMathFunctions)
 add_subdirectory(core/kipl/UnitTests/tLinFit)
 add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
+add_subdirectory(core/kipl/UnitTests/tSubImage)
 
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
