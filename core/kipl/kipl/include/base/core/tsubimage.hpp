@@ -471,8 +471,6 @@ ImagePatchExtractor<T, NDims>::ImagePatchExtractor(std::vector<size_t> const & i
 	m_gridDims.resize(nDims);
 	m_gridRemainders.resize(nDims);
 	for (size_t d = 0; d < nDims; ++d) {
-		if (m_imageDims[d] < m_subImageDims[d])
-			throw kipl::base::KiplException("ImagePatchExtractor: subImageDims larger than imageDims in one dimension", __FILE__, __LINE__);
 
 		m_gridDims[d]       = m_imageDims[d] / m_subImageDims[d]; // Ceiling division
 		m_gridRemainders[d] = m_imageDims[d] % m_subImageDims[d];
