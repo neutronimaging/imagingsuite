@@ -445,7 +445,7 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float, 2> &img)
     float *pHoles = noholes.GetDataPtr();
     float *pPeaks = nopeaks.GetDataPtr();
 
-    std::list<size_t> spotlist;
+    std::vector<size_t> spotlist;
 
     for (size_t i=0; i<padded.Size(); ++i)
     {
