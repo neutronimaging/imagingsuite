@@ -1,7 +1,7 @@
 
 
-set(TARGET_NAME "tImagingAlgorithms")
-project(tImagingAlgorithms LANGUAGES CXX)
+set(TARGET_NAME "tSpotCleaners")
+project(tSpotCleaners LANGUAGES CXX)
 
 enable_testing()
 
@@ -23,7 +23,7 @@ include_directories(
 )
 
 set(SRC_FILES
-tst_testImagingAlgorithms.cpp)
+tst_spotcleaners.cpp)
 
 add_executable(${TARGET_NAME} ${SRC_FILES})
 

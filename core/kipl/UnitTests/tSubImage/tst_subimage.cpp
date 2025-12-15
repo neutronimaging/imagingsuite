@@ -22,6 +22,7 @@ private Q_SLOTS:
     void testCornerCases2D();
     void testExtractInsert3D();
     void testStaticMembers();
+    void testLargeImageHandling();
 
     void testPatchExtractorInitialization();
     void testPatchExtractorAccessors();
@@ -547,6 +548,19 @@ void SubImageTest::testPatchExtractorAccessors()
     }   
     QCOMPARE(ysum/extractor.size(0), img.Size(1));
 }
+
+void SubImageTest::testLargeImageHandling()
+{
+    // Test handling of large images that may exceed 2GB in size
+    std::vector<size_t> dims = {1024, 512}; // 2.5 billion pixels
+    std::vector<size_t> subImageDims = {32, 32};
+    
+    kipl::base::ImagePatchExtractor<float,2> extractor(dims, subImageDims, 0);
+
+    auto subImages = extractor.getAllSubImages();
+
+}
+
 
 void SubImageTest::testStaticMembers()
 {
