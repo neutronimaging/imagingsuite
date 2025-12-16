@@ -1,4 +1,5 @@
 #include "../include/sortspotclean.h"
+#include "../include/ImagingException.h"
 
 #include <algorithms/sortalg.h>
 #include <base/tsubimage.h>
@@ -24,7 +25,7 @@ SortSpotClean::~SortSpotClean()
 
 }
 
-void SortSpotClean::process(kipl::base::TImage<float,2>& image, float quantile, float threshold)
+void SortSpotClean::process(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method)
 {
     if (m_processPatches)
     {  
@@ -38,7 +39,7 @@ void SortSpotClean::process(kipl::base::TImage<float,2>& image, float quantile, 
             // auto sub = extractor[p];
 
             auto patch = p.extract(image);
-            findAndCleanSpots(patch, threshold, quantile);
+            findAndCleanSpots(patch, threshold, quantile, method);
             p.insert(patch,result);
         }
 
@@ -48,22 +49,49 @@ void SortSpotClean::process(kipl::base::TImage<float,2>& image, float quantile, 
         findAndCleanSpots(image, threshold, quantile);
 }
 
-void SortSpotClean::findAndCleanSpots(kipl::base::TImage<float,2>& image, float threshold, float quantile)
+void SortSpotClean::findAndCleanSpots(kipl::base::TImage<float,2>& image, float threshold, float quantile, eSortSpotQuantile method)
 {
-    auto spotPositions = findSpots(image, quantile, threshold);
+    auto spotPositions = findSpots(image, quantile, threshold, method);
     kipl::morphology::RepairHoles(image, spotPositions, kipl::base::eConnectivity::conn8);
     m_mask = createSpotMask(image, spotPositions);
 }
 
-std::vector<size_t> SortSpotClean::findSpots(kipl::base::TImage<float,2>& image, float quantile, float threshold)
+std::vector<size_t> SortSpotClean::findSpots(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method)
 {
     std::vector<size_t> spotPositions;
 
     auto idxSort = kipl::algorithms::arg_sort(image.GetDataPtr(), image.GetDataPtr() + image.Size());
 
-    size_t startIdx = static_cast<size_t>(static_cast<float>(image.Size()) * 0.5f * (1.0f - quantile));
-    size_t endIdx   = static_cast<size_t>(static_cast<float>(image.Size()) * (0.5f + 0.5f * quantile));
+    size_t startIdx = 0UL;
+    size_t endIdx   = idxSort.size();
+
+    switch (method)
+    {
+    case eSortSpotQuantile::All:
+        m_logger.warning("Spot detection quantile 'All' specified, all pixels will be used.");
+        return spotPositions;
+        break;
+    case eSortSpotQuantile::BrightSpots:
+        startIdx = 0.0f;
+        endIdx   = static_cast<size_t>(static_cast<float>(image.Size()) * quantile);
+
+        break;
+    case eSortSpotQuantile::DarkSpots:
+        // already sorted in ascending order
+        break;
+    case eSortSpotQuantile::Both:
+        startIdx = static_cast<size_t>(static_cast<float>(image.Size()) * 0.5f * (1.0f - quantile));
+        endIdx   = static_cast<size_t>(static_cast<float>(image.Size()) * (0.5f + 0.5f * quantile));
+    
+        break;
+    default:
+        m_logger.error("Unknown spot detection quantile specified.");
+        throw ImagingException("Unknown spot detection quantile specified in SortSpotClean.");
+        break;
+    }
+
     size_t N= endIdx - startIdx;
+
     std::vector<float> x(N);
     std::vector<float> y(N);
 
@@ -131,4 +159,50 @@ kipl::base::TImage<float> SortSpotClean::createSpotMask(        kipl::base::TIma
     return mask;
 }
 
+}
+
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::eSortSpotQuantile esq)
+{
+    switch (esq)
+    {
+    case ImagingAlgorithms::eSortSpotQuantile::All:
+        return "All";
+    case ImagingAlgorithms::eSortSpotQuantile::BrightSpots:
+        return "BrightSpots";
+    case ImagingAlgorithms::eSortSpotQuantile::DarkSpots:
+        return "DarkSpots";
+    case ImagingAlgorithms::eSortSpotQuantile::Both:
+        return "Both";
+    default:
+        return "Unknown";
+    }
+}
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string &str,ImagingAlgorithms::eSortSpotQuantile &esq)
+{
+    if (str == "All")
+    {
+        esq = ImagingAlgorithms::eSortSpotQuantile::All;
+    }
+    else if (str == "BrightSpots")
+    {
+        esq = ImagingAlgorithms::eSortSpotQuantile::BrightSpots;
+    }
+    else if (str == "DarkSpots")
+    {
+        esq = ImagingAlgorithms::eSortSpotQuantile::DarkSpots;
+    }
+    else if (str == "Both")
+    {
+        esq = ImagingAlgorithms::eSortSpotQuantile::Both;
+    }
+    else
+    {
+        throw ImagingException("Unknown eSortSpotQuantile string: " + str,__FILE__,__LINE__);
+    }
+}   
+
+std::ostream & IMAGINGALGORITHMSSHARED_EXPORT operator<<(std::ostream &os, const ImagingAlgorithms::eSortSpotQuantile &esq)
+{
+    os << enum2string(esq);
+    return os;
 }

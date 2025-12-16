@@ -7,6 +7,7 @@
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
+#include <QElapsedTimer>
 
 
 #include <base/timage.h>
@@ -17,6 +18,7 @@
 
 #include <MorphSpotClean.h>
 #include <sortspotclean.h>
+#include <ImagingException.h>
 
 class TestSpotCleaners : public QObject
 {
@@ -36,6 +38,7 @@ private Q_SLOTS:
 
     void SortSpotClean_BasicRun();
     void SortSpotClean_RunPatches();
+    void SortSpotClean_enums();
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
@@ -252,19 +255,51 @@ void TestSpotCleaners::SortSpotClean_BasicRun()
 
 void TestSpotCleaners::SortSpotClean_RunPatches()
 {
-    ImagingAlgorithms::SortSpotClean cleaner(true,16UL,false);
+    ImagingAlgorithms::SortSpotClean cleaner(true,24UL,false);
 
     auto img=holes;
+    // auto img=spots;
     img.Clone();
     kipl::io::WriteTIFF(img,"sortspot_orig.tif",kipl::base::Float32);
 
-    cleaner.process(img,0.99f,1.0f);
+    QElapsedTimer timer;
+    timer.start();
+    cleaner.process(img,0.95f,1.0f);
+    qint64 elapsed = timer.elapsed();
+    std::cout << "SortSpotClean_RunPatches processing time: " << elapsed << " ms" << std::endl;
+
     // auto mask=cleaner.getSpotMask();
     // kipl::io::WriteTIFF(mask,"sortspotmask.tif",kipl::base::Float32);
 
     // auto diff=cleaner.getDifferenceImage();
     kipl::io::WriteTIFF(img,"sortspotdiff_full_cleaned.tif",kipl::base::Float32);
 }
+
+void TestSpotCleaners::SortSpotClean_enums()
+{
+    std::map<std::string, ImagingAlgorithms::eSortSpotQuantile> enummap;
+
+    enummap["All"]         = ImagingAlgorithms::eSortSpotQuantile::All ;
+    enummap["BrightSpots"] = ImagingAlgorithms::eSortSpotQuantile::BrightSpots ;
+    enummap["DarkSpots"]   = ImagingAlgorithms::eSortSpotQuantile::DarkSpots ;
+    enummap["Both"]        = ImagingAlgorithms::eSortSpotQuantile::Both ;
+
+    ImagingAlgorithms::eSortSpotQuantile esq;
+
+    for (auto & item : enummap)
+    {
+        QCOMPARE(enum2string(item.second),item.first);
+
+        string2enum(item.first,esq);
+        QCOMPARE(esq,item.second);
+
+        std::stringstream ss;
+        ss << item.second;
+        QCOMPARE(ss.str(),item.first);
+    }
+
+    QVERIFY_THROWS_EXCEPTION(ImagingException, string2enum("qwerty",esq));
+}   
 QTEST_APPLESS_MAIN(TestSpotCleaners)
 
 
