@@ -91,6 +91,7 @@ private:
     std::mutex queue_mutex;
 
     std::condition_variable condition;
+    std::condition_variable cv_completed; ///< Notifies when tasks complete for low-CPU barrier
     bool stop;
     std::atomic_size_t submitted_tasks;
     std::atomic_size_t processed_tasks;

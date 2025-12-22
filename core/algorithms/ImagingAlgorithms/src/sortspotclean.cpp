@@ -12,12 +12,17 @@
 
 namespace ImagingAlgorithms {
 
-SortSpotClean::SortSpotClean(bool processPatches, size_t patchSize, bool useThreads) :
+SortSpotClean::SortSpotClean(bool processPatches, size_t patchSize, bool useThreads, kipl::interactors::InteractionBase *interactor) :
     m_logger("SortSpotClean"),
+    m_bUseThreading(useThreads),
+    m_nNumberOfThreads(0),
+    m_threadPool(nullptr),
     m_processPatches(processPatches),
-    m_useThreads(useThreads),
-    m_patchSize(patchSize)
+    m_patchSize(patchSize),
+    m_nCounter(0),
+    m_interactor(interactor)    
 {
+    useThreading(useThreads);
 }
 
 SortSpotClean::~SortSpotClean()
@@ -34,10 +39,25 @@ void SortSpotClean::process(kipl::base::TImage<float,2>& image, float quantile, 
         kipl::base::ImagePatchExtractor<float,2> extractor(image.dims(), {m_patchSize,m_patchSize}, 2 );
 
         auto patches = extractor.getAllSubImages();
+        if (m_bUseThreading && m_threadPool)
+        {
+            auto pImage = &image;
+            auto pResult = &result;
+            for (auto & p : patches)
+            {
+                auto pp = &p;
+                m_threadPool->enqueue([this, pImage, pResult, pp, &threshold, &quantile, &method] {
+                    auto patch = pp->extract(*pImage);
+                    this->findAndCleanSpots(patch, threshold, quantile, method);
+                    pp->insert(patch,*pResult);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                });
+            }
+            m_threadPool->barrier();
+        }
+        else
         for (auto & p : patches)
         {
-            // auto sub = extractor[p];
-
             auto patch = p.extract(image);
             findAndCleanSpots(patch, threshold, quantile, method);
             p.insert(patch,result);
@@ -53,7 +73,7 @@ void SortSpotClean::findAndCleanSpots(kipl::base::TImage<float,2>& image, float 
 {
     auto spotPositions = findSpots(image, quantile, threshold, method);
     kipl::morphology::RepairHoles(image, spotPositions, kipl::base::eConnectivity::conn8);
-    m_mask = createSpotMask(image, spotPositions);
+    // m_mask = createSpotMask(image, spotPositions);
 }
 
 std::vector<size_t> SortSpotClean::findSpots(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method)
@@ -157,6 +177,81 @@ kipl::base::TImage<float> SortSpotClean::createSpotMask(        kipl::base::TIma
     }
 
     return mask;
+}
+
+void SortSpotClean::setConnectivity(kipl::base::eConnectivity conn)
+{
+    // Implementation here
+}
+
+kipl::base::eConnectivity SortSpotClean::connectivity()
+{
+    // Implementation here
+    return kipl::base::conn8; // Example return value
+}
+
+void SortSpotClean::setLimits(bool bClamp, float fMin, float fMax)
+{
+    // Implementation here
+}
+
+std::vector<float> SortSpotClean::clampLimits()
+{
+    // Implementation here
+    return std::vector<float>(); // Example return value
+}
+
+bool SortSpotClean::clampActive()
+{
+    // Implementation here
+    return false; // Example return value
+}
+
+void SortSpotClean::setCleanInfNan(bool activate)
+{
+    // Implementation here
+}
+
+bool SortSpotClean::cleanInfNan()
+{
+    // Implementation here
+    return false; // Example return value
+}
+
+void SortSpotClean::useThreading(bool x)
+{
+    m_bUseThreading = x;
+    if (m_bUseThreading)
+    {
+        m_nNumberOfThreads = std::thread::hardware_concurrency();
+
+        if (m_threadPool == nullptr)
+        {
+            m_threadPool = new kipl::utilities::ThreadPool(m_nNumberOfThreads);
+        }
+
+        m_logger.message("Multi-thread processing using thread pool (" + std::to_string(m_threadPool->pool_size()) + " threads)");
+    }
+    else
+    {
+        m_logger.message("Single-thread processing");
+        m_nNumberOfThreads = 0;
+        if (m_threadPool != nullptr)
+        {
+            delete m_threadPool;
+            m_threadPool = nullptr;
+        }
+    }
+}
+
+bool SortSpotClean::isThreaded()
+{
+    return m_bUseThreading; // Example return value
+}
+    
+int SortSpotClean::numberOfThreads()
+{
+    return m_nNumberOfThreads; // Example return value
 }
 
 }

@@ -38,6 +38,7 @@ private Q_SLOTS:
 
     void SortSpotClean_BasicRun();
     void SortSpotClean_RunPatches();
+    void SortSpotClean_RunThreaded();
     void SortSpotClean_enums();
 private:
     void MorphSpotClean_ListAlgorithm();
@@ -256,7 +257,8 @@ void TestSpotCleaners::SortSpotClean_BasicRun()
 void TestSpotCleaners::SortSpotClean_RunPatches()
 {
     ImagingAlgorithms::SortSpotClean cleaner(true,24UL,false);
-
+    QCOMPARE(cleaner.isThreaded(),false);
+    QCOMPARE(cleaner.numberOfThreads(),0);
     auto img=holes;
     // auto img=spots;
     img.Clone();
@@ -273,6 +275,27 @@ void TestSpotCleaners::SortSpotClean_RunPatches()
 
     // auto diff=cleaner.getDifferenceImage();
     kipl::io::WriteTIFF(img,"sortspotdiff_full_cleaned.tif",kipl::base::Float32);
+}
+
+
+void TestSpotCleaners::SortSpotClean_RunThreaded()
+{
+    ImagingAlgorithms::SortSpotClean cleaner(true,24UL,true);
+
+    auto img=holes;
+    // auto img=spots;
+    img.Clone();
+    kipl::io::WriteTIFF(img,"sortspot_orig.tif",kipl::base::Float32);
+
+    QCOMPARE(cleaner.isThreaded(),true);
+    QCOMPARE(cleaner.numberOfThreads(),std::thread::hardware_concurrency());
+    QElapsedTimer timer;
+    timer.start();
+    cleaner.process(img,0.95f,1.0f);
+    qint64 elapsed = timer.elapsed();
+    std::cout << "SortSpotClean_RunThreaded processing time: " << elapsed << " ms" << std::endl;
+
+    kipl::io::WriteTIFF(img,"sortspotdiff_full_th_cleaned.tif",kipl::base::Float32);
 }
 
 void TestSpotCleaners::SortSpotClean_enums()

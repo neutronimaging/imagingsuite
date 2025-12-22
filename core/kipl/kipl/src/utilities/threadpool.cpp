@@ -51,6 +51,11 @@ ThreadPool::ThreadPool(unsigned int numThreads) :
                     
                     task();
                     ++processed_tasks;
+                    // Notify any waiters that a task finished
+                    this->cv_completed.notify_all();
+#if defined(__cpp_lib_atomic_wait) && (__cpp_lib_atomic_wait >= 201907)
+                    processed_tasks.notify_all();
+#endif
                 }
             }
         );
@@ -59,13 +64,26 @@ ThreadPool::ThreadPool(unsigned int numThreads) :
 
 void ThreadPool::barrier()
 { 
-    for (;;) 
-    {
-        if (processed_tasks != submitted_tasks)
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        else
-            return ;
+#if defined(__cpp_lib_atomic_wait) && (__cpp_lib_atomic_wait >= 201907)
+    // C++20: Wait using atomic wait/notify without holding a mutex.
+    // Snapshot the target to provide "flush" semantics: wait for tasks
+    // submitted up to the call time.
+    const auto target = this->submitted_tasks.load(std::memory_order_acquire);
+    for (;;) {
+        auto done = this->processed_tasks.load(std::memory_order_acquire);
+        if (done >= target) break;
+        this->processed_tasks.wait(done, std::memory_order_relaxed);
     }
+#else
+    std::unique_lock<std::mutex> lock(this->queue_mutex);
+    // Wait until all submitted tasks are processed and the queue is empty.
+    // Using a predicate makes this resilient to spurious wakeups.
+    this->cv_completed.wait(lock, [this]{
+        return this->processed_tasks.load(std::memory_order_acquire) ==
+                   this->submitted_tasks.load(std::memory_order_acquire)
+               && this->tasks.empty();
+    });
+#endif
 }
 
 size_t ThreadPool::pool_size()
