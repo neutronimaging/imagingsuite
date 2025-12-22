@@ -109,12 +109,12 @@ void TestSpotCleaners::MorphSpotClean_Initialization()
     QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn18));
     QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn26));
 
-    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::MorphDetectHoles);
-    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::MorphCleanReplace);
+    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::eMorphDetectionMethod::Holes);
+    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::eMorphCleanMethod::Replace);
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth, ImagingAlgorithms::MorphCleanFill);
-    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::MorphDetectBoth);
-    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::MorphCleanFill);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Both, ImagingAlgorithms::eMorphCleanMethod::Fill);
+    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::eMorphDetectionMethod::Both);
+    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::eMorphCleanMethod::Fill);
 
     QCOMPARE(cleaner.clampLimits(),std::vector<float>({-0.1f,7.0f}));
     QCOMPARE(cleaner.clampActive(),false);
@@ -140,7 +140,7 @@ void TestSpotCleaners::MorphSpotClean_CleanHoles()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectDarkSpots,ImagingAlgorithms::MorphCleanReplace);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::DarkSpots,ImagingAlgorithms::eMorphCleanMethod::Replace);
     cleaner.setConnectivity(kipl::base::conn8);
     cleaner.setThresholdByFraction(true);
     cleaner.process(img,0.95f,0.05f);
@@ -155,7 +155,7 @@ void TestSpotCleaners::MorphSpotClean_CleanPeaks()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBrightSpots, ImagingAlgorithms::MorphCleanReplace);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::BrightSpots, ImagingAlgorithms::eMorphCleanMethod::Replace);
     cleaner.setConnectivity(kipl::base::conn8);
     cleaner.process(img,0.95f,0.05f);
 
@@ -169,7 +169,7 @@ void TestSpotCleaners::MorphSpotClean_CleanBoth()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Both,ImagingAlgorithms::eMorphCleanMethod::Replace);
     cleaner.setConnectivity(kipl::base::conn8);
     cleaner.process(img,0.95f,0.05f);
 
@@ -183,7 +183,7 @@ void TestSpotCleaners::MorphSpotClean_EdgePreparation()
     img.Clone(holes);
     ImagingAlgorithms::MorphSpotClean cleaner;
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Both,ImagingAlgorithms::eMorphCleanMethod::Replace);
     cleaner.setConnectivity(kipl::base::conn8);
     cleaner.process(img,1.0f,0.05f);
 
@@ -195,12 +195,12 @@ void TestSpotCleaners::MorphSpotClean_enums()
 {
     std::map<std::string, ImagingAlgorithms::eMorphDetectionMethod> enummap;
 
-    enummap["morphdetectbrightspots"] = ImagingAlgorithms::MorphDetectBrightSpots ;
-    enummap["morphdetectdarkspots"]   = ImagingAlgorithms::MorphDetectDarkSpots ;
-    enummap["morphdetectallspots"]    = ImagingAlgorithms::MorphDetectAllSpots ;
-    enummap["morphdetectholes"]       = ImagingAlgorithms::MorphDetectHoles ;
-    enummap["morphdetectpeaks"]       = ImagingAlgorithms::MorphDetectPeaks ;
-    enummap["morphdetectboth"]        = ImagingAlgorithms::MorphDetectBoth ;
+    enummap["morphdetectbrightspots"] = ImagingAlgorithms::eMorphDetectionMethod::BrightSpots ;
+    enummap["morphdetectdarkspots"]   = ImagingAlgorithms::eMorphDetectionMethod::DarkSpots ;
+    enummap["morphdetectallspots"]    = ImagingAlgorithms::eMorphDetectionMethod::AllSpots ;
+    enummap["morphdetectholes"]       = ImagingAlgorithms::eMorphDetectionMethod::Holes ;
+    enummap["morphdetectpeaks"]       = ImagingAlgorithms::eMorphDetectionMethod::Peaks ;
+    enummap["morphdetectboth"]        = ImagingAlgorithms::eMorphDetectionMethod::Both ;
 
     ImagingAlgorithms::eMorphDetectionMethod mdm;
 
@@ -231,7 +231,7 @@ void TestSpotCleaners::MorphSpotClean_ListAlgorithm()
         std::cout<<"Clone failed with "<<e.what()<<std::endl;
     }
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanFill);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Holes,ImagingAlgorithms::eMorphCleanMethod::Fill);
     cleaner.setConnectivity(kipl::base::conn4);
 
     cleaner.process(res,0.04,0.01);

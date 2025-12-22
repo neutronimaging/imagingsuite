@@ -26,8 +26,8 @@ MorphSpotClean::MorphSpotClean(kipl::interactors::InteractionBase *interactor) :
     m_bUseThreading(true),
     m_nNumberOfThreads(-1),
     m_eConnectivity(kipl::base::conn8),
-    m_eMorphClean(MorphCleanReplace),
-    m_eMorphDetect(MorphDetectHoles),
+    m_eMorphClean(ImagingAlgorithms::eMorphCleanMethod::Replace),
+    m_eMorphDetect(ImagingAlgorithms::eMorphDetectionMethod::Holes),
     m_seSize(5),
     m_nEdgeSmoothLength(9),
     m_nPadMargin(5),
@@ -60,8 +60,8 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, float th, float s
     std::fill_n(m_fSigma.begin(),2,sigma);
 
     switch (m_eMorphClean) {
-        case MorphCleanReplace  : ProcessReplace(img); break;
-        case MorphCleanFill     : ProcessFill(img); break;
+        case ImagingAlgorithms::eMorphCleanMethod::Replace  : ProcessReplace(img); break;
+        case ImagingAlgorithms::eMorphCleanMethod::Fill     : ProcessFill(img); break;
     default : throw ImagingException("Unkown cleaning method selected", __FILE__,__LINE__);
     }
 
@@ -81,8 +81,8 @@ void MorphSpotClean::process(kipl::base::TImage<float,2> &img, std::vector<float
 
     switch (m_eMorphClean)
     {
-        case MorphCleanReplace  : ProcessReplace(img); break;
-        case MorphCleanFill     : ProcessFill(img);    break;
+        case ImagingAlgorithms::eMorphCleanMethod::Replace  : ProcessReplace(img); break;
+        case ImagingAlgorithms::eMorphCleanMethod::Fill     : ProcessFill(img);    break;
     default : throw ImagingException("Unkown cleaning method selected", __FILE__,__LINE__);
     }
 
@@ -207,26 +207,26 @@ void MorphSpotClean::detectionImage(kipl::base::TImage<float,2> &img,
 
     switch (m_eMorphDetect)
     {
-    case MorphDetectBrightSpots : noholes.FreeImage();
+    case ImagingAlgorithms::eMorphDetectionMethod::BrightSpots : noholes.FreeImage();
                                   nopeaks  = DetectBrightSpots(padded);
                                   break;
 
-    case MorphDetectDarkSpots   : noholes  = DetectDarkSpots(padded);
+    case ImagingAlgorithms::eMorphDetectionMethod::DarkSpots   : noholes  = DetectDarkSpots(padded);
                                   nopeaks.FreeImage();
                                   break;
 
-    case MorphDetectAllSpots    : nopeaks  = DetectBrightSpots(padded);
+    case ImagingAlgorithms::eMorphDetectionMethod::AllSpots    : nopeaks  = DetectBrightSpots(padded);
                                   noholes  = DetectDarkSpots(padded);
                                   break;
 
-    case MorphDetectHoles       : noholes  = DetectHoles(padded);
+    case ImagingAlgorithms::eMorphDetectionMethod::Holes       : noholes  = DetectHoles(padded);
                                   nopeaks.FreeImage();
                                   break;
 
-    case MorphDetectPeaks       : noholes.FreeImage();
+    case ImagingAlgorithms::eMorphDetectionMethod::Peaks       : noholes.FreeImage();
                                   nopeaks  = DetectPeaks(padded);  break;
 
-    case MorphDetectBoth        : noholes  = DetectHoles(padded);
+    case ImagingAlgorithms::eMorphDetectionMethod::Both        : noholes  = DetectHoles(padded);
                                   nopeaks  = DetectPeaks(padded);  break;
 
     default: throw ImagingException("Unkown detection method selected", __FILE__,__LINE__);
@@ -273,35 +273,35 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
             float val=pImg[i];
             switch (m_eMorphDetect)
             {
-            case MorphDetectDarkSpots :
+            case ImagingAlgorithms::eMorphDetectionMethod::DarkSpots :
                 if (threshold[0]<abs(pHoles[i]-val))
                     pImg[i]=pHoles[i];
                 break;
 
-            case MorphDetectBrightSpots :
+            case ImagingAlgorithms::eMorphDetectionMethod::BrightSpots :
                 if (threshold[1]<abs(pPeaks[i]-val))
                     pImg[i]=pPeaks[i];
                 break;
 
-            case MorphDetectAllSpots :
+            case ImagingAlgorithms::eMorphDetectionMethod::AllSpots :
                 if (threshold[0]<abs(pHoles[i]-val))
                     pImg[i]=pHoles[i];
                 if (threshold[1]<abs(pPeaks[i]-val))
                     pImg[i]=pPeaks[i];
                 break;
 
-            case MorphDetectHoles :
+            case ImagingAlgorithms::eMorphDetectionMethod::Holes :
                 if (threshold[0]<abs(val-pHoles[i]))
                     pImg[i]=pHoles[i];
                 break;
 
-            case MorphDetectPeaks :
+            case ImagingAlgorithms::eMorphDetectionMethod::Peaks :
                 if (threshold[1]<abs(pPeaks[i]-val))
                     pImg[i]=pPeaks[i];
                 break;
 
 
-            case MorphDetectBoth :
+            case ImagingAlgorithms::eMorphDetectionMethod::Both :
                 if (threshold[0]<abs(val-pHoles[i]))
                     pImg[i]=pHoles[i];
                 if (threshold[1]<abs(pPeaks[i]-val))
@@ -317,13 +317,13 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
             float val=pImg[i];
             switch (m_eMorphDetect)
             {
-            case MorphDetectDarkSpots :
+            case ImagingAlgorithms::eMorphDetectionMethod::DarkSpots :
                 pImg[i]=kipl::math::sigmoidWeights(fabs(pHoles[i]-val),val,pHoles[i],threshold[0],sigma[0]);
                 break;
-            case MorphDetectBrightSpots :
+            case ImagingAlgorithms::eMorphDetectionMethod::BrightSpots :
                 pImg[i]=kipl::math::sigmoidWeights(fabs(val-pPeaks[i]),val,pPeaks[i],threshold[1],sigma[1]);
                 break;
-            case MorphDetectAllSpots :
+            case ImagingAlgorithms::eMorphDetectionMethod::AllSpots :
                 dp=fabs(val-pPeaks[i]);
                 dh=fabs(pHoles[i]-val);
 
@@ -333,15 +333,15 @@ void MorphSpotClean::ProcessReplace(kipl::base::TImage<float,2> &img)
                     pImg[i]=kipl::math::sigmoidWeights(dh,val,pHoles[i],threshold[1],m_fSigma[1]);
 
                 break;
-            case MorphDetectHoles :
+            case ImagingAlgorithms::eMorphDetectionMethod::Holes :
                 pImg[i]=kipl::math::sigmoidWeights(pHoles[i]-val,val,pHoles[i],threshold[0],sigma[0]);
                 break;
 
-            case MorphDetectPeaks :
+            case ImagingAlgorithms::eMorphDetectionMethod::Peaks :
                 pImg[i]=kipl::math::sigmoidWeights(val-pPeaks[i],val,pPeaks[i],threshold[1],sigma[1]);
                 break;
 
-            case MorphDetectBoth :
+            case ImagingAlgorithms::eMorphDetectionMethod::Both :
                 dp=val-pPeaks[i];
                 dh=pHoles[i]-val;
 
@@ -381,7 +381,7 @@ void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
         float val=pImg[i];
         switch (m_eMorphDetect)
         {
-        case MorphDetectHoles :
+        case ImagingAlgorithms::eMorphDetectionMethod::Holes :
             diffH=abs(val-pHoles[i]);
             if (m_fThreshold[0]<diffH)
             {
@@ -390,7 +390,7 @@ void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
             }
             break;
 
-        case MorphDetectPeaks :
+        case ImagingAlgorithms::eMorphDetectionMethod::Peaks :
             diffP=abs(val-pPeaks[i]);
             if (m_fThreshold[0]<diffP)
             {
@@ -399,7 +399,7 @@ void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
             }
             break;
 
-        case MorphDetectBoth :
+        case ImagingAlgorithms::eMorphDetectionMethod::Both :
             diffH=abs(val-pHoles[i]);
             diffP=abs(val-pPeaks[i]);
 
@@ -413,9 +413,9 @@ void MorphSpotClean::ProcessFillMix(kipl::base::TImage<float,2> &img)
 
 
             break;
-        case MorphDetectDarkSpots:   throw ImagingException("Dark spots not supported in mixed mode",__FILE__,__LINE__); break;
-        case MorphDetectBrightSpots: throw ImagingException("Bright spots not supported in mixed mode",__FILE__,__LINE__); break;
-        case MorphDetectAllSpots:    throw ImagingException("All spots not supported in mixed mode",__FILE__,__LINE__); break;
+        case ImagingAlgorithms::eMorphDetectionMethod::DarkSpots:   throw ImagingException("Dark spots not supported in mixed mode",__FILE__,__LINE__); break;
+        case ImagingAlgorithms::eMorphDetectionMethod::BrightSpots: throw ImagingException("Bright spots not supported in mixed mode",__FILE__,__LINE__); break;
+        case ImagingAlgorithms::eMorphDetectionMethod::AllSpots:    throw ImagingException("All spots not supported in mixed mode",__FILE__,__LINE__); break;
         }
     }
 
@@ -453,27 +453,27 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float, 2> &img)
         bool res=false;
         switch (m_eMorphDetect)
         {
-        case MorphDetectDarkSpots :
+        case ImagingAlgorithms::eMorphDetectionMethod::DarkSpots :
             res = threshold[0]<abs(pHoles[i]-val);
             break;
 
-        case MorphDetectBrightSpots :
+        case ImagingAlgorithms::eMorphDetectionMethod::BrightSpots :
             res = threshold[1]<abs(pPeaks[i]-val);
             break;
 
-        case MorphDetectAllSpots :
+        case ImagingAlgorithms::eMorphDetectionMethod::AllSpots :
             res = (threshold[0]<abs(pHoles[i]-val)) || (threshold[1]<abs(pPeaks[i]-val));
             break;
 
-        case MorphDetectHoles :
+        case ImagingAlgorithms::eMorphDetectionMethod::Holes :
             res = threshold[0]<abs(val-pHoles[i]);
             break;
 
-        case MorphDetectPeaks :
+        case ImagingAlgorithms::eMorphDetectionMethod::Peaks :
             res = (threshold[1]<abs(pPeaks[i]-val));
             break;
 
-        case MorphDetectBoth :
+        case ImagingAlgorithms::eMorphDetectionMethod::Both :
             res =  (threshold[0]<abs(val-pHoles[i])) || (threshold[1]<abs(pPeaks[i]-val));
             break;
         }
@@ -999,8 +999,8 @@ std::string enum2string(ImagingAlgorithms::eMorphCleanMethod mc)
 
     switch (mc)
     {
-    case ImagingAlgorithms::MorphCleanReplace : return "morphcleanreplace"; break;
-    case ImagingAlgorithms::MorphCleanFill : return "morphcleanfill"; break;
+    case ImagingAlgorithms::eMorphCleanMethod::Replace : return "morphcleanreplace"; break;
+    case ImagingAlgorithms::eMorphCleanMethod::Fill : return "morphcleanfill"; break;
     default: throw ImagingException("Failed to convert enum to string.",__FILE__,__LINE__);
     }
 
@@ -1017,9 +1017,9 @@ std::ostream & operator<<(std::ostream &s, ImagingAlgorithms::eMorphCleanMethod 
 void string2enum(std::string str, ImagingAlgorithms::eMorphCleanMethod &mc)
 {
     if (str=="morphcleanreplace")
-        mc=ImagingAlgorithms::MorphCleanReplace;
+        mc=ImagingAlgorithms::eMorphCleanMethod::Replace;
     else if (str=="morphcleanfill")
-        mc=ImagingAlgorithms::MorphCleanFill;
+        mc=ImagingAlgorithms::eMorphCleanMethod::Fill;
     else
     {
         std::ostringstream msg;
@@ -1034,12 +1034,12 @@ std::string enum2string(ImagingAlgorithms::eMorphDetectionMethod mc)
 
     switch (mc)
     {
-    case ImagingAlgorithms::MorphDetectBrightSpots : return "morphdetectbrightspots"; break;
-    case ImagingAlgorithms::MorphDetectDarkSpots   : return "morphdetectdarkspots";   break;
-    case ImagingAlgorithms::MorphDetectAllSpots    : return "morphdetectallspots";    break;
-    case ImagingAlgorithms::MorphDetectHoles       : return "morphdetectholes";       break;
-    case ImagingAlgorithms::MorphDetectPeaks       : return "morphdetectpeaks";       break;
-    case ImagingAlgorithms::MorphDetectBoth        : return "morphdetectboth";        break;
+    case ImagingAlgorithms::eMorphDetectionMethod::BrightSpots : return "morphdetectbrightspots"; break;
+    case ImagingAlgorithms::eMorphDetectionMethod::DarkSpots   : return "morphdetectdarkspots";   break;
+    case ImagingAlgorithms::eMorphDetectionMethod::AllSpots    : return "morphdetectallspots";    break;
+    case ImagingAlgorithms::eMorphDetectionMethod::Holes       : return "morphdetectholes";       break;
+    case ImagingAlgorithms::eMorphDetectionMethod::Peaks       : return "morphdetectpeaks";       break;
+    case ImagingAlgorithms::eMorphDetectionMethod::Both        : return "morphdetectboth";        break;
     default:
     {
         std::ostringstream msg;
@@ -1060,12 +1060,12 @@ std::ostream & operator<<(std::ostream &s, ImagingAlgorithms::eMorphDetectionMet
 void string2enum(std::string str, ImagingAlgorithms::eMorphDetectionMethod &mc)
 {
     std::map<std::string, ImagingAlgorithms::eMorphDetectionMethod> enummap;
-    enummap["morphdetectbrightspots"] = ImagingAlgorithms::MorphDetectBrightSpots ;
-    enummap["morphdetectdarkspots"]   = ImagingAlgorithms::MorphDetectDarkSpots ;
-    enummap["morphdetectallspots"]    = ImagingAlgorithms::MorphDetectAllSpots ;
-    enummap["morphdetectholes"]       = ImagingAlgorithms::MorphDetectHoles ;
-    enummap["morphdetectpeaks"]       = ImagingAlgorithms::MorphDetectPeaks ;
-    enummap["morphdetectboth"]        = ImagingAlgorithms::MorphDetectBoth ;
+    enummap["morphdetectbrightspots"] = ImagingAlgorithms::eMorphDetectionMethod::BrightSpots ;
+    enummap["morphdetectdarkspots"]   = ImagingAlgorithms::eMorphDetectionMethod::DarkSpots ;
+    enummap["morphdetectallspots"]    = ImagingAlgorithms::eMorphDetectionMethod::AllSpots ;
+    enummap["morphdetectholes"]       = ImagingAlgorithms::eMorphDetectionMethod::Holes ;
+    enummap["morphdetectpeaks"]       = ImagingAlgorithms::eMorphDetectionMethod::Peaks ;
+    enummap["morphdetectboth"]        = ImagingAlgorithms::eMorphDetectionMethod::Both ;
 
     try
     {
