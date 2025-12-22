@@ -525,24 +525,42 @@ std::vector< kipl::base::TSubImage<T,NDims> > ImagePatchExtractor<T, NDims>::get
 template <typename T, size_t NDims>
 std::tuple<std::vector<size_t>, std::vector<size_t> > ImagePatchExtractor<T, NDims>::calculatePatchInfo(size_t x, size_t y) const
 {
-		std::vector<size_t> startPos({x*m_subImageDims[0],y*m_subImageDims[1]});
-		std::vector<size_t> adjustedSubImageDims = m_subImageDims;
+	std::vector<size_t> startPos({x*m_subImageDims[0],y*m_subImageDims[1]});
+	std::vector<size_t> adjustedSubImageDims = m_subImageDims;
 
-		if (x<m_gridRemainders[0] && m_gridDims[0]>1) {
-			adjustedSubImageDims[0]+=1;
-			startPos[0]+=x;
+	std::vector<size_t> pos = {x,y};
+
+	for (size_t i=0; i<NDims; ++i) 
+	{		
+		if (m_gridRemainders[i]<m_gridDims[i]) 
+		{
+			if (pos[i]<m_gridRemainders[i] && m_gridDims[i]>1) 
+			{
+				adjustedSubImageDims[i]+=1;
+				startPos[i]+=pos[i];
+			}
+			else
+				startPos[i]+=m_gridRemainders[i];
 		}
 		else
-			startPos[0]+=m_gridRemainders[0];
-
-		if (y<m_gridRemainders[1] && m_gridDims[1]>1) {
-			adjustedSubImageDims[1]+=1;
-			startPos[1]+=y;
+		{
+			size_t bias  = m_gridRemainders[i]/m_gridDims[i];
+			size_t extra = m_gridRemainders[i]%m_gridDims[i];	
+			if (pos[i]<extra) 
+			{
+				adjustedSubImageDims[i]+=bias+1;
+				startPos[i]+=pos[i]*(bias+1);
+			}
+			else
+			{
+				adjustedSubImageDims[i]+=bias;
+				startPos[i]+=(extra*(bias+1))+((pos[i]-extra)*bias);
+			}
 		}
-		else
-			startPos[1]+=m_gridRemainders[1];
-
-		return {startPos, adjustedSubImageDims};
+		
+	}
+	
+	return {startPos, adjustedSubImageDims};
 }
 
 template <typename T, size_t NDims>

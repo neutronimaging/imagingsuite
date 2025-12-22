@@ -16,7 +16,7 @@ SortSpotClean::SortSpotClean(bool processPatches, size_t patchSize, bool useThre
     m_logger("SortSpotClean"),
     m_processPatches(processPatches),
     m_useThreads(useThreads),
-     m_patchSize(patchSize)
+    m_patchSize(patchSize)
 {
 }
 
@@ -31,7 +31,7 @@ void SortSpotClean::process(kipl::base::TImage<float,2>& image, float quantile, 
     {  
         kipl::base::TImage<float,2> result(image.dims());
         // Add patch-wise processing here
-        kipl::base::ImagePatchExtractor<float,2> extractor(image.dims(), {m_patchSize,m_patchSize}, 0);
+        kipl::base::ImagePatchExtractor<float,2> extractor(image.dims(), {m_patchSize,m_patchSize}, 2 );
 
         auto patches = extractor.getAllSubImages();
         for (auto & p : patches)

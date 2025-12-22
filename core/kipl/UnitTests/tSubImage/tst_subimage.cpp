@@ -18,6 +18,7 @@ private Q_SLOTS:
     void testInitialization();
     void testCopying();
     void testExtractInsert2D();
+    void testFewBlocks2D();
     void testEdgeCases2D();
     void testCornerCases2D();
     void testExtractInsert3D();
@@ -329,9 +330,9 @@ void SubImageTest::testCornerCases2D()
         QCOMPARE(extracted.Size(0), length[0]+2*margin);
         QCOMPARE(extracted.Size(1), length[1]+2*margin);
 
-        std::cout << "Top-Left Corner:" << std::endl;
-        std::cout << img << std::endl;
-        std::cout << extracted << std::endl;
+        // std::cout << "Top-Left Corner:" << std::endl;
+        // std::cout << img << std::endl;
+        // std::cout << extracted << std::endl;
         // Check center values
         for (size_t y=0; y<length[1]; y++) {
             for (size_t x=0; x<length[0]; x++) {
@@ -356,9 +357,9 @@ void SubImageTest::testCornerCases2D()
         QCOMPARE(extracted.Size(0), length[0]+2*margin);
         QCOMPARE(extracted.Size(1), length[1]+2*margin);
 
-        std::cout << "Top-Right Corner:" << std::endl;
-        std::cout << img << std::endl;
-        std::cout << extracted << std::endl;
+        // std::cout << "Top-Right Corner:" << std::endl;
+        // std::cout << img << std::endl;
+        // std::cout << extracted << std::endl;
         // Check center values
         for (size_t y=0; y<length[1]; y++) {
             for (size_t x=0; x<length[0]; x++) {
@@ -382,9 +383,9 @@ void SubImageTest::testCornerCases2D()
         QCOMPARE(extracted.Size(0), length[0]+2*margin);
         QCOMPARE(extracted.Size(1), length[1]+2*margin);
 
-        std::cout << "Bottom-Left Corner:" << std::endl;
-        std::cout << img << std::endl;
-        std::cout << extracted << std::endl;
+        // std::cout << "Bottom-Left Corner:" << std::endl;
+        // std::cout << img << std::endl;
+        // std::cout << extracted << std::endl;
         // Check center values
         for (size_t y=0; y<length[1]; y++) {
             for (size_t x=0; x<length[0]; x++) {
@@ -408,9 +409,9 @@ void SubImageTest::testCornerCases2D()
         QCOMPARE(extracted.Size(0), length[0]+2*margin);
         QCOMPARE(extracted.Size(1), length[1]+2*margin);
 
-        std::cout << "Bottom-Right Corner:" << std::endl;
-        std::cout << img << std::endl;
-        std::cout << extracted << std::endl;
+        // std::cout << "Bottom-Right Corner:" << std::endl;
+        // std::cout << img << std::endl;
+        // std::cout << extracted << std::endl;
         // Check center values
         for (size_t y=0; y<length[1]; y++) {
             for (size_t x=0; x<length[0]; x++) {
@@ -558,9 +559,37 @@ void SubImageTest::testLargeImageHandling()
     kipl::base::ImagePatchExtractor<float,2> extractor(dims, subImageDims, 0);
 
     auto subImages = extractor.getAllSubImages();
-
 }
 
+void SubImageTest::testFewBlocks2D()
+{
+    kipl::base::TImage<float,2> img({44,45});
+    for (size_t y=0; y<img.Size(1); y++) {
+        for (size_t x=0; x<img.Size(0); x++) {
+            img(x,y) = static_cast<float>(y*10 + x);
+        }
+    }
+
+    std::vector<size_t> subImageDims = {12,12};
+    size_t margin = 0;
+
+    std::vector<size_t> expectedLengthX = {15,15,14,15,15,14,15,15,14};
+    std::vector<size_t> expectedLengthY = {15,15,15,15,15,15,15,15,15};
+    
+    kipl::base::ImagePatchExtractor<float,2> extractor(img.dims(), subImageDims, margin);
+
+    for (size_t i=0; i<extractor.size(); ++i) {
+        kipl::base::TSubImage<float,2> subImg = extractor.at(i);
+        std::vector<size_t> start  = subImg.start();
+        std::vector<size_t> length = subImg.length();
+
+        auto extracted = subImg.extract(img);
+        
+        QCOMPARE(extracted.Size(0), expectedLengthX[i]);
+        QCOMPARE(extracted.Size(1), expectedLengthY[i]);
+    }
+    
+}
 
 void SubImageTest::testStaticMembers()
 {
