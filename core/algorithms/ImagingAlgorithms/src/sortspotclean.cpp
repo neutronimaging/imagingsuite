@@ -39,29 +39,40 @@ void SortSpotClean::process(kipl::base::TImage<float,2>& image, float quantile, 
         kipl::base::ImagePatchExtractor<float,2> extractor(image.dims(), {m_patchSize,m_patchSize}, 2 );
 
         auto patches = extractor.getAllSubImages();
-        if (m_bUseThreading && m_threadPool)
+        if (m_bUseThreading && m_threadPool!=nullptr)
         {
-            auto pImage = &image;
+            auto pImage  = &image;
             auto pResult = &result;
-            for (auto & p : patches)
-            {
-                auto pp = &p;
-                m_threadPool->enqueue([this, pImage, pResult, pp, &threshold, &quantile, &method] {
-                    auto patch = pp->extract(*pImage);
-                    this->findAndCleanSpots(patch, threshold, quantile, method);
-                    pp->insert(patch,*pResult);
-                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            auto pp      = &patches;
+
+            size_t blockSize = extractor.size() / static_cast<size_t>(m_nNumberOfThreads);
+            size_t blockRest = extractor.size() % static_cast<size_t>(m_nNumberOfThreads);
+            size_t first = 0UL;
+            size_t last  = 0UL;
+            
+            for (size_t i=0; i<static_cast<size_t>(m_nNumberOfThreads); ++i) {
+                last = first + blockSize + (i<blockRest ? 1UL : 0UL);
+                m_threadPool->enqueue([this, pImage, pResult, pp, &threshold, &quantile, &method, first, last]() {
+                    for (size_t j=first; j<last; ++j)
+                    {
+                        auto patch = (*pp)[j].extract(*pImage);
+                        this->findAndCleanSpots(patch, threshold, quantile, method);
+                        (*pp)[j].insert(patch,*pResult);
+                    }
+                    // std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    
                 });
+                first = last;
             }
             m_threadPool->barrier();
         }
         else
-        for (auto & p : patches)
-        {
-            auto patch = p.extract(image);
-            findAndCleanSpots(patch, threshold, quantile, method);
-            p.insert(patch,result);
-        }
+            for (auto & p : patches)
+            {
+                auto patch = p.extract(image);
+                findAndCleanSpots(patch, threshold, quantile, method);
+                p.insert(patch,result);
+            }
 
         image = result;
     }
@@ -110,7 +121,7 @@ std::vector<size_t> SortSpotClean::findSpots(kipl::base::TImage<float,2>& image,
         break;
     }
 
-    size_t N= endIdx - startIdx;
+    size_t N = endIdx - startIdx;
 
     std::vector<float> x(N);
     std::vector<float> y(N);
@@ -135,7 +146,7 @@ std::vector<size_t> SortSpotClean::findSpots(kipl::base::TImage<float,2>& image,
         stats.put(std::fabs(pData[idxSort[i]] - fittedVal));
     }    
     
-    m_diff.resize(image.dims());
+    // m_diff.resize(image.dims());
 
     float th = stats.s() * threshold;
     // std::cout<<"Spot detection threshold: " << th <<"\n"<<stats<< std::endl;
@@ -147,7 +158,7 @@ std::vector<size_t> SortSpotClean::findSpots(kipl::base::TImage<float,2>& image,
         {
             spotPositions.push_back(idxSort[i]);
         }
-        m_diff[idxSort[i]] = pData[idxSort[i]] - fittedVal;
+        // m_diff[idxSort[i]] = pData[idxSort[i]] - fittedVal;
     }
 
     for (size_t i = endIdx; i < image.Size(); ++i)
@@ -157,7 +168,7 @@ std::vector<size_t> SortSpotClean::findSpots(kipl::base::TImage<float,2>& image,
         {
             spotPositions.push_back(idxSort[i]);
         }
-        m_diff[idxSort[i]] = pData[idxSort[i]] - fittedVal;
+        // m_diff[idxSort[i]] = pData[idxSort[i]] - fittedVal;
     }
 
     // std::cout<<"Detected " << spotPositions.size() << " spots." << std::endl;

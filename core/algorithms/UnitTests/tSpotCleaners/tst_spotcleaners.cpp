@@ -264,11 +264,12 @@ void TestSpotCleaners::SortSpotClean_RunPatches()
     img.Clone();
     kipl::io::WriteTIFF(img,"sortspot_orig.tif",kipl::base::Float32);
 
-    QElapsedTimer timer;
-    timer.start();
-    cleaner.process(img,0.95f,1.0f);
-    qint64 elapsed = timer.elapsed();
-    std::cout << "SortSpotClean_RunPatches processing time: " << elapsed << " ms" << std::endl;
+    // timer.start();
+    QBENCHMARK{
+        cleaner.process(img,0.95f,1.0f);
+    }
+    // qint64 elapsed = timer.elapsed();
+    // std::cout << "SortSpotClean_RunPatches processing time: " << elapsed << " ms" << std::endl;
 
     // auto mask=cleaner.getSpotMask();
     // kipl::io::WriteTIFF(mask,"sortspotmask.tif",kipl::base::Float32);
@@ -280,22 +281,35 @@ void TestSpotCleaners::SortSpotClean_RunPatches()
 
 void TestSpotCleaners::SortSpotClean_RunThreaded()
 {
-    ImagingAlgorithms::SortSpotClean cleaner(true,24UL,true);
+    ImagingAlgorithms::SortSpotClean cleaner_s(true,24UL,false);
+    ImagingAlgorithms::SortSpotClean cleaner_p(true,24UL,true);
 
     auto img=holes;
     // auto img=spots;
     img.Clone();
     kipl::io::WriteTIFF(img,"sortspot_orig.tif",kipl::base::Float32);
 
-    QCOMPARE(cleaner.isThreaded(),true);
-    QCOMPARE(cleaner.numberOfThreads(),std::thread::hardware_concurrency());
-    QElapsedTimer timer;
-    timer.start();
-    cleaner.process(img,0.95f,1.0f);
-    qint64 elapsed = timer.elapsed();
-    std::cout << "SortSpotClean_RunThreaded processing time: " << elapsed << " ms" << std::endl;
-
+    QCOMPARE(cleaner_p.isThreaded(),true);
+    QCOMPARE(cleaner_p.numberOfThreads(),std::thread::hardware_concurrency());
+    // QElapsedTimer timer;
+    // timer.start();
+    QBENCHMARK{
+        cleaner_p.process(img,0.95f,1.0f);
+    }
+    // qint64 elapsed = timer.elapsed();
+    // std::cout << "SortSpotClean_RunThreaded processing time: " << elapsed << " ms" << std::endl;
     kipl::io::WriteTIFF(img,"sortspotdiff_full_th_cleaned.tif",kipl::base::Float32);
+
+    auto img_s = holes;
+    // auto img_s = spots;
+    img_s.Clone();
+
+    cleaner_s.process(img_s,0.95f,1.0f);
+
+    for (size_t i=0; i<img.Size(); ++i)
+    {
+        QCOMPARE(img[i],img_s[i]);
+    }   
 }
 
 void TestSpotCleaners::SortSpotClean_enums()

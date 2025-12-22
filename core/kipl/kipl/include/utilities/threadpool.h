@@ -43,6 +43,10 @@ public:
     /// @brief Waits until all tasks have be processed by comparing submitted and processed.
     void barrier();
 
+    /// @brief Waits until all tasks submitted up to the call are processed.
+    ///        Tasks enqueued after the call may still be running when this returns.
+    void barrier_flush();
+
     /// @brief Tells how many threads the pool has
     /// @return the number of threads
     size_t pool_size();

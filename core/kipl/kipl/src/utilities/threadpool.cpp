@@ -38,8 +38,7 @@ ThreadPool::ThreadPool(unsigned int numThreads) :
                         if (this->stop && this->tasks.empty())
                             return;
 
-                        if (this->tasks.empty()) // To avoid dry spinning 
-                            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                        // No extra sleep here; predicate on condition avoids spinning.
 
                         task = std::move(this->tasks.front());
                         this->tasks.pop();
@@ -65,9 +64,39 @@ ThreadPool::ThreadPool(unsigned int numThreads) :
 void ThreadPool::barrier()
 { 
 #if defined(__cpp_lib_atomic_wait) && (__cpp_lib_atomic_wait >= 201907)
-    // C++20: Wait using atomic wait/notify without holding a mutex.
-    // Snapshot the target to provide "flush" semantics: wait for tasks
-    // submitted up to the call time.
+    // C++20: Stable snapshot loop to handle tasks that enqueue more tasks.
+    for (;;) {
+        const auto target = this->submitted_tasks.load(std::memory_order_acquire);
+        for (;;) {
+            auto done = this->processed_tasks.load(std::memory_order_acquire);
+            if (done >= target) break;
+            this->processed_tasks.wait(done, std::memory_order_relaxed);
+        }
+        // If no new tasks were submitted while waiting, we are quiescent up to target.
+        if (this->submitted_tasks.load(std::memory_order_acquire) == target)
+            break;
+        // Otherwise, loop and wait for the new submissions as well.
+    }
+#else
+    // Fallback: use condition variable with the same stable snapshot semantics.
+    for (;;) {
+        const auto target = this->submitted_tasks.load(std::memory_order_acquire);
+        std::unique_lock<std::mutex> lock(this->queue_mutex);
+        this->cv_completed.wait(lock, [this, target]{
+            return this->processed_tasks.load(std::memory_order_acquire) >= target;
+        });
+        // If no new tasks were submitted while we waited, we are done.
+        if (this->submitted_tasks.load(std::memory_order_acquire) == target)
+            break;
+        // else release lock and retry with the new target
+    }
+#endif
+}
+
+void ThreadPool::barrier_flush()
+{
+#if defined(__cpp_lib_atomic_wait) && (__cpp_lib_atomic_wait >= 201907)
+    // Wait only for tasks submitted up to call time.
     const auto target = this->submitted_tasks.load(std::memory_order_acquire);
     for (;;) {
         auto done = this->processed_tasks.load(std::memory_order_acquire);
@@ -75,13 +104,11 @@ void ThreadPool::barrier()
         this->processed_tasks.wait(done, std::memory_order_relaxed);
     }
 #else
+    // Fallback: wait with condition variable until processed >= target.
+    const auto target = this->submitted_tasks.load(std::memory_order_acquire);
     std::unique_lock<std::mutex> lock(this->queue_mutex);
-    // Wait until all submitted tasks are processed and the queue is empty.
-    // Using a predicate makes this resilient to spurious wakeups.
-    this->cv_completed.wait(lock, [this]{
-        return this->processed_tasks.load(std::memory_order_acquire) ==
-                   this->submitted_tasks.load(std::memory_order_acquire)
-               && this->tasks.empty();
+    this->cv_completed.wait(lock, [this, target]{
+        return this->processed_tasks.load(std::memory_order_acquire) >= target;
     });
 #endif
 }
