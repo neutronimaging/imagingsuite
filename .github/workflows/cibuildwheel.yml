@@ -1,0 +1,56 @@
+name: Build pymuhrec wheels (cibuildwheel)
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'master'
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15-intel, macos-15, windows-2025]
+
+    steps:
+    - name: Checkout imagingsuite
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Checkout TestData
+      uses: actions/checkout@v4
+      with:
+        repository: neutronimaging/TestData
+        path: TestData
+
+    - name: Symlink TestData to parent directory
+      shell: bash
+      run: ln -s "$GITHUB_WORKSPACE/TestData" "$GITHUB_WORKSPACE/../TestData"
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install cibuildwheel
+      run: python -m pip install cibuildwheel
+
+    - name: Install sse2neon (macOS ARM only)
+      if: runner.os == 'macOS' && runner.arch == 'ARM64'
+      run: brew install sse2neon
+
+    - name: Build wheels with cibuildwheel
+      run: python -m cibuildwheel --output-dir wheelhouse .
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheels-${{ runner.os }}-${{ runner.arch }}
+        path: wheelhouse/*.whl
