@@ -241,12 +241,12 @@ void SortSpotClean::useThreading(bool x)
             m_threadPool = new kipl::utilities::ThreadPool(m_nNumberOfThreads);
         }
 
-        m_logger.message("Multi-thread processing using thread pool (" + std::to_string(m_threadPool->pool_size()) + " threads)");
+        m_logger.message("Multi-thread processing using thread pool (" + std::to_string(m_threadPool->pool_size()) + " threads) is enabled.");
     }
     else
     {
         m_logger.message("Single-thread processing");
-        m_nNumberOfThreads = 0;
+        m_nNumberOfThreads = 1;
         if (m_threadPool != nullptr)
         {
             delete m_threadPool;
