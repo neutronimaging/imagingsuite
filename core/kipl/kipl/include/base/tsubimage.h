@@ -76,7 +76,7 @@ private:
 template <typename T, size_t NDims>
 class ImagePatchExtractor {
 public:
-    ImagePatchExtractor(std::vector<size_t> const & imageDims, std::vector<size_t> const & subImageDims, size_t margin);
+    ImagePatchExtractor(std::vector<size_t> const & imageDims, std::vector<size_t> const & subImageDims, size_t margin, bool useReminders=true);
  
     size_t size() const;
     size_t size(size_t axis) const;

@@ -39,6 +39,7 @@ private Q_SLOTS:
     void SortSpotClean_BasicRun();
     void SortSpotClean_RunPatches();
     void SortSpotClean_RunThreaded();
+    void SortSpotClean_Run3D();
     void SortSpotClean_enums();
 private:
     void MorphSpotClean_ListAlgorithm();
@@ -46,6 +47,7 @@ private:
     std::string dataPath;
     kipl::base::TImage<float,2> holes;
     kipl::base::TImage<float,2> spots;
+    kipl::base::TImage<float,3> volume;
 
     std::map<size_t,float> points;
     // size_t pos1;
@@ -71,9 +73,21 @@ TestSpotCleaners::TestSpotCleaners()
     kipl::strings::filenames::CheckPathSlashes(fname,false);
     kipl::io::ReadTIFF(holes,fname);
 
-    fname = dataPath+"2D/tiff/manyspots.tif";
-    kipl::strings::filenames::CheckPathSlashes(fname,false);
-    kipl::io::ReadTIFF(spots,fname);
+    size_t patchSize=200;
+
+    kipl::base::ImagePatchExtractor<float,2> extractor(holes.dims(), {patchSize,patchSize}, 0 ,false);
+
+    auto patches = extractor.getAllSubImages();
+
+    volume.resize({patchSize,patchSize,patches.size()});
+
+    size_t idx=0;
+    for (const auto & patch : patches)
+    {
+        auto subImg = patch.extract(holes);
+        kipl::base::InsertSlice(subImg, volume, idx++, kipl::base::eImagePlanes::ImagePlaneXY);
+    }
+
 }
 
 void TestSpotCleaners::PixelInfo()
@@ -258,7 +272,7 @@ void TestSpotCleaners::SortSpotClean_RunPatches()
 {
     ImagingAlgorithms::SortSpotClean cleaner(true,24UL,false);
     QCOMPARE(cleaner.isThreaded(),false);
-    QCOMPARE(cleaner.numberOfThreads(),0);
+    QCOMPARE(cleaner.numberOfThreads(),1);
     auto img=holes;
     // auto img=spots;
     img.Clone();
@@ -293,23 +307,74 @@ void TestSpotCleaners::SortSpotClean_RunThreaded()
     QCOMPARE(cleaner_p.numberOfThreads(),std::thread::hardware_concurrency());
     // QElapsedTimer timer;
     // timer.start();
-    QBENCHMARK{
+    // QBENCHMARK{
         cleaner_p.process(img,0.95f,1.0f);
-    }
+    // }
     // qint64 elapsed = timer.elapsed();
     // std::cout << "SortSpotClean_RunThreaded processing time: " << elapsed << " ms" << std::endl;
-    kipl::io::WriteTIFF(img,"sortspotdiff_full_th_cleaned.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"sortspotdiff_full_th_all_cleaned.tif",kipl::base::Float32);
 
     auto img_s = holes;
     // auto img_s = spots;
     img_s.Clone();
 
     cleaner_s.process(img_s,0.95f,1.0f);
+    kipl::io::WriteTIFF(img_s,"sortspotdiff_full_th_single_cleaned.tif",kipl::base::Float32);
+
+    size_t diffs = 0UL;
 
     for (size_t i=0; i<img.Size(); ++i)
     {
-        QCOMPARE(img[i],img_s[i]);
-    }   
+        diffs += (img[i] != img_s[i]) ? 1 : 0;
+    }
+    
+    QCOMPARE(diffs,0UL);
+}
+
+void TestSpotCleaners::SortSpotClean_Run3D()
+{
+    ImagingAlgorithms::SortSpotClean cleaner_s(true,32UL,false);
+
+    auto volA = volume;
+    auto volB = volume;
+    auto volC = volume;
+    volA.Clone();
+    volB.Clone();
+    volC.Clone();
+
+    for (size_t i=0; i<volA.Size(2); ++i)
+    {
+        auto img = kipl::base::ExtractSlice(volA, i, kipl::base::eImagePlanes::ImagePlaneXY);
+        cleaner_s.process(img,0.95f,1.0f);
+        kipl::base::InsertSlice(img, volA, i, kipl::base::eImagePlanes::ImagePlaneXY);
+    }
+
+    cleaner_s.process(volB,0.95f,1.0f);
+
+    size_t sum=0UL;
+    size_t diffsum = 0UL;
+    for (size_t i=0; i<volA.Size(); ++i)
+    {
+        sum += (volA[i] != volB[i]) ? 1 : 0;
+        diffsum += (volume[i] != volB[i]) ? 1 : 0;
+    }
+    QCOMPARE(sum,0UL);
+    qDebug()<<"Total differences between slice-wise and 3D processing (single thread): "<<diffsum<<" out of "<<volA.Size()<<" voxels.";
+
+    ImagingAlgorithms::SortSpotClean cleaner_p(true,32UL,true);
+
+    cleaner_p.process(volC,0.95f,1.0f);
+    sum=0UL;
+    diffsum = 0UL;
+
+    for (size_t i=0; i<volA.Size(); ++i)
+    {
+        sum += (volA[i] != volC[i]) ? 1 : 0;
+        diffsum += (volume[i] != volC[i]) ? 1 : 0;
+    }
+    QCOMPARE(sum,0UL);
+    qDebug()<<"Total differences between slice-wise and 3D processing (multi threaded): "<<diffsum<<" out of "<<volA.Size()<<" voxels.";
+
 }
 
 void TestSpotCleaners::SortSpotClean_enums()

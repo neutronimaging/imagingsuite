@@ -447,7 +447,10 @@ void TSubImage<T,NDims>::Put(const TImage<T,NDims> src, TImage<T, NDims> dest, s
 
 // ImagePatchExtractor class implementation
 template <typename T, size_t NDims>	
-ImagePatchExtractor<T, NDims>::ImagePatchExtractor(std::vector<size_t> const & imageDims, std::vector<size_t> const & subImageDims, size_t margin) :
+ImagePatchExtractor<T, NDims>::ImagePatchExtractor( std::vector<size_t> const & imageDims, 
+													std::vector<size_t> const & subImageDims, 
+													size_t margin, 
+													bool useReminders) :
 	m_imageDims(imageDims),
 	m_subImageDims(subImageDims),
 	m_margin(margin)
@@ -476,7 +479,7 @@ ImagePatchExtractor<T, NDims>::ImagePatchExtractor(std::vector<size_t> const & i
 	for (size_t d = 0; d < nDims; ++d) {
 
 		m_gridDims[d]       = m_imageDims[d] / m_subImageDims[d]; // Ceiling division
-		m_gridRemainders[d] = m_imageDims[d] % m_subImageDims[d];
+		m_gridRemainders[d] = useReminders ? m_imageDims[d] % m_subImageDims[d] :0UL;
 	}
 
 	// Calculate total number of patches

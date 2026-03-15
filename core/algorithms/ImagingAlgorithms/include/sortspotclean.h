@@ -38,6 +38,7 @@ public:
     ~SortSpotClean();
 
     void process(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
+    void process(kipl::base::TImage<float,3>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
     
     kipl::base::TImage<float,2> getSpotMask() const { return m_mask; }
     kipl::base::TImage<float,2> getDifferenceImage() const { return m_diff; }  
@@ -55,6 +56,8 @@ public:
     bool isThreaded();
     int  numberOfThreads();
 private:
+    void process2D_single(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
+    void process2D_parallel(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
     void findAndCleanSpots(kipl::base::TImage<float,2>& image, float threshold, float quantile, eSortSpotQuantile method=eSortSpotQuantile::Both);
     std::vector<size_t> findSpots(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
     kipl::base::TImage<float,2> createSpotMask(kipl::base::TImage<float,2>& image, const std::vector<size_t>& spotPositions);
@@ -64,6 +67,11 @@ private:
     kipl::utilities::ThreadPool *m_threadPool;
     bool   m_processPatches;
     size_t m_patchSize;
+    bool  m_bClamp;
+    std::vector<float> m_clampLimits;
+    bool  m_bCleanInfNan;
+    kipl::base::eConnectivity m_connectivity;
+
     kipl::base::TImage<float,2> m_mask; //!< Mask image indicating the spot positions
     kipl::base::TImage<float,2> m_diff;
 
