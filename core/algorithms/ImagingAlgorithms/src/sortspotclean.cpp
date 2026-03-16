@@ -32,7 +32,8 @@ SortSpotClean::SortSpotClean(bool processPatches, size_t patchSize, bool useThre
 
 SortSpotClean::~SortSpotClean()
 {
-
+    delete m_threadPool;
+    m_threadPool = nullptr;
 }
 
 void SortSpotClean::process(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method)
@@ -126,9 +127,8 @@ void SortSpotClean::process2D_parallel(kipl::base::TImage<float,2>& image, float
     for (size_t i=0; i<static_cast<size_t>(m_nNumberOfThreads); ++i) 
     {
         last = first + blockSize + (i<blockRest ? 1UL : 0UL);
-        // m_logger.message(std::format("Enqueuing thread {} for patches {} to {} (len={})", i, first, last-1, last-first));
-
-        m_threadPool->enqueue([this, pImage, pResult, pp, &threshold, &quantile, &method, first, last]() 
+        
+        m_threadPool->enqueue([this, pImage, pResult, pp, threshold, quantile, method, first, last]() 
         {
             for (size_t j=first; j<last; ++j)
             {
@@ -166,7 +166,7 @@ std::vector<size_t> SortSpotClean::findSpots(kipl::base::TImage<float,2>& image,
         return spotPositions;
         break;
     case eSortSpotQuantile::BrightSpots:
-        startIdx = 0.0f;
+        startIdx = 0UL;
         endIdx   = static_cast<size_t>(static_cast<float>(image.Size()) * quantile);
 
         break;
@@ -293,7 +293,7 @@ void SortSpotClean::setCleanInfNan(bool activate)
 bool SortSpotClean::cleanInfNan()
 {
     // Implementation here
-    return false; // Example return value
+    return m_bCleanInfNan; // Example return value
 }
 
 void SortSpotClean::useThreading(bool x)

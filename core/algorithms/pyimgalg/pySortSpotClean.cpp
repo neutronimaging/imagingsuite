@@ -21,10 +21,6 @@ void bindSortSpotClean(py::module &m)
 {
     py::class_<ImagingAlgorithms::SortSpotClean> sscClass(m, "SortSpotClean");
 
-    //    void Process(kipl::base::TImage<float,2> &img, float th, float sigma);
-    //    void Process(kipl::base::TImage<float,2> &img, float *th, float *sigma);
-
-
     sscClass.def(py::init<bool, size_t, bool>(),
             py::arg("processPatches")= false,
             py::arg("patchSize")     = 32UL,
@@ -51,9 +47,7 @@ void bindSortSpotClean(py::module &m)
                 if (dims.size() == 2)
                 {
                         py::print("Processing 2D image with dimensions: ", dims);
-                        // kipl::base::TImage<float,2> img(dims);
-
-                        // std::copy_n(data,img.Size(),img.GetDataPtr());
+  
                         kipl::base::TImage<float,2> img(data,dims);
 
                         msc.process(img,quantile,th,esq);
@@ -64,27 +58,14 @@ void bindSortSpotClean(py::module &m)
                 if (dims.size() == 3)
                 {
                         py::print("Processing 3D image with dimensions: ", dims);
-                        // kipl::base::TImage<float,3> img(dims);
 
-                        // std::copy_n(data,img.Size(),img.GetDataPtr());
                         kipl::base::TImage<float,3> img(data,dims);
            
                         msc.process(img,quantile,th,esq);
 
                         std::copy_n(img.GetDataPtr(),img.Size(),data);
                 }
-                
-                // std::vector<size_t> dims = {    static_cast<size_t>(buf1.shape[1]),
-                //                                 static_cast<size_t>(buf1.shape[0])};
-                // float *data=static_cast<float*>(buf1.ptr);
 
-                // kipl::base::TImage<float,2> img(dims);
-
-                // std::copy_n(data,img.Size(),img.GetDataPtr());
-
-                // msc.process(img,quantile,th,esq);
-
-                // std::copy_n(img.GetDataPtr(),img.Size(),data);
             },
 
             "Cleans spots from the image in place using th as threshold and sigma as mixing width.",

@@ -10,7 +10,6 @@
 #include <algorithm>
 #include <span>
 #include <ranges>
-// #include <format>
 
 namespace kipl { namespace base {
 
@@ -234,9 +233,10 @@ void TSubImage<T,NDims>::insert(const kipl::base::TImage<T,NDims> & subImg, kipl
 {
 	if (dest.Size(0)<m_start[0]+m_length[0])
 		throw kipl::base::KiplException("TSubImage::insert: X-dim out of range",__FILE__,__LINE__);
-		// throw kipl::base::KiplException(std::format("TSubImage::insert: X-dim out of range ({})",m_start[0]+m_length[0]),__FILE__,__LINE__);
+		
 	if (dest.Size(1)<m_start[1]+m_length[1])
 		throw kipl::base::KiplException("TSubImage::insert: Y-dim out of range",__FILE__,__LINE__);
+
 	if (NDims==3) {
 		if (dest.Size(2)<m_start[2]+m_length[2])
 			throw kipl::base::KiplException("TSubImage::insert: Z-dim out of range",__FILE__,__LINE__);
