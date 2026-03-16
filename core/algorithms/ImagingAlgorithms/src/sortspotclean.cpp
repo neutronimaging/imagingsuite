@@ -62,16 +62,18 @@ void SortSpotClean::process(kipl::base::TImage<float,3>& image, float quantile, 
         m_logger.message("Processing 3D image in multi-threaded mode with patch-wise processing.");
         for (size_t z=0; z<image.Size(2); ++z) 
         {
-            m_threadPool->enqueue([this, pImage, &threshold, &quantile, &method, z]() 
+            m_threadPool->enqueue([this, pImage, threshold, quantile, method, z]() 
             {
                 kipl::base::TImage<float,2> slice = kipl::base::ExtractSlice(*pImage, z, kipl::base::eImagePlanes::ImagePlaneXY);
 
-                process2D_single(slice, quantile, threshold, method);
+                this->process2D_single(slice, quantile, threshold, method);
                 
                 kipl::base::InsertSlice(slice, *pImage, z, kipl::base::eImagePlanes::ImagePlaneXY);
                 
             });
         }
+
+        m_threadPool->barrier();
 
     }
     else {
