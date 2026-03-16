@@ -84,6 +84,6 @@ private:
 std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::eSortSpotQuantile esq);
 void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string &str,ImagingAlgorithms::eSortSpotQuantile &esq);
 
-std::ostream & IMAGINGALGORITHMSSHARED_EXPORT operator<<(std::ostream &os, const ImagingAlgorithms::eSortSpotQuantile &esq);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &os, const ImagingAlgorithms::eSortSpotQuantile &esq);
 
 #endif  // IMGALG_SORTSPOTCLEAN_H_

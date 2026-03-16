@@ -374,7 +374,7 @@ void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string &str,ImagingAl
     }
 }   
 
-std::ostream & IMAGINGALGORITHMSSHARED_EXPORT operator<<(std::ostream &os, const ImagingAlgorithms::eSortSpotQuantile &esq)
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &os, const ImagingAlgorithms::eSortSpotQuantile &esq)
 {
     os << enum2string(esq);
     return os;

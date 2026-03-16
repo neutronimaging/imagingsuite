@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <span>
 #include <ranges>
-#include <format>
+// #include <format>
 
 namespace kipl { namespace base {
 
