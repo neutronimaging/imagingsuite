@@ -233,12 +233,13 @@ template <typename T, size_t NDims>
 void TSubImage<T,NDims>::insert(const kipl::base::TImage<T,NDims> & subImg, kipl::base::TImage<T,NDims> & dest, bool includeMargin) const
 {
 	if (dest.Size(0)<m_start[0]+m_length[0])
-		throw kipl::base::KiplException(std::format("TSubImage::insert: X-dim out of range ({})",m_start[0]+m_length[0]),__FILE__,__LINE__);
+		throw kipl::base::KiplException("TSubImage::insert: X-dim out of range",__FILE__,__LINE__);
+		// throw kipl::base::KiplException(std::format("TSubImage::insert: X-dim out of range ({})",m_start[0]+m_length[0]),__FILE__,__LINE__);
 	if (dest.Size(1)<m_start[1]+m_length[1])
-		throw kipl::base::KiplException(std::format("TSubImage::insert: Y-dim out of range ({})",m_start[1]+m_length[1]),__FILE__,__LINE__);
+		throw kipl::base::KiplException("TSubImage::insert: Y-dim out of range",__FILE__,__LINE__);
 	if (NDims==3) {
 		if (dest.Size(2)<m_start[2]+m_length[2])
-			throw kipl::base::KiplException(std::format("TSubImage::insert: Z-dim out of range ({})",m_start[2]+m_length[2]),__FILE__,__LINE__);
+			throw kipl::base::KiplException("TSubImage::insert: Z-dim out of range",__FILE__,__LINE__);
 	}
 
 	if (subImg.Size(0)!=m_length[0]+2*m_margin || subImg.Size(1)!=m_length[1]+2*m_margin || (NDims==3 && subImg.Size(2)!=m_length[2]+2*m_margin) )
