@@ -23,18 +23,18 @@
 
 namespace ImagingAlgorithms {
 
-enum eMorphDetectionMethod {
-    MorphDetectDarkSpots = 0,
-    MorphDetectBrightSpots,
-    MorphDetectAllSpots,
-    MorphDetectHoles,
-    MorphDetectPeaks,
-    MorphDetectBoth
+enum class eMorphDetectionMethod {
+    DarkSpots = 0,
+    BrightSpots,
+    AllSpots,
+    Holes,
+    Peaks,
+    Both
 };
 
-enum eMorphCleanMethod {
-    MorphCleanReplace = 0,
-    MorphCleanFill
+enum class eMorphCleanMethod {
+    Replace = 0,
+    Fill
 };
 
 class IMAGINGALGORITHMSSHARED_EXPORT MorphSpotClean
