@@ -25,15 +25,14 @@ jobs:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: true
 
-      # Build on the following 4 configurations: 
+      # Build on the following 3 configurations: 
       # 1. <Windows, Release, 2022 MSVC compiler toolchain>
       # 2. <Ubuntu latest, i.e. version 22.04, Release, GCC 11 compiler toolchain>
-      # 3. <MacOS 13 with x86-64 arch, Release, Clang 14 compiler toolchain>
-      # 4. <MacOS 14 with arm64 arch, Release, Clang 15 compiler toolchain
+      # 3. <MacOS 14 with arm64 arch, Release, Clang 15 compiler toolchain>
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix: # Qt requires py7zr==0.20.x which requires python 3.7^
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
-        os: [windows-2022, ubuntu-22.04, macos-13, macos-14]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        os: [windows-2022, ubuntu-22.04, macos-14]
         include:
           - os: windows-2022
             c_compiler: cl
@@ -45,12 +44,6 @@ jobs:
             c_compiler: gcc
             cpp_compiler: g++
             gcc: 11
-            build_type: Release
-            build_root: build-imagingsuite/Release
-          - os: macos-13
-            c_compiler: clang
-            cpp_compiler: clang++
-            clang: 14
             build_type: Release
             build_root: build-imagingsuite/Release
           - os: macos-14
