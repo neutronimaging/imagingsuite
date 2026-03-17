@@ -56,13 +56,13 @@ jobs:
     steps:
       # Checkouts the source code to build the project with the git history
     - name: Checkout imagingsuite source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: imagingsuite
         fetch-depth: 0
       # Checks out the test data repository for the c++ tests with ctest
     - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: neutronimaging/TestData
         path: TestData
@@ -84,7 +84,7 @@ jobs:
     #       lfs_limit: 60
 
     - name: Set up python ${{ matrix.python-version }}
-      uses: actions/setup-python@master
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -109,7 +109,7 @@ jobs:
 
     - name: Using the builtin GitHub Cache Action for .conan
       id: github-cache-conan
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       env:
         cache-name: cache-conan-modules 
       with:
