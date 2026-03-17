@@ -27,6 +27,7 @@ set(INC_FILES
   include/TranslateProjectionsModule.h
   include/CameraStripeClean.h
   include/MorphSpotCleanModule.h
+  include/SortSpotCleanModule.h
   include/SpotClean.h
   include/TranslatedProjectionWeighting.h
   include/DataScaler.h
@@ -61,6 +62,7 @@ set(SRC_FILES
   src/MedianMixRingClean.cpp
   src/WaveletRingClean.cpp
   src/MorphSpotCleanModule.cpp
+  src/SortSpotCleanModule.cpp
   src/bblognorm.cpp
   src/NormPlugins.cpp
   src/PolynomialCorrectionModule.cpp
