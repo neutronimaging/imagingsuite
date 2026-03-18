@@ -25,11 +25,10 @@ jobs:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
 
-      # Build on the following 4 configurations: 
+      # Build on the following 3 configurations: 
       # 1. <Windows, Release, 2022 MSVC compiler toolchain>
       # 2. <Ubuntu latest, i.e. version 22.04, Release, GCC 11 compiler toolchain>
-      # 3. <MacOS 13 with x86-64 arch, Release, Clang 14 compiler toolchain>
-      # 4. <MacOS 14 with arm64 arch, Release, Clang 15 compiler toolchain
+      # 3. <MacOS 14 with arm64 arch, Release, Clang 15 compiler toolchain>
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the list.
       matrix:
         include:
@@ -45,12 +44,6 @@ jobs:
             gcc: 11
             build_type: Release
             build_root: build-imagingsuite/Release
-          - os: macos-15-intel
-            c_compiler: clang
-            cpp_compiler: clang++
-            clang: 14
-            build_type: Release
-            build_root: build-imagingsuite/Release
           - os: macos-14
             c_compiler: clang
             cpp_compiler: clang++
@@ -61,13 +54,13 @@ jobs:
     steps:
       # Checkouts the source code to build the project with the git history
     - name: Checkout imagingsuite source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: imagingsuite
         fetch-depth: 0
       # Checks out the test data repository for the c++ tests with ctest
     - name: Checkout neutronimaging/TestData                 <-- clone https://github.com/neutronimaging/TestData.git
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: neutronimaging/TestData
         path: TestData
@@ -104,7 +97,7 @@ jobs:
 
     - name: Using the builtin GitHub Cache Action for .conan
       id: github-cache-conan
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       env:
         cache-name: cache-conan-modules
       with:

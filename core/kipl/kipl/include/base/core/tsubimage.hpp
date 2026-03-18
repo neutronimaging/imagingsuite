@@ -200,11 +200,6 @@ void TSubImage<T,NDims>::extract(const kipl::base::TImage<T,NDims> & src, kipl::
 									std::span<std::span<T>>(dst_rows),
 									m_start[0], m_start[1], m_length[0], m_length[1], m_margin, m_margin);
 
-			// for (size_t y=0; y<m_elength[1]; y++) {
-			// 	auto pSrc = src.GetLinePtr(y+m_estart[1],0)+m_estart[0];
-			// 	auto pDst = dst.GetLinePtr(y,0);
-			// 	std::copy_n(pSrc, m_elength[0], pDst);
-			// }
 		} else { // Fast copy when no border issues
 			for (size_t y=0; y<m_elength[1]; y++) {
 				auto pSrc = src.GetLinePtr(y+m_estart[1],0)+m_estart[0];
@@ -236,12 +231,14 @@ void TSubImage<T,NDims>::extract(const kipl::base::TImage<T,NDims> & src, kipl::
 template <typename T, size_t NDims>
 void TSubImage<T,NDims>::insert(const kipl::base::TImage<T,NDims> & subImg, kipl::base::TImage<T,NDims> & dest, bool includeMargin) const
 {
-	if (dest.Size(0)<=m_start[0]+m_length[0])
+	if (dest.Size(0)<m_start[0]+m_length[0])
 		throw kipl::base::KiplException("TSubImage::insert: X-dim out of range",__FILE__,__LINE__);
-	if (dest.Size(1)<=m_start[1]+m_length[1])
+		
+	if (dest.Size(1)<m_start[1]+m_length[1])
 		throw kipl::base::KiplException("TSubImage::insert: Y-dim out of range",__FILE__,__LINE__);
+
 	if (NDims==3) {
-		if (dest.Size(2)<=m_start[2]+m_length[2])
+		if (dest.Size(2)<m_start[2]+m_length[2])
 			throw kipl::base::KiplException("TSubImage::insert: Z-dim out of range",__FILE__,__LINE__);
 	}
 
@@ -451,7 +448,10 @@ void TSubImage<T,NDims>::Put(const TImage<T,NDims> src, TImage<T, NDims> dest, s
 
 // ImagePatchExtractor class implementation
 template <typename T, size_t NDims>	
-ImagePatchExtractor<T, NDims>::ImagePatchExtractor(std::vector<size_t> const & imageDims, std::vector<size_t> const & subImageDims, size_t margin) :
+ImagePatchExtractor<T, NDims>::ImagePatchExtractor( std::vector<size_t> const & imageDims, 
+													std::vector<size_t> const & subImageDims, 
+													size_t margin, 
+													bool useReminders) :
 	m_imageDims(imageDims),
 	m_subImageDims(subImageDims),
 	m_margin(margin)
@@ -480,7 +480,7 @@ ImagePatchExtractor<T, NDims>::ImagePatchExtractor(std::vector<size_t> const & i
 	for (size_t d = 0; d < nDims; ++d) {
 
 		m_gridDims[d]       = m_imageDims[d] / m_subImageDims[d]; // Ceiling division
-		m_gridRemainders[d] = m_imageDims[d] % m_subImageDims[d];
+		m_gridRemainders[d] = useReminders ? m_imageDims[d] % m_subImageDims[d] :0UL;
 	}
 
 	// Calculate total number of patches
@@ -529,24 +529,42 @@ std::vector< kipl::base::TSubImage<T,NDims> > ImagePatchExtractor<T, NDims>::get
 template <typename T, size_t NDims>
 std::tuple<std::vector<size_t>, std::vector<size_t> > ImagePatchExtractor<T, NDims>::calculatePatchInfo(size_t x, size_t y) const
 {
-		std::vector<size_t> startPos({x*m_subImageDims[0],y*m_subImageDims[1]});
-		std::vector<size_t> adjustedSubImageDims = m_subImageDims;
+	std::vector<size_t> startPos({x*m_subImageDims[0],y*m_subImageDims[1]});
+	std::vector<size_t> adjustedSubImageDims = m_subImageDims;
 
-		if (x<m_gridRemainders[0] && m_gridDims[0]>1) {
-			adjustedSubImageDims[0]+=1;
-			startPos[0]+=x;
+	std::vector<size_t> pos = {x,y};
+
+	for (size_t i=0; i<NDims; ++i) 
+	{		
+		if (m_gridRemainders[i]<m_gridDims[i]) 
+		{
+			if (pos[i]<m_gridRemainders[i] && m_gridDims[i]>1) 
+			{
+				adjustedSubImageDims[i]+=1;
+				startPos[i]+=pos[i];
+			}
+			else
+				startPos[i]+=m_gridRemainders[i];
 		}
 		else
-			startPos[0]+=m_gridRemainders[0];
-
-		if (y<m_gridRemainders[1] && m_gridDims[1]>1) {
-			adjustedSubImageDims[1]+=1;
-			startPos[1]+=y;
+		{
+			size_t bias  = m_gridRemainders[i]/m_gridDims[i];
+			size_t extra = m_gridRemainders[i]%m_gridDims[i];	
+			if (pos[i]<extra) 
+			{
+				adjustedSubImageDims[i]+=bias+1;
+				startPos[i]+=pos[i]*(bias+1);
+			}
+			else
+			{
+				adjustedSubImageDims[i]+=bias;
+				startPos[i]+=(extra*(bias+1))+((pos[i]-extra)*bias);
+			}
 		}
-		else
-			startPos[1]+=m_gridRemainders[1];
-
-		return {startPos, adjustedSubImageDims};
+		
+	}
+	
+	return {startPos, adjustedSubImageDims};
 }
 
 template <typename T, size_t NDims>

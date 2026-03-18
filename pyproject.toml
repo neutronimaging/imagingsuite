@@ -48,8 +48,8 @@ manylinux-x86_64-image = "manylinux_2_28"
 repair-wheel-command = "python3 {project}/scripts/repair_wheel.py {wheel} {dest_dir} linux"
 
 [tool.cibuildwheel.macos]
-before-build = "pip install conan wheel && conan profile detect --force && if [ \"$(uname -m)\" = \"arm64\" ]; then PROF=macos_arm_clang_15_release; else PROF=macos_x64_clang_14_release; fi && conan install {project} --build=missing -of {project}/generators -pr:h {project}/profiles/$PROF -pr:b default"
-environment = { BUILD_GUI = "OFF", MACOSX_DEPLOYMENT_TARGET = "10.15" }
+before-build = "pip install conan wheel && conan profile detect --force && conan install {project} --build=missing -of {project}/generators -pr:h {project}/profiles/macos_arm_clang_15_release -pr:b default"
+environment = { BUILD_GUI = "OFF" }
 repair-wheel-command = "python3 {project}/scripts/repair_wheel.py {wheel} {dest_dir} macos {delocate_archs}"
 
 [tool.cibuildwheel.windows]

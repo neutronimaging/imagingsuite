@@ -206,6 +206,7 @@ endif()
 add_subdirectory(core/algorithms/ImagingAlgorithms)
 if(BUILD_GUI)
   add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+  add_subdirectory(core/algorithms/UnitTests/tSpotCleaners/)
 endif()
 
 add_subdirectory(core/algorithms/AdvancedFilters)

@@ -22,8 +22,8 @@ MorphSpotCleanDlg::MorphSpotCleanDlg(QWidget *parent) :
     ConfiguratorDialogBase("MorphSpotCleanDlg",true,true,true,parent),
     ui(new Ui::MorphSpotCleanDlg),
     m_eConnectivity(kipl::base::conn4),
-    m_eDetectionMethod(ImagingAlgorithms::MorphDetectBoth),
-    m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
+    m_eDetectionMethod(ImagingAlgorithms::eMorphDetectionMethod::Both),
+    m_eCleanMethod(ImagingAlgorithms::eMorphCleanMethod::Replace),
     m_fThreshold{0.1f,0.1f},
     m_fSigma{0.01f,0.01f},
     m_bRemoveInfNaN(false),
@@ -66,10 +66,10 @@ void MorphSpotCleanDlg::ApplyParameters()
     kipl::math::replaceInfNaN(m_DetectionImageHoles,0.0f);
 
 
-    if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectDarkSpots) ||
-        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectAllSpots)  ||
-        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectHoles)     ||
-        (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
+    if ((m_eDetectionMethod==ImagingAlgorithms::eMorphDetectionMethod::DarkSpots) ||
+        (m_eDetectionMethod==ImagingAlgorithms::eMorphDetectionMethod::AllSpots)  ||
+        (m_eDetectionMethod==ImagingAlgorithms::eMorphDetectionMethod::Holes)     ||
+        (m_eDetectionMethod==ImagingAlgorithms::eMorphDetectionMethod::Both))
     {
         prepareDetectionPlot(m_DetectionImageHoles,0,N,m_fThreshold[0],m_fSigma[0],"Detection Holes","Threshold Holes");
     }
@@ -77,10 +77,10 @@ void MorphSpotCleanDlg::ApplyParameters()
     m_DetectionImagePeaks = detectionimgs.second;
     kipl::math::replaceInfNaN(m_DetectionImagePeaks,0.0f);
 
-    if ((m_eDetectionMethod==ImagingAlgorithms::MorphDetectBrightSpots)  ||
-            (m_eDetectionMethod==ImagingAlgorithms::MorphDetectAllSpots) ||
-            (m_eDetectionMethod==ImagingAlgorithms::MorphDetectPeaks)    ||
-            (m_eDetectionMethod==ImagingAlgorithms::MorphDetectBoth))
+    if ((m_eDetectionMethod==ImagingAlgorithms::eMorphDetectionMethod::BrightSpots)  ||
+            (m_eDetectionMethod==ImagingAlgorithms::eMorphDetectionMethod::AllSpots) ||
+            (m_eDetectionMethod==ImagingAlgorithms::eMorphDetectionMethod::Peaks)    ||
+            (m_eDetectionMethod==ImagingAlgorithms::eMorphDetectionMethod::Both))
     {
         prepareDetectionPlot(m_DetectionImagePeaks,1,N,m_fThreshold[1],m_fSigma[1],"Detection Peaks","Threshold Peaks");
     }
@@ -221,12 +221,12 @@ void MorphSpotCleanDlg::UpdateDialog()
     ui->spinSigmaHoles->setValue(m_fSigma[0]);
     ui->spinThresholdPeaks->setValue(m_fThreshold[1]);
     ui->spinSigmaPeaks->setValue(m_fSigma[1]);
-    ui->comboCleanMethod->setCurrentIndex(m_eCleanMethod);
-    ui->comboDetectionMethod->setCurrentIndex(m_eDetectionMethod);
-    on_comboDetectionMethod_currentIndexChanged(m_eDetectionMethod);
+    ui->comboCleanMethod->setCurrentIndex(static_cast<int>(m_eCleanMethod));
+    ui->comboDetectionMethod->setCurrentIndex(static_cast<int>(m_eDetectionMethod));
+    on_comboDetectionMethod_currentIndexChanged(static_cast<int>(m_eDetectionMethod));
     ui->comboBox_ThresholdValue->setCurrentIndex(m_bThresholdByFraction ? 1 : 0);
 
-    ui->comboConnectivity->setCurrentIndex(m_eConnectivity);
+    ui->comboConnectivity->setCurrentIndex(static_cast<int>(m_eConnectivity));
     ui->spinArea->setValue(m_nMaxArea);
     ui->checkBoxRemoveInfNan->setChecked(m_bRemoveInfNaN);
     ui->groupBox_clampData->setChecked(m_bClampData);
@@ -317,22 +317,22 @@ void MorphSpotCleanDlg::on_comboDetectionDisplay_currentIndexChanged(int index)
     case 2: // Detection image
         switch (m_eDetectionMethod)
         {
-        case ImagingAlgorithms::MorphDetectDarkSpots :
+        case ImagingAlgorithms::eMorphDetectionMethod::DarkSpots :
             dimg=m_DetectionImageHoles;
             break;
-        case ImagingAlgorithms::MorphDetectBrightSpots :
+        case ImagingAlgorithms::eMorphDetectionMethod::BrightSpots :
             dimg=m_DetectionImagePeaks;
             break;
-        case ImagingAlgorithms::MorphDetectAllSpots :
+        case ImagingAlgorithms::eMorphDetectionMethod::AllSpots :
             dimg=m_DetectionImagePeaks - m_DetectionImageHoles;
             break;
-        case ImagingAlgorithms::MorphDetectHoles :
+        case ImagingAlgorithms::eMorphDetectionMethod::Holes :
             dimg=m_DetectionImageHoles;
             break;
-        case ImagingAlgorithms::MorphDetectPeaks :
+        case ImagingAlgorithms::eMorphDetectionMethod::Peaks :
             dimg=m_DetectionImagePeaks;
             break;
-        case ImagingAlgorithms::MorphDetectBoth :
+        case ImagingAlgorithms::eMorphDetectionMethod::Both :
             dimg=m_DetectionImagePeaks - m_DetectionImageHoles;
             break;
         }
@@ -356,29 +356,29 @@ void MorphSpotCleanDlg::on_comboDetectionMethod_currentIndexChanged(int index)
 
     switch (method)
     {
-    case ImagingAlgorithms::MorphDetectDarkSpots :
+    case ImagingAlgorithms::eMorphDetectionMethod::DarkSpots :
         ui->groupBoxPeaks->hide();
         ui->groupBoxHoles->show();
         break;
 
-    case ImagingAlgorithms::MorphDetectBrightSpots :
+    case ImagingAlgorithms::eMorphDetectionMethod::BrightSpots :
         ui->groupBoxPeaks->show();
         ui->groupBoxHoles->hide();
         break;
-    case ImagingAlgorithms::MorphDetectAllSpots :
+    case ImagingAlgorithms::eMorphDetectionMethod::AllSpots :
         ui->groupBoxPeaks->show();
         ui->groupBoxHoles->show();
         break;
-    case ImagingAlgorithms::MorphDetectHoles :
+    case ImagingAlgorithms::eMorphDetectionMethod::Holes :
         ui->groupBoxPeaks->hide();
         ui->groupBoxHoles->show();
         break;
 
-    case ImagingAlgorithms::MorphDetectPeaks :
+    case ImagingAlgorithms::eMorphDetectionMethod::Peaks :
         ui->groupBoxPeaks->show();
         ui->groupBoxHoles->hide();
         break;
-    case ImagingAlgorithms::MorphDetectBoth :
+    case ImagingAlgorithms::eMorphDetectionMethod::Both :
         ui->groupBoxPeaks->show();
         ui->groupBoxHoles->show();
         break;

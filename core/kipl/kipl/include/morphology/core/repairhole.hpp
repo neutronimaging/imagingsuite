@@ -12,7 +12,7 @@ namespace kipl {
 namespace morphology {
 
 template <class T>
-void RepairHoles(kipl::base::TImage<T,2> &img, std::list<size_t> &holelist, kipl::base::eConnectivity connect)
+void RepairHoles(kipl::base::TImage<T,2> &img, std::vector<size_t> &holelist, kipl::base::eConnectivity connect)
 {
     const T markedPixel = std::numeric_limits<T>::max();
 

@@ -37,6 +37,7 @@ set(SRC_FILES
   pyImagingException.cpp  
 # pyTranslateProjections.cpp  
   pyMorphSpotClean.cpp  
+  pySortSpotClean.cpp
   pyPixelInfo.cpp
   pyProjectionFilter.cpp
 #  pygammaclean.cpp  
