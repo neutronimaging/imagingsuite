@@ -57,16 +57,24 @@ void SortSpotClean::process(kipl::base::TImage<float,2>& image, float quantile, 
 
 void SortSpotClean::process(kipl::base::TImage<float,3>& image, float quantile, float threshold, eSortSpotQuantile method)
 {
+    std::ostringstream msg;
+    m_nCounter = 0;
     if (m_bUseThreading && m_threadPool!=nullptr) 
     {
         auto pImage  = &image;
-        m_logger.message("Processing 3D image in multi-threaded mode with patch-wise processing.");
+        msg<<"Processing 3D image in multi-threaded mode with patch-wise processing. Image size: "<<image.Size(0)<<"x"<<image.Size(1)<<"x"<<image.Size(2);
+        m_logger.message(msg.str());
         for (size_t z=0; z<image.Size(2); ++z) 
         {
             m_threadPool->enqueue([this, pImage, threshold, quantile, method, z]() 
             {
+                ++m_nCounter;
+                updateStatus(static_cast<float>(m_nCounter)/static_cast<float>(pImage->Size(2)),"SortSpotClean");
+            
                 kipl::base::TImage<float,2> slice = kipl::base::ExtractSlice(*pImage, z, kipl::base::eImagePlanes::ImagePlaneXY);
-
+                std::ostringstream msg;
+                msg<<"Processing slice "<<z<<" of "<<pImage->Size(2);
+                m_logger.message(msg.str());
                 this->process2D_single(slice, quantile, threshold, method);
                 
                 kipl::base::InsertSlice(slice, *pImage, z, kipl::base::eImagePlanes::ImagePlaneXY);
@@ -77,15 +85,20 @@ void SortSpotClean::process(kipl::base::TImage<float,3>& image, float quantile, 
         m_threadPool->barrier();
 
     }
-    else {
+    else 
+    {
         m_logger.message("Processing 3D image in single-threaded mode with patch-wise processing.");
         for (size_t z=0; z<image.Size(2); ++z) 
         {
+            ++m_nCounter;
+            updateStatus(static_cast<float>(m_nCounter)/static_cast<float>(image.Size(2)),"SortSpotClean");
+            msg.str("");
+            msg<<"Processing slice "<<z<<" of "<<image.Size(2);
+            m_logger.message(msg.str());
             kipl::base::TImage<float,2> slice = kipl::base::ExtractSlice(image, z, kipl::base::eImagePlanes::ImagePlaneXY);
             process2D_single(slice, quantile, threshold, method);
             kipl::base::InsertSlice(slice, image, z, kipl::base::eImagePlanes::ImagePlaneXY);
         }
-        
     }
 }
 
@@ -96,6 +109,10 @@ void SortSpotClean::process2D_single(kipl::base::TImage<float,2>& image, float q
     kipl::base::ImagePatchExtractor<float,2> extractor(image.dims(), {m_patchSize,m_patchSize}, 2 );
 
     auto patches = extractor.getAllSubImages();
+
+    std::ostringstream msg;
+    // msg<<"Processing 2D image with patch-wise processing. Image size: "<<image.Size(0)<<"x"<<image.Size(1)<<", Number of patches: "<<patches.size();
+    // m_logger.message(msg.str());
 
     for (auto & p : patches)
     {
@@ -146,6 +163,10 @@ void SortSpotClean::process2D_parallel(kipl::base::TImage<float,2>& image, float
 void SortSpotClean::findAndCleanSpots(kipl::base::TImage<float,2>& image, float threshold, float quantile, eSortSpotQuantile method)
 {
     auto spotPositions = findSpots(image, quantile, threshold, method);
+    std::ostringstream msg;
+    msg<<"Found "<<spotPositions.size()<<" spots to clean using q="<<quantile<<" and th="<<threshold<<".";
+    m_logger.debug(msg.str());
+    
     kipl::morphology::RepairHoles(image, spotPositions, kipl::base::eConnectivity::conn8);
     // m_mask = createSpotMask(image, spotPositions);
 }
@@ -330,6 +351,15 @@ bool SortSpotClean::isThreaded()
 int SortSpotClean::numberOfThreads()
 {
     return m_nNumberOfThreads; // Example return value
+}
+
+bool SortSpotClean::updateStatus(float val, std::string msg)
+{
+    if (m_interactor!=nullptr) {
+        return m_interactor->SetProgress(val,msg);
+    }
+
+    return false;
 }
 
 }

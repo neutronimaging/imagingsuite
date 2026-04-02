@@ -21,7 +21,7 @@ SortSpotCleanModule::SortSpotCleanModule(kipl::interactors::InteractionBase *int
     m_fThreshold(0.95f),
     m_fQuantile(0.95f),
     m_nPatchSize(32),
-    m_eQuantileMethod(ImagingAlgorithms::eSortSpotQuantile::Both),
+    m_eQuantileMethod(ImagingAlgorithms::eSortSpotQuantile::BrightSpots),
     m_eConnectivity(kipl::base::eConnectivity::conn4),
     m_bRemoveInfNaN(false),
     m_bClampData(false),
@@ -64,7 +64,7 @@ int SortSpotCleanModule::Configure(ReconConfig config, std::map<std::string, std
         m_nPatchSize      = GetIntParameter(parameters,"patchsize");
     
         string2enum(GetStringParameter(parameters,"connectivity"),m_eConnectivity);
-        string2enum(GetStringParameter(parameters,"quantile"),m_eQuantileMethod);
+        string2enum(GetStringParameter(parameters,"quantilemethod"),m_eQuantileMethod);
 
         m_bRemoveInfNaN   = kipl::strings::string2bool(GetStringParameter(parameters,"removeinfnan"));
         m_bClampData      = kipl::strings::string2bool(GetStringParameter(parameters,"clampdata"));
@@ -105,7 +105,7 @@ std::map<std::string, std::string> SortSpotCleanModule::GetParameters()
         parameters["patchsize"]    = std::to_string(m_nPatchSize);
 
         parameters["connectivity"] = enum2string(m_eConnectivity);
-        parameters["quantile"]     = enum2string(m_eQuantileMethod);
+        parameters["quantilemethod"]     = enum2string(m_eQuantileMethod);
 
         parameters["removeinfnan"] = kipl::strings::bool2string(m_bRemoveInfNaN);
         parameters["clampdata"]    = kipl::strings::bool2string(m_bClampData);
