@@ -18,6 +18,7 @@
 
 #include <MorphSpotClean.h>
 #include <sortspotclean.h>
+#include <gammaclean.h>
 #include <ImagingException.h>
 
 class TestSpotCleaners : public QObject
@@ -41,6 +42,10 @@ private Q_SLOTS:
     void SortSpotClean_RunThreaded();
     void SortSpotClean_Run3D();
     void SortSpotClean_enums();
+
+    void GammaClean_BasicRun();
+    void GammaClean_BenchMark();
+
 private:
     void MorphSpotClean_ListAlgorithm();
 private:
@@ -402,6 +407,35 @@ void TestSpotCleaners::SortSpotClean_enums()
 
     QVERIFY_THROWS_EXCEPTION(ImagingException, string2enum("qwerty",esq));
 }   
+
+void TestSpotCleaners::GammaClean_BasicRun()
+{
+    // Basic test to check if the algorithm runs without errors and produces output. No assertions on the output are made here.
+
+    ImagingAlgorithms::GammaClean cleaner;
+
+    auto img=kipl::base::TSubImage<float,2>::Get(holes,{200,200},{32,32});
+    kipl::io::WriteTIFF(img,"gammaclean_patch.tif",kipl::base::Float32);
+
+    cleaner.process(img);
+    kipl::io::WriteTIFF(img,"gammaclean_patch_cleaned.tif",kipl::base::Float32);
+    auto mask=cleaner.spotMask();
+    kipl::io::WriteTIFF(mask,"gammaclean_spotmask.tif",kipl::base::UInt16);
+    auto diff=cleaner.detectionImage();
+    kipl::io::WriteTIFF(diff,"gammaclean_diff.tif",kipl::base::Float32);
+}
+
+void TestSpotCleaners::GammaClean_BenchMark()
+{
+    ImagingAlgorithms::GammaClean cleaner;
+
+    QBENCHMARK
+    {
+        auto img=holes;
+        img.Clone();
+        cleaner.process(img);
+    }
+}
 QTEST_APPLESS_MAIN(TestSpotCleaners)
 
 

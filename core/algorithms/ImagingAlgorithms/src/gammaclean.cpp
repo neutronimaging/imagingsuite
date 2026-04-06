@@ -3,6 +3,9 @@
 #include "../include/gammaclean.h"
 #include <sstream>
 #include <list>
+#include <algorithm>
+#include <array>
+#include <vector>
 
 #include <filters/laplacianofgaussian.h>
 #include <filters/medianfilter.h>
@@ -12,59 +15,111 @@
 
 namespace ImagingAlgorithms {
 
+        
+//     void process(kipl::base::TImage<float,2> & img);
+//     void process(kipl::base::TImage<float,3> & img);
+    
+//     void configure(float sigma, float th3, float th5, float th7, size_t medsize);
 
-GammaClean::GammaClean() :
-    m_fSigma(0.8f),
-    m_fThreshold3(25.0f),
-    m_fThreshold5(100.0f),
-    m_fThreshold7(400.0f),
-    m_nMedianSize(3)
+//     kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> &img);
+
+//     void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
+//     kipl::base::eConnectivity connectivity();
+        
+//     void setLimits(bool bClamp, float fMin, float fMax);
+//     std::vector<float> clampLimits();
+//     bool clampActive();
+    
+//     void setCleanInfNan(bool activate);
+//     bool cleanInfNan();
+//     void useThreading(bool x);
+//     bool isThreaded();
+//     int  numberOfThreads();
+
+// private:
+//     void prepareNeighborhoods(const std::vector<size_t> &dims);
+//     void medianNeighborhood(float *pImg, float *pRes, ptrdiff_t pos, ptrdiff_t *ng, size_t N);
+//     void laplacianOfGaussian(float *pImg, float *pRes, ptrdiff_t pos, ptrdiff_t *ng, size_t N);
+
+GammaClean::GammaClean( float sigma, 
+                        float th3, 
+                        float th5, 
+                        float th7, 
+                        size_t medsize, 
+                        bool useThreads, 
+                        kipl::interactors::InteractionBase *interactor) :
+    m_logger("GammaClean"),
+    m_pInteractor(interactor),
+    m_threadPool(nullptr),
+    m_fSigma(sigma),
+    m_fThreshold3(th3),
+    m_fThreshold5(th5),
+    m_fThreshold7(th7),
+    m_nMedianSize(medsize)
 {
-
+    if (useThreads) {
+        m_threadPool = new kipl::utilities::ThreadPool(std::thread::hardware_concurrency());
+    }   
 }
 
-void GammaClean::Configure(float sigma, float th3, float th5, float th7, size_t medsize)
+void GammaClean::configure(float sigma, float th3, float th5, float th7, size_t medsize)
 {
-    m_fSigma=sigma;
-    m_fThreshold3=th3;
-    m_fThreshold5=th5;
-    m_fThreshold7=th7;
-    m_nMedianSize=medsize;
+    m_fSigma       = sigma;
+    m_fThreshold3  = th3;
+    m_fThreshold5  = th5;
+    m_fThreshold7  = th7;
+    m_nMedianSize  = medsize;
 }
 
-kipl::base::TImage<float,2> GammaClean::Process(kipl::base::TImage<float,2> & img)
+void GammaClean::process(kipl::base::TImage<float,3> & /*img*/)
+{
+    throw ImagingException("3D processing not implemented yet",__FILE__,__LINE__);
+}
+
+void GammaClean::process(kipl::base::TImage<float,2> & img)
 {
     std::stringstream msg;
+
+    msg.str(""); msg<<"Starting GammaClean with parameters: sigma="<<m_fSigma<<", th3="<<m_fThreshold3<<", th5="<<m_fThreshold5<<", th7="<<m_fThreshold7<<", median size="<<m_nMedianSize;
+    m_logger.message(msg.str());
     kipl::base::TImage<float,2> LoG=kipl::filters::LaplacianOfGaussian(img,m_fSigma);
 
-    std::vector<size_t> meddims={m_nMedianSize,m_nMedianSize};
+    std::vector<size_t>  meddims={m_nMedianSize,m_nMedianSize};
     kipl::filters::TMedianFilter<float,2> med3(meddims);
+
     kipl::base::TImage<float,2> LoGm3=med3(LoG);
 
-    kipl::base::TImage<int,2> mask(img.dims()); mask=0;
-    float *pLoG=LoG.GetDataPtr();
-    float *pLoGm3=LoGm3.GetDataPtr();
-    int *pMask=mask.GetDataPtr();
+    m_diff.resize(img.dims()); 
+    m_mask.resize(img.dims()); 
 
-    std::list<ptrdiff_t> m3;
-    std::list<ptrdiff_t> m5;
-    std::list<ptrdiff_t> m7;
+    // float *pLoG   = LoG.GetDataPtr();
+    // float *pLoGm3 = LoGm3.GetDataPtr();
+    // int   *pMask  = m_mask.GetDataPtr();
 
-    ptrdiff_t N=static_cast<ptrdiff_t>(LoGm3.Size());
-    for (ptrdiff_t i=0; i<N; i++) {
-        float diff=pLoG[i]-pLoGm3[i];
+    std::vector<ptrdiff_t> m3;
+    std::vector<ptrdiff_t> m5;
+    std::vector<ptrdiff_t> m7;
 
-        pMask[i]=(m_fThreshold3<diff) + ((m_fThreshold5<diff)<<1) + ((m_fThreshold7<diff)<<2);
-
-        switch (static_cast<int>(pMask[i])) {
+    ptrdiff_t N=static_cast<ptrdiff_t>(img.Size());
+    for (ptrdiff_t i=0; i<N; i++) 
+    {
+        m_diff[i]=LoG[i]-LoGm3[i];
+        m_mask[i]=(m_fThreshold3<m_diff[i]) + ((m_fThreshold5<m_diff[i])*2) + ((m_fThreshold7<m_diff[i])*4);
+        
+        switch (static_cast<int>(m_mask[i])) 
+        {
+            case 0: break;
             case 1: m3.push_back(i); break;
             case 3: m5.push_back(i); break;
             case 7: m7.push_back(i); break;
             default:
-                msg.str(""); msg<<"Strange mask code ("<<pMask[i]<<") found at position"<<i;
+                msg.str(""); msg<<"Strange mask code ("<<m_mask[i]<<") found at position"<<i;
                 throw ImagingException(msg.str(),__FILE__,__LINE__);
         }
     }
+
+    msg.str(""); msg<<"Gamma spots detected: "<<m3.size()<<" (3x3), "<<m5.size()<<" (5x5), "<<m7.size()<<" (7x7)";
+    m_logger.message(msg.str());
 
     // AK: This dilation map is useless!!! It is a void operation.
     //    ; we found that some of the edge pixels are not removed. so we dilate the map7
@@ -78,7 +133,8 @@ kipl::base::TImage<float,2> GammaClean::Process(kipl::base::TImage<float,2> & im
     // The mask implemented mask coding renders this process obsolete.
     //    imgthr5=(imgthr5 or imgthr7) - imgthr7
     //    imgthr3=imgthr3-imgthr5
-    kipl::base::TImage<float,2> imgm3=med3(img);
+
+    // kipl::base::TImage<float,2> imgm3=med3(img);
     kipl::base::TImage<float,2> res=img;
     res.Clone();
 
@@ -86,22 +142,24 @@ kipl::base::TImage<float,2> GammaClean::Process(kipl::base::TImage<float,2> & im
     float *pRes=res.GetDataPtr();
     float *pImg=img.GetDataPtr();
 
-    for (it=m3.begin(); it!=m3.end(); it++) {
-        MedianNeighborhood(pImg,pRes,*it,m_nNG3,9);
+
+    for (const auto &pos : m3) 
+    {
+        medianNeighborhood(pImg,pRes,pos,m_nNG3);
     }
 
-    for (it=m5.begin(); it!=m5.end(); it++) {
-        MedianNeighborhood(pImg,pRes,*it,m_nNG5,25);
+    for (const auto &pos : m5) {
+        medianNeighborhood(pImg,pRes,pos,m_nNG5);
     }
 
-    for (it=m7.begin(); it!=m7.end(); it++) {
-        MedianNeighborhood(pImg,pRes,*it,m_nNG7,49);
+    for (const auto &pos : m7) {
+        medianNeighborhood(pImg,pRes,pos,m_nNG7);
     }
 
-    return res;
+    img=res;
 }
 
-void GammaClean::PrepareNeighborhoods(size_t *dims)
+void GammaClean::prepareNeighborhoods(const std::vector<size_t> &dims)
 {
     for (ptrdiff_t i=-1,idx=0; i<=1; i++)
         for (ptrdiff_t j=-1; j<=1; j++, idx++)
@@ -117,27 +175,32 @@ void GammaClean::PrepareNeighborhoods(size_t *dims)
 
 }
 
-void GammaClean::MedianNeighborhood(float *pImg, float *pRes, ptrdiff_t pos, ptrdiff_t *ng, size_t N)
+void GammaClean::medianNeighborhood(float *pImg, float *pRes, ptrdiff_t pos, const std::vector<ptrdiff_t> &ng)
 {
-    size_t medN=N;
-    ptrdiff_t p;
-    for (size_t i=0; i<N; i++) {
-        p=pos+ng[i];
+    std::vector<float> medvec;
+    medvec.reserve(ng.size());
 
-        if ((p<0) || (m_nData<=p)) {
-            medN--;
-        }
-        else {
-            medvec[i]=pImg[p];
+    for (const auto &i : ng) 
+    {
+        ptrdiff_t p=pos+i;
+
+        if ((0<=p) && (p<m_nData)) 
+        {
+            medvec.push_back(pImg[p]);
         }
     }
 
-    kipl::math::median_quick_select(medvec,medN,pRes+pos);
+    pRes[pos]=kipl::math::median_STL(medvec);
 }
 
-kipl::base::TImage<float,2> GammaClean::DetectionImage(kipl::base::TImage<float,2> & img)
+kipl::base::TImage<float,2> GammaClean::detectionImage() 
 {
-    return img;
+    return m_diff;
+}
+
+kipl::base::TImage<unsigned short,2> GammaClean::spotMask() 
+{
+    return m_mask;
 }
 
 }

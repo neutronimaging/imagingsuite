@@ -10,6 +10,7 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(QT NAMES Qt6 COMPONENTS Widgets Charts PrintSupport REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts PrintSupport)
 # find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
