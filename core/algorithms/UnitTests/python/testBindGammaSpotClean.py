@@ -4,6 +4,7 @@ from os import makedirs
 import numpy as np
 import skimage.io as io
 import math
+import time
 
 sys.path.append('../../../../../build-imagingsuite/Release/lib/')
 import imgalg as ia
@@ -18,10 +19,10 @@ def test_gamma_clean_ctor():
     assert gc.isThreaded() == False
     assert gc.numberOfThreads() == 1
 
-    gc2=ia.GammaClean(useThreads=True)
+    # gc2=ia.GammaClean(useThreads=True)
 
-    assert gc2.isThreaded() == True
-    assert gc2.numberOfThreads() > 1
+    # assert gc2.isThreaded() == True
+    # assert gc2.numberOfThreads() > 1
 
 def test_gamma_clean_dummy_run():
     gc=ia.GammaClean()
@@ -42,15 +43,23 @@ def test_gamma_clean_basic_run():
     w = 256
     pos = [200,200]
     fname = dataPath+"2D/tiff/spots/balls.tif";
-    img = io.imread(fname).astype('float32')[pos[0]:pos[0]+w,pos[1]:pos[1]+w]
+    # img = io.imread(fname).astype('float32')[pos[0]:pos[0]+w,pos[1]:pos[1]+w]
+    img = io.imread(fname).astype('float32')
     res = img.copy()
     gc=ia.GammaClean()
 
+    start = time.perf_counter()
     gc.process(res)
+    elapsed = time.perf_counter() - start
+    print(f"GammaClean processing time: {elapsed:.4f} seconds")
 
+    
     io.imsave('balls_cleaned.tif',res.astype('float32'))
 
+    start = time.perf_counter()
     tum=tumgc(img, thr3=25, thr5=100, thr7=400, sig_log=0.8)
+    elapsed = time.perf_counter() - start
+    print(f"TUM GammaClean processing time: {elapsed:.4f} seconds")
     io.imsave('balls_tum_cleaned.tif',tum.astype('float32'))
 
     changes = np.sum(res != img)

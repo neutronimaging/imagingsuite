@@ -61,7 +61,9 @@ GammaClean::GammaClean( float sigma,
         m_threadPool = new kipl::utilities::ThreadPool(std::thread::hardware_concurrency());
     }   
 
-    buildLoGKernel(sigma, static_cast<size_t>(std::ceil(6*sigma))); // The kernel size is set to 6*sigma to capture the significant part of the Gaussian. This is a common choice for LoG filters.
+    // size_t N=static_cast<size_t>(std::ceil(6*sigma));
+    size_t N=9UL;
+    buildLoGKernel(sigma, static_cast<size_t>(N)); // The kernel size is set to 6*sigma to capture the significant part of the Gaussian. This is a common choice for LoG filters.
 }
 
 GammaClean::~GammaClean()
@@ -79,7 +81,10 @@ void GammaClean::configure(float sigma, float th3, float th5, float th7, size_t 
     m_fThreshold7  = th7;
     m_nMedianSize  = medsize;
 
-    buildLoGKernel(sigma, static_cast<size_t>(std::ceil(6*sigma))); // The kernel size is set to 6*sigma to capture the significant part of the Gaussian. This is a common choice for LoG filters.
+    // size_t N=static_cast<size_t>(std::ceil(6*sigma));
+    size_t N=9UL;
+
+    buildLoGKernel(sigma, static_cast<size_t>(N)); // The kernel size is set to 6*sigma to capture the significant part of the Gaussian. This is a common choice for LoG filters.
 }
 
 void GammaClean::process(kipl::base::TImage<float,3> & /*img*/)
@@ -91,6 +96,7 @@ void GammaClean::process(kipl::base::TImage<float,2> & img)
 {
     std::stringstream msg;
 
+    m_nData=static_cast<ptrdiff_t>(img.Size());
     msg.str(""); msg<<"Starting GammaClean with parameters: sigma="<<m_fSigma<<", th3="<<m_fThreshold3<<", th5="<<m_fThreshold5<<", th7="<<m_fThreshold7<<", median size="<<m_nMedianSize;
     m_logger.message(msg.str());
     // kipl::base::TImage<float,2> LoG=kipl::filters::LaplacianOfGaussian(img,m_fSigma);
@@ -141,6 +147,7 @@ void GammaClean::process(kipl::base::TImage<float,2> & img)
     float *pImg=img.GetDataPtr();
 
 
+    prepareNeighborhoods(img.dims());
     for (const auto &pos : m3) 
     {
         medianNeighborhood(pImg,pRes,pos,m_nNG3);
@@ -161,6 +168,10 @@ void GammaClean::process(kipl::base::TImage<float,2> & img)
 
 void GammaClean::prepareNeighborhoods(const std::vector<size_t> &dims)
 {
+    m_nNG3.resize(9);
+    m_nNG5.resize(25);
+    m_nNG7.resize(49);
+
     for (ptrdiff_t i=-1,idx=0; i<=1; i++)
         for (ptrdiff_t j=-1; j<=1; j++, idx++)
             m_nNG3[idx]=i*dims[0]+j;
@@ -190,8 +201,14 @@ void GammaClean::medianNeighborhood(float *pImg, float *pRes, ptrdiff_t pos, con
         }
     }
 
-    pRes[pos]=-1000.0f;
-    // pRes[pos]=kipl::math::median_STL(medvec);
+    if (medvec.size()==0UL) 
+    {
+        std::ostringstream msg;
+        msg<<"No valid neighborhood pixels found for median calculation at position "<<pos<<", ng size: "<<ng.size()<<", image data size: "<<m_nData;
+        throw ImagingException(msg.str(),__FILE__,__LINE__);
+    }
+    
+    pRes[pos]=kipl::math::median_STL(medvec);
     // kipl::math::median(medvec,pRes+pos);
 }
 
