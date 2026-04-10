@@ -73,7 +73,7 @@ T median_STL(const std::vector<T> &v)
         return static_cast<T>((static_cast<double>(tmp[mid - 1]) + static_cast<double>(tmp[mid])) * 0.5);
 }
 
-#define PIX_SORT(a,b) { if ((a)>(b)) swap(a,b); }
+#define PIX_SORT(a,b) { if ((a)>(b)) std::swap(a,b); }
 
 template <class T>
 void opt_med9(T * p, T *med)
@@ -142,7 +142,7 @@ void median_quick_select(T *arr, const size_t n, S *med)
         }
         if (high == low + 1) { // Two elements only
         	if (arr[low] > arr[high]) 
-            	swap(arr[low], arr[high]) ;
+            	std::swap(arr[low], arr[high]) ;
         	*med= static_cast<S>(arr[median]);
             return; 
         }
@@ -153,9 +153,9 @@ void median_quick_select(T *arr, const size_t n, S *med)
         midval  = arr[middle];
         highval = arr[high];
 
-        if (midval > highval) swap(midval, highval) ; 
-        if (lowval > highval) swap(lowval, highval) ;
-        if (midval > lowval)  swap(midval, lowval) ;   // Swap low item
+        if (midval > highval) std::swap(midval, highval) ; 
+        if (lowval > highval) std::swap(lowval, highval) ;
+        if (midval > lowval)  std::swap(midval, lowval) ;   // Swap low item
                                                        // (now in position middle) into position (low+1)
         arr[low]=lowval;
         arr[middle]=arr[low+1];
@@ -180,7 +180,7 @@ void median_quick_select(T *arr, const size_t n, S *med)
         }
         
         // Swap middle item (in position low) back into correct position
-        swap(arr[low], arr[hh]) ; // Re-set active partition
+        std::swap(arr[low], arr[hh]) ; // Re-set active partition
         if (hh <= median) low = ll;
         if (hh >= median) high = hh - 1;
 	}
