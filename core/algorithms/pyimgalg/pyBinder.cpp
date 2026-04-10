@@ -18,6 +18,7 @@ void bindPixelInfo(py::module &m);
 void bindException(py::module &m);
 void bindProjectionFilter(py::module &m);
 void bindCenterEstimator(py::module &m);
+void bindGammaClean(py::module &m);
 
 PYBIND11_MODULE(imgalg,m)
 {
@@ -29,6 +30,7 @@ PYBIND11_MODULE(imgalg,m)
     bindProjectionFilter(m);
     bindNormalizeImage(m);
     bindCenterEstimator(m);
+    bindGammaClean(m);
 //    bindPixelInfo(m);
 //    bindException(m);
 

@@ -62,6 +62,13 @@ GammaClean::GammaClean( float sigma,
     }   
 }
 
+GammaClean::~GammaClean()
+{
+    if (m_threadPool) {
+        delete m_threadPool;
+    }
+}
+
 void GammaClean::configure(float sigma, float th3, float th5, float th7, size_t medsize)
 {
     m_fSigma       = sigma;
@@ -69,6 +76,8 @@ void GammaClean::configure(float sigma, float th3, float th5, float th7, size_t 
     m_fThreshold5  = th5;
     m_fThreshold7  = th7;
     m_nMedianSize  = medsize;
+
+    buildLoGKernel(sigma, static_cast<size_t>(std::ceil(6*sigma))); // The kernel size is set to 6*sigma to capture the significant part of the Gaussian. This is a common choice for LoG filters.
 }
 
 void GammaClean::process(kipl::base::TImage<float,3> & /*img*/)
@@ -83,6 +92,8 @@ void GammaClean::process(kipl::base::TImage<float,2> & img)
     msg.str(""); msg<<"Starting GammaClean with parameters: sigma="<<m_fSigma<<", th3="<<m_fThreshold3<<", th5="<<m_fThreshold5<<", th7="<<m_fThreshold7<<", median size="<<m_nMedianSize;
     m_logger.message(msg.str());
     kipl::base::TImage<float,2> LoG=kipl::filters::LaplacianOfGaussian(img,m_fSigma);
+    // kipl::filters::TFilter<float,2UL> logFilter(m_logkernel,m_logkerneldims);
+    // kipl::base::TImage<float,2UL> LoG=logFilter(img,kipl::filters::FilterBase::EdgeMirror);
 
     std::vector<size_t>  meddims={m_nMedianSize,m_nMedianSize};
     kipl::filters::TMedianFilter<float,2> med3(meddims);
@@ -191,6 +202,55 @@ void GammaClean::medianNeighborhood(float *pImg, float *pRes, ptrdiff_t pos, con
     }
 
     pRes[pos]=kipl::math::median_STL(medvec);
+    // kipl::math::median(medvec,pRes+pos);
+}
+
+void GammaClean::buildLoGKernel(float sigma, size_t N)
+{
+// def LaplacianOfGaussian(n, sigma):
+//     """Laplacian of Gaussian.
+
+//     :param N: kernel size.
+//     :type N: :class:'int'
+//     :param sigma: width
+//     :type sigma: :class:'float'
+//     """
+//     if np.mod(n, 2) == 0:
+//         n = n + 1
+//     n2 = n // 2
+//     g = np.zeros([n, n])
+//     log = np.zeros([n, n])
+//     sigma = float(sigma)
+//     for i in np.arange(-n2, n2 + 1):
+//         for j in np.arange(-n2, n2 + 1):
+//             g[i + n2, j + n2] = exp(-(i * i + j * j) / (2.0 * sigma * sigma))
+//     sumg = np.sum(g)
+//     for i in np.arange(-n2, n2 + 1):
+//         for j in np.arange(-n2, n2 + 1):
+//             log[i + n2, j + n2] = (
+//                 (i * i + j * j - 2 * sigma * sigma)
+//                 * g[i + n2, j + n2]
+//                 / (2.0 * pi * pow(sigma, 6) * sumg)
+//             )
+//     return log
+    ptrdiff_t N2 = N / 2;
+
+    m_logkernel.resize((2*N2+1)*(2*N2+1)); // resize the kernel to the correct size
+    
+    m_logkerneldims.resize(2);
+    m_logkerneldims[0] = 2*N2+1;
+    m_logkerneldims[1] = 2*N2+1;
+
+    std::vector<float> g(m_logkernel.size(),0.0f);
+    for (ptrdiff_t i=-N2,idx=0; i<=N2; i++)
+        for (ptrdiff_t j=-N2; j<=N2; j++, idx++)
+            g[idx]=std::exp(-(i * i + j * j) / (2.0f * sigma * sigma));
+    
+    float sumg = std::accumulate(g.begin(), g.end(), 0.0f);
+
+    for (ptrdiff_t i=-N2,idx=0; i<=N2; i++)
+        for (ptrdiff_t j=-N2; j<=N2; j++, idx++)
+            m_logkernel[idx] = ((i * i + j * j - 2 * sigma * sigma) * g[idx]) / (2.0f * static_cast<float>(M_PI) * std::pow(sigma,6) * sumg);
 }
 
 kipl::base::TImage<float,2> GammaClean::detectionImage() 
@@ -201,6 +261,19 @@ kipl::base::TImage<float,2> GammaClean::detectionImage()
 kipl::base::TImage<unsigned short,2> GammaClean::spotMask() 
 {
     return m_mask;
+}
+
+bool GammaClean::isThreaded()
+{
+    return (m_threadPool!=nullptr);
+}
+
+int GammaClean::numberOfThreads()
+{
+    if (m_threadPool) {
+        return m_threadPool->pool_size();
+    }
+    return 1;
 }
 
 }

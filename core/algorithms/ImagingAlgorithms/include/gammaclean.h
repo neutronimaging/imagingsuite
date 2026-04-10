@@ -39,6 +39,8 @@ public:
                size_t medsize=3, 
                bool useThreads=false, 
                kipl::interactors::InteractionBase *interactor=nullptr);
+    
+    ~GammaClean();
 
     void process(kipl::base::TImage<float,2> & img);
     void process(kipl::base::TImage<float,3> & img);
@@ -64,6 +66,7 @@ public:
 private:
     void prepareNeighborhoods(const std::vector<size_t> &dims);
     void medianNeighborhood(float *pImg, float *pRes, ptrdiff_t pos, const std::vector<ptrdiff_t> &ng);
+    void buildLoGKernel(float sigma, size_t N);
     
     float m_fSigma;
     float m_fThreshold3;
@@ -72,6 +75,8 @@ private:
     size_t m_nMedianSize;
     kipl::base::TImage<unsigned short,2> m_mask;
     kipl::base::TImage<float,2> m_diff;
+    std::vector<float> m_logkernel;
+    std::vector<size_t> m_logkerneldims;
 
     std::vector<ptrdiff_t> m_nNG3;
     std::vector<ptrdiff_t> m_nNG5;

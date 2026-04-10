@@ -40,7 +40,7 @@ set(SRC_FILES
   pySortSpotClean.cpp
   pyPixelInfo.cpp
   pyProjectionFilter.cpp
-#  pygammaclean.cpp  
+  pyGammaClean.cpp  
   pyAverageImage.cpp  
 #  pypiercingpointestimator.cpp  
 #  pyReferenceImageCorrection.cpp  
