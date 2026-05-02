@@ -33,16 +33,23 @@ class MuhrecRecipe(ConanFile):
         self.tool_requires("cmake/[4.1.2]") 
 
     def layout(self):
-        cmake_layout(
-            self,
-            build_folder="../build-imagingsuite",
-            )
+        if "QTPATH" not in os.environ:
+            self.folders.generators = "."
+        else:
+            cmake_layout(
+                self,
+                build_folder="../build-imagingsuite",
+                )
 
     def generate(self):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self, generator="Ninja") #default is None
         tc.generate()
+        # The rest of generate() is only needed for GUI/desktop builds
+        if "QTPATH" not in os.environ:
+            return
+
         ms = VirtualRunEnv(self)
         ms.generate()
         bin_folder = os.path.abspath(os.path.join(self.build_folder, "bin", self.cpp.build.bindir))
@@ -57,7 +64,7 @@ class MuhrecRecipe(ConanFile):
             if len(dep.cpp_info.libdirs)>0:
                 copy(self, "*.so*", dep.cpp_info.libdirs[0], self.lib_folder)
                 copy(self, "*.dylib", dep.cpp_info.libdirs[0], self.lib_folder)
-            
+
         # Copy dynamic libraries from qt
         qtpath = os.environ["QTPATH"]
         Qt_dynamic_library_list = ["Qt6PrintSupport", "Qt6Charts", "Qt6OpenGLWidgets", "Qt6OpenGl", "Qt6Test"]

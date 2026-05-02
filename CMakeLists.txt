@@ -10,10 +10,12 @@ cmake_minimum_required(VERSION 3.30)
 
 project(imagingsuite VERSION 4.3 LANGUAGES CXX)
 
+option(BUILD_GUI "Build Qt GUI applications and unit tests" ON)
+
 set(CMAKE_FIND_DEBUG_MODE OFF)
-# require C++17
+# require C++20
 if(NOT DEFINED CMAKE_CXX_STANDARD)
-  
+  set(CMAKE_CXX_STANDARD 20)
 endif(NOT DEFINED CMAKE_CXX_STANDARD)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -29,8 +31,18 @@ if(NOT CMAKE_BUILD_TYPE)
   )
 endif(NOT CMAKE_BUILD_TYPE)
 
-file(TO_CMAKE_PATH "$ENV{QTPATH}/lib/cmake/;${CMAKE_BINARY_DIR}/generators" PREFIX_PATH)
+if(BUILD_GUI AND DEFINED ENV{QTPATH})
+  file(TO_CMAKE_PATH "$ENV{QTPATH}/lib/cmake/;${CMAKE_BINARY_DIR}/generators" PREFIX_PATH)
+else()
+  file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}/generators" PREFIX_PATH)
+endif()
 file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_BINARY_DIR}/generators" MODULE_PATH)
+
+# For wheel builds, Conan generators are placed in the source tree by cibuildwheel's before-build
+if(SKBUILD AND EXISTS "${PROJECT_SOURCE_DIR}/generators")
+  list(APPEND PREFIX_PATH "${PROJECT_SOURCE_DIR}/generators")
+  list(APPEND MODULE_PATH "${PROJECT_SOURCE_DIR}/generators")
+endif()
 
 # Set environment variables so that CMAKE can find the packages
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PREFIX_PATH})
@@ -39,7 +51,7 @@ message("CMAKE_PREFIX_PATH is: ${CMAKE_PREFIX_PATH}")
 message("CMAKE_MODULE_PATH is: ${CMAKE_MODULE_PATH}")
 message("QTPATH is: $ENV{QTPATH}")
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
-find_package(Python3 COMPONENTS Interpreter Development)
+find_package(Python3 COMPONENTS Interpreter Development.Module)
 
 find_package(Armadillo REQUIRED)
 find_package(pybind11 REQUIRED)
@@ -68,7 +80,16 @@ elseif (APPLE)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
   include_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+  if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    # sse2neon provides SSE intrinsics on ARM; installed via brew
+    find_path(SSE2NEON_INCLUDE_DIR sse2neon/sse2neon.h
+      HINTS /opt/homebrew/include /usr/local/include)
+    if(SSE2NEON_INCLUDE_DIR)
+      include_directories(${SSE2NEON_INCLUDE_DIR})
+    endif()
+  endif()
 endif()
+
 
 if("${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}" VERSION_LESS "3.5")
   message(
@@ -84,7 +105,7 @@ execute_process(
   RESULT_VARIABLE HAVE_GIT_VERSION_INFO
   OUTPUT_VARIABLE GIT_VERSION_INFO
   OUTPUT_STRIP_TRAILING_WHITESPACE
-  COMMAND_ERROR_IS_FATAL ANY
+  ERROR_QUIET
 )
 if(${HAVE_GIT_VERSION_INFO} EQUAL 0)
   message(STATUS "Got version from Git: ${GIT_VERSION_INFO}")
@@ -140,7 +161,14 @@ SET(CMAKE_SKIP_BUILD_RPATH FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 
-if(NOT APPLE)
+if(SKBUILD)
+  # Wheel builds: all libs installed to same directory
+  if(NOT APPLE)
+    set(CMAKE_INSTALL_RPATH $ORIGIN)
+  else()
+    set(CMAKE_INSTALL_RPATH @loader_path)
+  endif()
+elseif(NOT APPLE)
   set(CMAKE_INSTALL_RPATH $ORIGIN/../lib)
 else()
   set(CMAKE_INSTALL_RPATH @loader_path/../Frameworks @loader_path/../../../lib @loader_path/lib @loader_path)
@@ -151,51 +179,57 @@ enable_testing()
 # Core libraries
 add_subdirectory(core/kipl/kipl)
 
-# Core library tests
-add_subdirectory(core/kipl/UnitTests/tAlgorithms)
-add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
-add_subdirectory(core/kipl/UnitTests/tLogging)
-add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
-add_subdirectory(core/kipl/UnitTests/tkiplfilters)
-add_subdirectory(core/kipl/UnitTests/tFillHole)
-add_subdirectory(core/kipl/UnitTests/tImageOperators)
-add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
-add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
-add_subdirectory(core/kipl/UnitTests/tNoiseImage)
-add_subdirectory(core/kipl/UnitTests/tedgefunction)
-add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
-add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
-add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
-add_subdirectory(core/kipl/UnitTests/tThreadPool)
-add_subdirectory(core/kipl/UnitTests/tKiplMath)
-add_subdirectory(core/kipl/UnitTests/tKIPLMathFunctions)
-add_subdirectory(core/kipl/UnitTests/tLinFit)
-add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
-add_subdirectory(core/kipl/UnitTests/tSubImage)
-
+# Core library tests (use Qt6::Test)
+if(BUILD_GUI)
+  add_subdirectory(core/kipl/UnitTests/tAlgorithms)
+  add_subdirectory(core/kipl/UnitTests/tDirAnalysis)
+  add_subdirectory(core/kipl/UnitTests/tLogging)
+  add_subdirectory(core/kipl/UnitTests/tSTLVectorOperations)
+  add_subdirectory(core/kipl/UnitTests/tkiplfilters)
+  add_subdirectory(core/kipl/UnitTests/tFillHole)
+  add_subdirectory(core/kipl/UnitTests/tImageOperators)
+  add_subdirectory(core/kipl/UnitTests/tIndex2Coord)
+  add_subdirectory(core/kipl/UnitTests/tKIPL_IO)
+  add_subdirectory(core/kipl/UnitTests/tNoiseImage)
+  add_subdirectory(core/kipl/UnitTests/tedgefunction)
+  add_subdirectory(core/kipl/UnitTests/tkiplbasetest)
+  add_subdirectory(core/kipl/UnitTests/tKIPLTimers)
+  add_subdirectory(core/kipl/UnitTests/tKIPLbaseTImage)
+  add_subdirectory(core/kipl/UnitTests/tThreadPool)
+  add_subdirectory(core/kipl/UnitTests/tKiplMath)
+  add_subdirectory(core/kipl/UnitTests/tKIPLMathFunctions)
+  add_subdirectory(core/kipl/UnitTests/tLinFit)
+  add_subdirectory(core/kipl/UnitTests/tKIPLHistogram)
+  add_subdirectory(core/kipl/UnitTests/tSubImage)
+endif()
 
 add_subdirectory(core/algorithms/ImagingAlgorithms)
-add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
-add_subdirectory(core/algorithms/UnitTests/tSpotCleaners/)
+if(BUILD_GUI)
+  add_subdirectory(core/algorithms/UnitTests/tImagingAlgorithms/)
+  add_subdirectory(core/algorithms/UnitTests/tSpotCleaners/)
+endif()
 
 add_subdirectory(core/algorithms/AdvancedFilters)
 # add_subdirectory(core/algorithms/UnitTests/tKiplAdvFilters) # development stuff
 # add_subdirectory(core/algorithms/UnitTests/tAdvancedFilters) # development stuff
 
 add_subdirectory(core/algorithms/ImagingQAAlgorithms)
-add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
-
+if(BUILD_GUI)
+  add_subdirectory(core/algorithms/UnitTests/tImagingQAAlgorithms)
+endif()
 
 add_subdirectory(core/modules/ModuleConfig)
 
 add_subdirectory(core/modules/ReaderConfig)
-add_subdirectory(core/modules/UnitTests/tReaderConfig)
+if(BUILD_GUI)
+  add_subdirectory(core/modules/UnitTests/tReaderConfig)
 
-add_subdirectory(GUI/qt/QtAddons)
-add_subdirectory(GUI/qt/QtImaging)
-add_subdirectory(core/modules/ReaderGUI)
-add_subdirectory(GUI/qt/QtModuleConfigure)
-#add_subdirectory(GUI/qt/WidgetTests)
+  add_subdirectory(GUI/qt/QtAddons)
+  add_subdirectory(GUI/qt/QtImaging)
+  add_subdirectory(core/modules/ReaderGUI)
+  add_subdirectory(GUI/qt/QtModuleConfigure)
+  #add_subdirectory(GUI/qt/WidgetTests)
+endif()
 
 # Tomography
 add_subdirectory(frameworks/tomography/Framework/ReconFramework)
@@ -205,35 +239,38 @@ add_subdirectory(frameworks/tomography/Backprojectors/FDKBackProjectors)
 add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModules)
 add_subdirectory(frameworks/tomography/Preprocessing/InspectorModules)
 
-add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
-add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
-if (NOT WIN32)
-  add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
+if(BUILD_GUI)
+  add_subdirectory(core/modules/UnitTests/tModuleConfig) # Delayed compile due to dependency of ReconFramework
+  add_subdirectory(frameworks/tomography/UnitTests/tReconConfig)
+  if (NOT WIN32)
+    add_subdirectory(frameworks/tomography/UnitTests/tFrameWork)
+  endif()
+  add_subdirectory(frameworks/tomography/UnitTests/tBBLogNorm)
+  add_subdirectory(frameworks/tomography/UnitTests/tFDKBackProjectors)
+  add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
+  # add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
+  add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
+  add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
+
+  # Tomography GUI
+  add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
+  add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
+
+  # applications
+  add_subdirectory(applications/muhrec)
+  if (WIN32)
+     add_subdirectory(applications/CLI/muhrecCLI)
+  #   add_subdirectory(applications/verticalslicer)
+  #   add_subdirectory(applications/CLI/multiframesplitter)
+  endif()
+  add_subdirectory(applications/CLI/multiframesplitter)
+  add_subdirectory(applications/CLI/verticalslicer)
+
+  add_subdirectory(applications/imageviewer)
 endif()
-add_subdirectory(frameworks/tomography/UnitTests/tBBLogNorm)
-add_subdirectory(frameworks/tomography/UnitTests/tFDKBackProjectors)
-add_subdirectory(frameworks/tomography/UnitTests/tStdPreprocModules)
-# add_subdirectory(frameworks/tomography/UnitTests/tIterativeBackProj) # Not relevant
-add_subdirectory(frameworks/tomography/UnitTests/tReconAlgorithms)
-add_subdirectory(frameworks/tomography/UnitTests/tStdBackProjectors)
-
-# Tomography GUI
-add_subdirectory(frameworks/tomography/Preprocessing/InspectorModulesGUI)
-add_subdirectory(frameworks/tomography/Preprocessing/StdPreprocModulesGUI)
-
-# applications
-add_subdirectory(applications/muhrec)
-if (WIN32)
-   add_subdirectory(applications/CLI/muhrecCLI)
-#   add_subdirectory(applications/verticalslicer)
-#   add_subdirectory(applications/CLI/multiframesplitter)
-endif()
-add_subdirectory(applications/CLI/multiframesplitter)
-add_subdirectory(applications/CLI/verticalslicer)
-
-add_subdirectory(applications/imageviewer)
 
 # Binder modules
 add_subdirectory(frameworks/tomography/pyMuhRec)
 add_subdirectory(core/algorithms/pyimgalg)
 add_subdirectory(core/algorithms/pyadvancedfilters)
+
