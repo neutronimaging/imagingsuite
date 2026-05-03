@@ -1,7 +1,7 @@
 [workspace]
 authors = ["Anders Kaestner <anders.kaestner@psi.ch>"]
 channels = ["conda-forge"]
-name = "scripts"
+name = "ImgSuite env"
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 version = "0.1.0"
 
