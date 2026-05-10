@@ -1,0 +1,58 @@
+[build-system]
+requires = ["scikit-build-core>=0.10", "setuptools-scm"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pymuhrec"
+authors = [{name = "Anders Kaestner"}]
+description = "pymuhrec package"
+dynamic = ["version"]
+dependencies = [
+    "numpy",
+    "scipy",
+    "scikit-image",
+    "matplotlib",
+    "astropy",
+    "tifffile",
+    "tqdm",
+    "pandas",
+]
+
+# --- scikit-build-core configuration ---
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.setuptools_scm"
+
+[tool.setuptools-scm]
+
+[tool.scikit-build]
+build.targets = ["advfilters", "muhrectomo", "imgalg"]
+install.components = ["python"]
+wheel.packages = ["package/pymuhrec"]
+
+[tool.scikit-build.cmake.define]
+BUILD_GUI = "OFF"
+
+# --- cibuildwheel configuration ---
+[tool.cibuildwheel]
+build = "cp310-* cp311-* cp312-* cp313-*"
+skip = "*-win32 *-manylinux_i686 *-musllinux*"
+test-requires = ["pytest"]
+test-command = "pytest {project}/package/tests -v"
+
+[tool.cibuildwheel.linux]
+before-test = "ln -sf {project}/TestData $(dirname {project})/TestData"
+before-all = "yum install -y gcc-toolset-11-gcc gcc-toolset-11-gcc-c++ gcc-toolset-11-binutils patchelf"
+before-build = "pip install conan && conan profile detect --force && conan install {project} --build=missing -of {project}/generators -pr:h {project}/profiles/linux_gcc_11_release -pr:b default"
+environment = { PATH = "/opt/rh/gcc-toolset-11/root/usr/bin:/usr/local/bin:$PATH", BUILD_GUI = "OFF" }
+manylinux-x86_64-image = "manylinux_2_28"
+repair-wheel-command = "python3 {project}/scripts/repair_wheel.py {wheel} {dest_dir} linux"
+
+[tool.cibuildwheel.macos]
+before-build = "pip install conan wheel && conan profile detect --force && conan install {project} --build=missing -of {project}/generators -pr:h {project}/profiles/macos_arm_clang_15_release -pr:b default"
+environment = { BUILD_GUI = "OFF" }
+repair-wheel-command = "python3 {project}/scripts/repair_wheel.py {wheel} {dest_dir} macos {delocate_archs}"
+
+[tool.cibuildwheel.windows]
+before-build = "pip install conan delvewheel && conan profile detect --force && conan install {project} --build=missing -of {project}/generators -pr:h {project}/profiles/windows_msvc_17_release -pr:b default"
+environment = { BUILD_GUI = "OFF" }
+repair-wheel-command = "python {project}/scripts/repair_wheel.py {wheel} {dest_dir} windows"

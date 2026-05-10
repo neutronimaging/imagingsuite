@@ -44,3 +44,4 @@ moc_*
 *.moc
 CMakeUserPresets.json
 QtInstaller/*installer*
+generators/
