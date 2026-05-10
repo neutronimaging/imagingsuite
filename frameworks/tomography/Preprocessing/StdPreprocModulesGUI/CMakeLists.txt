@@ -82,6 +82,12 @@ add_library(${TARGET_NAME} SHARED
   ${UI_FILES}
   )
 
+# Ensure local QtAddons headers are searched before external include paths
+# (e.g. Homebrew) to avoid picking an unrelated plotter.h.
+target_include_directories(${TARGET_NAME} BEFORE PRIVATE
+  ${CMAKE_SOURCE_DIR}/GUI/qt/QtAddons
+)
+
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (WIN32)
   target_link_libraries(${TARGET_NAME} 
