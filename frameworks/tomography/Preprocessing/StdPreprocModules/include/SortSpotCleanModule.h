@@ -30,6 +30,7 @@ protected:
     float  m_fQuantile;
     size_t m_nPatchSize;
     ImagingAlgorithms::eSortSpotQuantile m_eQuantileMethod;
+    ImagingAlgorithms::eSortSpotThresholdMethod m_eThresholdMethod;
     kipl::base::eConnectivity m_eConnectivity;
     bool   m_bRemoveInfNaN;
     bool   m_bClampData;

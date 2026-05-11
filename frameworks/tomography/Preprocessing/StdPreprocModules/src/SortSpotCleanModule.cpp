@@ -22,6 +22,7 @@ SortSpotCleanModule::SortSpotCleanModule(kipl::interactors::InteractionBase *int
     m_fQuantile(0.95f),
     m_nPatchSize(32),
     m_eQuantileMethod(ImagingAlgorithms::eSortSpotQuantile::BrightSpots),
+    m_eThresholdMethod(ImagingAlgorithms::eSortSpotThresholdMethod::ConfidenceInterval),
     m_eConnectivity(kipl::base::eConnectivity::conn4),
     m_bRemoveInfNaN(false),
     m_bClampData(false),
@@ -65,6 +66,7 @@ int SortSpotCleanModule::Configure(ReconConfig config, std::map<std::string, std
     
         string2enum(GetStringParameter(parameters,"connectivity"),m_eConnectivity);
         string2enum(GetStringParameter(parameters,"quantilemethod"),m_eQuantileMethod);
+        string2enum(GetStringParameter(parameters,"thresholdmethod"),m_eThresholdMethod);
 
         m_bRemoveInfNaN   = kipl::strings::string2bool(GetStringParameter(parameters,"removeinfnan"));
         m_bClampData      = kipl::strings::string2bool(GetStringParameter(parameters,"clampdata"));
@@ -106,6 +108,7 @@ std::map<std::string, std::string> SortSpotCleanModule::GetParameters()
 
         parameters["connectivity"] = enum2string(m_eConnectivity);
         parameters["quantilemethod"]     = enum2string(m_eQuantileMethod);
+        parameters["thresholdmethod"]    = enum2string(m_eThresholdMethod);
 
         parameters["removeinfnan"] = kipl::strings::bool2string(m_bRemoveInfNaN);
         parameters["clampdata"]    = kipl::strings::bool2string(m_bClampData);
@@ -135,7 +138,7 @@ int SortSpotCleanModule::ProcessCore(kipl::base::TImage<float,3> & img, std::map
     std::ostringstream msg;
 
     try {
-        m_cleaner.process(img,m_fQuantile,m_fThreshold,m_eQuantileMethod);
+        m_cleaner.process(img,m_fQuantile,m_fThreshold,m_eQuantileMethod,m_eThresholdMethod);
     }
     catch (ImagingException & e) {
         msg.str("");
@@ -165,7 +168,7 @@ int SortSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::map
     std::ostringstream msg;
 
     try {
-        m_cleaner.process(img,m_fQuantile,m_fThreshold,m_eQuantileMethod);
+        m_cleaner.process(img,m_fQuantile,m_fThreshold,m_eQuantileMethod,m_eThresholdMethod);
     }
     catch (ImagingException & e) {
         msg.str("");

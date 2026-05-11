@@ -31,7 +31,8 @@ void bindSortSpotClean(py::module &m)
                  py::array_t<float> &x,
                  float quantile,
                  float th,
-                 ImagingAlgorithms::eSortSpotQuantile esq)
+                 ImagingAlgorithms::eSortSpotQuantile esq,
+                 ImagingAlgorithms::eSortSpotThresholdMethod estm)
             {
                 py::buffer_info buf1 = x.request();
 
@@ -50,7 +51,7 @@ void bindSortSpotClean(py::module &m)
   
                         kipl::base::TImage<float,2> img(data,dims);
 
-                        msc.process(img,quantile,th,esq);
+                        msc.process(img,quantile,th,esq,estm);
 
                         std::copy_n(img.GetDataPtr(),img.Size(),data);
                 }
@@ -61,7 +62,7 @@ void bindSortSpotClean(py::module &m)
 
                         kipl::base::TImage<float,3> img(data,dims);
            
-                        msc.process(img,quantile,th,esq);
+                        msc.process(img,quantile,th,esq,estm);
 
                         std::copy_n(img.GetDataPtr(),img.Size(),data);
                 }
@@ -72,13 +73,19 @@ void bindSortSpotClean(py::module &m)
             py::arg("x"),
             py::arg("quantile"),
             py::arg("th"),
-            py::arg("method"));
+            py::arg("method"),
+            py::arg("thresholdMethod"));
 
     py::enum_<ImagingAlgorithms::eSortSpotQuantile>(m,"eSortSpotQuantile")
             .value("SortQuantileAll",           ImagingAlgorithms::eSortSpotQuantile::All)
             .value("SortQuantileBright",        ImagingAlgorithms::eSortSpotQuantile::BrightSpots)
             .value("SortQuantileDark",          ImagingAlgorithms::eSortSpotQuantile::DarkSpots)
             .value("SortQuantileBoth",          ImagingAlgorithms::eSortSpotQuantile::Both)
+            .export_values();
+
+    py::enum_<ImagingAlgorithms::eSortSpotThresholdMethod>(m,"eSortSpotThresholdMethod")
+            .value("SortThresholdConfidence",    ImagingAlgorithms::eSortSpotThresholdMethod::ConfidenceInterval)
+            .value("SortThresholdAbsolute",      ImagingAlgorithms::eSortSpotThresholdMethod::Absolute)
             .export_values();
 
 }
