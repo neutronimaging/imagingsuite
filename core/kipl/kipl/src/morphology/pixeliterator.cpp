@@ -106,11 +106,11 @@ void PixelIterator::setupNeighborhoods()
 {
 
     switch (m_connectivity) {
-    case kipl::base::conn4  : setupConn4();  break;
-    case kipl::base::conn8  : setupConn8();  break;
-    case kipl::base::conn6  : setupConn6();  break;
-    case kipl::base::conn18 : setupConn18(); break;
-    case kipl::base::conn26 : setupConn26(); break;
+    case kipl::base::eConnectivity::conn4  : setupConn4();  break;
+    case kipl::base::eConnectivity::conn8  : setupConn8();  break;
+    case kipl::base::eConnectivity::conn6  : setupConn6();  break;
+    case kipl::base::eConnectivity::conn18 : setupConn18(); break;
+    case kipl::base::eConnectivity::conn26 : setupConn26(); break;
 
     default :
         throw kipl::base::KiplException("Unknown connectivity provided to PixelIterator");

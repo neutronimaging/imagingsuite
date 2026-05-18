@@ -14,11 +14,11 @@ KIPLSHARED_EXPORT int getConnectivityDims(kipl::base::eConnectivity &conn)
     int dims=0;
 
     switch (conn) {
-    case kipl::base::conn4  : dims=2; break;
-    case kipl::base::conn8  : dims=2; break;
-    case kipl::base::conn6  : dims=3; break;
-    case kipl::base::conn18 : dims=3; break;
-    case kipl::base::conn26 : dims=3; break;
+    case kipl::base::eConnectivity::conn4  : dims=2; break;
+    case kipl::base::eConnectivity::conn8  : dims=2; break;
+    case kipl::base::eConnectivity::conn6  : dims=3; break;
+    case kipl::base::eConnectivity::conn18 : dims=3; break;
+    case kipl::base::eConnectivity::conn26 : dims=3; break;
 
     default :
         throw kipl::base::KiplException("Could not transform a Connectivity enum to a string", __FILE__, __LINE__);
@@ -29,12 +29,12 @@ KIPLSHARED_EXPORT int getConnectivityDims(kipl::base::eConnectivity &conn)
 int connectivityNeighbors(kipl::base::eConnectivity conn)
 {
     switch (conn) {
-    case conn4  : return 4;
-    case conn8  : return 8;
-    case conn6  : return 6;
-    case conn18 : return 18;
-    case conn26 : return 26;
-    case euclid : return 0;
+    case kipl::base::eConnectivity::conn4  : return 4;
+    case kipl::base::eConnectivity::conn8  : return 8;
+    case kipl::base::eConnectivity::conn6  : return 6;
+    case kipl::base::eConnectivity::conn18 : return 18;
+    case kipl::base::eConnectivity::conn26 : return 26;
+    case kipl::base::eConnectivity::euclid : return 0;
     default :
         throw kipl::base::KiplException("Unknown connectivity enum value encountered", __FILE__, __LINE__);
     };
@@ -302,11 +302,11 @@ KIPLSHARED_EXPORT std::string enum2string(kipl::base::eConnectivity conn)
 {
     std::string str;
     switch (conn) {
-    case kipl::base::conn4   : str = "conn4"; break;
-    case kipl::base::conn8  : str = "conn8"; break;
-    case kipl::base::conn6  : str = "conn6"; break;
-    case kipl::base::conn18 : str = "conn18"; break;
-    case kipl::base::conn26 : str = "conn26"; break;
+    case kipl::base::eConnectivity::conn4  : str = "conn4"; break;
+    case kipl::base::eConnectivity::conn8  : str = "conn8"; break;
+    case kipl::base::eConnectivity::conn6  : str = "conn6"; break;
+    case kipl::base::eConnectivity::conn18 : str = "conn18"; break;
+    case kipl::base::eConnectivity::conn26 : str = "conn26"; break;
 
     default :
         throw kipl::base::KiplException("Could not transform a Connectivity enum to a string", __FILE__, __LINE__);
@@ -322,11 +322,11 @@ KIPLSHARED_EXPORT void  string2enum(std::string str, kipl::base::eConnectivity &
 {
     std::map<std::string, kipl::base::eConnectivity> values;
 
-    values["conn4"] = kipl::base::conn4;
-    values["conn8"] = kipl::base::conn8;
-    values["conn6"] = kipl::base::conn6;
-    values["conn18"] = kipl::base::conn18;
-    values["conn26"] = kipl::base::conn26;
+    values["conn4"] = kipl::base::eConnectivity::conn4;
+    values["conn8"] = kipl::base::eConnectivity::conn8;
+    values["conn6"] = kipl::base::eConnectivity::conn6;
+    values["conn18"] = kipl::base::eConnectivity::conn18;
+    values["conn26"] = kipl::base::eConnectivity::conn26;
 
     auto it=values.find(str);
 

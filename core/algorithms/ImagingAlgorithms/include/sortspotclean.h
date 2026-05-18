@@ -57,7 +57,7 @@ public:
     kipl::base::TImage<float,2> getSpotMask() const { return m_mask; }
     kipl::base::TImage<float,2> getDifferenceImage() const { return m_diff; }  
 
-    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
+    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::eConnectivity::conn8);
     kipl::base::eConnectivity connectivity();
         
     void setLimits(bool bClamp, float fMin, float fMax);

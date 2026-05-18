@@ -103,7 +103,7 @@ enum eEndians {
 };
 
 /// \brief selector for neighborhood connectivity
-enum eConnectivity {
+enum class eConnectivity {
     conn4,
     conn8,
     conn6,

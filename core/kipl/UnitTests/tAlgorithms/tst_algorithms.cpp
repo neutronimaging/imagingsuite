@@ -220,7 +220,7 @@ void AlgorithmsTest::testListDilate()
 
     QCOMPARE(pix.size(),6);
 
-    auto res=kipl::algorithms::dilate_points(pix, dims, kipl::base::conn4);
+    auto res=kipl::algorithms::dilate_points(pix, dims, kipl::base::eConnectivity::conn4);
 
     std::vector<int> resimg(img.size(),0);
 
@@ -236,7 +236,7 @@ void AlgorithmsTest::testListDilate()
                             1,1,1,1,1,1,0,
                             0,1,1,1,1,1,0}; 
 
-    auto res8=kipl::algorithms::dilate_points(pix, dims, kipl::base::conn8);
+    auto res8=kipl::algorithms::dilate_points(pix, dims, kipl::base::eConnectivity::conn8);
 
     std::vector<int> resimg8(img.size(),0);
 
