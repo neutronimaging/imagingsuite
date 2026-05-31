@@ -46,13 +46,15 @@ public:
         float quantile, 
         float threshold, 
         eSortSpotQuantile method=eSortSpotQuantile::Both,
-        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval);
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
 
     void process(kipl::base::TImage<float,3>& image, 
         float quantile, 
         float threshold, 
         eSortSpotQuantile method=eSortSpotQuantile::Both,
-        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval);
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
     
     kipl::base::TImage<float,2> getSpotMask() const { return m_mask; }
     kipl::base::TImage<float,2> getDifferenceImage() const { return m_diff; }  
@@ -74,18 +76,23 @@ private:
         float quantile, 
         float threshold, 
         eSortSpotQuantile method=eSortSpotQuantile::Both,
-        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval);
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
+
     void process2D_parallel(kipl::base::TImage<float,2>& image, 
         float quantile, 
         float threshold, 
         eSortSpotQuantile method=eSortSpotQuantile::Both,
-        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval);
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
 
     void findAndCleanSpots(kipl::base::TImage<float,2>& image, 
         float threshold, 
         float quantile, 
         eSortSpotQuantile method=eSortSpotQuantile::Both,
-        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval);
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
+
 
     std::vector<size_t> findSpots(kipl::base::TImage<float,2>& image, 
         float quantile, 

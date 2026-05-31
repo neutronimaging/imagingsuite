@@ -2,6 +2,7 @@
 #include "../include/ImagingException.h"
 
 #include <algorithms/sortalg.h>
+#include <algorithms/listmorphology.h>
 #include <base/tsubimage.h>
 #include <base/kiplenums.h>
 #include <base/textractor.h>
@@ -40,22 +41,23 @@ void SortSpotClean::process(kipl::base::TImage<float,2>& image,
     float quantile, 
     float threshold, 
     eSortSpotQuantile method,
-    eSortSpotThresholdMethod thresholdMethod)
+    eSortSpotThresholdMethod thresholdMethod,
+    kipl::base::eConnectivity dilation)
 {
     if (m_processPatches)
     {  
         if (m_bUseThreading && m_threadPool!=nullptr) {
             m_logger.message("Processing 2D image in multi-threaded mode with patch-wise processing.");
-            process2D_parallel(image, quantile, threshold, method, thresholdMethod);
+            process2D_parallel(image, quantile, threshold, method, thresholdMethod, dilation);
         }
         else {
             m_logger.message("Processing 2D image in single-threaded mode with patch-wise processing.");
-            process2D_single(image, quantile, threshold, method, thresholdMethod);
+            process2D_single(image, quantile, threshold, method, thresholdMethod, dilation);
         }       
     }
     else {
         m_logger.message("Processing entire 2D image in a single-threaded manner.");
-        findAndCleanSpots(image, threshold, quantile);
+        findAndCleanSpots(image, threshold, quantile, method, thresholdMethod, dilation);
     }
 }
 
@@ -63,7 +65,8 @@ void SortSpotClean::process(kipl::base::TImage<float,3>& image,
     float quantile, 
     float threshold, 
     eSortSpotQuantile method,
-    eSortSpotThresholdMethod thresholdMethod)
+    eSortSpotThresholdMethod thresholdMethod,
+    kipl::base::eConnectivity dilation)
 {
     std::ostringstream msg;
     m_nCounter = 0;
@@ -74,7 +77,7 @@ void SortSpotClean::process(kipl::base::TImage<float,3>& image,
         m_logger.message(msg.str());
         for (size_t z=0; z<image.Size(2); ++z) 
         {
-            m_threadPool->enqueue([this, pImage, threshold, quantile, method, thresholdMethod, z]() 
+            m_threadPool->enqueue([this, pImage, threshold, quantile, method, thresholdMethod,dilation, z]() 
             {
                 ++m_nCounter;
                 updateStatus(static_cast<float>(m_nCounter)/static_cast<float>(pImage->Size(2)),"SortSpotClean");
@@ -83,7 +86,7 @@ void SortSpotClean::process(kipl::base::TImage<float,3>& image,
                 std::ostringstream msg;
                 msg<<"Processing slice "<<z<<" of "<<pImage->Size(2);
                 m_logger.message(msg.str());
-                this->process2D_single(slice, quantile, threshold, method, thresholdMethod);
+                this->process2D_single(slice, quantile, threshold, method, thresholdMethod, dilation);
                 
                 kipl::base::InsertSlice(slice, *pImage, z, kipl::base::eImagePlanes::ImagePlaneXY);
                 
@@ -104,7 +107,7 @@ void SortSpotClean::process(kipl::base::TImage<float,3>& image,
             msg<<"Processing slice "<<z<<" of "<<image.Size(2);
             m_logger.message(msg.str());
             kipl::base::TImage<float,2> slice = kipl::base::ExtractSlice(image, z, kipl::base::eImagePlanes::ImagePlaneXY);
-            process2D_single(slice, quantile, threshold, method, thresholdMethod);
+            process2D_single(slice, quantile, threshold, method, thresholdMethod, dilation);
             kipl::base::InsertSlice(slice, image, z, kipl::base::eImagePlanes::ImagePlaneXY);
         }
     }
@@ -114,7 +117,8 @@ void SortSpotClean::process2D_single(kipl::base::TImage<float,2>& image,
     float quantile, 
     float threshold, 
     eSortSpotQuantile method,
-    eSortSpotThresholdMethod thresholdMethod)
+    eSortSpotThresholdMethod thresholdMethod,
+    kipl::base::eConnectivity dilation)
 {
     kipl::base::TImage<float,2> result(image.dims());
 
@@ -129,7 +133,7 @@ void SortSpotClean::process2D_single(kipl::base::TImage<float,2>& image,
     for (auto & p : patches)
     {
         auto patch = p.extract(image);
-        findAndCleanSpots(patch, threshold, quantile, method, thresholdMethod);
+        findAndCleanSpots(patch, threshold, quantile, method, thresholdMethod, dilation);
         p.insert(patch,result);
     }
 
@@ -140,7 +144,8 @@ void SortSpotClean::process2D_parallel(kipl::base::TImage<float,2>& image,
     float quantile, 
     float threshold, 
     eSortSpotQuantile method, 
-    eSortSpotThresholdMethod thresholdMethod)
+    eSortSpotThresholdMethod thresholdMethod,
+    kipl::base::eConnectivity dilation)
 {
     kipl::base::TImage<float,2> result(image.dims());
 
@@ -161,12 +166,12 @@ void SortSpotClean::process2D_parallel(kipl::base::TImage<float,2>& image,
     {
         last = first + blockSize + (i<blockRest ? 1UL : 0UL);
         
-        m_threadPool->enqueue([this, pImage, pResult, pp, threshold, quantile, method, thresholdMethod, first, last]() 
+        m_threadPool->enqueue([this, pImage, pResult, pp, threshold, quantile, method, thresholdMethod, dilation, first, last]() 
         {
             for (size_t j=first; j<last; ++j)
             {
                 auto patch = (*pp)[j].extract(*pImage);
-                this->findAndCleanSpots(patch, threshold, quantile, method, thresholdMethod);
+                this->findAndCleanSpots(patch, threshold, quantile, method, thresholdMethod, dilation);
                 (*pp)[j].insert(patch,*pResult);
             }            
         });
@@ -180,13 +185,19 @@ void SortSpotClean::findAndCleanSpots(kipl::base::TImage<float,2>& image,
     float threshold, 
     float quantile, 
     eSortSpotQuantile method,
-    eSortSpotThresholdMethod thresholdMethod)
+    eSortSpotThresholdMethod thresholdMethod,
+    kipl::base::eConnectivity dilation)
 {
     auto spotPositions = findSpots(image, quantile, threshold, method, thresholdMethod);
     std::ostringstream msg;
     msg<<"Found "<<spotPositions.size()<<" spots to clean using q="<<quantile<<" and th="<<threshold<<".";
     m_logger.debug(msg.str());
-    
+
+    if (dilation != kipl::base::eConnectivity::none)
+    {
+        spotPositions = kipl::algorithms::dilate_points(spotPositions, image.dims(), dilation);
+    }
+
     kipl::morphology::RepairHoles(image, spotPositions, kipl::base::eConnectivity::conn8);
     // m_mask = createSpotMask(image, spotPositions);
 }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <base/kiplenums.h>
+#include <base/KiplException.h>
 #include <morphology/pixeliterator.h>
 
 #include "../unique.h"
@@ -18,6 +19,11 @@ std::vector<T> dilate_points(std::vector<T> &v, const std::vector<size_t>& dims,
     ptrdiff_t imgSize = 1L;
     for (const auto & d : dims)
         imgSize*=static_cast<ptrdiff_t>(d);
+
+    if (kipl::base::connectivityDims(connectivity) != dims.size())
+    {
+        throw kipl::base::KiplException("Connectivity does not match the number of dimensions of the image", __FILE__, __LINE__);
+    }   
 
     kipl::base::PixelIterator neighborhood(dims, connectivity);
 

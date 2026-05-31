@@ -32,6 +32,7 @@ protected:
     ImagingAlgorithms::eSortSpotQuantile m_eQuantileMethod;
     ImagingAlgorithms::eSortSpotThresholdMethod m_eThresholdMethod;
     kipl::base::eConnectivity m_eConnectivity;
+    kipl::base::eConnectivity m_eDilation;
     bool   m_bRemoveInfNaN;
     bool   m_bClampData;
     float  m_fMinLevel;

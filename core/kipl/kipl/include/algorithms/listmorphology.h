@@ -15,7 +15,7 @@ namespace algorithms {
 /// @param v Input vector.
 /// @return A vector containing the unique values from the input vector.
 template<class T>
-std::vector<T> dilate_points(std::vector<T> &v, const std::vector<T>& dims, kipl::base::eConnectivity conn);
+std::vector<T> dilate_points(std::vector<T> &v, const std::vector<size_t>& dims, kipl::base::eConnectivity conn);
 
 }}
 #endif
