@@ -32,7 +32,8 @@ void bindSortSpotClean(py::module &m)
                  float quantile,
                  float th,
                  ImagingAlgorithms::eSortSpotQuantile esq,
-                 ImagingAlgorithms::eSortSpotThresholdMethod estm)
+                 ImagingAlgorithms::eSortSpotThresholdMethod estm,
+                 kipl::base::eConnectivity dilation)
             {
                 py::buffer_info buf1 = x.request();
 
@@ -51,7 +52,7 @@ void bindSortSpotClean(py::module &m)
   
                         kipl::base::TImage<float,2> img(data,dims);
 
-                        msc.process(img,quantile,th,esq,estm);
+                        msc.process(img,quantile,th,esq,estm,dilation);
 
                         std::copy_n(img.GetDataPtr(),img.Size(),data);
                 }
@@ -62,7 +63,7 @@ void bindSortSpotClean(py::module &m)
 
                         kipl::base::TImage<float,3> img(data,dims);
            
-                        msc.process(img,quantile,th,esq,estm);
+                        msc.process(img,quantile,th,esq,estm,dilation);
 
                         std::copy_n(img.GetDataPtr(),img.Size(),data);
                 }
@@ -74,8 +75,9 @@ void bindSortSpotClean(py::module &m)
             py::arg("quantile"),
             py::arg("th"),
             py::arg("method"),
-            py::arg("thresholdMethod"));
-
+            py::arg("thresholdMethod"),
+            py::arg("dilation") = kipl::base::eConnectivity::conn8);
+            
     py::enum_<ImagingAlgorithms::eSortSpotQuantile>(m,"eSortSpotQuantile")
             .value("SortQuantileAll",           ImagingAlgorithms::eSortSpotQuantile::All)
             .value("SortQuantileBright",        ImagingAlgorithms::eSortSpotQuantile::BrightSpots)
