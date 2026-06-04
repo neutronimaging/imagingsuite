@@ -12,6 +12,7 @@
 #include "polynomialcorrectiondlg.h"
 #include "WaveletRingCleanDlg.h"
 #include "morphspotcleandlg.h"
+#include "sortspotcleandlg.h"
 #include "datascalerdlg.h"
 #include "adaptivefilterdlg.h"
 #include "generalfilterdlg.h"
@@ -73,6 +74,9 @@ STDPREPROCMODULESGUISHARED_EXPORT void *GetGUIModule(const char *application, co
 
         if (sName=="MorphSpotClean")
             return new MorphSpotCleanDlg;
+
+        if (sName=="SortSpotClean")
+            return new SortSpotCleanDlg;
 
         if (sName=="ReplaceUnderexposed")
             return new ReplaceUnderexposedDlg;
