@@ -12,6 +12,7 @@
 #include <condition_variable>
 #include <queue>
 #include <functional>
+#include <algorithm>
 
 #include "../logging/logger.h"
 
@@ -74,11 +75,9 @@ public:
     template<class T, class F>
     void transform(T* data, size_t size, F &&f, size_t block_size = 1024) {
         for (size_t i = 0; i < size; i += block_size) {
-            // std::cout << "Processed block " << i << " to " << std::min(i + block_size, size) << std::endl;
-            this->enqueue([&, i] {
-                // std::cout << "Task processed block " << i << " to " << std::min(i + block_size, size) << std::endl;
-                for (size_t j = i; j < std::min(i + block_size, size); ++j) {
-                    // auto val = data[j];
+            this->enqueue([&, i, block_size, size, f] {
+                for (size_t j = i; j < (std::min)(i + block_size, size); ++j)
+                {
                     f(data[j]);
                 }
             });
