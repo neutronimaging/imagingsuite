@@ -1,3 +1,4 @@
+//<LICENCE>
 #if !defined(LISTMORPHOLOGY_HPP)
 #define LISTMORPHOLOGY_HPP
 
