@@ -13,7 +13,7 @@ class MuhrecRecipe(ConanFile):
 
     def requirements(self):
         self.requires("zlib/[1.3.1]")
-        self.requires("openblas/[0.3.25]") # Can't update to 0.3.27 because of armadillo
+        self.requires("openblas/[>=0.3.30 <4]")
         self.requires("pybind11/3.0.1")
         #self.requires("pthreads4w/[>2.11.0]")
         self.requires("libxml2/[2.15.0]")
