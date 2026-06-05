@@ -21,7 +21,6 @@ void bindEnums(py::module &m)
 {
 
 py::enum_<kipl::base::eConnectivity>(m,"eConnectivity")
-            .value("ConnectivityNone",           kipl::base::eConnectivity::none)
             .value("Connectivity4",              kipl::base::eConnectivity::conn4)
             .value("Connectivity8",              kipl::base::eConnectivity::conn8)
             .value("Connectivity6",              kipl::base::eConnectivity::conn6)

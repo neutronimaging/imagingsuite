@@ -189,8 +189,7 @@ int SortSpotCleanModule::ProcessCore(kipl::base::TImage<float,2> & img, std::map
         throw ReconException(msg.str(),__FILE__,__LINE__);
     }
     catch (...) {
-
-
+        throw ReconException("Failed to process 2D image with unknown exception",__FILE__,__LINE__);
     }
 
     return 0;

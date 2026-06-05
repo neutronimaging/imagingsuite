@@ -48,7 +48,7 @@ void bindSortSpotClean(py::module &m)
 
                 if (dims.size() == 2)
                 {
-                        py::print("Processing 2D image with dimensions: ", dims);
+                        // py::print("Processing 2D image with dimensions: ", dims);
   
                         kipl::base::TImage<float,2> img(data,dims);
 
@@ -59,7 +59,7 @@ void bindSortSpotClean(py::module &m)
 
                 if (dims.size() == 3)
                 {
-                        py::print("Processing 3D image with dimensions: ", dims);
+                        // py::print("Processing 3D image with dimensions: ", dims);
 
                         kipl::base::TImage<float,3> img(data,dims);
            
@@ -76,7 +76,7 @@ void bindSortSpotClean(py::module &m)
             py::arg("th"),
             py::arg("method"),
             py::arg("thresholdMethod"),
-            py::arg("dilation") = kipl::base::eConnectivity::conn8);
+            py::arg("dilation") = kipl::base::eConnectivity::none);
             
     py::enum_<ImagingAlgorithms::eSortSpotQuantile>(m,"eSortSpotQuantile")
             .value("SortQuantileAll",           ImagingAlgorithms::eSortSpotQuantile::All)
