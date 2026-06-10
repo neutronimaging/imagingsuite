@@ -50,7 +50,7 @@ public:
     kipl::base::TImage<float,2> detectionImage() ;
     kipl::base::TImage<unsigned short,2> spotMask() ;
 
-    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
+    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::eConnectivity::conn8);
     kipl::base::eConnectivity connectivity();
         
     void setLimits(bool bClamp, float fMin, float fMax);
