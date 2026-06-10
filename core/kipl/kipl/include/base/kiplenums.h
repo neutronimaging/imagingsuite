@@ -103,13 +103,14 @@ enum eEndians {
 };
 
 /// \brief selector for neighborhood connectivity
-enum eConnectivity {
+enum class eConnectivity {
     conn4,
     conn8,
     conn6,
     conn18,
     conn26,
-    euclid
+    euclid,
+    none
 };
 
 enum eEdgeStatus {
@@ -143,7 +144,7 @@ enum eEdgeStatus {
 
 };
 
-KIPLSHARED_EXPORT int getConnectivityDims(kipl::base::eConnectivity &conn);
+KIPLSHARED_EXPORT size_t connectivityDims(kipl::base::eConnectivity &conn);
 KIPLSHARED_EXPORT int connectivityNeighbors(kipl::base::eConnectivity conn);
 KIPLSHARED_EXPORT kipl::base::eOperatingSystem getOperatingSystem();
 }}

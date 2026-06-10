@@ -15,7 +15,7 @@ namespace base {
 PixelIterator::PixelIterator(const std::vector<size_t> &dims, kipl::base::eConnectivity conn) :
     logger("PixelIterator"),
     m_imageSize(static_cast<ptrdiff_t>(std::accumulate(dims.begin(), dims.end(), static_cast<size_t>(1), std::multiplies<size_t>()))),
-    m_ndims(kipl::base::getConnectivityDims(conn)),
+    m_ndims(kipl::base::connectivityDims(conn)),
     m_sx(static_cast<ptrdiff_t>(dims[0])),
     m_sxy(static_cast<ptrdiff_t>(dims[0]*dims[1])),
     m_connectivity(conn),
@@ -106,11 +106,11 @@ void PixelIterator::setupNeighborhoods()
 {
 
     switch (m_connectivity) {
-    case kipl::base::conn4  : setupConn4();  break;
-    case kipl::base::conn8  : setupConn8();  break;
-    case kipl::base::conn6  : setupConn6();  break;
-    case kipl::base::conn18 : setupConn18(); break;
-    case kipl::base::conn26 : setupConn26(); break;
+    case kipl::base::eConnectivity::conn4  : setupConn4();  break;
+    case kipl::base::eConnectivity::conn8  : setupConn8();  break;
+    case kipl::base::eConnectivity::conn6  : setupConn6();  break;
+    case kipl::base::eConnectivity::conn18 : setupConn18(); break;
+    case kipl::base::eConnectivity::conn26 : setupConn26(); break;
 
     default :
         throw kipl::base::KiplException("Unknown connectivity provided to PixelIterator");

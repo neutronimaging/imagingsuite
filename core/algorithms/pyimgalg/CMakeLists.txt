@@ -46,6 +46,7 @@ set(SRC_FILES
 #  pyReferenceImageCorrection.cpp  
 #  pytomocenter.cpp  
   pyCenterEstimation.cpp
+  pyEnums.cpp
   pyBinder.cpp
   utilities.cpp
 

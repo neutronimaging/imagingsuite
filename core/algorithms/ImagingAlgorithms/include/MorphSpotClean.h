@@ -49,7 +49,7 @@ public:
     void process(kipl::base::TImage<float,3> &img, float th, float sigma);
     void process(kipl::base::TImage<float,3> &img, std::vector<float> &th, std::vector<float> &sigma);
 
-    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
+    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::eConnectivity::conn8);
     kipl::base::eConnectivity connectivity();
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
     eMorphDetectionMethod detectionMethod();
