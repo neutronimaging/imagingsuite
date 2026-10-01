@@ -765,7 +765,7 @@ void BivariateHistogram::Write(string fname)
         img[i]=static_cast<float>(m_bins[i]);
     }
 
-    kipl::io::WriteTIFF(img,fname,kipl::base::Float32);
+    kipl::io::WriteTIFF(img,fname,kipl::base::eDataType::Float32);
 #endif
 }
 

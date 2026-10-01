@@ -111,6 +111,9 @@ public:
                             kipl::base::eImageRotate rotate = kipl::base::ImageRotateNone,
                             float binning                   = 1.0f);
 
+    kipl::base::eDataType getDataType(std::string filename);
+    kipl::base::eDataType getDataType(std::string path, std::string filemask, size_t number);
+    
     /// Get the projection dose for an image file using an explicit file name
     /// \param path The path where image is stored
     /// \param filemask Mask of the images, # are used as placeholders for the index numbers.

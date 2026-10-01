@@ -176,7 +176,7 @@ void ReferenceImageCorrection::SetReferenceImages(kipl::base::TImage<float,2> *o
         if (bSaveBG){
                 std::string fname=pathBG+"/"+flatname_BG;
                 kipl::strings::filenames::CheckPathSlashes(fname,false);
-                kipl::io::WriteTIFF(m_OB_BB_Interpolated,fname,kipl::base::Float32); // seem correct
+                kipl::io::WriteTIFF(m_OB_BB_Interpolated,fname,kipl::base::eDataType::Float32); // seem correct
         }
 
         PrepareReferencesBB();
@@ -314,7 +314,7 @@ void ReferenceImageCorrection::Process(kipl::base::TImage<float,3> &img, float *
                 kipl::strings::filenames::MakeFileName(filemask_BG,static_cast<int>(i),filename,ext,'#','0');
                 std::string fname=pathBG+"/"+filename;
                 kipl::strings::filenames::CheckPathSlashes(fname,false);
-                kipl::io::WriteTIFF(m_BB_sample_Interpolated,fname,kipl::base::Float32); // seem correct
+                kipl::io::WriteTIFF(m_BB_sample_Interpolated,fname,kipl::base::eDataType::Float32); // seem correct
 
             }
 

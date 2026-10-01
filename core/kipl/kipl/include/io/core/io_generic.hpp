@@ -115,7 +115,7 @@ int  ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> &img,
             buffer[j]=file.get();
         ImgType * pLine = img.GetLinePtr(i);
         switch (dt) {
-        case kipl::base::UInt4 :
+        case kipl::base::eDataType::UInt4 :
             logger(logger.LogMessage,"UInt4");
             for (size_t j=0, k=0; j<size_x; j+=2, k++) {
                   data[0].c=buffer[k];
@@ -124,12 +124,12 @@ int  ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> &img,
                   pLine[j+1] = static_cast<unsigned short>(data[0].nibbles.hi);
             }
             break;
-        case kipl::base::UInt8 :
+        case kipl::base::eDataType::UInt8 :
             logger(logger.LogMessage,"UInt8");
             for (size_t j=0; j<size_x; j++)
                 pLine[j]=static_cast<unsigned char>(buffer[j]);
             break;
-        case kipl::base::UInt12 :
+        case kipl::base::eDataType::UInt12 :
             logger(logger.LogMessage,"UInt12");
             for (size_t j=0, k=0; j<size_x; j+=2, k+=3) {
                 // Careful with signed unsigned...
@@ -141,14 +141,14 @@ int  ReadGeneric(ifstream &file,kipl::base::TImage<ImgType,2> &img,
                   pLine[j+1] = static_cast<unsigned short>(data[1].nibbles.lo + (data[2].b<<4));
             }
             break;
-        case kipl::base::UInt16 :
+        case kipl::base::eDataType::UInt16 :
             logger(logger.LogMessage,"UInt16");
 
             for (size_t j=0; j<size_x; j++) {
                   pLine[j]   = static_cast<ImgType>(shortbuffer[j]);
             }
             break;
-        case kipl::base::Float32 :
+        case kipl::base::eDataType::Float32 :
             logger(logger.LogMessage,"Float32");
 
             for (size_t j=0; j<size_x; j++) {

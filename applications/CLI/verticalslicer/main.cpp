@@ -65,6 +65,9 @@ int process(int argc, char *argv[])
     std::vector<size_t> dimsYZ={dims[1],last-first+1};
     kipl::base::TImage<float,2> sliceYZ(dimsYZ);
 
+    size_t N=last-first+1;
+    size_t step=N/10;
+
     for (size_t i=first; i<=last; ++i) 
     {
         img=reader.Read("",srcfname,i,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0,{});
@@ -76,7 +79,15 @@ int process(int argc, char *argv[])
         {
             pLine[j] = pImg[j*img.Size(0)];
         }
+        if ((i-first) % step == 0) 
+        {
+            logger.message("Processed " +std::to_string(float(i-first)/float(N)*100.0f)+"%: "
+                                        +std::to_string(i-first+1)
+                                        +" of "+std::to_string(last-first+1));
+        } 
     }
+
+    auto dataType=reader.getDataType("",srcfname,first);
 
     ImageWriter writer;
 
@@ -85,9 +96,9 @@ int process(int argc, char *argv[])
     std::vector<std::string> ext;
     kipl::strings::filenames::StripFileName(args["outfile"],path,name,ext);
     std::string nameXZ=path+name+"_XZ"+ext.back();
-    writer.write(sliceXZ,nameXZ);
+    writer.write(sliceXZ,nameXZ,dataType);
     std::string nameYZ=path+name+"_YZ"+ext.back();
-    writer.write(sliceYZ,nameYZ);
+    writer.write(sliceYZ,nameYZ,dataType);
 
     return 0;
 }

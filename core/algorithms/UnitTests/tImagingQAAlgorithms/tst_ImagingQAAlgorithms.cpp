@@ -106,7 +106,7 @@ void TImagingQAAlgorithmsTest::testContrastSampleAnalysis()
         float val=1.0f+i*0.1f;
         inset.Draw(orig,x,y,val);
     }
-    kipl::io::WriteTIFF(orig,"csa_test_orig.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(orig,"csa_test_orig.tif",kipl::base::eDataType::Float32);
 
     // std::vector<kipl::math::Statistics> stats(6);
     // std::vector<kipl::base::coords3Df> centers(6);
@@ -201,7 +201,7 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
 
     kipl::base::TImage<float,2> img=makeEdgeImage(50,2.0f,coefs);
 
-    kipl::io::WriteTIFF(img,"slantededge.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"slantededge.tif",kipl::base::eDataType::Float32);
 
     ImagingQAAlgorithms::ProfileExtractor p;
 
@@ -211,7 +211,7 @@ void TImagingQAAlgorithmsTest::testProfileExtractor()
     kipl::io::serializeMap(profile,"profile_synth.txt");
 
     auto dmap=p.distanceMap(img.dims());
-    kipl::io::WriteTIFF(dmap,"edgedistmap.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(dmap,"edgedistmap.tif",kipl::base::eDataType::Float32);
 
     QVERIFY(fabs(p.coefficients()[0]/coefs[0]-1)<0.01);
     QVERIFY(fabs(p.coefficients()[1]/coefs[1]-1)<0.01);

@@ -88,7 +88,8 @@ enum eRotationDirection {
 };
 
 /// \brief Unsigned integer data type selector
-enum eDataType {
+enum class eDataType {
+    Unknown = 0,   ///< Unknown data type
     UInt4   = 4,      ///< 4bits unsigned integer
     UInt8   = 8,      ///< 8bits unsigned integer
     UInt12  = 12,     ///< 12bits unsigned integer

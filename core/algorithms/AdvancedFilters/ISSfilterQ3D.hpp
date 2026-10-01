@@ -126,7 +126,7 @@ int ISSfilterQ3D<T>::process(kipl::base::TImage<T,3> &img, double dTau, double d
 			kipl::strings::filenames::CheckPathSlashes(p,true);
 			fname=p+fname;
 			kipl::base::TImage<T,2> slice=kipl::base::ExtractSlice(img, img.Size(2)/2);
-            kipl::io::WriteTIFF(slice,fname.c_str(),kipl::base::Float32);
+            kipl::io::WriteTIFF(slice,fname.c_str(),kipl::base::eDataType::Float32);
 		}
 	}
 

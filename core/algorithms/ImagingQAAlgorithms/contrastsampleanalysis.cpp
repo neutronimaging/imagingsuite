@@ -57,7 +57,7 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,2> img)
    }
    makeHistogram();
    if (saveIntermediateImages)
-       kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::Float32);
+       kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::eDataType::Float32);
 }
 
 void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
@@ -91,7 +91,7 @@ void ContrastSampleAnalysis::setImage(kipl::base::TImage<float,3> img)
     makeHistogram();
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::Float32);
+        kipl::io::WriteTIFF(m_Img2D,"csa_2d_orig.tif",kipl::base::eDataType::Float32);
 
 }
 
@@ -165,7 +165,7 @@ void ContrastSampleAnalysis::findCenters(const std::list<kipl::base::RectROI> &R
 
         msg.str(""); msg<<"chmcrop_"<<loopidx++<<".tif";
         if (saveIntermediateImages)
-            kipl::io::WriteTIFF(chmCrop,msg.str(),kipl::base::Float32);
+            kipl::io::WriteTIFF(chmCrop,msg.str(),kipl::base::eDataType::Float32);
 
 
         float minVal=0.0f;
@@ -222,18 +222,18 @@ void ContrastSampleAnalysis::findCenters()
     msg.str(""); msg<<"hMax timing: "<<timer;
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF(peaks,"csa_hmax.tif",kipl::base::Float32);
+        kipl::io::WriteTIFF(peaks,"csa_hmax.tif",kipl::base::eDataType::Float32);
 
     insetpeaks=chm-peaks;
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks.tif",kipl::base::Float32);
+        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks.tif",kipl::base::eDataType::Float32);
 
     for (size_t i=0; i<insetpeaks.Size(); ++i)
         insetpeaks[i]=0.5f*threshold<insetpeaks[i];
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks_bi.tif",kipl::base::Float32);
+        kipl::io::WriteTIFF(insetpeaks,"csa_insetpeaks_bi.tif",kipl::base::eDataType::Float32);
     timer.reset();
     timer.Tic();
 
@@ -380,7 +380,7 @@ void ContrastSampleAnalysis::circleTransform(float pixelSize)
     msg.str(""); msg<<"Circular Hough timing: "<<timer;
 
     if (saveIntermediateImages)
-        kipl::io::WriteTIFF(chm,"csa_cht.tif",kipl::base::Float32);
+        kipl::io::WriteTIFF(chm,"csa_cht.tif",kipl::base::eDataType::Float32);
 }
 
 }
