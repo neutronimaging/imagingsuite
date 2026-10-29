@@ -5,7 +5,7 @@ from conan.tools.files import copy
 import os
 import sys
 import shutil
-from six import StringIO
+from io import StringIO
 
 class MuhrecRecipe(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
