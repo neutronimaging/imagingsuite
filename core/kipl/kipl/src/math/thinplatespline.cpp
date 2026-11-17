@@ -109,7 +109,7 @@ float ThinPlateSpline::interpolate(size_t x, size_t y)
     return interpolate(static_cast<double>(x), static_cast<double>(y));
 }
 
-kipl::base::TImage<float,2> ThinPlateSpline::render(const std::vector<size_t> dims, const std::vector<size_t> &fov) 
+kipl::base::TImage<float,2> ThinPlateSpline::render(const std::vector<size_t> dims, const std::vector<size_t> & /*fov */) 
 {    
     kipl::base::TImage<float,2> img(dims);
 

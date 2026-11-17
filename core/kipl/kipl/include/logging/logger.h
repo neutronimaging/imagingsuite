@@ -54,6 +54,7 @@ public:
 
 	/// \brief Enum used to select the current minimum log level
 	enum LogLevel {
+        LogNone,     //!< No logging at all
 		LogError,    //!< Report errors
 		LogWarning,  //!< Report at least Warnings
 		LogMessage,  //!< Report at least Messages

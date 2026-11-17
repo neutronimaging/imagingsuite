@@ -127,7 +127,7 @@ protected:
     QPoint m_LastMotionPosition;
     QSize widgetSize;
     QSet<ImageViewerWidget *> m_LinkedViewers;
-    enum { Margin = 5 };
+    enum { Margin = 2 };
     ImageViewerInfoDialog m_infoDialog;
     QMutex m_MouseMoveMutex;
     QMutex m_ImageMutex;

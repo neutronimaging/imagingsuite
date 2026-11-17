@@ -86,7 +86,7 @@ public:
     /// \param x x-coordinate
     /// \param y y-coordinate
     /// \param z z-coordinate
-    T  operator()(size_t x=0, size_t y=0, size_t z=0) const;
+    T & operator()(ptrdiff_t x=0, ptrdiff_t y=0, ptrdiff_t z=0) ;
 
     /// \brief Coordinate access of a pixel
     /// \param x x-coordinate
@@ -98,7 +98,19 @@ public:
     /// \param x x-coordinate
     /// \param y y-coordinate
     /// \param z z-coordinate
-	T operator()(int x=0, int y=0, int z=0) const;
+    const T & operator()(size_t x=0, size_t y=0, size_t z=0) const;
+
+	/// \brief Coordinate access of a pixel
+    /// \param x x-coordinate
+    /// \param y y-coordinate
+    /// \param z z-coordinate
+    const T & operator()(ptrdiff_t x=0, ptrdiff_t y=0, ptrdiff_t z=0) const;
+
+    /// \brief Coordinate access of a pixel
+    /// \param x x-coordinate
+    /// \param y y-coordinate
+    /// \param z z-coordinate
+    const T & operator()(int x=0, int y=0, int z=0) const;
 	
 	/// \brief Gives the number of references to the current memory block
 	/// \test The method is tested with unit test

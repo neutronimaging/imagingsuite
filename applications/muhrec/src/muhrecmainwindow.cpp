@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <algorithm>
+#include <cmath>
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -666,7 +668,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         m_Config.setAppPath(m_sApplicationPath);
         m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
         msg.str("");
-        msg<<m_Config.WriteXML();
+        msg<<"Loaded config:\n"<<m_Config.WriteXML();
         logger(logger.LogMessage,msg.str());
     }
     catch (ReconException &e)
@@ -699,7 +701,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         // Replace template path by module path for pre processing
         // size_t pos=0;
 
-        logger(logger.LogMessage,"Updating path of preprocessing modules");
+        logger.message("Updating path of preprocessing modules");
         for (auto &module : m_Config.modules)
         {
             module.setAppPath(m_sApplicationPath,"Preprocessors");
@@ -707,7 +709,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
             logger.message(module.m_sSharedObject);
         }
 
-        logger(logger.LogMessage,"Updating path of back projector");
+        logger.message("Updating path of back projector");
         m_Config.backprojector.setAppPath(m_sApplicationPath,"BackProjectors");
 
         logger.message(m_Config.backprojector.m_sSharedObject);
@@ -725,6 +727,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
     }
 
+    kipl::logging::Logger::SetLogLevel(m_Config.System.eLogLevel);
     // m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
 
     m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.size());
@@ -1522,10 +1525,10 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.sPath="";
     m_Config.ProjectionInfo.sReferencePath="";
 
-    m_Config.ProjectionInfo.sFileMask = ui->editProjectionMask->text().toStdString();
+    m_Config.ProjectionInfo.sFileMask   = ui->editProjectionMask->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sFileMask,false);
     m_Config.ProjectionInfo.nFirstIndex = ui->spinFirstProjection->value();
-    m_Config.ProjectionInfo.nLastIndex = ui->spinLastProjection->value();
+    m_Config.ProjectionInfo.nLastIndex  = ui->spinLastProjection->value();
     if (m_Config.ProjectionInfo.nLastIndex<m_Config.ProjectionInfo.nFirstIndex)
     {
         qDebug()<<"Update config: Last<First projection";
@@ -1536,11 +1539,11 @@ void MuhRecMainWindow::UpdateConfig()
     }
     m_Config.ProjectionInfo.nProjectionStep = ui->spinProjectionStep->value();
     m_Config.ProjectionInfo.nRepeatedView   = ui->spinBox_projPerView->value();
-    m_Config.ProjectionInfo.averageMethod   = static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboBox_projectionCominationMethod->currentIndex());
-    m_Config.ProjectionInfo.imagetype = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
-    m_Config.ProjectionInfo.fBinning = ui->spinProjectionBinning->value();
-    m_Config.ProjectionInfo.eFlip = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
-    m_Config.ProjectionInfo.eRotate = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
+    m_Config.ProjectionInfo.averageMethod   = static_cast<ImagingAlgorithms::eAverageImageMethod>(ui->comboBox_projectionCominationMethod->currentIndex());
+    m_Config.ProjectionInfo.imagetype       = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
+    m_Config.ProjectionInfo.fBinning        = ui->spinProjectionBinning->value();
+    m_Config.ProjectionInfo.eFlip           = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
+    m_Config.ProjectionInfo.eRotate         = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
 
 //    m_Config.ProjectionInfo.sReferencePath = ui->editReferencePath->text().toStdString();
 //    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sReferencePath,true);
@@ -1565,6 +1568,10 @@ void MuhRecMainWindow::UpdateConfig()
     
 
     ui->widgetDoseROI->getROI(m_Config.ProjectionInfo.dose_roi);
+    logger.message("Config dose ROI: ["+std::to_string(m_Config.ProjectionInfo.dose_roi[0])+","
+                    +std::to_string(m_Config.ProjectionInfo.dose_roi[1])+","
+                    +std::to_string(m_Config.ProjectionInfo.dose_roi[2])+","
+                    +std::to_string(m_Config.ProjectionInfo.dose_roi[3])+"]");
     ui->widgetProjectionROI->getROI(m_Config.ProjectionInfo.projection_roi);
 
     m_Config.ProjectionInfo.roi[0]             = m_Config.ProjectionInfo.projection_roi[0];
@@ -2447,9 +2454,35 @@ void MuhRecMainWindow::on_dspinRotationCenter_valueChanged(double arg1)
     CenterOfRotationChanged();
 }
 
-void MuhRecMainWindow::on_dspinTiltAngle_valueChanged(double arg1)
+void MuhRecMainWindow::on_dspinTiltAngle_valueChanged(double tiltangle)
 {
-    (void) arg1;
+    if (ui->checkCorrectTilt->checkState()==Qt::Checked)
+    {
+        double tantilt=tan(tiltangle*3.1415/180.0);
+
+        double d_left = ui->dspinRotationCenter->value() - m_Config.ProjectionInfo.projection_roi[0];
+        double d_right = m_Config.ProjectionInfo.projection_roi[2] - ui->dspinRotationCenter->value();
+
+        double xtalk = std::fabs((std::min)(d_left, d_right) * tantilt);
+
+        if (5<xtalk) 
+        {
+            QMessageBox dlg;
+            dlg.setWindowTitle("Tilt correction warning");
+            dlg.setTextFormat(Qt::RichText);
+            dlg.setText("<b>The tilt angle is too high.</b>");
+            dlg.setInformativeText("The vertical shift is greater than 5 pixels at the perimeter. "
+                        "This leads to blurring and distortion artifacts in the reconstruction. "
+                        "You should rotate the images by the tilt angle before reconstruction. "
+                        "<br/><br>See the <a href='https://github.com/neutronimaging/imagingsuite/wiki/User-manuals-MuhRec-Tilt#tilt-correction-in-muhrec'>user manual</a> for more information.<br/>"
+                        );  
+                        
+            dlg.setStandardButtons(QMessageBox::Ok);
+            logger.warning("Tilt angle is too high, vertical shift at perimeter is greater than 5 pixels (" + std::to_string(xtalk) + " pixels).");
+            dlg.exec();
+
+        }
+    }
     CenterOfRotationChanged();
 }
 

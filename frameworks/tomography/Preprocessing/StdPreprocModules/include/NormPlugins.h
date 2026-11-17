@@ -48,7 +48,7 @@ protected:
     size_t nBBCount;
     size_t nBBFirstIndex;
 
-    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAvagerage;
+    ImagingAlgorithms::eAverageImageMethod m_ReferenceAvagerage;
 
 	kipl::base::TImage<float,2> mFlatField;
 	kipl::base::TImage<float,2> mDark;

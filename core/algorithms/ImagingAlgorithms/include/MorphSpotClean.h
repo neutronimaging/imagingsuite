@@ -23,18 +23,18 @@
 
 namespace ImagingAlgorithms {
 
-enum eMorphDetectionMethod {
-    MorphDetectDarkSpots = 0,
-    MorphDetectBrightSpots,
-    MorphDetectAllSpots,
-    MorphDetectHoles,
-    MorphDetectPeaks,
-    MorphDetectBoth
+enum class eMorphDetectionMethod {
+    DarkSpots = 0,
+    BrightSpots,
+    AllSpots,
+    Holes,
+    Peaks,
+    Both
 };
 
-enum eMorphCleanMethod {
-    MorphCleanReplace = 0,
-    MorphCleanFill
+enum class eMorphCleanMethod {
+    Replace = 0,
+    Fill
 };
 
 class IMAGINGALGORITHMSSHARED_EXPORT MorphSpotClean
@@ -49,7 +49,7 @@ public:
     void process(kipl::base::TImage<float,3> &img, float th, float sigma);
     void process(kipl::base::TImage<float,3> &img, std::vector<float> &th, std::vector<float> &sigma);
 
-    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
+    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::eConnectivity::conn8);
     kipl::base::eConnectivity connectivity();
     void setCleanMethod(eMorphDetectionMethod mdm, eMorphCleanMethod mcm);
     eMorphDetectionMethod detectionMethod();

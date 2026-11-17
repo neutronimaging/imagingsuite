@@ -175,7 +175,9 @@ std::ostream  KIPLSHARED_EXPORT & operator<<(std::ostream &os, kipl::logging::Lo
 
 void  KIPLSHARED_EXPORT string2enum(std::string s, kipl::logging::Logger::LogLevel &level)
 {
-    if (s=="error")
+    if (s=="none")
+        level=kipl::logging::Logger::LogNone;
+    else if (s=="error")
         level=kipl::logging::Logger::LogError;
     else if (s=="warning")
         level=kipl::logging::Logger::LogWarning;
@@ -193,6 +195,7 @@ void  KIPLSHARED_EXPORT string2enum(std::string s, kipl::logging::Logger::LogLev
 std::string  KIPLSHARED_EXPORT enum2string(kipl::logging::Logger::LogLevel level)
 {
     switch (level) {
+    case kipl::logging::Logger::LogNone   : return "none"   ; break;
     case kipl::logging::Logger::LogError   : return "error"   ; break;
     case kipl::logging::Logger::LogWarning : return "warning" ; break;
     case kipl::logging::Logger::LogMessage : return "message" ; break;

@@ -94,7 +94,7 @@ public:
         size_t nLastIndex;          ///< The index number of the last projection in the data set
         size_t nProjectionStep;     ///< Increment of the projection index during read
         size_t nRepeatedView;       ///< Same view has repeated projections
-        ImagingAlgorithms::AverageImage::eAverageMethod averageMethod;
+        ImagingAlgorithms::eAverageImageMethod averageMethod;
         eSkipListMode skipListMode;  ///< Indicates if the skip list is used to skip or drop projections
         std::set<size_t> nlSkipList;///< List of projection indices that are retakes and will be skipped. This is not a missing angle.
         bool bRepeatLine;           ///< Repeat line this is a part of the repeat sinogram reconstruction
