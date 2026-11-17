@@ -8,14 +8,16 @@
 
 class INSPECTORMODULESSHARED_EXPORT CountNANs: public PreprocModuleBase {
 public:
+	using PreprocModuleBase::Configure;
 	CountNANs();
-	virtual ~CountNANs();
+	~CountNANs();
 
-	virtual std::map<std::basic_string<char>, std::basic_string<char> > GetParameters();
-	virtual int Configure(ReconConfig, std::map<std::basic_string<char>, std::basic_string<char> >);
+	std::map<std::basic_string<char>, std::basic_string<char> > GetParameters() override;
+	int Configure(ReconConfig, std::map<std::basic_string<char>, std::basic_string<char> >) override;
 protected:
-	virtual int ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters);
-	virtual int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters);
+	using PreprocModuleBase::ProcessCore;
+	int ProcessCore(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters) override;
+	int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters) override;
 
 };
 

@@ -55,9 +55,9 @@ void ProcessTimingLogger::addLogEntry(std::map<std::string,std::map<std::string,
             try
             {
                 ofs<<std::stod(item.second);
-            }  catch ( std::invalid_argument)
+            }  catch ( std::invalid_argument &e)
             {
-                ofs<<"\""<<std::stod(item.second)<<"\"";
+                ofs<<e.what()<<" time=\""<<std::stod(item.second)<<"\"";
             }
             if (item.first != category.second.rbegin()->first)
                 ofs<<", ";

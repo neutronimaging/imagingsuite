@@ -10,18 +10,21 @@
 
 namespace ImagingAlgorithms {
 
+enum class eAverageImageMethod {
+        SelectSingle,      ///< Selects the first XY-image in the stack
+        Sum,               ///< Compute the sum of the XY-images
+        Average,           ///< Compute the average of the XY-images
+        Median,            ///< Compute the median of the XY-images
+        WeightedAverage,   ///< Compute the weighted average of the images
+        MADWeightedAverage,///< Compute the weighted average of the images using the MAD for weight computation
+        Min,               ///< Compute the minimum pixel value of the images
+        Max                ///< Compute the maximum pixel value of the images
+};
+
 class IMAGINGALGORITHMSSHARED_EXPORT AverageImage
 {
 public:
-    enum eAverageMethod {
-        ImageSelectSingle,      ///< Selects the first XY-image in the stack
-        ImageSum,               ///< Compute the sum of the XY-images
-        ImageAverage,           ///< Compute the average of the XY-images
-        ImageMedian,            ///< Compute the median of the XY-images
-        ImageWeightedAverage,   ///< Compute the weighted average of the images
-        ImageMin,               ///< Compute the minimum pixel value of the images
-        ImageMax                ///< Compute the maximum pixel value of the images
-    };
+
 
     AverageImage();
 
@@ -33,7 +36,7 @@ public:
     /// \param img A 3D image with the input 2D images in the XY-plane.
     /// \param method Method selector
     /// \param weights Additional weights per slice, can be used for dose correction
-    kipl::base::TImage<float,2> operator()(kipl::base::TImage<float,3> &img, eAverageMethod method, std::vector<float> weights = {});
+    kipl::base::TImage<float,2> operator()(kipl::base::TImage<float,3> &img, eAverageImageMethod method, std::vector<float> weights = {});
 protected:
     kipl::base::TImage<float,2> SelectSingle(kipl::base::TImage<float,3> &img);
     kipl::base::TImage<float,3> WeightImages(kipl::base::TImage<float,3> &img, float *weights);
@@ -42,6 +45,7 @@ protected:
     kipl::base::TImage<float,2> ComputeAverage(kipl::base::TImage<float,3> & img);
     kipl::base::TImage<float,2> ComputeMedian(kipl::base::TImage<float,3> & img);
     kipl::base::TImage<float,2> ComputeWeightedAverage(kipl::base::TImage<float,3> & img);
+    kipl::base::TImage<float,2> ComputeMADWeightedAverage(kipl::base::TImage<float,3> & img);
     kipl::base::TImage<float,2> ComputeMin(kipl::base::TImage<float,3> & img);
     kipl::base::TImage<float,2> ComputeMax(kipl::base::TImage<float,3> & img);
 
@@ -52,8 +56,8 @@ protected:
 
 }
 
-void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string &str, ImagingAlgorithms::AverageImage::eAverageMethod &eam);
-std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::AverageImage::eAverageMethod eam);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string &str, ImagingAlgorithms::eAverageImageMethod &eam);
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::eAverageImageMethod eam);
 
-std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::AverageImage::eAverageMethod  & eam);
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(ostream & s, ImagingAlgorithms::eAverageImageMethod  & eam);
 #endif // AVERAGEPROJECTION_H

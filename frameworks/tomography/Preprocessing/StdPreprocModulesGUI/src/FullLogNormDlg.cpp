@@ -15,7 +15,7 @@ FullLogNormDlg::FullLogNormDlg(QWidget *parent) :
     ui(new Ui::FullLogNormDlg),
     m_bUseDose(true),
     m_bUseLUT(false),
-    m_eAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage)
+    m_eAverageMethod(ImagingAlgorithms::eAverageImageMethod::WeightedAverage)
 {
     ui->setupUi(this);
     UpdateDialog();
@@ -58,7 +58,7 @@ void FullLogNormDlg::UpdateParameters()
 {
     m_bUseDose = ui->check_usedose->checkState();
     m_bUseLUT = ui->check_useLut->checkState();
-    m_eAverageMethod = static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->combo_averagemethod->currentIndex());
+    m_eAverageMethod = static_cast<ImagingAlgorithms::eAverageImageMethod>(ui->combo_averagemethod->currentIndex());
 }
 
 void FullLogNormDlg::UpdateParameterList(std::map<std::string, std::string> &parameters)

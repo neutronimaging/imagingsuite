@@ -7,6 +7,7 @@
 class RECONALGORITHMSSHARED_EXPORT BasicForwardProjector : public ForwardProjectorBase
 {
 public:
+    using ForwardProjectorBase::project;
     BasicForwardProjector();
 
     virtual int project(kipl::base::TImage<float, 2> &slice, std::list<float> &angles, kipl::base::TImage<float, 2> &proj);

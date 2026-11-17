@@ -25,9 +25,10 @@ class BBLogNormDlg : public ConfiguratorDialogBase
     Q_OBJECT
 
 public:
+    using ConfiguratorDialogBase::exec; 
     explicit BBLogNormDlg(QWidget *parent = 0);
      ~BBLogNormDlg();
-    virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
+    int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img) override;
 
 private slots:
     void on_button_OBBBpath_clicked();
@@ -52,9 +53,9 @@ private slots:
     void on_pushButton_ext_sample_back_clicked();
 
 private:
-    virtual void ApplyParameters();
-    virtual void UpdateDialog();
-    virtual void UpdateParameters();
+    virtual void ApplyParameters() override;
+    virtual void UpdateDialog() override;
+    virtual void UpdateParameters() override;
     virtual void UpdateParameterList(std::map<std::string, std::string> &parameters);
 
 
@@ -99,7 +100,7 @@ private:
     bool bExtSingleFile; /// boolean value on the use of single external file for sample background
 //    bool bUseBB; /// boolean value on the use of BBs, to be set when calling PrepareBBData
 //    bool bUseExternalBB; /// boolean value on the use of externally produced BBs
-    ImagingAlgorithms::AverageImage::eAverageMethod m_ReferenceAverageMethod;
+    ImagingAlgorithms::eAverageImageMethod m_ReferenceAverageMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eReferenceMethod m_ReferenceMethod;
     ImagingAlgorithms::ReferenceImageCorrection::eBBOptions m_BBOptions;
     ImagingAlgorithms::ReferenceImageCorrection::eInterpOrderX m_xInterpOrder;

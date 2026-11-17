@@ -56,7 +56,7 @@ BBLogNorm::BBLogNorm(kipl::interactors::InteractionBase *interactor) :
     ffirstAngle(0.0f),
     flastAngle(360.0f),
     m_nWindow(5),
-    m_ReferenceAverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    m_ReferenceAverageMethod(ImagingAlgorithms::eAverageImageMethod::WeightedAverage),
     m_ReferenceMethod(ImagingAlgorithms::ReferenceImageCorrection::ReferenceLogNorm),
     m_BBOptions(ImagingAlgorithms::ReferenceImageCorrection::Interpolate),
     m_xInterpOrder(ImagingAlgorithms::ReferenceImageCorrection::SecondOrder_x),
@@ -1338,7 +1338,8 @@ int BBLogNorm::GetnProjwithAngle(float angle){
         curr_angle = m_Config.ProjectionInfo.fScanArc[0]+(m_Config.ProjectionInfo.fScanArc[1]-m_Config.ProjectionInfo.fScanArc[0])/(nProj-1)*i;
 
 
-        if (curr_angle<=angle+0.5f & curr_angle>=angle-0.5f) {
+        if ((curr_angle<=angle+0.5f) && (curr_angle>=angle-0.5f) )
+        {
             break;
         }
         else index++;

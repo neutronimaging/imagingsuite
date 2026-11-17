@@ -11,11 +11,6 @@
 
 int main(int argc, char *argv[])
 {
-//    QCoreApplication app(argc, argv);
-//    app.setApplicationVersion(VERSION);
-
-//    std::string homedir = QDir::homePath().toStdString();
-
     std::string homedir = std::filesystem::temp_directory_path().string();
 
     kipl::strings::filenames::CheckPathSlashes(homedir,true);

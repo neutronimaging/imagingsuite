@@ -19,6 +19,7 @@
 #include "../include/SinoSpotClean.h"
 #include "../include/TranslateProjectionsModule.h"
 #include "../include/MorphSpotCleanModule.h"
+#include "../include/SortSpotCleanModule.h"
 #include "../include/GammaSpotCleanModule.h"
 #include "../include/CameraStripeClean.h"
 #include "../include/bblognorm.h"
@@ -109,6 +110,9 @@ STDPREPROCMODULESSHARED_EXPORT void * GetModule(const char *application, const c
 
         if (sName=="MorphSpotClean")
             return new MorphSpotCleanModule(interactor);
+
+        if (sName=="SortSpotClean")
+            return new SortSpotCleanModule(interactor);
 
         if (sName=="GammaSpotClean")
             return new GammaSpotCleanModule;
@@ -244,6 +248,9 @@ STDPREPROCMODULESSHARED_EXPORT int GetModuleList(const char *application, void *
 
     MorphSpotCleanModule mscm;
     modulelist->operator []("MorphSpotClean")=mscm.GetParameters();
+
+    SortSpotCleanModule sscm;
+    modulelist->operator []("SortSpotClean")=sscm.GetParameters();
 
     GammaSpotCleanModule gscm;
     modulelist->operator []("GammaSpotClean")=gscm.GetParameters();

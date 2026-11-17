@@ -121,20 +121,20 @@ void TestImagingAlgorithms::MorphSpotClean_Initialization()
 {
     ImagingAlgorithms::MorphSpotClean cleaner;
 
-    QCOMPARE(cleaner.connectivity(),kipl::base::conn8);
-    cleaner.setConnectivity(kipl::base::conn4);
-    QCOMPARE(cleaner.connectivity(),kipl::base::conn4);
+    QCOMPARE(cleaner.connectivity(),kipl::base::eConnectivity::conn8);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn4);
+    QCOMPARE(cleaner.connectivity(),kipl::base::eConnectivity::conn4);
     
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn6));
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn18));
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn26));
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::eConnectivity::conn6));
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::eConnectivity::conn18));
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::eConnectivity::conn26));
 
-    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::MorphDetectHoles);
-    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::MorphCleanReplace);
+    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::eMorphDetectionMethod::Holes);
+    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::eMorphCleanMethod::Replace);
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth, ImagingAlgorithms::MorphCleanFill);
-    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::MorphDetectBoth);
-    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::MorphCleanFill);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Both, ImagingAlgorithms::eMorphCleanMethod::Fill);
+    QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::eMorphDetectionMethod::Both);
+    QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::eMorphCleanMethod::Fill);
 
     QCOMPARE(cleaner.clampLimits(),std::vector<float>({-0.1f,7.0f}));
     QCOMPARE(cleaner.clampActive(),false);
@@ -160,8 +160,8 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectDarkSpots,ImagingAlgorithms::MorphCleanReplace);
-    cleaner.setConnectivity(kipl::base::conn8);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::DarkSpots, ImagingAlgorithms::eMorphCleanMethod::Replace);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.setThresholdByFraction(true);
     cleaner.process(img,0.95f,0.05f);
 
@@ -175,8 +175,8 @@ void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBrightSpots, ImagingAlgorithms::MorphCleanReplace);
-    cleaner.setConnectivity(kipl::base::conn8);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::BrightSpots, ImagingAlgorithms::eMorphCleanMethod::Replace);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,0.95f,0.05f);
 
     kipl::io::WriteTIFF(img,"cleanbright.tif",kipl::base::Float32);
@@ -189,8 +189,8 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
     kipl::base::TImage<float,2> img=holes;
     img.Clone();
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
-    cleaner.setConnectivity(kipl::base::conn8);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Both,ImagingAlgorithms::eMorphCleanMethod::Replace);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,0.95f,0.05f);
 
     kipl::io::WriteTIFF(img,"cleanall.tif",kipl::base::Float32);
@@ -203,8 +203,8 @@ void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
     img.Clone(holes);
     ImagingAlgorithms::MorphSpotClean cleaner;
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectBoth,ImagingAlgorithms::MorphCleanReplace);
-    cleaner.setConnectivity(kipl::base::conn8);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Both,ImagingAlgorithms::eMorphCleanMethod::Replace);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,1.0f,0.05f);
 
     kipl::io::WriteTIFF(img,"spotcleaned.tif",kipl::base::Float32);
@@ -215,12 +215,12 @@ void TestImagingAlgorithms::MorphSpotClean_enums()
 {
     std::map<std::string, ImagingAlgorithms::eMorphDetectionMethod> enummap;
 
-    enummap["morphdetectbrightspots"] = ImagingAlgorithms::MorphDetectBrightSpots ;
-    enummap["morphdetectdarkspots"]   = ImagingAlgorithms::MorphDetectDarkSpots ;
-    enummap["morphdetectallspots"]    = ImagingAlgorithms::MorphDetectAllSpots ;
-    enummap["morphdetectholes"]       = ImagingAlgorithms::MorphDetectHoles ;
-    enummap["morphdetectpeaks"]       = ImagingAlgorithms::MorphDetectPeaks ;
-    enummap["morphdetectboth"]        = ImagingAlgorithms::MorphDetectBoth ;
+    enummap["morphdetectbrightspots"] = ImagingAlgorithms::eMorphDetectionMethod::BrightSpots ;
+    enummap["morphdetectdarkspots"]   = ImagingAlgorithms::eMorphDetectionMethod::DarkSpots ;
+    enummap["morphdetectallspots"]    = ImagingAlgorithms::eMorphDetectionMethod::AllSpots ;
+    enummap["morphdetectholes"]       = ImagingAlgorithms::eMorphDetectionMethod::Holes ;
+    enummap["morphdetectpeaks"]       = ImagingAlgorithms::eMorphDetectionMethod::Peaks ;
+    enummap["morphdetectboth"]        = ImagingAlgorithms::eMorphDetectionMethod::Both ;
 
     ImagingAlgorithms::eMorphDetectionMethod mdm;
 
@@ -251,8 +251,8 @@ void TestImagingAlgorithms::MorphSpotClean_ListAlgorithm()
         std::cout<<"Clone failed with "<<e.what()<<std::endl;
     }
 
-    cleaner.setCleanMethod(ImagingAlgorithms::MorphDetectHoles,ImagingAlgorithms::MorphCleanFill);
-    cleaner.setConnectivity(kipl::base::conn4);
+    cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Holes,ImagingAlgorithms::eMorphCleanMethod::Fill);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn4);
 
     cleaner.process(res,0.04,0.01);
 }
@@ -262,27 +262,30 @@ void TestImagingAlgorithms::AverageImage_Enums()
 {
 
     std::string key;
-    key = enum2string(ImagingAlgorithms::AverageImage::ImageAverage);
+    key = enum2string(ImagingAlgorithms::eAverageImageMethod::Average);
     QCOMPARE(key,std::string("ImageAverage"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageSum),             std::string("ImageSum"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMedian),          std::string("ImageMedian"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageWeightedAverage), std::string("ImageWeightedAverage"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMin),             std::string("ImageMin"));
-    QCOMPARE(enum2string(ImagingAlgorithms::AverageImage::ImageMax),             std::string("ImageMax"));
+    QCOMPARE(enum2string(ImagingAlgorithms::eAverageImageMethod::Sum),                std::string("ImageSum"));
+    QCOMPARE(enum2string(ImagingAlgorithms::eAverageImageMethod::Median),             std::string("ImageMedian"));
+    QCOMPARE(enum2string(ImagingAlgorithms::eAverageImageMethod::WeightedAverage),    std::string("ImageWeightedAverage"));
+    QCOMPARE(enum2string(ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage), std::string("ImageMADWeightedAverage"));
+    QCOMPARE(enum2string(ImagingAlgorithms::eAverageImageMethod::Min),                std::string("ImageMin"));
+    QCOMPARE(enum2string(ImagingAlgorithms::eAverageImageMethod::Max),                std::string("ImageMax"));
 
-    ImagingAlgorithms::AverageImage::eAverageMethod e;
+    ImagingAlgorithms::eAverageImageMethod e;
     string2enum("ImageAverage",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageAverage);
+    QCOMPARE(e,ImagingAlgorithms::eAverageImageMethod::Average);
     string2enum("ImageSum",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageSum);
+    QCOMPARE(e,ImagingAlgorithms::eAverageImageMethod::Sum);
     string2enum("ImageMedian",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageMedian);
+    QCOMPARE(e,ImagingAlgorithms::eAverageImageMethod::Median);
     string2enum("ImageWeightedAverage",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageWeightedAverage);
+    QCOMPARE(e,ImagingAlgorithms::eAverageImageMethod::WeightedAverage);
+    string2enum("ImageMADWeightedAverage",e);
+    QCOMPARE(e,ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage);
     string2enum("ImageMin",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageMin);
+    QCOMPARE(e,ImagingAlgorithms::eAverageImageMethod::Min);
     string2enum("ImageMax",e);
-    QCOMPARE(e,ImagingAlgorithms::AverageImage::ImageMax);
+    QCOMPARE(e,ImagingAlgorithms::eAverageImageMethod::Max);
 }
 
 void TestImagingAlgorithms::AverageImage_Processing()
@@ -302,37 +305,41 @@ void TestImagingAlgorithms::AverageImage_Processing()
         }
     }
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageSum);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Sum);
     float r0=res[0];
     QCOMPARE(res.Size(0),dims[0]);
     QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,15.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageAverage);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Average);
     r0=res[0];
     QCOMPARE(res.Size(0),dims[0]);
     QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,3.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageWeightedAverage);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::WeightedAverage);
     r0=res[0];
     QCOMPARE(res.Size(0),dims[0]);
     QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,3.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMedian);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage);
     r0=res[0];
     QCOMPARE(res.Size(0),dims[0]);
     QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,3.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMin);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Median);
+    r0=res[0];
+    QCOMPARE(r0,3.0f);
+
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Min);
     r0=res[0];
     QCOMPARE(res.Size(0),dims[0]);
     QCOMPARE(res.Size(1),dims[1]);
     QCOMPARE(r0,1.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMax);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Max);
     r0=res[0];
     QCOMPARE(res.Size(0),dims[0]);
     QCOMPARE(res.Size(1),dims[1]);
@@ -357,27 +364,31 @@ void TestImagingAlgorithms::AverageImage_ProcessingWeights()
         w[i]=static_cast<float>(i+1);
     }
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageSum,w);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Sum,w);
     float r0=res[0];
     QCOMPARE(r0,55.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageAverage,w);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Average,w);
     r0=res[0];
     QCOMPARE(r0,11.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageWeightedAverage,w);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::WeightedAverage,w);
     r0=res[0];
     QCOMPARE(r0,11.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMedian,w);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage,w);
     r0=res[0];
     QCOMPARE(r0,9.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMin,w);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Median,w);
+    r0=res[0];
+    QCOMPARE(r0,9.0f);
+
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Min,w);
     r0=res[0];
     QCOMPARE(r0,1.0f);
 
-    res=avg(stack,ImagingAlgorithms::AverageImage::ImageMax,w);
+    res=avg(stack,ImagingAlgorithms::eAverageImageMethod::Max,w);
     r0=res[0];
     QCOMPARE(r0,25.0f);
 }

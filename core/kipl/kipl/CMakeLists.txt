@@ -1,30 +1,15 @@
-cmake_minimum_required(VERSION 3.14)
+
 
 set(TARGET_NAME "kipl")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
-if (APPLE)
 include_directories(
      ../../../core/kipl/kipl/include
-     # ../../../../ExternalDependencies/macos/include
     )
-endif()
-
-if (WIN32)
-include_directories(
-    ../../../core/kipl/kipl/include
-    # ../../../core/modules/ModuleConfig/include
-    # ../../../../ExternalDependencies/windows/include
-    # ../../../../ExternalDependencies/windows/include/nexus
-    # ../../../../ExternalDependencies/windows/include/cfitsio
-    # ../../../external/include/
-    )
-endif()
 
 set(INC_FILES
     include/filters/core/savitzkygolayfilter.hpp
@@ -325,19 +310,12 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-# target_compile_definitions(${TARGET_NAME} PRIVATE KIPL_LIBRARY HAVE_NEXUS NOMINMAX)
 target_compile_definitions(${TARGET_NAME} PRIVATE KIPL_LIBRARY NOMINMAX)
 
-# add_definitions(-DHAVE_NEXUS)
 
 message(kipl - ${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 if (WIN32)
-    # target_link_directories(${TARGET_NAME} PUBLIC
-    # ../../../../ExternalDependencies/windows/lib
-    # ../../../../imagingsuite/external/lib64
-    # ../../../../imagingsuite/external/lib64/nexus
-    # )
     find_package(OpenMP)
 
 
@@ -347,19 +325,14 @@ if (WIN32)
         LibXml2::LibXml2
         TIFF::TIFF
         cfitsio::cfitsio
-        #libopenblas
         OpenBLAS::OpenBLAS
-        #libfftw3-3
-        #libfftw3f-3
         fftw::fftw
+        HDF5::HDF5
         armadillo::armadillo
         dirent::dirent
     )
 endif()
 
-# target_link_libraries(${PROJECT_NAME} 
-#     armadillo::armadillo
-#     )
 
 if (UNIX)
     find_package(OpenMP)
@@ -371,16 +344,9 @@ if (UNIX)
             TIFF::TIFF
             cfitsio::cfitsio
             OpenBLAS::OpenBLAS
+            HDF5::HDF5
             armadillo::armadillo
-            #${TIFF_LIBRARIES}
-            #${LAPACK_LIBRARIES}
-            #${BLAS_LIBRARIES}
-            #${ARMADILLO_LIBRARIES}
-            #FFTW::Double
-            #FFTW::Float
             fftw::fftw
-            #${CFITSIO_LIBRARIES}
-            # ${NEXUS_LIBRARIES}
         )
     else()
         target_link_libraries(${TARGET_NAME}
@@ -389,20 +355,14 @@ if (UNIX)
                 TIFF::TIFF
                 cfitsio::cfitsio
                 OpenBLAS::OpenBLAS
+                HDF5::HDF5
                 armadillo::armadillo
-                #${TIFF_LIBRARIES}
-                #${LAPACK_LIBRARIES}
-                #${BLAS_LIBRARIES}
-                #${ARMADILLO_LIBRARIES}
-                #FFTW::Double
-                #FFTW::Float
                 fftw::fftw
-                #${CFITSIO_LIBRARIES}
-                # ${NEXUS_LIBRARIES}
             )
     endif()
 endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION pymuhrec COMPONENT python RUNTIME DESTINATION pymuhrec COMPONENT python)
 
 

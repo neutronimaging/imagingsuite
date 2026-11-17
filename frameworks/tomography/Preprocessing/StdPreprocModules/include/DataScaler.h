@@ -13,6 +13,8 @@
 
 class STDPREPROCMODULESSHARED_EXPORT DataScaler: public PreprocModuleBase {
 public:
+	using PreprocModuleBase::Configure;
+
 	DataScaler();
 	virtual ~DataScaler();
 	

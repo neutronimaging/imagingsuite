@@ -157,17 +157,15 @@ void WaveletRingCleanDlg::UpdateDialog()
 {
     ui->entry_levels->setValue(m_nLevels);
     ui->entry_cutoff->setValue(m_fSigma);
-    int default_wavelet, idx;
+    int default_wavelet =-1;
 
     kipl::wavelets::WaveletKernel<float> wk("daub4");
 
     std::list<std::string> wlist=wk.NameList();
-    std::list<std::string>::iterator it;
 
-    for (idx=0, it=wlist.begin(); it!=wlist.end(); it++,idx++) 
-    {
-        if (*it==m_sWaveletName)
-            default_wavelet=idx;
+    auto it = std::find(wlist.begin(), wlist.end(), m_sWaveletName);
+    if (it != wlist.end()) {
+        default_wavelet = std::distance(wlist.begin(), it);
     }
 
     ui->combo_wavelets->setCurrentIndex(default_wavelet);
@@ -202,12 +200,13 @@ void WaveletRingCleanDlg::PrepareWaveletComboBox()
 
     ui->combo_wavelets->clear();
 
-    int default_wavelet, idx;
-    for (idx=0, it=wlist.begin(); it!=wlist.end(); it++,idx++) 
+    int default_wavelet=-1;
+    
+    for (it=wlist.begin(); it!=wlist.end(); it++) 
     {
         QString str=QString::fromStdString(*it);
         if (*it==m_sWaveletName)
-            default_wavelet=idx;
+            default_wavelet = std::distance(wlist.begin(), it);
         ui->combo_wavelets->addItem(str);
     }
 

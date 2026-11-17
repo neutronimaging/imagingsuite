@@ -46,11 +46,11 @@ PlotWidget::~PlotWidget()
     delete ui;
 }
 
-void PlotWidget::setCurveData(int id, const QVector<QPointF> &data, QString name)
+void PlotWidget::setCurveData(int id, const QVector<QPointF> &datapoints, QString name)
 {
     QLineSeries *series=new QLineSeries();
     int i=0;
-    for (auto it=data.begin(); it!=data.end(); ++it, ++i)
+    for (auto it=datapoints.begin(); it!=datapoints.end(); ++it, ++i)
         series->append(it->x(),it->y());
 
     if (name.isEmpty() ==false)
@@ -59,11 +59,11 @@ void PlotWidget::setCurveData(int id, const QVector<QPointF> &data, QString name
     setCurveData(id,series);
 }
 
-void PlotWidget::setCurveData(int id, const std::vector<float> &data, QString name)
+void PlotWidget::setCurveData(int id, const std::vector<float> &datapoints, QString name)
 {
     QLineSeries *series=new QLineSeries();
     int i=0;
-    for (auto &item : data)
+    for (auto &item : datapoints)
         series->append(i++,item);
 
     if (name.isEmpty() ==false)
@@ -108,11 +108,11 @@ void PlotWidget::setCurveData(int id, const std::vector<float> &x, const std::ve
     setCurveData(id,series);
 }
 
-void PlotWidget::setCurveData(int id, const std::map<float, float> &data, QString name)
+void PlotWidget::setCurveData(int id, const std::map<float, float> &datapoints, QString name)
 {
     QLineSeries *series=new QLineSeries();
 
-    for (auto const &item : data)
+    for (auto const &item : datapoints)
         series->append(item.first,item.second);
 
     if (name.isEmpty() ==false)
@@ -538,8 +538,8 @@ void PlotWidget::saveCurveData()
                     case QAbstractSeries::SeriesTypeLine :
                     {
                         QLineSeries *series = dynamic_cast<QLineSeries *>(s.second);
-                        auto data = series->points();
-                        for (auto p : data)
+                        auto datapoints = series->points();
+                        for (auto p : datapoints)
                         {
                             datastream<<p.x()<<", "<<p.y()<<std::endl;
                         }
@@ -548,8 +548,8 @@ void PlotWidget::saveCurveData()
                     case QAbstractSeries::SeriesTypeBoxPlot :
                     {
                         QBoxPlotSeries *series = dynamic_cast<QBoxPlotSeries *>(s.second);
-                        auto data = series->boxSets();
-                        for (const auto pp : data)
+                        auto datasets = series->boxSets();
+                        for (const auto pp : datasets)
                         {
                             auto & p = *pp;
                             datastream<<p.label().toStdString()<<", "

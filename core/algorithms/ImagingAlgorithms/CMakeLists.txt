@@ -1,45 +1,23 @@
-cmake_minimum_required(VERSION 3.14)
+
 
 set(TARGET_NAME "ImagingAlgorithms")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (APPLE)
 include_directories(
     ../../../core/kipl/kipl/include
     ../../../core/modules/ModuleConfig/include
-    # ../../../../ExternalDependencies/macos/include
     )
 endif()
 
-if (WIN32)
-    include_directories(
-        ../../../core/kipl/kipl/include
-        ../../../core/modules/ModuleConfig/include
-        # ../../../external/include/
-        # ../../../../ExternalDependencies/windows/include
-        # ../../../../ExternalDependencies/windows/include/nexus
-        # ../../../../ExternalDependencies/windows/include/cfitsio
-        )
-endif()
-
-if (UNIX)
 include_directories(
-    /opt/local/include
-    /opt/local/include/libxml2
-    ../../../core/kipl/kipl/include
-    # ../../../external/src/linalg
-    ../../../core/kipl/kipl/include
-    ../../../core/modules/ModuleConfig/include
-    # ../../../external/mac/include/
-    # ../../../../ExternalDependencies/macos/include
-    # ../../../../ExternalDependencies/macos/include/nexus
-    # ../../../external/mac/include/hdf5
-    )
-endif()
+  ../../../core/kipl/kipl/include
+  ../../../core/modules/ModuleConfig/include
+)
 
 set(INC_FILES
   include/StripeFilter.h  
@@ -58,6 +36,7 @@ set(INC_FILES
   include/ReplaceUnderexposed.h
   include/tomocenter.h
   include/normalizeimage.h
+  include/sortspotclean.h
 )
 
 set(SRC_FILES
@@ -76,6 +55,7 @@ set(SRC_FILES
   src/ReplaceUnderexposed.cpp
   src/tomocenter.cpp  
   src/normalizeimage.cpp
+  src/sortspotclean.cpp
 )
 
 
@@ -86,12 +66,7 @@ add_library(${TARGET_NAME} SHARED
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-#target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY HAVE_NEXUS ARMA_USE_BLAS ARMA_USE_LAPACK)
 target_compile_definitions(${TARGET_NAME} PRIVATE IMAGINGALGORITHMS_LIBRARY )
-
-# add_definitions(-DHAVE_NEXUS )
-# add_definitions(-DARMA_USE_BLAS -DARMA_USE_LAPACK)
-
     
 if (APPLE)
 target_link_libraries(${TARGET_NAME}
@@ -101,13 +76,10 @@ target_link_libraries(${TARGET_NAME}
 endif()
 
 if (WIN32)
-    # target_link_directories(${TARGET_NAME} PUBLIC
-    #  ../../../../ExternalDependencies/windows/lib    )
-    
+   
     target_link_libraries(${TARGET_NAME}
     PUBLIC
       kipl
-      #libopenblas
       OpenBLAS::OpenBLAS
       )
 endif()
@@ -130,3 +102,4 @@ if (UNIX AND NOT APPLE)
 endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION pymuhrec COMPONENT python RUNTIME DESTINATION pymuhrec COMPONENT python)
