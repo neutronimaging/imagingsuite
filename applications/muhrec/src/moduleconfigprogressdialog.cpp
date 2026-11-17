@@ -60,8 +60,8 @@ int ModuleConfigProgressDialog::exec(ReconEngine * engine,const std::vector<size
 
     ui->progressBar->setMaximum(100);
 
-    auto process_thread  = std::thread([=]{ process(); } );
-    auto progress_thread = std::thread([=]{ progress(); } );
+    auto process_thread  = std::thread([=,this]{ process(); } );
+    auto progress_thread = std::thread([=,this]{ progress(); } );
 
     int res=exec();
 

@@ -1,64 +1,21 @@
-cmake_minimum_required(VERSION 3.5)
+
 set(TARGET_NAME "ImageViewer")
 project(${TARGET_NAME} VERSION 4.3 LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Charts Concurrent)
-#find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Charts Concurrent REQUIRED)
-#find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Charts REQUIRED)
+
 
 if (APPLE)
-file(COPY ${CMAKE_BINARY_DIR}/lib/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks")
+    file(COPY ${CMAKE_BINARY_DIR}/lib/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Frameworks")
 endif()
 
-if (APPLE)
-include_directories(
-    ../../core/kipl/kipl/include
-    ../../core/modules/ModuleConfig/include
-    ../../core/modules/ReaderConfig
-    ../../core/algorithms/ImagingAlgorithms/include
-    ../../GUI/qt/QtAddons
-    ../../GUI/qt/QtImaging
-    ../../GUI/qt/QtModuleConfigure
-    ../../core/modules/ReaderGUI
-    ../../frameworks/tomography/Framework/ReconFramework/include/
-    ../../core/algorithms/ImagingAlgorithms/include
-    # ../../../ExternalDependencies/macos/include
-    # ../../../ExternalDependencies/macos/include/nexus
-    # ../../external/mac/include/
-    Qt6Widgets_INCLUDE_DIRS/QtCharts
-    )
-endif()
-
-if (WIN32)
-include_directories(
-    ../../core/kipl/kipl/include
-    ../../core/modules/ModuleConfig/include
-    ../../core/modules/ReaderConfig
-    ../../core/algorithms/ImagingAlgorithms/include
-    ../../GUI/qt/QtAddons
-    ../../GUI/qt/QtImaging
-    ../../GUI/qt/QtModuleConfigure
-    ../../core/modules/ReaderGUI
-    ../../frameworks/tomography/Framework/ReconFramework/include/
-    ../../core/algorithms/ImagingAlgorithms/include
-    # ../../../ExternalDependencies/windows/include
-    # ../../../ExternalDependencies/windows/include/cfitsio
-    # ../../../ExternalDependencies/windows/include/libxml2
-    # ../../../ExternalDependencies/windows/include/nexus
-    # ../../external/include/
-    Qt6Widgets_INCLUDE_DIRS/QtCharts
-    )
-endif()
-
-if (UNIX)
 include_directories(
     ../../core/kipl/kipl/include
     ../../core/modules/ModuleConfig/include
@@ -72,7 +29,6 @@ include_directories(
     ../../core/algorithms/ImagingAlgorithms/include
     Qt6Widgets_INCLUDE_DIRS/QtCharts
     )
-endif()
 
 set(SRC_FILES
     imageviewer/main.cpp
@@ -100,34 +56,22 @@ set(app_icon_macos "${CMAKE_CURRENT_SOURCE_DIR}/imageviewer/viewer_icon.icns")
 set_source_files_properties(${app_icon_macos} PROPERTIES
         MACOSX_PACKAGE_LOCATION "Resources")
         set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/imageviewer/viewer_icon.rc")
-# qt_add_executable(${TARGET_NAME} MACOSX_BUNDLE  ${app_icon_macos})
+
 
 message(App Qt${QT_VERSION_MAJOR})
 
-#if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${TARGET_NAME}
-        MANUAL_FINALIZATION
+qt_add_executable(${TARGET_NAME}
+    MANUAL_FINALIZATION
 #        MACOSX_BUNDLE
-        ${SRC_FILES}
-        ${INC_FILES}
-        ${UI_FILES}
-        ${app_icon_macos}
-        ${APP_ICON_RESOURCE_WINDOWS}
-    )
-#else()
-#        add_executable(${TARGET_NAME}
-#            ${PROJECT_SOURCES}
-#        )
-#endif()
+    ${SRC_FILES}
+    ${INC_FILES}
+    ${UI_FILES}
+    ${app_icon_macos}
+    ${APP_ICON_RESOURCE_WINDOWS}
+)
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
 link_directories(../../../lib) # /opt/local/lib )
-
-# target_link_directories(${TARGET_NAME} PRIVATE
-#     #/opt/local/lib
-#     # ../../../ExternalDependencies/macos/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib
-#     # ../../external/mac/lib/
-#     )
 
 target_link_libraries(${TARGET_NAME} PUBLIC
     Qt${QT_VERSION_MAJOR}::Core

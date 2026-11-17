@@ -282,7 +282,7 @@ double median(std::vector<T> &v)
 	for (size_t i=0; i<N; i++)
 		tmp[i]=v[i];
 
-	heapsort(tmp,N);
+	kipl::algorithms::heapsort(tmp,N);
 
 	if (N%2)
 		m=tmp[N/2];

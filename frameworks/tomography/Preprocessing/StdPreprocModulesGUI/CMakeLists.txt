@@ -1,13 +1,12 @@
-cmake_minimum_required(VERSION 3.14)
+
 
 set(TARGET_NAME "StdPreprocModulesGUI")
 project(${TARGET_NAME} LANGUAGES CXX)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 COMPONENTS Widgets Charts REQUIRED)
@@ -15,43 +14,7 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets Charts)
 
 message("Using Qt${QT_VERSION_MAJOR}")
 
-if (APPLE)
 include_directories(
-    ../../Framework/ReconFramework/include/
-    ../../../../core/kipl/kipl/include
-    ../../../../core/modules/ModuleConfig/include
-    ../../../../core/modules/ReaderConfig
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../GUI/qt/QtAddons/
-    ../../../../GUI/qt/QtModuleConfigure/
-    ../StdPreprocModules/include
-    # ../../../../../ExternalDependencies/macos/include
-    #Qt6Widgets_INCLUDE_DIRS/QtCharts
-    )
-
-    # link_directories(../../../../../lib)
-endif()
-
-if (WIN32)
-include_directories(
-    ../../Framework/ReconFramework/include/
-    ../../../../core/kipl/kipl/include
-    ../../../../core/modules/ModuleConfig/include
-    ../../../../core/modules/ReaderConfig
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../../../GUI/qt/QtAddons/
-    ../../../../GUI/qt/QtModuleConfigure/
-    ../StdPreprocModules/include
-    # ../../../../../ExternalDependencies/windows/include
-    # ../../../../../ExternalDependencies/windows/include/libxml2
-    # ../../../../../imagingsuite/external/include
-    )
-
-endif()
-
-if (UNIX)
-include_directories(
-    /usr/include/libxml2
     ../../Framework/ReconFramework/include/
     ../../../../core/kipl/kipl/include
     ../../../../core/modules/ModuleConfig/include
@@ -62,8 +25,6 @@ include_directories(
     ../StdPreprocModules/include
 
     )
-
-endif()
 
 set(INC_FILES
     src/FullLogNormDlg.h
@@ -76,6 +37,7 @@ set(INC_FILES
     src/generalfilterdlg.h
     src/medianmixringcleandlg.h
     src/morphspotcleandlg.h
+    src/sortspotcleandlg.h
     src/polynomialcorrectiondlg.h
     src/projectionfilterdlg.h
     src/stdpreprocmodulesgui.h
@@ -92,6 +54,7 @@ set(SRC_FILES
     src/medianmixringcleandlg.cpp
     src/WaveletRingCleanDlg.cpp
     src/morphspotcleandlg.cpp
+    src/sortspotcleandlg.cpp
     src/adaptivefilterdlg.cpp
     src/polynomialcorrectiondlg.cpp
     src/bblognormdlg.cpp
@@ -109,6 +72,7 @@ set(UI_FILES
     src/medianmixringclean.ui
     src/WaveletRingCleanDlg.ui
     src/morphspotcleandlg.ui
+    src/sortspotcleandlg.ui
     src/adaptivefilterdlg.ui
     src/polynomialcorrectiondlg.ui
     src/bblognormdlg.ui
@@ -124,13 +88,14 @@ add_library(${TARGET_NAME} SHARED
   ${UI_FILES}
   )
 
+# Ensure local QtAddons headers are searched before external include paths
+# (e.g. Homebrew) to avoid picking an unrelated plotter.h.
+target_include_directories(${TARGET_NAME} BEFORE PRIVATE
+  ${CMAKE_SOURCE_DIR}/GUI/qt/QtAddons
+)
+
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (WIN32)
-    # target_link_directories(${TARGET_NAME} PRIVATE
-    #      ../../../../../ExternalDependencies/windows/lib
-    # #     ../../../../../imagingsuite/external/lib64
-    # )
-
   target_link_libraries(${TARGET_NAME} 
   PUBLIC
     Qt${QT_VERSION_MAJOR}::Core
@@ -145,17 +110,16 @@ if (WIN32)
     QtModuleConfigure
     StdPreprocModules
 
-    #libopenblas
     OpenBLAS::OpenBLAS
-    #liblapack #Supplies by OpenBLAS
+
   )
 endif()
 
-  if (APPLE)  
+if (APPLE)  
       target_link_libraries(${TARGET_NAME} PUBLIC
           Qt${QT_VERSION_MAJOR}::Core
           Qt${QT_VERSION_MAJOR}::Widgets
- #         Qt${QT_VERSION_MAJOR}::Charts
+          Qt${QT_VERSION_MAJOR}::Charts
  #         Qt${QT_VERSION_MAJOR}::PrintSupport
           kipl
           ImagingAlgorithms
@@ -166,9 +130,9 @@ endif()
           QtModuleConfigure
           StdPreprocModules
       )
-  endif()
+endif()
 
-  if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(${TARGET_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Widgets
@@ -181,15 +145,11 @@ endif()
         QtModuleConfigure
         StdPreprocModules
         LibXml2::LibXml2 
-        #fftw3
-        #fftw3f
         fftw::fftw
         TIFF::TIFF
         cfitsio::cfitsio
         armadillo::armadillo
         OpenBLAS::OpenBLAS
-        #lapack
-        #blas
     )
   endif()
 

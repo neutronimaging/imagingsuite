@@ -34,6 +34,7 @@ private slots:
     void on_button_apply_clicked();
 
 private:
+    using ConfiguratorDialogBase::exec;
     virtual void ApplyParameters();
     virtual void UpdateDialog();
     virtual void UpdateParameters();

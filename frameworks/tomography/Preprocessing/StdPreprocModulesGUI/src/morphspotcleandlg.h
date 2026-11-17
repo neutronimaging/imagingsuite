@@ -42,7 +42,7 @@ private slots:
 private:
     Ui::MorphSpotCleanDlg *ui;
 
-private:
+    using ConfiguratorDialogBase::exec;
     virtual void ApplyParameters();
     void prepareDetectionPlot(kipl::base::TImage<float,2> &img,
                               int det,

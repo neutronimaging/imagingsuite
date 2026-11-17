@@ -29,6 +29,7 @@ public:
     virtual int exec(ConfigBase * config, std::map<std::string, std::string> &parameters, kipl::base::TImage<float,3> & img);
 
 private:
+    using ConfiguratorDialogBase::exec;
     Ui::ProjectionFilterDlg *ui;
 
     virtual void ApplyParameters();

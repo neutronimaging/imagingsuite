@@ -280,7 +280,10 @@ void  TDirAnalysisTest::MakeFiles(std::string mask, int N, int first)
     for (int i=0; i<N; ++i) {
         kipl::strings::filenames::MakeFileName(mask,i+first,fname,ext,'#');
         QFile f(QString::fromStdString(fname));
-        f.open(QIODevice::WriteOnly);
+        if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qWarning() << "tdiranalysistest: failed to create test file" << fname << ":" << f.errorString();
+            return;
+        }
 
         f.write(fname.c_str(),fname.size());
 

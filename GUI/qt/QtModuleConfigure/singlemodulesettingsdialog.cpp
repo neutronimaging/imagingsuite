@@ -24,6 +24,7 @@ typedef  void * HINSTANCE;
 
 SingleModuleSettingsDialog::SingleModuleSettingsDialog(const std::string &sApplicationName,
                                                        const std::string &sApplicationPath,
+                                                       const std::string &sCategory,
                                                        const std::string & sDefaultModuleSource,
                                                        QWidget *parent) :
     QDialog(parent),
@@ -31,8 +32,9 @@ SingleModuleSettingsDialog::SingleModuleSettingsDialog(const std::string &sAppli
     ui(new Ui::SingleModuleSettingsDialog),
     m_sApplication(sApplicationName),
     m_sApplicationPath(sApplicationPath),
+    m_sCategory(sCategory),
     m_sDefaultModuleSource(sDefaultModuleSource),
-    m_ModuleConfig("")
+    m_ModuleConfig("","")
 {
     ui->setupUi(this);
 }
@@ -46,7 +48,7 @@ int SingleModuleSettingsDialog::exec(ModuleConfig &config)
 {
     std::ostringstream msg;
     m_ModuleConfig=config;
-    m_ModuleConfig.setAppPath(QCoreApplication::applicationDirPath().toStdString());
+    m_ModuleConfig.setAppPath(QCoreApplication::applicationDirPath().toStdString(),m_sCategory);
 
     QDir dir;
     if (dir.exists(QString::fromStdString(m_ModuleConfig.m_sSharedObject)))
@@ -255,15 +257,27 @@ void SingleModuleSettingsDialog::on_pushButton_Browse_clicked()
 {
     logger.message("Browse");
 
+    QString appPath = QCoreApplication::applicationDirPath();
     QString fileName;
-    #ifdef Q_OS_WIN
-        QString appPath = QCoreApplication::applicationDirPath()+"\\";
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dll)"));
-    #else
-        QString appPath = QCoreApplication::applicationDirPath()+"/../Frameworks/";
-        fileName = QFileDialog::getOpenFileName(this,tr("Open module library"),appPath,tr("libs (*.dylib | *.so)"));
-    #endif
-    logger.message(appPath.toStdString());
+ 
+    auto os = kipl::base::getOperatingSystem();
+    QString filters("");
+
+    switch (os) {
+        case kipl::base::OSUnknown:
+            throw kipl::base::KiplException("OS not recognized", __FILE__, __LINE__);
+        case kipl::base::OSWindows:
+            filters = "module libs (*BackProjectors.dll)";
+            break;
+        case kipl::base::OSMacOS:
+            filters = "module libs (*BackProjectors.dylib)";
+            break;
+        case kipl::base::OSLinux:
+            filters = "module libs (*BackProjectors.so)";
+            break;
+    }
+
+    fileName = QFileDialog::getOpenFileName(this, tr("Open back projector library"), QString::fromStdString(m_sDefaultModuleSource), filters);
 
     if ( fileName.isNull() )
     {

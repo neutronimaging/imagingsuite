@@ -27,6 +27,7 @@ void PreferencesDialog::UpdateConfig()
 {
     m_MemoryLimit=ui->spinBox_MemoryLimit->value();
     m_LogLevel=static_cast<kipl::logging::Logger::LogLevel>(ui->comboBox_LogLevel->currentIndex());
+    kipl::logging::Logger::SetLogLevel(m_LogLevel);
 }
 
 int PreferencesDialog::exec()

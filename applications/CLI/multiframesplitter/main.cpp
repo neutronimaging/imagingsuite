@@ -3,10 +3,10 @@
 #include <sstream>
 #include <map>
 
-#include <QCoreApplication>
-#include <QVector>
-#include <QString>
-#include <QDebug>
+// #include <QCoreApplication>
+// #include <QVector>
+// #include <QString>
+// #include <QDebug>
 
 #include <analyzefileext.h>
 #include <base/timage.h>
@@ -61,7 +61,6 @@ int process(int argc, char *argv[])
     ImageReader reader;
 
     std::string srcfname=args["infile"];
-    qDebug() << "Pre size check";
     try {
         dims=reader.imageSize(srcfname,1.0f);
     } catch (ReaderException &e) {
@@ -73,7 +72,6 @@ int process(int argc, char *argv[])
         exit(0);
     }
 
-    qDebug() << "nDims:" <<dims.size()<<dims[0]<<dims[1]<<dims[2];
     if (dims.size()<3) {
         logger(logger.LogWarning,"This is a single frame image");
         return 0;
@@ -84,7 +82,6 @@ int process(int argc, char *argv[])
     msg.str("");
     msg<<srcfname<<" has "<<cnt<<" slices";
     logger(logger.LogMessage,msg.str());
-    qDebug() << QString::fromStdString(msg.str());
 
     std::string path;
     std::string fname;
@@ -113,11 +110,11 @@ int process(int argc, char *argv[])
         string2enum(args["rotate"],rotate);
     }
     catch (kipl::base::KiplException &e) {
-        qDebug() << e.what();
+        logger.error(e.what());
         return -1;
     }
 
-    qDebug() << QString::fromStdString(fmask) << ", first="<<first<<", last="<<last<<QString::fromStdString(enum2string(rotate));
+    // qDebug() << QString::fromStdString(fmask) << ", first="<<first<<", last="<<last<<QString::fromStdString(enum2string(rotate));
 
     std::string destname,ext;
     ImageWriter writer;
@@ -131,11 +128,11 @@ int process(int argc, char *argv[])
         }
     }
     catch (ReaderException &e) {
-        qDebug() << e.what();
+        logger.error(e.what());
         return -1;
     }
     catch (kipl::base::KiplException &e) {
-        qDebug() << e.what();
+        logger.error(e.what());
         return -1;
     }
     return cnt;
@@ -204,7 +201,7 @@ int showHelp()
 {
     std::cout<<"Multi-frame image splitter\n";
     std::cout<<"Usage: multiframesplitter [args] \n";
-    std::cout<<"(c) Anders Kaestner, 2018\n";
+    std::cout<<"(c) Anders Kaestner, 2025\n";
     std::cout<<"Arguments:\n";
     std::cout<<"-i <file name> : The image file to split can be either a multi-frame fits or vivaseq\n";
     std::cout<<"-o <file_#####.tif> : The file mask of the output images. If skiped the base name of the input is used with index. \n";

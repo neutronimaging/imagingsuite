@@ -10,18 +10,20 @@
 
 class STDPREPROCMODULESSHARED_EXPORT GammaSpotCleanModule: public PreprocModuleBase {
 public:
+    using PreprocModuleBase::Configure;
     GammaSpotCleanModule();
-    virtual ~GammaSpotCleanModule();
+    ~GammaSpotCleanModule();
 
-    virtual int Configure(ReconConfig config, std::map<std::string, std::string> parameters);
-    virtual std::map<std::string, std::string> GetParameters();
-    virtual bool SetROI(const std::vector<size_t> &roi);
+    int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
+    std::map<std::string, std::string> GetParameters() override;
+    bool SetROI(const std::vector<size_t> &roi) override;
 
     kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> img);
 
 protected:
-    virtual int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff);
-    virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);
+    using PreprocModuleBase::ProcessCore;
+    int ProcessCore(kipl::base::TImage<float,3> & img, std::map<std::string, std::string> & coeff) override;
+    int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff) override;
     int ProcessSingle(kipl::base::TImage<float,3> & img);
     int ProcessParallel(kipl::base::TImage<float,3> & img);
 

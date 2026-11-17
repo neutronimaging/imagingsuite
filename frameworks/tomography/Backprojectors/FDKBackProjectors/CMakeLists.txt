@@ -1,45 +1,18 @@
-cmake_minimum_required(VERSION 3.14)
+
 
 set(TARGET_NAME "FDKBackProjectors")
 project(kipl LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (APPLE)
 include_directories(
     ../../../../core/kipl/kipl/include
     ../../../../core/algorithms/ImagingAlgorithms/include
     ../../../../core/modules/ModuleConfig/include
     ../../Framework/ReconFramework/include
-    # ../../../../../ExternalDependencies/macos/include/
     )
-endif()
-
-if (WIN32)
-include_directories(
-    ../../../../core/kipl/kipl/include
-    ../../../../core/modules/ModuleConfig/include
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    ../../Framework/ReconFramework/include
-    # ../../../../../ExternalDependencies/windows/include
-    # ../../../../../ExternalDependencies/windows/include/nexus
-    # ../../../../../ExternalDependencies/windows/include/cfitsio
-    # ../../../../../ExternalDependencies/windows/include/libxml2
-    # ../../../../external/include/
-    )
-endif()
-
-if (UNIX)
-include_directories(
-    ../../../../core/kipl/kipl/include
-    ../../../../core/algorithms/ImagingAlgorithms/include
-    # ../../../../external/src/linalg
-    ../../../../core/modules/ModuleConfig/include
-    ../../Framework/ReconFramework/include
-    )
-endif()
 
 
 set(INC_FILES
@@ -85,29 +58,25 @@ set(SRC_FILES
 #        ../../src/volume.cxx
 )
 
-
 add_library(${TARGET_NAME} SHARED
   ${SRC_FILES}
   ${INC_FILES}
 )
 
-
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
-# target_compile_definitions(${TARGET_NAME} PRIVATE FDKBACKPROJ_LIBRARY HAVE_NEXUS)
 target_compile_definitions(${TARGET_NAME} PRIVATE FDKBACKPROJ_LIBRARY)
-
-# add_definitions(-DHAVE_NEXUS)
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 
 target_link_libraries(${TARGET_NAME}
-    PUBLIC
+        PUBLIC
         kipl
         ImagingAlgorithms
         ModuleConfig
         ReconFramework
-        )
+    )
 
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION pymuhrec COMPONENT python RUNTIME DESTINATION pymuhrec COMPONENT python)

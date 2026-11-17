@@ -38,7 +38,7 @@ void TStdPreprocModulesTest::testGetModuleList()
     GetModuleList("muhrec", reinterpret_cast<void *>(&modulelist));
     qDebug() << modulelist.size();
 
-    QCOMPARE(modulelist.size(),22UL);
+    QCOMPARE(modulelist.size(),23UL);
 }
 
 void TStdPreprocModulesTest::testFullLogNorm()
@@ -156,17 +156,6 @@ void TStdPreprocModulesTest::testMorpSpotClean_Process()
 
 }
 
-
-#ifdef __APPLE__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-    QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
-    #pragma clang diagnostic pop
-#else
-    QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
-#endif
-
-
-// QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
+QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
 
 #include "tst_StdPreprocModules.moc"

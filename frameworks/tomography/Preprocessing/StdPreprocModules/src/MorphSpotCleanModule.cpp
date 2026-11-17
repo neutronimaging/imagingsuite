@@ -17,9 +17,9 @@
 
 MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("MorphSpotCleanModule",interactor),
-    m_eConnectivity(kipl::base::conn4),
-    m_eDetectionMethod(ImagingAlgorithms::MorphDetectAllSpots),
-    m_eCleanMethod(ImagingAlgorithms::MorphCleanReplace),
+    m_eConnectivity(kipl::base::eConnectivity::conn4),
+    m_eDetectionMethod(ImagingAlgorithms::eMorphDetectionMethod::DarkSpots),
+    m_eCleanMethod(ImagingAlgorithms::eMorphCleanMethod::Replace),
     m_fThreshold{0.95f,0.95f},
     m_fSigma{0.025f,0.025f},
     m_bThresholdByFraction(true),
@@ -339,7 +339,7 @@ int MorphSpotCleanModule::ProcessParallelStd(kipl::base::TImage<float,3> & img)
         // spawn threads
 
         auto pImg = &img;
-        threads.push_back(std::thread([=] { ProcessParallelStdBlock(i,pImg,begin,end); }));
+        threads.push_back(std::thread([=,this] { ProcessParallelStdBlock(i,pImg,begin,end); }));
         begin = end;
     }
 
