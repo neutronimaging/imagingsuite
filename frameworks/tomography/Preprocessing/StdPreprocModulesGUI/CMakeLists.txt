@@ -37,6 +37,7 @@ set(INC_FILES
     src/generalfilterdlg.h
     src/medianmixringcleandlg.h
     src/morphspotcleandlg.h
+    src/sortspotcleandlg.h
     src/polynomialcorrectiondlg.h
     src/projectionfilterdlg.h
     src/stdpreprocmodulesgui.h
@@ -52,6 +53,7 @@ set(SRC_FILES
     src/medianmixringcleandlg.cpp
     src/WaveletRingCleanDlg.cpp
     src/morphspotcleandlg.cpp
+    src/sortspotcleandlg.cpp
     src/adaptivefilterdlg.cpp
     src/polynomialcorrectiondlg.cpp
     src/bblognormdlg.cpp
@@ -68,6 +70,7 @@ set(UI_FILES
     src/medianmixringclean.ui
     src/WaveletRingCleanDlg.ui
     src/morphspotcleandlg.ui
+    src/sortspotcleandlg.ui
     src/adaptivefilterdlg.ui
     src/polynomialcorrectiondlg.ui
     src/bblognormdlg.ui
@@ -81,6 +84,12 @@ add_library(${TARGET_NAME} SHARED
   ${INC_FILES}
   ${UI_FILES}
   )
+
+# Ensure local QtAddons headers are searched before external include paths
+# (e.g. Homebrew) to avoid picking an unrelated plotter.h.
+target_include_directories(${TARGET_NAME} BEFORE PRIVATE
+  ${CMAKE_SOURCE_DIR}/GUI/qt/QtAddons
+)
 
   message(${CMAKE_HOST_SYSTEM_PROCESSOR})
 if (WIN32)

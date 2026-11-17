@@ -7,3 +7,5 @@ compiler.version=15
 compiler.cppstd=20
 compiler.libcxx=libc++
 [options]
+[conf]
+tools.cmake.cmaketoolchain:extra_variables={"CMAKE_POLICY_VERSION_MINIMUM": "3.5"}

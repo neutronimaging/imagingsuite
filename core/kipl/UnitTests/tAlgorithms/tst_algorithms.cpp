@@ -4,6 +4,8 @@
 
 #include <algorithms/sortalg.h>
 #include <algorithms/unique.h>
+#include <algorithms/listmorphology.h>
+#include <base/timage.h>
 
 #include <algorithm>
 #include <random>
@@ -35,6 +37,8 @@ private Q_SLOTS:
     void testUniqueNegativeValues();
     void testUniqueStrings();
     void testUniqueLargeRandom();
+
+    void testListDilate();
 
 };
 
@@ -190,6 +194,59 @@ void AlgorithmsTest::testUniqueLargeRandom() {
         QCOMPARE(u[idx], val);
         ++idx;
     }
+}
+
+void AlgorithmsTest::testListDilate()
+{ 
+    std::vector<size_t> dims={7,5};
+
+    std::vector<int> img = {0,1,0,0,0,0,0,
+                            0,0,0,1,0,0,1,
+                            0,1,0,0,0,0,0,
+                            0,0,1,0,0,0,0,
+                            0,0,0,0,1,0,0};
+
+    std::vector<int> exp4 = {1,1,1,1,0,0,1,
+                             0,1,1,1,1,1,1,
+                             1,1,1,1,0,0,1,
+                             0,1,1,1,1,0,0,
+                             0,0,1,1,1,1,0};
+
+    std::vector<size_t> pix;
+
+    for (size_t i=0L; i<img.size(); ++i)
+        if (img.at(i))
+            pix.push_back(i);
+
+    QCOMPARE(pix.size(),6);
+
+    auto res=kipl::algorithms::dilate_points(pix, dims, kipl::base::eConnectivity::conn4);
+
+    std::vector<int> resimg(img.size(),0);
+
+    for (const auto & pp : res)
+        resimg[pp]+=1;
+
+    QCOMPARE(resimg,exp4);
+    QCOMPARE(res.size(),24);
+
+    std::vector<int> exp8 = {1,1,1,1,1,1,1,
+                            1,1,1,1,1,1,1,
+                            1,1,1,1,1,1,1,
+                            1,1,1,1,1,1,0,
+                            0,1,1,1,1,1,0}; 
+
+    auto res8=kipl::algorithms::dilate_points(pix, dims, kipl::base::eConnectivity::conn8);
+
+    std::vector<int> resimg8(img.size(),0);
+
+    for (const auto & pp : res8)
+        resimg8[pp]+=1;
+
+    QCOMPARE(resimg8,exp8);
+    QCOMPARE(res8.size(),32);
+                            
+    
 }
 
 QTEST_APPLESS_MAIN(AlgorithmsTest)

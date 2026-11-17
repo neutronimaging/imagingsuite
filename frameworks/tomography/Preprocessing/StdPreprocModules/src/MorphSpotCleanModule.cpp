@@ -17,7 +17,7 @@
 
 MorphSpotCleanModule::MorphSpotCleanModule(kipl::interactors::InteractionBase *interactor) :
     PreprocModuleBase("MorphSpotCleanModule",interactor),
-    m_eConnectivity(kipl::base::conn4),
+    m_eConnectivity(kipl::base::eConnectivity::conn4),
     m_eDetectionMethod(ImagingAlgorithms::eMorphDetectionMethod::DarkSpots),
     m_eCleanMethod(ImagingAlgorithms::eMorphCleanMethod::Replace),
     m_fThreshold{0.95f,0.95f},

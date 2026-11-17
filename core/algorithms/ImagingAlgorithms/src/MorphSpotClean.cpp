@@ -25,7 +25,7 @@ MorphSpotClean::MorphSpotClean(kipl::interactors::InteractionBase *interactor) :
     mark(std::numeric_limits<float>::max()),
     m_bUseThreading(true),
     m_nNumberOfThreads(-1),
-    m_eConnectivity(kipl::base::conn8),
+    m_eConnectivity(kipl::base::eConnectivity::conn8),
     m_eMorphClean(ImagingAlgorithms::eMorphCleanMethod::Replace),
     m_eMorphDetect(ImagingAlgorithms::eMorphDetectionMethod::Holes),
     m_seSize(5),
@@ -486,14 +486,14 @@ void MorphSpotClean::ProcessFill(kipl::base::TImage<float, 2> &img)
     msg<<"Found "<<spotlist.size()<<" spots ("<<static_cast<float>(spotlist.size())/static_cast<float>(padded.Size())<<")";
     logger.verbose(msg.str());
 
-    kipl::morphology::RepairHoles(padded,spotlist,kipl::base::conn8);
+    kipl::morphology::RepairHoles(padded,spotlist,kipl::base::eConnectivity::conn8);
 
     unpadEdges(padded,img);
 }
 
 void MorphSpotClean::setConnectivity(kipl::base::eConnectivity conn)
 {
-    if ((conn!=kipl::base::conn8) && (conn!=kipl::base::conn4))
+    if ((conn!=kipl::base::eConnectivity::conn8) && (conn!=kipl::base::eConnectivity::conn4))
         throw ImagingException("MorphSpotClean only supports 4- and 8-connectivity",__FILE__,__LINE__);
 
     m_eConnectivity = conn;

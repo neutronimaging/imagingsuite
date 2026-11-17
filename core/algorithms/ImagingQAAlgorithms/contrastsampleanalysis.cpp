@@ -217,7 +217,7 @@ void ContrastSampleAnalysis::findCenters()
 
     kipl::profile::Timer timer;
     timer.Tic();
-    kipl::morphology::hMax(chm,peaks,threshold, kipl::base::conn4);
+    kipl::morphology::hMax(chm,peaks,threshold, kipl::base::eConnectivity::conn4);
     timer.Toc();
     msg.str(""); msg<<"hMax timing: "<<timer;
 

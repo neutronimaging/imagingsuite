@@ -418,7 +418,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
 
     try {
-        maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+        maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::eConnectivity::conn4); // from morphextrema
     }
     catch (const ImagingException &ex) {
         logger(kipl::logging::Logger::LogError,ex.what());
@@ -433,7 +433,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
      vector< pair< size_t, size_t > > area;
      try {
-         num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
+         num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::eConnectivity::conn4, bg);
 //         kipl::io::WriteTIFF(labelImage, "labelImage.tif");
          std::ostringstream msg;
          msg << "number of objects: " << num_obj;
@@ -1001,10 +1001,10 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     }
 
     kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
-    maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+    maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::eConnectivity::conn4); // from morphextrema
 
     float bg = 1.0f;
-    int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::base::conn4, bg);
+    int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::base::eConnectivity::conn4, bg);
 
     vector< pair< size_t, size_t > > area;
     kipl::morphology::LabelArea(labelImage, num_obj, area);
@@ -2738,7 +2738,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
 
     msg<<"Correcting "<<negPixelList.size()<<" pixels with negative values using repairHoles.";
     logger.message(msg.str());
-    kipl::morphology::RepairHoles(img,negPixelList,kipl::base::conn8);
+    kipl::morphology::RepairHoles(img,negPixelList,kipl::base::eConnectivity::conn8);
 
 
     return 1;

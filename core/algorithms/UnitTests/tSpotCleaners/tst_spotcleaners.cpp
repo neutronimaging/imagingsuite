@@ -116,13 +116,13 @@ void TestSpotCleaners::MorphSpotClean_Initialization()
 {
     ImagingAlgorithms::MorphSpotClean cleaner;
 
-    QCOMPARE(cleaner.connectivity(),kipl::base::conn8);
-    cleaner.setConnectivity(kipl::base::conn4);
-    QCOMPARE(cleaner.connectivity(),kipl::base::conn4);
+    QCOMPARE(cleaner.connectivity(),kipl::base::eConnectivity::conn8);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn4);
+    QCOMPARE(cleaner.connectivity(),kipl::base::eConnectivity::conn4);
     
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn6));
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn18));
-    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::conn26));
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::eConnectivity::conn6));
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::eConnectivity::conn18));
+    QVERIFY_THROWS_EXCEPTION(kipl::base::KiplException, cleaner.setConnectivity(kipl::base::eConnectivity::conn26));
 
     QCOMPARE(cleaner.detectionMethod(),ImagingAlgorithms::eMorphDetectionMethod::Holes);
     QCOMPARE(cleaner.cleanMethod(),ImagingAlgorithms::eMorphCleanMethod::Replace);
@@ -156,7 +156,7 @@ void TestSpotCleaners::MorphSpotClean_CleanHoles()
     img.Clone();
 
     cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::DarkSpots,ImagingAlgorithms::eMorphCleanMethod::Replace);
-    cleaner.setConnectivity(kipl::base::conn8);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.setThresholdByFraction(true);
     cleaner.process(img,0.95f,0.05f);
 
@@ -171,7 +171,7 @@ void TestSpotCleaners::MorphSpotClean_CleanPeaks()
     img.Clone();
 
     cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::BrightSpots, ImagingAlgorithms::eMorphCleanMethod::Replace);
-    cleaner.setConnectivity(kipl::base::conn8);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,0.95f,0.05f);
 
     kipl::io::WriteTIFF(img,"cleanbright.tif",kipl::base::Float32);
@@ -185,7 +185,7 @@ void TestSpotCleaners::MorphSpotClean_CleanBoth()
     img.Clone();
 
     cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Both,ImagingAlgorithms::eMorphCleanMethod::Replace);
-    cleaner.setConnectivity(kipl::base::conn8);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,0.95f,0.05f);
 
     kipl::io::WriteTIFF(img,"cleanall.tif",kipl::base::Float32);
@@ -199,7 +199,7 @@ void TestSpotCleaners::MorphSpotClean_EdgePreparation()
     ImagingAlgorithms::MorphSpotClean cleaner;
 
     cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Both,ImagingAlgorithms::eMorphCleanMethod::Replace);
-    cleaner.setConnectivity(kipl::base::conn8);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,1.0f,0.05f);
 
     kipl::io::WriteTIFF(img,"spotcleaned.tif",kipl::base::Float32);
@@ -247,7 +247,7 @@ void TestSpotCleaners::MorphSpotClean_ListAlgorithm()
     }
 
     cleaner.setCleanMethod(ImagingAlgorithms::eMorphDetectionMethod::Holes,ImagingAlgorithms::eMorphCleanMethod::Fill);
-    cleaner.setConnectivity(kipl::base::conn4);
+    cleaner.setConnectivity(kipl::base::eConnectivity::conn4);
 
     cleaner.process(res,0.04,0.01);
 }

@@ -46,6 +46,7 @@ set(SRC_FILES
 #  pyReferenceImageCorrection.cpp  
 #  pytomocenter.cpp  
   pyCenterEstimation.cpp
+  pyEnums.cpp
   pyBinder.cpp
   utilities.cpp
 
@@ -110,4 +111,4 @@ set_target_properties(${TARGET_NAME}
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION pymuhrec COMPONENT python RUNTIME DESTINATION pymuhrec COMPONENT python)

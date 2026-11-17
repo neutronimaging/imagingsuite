@@ -5,7 +5,7 @@ from conan.tools.files import copy
 import os
 import sys
 import shutil
-from six import StringIO
+from io import StringIO
 
 class MuhrecRecipe(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
@@ -13,7 +13,7 @@ class MuhrecRecipe(ConanFile):
 
     def requirements(self):
         self.requires("zlib/[1.3.1]")
-        self.requires("openblas/[0.3.25]") # Can't update to 0.3.27 because of armadillo
+        self.requires("openblas/[>=0.3.30 <4]")
         self.requires("pybind11/3.0.1")
         #self.requires("pthreads4w/[>2.11.0]")
         self.requires("libxml2/[2.15.0]")
@@ -33,16 +33,23 @@ class MuhrecRecipe(ConanFile):
         self.tool_requires("cmake/[4.1.2]") 
 
     def layout(self):
-        cmake_layout(
-            self,
-            build_folder="../build-imagingsuite",
-            )
+        if "QTPATH" not in os.environ:
+            self.folders.generators = "."
+        else:
+            cmake_layout(
+                self,
+                build_folder="../build-imagingsuite",
+                )
 
     def generate(self):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self, generator="Ninja") #default is None
         tc.generate()
+        # The rest of generate() is only needed for GUI/desktop builds
+        if "QTPATH" not in os.environ:
+            return
+
         ms = VirtualRunEnv(self)
         ms.generate()
         bin_folder = os.path.abspath(os.path.join(self.build_folder, "bin", self.cpp.build.bindir))
@@ -57,7 +64,7 @@ class MuhrecRecipe(ConanFile):
             if len(dep.cpp_info.libdirs)>0:
                 copy(self, "*.so*", dep.cpp_info.libdirs[0], self.lib_folder)
                 copy(self, "*.dylib", dep.cpp_info.libdirs[0], self.lib_folder)
-            
+
         # Copy dynamic libraries from qt
         qtpath = os.environ["QTPATH"]
         Qt_dynamic_library_list = ["Qt6PrintSupport", "Qt6Charts", "Qt6OpenGLWidgets", "Qt6OpenGl", "Qt6Test"]

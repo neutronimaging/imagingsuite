@@ -112,6 +112,12 @@ qt_add_executable(${TARGET_NAME}
     src/tiltwarningdialog.h src/tiltwarningdialog.cpp src/tiltwarningdialog.ui
 )
 
+# Ensure local QtAddons headers are searched before external include paths
+# (e.g. Homebrew) to avoid picking an unrelated plotter.h.
+target_include_directories(${TARGET_NAME} BEFORE PRIVATE
+    ${CMAKE_SOURCE_DIR}/GUI/qt/QtAddons
+)
+
 if (WIN32)
 
     target_link_libraries(${TARGET_NAME} PRIVATE

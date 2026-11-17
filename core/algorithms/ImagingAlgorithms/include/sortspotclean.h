@@ -31,19 +31,35 @@ enum class eSortSpotQuantile {
     Both        = 3
 };
 
+enum class eSortSpotThresholdMethod {
+    ConfidenceInterval = 0,
+    Absolute           = 1
+};
+
 class IMAGINGALGORITHMSSHARED_EXPORT SortSpotClean {
     kipl::logging::Logger m_logger;
 public:
     SortSpotClean(bool processPatches=false, size_t patchSize=32, bool useThreads=false, kipl::interactors::InteractionBase *interactor=nullptr);
     ~SortSpotClean();
 
-    void process(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
-    void process(kipl::base::TImage<float,3>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
+    void process(kipl::base::TImage<float,2>& image, 
+        float quantile, 
+        float threshold, 
+        eSortSpotQuantile method=eSortSpotQuantile::Both,
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
+
+    void process(kipl::base::TImage<float,3>& image, 
+        float quantile, 
+        float threshold, 
+        eSortSpotQuantile method=eSortSpotQuantile::Both,
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
     
     kipl::base::TImage<float,2> getSpotMask() const { return m_mask; }
     kipl::base::TImage<float,2> getDifferenceImage() const { return m_diff; }  
 
-    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
+    void setConnectivity(kipl::base::eConnectivity conn = kipl::base::eConnectivity::conn8);
     kipl::base::eConnectivity connectivity();
         
     void setLimits(bool bClamp, float fMin, float fMax);
@@ -56,11 +72,36 @@ public:
     bool isThreaded();
     int  numberOfThreads();
 private:
-    void process2D_single(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
-    void process2D_parallel(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
-    void findAndCleanSpots(kipl::base::TImage<float,2>& image, float threshold, float quantile, eSortSpotQuantile method=eSortSpotQuantile::Both);
-    std::vector<size_t> findSpots(kipl::base::TImage<float,2>& image, float quantile, float threshold, eSortSpotQuantile method=eSortSpotQuantile::Both);
+    void process2D_single(kipl::base::TImage<float,2>& image, 
+        float quantile, 
+        float threshold, 
+        eSortSpotQuantile method=eSortSpotQuantile::Both,
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
+
+    void process2D_parallel(kipl::base::TImage<float,2>& image, 
+        float quantile, 
+        float threshold, 
+        eSortSpotQuantile method=eSortSpotQuantile::Both,
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
+
+    void findAndCleanSpots(kipl::base::TImage<float,2>& image, 
+        float threshold, 
+        float quantile, 
+        eSortSpotQuantile method=eSortSpotQuantile::Both,
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval,
+        kipl::base::eConnectivity dilation=kipl::base::eConnectivity::none);
+
+
+    std::vector<size_t> findSpots(kipl::base::TImage<float,2>& image, 
+        float quantile, 
+        float threshold, 
+        eSortSpotQuantile method=eSortSpotQuantile::Both,
+        eSortSpotThresholdMethod thresholdMethod=eSortSpotThresholdMethod::ConfidenceInterval);
+        
     kipl::base::TImage<float,2> createSpotMask(kipl::base::TImage<float,2>& image, const std::vector<size_t>& spotPositions);
+    bool updateStatus(float val, std::string msg);
 
     bool   m_bUseThreading;
     int    m_nNumberOfThreads;
@@ -86,4 +127,8 @@ void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string &str,ImagingAl
 
 std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &os, const ImagingAlgorithms::eSortSpotQuantile &esq);
 
+std::string IMAGINGALGORITHMSSHARED_EXPORT enum2string(ImagingAlgorithms::eSortSpotThresholdMethod estm);
+void IMAGINGALGORITHMSSHARED_EXPORT string2enum(const std::string &str,ImagingAlgorithms::eSortSpotThresholdMethod &estm);
+
+std::ostream IMAGINGALGORITHMSSHARED_EXPORT & operator<<(std::ostream &os, const ImagingAlgorithms::eSortSpotThresholdMethod &estm);
 #endif  // IMGALG_SORTSPOTCLEAN_H_
