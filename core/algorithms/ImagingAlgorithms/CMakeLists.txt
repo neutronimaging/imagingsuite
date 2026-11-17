@@ -36,6 +36,7 @@ set(INC_FILES
   include/ReplaceUnderexposed.h
   include/tomocenter.h
   include/normalizeimage.h
+  include/sortspotclean.h
 )
 
 set(SRC_FILES
@@ -54,6 +55,7 @@ set(SRC_FILES
   src/ReplaceUnderexposed.cpp
   src/tomocenter.cpp  
   src/normalizeimage.cpp
+  src/sortspotclean.cpp
 )
 
 
@@ -100,3 +102,4 @@ if (UNIX AND NOT APPLE)
 endif()
 
 install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION pymuhrec COMPONENT python RUNTIME DESTINATION pymuhrec COMPONENT python)

@@ -51,7 +51,7 @@ ReferenceImageCorrection::ReferenceImageCorrection(kipl::interactors::Interactio
     bExtSingleFile(true),
     fdose_ext_slice(0.0f),
     m_MaskMethod(ImagingAlgorithms::ReferenceImageCorrection::otsuMask),
-    m_AverageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    m_AverageMethod(ImagingAlgorithms::eAverageImageMethod::WeightedAverage),
     m_IntMeth_x(SecondOrder_x),
     m_IntMeth_y(SecondOrder_y),
     m_nDoseROI(4,0UL),
@@ -418,7 +418,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
     kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
 
     try {
-        maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+        maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::eConnectivity::conn4); // from morphextrema
     }
     catch (const ImagingException &ex) {
         logger(kipl::logging::Logger::LogError,ex.what());
@@ -433,7 +433,7 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float, 2> &im
 
      vector< pair< size_t, size_t > > area;
      try {
-         num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::conn4, bg);
+         num_obj = kipl::morphology::LabelImage(maskOtsuFilled,labelImage, kipl::base::eConnectivity::conn4, bg);
 //         kipl::io::WriteTIFF(labelImage, "labelImage.tif");
          std::ostringstream msg;
          msg << "number of objects: " << num_obj;
@@ -1001,10 +1001,10 @@ void ReferenceImageCorrection::SegmentBlackBody(kipl::base::TImage<float,2> &nor
     }
 
     kipl::base::TImage<float,2> maskOtsuFilled(mask.dims());
-    maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::conn4); // from morphextrema
+    maskOtsuFilled = kipl::morphology::FillPeaks(maskOtsu,kipl::base::eConnectivity::conn4); // from morphextrema
 
     float bg = 1.0f;
-    int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::base::conn4, bg);
+    int num_obj = kipl::morphology::LabelImage(maskOtsu,labelImage, kipl::base::eConnectivity::conn4, bg);
 
     vector< pair< size_t, size_t > > area;
     kipl::morphology::LabelArea(labelImage, num_obj, area);
@@ -2569,7 +2569,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
     float *pFlat=m_OpenBeam.GetDataPtr();
     float *pDark=m_DarkCurrent.GetDataPtr();
 
-    std::list<size_t> negPixelList;
+    std::vector<size_t> negPixelList;
 
     if (m_bHaveBlackBody) {
         if (m_bHaveDarkCurrent) {
@@ -2738,7 +2738,7 @@ int ReferenceImageCorrection:: ComputeLogNorm(kipl::base::TImage<float,2> &img, 
 
     msg<<"Correcting "<<negPixelList.size()<<" pixels with negative values using repairHoles.";
     logger.message(msg.str());
-    kipl::morphology::RepairHoles(img,negPixelList,kipl::base::conn8);
+    kipl::morphology::RepairHoles(img,negPixelList,kipl::base::eConnectivity::conn8);
 
 
     return 1;

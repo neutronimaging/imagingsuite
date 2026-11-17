@@ -13,18 +13,22 @@ void bindNormalizeImage(py::module &m);
 void bindAverageImage(py::module &m);
 void bindPolynomialCorrection(py::module &m);
 void bindMorphSpotClean(py::module &m);
+void bindSortSpotClean(py::module &m);
 void bindStripeFilter(py::module &m);
 void bindPixelInfo(py::module &m);
 void bindException(py::module &m);
 void bindProjectionFilter(py::module &m);
 void bindCenterEstimator(py::module &m);
 void bindTPSInterpolator(py::module &m);
+void bindEnums(py::module &m);
 
 PYBIND11_MODULE(imgalg,m)
 {
+    bindEnums(m);
     bindAverageImage(m);
     bindPolynomialCorrection(m);
     bindMorphSpotClean(m);
+    bindSortSpotClean(m);
     bindStripeFilter(m);
     bindProjectionFilter(m);
     bindNormalizeImage(m);

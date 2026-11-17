@@ -1,7 +1,7 @@
 
 
 set(TARGET_NAME "tImagingAlgorithms")
-project(tLogging LANGUAGES CXX)
+project(tImagingAlgorithms LANGUAGES CXX)
 
 enable_testing()
 
@@ -22,10 +22,10 @@ include_directories(
     ../../ImagingAlgorithms/include
 )
 
-set(SRC_FILES,
+set(SRC_FILES
 tst_testImagingAlgorithms.cpp)
 
-add_executable(${TARGET_NAME} tst_testImagingAlgorithms.cpp)
+add_executable(${TARGET_NAME} ${SRC_FILES})
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE

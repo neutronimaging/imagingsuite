@@ -35,7 +35,13 @@ void QtLogViewer::on_buttonSave_clicked()
     if (filename.isEmpty()==false)
     {
         QFile f( filename );
-        f.open( QIODevice::WriteOnly | QIODevice::Text);
+
+        if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qWarning() << "qtlogviewer: failed to open log file" << filename << ":" << f.errorString();
+    
+            return; // or handle the error appropriately
+        }
+
         QTextStream out(&f);
         out<<serialize();
         f.close();

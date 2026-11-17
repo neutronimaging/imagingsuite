@@ -31,7 +31,7 @@ private:
     Ui::FullLogNormDlg *ui;
     bool m_bUseDose;
     bool m_bUseLUT;
-    ImagingAlgorithms::AverageImage::eAverageMethod m_eAverageMethod;
+    ImagingAlgorithms::eAverageImageMethod m_eAverageMethod;
 
 };
 
