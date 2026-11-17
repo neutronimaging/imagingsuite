@@ -28,7 +28,7 @@ NormBase::NormBase(std::string name) :
     nDCFirstIndex(1),
     nBBCount(0),
     nBBFirstIndex(1),
-    m_ReferenceAvagerage(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    m_ReferenceAvagerage(ImagingAlgorithms::eAverageImageMethod::WeightedAverage),
     fFlatDose(1.0f),
     fBlackDose(1.0f),
     bUseNormROI(true),
@@ -97,7 +97,7 @@ int NormBase::Configure(ReconConfig config, std::map<std::string, std::string> p
     }
     catch (...) {
         logger(logger.LogWarning,"referenceaverage not found, using image average.");
-        m_ReferenceAvagerage = ImagingAlgorithms::AverageImage::ImageAverage;
+        m_ReferenceAvagerage = ImagingAlgorithms::eAverageImageMethod::Average;
     }
 
     nOriginalNormRegion = config.ProjectionInfo.dose_roi;
@@ -332,11 +332,9 @@ void FullLogNorm::SetReferenceImages(kipl::base::TImage<float,2> dark, kipl::bas
 	
     float dose=1.0f/(fFlatDose);
 
-	if (dose!=dose)
-		throw ReconException("The reference dose is a NaN",__FILE__,__LINE__);
+	if (dose!=dose) throw ReconException("The reference dose is a NaN",__FILE__,__LINE__);
 
-    if (isinf(dose)==true)
-        throw ReconException("The reference dose is Inf",__FILE__,__LINE__);
+    if (isinf(dose)==true) throw ReconException("The reference dose is Inf",__FILE__,__LINE__);
 
 	const int N=static_cast<int>(flat.Size());
 	float *pFlat=flat.GetDataPtr();

@@ -76,31 +76,31 @@ void Plotter::zoomIn()
     }
 }
 
-void Plotter::setCurveData(int id, const QVector<QPointF> &data, QColor color, ePlotGlyph pg)
+void Plotter::setCurveData(int id, const QVector<QPointF> &datapoints, QColor color, ePlotGlyph pg)
 {
-    curveMap[id] = PlotData(data,color,pg);
+    curveMap[id] = PlotData(datapoints,color,pg);
     refreshBounds();
     refreshPixmap();
 }
 
 void Plotter::setCurveData(int id, const float *const x,const float *const y, const int N,QColor color, ePlotGlyph pg)
 {
-    QVector<QPointF> data;
+    QVector<QPointF> datapoints;
 
     for (int i=0; i<N; i++)
-        data.append(QPointF(x[i],y[i]));
+        datapoints.append(QPointF(x[i],y[i]));
 
-    setCurveData(id,data,color,pg);
+    setCurveData(id,datapoints,color,pg);
 }
 
 void Plotter::setCurveData(int id, const float *const x, const size_t *const y, const int N, QColor color, ePlotGlyph pg)
 {
-    QVector<QPointF> data;
+    QVector<QPointF> datapoints;
 
     for (int i=0; i<N; i++)
-        data.append(QPointF(x[i],static_cast<float>(y[i])));
+        datapoints.append(QPointF(x[i],static_cast<float>(y[i])));
 
-    setCurveData(id,data,color,pg);
+    setCurveData(id,datapoints,color,pg);
 }
 
 void Plotter::refreshBounds()
@@ -325,7 +325,7 @@ void Plotter::savePlotData()
     if (curveMap.isEmpty()==false) {
         for (auto id: curveMap.keys()) {
             namemaker.str("");
-            PlotData data=curveMap.value(id);
+            PlotData datapoints=curveMap.value(id);
             if (ext.empty()==true)
                 extstr=".csv";
             else {
@@ -338,7 +338,7 @@ void Plotter::savePlotData()
 
             std::ofstream plotfile(namemaker.str().c_str());
 
-            for (auto d :data.m_data) {
+            for (auto d :datapoints.m_data) {
                 plotfile<<d.x()<<", "<<d.y()<<std::endl;
             }
 
@@ -446,16 +446,16 @@ void Plotter::drawCurves(QPainter *painter)
         i.next();
 
         //int id = i.key();
-        QVector<QPointF> data = i.value().m_data;
+        QVector<QPointF> datapoints = i.value().m_data;
 
-        QPolygonF polyline(data.count());
+        QPolygonF polyline(datapoints.count());
         painter->setPen(i.value().color);
         int nGlyphSize = static_cast<int>(this->font().pointSize()*0.75);
 
-        if ((i.value().glyph==QtAddons::PlotGlyph_None) || (rect.width() < 1.05 * data.count()*nGlyphSize)) {
-            for (int j = 0; j < data.count(); ++j) {
-                double dx = data[j].x() - settings.minX;
-                double dy = data[j].y() - settings.minY;
+        if ((i.value().glyph==QtAddons::PlotGlyph_None) || (rect.width() < 1.05 * datapoints.count()*nGlyphSize)) {
+            for (int j = 0; j < datapoints.count(); ++j) {
+                double dx = datapoints[j].x() - settings.minX;
+                double dy = datapoints[j].y() - settings.minY;
                 double x = rect.left() + (dx * (rect.width() - 1)
                                              / settings.spanX());
                 double y = rect.bottom() - (dy * (rect.height() - 1)
@@ -466,9 +466,9 @@ void Plotter::drawCurves(QPainter *painter)
         else {
             QGlyphBase *pGlyph=BuildGlyph(i.value().glyph,nGlyphSize);
 
-            for (int j = 0; j < data.count(); ++j) {
-                double dx = data[j].x() - settings.minX;
-                double dy = data[j].y() - settings.minY;
+            for (int j = 0; j < datapoints.count(); ++j) {
+                double dx = datapoints[j].x() - settings.minX;
+                double dy = datapoints[j].y() - settings.minY;
                 double x = rect.left() + (dx * (rect.width() - 1)
                                              / settings.spanX());
                 double y = rect.bottom() - (dy * (rect.height() - 1)

@@ -201,7 +201,7 @@ protected:
 
     ImagingAlgorithms::ReferenceImageCorrection::eMaskCreationMethod m_MaskMethod;
     kipl::base::TImage<float,2> m_MaskImage;
-    ImagingAlgorithms::AverageImage::eAverageMethod m_AverageMethod; /// method used for image averaging (options: sum, mean, max, weightedmean, median and average)
+    ImagingAlgorithms::eAverageImageMethod m_AverageMethod; /// method used for image averaging (options: sum, mean, max, weightedmean, median and average)
 
     eInterpOrderX m_IntMeth_x;
     eInterpOrderY m_IntMeth_y;

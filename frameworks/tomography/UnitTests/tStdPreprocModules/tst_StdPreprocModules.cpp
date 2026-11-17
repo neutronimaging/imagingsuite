@@ -38,7 +38,7 @@ void TStdPreprocModulesTest::testGetModuleList()
     GetModuleList("muhrec", reinterpret_cast<void *>(&modulelist));
     qDebug() << modulelist.size();
 
-    QCOMPARE(modulelist.size(),21UL);
+    QCOMPARE(modulelist.size(),22UL);
 }
 
 void TStdPreprocModulesTest::testFullLogNorm()

@@ -22,6 +22,7 @@ public:
 	virtual std::map<std::string, std::string> GetParameters();
     virtual bool SetROI(const std::vector<size_t> &roi);
 protected:
+    using PreprocModuleBase::Configure;
     eGeneralFilter filterType;
     float filterSize;
 	virtual int ProcessCore(kipl::base::TImage<float,2> & img, std::map<std::string, std::string> & coeff);

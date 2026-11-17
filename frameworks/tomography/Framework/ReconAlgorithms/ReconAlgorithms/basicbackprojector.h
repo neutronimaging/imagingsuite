@@ -7,6 +7,8 @@
 class RECONALGORITHMSSHARED_EXPORT BasicBackProjector: public BackProjectorBase
 {
 public:
+    using BackProjectorBase::backproject;
+    
     BasicBackProjector();
     ~BasicBackProjector();
 

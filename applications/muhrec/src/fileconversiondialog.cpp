@@ -166,8 +166,8 @@ void FileConversionDialog::on_pushButton_StartConversion_clicked()
     msg<<"The input data has ext="<<ext1<<", and will be saved as ext="<<ext2;
     logger(logger.LogDebug,msg.str());
 
-    auto progress_thread = std::thread([=]{ Progress(); });
-    auto process_thread  = std::thread([=]{ Process(ext1==ext2); });
+    auto progress_thread = std::thread([=,this]{ Progress(); });
+    auto process_thread  = std::thread([=,this]{ Process(ext1==ext2); });
 
     process_thread.join();
     progress_thread.join();
@@ -285,7 +285,7 @@ int FileConversionDialog::ConvertImages()
     {
         spotclean = new ImagingAlgorithms::MorphSpotClean;
         spotclean->setCleanMethod(static_cast<ImagingAlgorithms::eMorphDetectionMethod>(ui->comboBox_spotcleanmethod->currentIndex()),
-                                  ImagingAlgorithms::MorphCleanReplace);
+                                  ImagingAlgorithms::eMorphCleanMethod::Fill);
         spotclean->setDetectionStrelSize(5);
         spotclean->setThresholdByFraction(true);
         spotclean->useThreading(true);
@@ -303,7 +303,6 @@ int FileConversionDialog::ConvertImages()
                 for (int i=0; (i<nCombine) && (it!=flist.end()); ++i)
                 {
                     img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,crop);
-//                    img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1.0f);
                     if (spotclean!=nullptr)
                     {
                         spotclean->process(img,ui->doubleSpinBox_spotclean_threshold->value(),0.01);
@@ -312,12 +311,11 @@ int FileConversionDialog::ConvertImages()
                    ++it;
                 }
 
-                img=avgimg(img3d,static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboAverageMethod->currentIndex()));
+                img=avgimg(img3d,static_cast<ImagingAlgorithms::eAverageImageMethod>(ui->comboAverageMethod->currentIndex()));
             }
             else
             {
                 img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1,crop);
-//                img=imgreader.Read(*it,kipl::base::ImageFlipNone,kipl::base::ImageRotateNone,1);
                 if (spotclean!=nullptr)
                 {
                     spotclean->process(img,ui->doubleSpinBox_spotclean_threshold->value(),0.01);

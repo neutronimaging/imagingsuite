@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <algorithm>
+#include <cmath>
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -63,6 +65,8 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
     m_nCurrentPage(0),
     m_nRequiredMemory(0),
     m_sApplicationPath(app->applicationDirPath().toStdString()),
+    m_sPreprocessorsPath(""),
+    m_sBackProjectorsPath(""),
     m_sHomePath(QDir::homePath().toStdString()),
     m_sConfigFilename("noname.xml"),
     m_sPreviewMask(""),
@@ -93,45 +97,36 @@ MuhRecMainWindow::MuhRecMainWindow(QApplication *app, QWidget *parent) :
         dir.mkdir(QString::fromStdString(m_sConfigPath));
     }
 
-    msg.str("");
-    msg<<"ApplicationPath = "<<m_sApplicationPath<<std::endl
-      <<"HomePath         = "<<m_sHomePath<<std::endl
-      <<"ConfigPath       = "<<m_sConfigPath<<std::endl;
-    logger.message(msg.str());
-
-
     ui->projectionViewer->hold_annotations(true);
 
     // Setup default module libs in the config
-    std::string defaultmodules;
-#ifdef Q_OS_WIN
-        defaultmodules=m_sApplicationPath+"\\StdBackProjectors.dll";
-#else
-    #ifdef Q_OS_MAC
-        defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.dylib";
-    #else
-        //defaultmodules = m_sApplicationPath+"../Frameworks/libStdBackProjectors.so";
-	defaultmodules = m_sApplicationPath + "../lib/libStdBackProjectors.so";
-    #endif
-#endif
-    ui->ConfiguratorBackProj->Configure("muhrecbp",defaultmodules,m_sApplicationPath);
+    std::string defaultpreprocessors;
+    std::string defaultprojectors;
 
-#ifdef Q_OS_WIN
-        defaultmodules=m_sApplicationPath+"\\StdPreprocModules.dll";
-#else
-    #ifdef Q_OS_MAC
-        defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.dylib";
-    #else
-        //defaultmodules = m_sApplicationPath+"../Frameworks/libStdPreprocModules.so";
-	defaultmodules = m_sApplicationPath+"../lib/libstdPreprocModules.so";
-    #endif
-#endif
+    ModuleLibNameManager mlnm(m_sApplicationPath,false,"Preprocessors");
+    m_sPreprocessorsPath = mlnm.generateLibPath();
+    defaultpreprocessors = mlnm.generateLibName("StdPreprocModules");
+    kipl::strings::filenames::CheckPathSlashes(m_sPreprocessorsPath,true);
+    kipl::strings::filenames::CheckPathSlashes(defaultpreprocessors,false);
 
-    ui->moduleconfigurator->configure("muhrec",m_sApplicationPath,&m_ModuleConfigurator);
-    ui->moduleconfigurator->SetDefaultModuleSource(defaultmodules);
-    ui->moduleconfigurator->SetApplicationObject(this);
+    ModuleLibNameManager mlnm2(m_sApplicationPath,false,"BackProjectors");
+    m_sBackProjectorsPath = mlnm2.generateLibPath();
+    defaultprojectors = mlnm2.generateLibName("StdBackProjectors");
+    kipl::strings::filenames::CheckPathSlashes(m_sBackProjectorsPath,true);
+    kipl::strings::filenames::CheckPathSlashes(defaultprojectors,false);
 
+    msg.str("");
+    msg<<"ApplicationPath   = "<<m_sApplicationPath<<std::endl
+      <<"PreprocessorsPath  = "<<m_sPreprocessorsPath<<std::endl
+      <<"BackProjectorsPath = "<<m_sBackProjectorsPath<<std::endl
+      <<"HomePath           = "<<m_sHomePath<<std::endl
+      <<"ConfigPath         = "<<m_sConfigPath<<std::endl;
+    logger.message(msg.str());
 
+    ui->ConfiguratorBackProj->Configure("muhrecbp", defaultprojectors,  "BackProjectors", m_sApplicationPath);
+    ui->moduleconfigurator  ->configure("muhrec",   m_sApplicationPath, "Modules", "Preprocessors", &m_ModuleConfigurator);
+    ui->moduleconfigurator  ->SetDefaultModuleSource(defaultpreprocessors);
+    ui->moduleconfigurator  ->SetApplicationObject(this);
 
     m_oldROI = {0,0,1,1};
 
@@ -643,10 +638,6 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
     std::string defaultsname=m_sHomePath+".imagingtools/CurrentRecon.xml";
     kipl::strings::filenames::CheckPathSlashes(defaultsname,false);
 
-
-    std::string sModulePath=m_sApplicationPath;
-    kipl::strings::filenames::CheckPathSlashes(sModulePath,true);
-
     msg.str("");
     msg<<"default name is "<<defaultsname<<" it "<<(dir.exists(QString::fromStdString(defaultsname))==true ? "exists" : "doesn't exist")<<" and should "<< (checkCurrent ? " " : "not ")<<"be used";
     logger.message(msg.str());
@@ -656,18 +647,12 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         bUseDefaults=false;
     }
     else {
-#ifdef Q_OS_DARWIN
+#if defined(Q_OS_DARWIN)
         defaultsname=m_sApplicationPath+"../Resources/defaults_mac.xml";
-        sModulePath+="..";
-#endif
-
-#ifdef Q_OS_WIN
-         defaultsname=m_sApplicationPath+"resources/defaults_windows.xml";
-#endif
-
-#ifdef Q_OS_LINUX
+#elif defined(Q_OS_WIN)
+        defaultsname=m_sApplicationPath+"resources/defaults_windows.xml";
+#elif defined(Q_OS_LINUX)
         defaultsname=m_sApplicationPath+"../resources/defaults_linux.xml";
-        sModulePath+="..";
 #endif
         bUseDefaults=true;
     }
@@ -683,7 +668,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         m_Config.setAppPath(m_sApplicationPath);
         m_Config.LoadConfigFile(defaultsname.c_str(),"reconstructor");
         msg.str("");
-        msg<<m_Config.WriteXML();
+        msg<<"Loaded config:\n"<<m_Config.WriteXML();
         logger(logger.LogMessage,msg.str());
     }
     catch (ReconException &e)
@@ -711,26 +696,21 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         m_Config.ProjectionInfo.sReferencePath     = m_sHomePath;
         m_Config.MatrixInfo.sDestinationPath       = m_sHomePath;
 
-        std::string sSearchStr = "@executable_path";
+        std::string sSearchStr = m_sApplicationPath;
 
         // Replace template path by module path for pre processing
-        size_t pos=0;
+        // size_t pos=0;
 
-        logger(logger.LogMessage,"Updating path of preprocessing modules");
+        logger.message("Updating path of preprocessing modules");
         for (auto &module : m_Config.modules)
         {
-            pos=module.m_sSharedObject.find(sSearchStr);
-
-            if (pos!=std::string::npos)
-                module.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
+            module.setAppPath(m_sApplicationPath,"Preprocessors");
 
             logger.message(module.m_sSharedObject);
         }
 
-        logger(logger.LogMessage,"Updating path of back projector");
-        pos=m_Config.backprojector.m_sSharedObject.find(sSearchStr);
-        if (pos!=std::string::npos)
-            m_Config.backprojector.m_sSharedObject.replace(pos,sSearchStr.size(),sModulePath);
+        logger.message("Updating path of back projector");
+        m_Config.backprojector.setAppPath(m_sApplicationPath,"BackProjectors");
 
         logger.message(m_Config.backprojector.m_sSharedObject);
 
@@ -747,6 +727,7 @@ void MuhRecMainWindow::LoadDefaults(bool checkCurrent)
         ui->widgetMatrixROI->setChecked(m_Config.MatrixInfo.bUseROI);
     }
 
+    kipl::logging::Logger::SetLogLevel(m_Config.System.eLogLevel);
     // m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.begin(),m_Config.ProjectionInfo.projection_roi.end());
 
     m_oldROI = std::vector<int>(m_Config.ProjectionInfo.projection_roi.size());
@@ -1544,10 +1525,10 @@ void MuhRecMainWindow::UpdateConfig()
     m_Config.ProjectionInfo.sPath="";
     m_Config.ProjectionInfo.sReferencePath="";
 
-    m_Config.ProjectionInfo.sFileMask = ui->editProjectionMask->text().toStdString();
+    m_Config.ProjectionInfo.sFileMask   = ui->editProjectionMask->text().toStdString();
     kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sFileMask,false);
     m_Config.ProjectionInfo.nFirstIndex = ui->spinFirstProjection->value();
-    m_Config.ProjectionInfo.nLastIndex = ui->spinLastProjection->value();
+    m_Config.ProjectionInfo.nLastIndex  = ui->spinLastProjection->value();
     if (m_Config.ProjectionInfo.nLastIndex<m_Config.ProjectionInfo.nFirstIndex)
     {
         qDebug()<<"Update config: Last<First projection";
@@ -1558,11 +1539,11 @@ void MuhRecMainWindow::UpdateConfig()
     }
     m_Config.ProjectionInfo.nProjectionStep = ui->spinProjectionStep->value();
     m_Config.ProjectionInfo.nRepeatedView   = ui->spinBox_projPerView->value();
-    m_Config.ProjectionInfo.averageMethod   = static_cast<ImagingAlgorithms::AverageImage::eAverageMethod>(ui->comboBox_projectionCominationMethod->currentIndex());
-    m_Config.ProjectionInfo.imagetype = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
-    m_Config.ProjectionInfo.fBinning = ui->spinProjectionBinning->value();
-    m_Config.ProjectionInfo.eFlip = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
-    m_Config.ProjectionInfo.eRotate = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
+    m_Config.ProjectionInfo.averageMethod   = static_cast<ImagingAlgorithms::eAverageImageMethod>(ui->comboBox_projectionCominationMethod->currentIndex());
+    m_Config.ProjectionInfo.imagetype       = static_cast<ReconConfig::cProjections::eImageType>(ui->comboProjectionStyle->currentIndex());
+    m_Config.ProjectionInfo.fBinning        = ui->spinProjectionBinning->value();
+    m_Config.ProjectionInfo.eFlip           = static_cast<kipl::base::eImageFlip>(ui->comboFlipProjection->currentIndex());
+    m_Config.ProjectionInfo.eRotate         = static_cast<kipl::base::eImageRotate>(ui->comboRotateProjection->currentIndex());
 
 //    m_Config.ProjectionInfo.sReferencePath = ui->editReferencePath->text().toStdString();
 //    kipl::strings::filenames::CheckPathSlashes(m_Config.ProjectionInfo.sReferencePath,true);
@@ -1587,6 +1568,10 @@ void MuhRecMainWindow::UpdateConfig()
     
 
     ui->widgetDoseROI->getROI(m_Config.ProjectionInfo.dose_roi);
+    logger.message("Config dose ROI: ["+std::to_string(m_Config.ProjectionInfo.dose_roi[0])+","
+                    +std::to_string(m_Config.ProjectionInfo.dose_roi[1])+","
+                    +std::to_string(m_Config.ProjectionInfo.dose_roi[2])+","
+                    +std::to_string(m_Config.ProjectionInfo.dose_roi[3])+"]");
     ui->widgetProjectionROI->getROI(m_Config.ProjectionInfo.projection_roi);
 
     m_Config.ProjectionInfo.roi[0]             = m_Config.ProjectionInfo.projection_roi[0];
@@ -2469,9 +2454,35 @@ void MuhRecMainWindow::on_dspinRotationCenter_valueChanged(double arg1)
     CenterOfRotationChanged();
 }
 
-void MuhRecMainWindow::on_dspinTiltAngle_valueChanged(double arg1)
+void MuhRecMainWindow::on_dspinTiltAngle_valueChanged(double tiltangle)
 {
-    (void) arg1;
+    if (ui->checkCorrectTilt->checkState()==Qt::Checked)
+    {
+        double tantilt=tan(tiltangle*3.1415/180.0);
+
+        double d_left = ui->dspinRotationCenter->value() - m_Config.ProjectionInfo.projection_roi[0];
+        double d_right = m_Config.ProjectionInfo.projection_roi[2] - ui->dspinRotationCenter->value();
+
+        double xtalk = std::fabs((std::min)(d_left, d_right) * tantilt);
+
+        if (5<xtalk) 
+        {
+            QMessageBox dlg;
+            dlg.setWindowTitle("Tilt correction warning");
+            dlg.setTextFormat(Qt::RichText);
+            dlg.setText("<b>The tilt angle is too high.</b>");
+            dlg.setInformativeText("The vertical shift is greater than 5 pixels at the perimeter. "
+                        "This leads to blurring and distortion artifacts in the reconstruction. "
+                        "You should rotate the images by the tilt angle before reconstruction. "
+                        "<br/><br>See the <a href='https://github.com/neutronimaging/imagingsuite/wiki/User-manuals-MuhRec-Tilt#tilt-correction-in-muhrec'>user manual</a> for more information.<br/>"
+                        );  
+                        
+            dlg.setStandardButtons(QMessageBox::Ok);
+            logger.warning("Tilt angle is too high, vertical shift at perimeter is greater than 5 pixels (" + std::to_string(xtalk) + " pixels).");
+            dlg.exec();
+
+        }
+    }
     CenterOfRotationChanged();
 }
 

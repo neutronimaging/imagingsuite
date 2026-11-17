@@ -14,7 +14,7 @@ namespace kipl {
 namespace morphology {
 
 template <class T>
-void RepairHoles(kipl::base::TImage<T> &img, std::list<size_t> &holelist, kipl::base::eConnectivity connect);
+void RepairHoles(kipl::base::TImage<T> &img, std::vector<size_t> &holelist, kipl::base::eConnectivity connect);
 }
 
 }

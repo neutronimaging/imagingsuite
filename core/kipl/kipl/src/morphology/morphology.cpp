@@ -240,7 +240,8 @@ ptrdiff_t CNeighborhood::neighbor(size_t pos, size_t index)
 ptrdiff_t CNeighborhood::forward2D(size_t pos, size_t index)
 {
 	
-	if ((pos<0) || (nimg<=pos))
+	// if ((pos<0) || (nimg<=pos))
+	if ((nimg<=pos)) // Valid for overflow and underflow
 		return -1;
 		
 	if (cNGpm<index)
@@ -458,7 +459,8 @@ ptrdiff_t CNeighborhood::neighbor2D(size_t pos, size_t index)
 	if ((pos==currentPos) && !isEdge) 
 		return pos+NG[index];	
 
-	if ((pos<0) || (pos>=nimg))
+	// if ((pos<0) || (pos>=nimg))
+	if (pos>=nimg) // Valid for overflow and underflow
 		return -1;
 	if (index>cNG)
 		return -1;
@@ -554,7 +556,8 @@ ptrdiff_t CNeighborhood::neighbor2D(size_t pos, size_t index)
 
 ptrdiff_t CNeighborhood::neighbor3D(size_t pos, size_t index,int cnt,ptrdiff_t *ng, bool *left, bool *right, bool *front, bool *back)
 {
-	if ((static_cast<ptrdiff_t>(index)>=cnt) && (index<0))
+	// if ((static_cast<ptrdiff_t>(index)>=cnt) && (index<0))
+	if ((static_cast<ptrdiff_t>(index)>=cnt)) // Valid for overflow and underflow
 		return -1;
 
 	ptrdiff_t p=pos+ng[index];

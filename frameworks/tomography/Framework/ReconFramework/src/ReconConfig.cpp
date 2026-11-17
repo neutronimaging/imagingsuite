@@ -20,7 +20,7 @@
 
 ReconConfig::ReconConfig(const std::string &appPath) :
     ConfigBase("ReconConfig",appPath),
-    backprojector(appPath)
+    backprojector(appPath,"Backprojectors")
 {
 
 }
@@ -101,7 +101,7 @@ std::string ReconConfig::WriteXML()
 			std::list<ModuleConfig>::iterator it;
 
             for (auto & module : modules) {
-                module.setAppPath(m_sApplicationPath);
+                module.setAppPath(m_sApplicationPath,"Preprocessors");
                 str<<module.WriteXML(indent+8);
 			}
 			str<<std::setw(indent+4)<<" "<<"</preprocessing>\n";
@@ -451,8 +451,7 @@ void ReconConfig::ParseMatrix(xmlTextReaderPtr reader)
 	        
 	        sName=reinterpret_cast<const char *>(name);	                
 	        
-	        if (sName=="dims") 
-	        	kipl::strings::String2Array(sValue,MatrixInfo.nDims,3);
+	        if (sName=="dims")              kipl::strings::String2Array(sValue,MatrixInfo.nDims,3);
 			if (sName=="serialize") 		MatrixInfo.bAutomaticSerialize = kipl::strings::string2bool(sValue);
 	        if (sName=="path") 				MatrixInfo.sDestinationPath    = sValue;
 	        if (sName=="matrixname") 	  	MatrixInfo.sFileMask           = sValue;
@@ -514,7 +513,7 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
         					sValue="Empty";
 						sName=reinterpret_cast<const char *>(name);
 						if (sName=="module") {
-                            ModuleConfig module(m_sApplicationPath);
+                            ModuleConfig module(m_sApplicationPath, "Preprocessors");
                             module.ParseModule(reader);
 							modules.push_back(module);
 						}
@@ -526,7 +525,7 @@ void ReconConfig::ParseProcessChain(xmlTextReaderPtr reader)
 			}
 			if (sName=="backprojector") {
 				logger(kipl::logging::Logger::LogVerbose,"Parsing backproj");
-                backprojector.setAppPath(m_sApplicationPath);
+                backprojector.setAppPath(m_sApplicationPath,"BackProjectors");
                 backprojector.ParseModule(reader);
 			}
 
@@ -660,7 +659,7 @@ ReconConfig::cProjections::cProjections() :
     nLastIndex(625),
     nProjectionStep(1),
     nRepeatedView(1),
-    averageMethod(ImagingAlgorithms::AverageImage::ImageWeightedAverage),
+    averageMethod(ImagingAlgorithms::eAverageImageMethod::WeightedAverage),
     skipListMode(SkipMode_None),
     bRepeatLine(false),
     scantype(SequentialScan),
