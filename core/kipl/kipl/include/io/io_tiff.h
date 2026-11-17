@@ -34,11 +34,11 @@ namespace kipl { namespace io {
 template <class ImgType,size_t N>
 void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
                const std::string &fname,
-               kipl::base::eDataType dt = kipl::base::UInt16,
+               kipl::base::eDataType dt = kipl::base::eDataType::UInt16,
                kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY,
                bool append=false)
 {
-    if ( (dt == kipl::base::UInt4) || (dt == kipl::base::UInt12))
+    if ( (dt == kipl::base::eDataType::UInt4) || (dt == kipl::base::eDataType::UInt12))
         throw kipl::base::KiplException("WriteTIFF doesn't support 4- and 12-bit formats");
 
     TIFF *image;
@@ -107,7 +107,7 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
         TIFFSetField(image, TIFFTAG_IMAGELENGTH,        static_cast<int>(sliceDims[1]));
         TIFFSetField(image, TIFFTAG_BITSPERSAMPLE,      dt);
         TIFFSetField(image, TIFFTAG_SAMPLESPERPIXEL,    1);
-        if ( dt == kipl::base::Float32 )
+        if ( dt == kipl::base::eDataType::Float32 )
             TIFFSetField(image, TIFFTAG_SAMPLEFORMAT,       3); // Floating point
         else
             TIFFSetField(image, TIFFTAG_SAMPLEFORMAT,       1); // UInt
@@ -147,8 +147,8 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
 
         switch (dt)
         {
-            case kipl::base::UInt4 : break;
-            case kipl::base::UInt8 :
+            case kipl::base::eDataType::UInt4 : break;
+            case kipl::base::eDataType::UInt8 :
             {
                 kipl::base::TImage<unsigned char, 2> tmp(sliceDims);
                 std::transform(pSlice, pSlice + sliceSize, tmp.GetDataPtr(), [](auto val) {
@@ -158,8 +158,8 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
                 TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize * sizeof(unsigned char));
                 break;
             }
-            case kipl::base::UInt12 : break;
-            case kipl::base::UInt16 :
+            case kipl::base::eDataType::UInt12 : break;
+            case kipl::base::eDataType::UInt16 :
             {
                 kipl::base::TImage<unsigned short, 2> tmp(sliceDims);
                 std::transform(pSlice, pSlice + sliceSize, tmp.GetDataPtr(), [](auto val) {
@@ -169,7 +169,7 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
                 TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize * sizeof(unsigned short));
                 break;
             }
-            case kipl::base::Float32 :
+            case kipl::base::eDataType::Float32 :
             {
                 kipl::base::TImage<float, 2> tmp(sliceDims);
                 std::transform(pSlice, pSlice + sliceSize, tmp.GetDataPtr(), [](auto val) {
@@ -183,8 +183,8 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
 
         // switch (dt)
         // {
-        //     case kipl::base::UInt4 : break;
-        //     case kipl::base::UInt8 :
+        //     case kipl::base::eDataType::UInt4 : break;
+        //     case kipl::base::eDataType::UInt8 :
         //     {
         //         kipl::base::TImage<unsigned char,2> tmp(sliceDims);
         //         copy_n(pSlice,sliceSize,tmp.GetDataPtr());
@@ -192,8 +192,8 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
         //         TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned char));
         //         break;
         //     }
-        //     case kipl::base::UInt12 : break;
-        //     case kipl::base::UInt16 :
+        //     case kipl::base::eDataType::UInt12 : break;
+        //     case kipl::base::eDataType::UInt16 :
         //     {
         //         kipl::base::TImage<unsigned short,2> tmp(sliceDims);
         //         copy_n(pSlice,sliceSize,tmp.GetDataPtr());
@@ -201,7 +201,7 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
         //         TIFFWriteEncodedStrip(image, 0, tmp.GetDataPtr(), sliceSize*sizeof(unsigned short));
         //         break;
         //     }
-        //     case kipl::base::Float32 :
+        //     case kipl::base::eDataType::Float32 :
         //     {
         //         kipl::base::TImage<float,2> tmp(sliceDims);
         //         copy_n(pSlice,sliceSize,tmp.GetDataPtr());
@@ -225,6 +225,11 @@ void WriteTIFF(const kipl::base::TImage<ImgType,N> & src,
 /// \param dims array with the dimensions
 int KIPLSHARED_EXPORT GetTIFFDims(const std::string & fname, size_t *dims);
 std::vector<size_t> KIPLSHARED_EXPORT GetTIFFDims(const std::string & fname);
+
+/// @brief Gets the data type of a tiff image without reading the image
+/// @param fname The file name of the tiff image
+/// @return The data type of the tiff image
+kipl::base::eDataType KIPLSHARED_EXPORT GetTIFFDataType(std::string fname);
 
 /// \brief Parses a string to find slope and offset.
 ///
@@ -254,8 +259,8 @@ template <class ImgType,size_t N>
 void WriteTIFF(kipl::base::TImage<ImgType,N> src,
                const std::string &fname,
                ImgType lo, ImgType hi,
-               kipl::base::eDataType dt = kipl::base::UInt16,
-               kipl::base::eImagePlanes plane=kipl::base::ImagePlaneXY,
+               kipl::base::eDataType dt = kipl::base::eDataType::UInt16,
+               kipl::base::eImagePlanes plane=kipl::base::eImagePlanes::ImagePlaneXY,
                bool append=false)
 {
     std::stringstream msg;
@@ -263,8 +268,8 @@ void WriteTIFF(kipl::base::TImage<ImgType,N> src,
     {
         switch (dt)
         {
-        case kipl::base::UInt4 : break;
-        case kipl::base::UInt8 :
+        case kipl::base::eDataType::UInt4 : break;
+        case kipl::base::eDataType::UInt8 :
         {
             kipl::base::TImage<unsigned char,N> img;
             img=kipl::base::ImageCaster<unsigned char, ImgType, N>::cast(src,lo,hi);
@@ -276,11 +281,11 @@ void WriteTIFF(kipl::base::TImage<ImgType,N> src,
                 src.info.sDescription=msg.str();
             }
 
-            WriteTIFF(img,fname,kipl::base::UInt8,plane,append);
+            WriteTIFF(img,fname,kipl::base::eDataType::UInt8,plane,append);
             break;
         }
-        case kipl::base::UInt12 : break;
-        case kipl::base::UInt16 :
+        case kipl::base::eDataType::UInt12 : break;
+        case kipl::base::eDataType::UInt16 :
         {
             kipl::base::TImage<unsigned short,N> img;
             img=kipl::base::ImageCaster<unsigned short, ImgType, N>::cast(src,lo,hi);
@@ -292,11 +297,11 @@ void WriteTIFF(kipl::base::TImage<ImgType,N> src,
                 src.info.sDescription=msg.str();
             }
 
-            WriteTIFF(img,fname,kipl::base::UInt16,plane,append);
+            WriteTIFF(img,fname,kipl::base::eDataType::UInt16,plane,append);
             break;
         }
-        case kipl::base::Float32 :
-            WriteTIFF(src,fname,kipl::base::Float32,plane,append);
+        case kipl::base::eDataType::Float32 :
+            WriteTIFF(src,fname,kipl::base::eDataType::Float32,plane,append);
             break;
         }
 	}

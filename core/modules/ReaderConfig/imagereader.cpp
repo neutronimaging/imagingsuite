@@ -86,6 +86,39 @@ std::vector<size_t> ImageReader::imageSize(std::string filename, float binning)
     return dims;
 }
 
+kipl::base::eDataType ImageReader::getDataType(std::string filename)
+{
+    auto ext=readers::GetFileExtensionType(filename);
+
+    switch (ext) {
+        case readers::ExtensionFITS  : return kipl::base::eDataType::UInt16;      
+        case readers::ExtensionTIFF  : return kipl::io::GetTIFFDataType(filename);
+        case readers::ExtensionPNG   : return kipl::base::eDataType::UInt8;
+        case readers::ExtensionSEQ   : return kipl::base::eDataType::UInt16;
+#ifdef HAVE_NEXUS
+        case readers::ExtensionHDF5  : return kipl::base::eDataType::UInt16;//return kipl::io::GetNexusDataType(filename);
+#endif
+        default : throw ReaderException("Unknown file type",__FILE__, __LINE__);
+    }
+}
+
+kipl::base::eDataType ImageReader::getDataType(std::string path, std::string filemask, size_t number)
+{
+    std::string filename;
+    std::string ext;
+
+    if (filemask.find('#')==std::string::npos)
+    { // Reading from single file
+        filename=path+filemask;
+    }
+    else
+    {
+        kipl::strings::filenames::MakeFileName(path+filemask,number,filename,ext,'#','0');
+    }
+
+    return getDataType(filename);
+}
+
 void ImageReader::UpdateCrop(kipl::base::eImageFlip flip,
         kipl::base::eImageRotate rotate,
         std::vector<size_t> &dims,

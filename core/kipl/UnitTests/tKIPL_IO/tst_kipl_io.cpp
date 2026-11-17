@@ -132,9 +132,9 @@ void tKIPL_IOTest::testDataTypesWriteTIFF()
     for (size_t i=0; i<fimg.Size(); i++)
         fimg[i]=static_cast<float>(i)*0.5;
         
-    kipl::io::WriteTIFF(fimg,"basicRW8.tif",kipl::base::UInt8);
-    kipl::io::WriteTIFF(fimg,"basicRW16.tif",kipl::base::UInt16);
-    kipl::io::WriteTIFF(fimg,"basicRWfloat.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(fimg,"basicRW8.tif",kipl::base::eDataType::UInt8);
+    kipl::io::WriteTIFF(fimg,"basicRW16.tif",kipl::base::eDataType::UInt16);
+    kipl::io::WriteTIFF(fimg,"basicRWfloat.tif",kipl::base::eDataType::Float32);
 
     kipl::base::TImage<float,2> res;
     kipl::io::ReadTIFF(res,"basicRWfloat.tif");

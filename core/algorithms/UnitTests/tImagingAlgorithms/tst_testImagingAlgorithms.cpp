@@ -163,7 +163,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanHoles()
     cleaner.setThresholdByFraction(true);
     cleaner.process(img,0.95f,0.05f);
 
-    kipl::io::WriteTIFF(img,"cleandark.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"cleandark.tif",kipl::base::eDataType::Float32);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
@@ -177,7 +177,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanPeaks()
     cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,0.95f,0.05f);
 
-    kipl::io::WriteTIFF(img,"cleanbright.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"cleanbright.tif",kipl::base::eDataType::Float32);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
@@ -191,7 +191,7 @@ void TestImagingAlgorithms::MorphSpotClean_CleanBoth()
     cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,0.95f,0.05f);
 
-    kipl::io::WriteTIFF(img,"cleanall.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"cleanall.tif",kipl::base::eDataType::Float32);
 }
 
 void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
@@ -205,7 +205,7 @@ void TestImagingAlgorithms::MorphSpotClean_EdgePreparation()
     cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,1.0f,0.05f);
 
-    kipl::io::WriteTIFF(img,"spotcleaned.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"spotcleaned.tif",kipl::base::eDataType::Float32);
 
 }
 
@@ -552,7 +552,7 @@ void TestImagingAlgorithms::ProjectionFilterProcessing()
 
     pf.process(sino);
 
-    kipl::io::WriteTIFF(sino,"projfilt_result.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(sino,"projfilt_result.tif",kipl::base::eDataType::Float32);
     QCOMPARE(pf.currentFFTSize(),2048UL);
     QCOMPARE(pf.currentImageSize(),sino.Size(0));
 

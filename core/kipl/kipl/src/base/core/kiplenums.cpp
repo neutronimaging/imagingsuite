@@ -148,10 +148,10 @@ std::string enum2string(kipl::base::eDataType dt)
 {
     std::string s;
     switch (dt) {
-        case kipl::base::UInt4 :  s="UInt4"; break;
-        case kipl::base::UInt8 :  s="UInt8"; break;
-        case kipl::base::UInt12 : s="UInt12"; break;
-        case kipl::base::UInt16 : s="UInt16"; break;
+        case kipl::base::eDataType::UInt4 :  s="UInt4"; break;
+        case kipl::base::eDataType::UInt8 :  s="UInt8"; break;
+        case kipl::base::eDataType::UInt12 : s="UInt12"; break;
+        case kipl::base::eDataType::UInt16 : s="UInt16"; break;
         default : s="Unknown data type"; break;
     }
 
@@ -160,10 +160,10 @@ std::string enum2string(kipl::base::eDataType dt)
 
 void  string2enum(std::string str, kipl::base::eDataType &dt)
 {
-    if (str=="UInt4") dt=kipl::base::UInt4;
-    else if (str=="UInt8") dt=kipl::base::UInt8;
-    else if (str=="UInt12") dt=kipl::base::UInt12;
-    else if (str=="UInt16") dt=kipl::base::UInt16;
+    if (str=="UInt4") dt=kipl::base::eDataType::UInt4;
+    else if (str=="UInt8") dt=kipl::base::eDataType::UInt8;
+    else if (str=="UInt12") dt=kipl::base::eDataType::UInt12;
+    else if (str=="UInt16") dt=kipl::base::eDataType::UInt16;
     else throw kipl::base::KiplException("Could not transform string to data type enum", __FILE__, __LINE__);
 }
 
@@ -178,8 +178,8 @@ std::string enum2string(kipl::base::eEndians endian)
 {
     std::string s;
     switch (endian) {
-        case kipl::base::SmallEndian :  s="SmallEndian"; break;
-        case kipl::base::BigEndian : s="BigEndian"; break;
+        case kipl::base::eEndians::SmallEndian :  s="SmallEndian"; break;
+        case kipl::base::eEndians::BigEndian : s="BigEndian"; break;
         default : s="Unknown data type"; break;
     }
 

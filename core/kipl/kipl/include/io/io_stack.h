@@ -149,13 +149,13 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
         }
 
         if ( filetype == TIFF8bitsMultiFrame )
-            WriteTIFF(img,filename,lo,hi,kipl::base::UInt8, imageplane,append);
+            WriteTIFF(img,filename,lo,hi,kipl::base::eDataType::UInt8, imageplane,append);
 
         if ( filetype == TIFF16bitsMultiFrame )
-            WriteTIFF(img,filename,lo,hi,kipl::base::UInt16, imageplane,append);
+            WriteTIFF(img,filename,lo,hi,kipl::base::eDataType::UInt16, imageplane,append);
 
         if ( filetype == TIFFfloatMultiFrame )
-            WriteTIFF(img,filename,kipl::base::Float32, imageplane,append);
+            WriteTIFF(img,filename,kipl::base::eDataType::Float32, imageplane,append);
     }
     else
     {
@@ -169,16 +169,16 @@ int WriteImageStack(kipl::base::TImage<ImgType,3> img,const std::string fname,
             switch (filetype)
             {
             case TIFF8bits :
-                WriteTIFF(tmp,filename,lo,hi,kipl::base::UInt8);
+                WriteTIFF(tmp,filename,lo,hi,kipl::base::eDataType::UInt8);
                 break;
             case TIFF16bits :
-                WriteTIFF(tmp,filename,lo,hi,kipl::base::UInt16);
+                WriteTIFF(tmp,filename,lo,hi,kipl::base::eDataType::UInt16);
                 break;
             case TIFFfloat :
                 ftmp.resize(tmp.dims());
                 for (size_t j=0; j<tmp.Size(); ++j)
                     ftmp[j]=tmp[j];
-                WriteTIFF(ftmp,filename,kipl::base::Float32);
+                WriteTIFF(ftmp,filename,kipl::base::eDataType::Float32);
                 break;
             case TIFF8bitsMultiFrame  : break;
             case TIFF16bitsMultiFrame : break;

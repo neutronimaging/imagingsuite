@@ -9,6 +9,7 @@
 
 #include "../../include/base/timage.h"
 #include "../../include/base/KiplException.h"
+#include "../../include/base/kiplenums.h"
 
 namespace kipl { namespace io {
 
@@ -87,5 +88,72 @@ std::vector<size_t> KIPLSHARED_EXPORT GetTIFFDims(const std::string & fname)
     return dims;
 }
 
+kipl::base::eDataType KIPLSHARED_EXPORT GetTIFFDataType(std::string fname)
+{
+    TIFF *image;
+    //TIFFErrorHandler warn = TIFFSetWarningHandler(0);
+    // Open the TIFF image
+    if((image = TIFFOpen(fname.c_str(), "r")) == nullptr){
+        std::stringstream msg;
+        msg.str("");
+        msg<<"GetTIFFDataType: Could not open "<<fname;
+        throw kipl::base::KiplException(msg.str(),__FILE__,__LINE__);
+    }
+    // We need to set some values for basic tags before we can add any data
+    int sampleFormat=0;
+    int bitsPerSample=0;
+    TIFFGetField(image, TIFFTAG_SAMPLEFORMAT, &sampleFormat);
+    TIFFGetField(image, TIFFTAG_BITSPERSAMPLE, &bitsPerSample);
 
+    kipl::base::eDataType dataType = kipl::base::eDataType::Unknown;
+
+    switch (sampleFormat) {
+        case SAMPLEFORMAT_IEEEFP:
+            switch (bitsPerSample) {
+                case 32:
+                    dataType = kipl::base::eDataType::Float32;
+                    break;
+                default:
+                    throw kipl::base::KiplException("Unsupported bits per sample for IEEE floating point", __FILE__, __LINE__);
+            }
+            break;
+        case SAMPLEFORMAT_INT:
+            switch (bitsPerSample) {
+                case 4:
+                    dataType = kipl::base::eDataType::UInt4;
+                    break;
+                case 8:
+                    dataType = kipl::base::eDataType::UInt8;
+                    break;
+                case 16:
+                    dataType = kipl::base::eDataType::UInt16;
+                    break;
+
+                default:
+                    throw kipl::base::KiplException("Unsupported bits per sample for signed integer", __FILE__, __LINE__);
+            }
+            break;
+        case SAMPLEFORMAT_UINT:
+            switch (bitsPerSample) {
+                case 8:
+                    dataType = kipl::base::eDataType::UInt8;
+                    break;
+                case 16:
+                    dataType = kipl::base::eDataType::UInt16;
+                    break;
+                    // case 32:
+                    //     dataType = kipl::base::eDataType::UInt32;
+                    //     break;
+                default:
+                    throw kipl::base::KiplException("Unsupported bits per sample for unsigned integer", __FILE__, __LINE__);
+            }
+            break;
+        default:
+            throw kipl::base::KiplException("Unsupported sample format", __FILE__, __LINE__);
+    }
+
+    TIFFClose(image);
+    return dataType;
+
+}
 }}

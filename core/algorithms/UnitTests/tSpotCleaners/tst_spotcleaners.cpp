@@ -160,7 +160,7 @@ void TestSpotCleaners::MorphSpotClean_CleanHoles()
     cleaner.setThresholdByFraction(true);
     cleaner.process(img,0.95f,0.05f);
 
-    kipl::io::WriteTIFF(img,"cleandark.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"cleandark.tif",kipl::base::eDataType::Float32);
 }
 
 void TestSpotCleaners::MorphSpotClean_CleanPeaks()
@@ -174,7 +174,7 @@ void TestSpotCleaners::MorphSpotClean_CleanPeaks()
     cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,0.95f,0.05f);
 
-    kipl::io::WriteTIFF(img,"cleanbright.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"cleanbright.tif",kipl::base::eDataType::Float32);
 }
 
 void TestSpotCleaners::MorphSpotClean_CleanBoth()
@@ -188,7 +188,7 @@ void TestSpotCleaners::MorphSpotClean_CleanBoth()
     cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,0.95f,0.05f);
 
-    kipl::io::WriteTIFF(img,"cleanall.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"cleanall.tif",kipl::base::eDataType::Float32);
 }
 
 void TestSpotCleaners::MorphSpotClean_EdgePreparation()
@@ -202,7 +202,7 @@ void TestSpotCleaners::MorphSpotClean_EdgePreparation()
     cleaner.setConnectivity(kipl::base::eConnectivity::conn8);
     cleaner.process(img,1.0f,0.05f);
 
-    kipl::io::WriteTIFF(img,"spotcleaned.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"spotcleaned.tif",kipl::base::eDataType::Float32);
 
 }
 
@@ -257,14 +257,14 @@ void TestSpotCleaners::SortSpotClean_BasicRun()
     ImagingAlgorithms::SortSpotClean cleaner;
 
     auto img=kipl::base::TSubImage<float,2>::Get(holes,{200,200},{32,32});
-    kipl::io::WriteTIFF(img,"sortspot_patch.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"sortspot_patch.tif",kipl::base::eDataType::Float32);
 
     cleaner.process(img,0.95f,1.0f);
     auto mask=cleaner.getSpotMask();
-    kipl::io::WriteTIFF(mask,"sortspotmask.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(mask,"sortspotmask.tif",kipl::base::eDataType::Float32);
 
     auto diff=cleaner.getDifferenceImage();
-    kipl::io::WriteTIFF(diff,"sortspotdiff.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(diff,"sortspotdiff.tif",kipl::base::eDataType::Float32);
 }
 
 
@@ -276,7 +276,7 @@ void TestSpotCleaners::SortSpotClean_RunPatches()
     auto img=holes;
     // auto img=spots;
     img.Clone();
-    kipl::io::WriteTIFF(img,"sortspot_orig.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"sortspot_orig.tif",kipl::base::eDataType::Float32);
 
     // timer.start();
     QBENCHMARK{
@@ -289,7 +289,7 @@ void TestSpotCleaners::SortSpotClean_RunPatches()
     // kipl::io::WriteTIFF(mask,"sortspotmask.tif",kipl::base::Float32);
 
     // auto diff=cleaner.getDifferenceImage();
-    kipl::io::WriteTIFF(img,"sortspotdiff_full_cleaned.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"sortspotdiff_full_cleaned.tif",kipl::base::eDataType::Float32);
 }
 
 
@@ -301,7 +301,7 @@ void TestSpotCleaners::SortSpotClean_RunThreaded()
     auto img=holes;
     // auto img=spots;
     img.Clone();
-    kipl::io::WriteTIFF(img,"sortspot_orig.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"sortspot_orig.tif",kipl::base::eDataType::Float32);
 
     QCOMPARE(cleaner_p.isThreaded(),true);
     QCOMPARE(cleaner_p.numberOfThreads(),std::thread::hardware_concurrency());
@@ -312,14 +312,14 @@ void TestSpotCleaners::SortSpotClean_RunThreaded()
     // }
     // qint64 elapsed = timer.elapsed();
     // std::cout << "SortSpotClean_RunThreaded processing time: " << elapsed << " ms" << std::endl;
-    kipl::io::WriteTIFF(img,"sortspotdiff_full_th_all_cleaned.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img,"sortspotdiff_full_th_all_cleaned.tif",kipl::base::eDataType::Float32);
 
     auto img_s = holes;
     // auto img_s = spots;
     img_s.Clone();
 
     cleaner_s.process(img_s,0.95f,1.0f);
-    kipl::io::WriteTIFF(img_s,"sortspotdiff_full_th_single_cleaned.tif",kipl::base::Float32);
+    kipl::io::WriteTIFF(img_s,"sortspotdiff_full_th_single_cleaned.tif",kipl::base::eDataType::Float32);
 
     size_t diffs = 0UL;
 
