@@ -11,7 +11,7 @@
 class STDPREPROCMODULESSHARED_EXPORT GammaSpotCleanModule: public PreprocModuleBase {
 public:
     using PreprocModuleBase::Configure;
-    GammaSpotCleanModule();
+    GammaSpotCleanModule(kipl::interactors::InteractionBase *interactor=nullptr);
     ~GammaSpotCleanModule();
 
     int Configure(ReconConfig config, std::map<std::string, std::string> parameters) override;
@@ -32,6 +32,8 @@ protected:
     float m_fThreshold5;
     float m_fThreshold7;
     size_t m_nMedianSize;
+
+    kipl::base::TImage<float,2> m_DetectionImg;
 };
 
 #endif // GAMMASPOTCLEANMODULE_H

@@ -15,32 +15,6 @@
 
 namespace ImagingAlgorithms {
 
-        
-//     void process(kipl::base::TImage<float,2> & img);
-//     void process(kipl::base::TImage<float,3> & img);
-    
-//     void configure(float sigma, float th3, float th5, float th7, size_t medsize);
-
-//     kipl::base::TImage<float,2> DetectionImage(kipl::base::TImage<float,2> &img);
-
-//     void setConnectivity(kipl::base::eConnectivity conn = kipl::base::conn8);
-//     kipl::base::eConnectivity connectivity();
-        
-//     void setLimits(bool bClamp, float fMin, float fMax);
-//     std::vector<float> clampLimits();
-//     bool clampActive();
-    
-//     void setCleanInfNan(bool activate);
-//     bool cleanInfNan();
-//     void useThreading(bool x);
-//     bool isThreaded();
-//     int  numberOfThreads();
-
-// private:
-//     void prepareNeighborhoods(const std::vector<size_t> &dims);
-//     void medianNeighborhood(float *pImg, float *pRes, ptrdiff_t pos, ptrdiff_t *ng, size_t N);
-//     void laplacianOfGaussian(float *pImg, float *pRes, ptrdiff_t pos, ptrdiff_t *ng, size_t N);
-
 GammaClean::GammaClean( float sigma, 
                         float th3, 
                         float th5, 
@@ -58,19 +32,14 @@ GammaClean::GammaClean( float sigma,
     m_nMedianSize(medsize)
 {
     if (useThreads) {
-        m_threadPool = new kipl::utilities::ThreadPool(std::thread::hardware_concurrency());
+        m_threadPool = std::make_unique<kipl::utilities::ThreadPool>(std::thread::hardware_concurrency());
     }   
 
     // size_t N=static_cast<size_t>(std::ceil(6*sigma));
     size_t N=9UL;
-    buildLoGKernel(sigma, static_cast<size_t>(N)); // The kernel size is set to 6*sigma to capture the significant part of the Gaussian. This is a common choice for LoG filters.
-}
 
-GammaClean::~GammaClean()
-{
-    if (m_threadPool) {
-        delete m_threadPool;
-    }
+    N = (N % 2 == 0) ? N + 1 : N; // Ensure N is odd
+    buildLoGKernel(sigma, static_cast<size_t>(N)); // The kernel size is set to 6*sigma to capture the significant part of the Gaussian. This is a common choice for LoG filters.
 }
 
 void GammaClean::configure(float sigma, float th3, float th5, float th7, size_t medsize)
@@ -87,9 +56,15 @@ void GammaClean::configure(float sigma, float th3, float th5, float th7, size_t 
     buildLoGKernel(sigma, static_cast<size_t>(N)); // The kernel size is set to 6*sigma to capture the significant part of the Gaussian. This is a common choice for LoG filters.
 }
 
-void GammaClean::process(kipl::base::TImage<float,3> & /*img*/)
+void GammaClean::process(kipl::base::TImage<float,3> & img)
 {
-    throw ImagingException("3D processing not implemented yet",__FILE__,__LINE__);
+    kipl::base::TImage<float,2> slice(img.dims());
+    for (size_t i=0; i<img.Size(2); ++i) 
+    {
+        std::copy_n(img.GetLinePtr(0,i), slice.Size(), slice.GetDataPtr());
+        process(slice);
+        std::copy_n(slice.GetDataPtr(), slice.Size(), img.GetLinePtr(0,i));  
+    }
 }
 
 void GammaClean::process(kipl::base::TImage<float,2> & img)

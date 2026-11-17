@@ -8,6 +8,7 @@
 #include <string>
 #include <map>
 #include <list>
+#include <memory>
 
 
 #include <base/timage.h>
@@ -29,7 +30,7 @@ class IMAGINGALGORITHMSSHARED_EXPORT GammaClean
 {
     kipl::logging::Logger m_logger;
     kipl::interactors::InteractionBase *m_pInteractor;
-    kipl::utilities::ThreadPool *m_threadPool;
+    std::unique_ptr<kipl::utilities::ThreadPool> m_threadPool;
 
 public:
     GammaClean(float sigma=0.8f, 
@@ -40,7 +41,11 @@ public:
                bool useThreads=false, 
                kipl::interactors::InteractionBase *interactor=nullptr);
     
-    ~GammaClean();
+    ~GammaClean() = default;
+    GammaClean(const GammaClean&) = delete;
+    GammaClean& operator=(const GammaClean&) = delete;
+    GammaClean(GammaClean&&) noexcept = default;
+    GammaClean& operator=(GammaClean&&) noexcept = default;
 
     void process(kipl::base::TImage<float,2> & img);
     void process(kipl::base::TImage<float,3> & img);
