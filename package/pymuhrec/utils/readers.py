@@ -2,7 +2,7 @@ import numpy as np
 import astropy.io.fits as fits
 from .imageutils import *
 import tifffile as tiff
-from tqdm.notebook import tqdm
+from tqdm.auto import tqdm
 
 def read_image(fname) :
     ''' Reads a single image in fits or tiff format

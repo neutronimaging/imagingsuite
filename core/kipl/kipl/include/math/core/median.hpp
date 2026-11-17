@@ -14,7 +14,7 @@ void median(T *v,const size_t n, S * med)
 {
         T *tmp=new T[n];
        memcpy(tmp,v,n*sizeof(T));
-        heapsort(tmp,static_cast<int>(n));
+        kipl::algorithms::heapsort(tmp,static_cast<int>(n));
         *med=0;
         if ((n & 1) == 1)
             *med=tmp[n/2];
@@ -53,6 +53,24 @@ void median_STL(T *v,const size_t n, S * med)
         	std::partial_sort(v,v+mid+1,v+n);
         	*med=static_cast<T>(0.5*(v[mid-1]+v[mid]));
         }
+}
+
+template<class T>
+T median_STL(const std::vector<T> &v)
+{
+    size_t n = v.size();
+    if (n == 0) return T{}; // or throw if you prefer
+
+    std::vector<T> tmp(v.begin(), v.end());
+    size_t mid = n / 2;
+
+    // partial_sort so that tmp[mid] (and tmp[mid-1] for even n) are the correct elements
+    std::partial_sort(tmp.begin(), tmp.begin() + mid + 1, tmp.end());
+
+    if (n & 1)
+        return tmp[mid];
+    else
+        return static_cast<T>((static_cast<double>(tmp[mid - 1]) + static_cast<double>(tmp[mid])) * 0.5);
 }
 
 #define PIX_SORT(a,b) { if ((a)>(b)) swap(a,b); }
@@ -170,5 +188,4 @@ void median_quick_select(T *arr, const size_t n, S *med)
 
 
 }}
-
-#endif /*MEDIAN_HPP_*/
+#endif

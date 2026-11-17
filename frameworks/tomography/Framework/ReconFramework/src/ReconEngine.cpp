@@ -1252,7 +1252,7 @@ int ReconEngine::Run3DFull()
                        CBCT_roi[3] = static_cast<size_t>(value2);
                }
 
-               if (CBCT_roi[1]-8>=0 && CBCT_roi[1]!=0)
+               if (CBCT_roi[1]>=8 && CBCT_roi[1]!=0)
                    CBCT_roi[1] -=8;
                if (CBCT_roi[3]+8<=m_Config.ProjectionInfo.projection_roi[3])
                    CBCT_roi[3] +=8;

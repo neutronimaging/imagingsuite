@@ -89,10 +89,10 @@ double RegionMean(T const * const data, size_t width, size_t height, size_t stri
 
 
 template <typename T>
-T sum(T * const begin, T const * const end)
+T sum(T const * begin, T const * end)
 {
 	T val=static_cast<T>(0);
-	for  (T * const it=begin; it<end; it++) {
+	for  (auto it=begin; it<end; ++it) {
 		val+=*it;
 	}
 	

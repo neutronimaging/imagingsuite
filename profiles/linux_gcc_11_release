@@ -4,6 +4,6 @@ arch=x86_64
 build_type=Release
 compiler=gcc
 compiler.version=11
-compiler.cppstd=17
+compiler.cppstd=20
 compiler.libcxx=libstdc++11
 [options]

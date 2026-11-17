@@ -17,7 +17,7 @@ template <typename T>
 void minmax(T const * const data, const size_t N, T *minval, T *maxval, bool finiteSafe=true);
 
 template <typename T>
-T sum(T * const begin, T const * const end);
+T sum(T const *  begin, T const * end);
 
 template <typename T>
 double sum2(T * const begin, T const * const end);
