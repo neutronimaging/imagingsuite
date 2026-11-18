@@ -24,6 +24,8 @@ public:
     int ProcessCore(kipl::base::TImage<float,3> &img, std::map<std::string,std::string> &parameters) override;
 
 protected:
+    using PreprocModuleBase::Configure;
+    using PreprocModuleBase::ProcessCore;
     int SimpleFilter(kipl::base::TImage<float,2> &img, std::map<std::string,std::string> &parameters);
     void MaxProfile(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,2> &profile);
     void MinProfile(kipl::base::TImage<float,3> &img, kipl::base::TImage<float,2> &profile);

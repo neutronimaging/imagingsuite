@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.5)
+
 
 set(TARGET_NAME "tImagingAlgorithms")
-project(tLogging LANGUAGES CXX)
+project(tImagingAlgorithms LANGUAGES CXX)
 
 enable_testing()
 
@@ -14,7 +14,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(
@@ -22,23 +22,10 @@ include_directories(
     ../../ImagingAlgorithms/include
 )
 
-# if (APPLE)
-#     include_directories(
-#         ../../../../../ExternalDependencies/macos/include/
-#     )
-# endif()
-
-# if (WIN32)
-#     include_directories(
-#         ../../../../../ExternalDependencies/windows/include/
-#         ../../../../../imagingsuite/external/include/
-#     )
-# endif()
-
-set(SRC_FILES,
+set(SRC_FILES
 tst_testImagingAlgorithms.cpp)
 
-add_executable(${TARGET_NAME} tst_testImagingAlgorithms.cpp)
+add_executable(${TARGET_NAME} ${SRC_FILES})
 
 target_link_libraries(${TARGET_NAME}
     PRIVATE

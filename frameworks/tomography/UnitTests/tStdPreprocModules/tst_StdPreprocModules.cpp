@@ -40,7 +40,7 @@ void TStdPreprocModulesTest::testGetModuleList()
     GetModuleList("muhrec", reinterpret_cast<void *>(&modulelist));
     qDebug() << modulelist.size();
 
-    QCOMPARE(modulelist.size(),21UL);
+    QCOMPARE(modulelist.size(),23UL);
 }
 
 void TStdPreprocModulesTest::testFullLogNorm()
@@ -167,13 +167,7 @@ void TStdPreprocModulesTest::testDetectorLag_Process()
     // QSKIP("Test is not implemented");
 }
 
-#ifdef __APPLE__
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-    QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
-    #pragma clang diagnostic pop
-#else
-    QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
-#endif
+QTEST_APPLESS_MAIN(TStdPreprocModulesTest)
+
 
 #include "tst_StdPreprocModules.moc"

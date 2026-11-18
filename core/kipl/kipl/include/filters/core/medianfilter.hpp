@@ -244,7 +244,7 @@ void TMedianFilter<T,nDims>::HeapSortMedianFilterSTL(kipl::base::TImage<T,nDims>
         auto pSrc = &src;
         auto pRes = &result;
 
-        threads.push_back(std::thread([=] { HeapSortInnerLoop(pSrc,
+        threads.push_back(std::thread([=, this] { HeapSortInnerLoop(pSrc,
                                                               pRes,
                                                               begin,
                                                               end,

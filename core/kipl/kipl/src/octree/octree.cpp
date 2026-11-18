@@ -12,8 +12,8 @@ OctreeNode::OctreeNode(kipl::base::TImage<float,3> &img, size_t *coords, size_t 
 	memset(nodes,0,sizeof(OctreeNode *)*8);
 
 	m_nCoords[0]=coords[0];
-	m_nCoords[1]=coords[2];
-	m_nCoords[2]=coords[3];
+	m_nCoords[1]=coords[1];
+	m_nCoords[2]=coords[2];
 
 	Split(img);
 }
@@ -39,7 +39,8 @@ void OctreeNode::Split(kipl::base::TImage<float,3> &img)
 	size_t l2=m_nLength>>1;
 	if (2<l2)
 		return;
-	size_t coords[3];
+	size_t coords[3]={0UL,0UL,0UL};
+	
 	coords[0]=m_nCoords[0]; coords[1]=m_nCoords[1]; coords[1]=m_nCoords[1];
 	nodes[0]=new OctreeNode(img,coords,l2);
 

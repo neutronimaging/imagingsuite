@@ -24,11 +24,11 @@ template <typename T>
                 int end() const {return m_nEnd;}
 		int size() const {return m_nEnd-m_nBegin+1;}
 
-                T const * const transH() const {return m_tH-m_nBegin;}
-                T const * const transG() const {return m_tG-m_nBegin;}
+		T const * transH() const {return m_tH-m_nBegin;}
+		T const * transG() const {return m_tG-m_nBegin;}
 
-                T const * const synthH() const {return m_sH-m_nBegin;}
-                T const * const synthG() const {return m_sG-m_nBegin;}
+		T const * synthH() const {return m_sH-m_nBegin;}
+		T const * synthG() const {return m_sG-m_nBegin;}
 		std::list<std::string> NameList();
 
 	private:

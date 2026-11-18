@@ -24,7 +24,7 @@ void bindAverageImage(py::module &m)
     avgClass.def("process",
                  [](ImagingAlgorithms::AverageImage &a,
                  py::array_t<float> &x,
-                 ImagingAlgorithms::AverageImage::eAverageMethod method,
+                 ImagingAlgorithms::eAverageImageMethod method,
                  std::vector<float> weights = {})
     {
         // auto r = x.unchecked<3>(); // x must have ndim = 3; can be non-writeable
@@ -50,13 +50,14 @@ void bindAverageImage(py::module &m)
     },"Computes a combined image using the selected method",py::arg("img"),py::arg("method"),py::arg("weights")=std::vector<float>());
 
 
-    py::enum_<ImagingAlgorithms::AverageImage::eAverageMethod>(avgClass,"eAverageMethod")
-            .value("ImageSum",             ImagingAlgorithms::AverageImage::ImageSum)
-            .value("ImageAverage",         ImagingAlgorithms::AverageImage::ImageAverage)
-            .value("ImageMedian",          ImagingAlgorithms::AverageImage::ImageMedian)
-            .value("ImageWeightedAverage", ImagingAlgorithms::AverageImage::ImageWeightedAverage)
-            .value("ImageMin",             ImagingAlgorithms::AverageImage::ImageMin)
-            .value("ImageMax",             ImagingAlgorithms::AverageImage::ImageMax)
+    py::enum_<ImagingAlgorithms::eAverageImageMethod>(avgClass,"eAverageImageMethod")
+            .value("Sum",             ImagingAlgorithms::eAverageImageMethod::Sum)
+            .value("Average",         ImagingAlgorithms::eAverageImageMethod::Average)
+            .value("Median",          ImagingAlgorithms::eAverageImageMethod::Median)
+            .value("WeightedAverage", ImagingAlgorithms::eAverageImageMethod::WeightedAverage)
+            .value("MADWeightedAverage", ImagingAlgorithms::eAverageImageMethod::MADWeightedAverage)
+            .value("Min",             ImagingAlgorithms::eAverageImageMethod::Min)
+            .value("Max",             ImagingAlgorithms::eAverageImageMethod::Max)
             .export_values();
 
 }

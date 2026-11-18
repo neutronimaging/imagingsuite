@@ -194,6 +194,7 @@ void SpotClean2Dlg::on_combo_detection_display_currentIndexChanged(int index)
             else
                 dimg[i]=0.0f;
         }
+        break;
     case 2: // Detection image
         dimg=m_DetectionImage;
         break;

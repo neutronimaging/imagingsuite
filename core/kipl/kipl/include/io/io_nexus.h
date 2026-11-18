@@ -21,9 +21,9 @@
 #include "../logging/logger.h"
 
 #ifdef HAVE_NEXUS
-#include <nexus/napi.h>
-#include <nexus/NeXusFile.hpp>
-#include <nexus/NeXusException.hpp>
+    #include <nexus/napi.h>
+    #include <nexus/NeXusFile.hpp>
+    #include <nexus/NeXusException.hpp>
 #endif
 
 // #ifdef _MSC_VER

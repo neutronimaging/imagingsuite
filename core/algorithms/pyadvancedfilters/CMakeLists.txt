@@ -5,24 +5,17 @@
 set(TARGET_NAME "advfilters")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(OpenMP)
 
 include_directories(
     ../../kipl/kipl/include
-    # ../../../../ExternalDependencies/macos/include
     )
 
 if (WIN32)
     include_directories(
         ../../../core/kipl/kipl/include
         ../../../core/modules/ModuleConfig/include
-        # ../../../external/include/
-        # ../../../../ExternalDependencies/windows/include
-        # ../../../../ExternalDependencies/windows/include/nexus
-        # ../../../../ExternalDependencies/windows/include/cfitsio
         )
 endif()
 
@@ -54,13 +47,7 @@ target_link_libraries(${TARGET_NAME}
   )
 endif(APPLE)
 
-if (WIN32)
-    # target_link_directories(${TARGET_NAME} PRIVATE
-    # ../../../../ExternalDependencies/windows/lib
-    # ../../../../imagingsuite/external/lib64
-    # ../../../../imagingsuite/external/lib64/nexus
-    # )
-    
+if (WIN32)   
     target_link_libraries(${TARGET_NAME}
     PUBLIC
       pybind11::module
@@ -98,4 +85,4 @@ set_target_properties(${TARGET_NAME}
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
   )
 
-install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION pymuhrec COMPONENT python RUNTIME DESTINATION pymuhrec COMPONENT python)

@@ -43,6 +43,7 @@ void LoggingTests::testLoggingEnums()
     QCOMPARE(enum2string(kipl::logging::Logger::LogMessage).c_str(), "message");
     QCOMPARE(enum2string(kipl::logging::Logger::LogWarning).c_str(), "warning");
     QCOMPARE(enum2string(kipl::logging::Logger::LogError).c_str(),   "error");
+    QCOMPARE(enum2string(kipl::logging::Logger::LogNone).c_str(),    "none");
 
     //    string2enum();
     kipl::logging::Logger::LogLevel level;
@@ -56,6 +57,8 @@ void LoggingTests::testLoggingEnums()
     QCOMPARE(level,kipl::logging::Logger::LogWarning);
     string2enum("error",level);
     QCOMPARE(level,kipl::logging::Logger::LogError);
+    string2enum("none",level);
+    QCOMPARE(level,kipl::logging::Logger::LogNone);
 }
 
 void LoggingTests::testLogWriter()
